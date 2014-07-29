@@ -1,4 +1,4 @@
-package com.example.bmus;
+package com.example.rftools;
 
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -7,17 +7,17 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 
-@Mod(modid = BmuS.MODID, version = BmuS.VERSION)
-public class BmuS
+@Mod(modid = RFTools.MODID, version = RFTools.VERSION)
+public class RFTools
 {
-    public static final String MODID = "bmus";
+    public static final String MODID = "rftools";
     public static final String VERSION = "0.0";
 
-    @SidedProxy(clientSide="com.example.bmus.ClientProxy", serverSide="com.example.bmus.ServerProxy")
+    @SidedProxy(clientSide="com.example.rftools.ClientProxy", serverSide="com.example.rftools.ServerProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance("bmus")
-    public static BmuS instance;
+    @Mod.Instance("rftools")
+    public static RFTools instance;
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;

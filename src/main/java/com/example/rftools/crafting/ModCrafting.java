@@ -1,4 +1,4 @@
-package com.example.bmus.crafting;
+package com.example.rftools.crafting;
 
 public final class ModCrafting {
 

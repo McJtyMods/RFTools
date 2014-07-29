@@ -1,9 +1,9 @@
-package com.example.bmus;
+package com.example.rftools;
 
-import com.example.bmus.blocks.ModBlocks;
-import com.example.bmus.crafting.ModCrafting;
-import com.example.bmus.items.ModItems;
-import com.example.bmus.mobs.ModEntities;
+import com.example.rftools.blocks.ModBlocks;
+import com.example.rftools.crafting.ModCrafting;
+import com.example.rftools.items.ModItems;
+import com.example.rftools.mobs.ModEntities;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
