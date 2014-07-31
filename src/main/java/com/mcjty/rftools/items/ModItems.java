@@ -1,9 +1,8 @@
-package com.example.rftools.items;
+package com.mcjty.rftools.items;
 
-import com.example.rftools.RFTools;
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 
 public final class ModItems {
     public static NetworkMonitorItem networkMonitorItem;

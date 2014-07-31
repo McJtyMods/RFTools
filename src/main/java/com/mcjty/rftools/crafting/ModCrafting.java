@@ -1,4 +1,4 @@
-package com.example.rftools.crafting;
+package com.mcjty.rftools.crafting;
 
 public final class ModCrafting {
 

@@ -1,4 +1,4 @@
-package com.example.rftools;
+package com.mcjty.rftools;
 
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -12,7 +12,7 @@ public class RFTools {
     public static final String MODID = "rftools";
     public static final String VERSION = "0.0";
 
-    @SidedProxy(clientSide="com.example.rftools.ClientProxy", serverSide="com.example.rftools.ServerProxy")
+    @SidedProxy(clientSide="com.mcjty.rftools.ClientProxy", serverSide="com.mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance("rftools")

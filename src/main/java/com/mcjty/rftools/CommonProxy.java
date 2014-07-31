@@ -1,10 +1,10 @@
-package com.example.rftools;
+package com.mcjty.rftools;
 
-import com.example.rftools.blocks.ModBlocks;
-import com.example.rftools.crafting.ModCrafting;
-import com.example.rftools.gui.GuiProxy;
-import com.example.rftools.items.ModItems;
-import com.example.rftools.mobs.ModEntities;
+import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.crafting.ModCrafting;
+import com.mcjty.rftools.gui.GuiProxy;
+import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.mobs.ModEntities;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;

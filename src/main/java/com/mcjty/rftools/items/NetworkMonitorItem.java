@@ -1,9 +1,8 @@
-package com.example.rftools.items;
+package com.mcjty.rftools.items;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
-import com.example.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

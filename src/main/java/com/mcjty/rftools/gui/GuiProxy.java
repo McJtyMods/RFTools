@@ -1,6 +1,6 @@
-package com.example.rftools.gui;
+package com.mcjty.rftools.gui;
 
-import com.example.rftools.RFTools;
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;

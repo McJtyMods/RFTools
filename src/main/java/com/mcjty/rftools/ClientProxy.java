@@ -1,4 +1,4 @@
-package com.example.rftools;
+package com.mcjty.rftools;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
