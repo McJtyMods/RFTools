@@ -2,12 +2,14 @@ package com.example.rftools;
 
 import com.example.rftools.blocks.ModBlocks;
 import com.example.rftools.crafting.ModCrafting;
+import com.example.rftools.gui.GuiProxy;
 import com.example.rftools.items.ModItems;
 import com.example.rftools.mobs.ModEntities;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -40,6 +42,8 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent e) {
         ModEntities.init();
+        NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
+
     }
 
     public void postInit(FMLPostInitializationEvent e) {

@@ -1,8 +1,8 @@
 [
 {
-  "modid": "bmus",
-  "name": "BmuS",
-  "description": "Beam me up Scotty!",
+  "modid": "rftools",
+  "name": "RFTools",
+  "description": "RedFlux tools",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
