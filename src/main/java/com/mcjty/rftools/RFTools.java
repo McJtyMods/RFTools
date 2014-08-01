@@ -6,6 +6,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = RFTools.MODID, version = RFTools.VERSION)
 public class RFTools {
@@ -18,16 +20,24 @@ public class RFTools {
     @Mod.Instance("rftools")
     public static RFTools instance;
 
+    public Logger logger;
+
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
+
+    public static void logError(String msg) {
+        instance.logger.log(Level.ERROR, msg);
+    }
+
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
      * register them with the GameRegistry.
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
+        logger = e.getModLog();
         this.proxy.preInit(e);
     }
     /**

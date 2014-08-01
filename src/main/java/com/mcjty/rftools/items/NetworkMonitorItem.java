@@ -3,6 +3,7 @@ package com.mcjty.rftools.items;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
+import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -91,14 +92,9 @@ public class NetworkMonitorItem extends Item {
 
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
-//        if (!world.isRemote) {
-//
-//            if (!player.isSneaking()) {
-//                player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-//            } else {
-//
-//            }
-//        }
+        if (world.isRemote) {
+            player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        }
 
         if (!world.isRemote) {
             System.out.println("==========================================");
