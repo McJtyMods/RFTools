@@ -38,6 +38,11 @@ public class GuiStringList extends GuiListExtended {
 
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected) {
+            System.out.println("slotIndex = " + slotIndex);
+            System.out.println("x = " + x);
+            System.out.println("y = " + y);
+//            System.out.println("listWidth = " + listWidth);
+//            System.out.println("slotHeight = " + slotHeight);
             owningList.mc.fontRenderer.drawString(value, x + 1, y, 1677215); //slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
         }
 

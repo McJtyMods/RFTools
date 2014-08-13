@@ -36,6 +36,15 @@ public class GuiBlockList extends GuiScreen {
         guiList = new GuiStringList(Minecraft.getMinecraft(), xSize, ySize, 0, ySize, 16);
         int k = (this.width - this.xSize) / 2;
         guiList.setSlotXBoundsFromLeft(k);
+        System.out.println("xSize = " + xSize);
+        System.out.println("ySize = " + ySize);
+
+        System.out.println("guiList.left = " + guiList.left);
+        System.out.println("guiList.right = " + guiList.right);
+        System.out.println("guiList.width = " + guiList.width);
+        System.out.println("guiList.height = " + guiList.height);
+        System.out.println("guiList.top = " + guiList.top);
+        System.out.println("guiList.bottom = " + guiList.bottom);
     }
 
     @Override
@@ -45,6 +54,9 @@ public class GuiBlockList extends GuiScreen {
         this.mc.getTextureManager().bindTexture(iconLocation);
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
+        System.out.println("k = " + k);
+        System.out.println("l = " + l);
+
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
         guiList.drawScreen(xSize_lo, ySize_lo, par3);
 //        GuiHelper.drawPlayerModel(k + 51, l + 75, 30, (k + 51) - this.xSize_lo, (l + 75 - 50) - this.ySize_lo, this.mc.thePlayer);
