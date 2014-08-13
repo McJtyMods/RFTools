@@ -16,48 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NetworkMonitorItem extends Item {
-
-    private class Coordinate {
-        int x, y, z;
-
-        private Coordinate(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Coordinate that = (Coordinate) o;
-
-            if (x != that.x) return false;
-            if (y != that.y) return false;
-            if (z != that.z) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            result = 31 * result + z;
-            return result;
-        }
-    }
-
-    private class BlockInfo {
-        TileEntity tileEntity;
-        Block block;
-
-        private BlockInfo(TileEntity tileEntity, Block block) {
-            this.tileEntity = tileEntity;
-            this.block = block;
-        }
-    }
+    private HashMap<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
 
     public NetworkMonitorItem() {
         setMaxStackSize(1);
@@ -89,16 +48,20 @@ public class NetworkMonitorItem extends Item {
         }
     }
 
+    public HashMap<Coordinate, BlockInfo> getConnectedBlocks() {
+        return connectedBlocks;
+    }
 
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            return true;
         }
 
         if (!world.isRemote) {
             System.out.println("==========================================");
-            HashMap<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
+            connectedBlocks.clear();
             findConnectedBlocks(connectedBlocks, world, x, y, z);
             for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
                 showBlockInfo(me.getKey(), me.getValue());
