@@ -27,7 +27,7 @@ public class NetworkMonitorItem extends Item {
         return 1;
     }
 
-    private void findConnectedBlocks(HashMap<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z) {
+    private void findConnectedBlocks(HashMap<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z, boolean first) {
         if (y < 0 || y >= world.getActualHeight()) {
             return;
         }
@@ -38,13 +38,13 @@ public class NetworkMonitorItem extends Item {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             Block block  = world.getBlock(x, y, z);
-            connectedBlocks.put(c, new BlockInfo(tileEntity, block));
-            findConnectedBlocks(connectedBlocks, world, x+1, y, z);
-            findConnectedBlocks(connectedBlocks, world, x - 1, y, z);
-            findConnectedBlocks(connectedBlocks, world, x, y-1, z);
-            findConnectedBlocks(connectedBlocks, world, x, y + 1, z);
-            findConnectedBlocks(connectedBlocks, world, x, y, z - 1);
-            findConnectedBlocks(connectedBlocks, world, x, y, z+1);
+            connectedBlocks.put(c, new BlockInfo(tileEntity, block, first));
+            findConnectedBlocks(connectedBlocks, world, x+1, y, z, false);
+            findConnectedBlocks(connectedBlocks, world, x - 1, y, z, false);
+            findConnectedBlocks(connectedBlocks, world, x, y-1, z, false);
+            findConnectedBlocks(connectedBlocks, world, x, y + 1, z, false);
+            findConnectedBlocks(connectedBlocks, world, x, y, z - 1, false);
+            findConnectedBlocks(connectedBlocks, world, x, y, z+1, false);
         }
     }
 
@@ -62,7 +62,7 @@ public class NetworkMonitorItem extends Item {
         if (!world.isRemote) {
             System.out.println("==========================================");
             connectedBlocks.clear();
-            findConnectedBlocks(connectedBlocks, world, x, y, z);
+            findConnectedBlocks(connectedBlocks, world, x, y, z, true);
             for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
                 showBlockInfo(me.getKey(), me.getValue());
             }
