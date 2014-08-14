@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -16,6 +17,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class GuiBlockList extends GuiScreen {
     private NetworkMonitorItem monitorItem;
@@ -56,6 +58,13 @@ public class GuiBlockList extends GuiScreen {
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
             Block block = me.getValue().getBlock();
             Coordinate coordinate = me.getKey();
+
+            System.out.println("block.getItemIconName() = " + block.getItemIconName());
+//            Item itemDropped = Item.getItemFromBlock(block);
+            Item itemDropped = block.getItemDropped(0, new Random(), 0);
+            System.out.println("itemDropped.getUnlocalizedName() = " + itemDropped.getUnlocalizedName());
+            System.out.println("new ItemStack(itemDropped).getDisplayName() = " + new ItemStack(itemDropped).getDisplayName());
+
             ItemStack s = new ItemStack(block, 1, 0);
 //            String lname = block.getLocalizedName();
 //            System.out.println("I18n = " + I18n.format(lname));
