@@ -1,23 +1,21 @@
 package com.mcjty.rftools.gui;
 
+import com.mcjty.gui.Label;
+import com.mcjty.gui.Panel;
+import com.mcjty.gui.Widget;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.BlockInfo;
 import com.mcjty.rftools.items.Coordinate;
 import com.mcjty.rftools.items.NetworkMonitorItem;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class GuiBlockList extends GuiScreen {
     private NetworkMonitorItem monitorItem;
@@ -33,6 +31,7 @@ public class GuiBlockList extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
     public static final int SEL_TEXT_COLOR = 0x092020;
 
+    Widget toplevel;
 
     public GuiBlockList(NetworkMonitorItem monitorItem) {
         this.monitorItem = monitorItem;
@@ -43,7 +42,14 @@ public class GuiBlockList extends GuiScreen {
         return false;
     }
 
-
+    @Override
+    public void initGui() {
+        super.initGui();
+        Label label1 = new Label().setText("Label1").setColor(0xff0000).setDesiredWidth(50);
+        Label label2 = new Label().setText("Label2").setColor(0x00ff00).setDesiredWidth(70);
+        toplevel = new Panel().addChild(label1).addChild(label2).setBackground(iconLocationLeft, iconLocationRight);
+        toplevel.setBounds(new Rectangle(10, 10, xSize, 40));
+    }
 
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
@@ -59,6 +65,7 @@ public class GuiBlockList extends GuiScreen {
         this.drawTexturedModalRect(k+256, l, 0, 0, this.xSize-256, this.ySize);
 
 //        this.drawVerticalLine(k + 15, l, l + 100, 0x334455);
+        toplevel.draw(mc, this, 10, 10);
 
         int y = 0;
         HashMap<Coordinate,BlockInfo> connectedBlocks = monitorItem.getConnectedBlocks();
@@ -99,17 +106,6 @@ public class GuiBlockList extends GuiScreen {
     }
 
     private String getReadableName(Block block) {
-        System.out.println("block.getItemIconName() = " + block.getItemIconName());
-//            Item itemDropped = Item.getItemFromBlock(block);
-        Item itemDropped = block.getItemDropped(0, new Random(), 0);
-        System.out.println("itemDropped.getUnlocalizedName() = " + itemDropped.getUnlocalizedName());
-        System.out.println("new ItemStack(itemDropped).getDisplayName() = " + new ItemStack(itemDropped).getDisplayName());
-
-//            String lname = block.getLocalizedName();
-//            System.out.println("I18n = " + I18n.format(lname));
-//            System.out.println("Stat = " + StatCollector.translateToLocal(lname));
-
-
         ItemStack s = new ItemStack(block, 1, 0);
         String displayName = s.getDisplayName();
         if (displayName.startsWith("tile.")) {
