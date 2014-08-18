@@ -37,14 +37,16 @@ public class NetworkMonitorItem extends Item {
         }
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
-            Block block  = world.getBlock(x, y, z);
-            connectedBlocks.put(c, new BlockInfo(tileEntity, block, first));
-            findConnectedBlocks(connectedBlocks, world, x+1, y, z, false);
-            findConnectedBlocks(connectedBlocks, world, x - 1, y, z, false);
-            findConnectedBlocks(connectedBlocks, world, x, y-1, z, false);
-            findConnectedBlocks(connectedBlocks, world, x, y + 1, z, false);
-            findConnectedBlocks(connectedBlocks, world, x, y, z - 1, false);
-            findConnectedBlocks(connectedBlocks, world, x, y, z+1, false);
+            if (tileEntity instanceof IEnergyHandler) {
+                Block block = world.getBlock(x, y, z);
+                connectedBlocks.put(c, new BlockInfo(tileEntity, block, first));
+                findConnectedBlocks(connectedBlocks, world, x + 1, y, z, false);
+                findConnectedBlocks(connectedBlocks, world, x - 1, y, z, false);
+                findConnectedBlocks(connectedBlocks, world, x, y - 1, z, false);
+                findConnectedBlocks(connectedBlocks, world, x, y + 1, z, false);
+                findConnectedBlocks(connectedBlocks, world, x, y, z - 1, false);
+                findConnectedBlocks(connectedBlocks, world, x, y, z + 1, false);
+            }
         }
     }
 
