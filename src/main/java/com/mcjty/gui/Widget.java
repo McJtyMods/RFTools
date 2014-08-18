@@ -45,7 +45,35 @@ public interface Widget<P extends Widget> {
     /**
      * Draw this widget on the GUI at the specific position. This position is usually supplied by the
      * parent widget or for the top level widget it is the top-left corner on screen.
+     * The given coordinates are the absolute coordinates of the parent. This does *not* include
+     * the top/left x,y of this widget itself.
      */
-    void draw(Minecraft mc, Gui gui, int x, int y);
+    void draw(int x, int y);
 
+    /**
+     * Handle a mouse click for this widget. This widget does not have to check if the coordinate is
+     * in the bounds. The given coordinates are relative to the parent of this widget.
+     * @param x
+     * @param y
+     * @param button
+     * @return a reference to the widget that wants focus (or null if not)
+     */
+    Widget mouseClick(int x, int y, int button);
+
+    /**
+     * Handle a mouse release for this widget.
+     *
+     * @param x
+     * @param y
+     * @param button
+     */
+    void mouseRelease(int x, int y, int button);
+
+    /**
+     * Handle a mouse move event.
+     *
+     * @param x
+     * @param y
+     */
+    void mouseMove(int x, int y);
 }

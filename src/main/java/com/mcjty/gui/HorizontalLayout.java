@@ -1,28 +1,16 @@
 package com.mcjty.gui;
 
-import java.awt.*;
 import java.util.Collection;
 
-public class HorizontalLayout implements Layout {
-    private int spacing;
-
-    public int getSpacing() {
-        return spacing;
-    }
-
-    public HorizontalLayout setSpacing(int spacing) {
-        this.spacing = spacing;
-        return this;
-    }
-
+public class HorizontalLayout extends AbstractLayout<HorizontalLayout> {
     @Override
     public void doLayout(Collection<Widget> children, int width, int height) {
-        int left = 0;
+        int left = getHorizontalMargin();
         for (Widget child : children) {
             int w = child.getDesiredWidth();
-            child.setBounds(new Rectangle(left, 0, w, height));
+            child.setBounds(align(left, getVerticalMargin(), w, height-getVerticalMargin()*2, child));
             left += w;
-            left += spacing;
+            left += getSpacing();
         }
     }
 }

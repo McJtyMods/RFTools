@@ -5,15 +5,28 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public abstract class AbstractWidget<P extends AbstractWidget> implements Widget<P> {
     protected Rectangle bounds;
-    private int desiredWidth = 50;
-    private int desiredHeight = 30;
+    private int desiredWidth = -1;
+    private int desiredHeight = -1;
+    protected Minecraft mc;
+    protected Gui gui;
 
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
+
+    protected AbstractWidget(Minecraft mc, Gui gui) {
+        this.mc = mc;
+        this.gui = gui;
+    }
+
+    protected void drawBox(int xx, int yy, int color) {
+        gui.drawRect(xx, yy, xx, yy + bounds.height, color);
+        gui.drawRect(xx + bounds.width, yy, xx + bounds.width, yy + bounds.height, color);
+        gui.drawRect(xx, yy, xx + bounds.width, yy, color);
+        gui.drawRect(xx, yy + bounds.height, xx + bounds.width, yy + bounds.height, color);
+    }
 
     @Override
     public int getDesiredWidth() {
@@ -57,21 +70,36 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         return bounds;
     }
 
-    protected void drawBackground(Minecraft mc, Gui gui, int x, int y) {
+    protected void drawBackground(int x, int y) {
+        int xx = x + bounds.x;
+        int yy = y + bounds.y;
         if (background1 != null) {
             mc.getTextureManager().bindTexture(background1);
             if (background2 == null) {
-                gui.drawTexturedModalRect(x, y, 0, 0, bounds.width, bounds.height);
+                gui.drawTexturedModalRect(xx, yy, 0, 0, bounds.width, bounds.height);
             } else {
-                gui.drawTexturedModalRect(x, y, 0, 0, 256, bounds.height);
+                gui.drawTexturedModalRect(xx, yy, 0, 0, 256, bounds.height);
                 mc.getTextureManager().bindTexture(background2);
-                gui.drawTexturedModalRect(x + 256, y, 0, 0, bounds.width - 256, bounds.height);
+                gui.drawTexturedModalRect(xx + 256, yy, 0, 0, bounds.width - 256, bounds.height);
             }
         }
     }
 
     @Override
-    public void draw(Minecraft mc, Gui gui, int x, int y) {
-        drawBackground(mc, gui, x, y);
+    public void draw(int x, int y) {
+        drawBackground(x, y);
+    }
+
+    @Override
+    public Widget mouseClick(int x, int y, int button) {
+        return null;
+    }
+
+    @Override
+    public void mouseRelease(int x, int y, int button) {
+    }
+
+    @Override
+    public void mouseMove(int x, int y) {
     }
 }

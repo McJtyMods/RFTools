@@ -1,8 +1,6 @@
 package com.mcjty.rftools.gui;
 
-import com.mcjty.gui.Label;
-import com.mcjty.gui.Panel;
-import com.mcjty.gui.Widget;
+import com.mcjty.gui.*;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.BlockInfo;
 import com.mcjty.rftools.items.Coordinate;
@@ -11,10 +9,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Rectangle;
-import java.util.HashMap;
 import java.util.Map;
 
 public class GuiBlockList extends GuiScreen {
@@ -45,10 +43,66 @@ public class GuiBlockList extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        Label label1 = new Label().setText("Label1").setColor(0xff0000).setDesiredWidth(50);
-        Label label2 = new Label().setText("Label2").setColor(0x00ff00).setDesiredWidth(70);
-        toplevel = new Panel().addChild(label1).addChild(label2).setBackground(iconLocationLeft, iconLocationRight);
-        toplevel.setBounds(new Rectangle(10, 10, xSize, 40));
+        Label label1 = new Label(mc, this).setText("Label1").setColor(0xff0000).setDesiredWidth(50);
+        Label label2 = new Label(mc, this).setText("Label2").setColor(0x00ff00).setDesiredWidth(70);
+        Panel rowPanel = new Panel(mc, this).addChild(label1).addChild(label2).setDesiredHeight(30);
+        Slider slider = new Slider(mc, this).setDesiredWidth(100).setDesiredHeight(20).setHorizontal().setScrollable(new Scrollable() {
+            private int first = 0;
+
+            @Override
+            public int getMaximum() {
+                return 100;
+            }
+
+            @Override
+            public int getCountSelected() {
+                return 10;
+            }
+
+            @Override
+            public int getFirstSelected() {
+                return first;
+            }
+
+            @Override
+            public void setFirstSelected(int first) {
+                System.out.println("first = " + first);
+                this.first = first;
+            }
+        });
+        toplevel = new Panel(mc, this).addChild(rowPanel).addChild(slider).setBackground(iconLocationLeft, iconLocationRight).setLayout(new VerticalLayout());
+        toplevel.setBounds(new Rectangle(10, 10, xSize, 120));
+    }
+
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) {
+        super.mouseClicked(x, y, button);
+        if (toplevel.getBounds().contains(x, y)) {
+            toplevel.mouseClick(x, y, button);
+        }
+    }
+
+    @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
+        int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int y = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        int k = Mouse.getEventButton();
+        if (k == -1) {
+            mouseMovedOrUp(x, y, k);
+        }
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int x, int y, int button) {
+        super.mouseMovedOrUp(x, y, button);
+        // -1 == mouse move
+        if (button != -1) {
+            toplevel.mouseRelease(x, y, button);
+        } else {
+            toplevel.mouseMove(x, y);
+        }
     }
 
     @Override
@@ -64,11 +118,9 @@ public class GuiBlockList extends GuiScreen {
         this.mc.getTextureManager().bindTexture(iconLocationRight);
         this.drawTexturedModalRect(k+256, l, 0, 0, this.xSize-256, this.ySize);
 
-//        this.drawVerticalLine(k + 15, l, l + 100, 0x334455);
-        toplevel.draw(mc, this, 10, 10);
 
         int y = 0;
-        HashMap<Coordinate,BlockInfo> connectedBlocks = monitorItem.getConnectedBlocks();
+        Map<Coordinate, BlockInfo> connectedBlocks = monitorItem.getConnectedBlocks();
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
             Block block = blockInfo.getBlock();
@@ -89,6 +141,17 @@ public class GuiBlockList extends GuiScreen {
         }
 
         this.drawGradientRect(k + xSize-20, l + 5, k + xSize-5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
+
+        toplevel.draw(0, 0);
+
+        for (int x = 10 ; x <= 500 ; x += 10) {
+            this.drawVerticalLine(x, 0, 300, 0x7fFFFFFF);
+        }
+
+        for (int yy = 10 ; yy <= 400 ; yy += 10) {
+            this.drawHorizontalLine(0, 500, yy, 0x7fffffff);
+        }
+
     }
 
     private int getTextColor(BlockInfo blockInfo) {
