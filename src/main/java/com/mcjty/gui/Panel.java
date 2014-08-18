@@ -6,11 +6,9 @@ import net.minecraft.client.gui.Gui;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Panel extends AbstractWidget<Panel> {
+public class Panel extends AbstractContainerWidget<Panel> {
 
-    private ArrayList<Widget> children = new ArrayList<Widget>();
     private Layout layout = new HorizontalLayout();
-    private boolean layoutDirty = true;
 
     private Widget focus = null;
 
@@ -18,27 +16,9 @@ public class Panel extends AbstractWidget<Panel> {
         super(mc, gui);
     }
 
-    @Override
-    public void setBounds(Rectangle bounds) {
-        layoutDirty = true;
-        super.setBounds(bounds);
-    }
-
-    public Panel addChild(Widget child) {
-        children.add(child);
-        layoutDirty = true;
-        return this;
-    }
-
-    public Panel removeChild(Widget child) {
-        children.remove(child);
-        layoutDirty = true;
-        return this;
-    }
-
     public Panel setLayout(Layout layout) {
         this.layout = layout;
-        layoutDirty = true;
+        markDirty();
         return this;
     }
 
@@ -50,9 +30,9 @@ public class Panel extends AbstractWidget<Panel> {
 //        drawBox(xx, yy, 0xffff0000);
 
 
-        if (layoutDirty) {
+        if (isDirty()) {
             layout.doLayout(children, bounds.width, bounds.height);
-            layoutDirty = false;
+            markClean();
         }
 
         for (Widget child : children) {

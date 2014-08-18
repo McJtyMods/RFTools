@@ -3,6 +3,7 @@ package com.mcjty.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -12,6 +13,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     private int desiredHeight = -1;
     protected Minecraft mc;
     protected Gui gui;
+
+    private boolean layoutDirty = true;
 
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
@@ -74,6 +77,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         int xx = x + bounds.x;
         int yy = y + bounds.y;
         if (background1 != null) {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
             mc.getTextureManager().bindTexture(background1);
             if (background2 == null) {
                 gui.drawTexturedModalRect(xx, yy, 0, 0, bounds.width, bounds.height);
@@ -102,4 +107,20 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     @Override
     public void mouseMove(int x, int y) {
     }
+
+    /**
+     * Mark this widget as dirty so that the system knows a new relayout is needed.
+     */
+    void markDirty() {
+        layoutDirty = true;
+    }
+
+    void markClean() {
+        layoutDirty = false;
+    }
+
+    boolean isDirty() {
+        return layoutDirty;
+    }
+
 }

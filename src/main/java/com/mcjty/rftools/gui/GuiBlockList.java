@@ -43,37 +43,31 @@ public class GuiBlockList extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+
+        int k = (this.width - this.xSize) / 2;
+        int l = (this.height - this.ySize) / 2;
+
         Label label1 = new Label(mc, this).setText("Label1").setColor(0xff0000).setDesiredWidth(50);
         Label label2 = new Label(mc, this).setText("Label2").setColor(0x00ff00).setDesiredWidth(70);
-        Panel rowPanel = new Panel(mc, this).addChild(label1).addChild(label2).setDesiredHeight(30);
-        Slider slider = new Slider(mc, this).setDesiredWidth(100).setDesiredHeight(20).setHorizontal().setScrollable(new Scrollable() {
-            private int first = 0;
+        Panel panel1 = new Panel(mc, this).addChild(label1).addChild(label2).setDesiredHeight(30);
 
-            @Override
-            public int getMaximum() {
-                return 100;
-            }
+        Slider testSlider = new Slider(mc, this).setDesiredWidth(100).setDesiredHeight(20).setHorizontal().setScrollable(new TestScrollable());
 
-            @Override
-            public int getCountSelected() {
-                return 10;
-            }
+        WidgetList list = new WidgetList(mc, this).setDesiredWidth(xSize-10-20-5).setDesiredHeight(105).setRowheight(20);
+        populateList(list);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(20).setVertical().setScrollable(list);
+        Panel panel3 = new Panel(mc, this).addChild(list).addChild(listSlider).setDesiredWidth(xSize-10).setDesiredHeight(115);
 
-            @Override
-            public int getFirstSelected() {
-                return first;
-            }
-
-            @Override
-            public void setFirstSelected(int first) {
-                System.out.println("first = " + first);
-                this.first = first;
-            }
-        });
-        toplevel = new Panel(mc, this).addChild(rowPanel).addChild(slider).setBackground(iconLocationLeft, iconLocationRight).setLayout(new VerticalLayout());
-        toplevel.setBounds(new Rectangle(10, 10, xSize, 120));
+        toplevel = new Panel(mc, this).addChild(panel1).addChild(testSlider).addChild(panel3).setBackground(iconLocationLeft, iconLocationRight).setLayout(new VerticalLayout());
+        toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
     }
 
+    private void populateList(WidgetList list) {
+        for (int i = 0 ; i < 40 ; i++) {
+            String txt = "Label: "+i;
+            list.addChild(new Label(mc, this).setText(txt).setColor(0x0000ff));
+        }
+    }
 
     @Override
     protected void mouseClicked(int x, int y, int button) {
@@ -109,6 +103,23 @@ public class GuiBlockList extends GuiScreen {
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+
+//        drawOldWay();
+
+        toplevel.draw(0, 0);
+
+//        for (int x = 10 ; x <= 500 ; x += 10) {
+//            this.drawVerticalLine(x, 0, 300, 0x7fFFFFFF);
+//        }
+//
+//        for (int yy = 10 ; yy <= 400 ; yy += 10) {
+//            this.drawHorizontalLine(0, 500, yy, 0x7fffffff);
+//        }
+
+    }
+
+    private void drawOldWay() {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
@@ -117,7 +128,6 @@ public class GuiBlockList extends GuiScreen {
         this.drawTexturedModalRect(k, l, 0, 0, 256, this.ySize);
         this.mc.getTextureManager().bindTexture(iconLocationRight);
         this.drawTexturedModalRect(k+256, l, 0, 0, this.xSize-256, this.ySize);
-
 
         int y = 0;
         Map<Coordinate, BlockInfo> connectedBlocks = monitorItem.getConnectedBlocks();
@@ -141,17 +151,6 @@ public class GuiBlockList extends GuiScreen {
         }
 
         this.drawGradientRect(k + xSize-20, l + 5, k + xSize-5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
-
-        toplevel.draw(0, 0);
-
-        for (int x = 10 ; x <= 500 ; x += 10) {
-            this.drawVerticalLine(x, 0, 300, 0x7fFFFFFF);
-        }
-
-        for (int yy = 10 ; yy <= 400 ; yy += 10) {
-            this.drawHorizontalLine(0, 500, yy, 0x7fffffff);
-        }
-
     }
 
     private int getTextColor(BlockInfo blockInfo) {
@@ -178,5 +177,30 @@ public class GuiBlockList extends GuiScreen {
             displayName = displayName.substring(0, displayName.length()-5);
         }
         return displayName;
+    }
+
+    private static class TestScrollable implements Scrollable {
+        private int first = 0;
+
+        @Override
+        public int getMaximum() {
+            return 100;
+        }
+
+        @Override
+        public int getCountSelected() {
+            return 10;
+        }
+
+        @Override
+        public int getFirstSelected() {
+            return first;
+        }
+
+        @Override
+        public void setFirstSelected(int first) {
+            System.out.println("first = " + first);
+            this.first = first;
+        }
     }
 }
