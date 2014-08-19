@@ -7,10 +7,15 @@ import com.mcjty.rftools.items.Coordinate;
 import com.mcjty.rftools.items.NetworkMonitorItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
@@ -57,18 +62,10 @@ public class GuiBlockList extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Label label1 = new Label(mc, this).setText("Label1").setColor(0xff0000);
-        Label label2 = new Label(mc, this).setText("Label2").setColor(0x00ff00);
-        Panel panel1 = new Panel(mc, this).addChild(label1).addChild(label2).setDesiredHeight(30);
-
-        Slider testSlider = new Slider(mc, this).setDesiredHeight(20).setHorizontal().setScrollable(new TestScrollable());
-
         list = new WidgetList(mc, this).setRowheight(14);
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Panel panel3 = new Panel(mc, this).addChild(list).addChild(listSlider);
-
-        toplevel = new Panel(mc, this).addChild(panel1).addChild(testSlider).addChild(panel3).setBackground(iconLocationLeft, iconLocationRight).setLayout(new VerticalLayout());
+        toplevel = new Panel(mc, this).setBackground(iconLocationLeft, iconLocationRight).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
     }
 
@@ -184,30 +181,5 @@ public class GuiBlockList extends GuiScreen {
             displayName = displayName.substring(0, displayName.length()-5);
         }
         return displayName;
-    }
-
-    private static class TestScrollable implements Scrollable {
-        private int first = 0;
-
-        @Override
-        public int getMaximum() {
-            return 100;
-        }
-
-        @Override
-        public int getCountSelected() {
-            return 10;
-        }
-
-        @Override
-        public int getFirstSelected() {
-            return first;
-        }
-
-        @Override
-        public void setFirstSelected(int first) {
-            System.out.println("first = " + first);
-            this.first = first;
-        }
     }
 }
