@@ -72,7 +72,7 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
             }
         }
         String s = value + "/" + maxValue;
-        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, getBounds().width), x+bounds.x, y+bounds.y, color);
+        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, getBounds().width), x+bounds.x, y+bounds.y+(bounds.height-mc.fontRenderer.FONT_HEIGHT)/2, color);
     }
 
 }

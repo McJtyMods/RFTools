@@ -110,7 +110,7 @@ public class GuiBlockList extends GuiScreen {
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
-            EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(color).setHorizontal();
+            EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(TEXT_COLOR).setHorizontal();
             panel.addChild(energyLabel);
             list.addChild(panel);
 
