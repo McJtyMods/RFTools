@@ -15,6 +15,7 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
      * Calculate the size of the widgets which don't have a fixed size.
      * @param children
      * @param totalSize
+     * @param dimension
      * @return the size of each dynamic widget
      */
     protected int calculateDynamicSize(Collection<Widget> children, int totalSize, Widget.Dimension dimension) {
@@ -29,6 +30,11 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
             }
         }
         totalFixed += getSpacing() * (children.size()-1);
+        if (dimension == Widget.Dimension.DIMENSION_WIDTH) {
+            totalFixed += getHorizontalMargin();
+        } else {
+            totalFixed += getVerticalMargin();
+        }
         int otherSize = 0;
         if (countFixed < children.size()) {
             otherSize = (totalSize - totalFixed) / (children.size() - countFixed);

@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Label extends AbstractWidget<Label> {
     private String text;
-    private int color;
+    private int color = 0xFF000000;
 
     public Label(Minecraft mc, Gui gui) {
         super(mc, gui);

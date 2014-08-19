@@ -14,9 +14,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkMonitorItem extends Item {
-    private HashMap<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
+    private ConcurrentHashMap<Coordinate,BlockInfo> connectedBlocks = new ConcurrentHashMap<Coordinate, BlockInfo>();
 
     public NetworkMonitorItem() {
         setMaxStackSize(1);
@@ -27,7 +28,7 @@ public class NetworkMonitorItem extends Item {
         return 1;
     }
 
-    private void findConnectedBlocks(HashMap<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z, boolean first) {
+    private void findConnectedBlocks(ConcurrentHashMap<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z, boolean first) {
         if (y < 0 || y >= world.getActualHeight()) {
             return;
         }
@@ -50,7 +51,7 @@ public class NetworkMonitorItem extends Item {
         }
     }
 
-    public HashMap<Coordinate, BlockInfo> getConnectedBlocks() {
+    synchronized public ConcurrentHashMap<Coordinate, BlockInfo> getConnectedBlocks() {
         return connectedBlocks;
     }
 

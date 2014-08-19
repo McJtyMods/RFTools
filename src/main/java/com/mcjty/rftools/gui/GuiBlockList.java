@@ -11,7 +11,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -20,6 +22,7 @@ import org.lwjgl.opengl.GL12;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class GuiBlockList extends GuiScreen {
     private NetworkMonitorItem monitorItem;
@@ -30,7 +33,7 @@ public class GuiBlockList extends GuiScreen {
     // A copy of the connected blocks we're currently showing
     Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
-    Map<Coordinate, Label> labelMap;
+    Map<Coordinate, EnergyBar> labelMap;
 
     /** The X size of the window in pixels. */
     protected int xSize = 320;
@@ -62,7 +65,7 @@ public class GuiBlockList extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(14);
+        list = new WidgetList(mc, this).setRowheight(16);
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
         toplevel = new Panel(mc, this).setBackground(iconLocationLeft, iconLocationRight).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
@@ -75,10 +78,9 @@ public class GuiBlockList extends GuiScreen {
 
             int energy = blockInfo.getEnergyStored();
             int maxEnergy = blockInfo.getMaxEnergyStored();
-            String energyString = energy + "/" + maxEnergy;
 
-            Label energyLabel = labelMap.get(me.getKey());
-            energyLabel.setText(energyString);
+            EnergyBar energyLabel = labelMap.get(me.getKey());
+            energyLabel.setValue(energy).setMaxValue(maxEnergy);
         }
     }
 
@@ -90,7 +92,7 @@ public class GuiBlockList extends GuiScreen {
         }
 
         connectedBlocks = new HashMap<Coordinate, BlockInfo>(newConnectedBlocks);
-        labelMap = new HashMap<Coordinate, Label>();
+        labelMap = new HashMap<Coordinate, EnergyBar>();
         list.removeChildren();
 
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
@@ -100,15 +102,15 @@ public class GuiBlockList extends GuiScreen {
 
             int energy = blockInfo.getEnergyStored();
             int maxEnergy = blockInfo.getMaxEnergyStored();
-            String energyString = energy + "/" + maxEnergy;
 
             String displayName = getReadableName(block);
             int color = getTextColor(blockInfo);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(100));
-            Label energyLabel = new Label(mc, this).setText(energyString).setColor(color);
+            panel.addChild(new BlockRender(mc, this).setRenderItem(block).setDesiredHeight(16).setDesiredWidth(16));
+            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(80));
+            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(70));
+            EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(color).setHorizontal();
             panel.addChild(energyLabel);
             list.addChild(panel);
 
@@ -157,8 +159,6 @@ public class GuiBlockList extends GuiScreen {
         }
 
         toplevel.draw(0, 0);
-
-//        this.drawGradientRect(k + xSize - 20, l + 5, k + xSize - 5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
     }
 
     private int getTextColor(BlockInfo blockInfo) {
