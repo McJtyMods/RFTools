@@ -36,7 +36,7 @@ public class GuiBlockList extends GuiScreen {
     Map<Coordinate, EnergyBar> labelMap;
 
     /** The X size of the window in pixels. */
-    protected int xSize = 320;
+    protected int xSize = 356;
     /** The Y size of the window in pixels. */
     protected int ySize = 180;
 
@@ -107,9 +107,9 @@ public class GuiBlockList extends GuiScreen {
             int color = getTextColor(blockInfo);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(block).setDesiredHeight(16).setDesiredWidth(16));
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(80));
-            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(70));
+            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
+            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
+            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
             EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(color).setHorizontal();
             panel.addChild(energyLabel);
             list.addChild(panel);

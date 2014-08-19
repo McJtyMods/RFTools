@@ -31,9 +31,9 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
         }
         totalFixed += getSpacing() * (children.size()-1);
         if (dimension == Widget.Dimension.DIMENSION_WIDTH) {
-            totalFixed += getHorizontalMargin();
+            totalFixed += getHorizontalMargin() * 2;
         } else {
-            totalFixed += getVerticalMargin();
+            totalFixed += getVerticalMargin() * 2;
         }
         int otherSize = 0;
         if (countFixed < children.size()) {
