@@ -9,8 +9,8 @@ import java.awt.*;
 
 public abstract class AbstractWidget<P extends AbstractWidget> implements Widget<P> {
     protected Rectangle bounds;
-    private int desiredWidth = -1;
-    private int desiredHeight = -1;
+    private int desiredWidth = SIZE_UNKNOWN;
+    private int desiredHeight = SIZE_UNKNOWN;
     protected Minecraft mc;
     protected Gui gui;
 
@@ -29,6 +29,15 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         gui.drawRect(xx + bounds.width, yy, xx + bounds.width, yy + bounds.height, color);
         gui.drawRect(xx, yy, xx + bounds.width, yy, color);
         gui.drawRect(xx, yy + bounds.height, xx + bounds.width, yy + bounds.height, color);
+    }
+
+    @Override
+    public int getDesiredSize(Dimension dimension) {
+        if (dimension == Dimension.DIMENSION_WIDTH) {
+            return getDesiredWidth();
+        } else {
+            return getDesiredHeight();
+        }
     }
 
     @Override

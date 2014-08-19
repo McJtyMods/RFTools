@@ -10,6 +10,13 @@ import java.awt.*;
  * more complicated table with images and descriptions.
  */
 public interface Widget<P extends Widget> {
+    static final int SIZE_UNKNOWN = -1;
+
+    static enum Dimension {
+        DIMENSION_WIDTH,
+        DIMENSION_HEIGHT
+    }
+
 
     /**
      * Set the actual bounds for this widget. These coordinates are relative to the parents
@@ -21,8 +28,15 @@ public interface Widget<P extends Widget> {
     void setBounds(Rectangle bounds);
 
     /**
+     * Version of getDesiredWidth/getDesiredHeight that accepts a dimension parameter.
+     * @param dimension
+     * @return
+     */
+    int getDesiredSize(Dimension dimension);
+
+    /**
      * Set the desired width for this widget. This property is used by layout instances
-     * which may honor or ignore this.
+     * which may honor or ignore this. You can also use one of the SIZE_... constants.
      */
     P setDesiredWidth(int width);
 
@@ -30,7 +44,7 @@ public interface Widget<P extends Widget> {
 
     /**
      * Set the desired height for this widget. This property is used by layout instances
-     * which may honor or ignore this.
+     * which may honor or ignore this. You can also use one of the SIZE_... constants.
      */
     P setDesiredHeight(int height);
 

@@ -47,25 +47,28 @@ public class GuiBlockList extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Label label1 = new Label(mc, this).setText("Label1").setColor(0xff0000).setDesiredWidth(50);
-        Label label2 = new Label(mc, this).setText("Label2").setColor(0x00ff00).setDesiredWidth(70);
+        Label label1 = new Label(mc, this).setText("Label1").setColor(0xff0000);
+        Label label2 = new Label(mc, this).setText("Label2").setColor(0x00ff00);
         Panel panel1 = new Panel(mc, this).addChild(label1).addChild(label2).setDesiredHeight(30);
 
-        Slider testSlider = new Slider(mc, this).setDesiredWidth(100).setDesiredHeight(20).setHorizontal().setScrollable(new TestScrollable());
+        Slider testSlider = new Slider(mc, this).setDesiredHeight(20).setHorizontal().setScrollable(new TestScrollable());
 
-        WidgetList list = new WidgetList(mc, this).setDesiredWidth(xSize-10-20-5).setDesiredHeight(105).setRowheight(20);
+        WidgetList list = new WidgetList(mc, this).setRowheight(14);
         populateList(list);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(20).setVertical().setScrollable(list);
-        Panel panel3 = new Panel(mc, this).addChild(list).addChild(listSlider).setDesiredWidth(xSize-10).setDesiredHeight(115);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
+        Panel panel3 = new Panel(mc, this).addChild(list).addChild(listSlider);
 
         toplevel = new Panel(mc, this).addChild(panel1).addChild(testSlider).addChild(panel3).setBackground(iconLocationLeft, iconLocationRight).setLayout(new VerticalLayout());
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
     }
 
     private void populateList(WidgetList list) {
-        for (int i = 0 ; i < 6 ; i++) {
+        for (int i = 0 ; i < 17 ; i++) {
             String txt = "Label: "+i;
-            list.addChild(new Label(mc, this).setText(txt).setColor(0x0000ff));
+            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            panel.addChild(new Label(mc, this).setText(txt).setColor(0x0000ff));
+            panel.addChild(new Label(mc, this).setText("This is a test").setColor(0xff00ff));
+            list.addChild(panel);
         }
     }
 
@@ -150,7 +153,7 @@ public class GuiBlockList extends GuiScreen {
             y += mc.fontRenderer.FONT_HEIGHT + 2;
         }
 
-        this.drawGradientRect(k + xSize-20, l + 5, k + xSize-5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
+        this.drawGradientRect(k + xSize - 20, l + 5, k + xSize - 5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
     }
 
     private int getTextColor(BlockInfo blockInfo) {

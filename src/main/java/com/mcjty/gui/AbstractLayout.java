@@ -1,6 +1,7 @@
 package com.mcjty.gui;
 
 import java.awt.*;
+import java.util.Collection;
 
 public abstract class AbstractLayout<P extends AbstractLayout> implements Layout {
     private int spacing = 5;
@@ -10,9 +11,37 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGN_CENTER;
     private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_CENTER;
 
+    /**
+     * Calculate the size of the widgets which don't have a fixed size.
+     * @param children
+     * @param totalSize
+     * @return the size of each dynamic widget
+     */
+    protected int calculateDynamicSize(Collection<Widget> children, int totalSize, Widget.Dimension dimension) {
+        // Calculate the total fixed size from all the children that have a fixed size
+        int totalFixed = 0;
+        int countFixed = 0;
+        for (Widget child : children) {
+            int s = child.getDesiredSize(dimension);
+            if (s != Widget.SIZE_UNKNOWN) {
+                totalFixed += s;
+                countFixed++;
+            }
+        }
+        totalFixed += getSpacing() * (children.size()-1);
+        int otherSize = 0;
+        if (countFixed < children.size()) {
+            otherSize = (totalSize - totalFixed) / (children.size() - countFixed);
+            if (otherSize <= 0) {
+                otherSize = 1;
+            }
+        }
+        return otherSize;
+    }
+
     protected Rectangle align(int x, int y, int width, int height, Widget child) {
         int desiredWidth = child.getDesiredWidth();
-        if (desiredWidth == -1) {
+        if (desiredWidth == Widget.SIZE_UNKNOWN) {
             desiredWidth = width;
         }
         switch (horizontalAlignment) {
@@ -22,7 +51,7 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
         }
 
         int desiredHeight = child.getDesiredHeight();
-        if (desiredHeight == -1) {
+        if (desiredHeight == Widget.SIZE_UNKNOWN) {
             desiredHeight = height;
         }
         switch (verticalAlignment) {
