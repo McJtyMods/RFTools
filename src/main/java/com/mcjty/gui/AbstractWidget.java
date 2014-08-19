@@ -83,10 +83,11 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     }
 
     protected void drawBackground(int x, int y) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
         int xx = x + bounds.x;
         int yy = y + bounds.y;
         if (background1 != null) {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
             mc.getTextureManager().bindTexture(background1);
             if (background2 == null) {

@@ -13,10 +13,19 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GuiBlockList extends GuiScreen {
     private NetworkMonitorItem monitorItem;
+
+    private WidgetList list;
+    private int listDirty;
+
+    // A copy of the connected blocks we're currently showing
+    Map<Coordinate, BlockInfo> connectedBlocks;
+    // The labels in our list containing the RF information.
+    Map<Coordinate, Label> labelMap;
 
     /** The X size of the window in pixels. */
     protected int xSize = 320;
@@ -33,6 +42,7 @@ public class GuiBlockList extends GuiScreen {
 
     public GuiBlockList(NetworkMonitorItem monitorItem) {
         this.monitorItem = monitorItem;
+        listDirty = 0;
     }
 
     @Override
@@ -53,8 +63,8 @@ public class GuiBlockList extends GuiScreen {
 
         Slider testSlider = new Slider(mc, this).setDesiredHeight(20).setHorizontal().setScrollable(new TestScrollable());
 
-        WidgetList list = new WidgetList(mc, this).setRowheight(14);
-        populateList(list);
+        list = new WidgetList(mc, this).setRowheight(14);
+        listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
         Panel panel3 = new Panel(mc, this).addChild(list).addChild(listSlider);
 
@@ -62,13 +72,50 @@ public class GuiBlockList extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
     }
 
-    private void populateList(WidgetList list) {
-        for (int i = 0 ; i < 17 ; i++) {
-            String txt = "Label: "+i;
+    private void refreshList() {
+        for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
+            BlockInfo blockInfo = me.getValue();
+
+            int energy = blockInfo.getEnergyStored();
+            int maxEnergy = blockInfo.getMaxEnergyStored();
+            String energyString = energy + "/" + maxEnergy;
+
+            Label energyLabel = labelMap.get(me.getKey());
+            energyLabel.setText(energyString);
+        }
+    }
+
+    private void populateList() {
+        Map<Coordinate, BlockInfo> newConnectedBlocks = monitorItem.getConnectedBlocks();
+        if (newConnectedBlocks.equals(connectedBlocks)) {
+            refreshList();
+            return;
+        }
+
+        connectedBlocks = new HashMap<Coordinate, BlockInfo>(newConnectedBlocks);
+        labelMap = new HashMap<Coordinate, Label>();
+        list.removeChildren();
+
+        for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
+            BlockInfo blockInfo = me.getValue();
+            Block block = blockInfo.getBlock();
+            Coordinate coordinate = me.getKey();
+
+            int energy = blockInfo.getEnergyStored();
+            int maxEnergy = blockInfo.getMaxEnergyStored();
+            String energyString = energy + "/" + maxEnergy;
+
+            String displayName = getReadableName(block);
+            int color = getTextColor(blockInfo);
+
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(txt).setColor(0x0000ff));
-            panel.addChild(new Label(mc, this).setText("This is a test").setColor(0xff00ff));
+            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
+            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(100));
+            Label energyLabel = new Label(mc, this).setText(energyString).setColor(color);
+            panel.addChild(energyLabel);
             list.addChild(panel);
+
+            labelMap.put(coordinate, energyLabel);
         }
     }
 
@@ -105,55 +152,16 @@ public class GuiBlockList extends GuiScreen {
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-
-//        drawOldWay();
+        listDirty--;
+        if (listDirty <= 0) {
+            populateList();
+            listDirty = 5;
+        }
 
         toplevel.draw(0, 0);
 
-//        for (int x = 10 ; x <= 500 ; x += 10) {
-//            this.drawVerticalLine(x, 0, 300, 0x7fFFFFFF);
-//        }
-//
-//        for (int yy = 10 ; yy <= 400 ; yy += 10) {
-//            this.drawHorizontalLine(0, 500, yy, 0x7fffffff);
-//        }
-
-    }
-
-    private void drawOldWay() {
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-
-        this.mc.getTextureManager().bindTexture(iconLocationLeft);
-//        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-        this.drawTexturedModalRect(k, l, 0, 0, 256, this.ySize);
-        this.mc.getTextureManager().bindTexture(iconLocationRight);
-        this.drawTexturedModalRect(k+256, l, 0, 0, this.xSize-256, this.ySize);
-
-        int y = 0;
-        Map<Coordinate, BlockInfo> connectedBlocks = monitorItem.getConnectedBlocks();
-        for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
-            BlockInfo blockInfo = me.getValue();
-            Block block = blockInfo.getBlock();
-            Coordinate coordinate = me.getKey();
-
-            int energy = blockInfo.getEnergyStored();
-            int maxEnergy = blockInfo.getMaxEnergyStored();
-            String energyString = energy + "/" + maxEnergy;
-
-            int yloc = l + 5 + y;
-            String displayName = getReadableName(block);
-            int color = getTextColor(blockInfo);
-            drawString(displayName, 100, k + 5, yloc, color);
-            drawString(coordinate.toString(), 75, k+110, yloc, color);
-            drawString(energyString, 105, k+190, yloc, color);
-
-            y += mc.fontRenderer.FONT_HEIGHT + 2;
-        }
-
-        this.drawGradientRect(k + xSize - 20, l + 5, k + xSize - 5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
+//        this.drawGradientRect(k + xSize - 20, l + 5, k + xSize - 5, l + ySize - 5, 0xFFFF0000, 0xFF00FF00);
     }
 
     private int getTextColor(BlockInfo blockInfo) {
@@ -164,10 +172,6 @@ public class GuiBlockList extends GuiScreen {
             color = TEXT_COLOR;
         }
         return color;
-    }
-
-    private void drawString(String string, int maxWidth, int x, int y, int color) {
-        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(string, maxWidth), x, y, color);
     }
 
     private String getReadableName(Block block) {

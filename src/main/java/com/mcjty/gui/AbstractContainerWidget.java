@@ -32,4 +32,9 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         return (P) this;
     }
 
+    public void removeChildren() {
+        children.clear();
+        markDirty();
+    }
+
 }
