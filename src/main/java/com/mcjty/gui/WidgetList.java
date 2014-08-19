@@ -7,7 +7,7 @@ import net.minecraft.client.gui.Gui;
 import java.awt.*;
 
 public class WidgetList extends AbstractContainerWidget<WidgetList> implements Scrollable {
-    private int rowheight = 20;
+    private int rowheight = 10;
     private int first = 0;
 
     public WidgetList(Minecraft mc, Gui gui) {
@@ -31,7 +31,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         int top = 0;        // Margin@@@?
 //        drawBox(xx, yy, 0xffff0000);
 
-        for (int i = first ; i <= first+getCountSelected() && i < children.size(); i++) {
+        for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
             Widget child = children.get(i);
             child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rowheight));
             child.draw(xx, yy);

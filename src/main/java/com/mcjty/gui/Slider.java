@@ -50,14 +50,29 @@ public class Slider extends AbstractWidget<Slider> {
 
         Gui.drawRect(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff000000);
 
-        if (horizontal) {
-            int size = (scrollable.getCountSelected() * (bounds.width-4)) / scrollable.getMaximum();
-            int first = (scrollable.getFirstSelected() * (bounds.width-4-size)) / scrollable.getMaximum();
+        int divider = scrollable.getMaximum() - scrollable.getCountSelected();
 
+        if (horizontal) {
+            int size;
+            int first;
+            if (divider <= 0) {
+                size = bounds.width - 4;
+                first = 0;
+            } else {
+                size = (scrollable.getCountSelected() * (bounds.width-4)) / scrollable.getMaximum();
+                first = (scrollable.getFirstSelected() * (bounds.width-4-size)) / divider;
+            }
             Gui.drawRect(xx+2 + first, yy+2, xx+2 + first + size-1, yy+bounds.height-4, 0xff777777);
         } else {
-            int size = (scrollable.getCountSelected() * (bounds.height-4)) / scrollable.getMaximum();
-            int first = (scrollable.getFirstSelected() * (bounds.height-4-size)) / scrollable.getMaximum();
+            int size;
+            int first;
+            if (divider <= 0) {
+                size = bounds.height - 4;
+                first = 0;
+            } else {
+                size = (scrollable.getCountSelected() * (bounds.height-4)) / scrollable.getMaximum();
+                first = (scrollable.getFirstSelected() * (bounds.height-4-size)) / divider;
+            }
 
             Gui.drawRect(xx+2, yy+2 + first, xx+bounds.width-4, yy + 2 + first + size-1, 0xff777777);
         }
@@ -65,15 +80,23 @@ public class Slider extends AbstractWidget<Slider> {
 
     private void updateScrollable(int x, int y) {
         int first;
-        if (horizontal) {
-            first = ((x-bounds.x-dx) * scrollable.getMaximum()) / (bounds.width-4);
+        int divider = scrollable.getMaximum() - scrollable.getCountSelected();
+        if (divider <= 0) {
+            first = 0;
         } else {
-            first = ((y-bounds.y-dy) * scrollable.getMaximum()) / (bounds.height-4);
+            if (horizontal) {
+                int size = (scrollable.getCountSelected() * (bounds.width-4)) / scrollable.getMaximum();
+                first = ((x-bounds.x-dx) * divider) / (bounds.width-4-size);
+            } else {
+                int size = (scrollable.getCountSelected() * (bounds.height-4)) / scrollable.getMaximum();
+                first = ((y-bounds.y-dy) * divider) / (bounds.height-4-size);
+            }
+        }
+        if (first > divider) {
+            first = divider;
         }
         if (first < 0) {
             first = 0;
-        } else if (first > scrollable.getMaximum()) {
-            first = scrollable.getMaximum();
         }
         scrollable.setFirstSelected(first);
     }

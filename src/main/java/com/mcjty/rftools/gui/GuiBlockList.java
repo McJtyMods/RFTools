@@ -63,7 +63,7 @@ public class GuiBlockList extends GuiScreen {
     }
 
     private void populateList(WidgetList list) {
-        for (int i = 0 ; i < 40 ; i++) {
+        for (int i = 0 ; i < 6 ; i++) {
             String txt = "Label: "+i;
             list.addChild(new Label(mc, this).setText(txt).setColor(0x0000ff));
         }
