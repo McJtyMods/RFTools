@@ -53,29 +53,34 @@ public class Slider extends AbstractWidget<Slider> {
         int divider = scrollable.getMaximum() - scrollable.getCountSelected();
 
         if (horizontal) {
-            int size;
-            int first;
-            if (divider <= 0) {
-                size = bounds.width - 4;
-                first = 0;
-            } else {
-                size = (scrollable.getCountSelected() * (bounds.width-4)) / scrollable.getMaximum();
-                first = (scrollable.getFirstSelected() * (bounds.width-4-size)) / divider;
-            }
+            int size = calculateKnobSize(divider, bounds.width);
+            int first = calculateKnobOffset(divider, size, bounds.width);
             Gui.drawRect(xx+2 + first, yy+2, xx+2 + first + size-1, yy+bounds.height-4, 0xff777777);
         } else {
-            int size;
-            int first;
-            if (divider <= 0) {
-                size = bounds.height - 4;
-                first = 0;
-            } else {
-                size = (scrollable.getCountSelected() * (bounds.height-4)) / scrollable.getMaximum();
-                first = (scrollable.getFirstSelected() * (bounds.height-4-size)) / divider;
-            }
-
+            int size = calculateKnobSize(divider, bounds.height);
+            int first = calculateKnobOffset(divider, size, bounds.height);
             Gui.drawRect(xx+2, yy+2 + first, xx+bounds.width-4, yy + 2 + first + size-1, 0xff777777);
         }
+    }
+
+    private int calculateKnobOffset(int divider, int size, int boundsSize) {
+        int first;
+        if (divider <= 0) {
+            first = 0;
+        } else {
+            first = (scrollable.getFirstSelected() * (boundsSize-4-size)) / divider;
+        }
+        return first;
+    }
+
+    private int calculateKnobSize(int divider, int boundsSize) {
+        int size;
+        if (divider <= 0) {
+            size = boundsSize - 4;
+        } else {
+            size = (scrollable.getCountSelected() * (boundsSize-4)) / scrollable.getMaximum();
+        }
+        return size;
     }
 
     private void updateScrollable(int x, int y) {
@@ -85,10 +90,10 @@ public class Slider extends AbstractWidget<Slider> {
             first = 0;
         } else {
             if (horizontal) {
-                int size = (scrollable.getCountSelected() * (bounds.width-4)) / scrollable.getMaximum();
+                int size = calculateKnobSize(divider, bounds.width);
                 first = ((x-bounds.x-dx) * divider) / (bounds.width-4-size);
             } else {
-                int size = (scrollable.getCountSelected() * (bounds.height-4)) / scrollable.getMaximum();
+                int size = calculateKnobSize(divider, bounds.height);
                 first = ((y-bounds.y-dy) * divider) / (bounds.height-4-size);
             }
         }
@@ -105,8 +110,22 @@ public class Slider extends AbstractWidget<Slider> {
     public Widget mouseClick(int x, int y, int button) {
         super.mouseClick(x, y, button);
         dragging = true;
-        dx = x-bounds.x;
-        dy = y-bounds.y;
+
+        int divider = scrollable.getMaximum() - scrollable.getCountSelected();
+
+        int first;
+        if (horizontal) {
+            int size = calculateKnobSize(divider, bounds.width);
+            first = calculateKnobOffset(divider, size, bounds.width);
+            dx = x-bounds.x-first;
+            dy = 0;
+        } else {
+            int size = calculateKnobSize(divider, bounds.height);
+            first = calculateKnobOffset(divider, size, bounds.height);
+            dx = 0;
+            dy = y-bounds.y-first;
+        }
+
         return this;
     }
 
