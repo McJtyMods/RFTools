@@ -47,7 +47,7 @@ public class GuiBlockList extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
     public static final int SEL_TEXT_COLOR = 0x092020;
 
-    Widget toplevel;
+    private Widget toplevel;
 
     public GuiBlockList(NetworkMonitorItem monitorItem) {
         this.monitorItem = monitorItem;

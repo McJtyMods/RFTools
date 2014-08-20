@@ -24,8 +24,10 @@ public class RFTools {
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
+
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
+    public static final int GUI_RF_MONITOR = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

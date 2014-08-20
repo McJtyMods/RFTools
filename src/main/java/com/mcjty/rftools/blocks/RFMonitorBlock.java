@@ -28,6 +28,10 @@ public class RFMonitorBlock extends Block {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        if (world.isRemote) {
+            player.openGui(RFTools.instance, RFTools.GUI_RF_MONITOR, player.worldObj, x, y, z);
+            return true;
+        }
         return super.onBlockActivated(world, x, y, z, player, side, sidex, sidey, sidez);
     }
 
