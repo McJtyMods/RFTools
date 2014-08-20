@@ -8,11 +8,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class BlockInfo {
     TileEntity tileEntity;
     Block block;
+    int metadata;
     boolean first;
 
-    BlockInfo(TileEntity tileEntity, Block block, boolean first) {
+    BlockInfo(TileEntity tileEntity, Block block, int metadata, boolean first) {
         this.tileEntity = tileEntity;
         this.block = block;
+        this.metadata = metadata;
         this.first = first;
     }
 
@@ -22,6 +24,10 @@ public class BlockInfo {
 
     public Block getBlock() {
         return block;
+    }
+
+    public int getMetadata() {
+        return metadata;
     }
 
     public boolean isFirst() {
@@ -56,6 +62,7 @@ public class BlockInfo {
         BlockInfo blockInfo = (BlockInfo) o;
 
         if (first != blockInfo.first) return false;
+        if (metadata != blockInfo.metadata) return false;
         if (block != null ? !block.equals(blockInfo.block) : blockInfo.block != null) return false;
         if (tileEntity != null ? !tileEntity.equals(blockInfo.tileEntity) : blockInfo.tileEntity != null) return false;
 
@@ -66,6 +73,7 @@ public class BlockInfo {
     public int hashCode() {
         int result = tileEntity != null ? tileEntity.hashCode() : 0;
         result = 31 * result + (block != null ? block.hashCode() : 0);
+        result = 31 * result + metadata;
         result = 31 * result + (first ? 1 : 0);
         return result;
     }

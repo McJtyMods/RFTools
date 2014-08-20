@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL12;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -103,11 +104,20 @@ public class GuiBlockList extends GuiScreen {
             int energy = blockInfo.getEnergyStored();
             int maxEnergy = blockInfo.getMaxEnergyStored();
 
-            String displayName = getReadableName(block);
             int color = getTextColor(blockInfo);
 
+            List<ItemStack> itemStacks = block.getDrops(mc.theWorld, coordinate.getX(), coordinate.getY(), coordinate.getZ(), blockInfo.getMetadata(), 1);
+            Object descriptiveObject = block;
+            if (itemStacks != null && !itemStacks.isEmpty()) {
+                descriptiveObject = itemStacks.get(0).getItem();
+                System.out.println("itemStacks.get(0).getDisplayName() = " + itemStacks.get(0).getDisplayName());
+            }
+
+            String displayName = getReadableName(descriptiveObject, blockInfo.getMetadata());
+
+
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
+            panel.addChild(new BlockRender(mc, this).setRenderItem(descriptiveObject));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
             EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(TEXT_COLOR).setHorizontal();
@@ -171,8 +181,18 @@ public class GuiBlockList extends GuiScreen {
         return color;
     }
 
-    private String getReadableName(Block block) {
-        ItemStack s = new ItemStack(block, 1, 0);
+    private String getReadableName(Object object, int metadata) {
+        if (object instanceof Block) {
+            return getReadableName((Block) object, metadata);
+        } else if (object instanceof Item) {
+            return getReadableName((Item) object, metadata);
+        } else {
+            return "?";
+        }
+    }
+
+    private String getReadableName(Block block, int metadata) {
+        ItemStack s = new ItemStack(block, 1, metadata);
         String displayName = s.getDisplayName();
         if (displayName.startsWith("tile.")) {
             displayName = displayName.substring(5);
@@ -182,4 +202,17 @@ public class GuiBlockList extends GuiScreen {
         }
         return displayName;
     }
+
+    private String getReadableName(Item item, int metadata) {
+        ItemStack s = new ItemStack(item, 1, metadata);
+        String displayName = s.getDisplayName();
+        if (displayName.startsWith("tile.")) {
+            displayName = displayName.substring(5);
+        }
+        if (displayName.endsWith(".name")) {
+            displayName = displayName.substring(0, displayName.length()-5);
+        }
+        return displayName;
+    }
+
 }

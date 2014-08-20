@@ -1,2 +1,3 @@
 item.NetworkMonitor.name=RF Network Monitor
 tile.rfMonitorBlock.name=RF Monitor
+tile.machineFrame.name=Machine Frame

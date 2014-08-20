@@ -7,13 +7,18 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.util.Iterator;
+
 public final class ModCrafting {
 
     public static final void init() {
         Object inkSac = Item.itemRegistry.getObjectById(351);
         GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), new Object[]{"rlr", "iri", "rlr", 'r', Items.redstone, 'i', Items.iron_ingot, 'l', inkSac});
 
-        Object redstoneTorch = Item.itemRegistry.getObjectById(76);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), new Object[]{"iTi", "iri", "iTi", 'i', Items.iron_ingot, 'T', redstoneTorch, 'r', Items.redstone});
+        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), new Object[]{"ili", "g g", "ili", 'i', Items.iron_ingot, 'g', Items.gold_nugget, 'l', lapisStack});
+
+        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), new Object[]{" T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone});
     }
 }
