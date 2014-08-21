@@ -12,9 +12,14 @@ import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,6 +94,30 @@ public class GuiRFMonitor extends GuiScreen {
         } else {
             monitorBlockTileEntity.setInvalid();
         }
+        sendChangeToServer();
+    }
+
+    private void sendChangeToServer(){
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+//        DataOutputStream outputStream = new DataOutputStream(bos);
+//        try {
+//            outputStream.writeInt(monitorBlockTileEntity.xCoord);
+//            outputStream.writeInt(monitorBlockTileEntity.yCoord);
+//            outputStream.writeInt(monitorBlockTileEntity.zCoord);
+//            //write the relevant information here... exemple:
+//            String s = monitorBlockTileEntity.getMonitorX() + "," + monitorBlockTileEntity.getMonitorY() + "," + monitorBlockTileEntity.getMonitorZ();
+//            outputStream.writeUTF(s);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//
+//
+//        S35PacketUpdateTileEntity packet = new S35PacketUpdateTileEntity();
+//        packet.channel = "GenericRandom";
+//        packet.data = bos.toByteArray();
+//        packet.length = bos.size();
+//
+//        PacketDispatcher.sendPacketToServer(packet);
     }
 
     private void populateList() {
