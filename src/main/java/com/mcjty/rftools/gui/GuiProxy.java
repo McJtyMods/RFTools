@@ -27,7 +27,7 @@ public class GuiProxy implements IGuiHandler {
             NetworkMonitorItem item = getNetworkMonitorItem(entityPlayer);
             if (item != null) {
                 System.out.println("com.mcjty.rftools.gui.GuiProxy.getClientGuiElement");
-                return new GuiBlockList(item);
+                return new GuiNetworkMonitor(item);
 
             }
         } else if (guiid == RFTools.GUI_RF_MONITOR) {

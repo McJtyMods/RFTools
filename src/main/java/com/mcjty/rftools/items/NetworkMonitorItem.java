@@ -3,6 +3,8 @@ package com.mcjty.rftools.items;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
+import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,77 +61,10 @@ public class NetworkMonitorItem extends Item {
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return true;
-        }
-
-        if (!world.isRemote) {
-            System.out.println("==========================================");
+        } else {
             connectedBlocks.clear();
             findConnectedBlocks(connectedBlocks, world, x, y, z, true);
-            for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
-                showBlockInfo(me.getKey(), me.getValue());
-            }
         }
         return true;
-    }
-
-    private void showBlockInfo(Coordinate c, BlockInfo blockInfo) {
-        System.out.print("Block: " + blockInfo.block.getUnlocalizedName() + " at " + c.x + "," + c.y + "," + c.z);
-        IEnergyHandler handler = (IEnergyHandler) blockInfo.tileEntity;
-        if (handler != null) {
-            System.out.println("  Energy:" + handler.getEnergyStored(ForgeDirection.DOWN) + " (" + handler.getMaxEnergyStored(ForgeDirection.DOWN) + ")");
-        } else {
-            System.out.println();
-        }
-//        showTileEntityInfo(blockInfo.tileEntity);
-    }
-
-    private void showTileEntityInfo(TileEntity tileEntity) {
-        if (tileEntity != null) {
-            if (tileEntity instanceof IEnergyHandler) {
-                System.out.println("    Tile entity is an energy handler");
-                IEnergyHandler handler = (IEnergyHandler) tileEntity;
-                checkConnections(handler);
-                checkEnergyStored(handler);
-            }
-            else if (tileEntity instanceof IEnergyConnection) {
-                System.out.println("    Tile entity is an energy connection");
-                IEnergyConnection connection = (IEnergyConnection) tileEntity;
-                checkConnections(connection);
-            }
-            if (tileEntity instanceof IEnergyStorage) {
-                System.out.println("    Tile entity is an energy storage");
-            }
-
-        }
-    }
-
-    private void checkConnections(IEnergyConnection connection) {
-        if (connection.canConnectEnergy(ForgeDirection.DOWN)) {
-            System.out.println("        Can connect from side DOWN");
-        }
-        if (connection.canConnectEnergy(ForgeDirection.UP)) {
-            System.out.println("        Can connect from side UP");
-        }
-        if (connection.canConnectEnergy(ForgeDirection.EAST)) {
-            System.out.println("        Can connect from side EAST");
-        }
-        if (connection.canConnectEnergy(ForgeDirection.WEST)) {
-            System.out.println("        Can connect from side WEST");
-        }
-        if (connection.canConnectEnergy(ForgeDirection.NORTH)) {
-            System.out.println("        Can connect from side NORTH");
-        }
-        if (connection.canConnectEnergy(ForgeDirection.SOUTH)) {
-            System.out.println("        Can connect from side SOUTH");
-        }
-    }
-
-    private void checkEnergyStored(IEnergyHandler handler) {
-        System.out.println("        Energy stored DOWN: " + handler.getEnergyStored(ForgeDirection.DOWN) + " (" + handler.getMaxEnergyStored(ForgeDirection.DOWN));
-        System.out.println("        Energy stored UP: " + handler.getEnergyStored(ForgeDirection.UP) + " (" + handler.getMaxEnergyStored(ForgeDirection.UP));
-        System.out.println("        Energy stored EAST: " + handler.getEnergyStored(ForgeDirection.EAST) + " (" + handler.getMaxEnergyStored(ForgeDirection.EAST));
-        System.out.println("        Energy stored WEST: " + handler.getEnergyStored(ForgeDirection.WEST) + " (" + handler.getMaxEnergyStored(ForgeDirection.WEST));
-        System.out.println("        Energy stored NORTH: " + handler.getEnergyStored(ForgeDirection.NORTH) + " (" + handler.getMaxEnergyStored(ForgeDirection.NORTH));
-        System.out.println("        Energy stored SOUTH: " + handler.getEnergyStored(ForgeDirection.SOUTH) + " (" + handler.getMaxEnergyStored(ForgeDirection.SOUTH));
     }
 }

@@ -1,21 +1,23 @@
 package com.mcjty.rftools.blocks;
 
+import cofh.api.energy.IEnergyHandler;
+import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.swing.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RFMonitorBlock extends Block {
 
-//    private static final ResourceLocation iconFront = new ResourceLocation(RFTools.MODID, "textures/blocks/machineFront.png");
-//    private static final ResourceLocation iconSide = new ResourceLocation(RFTools.MODID, "textures/blocks/machineSide.png");
+    private ConcurrentHashMap<Coordinate,BlockInfo> adjacentBlocks = new ConcurrentHashMap<Coordinate, BlockInfo>();
 
     private IIcon iconFront;
     private IIcon iconSide;
@@ -31,8 +33,11 @@ public class RFMonitorBlock extends Block {
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_RF_MONITOR, player.worldObj, x, y, z);
             return true;
+        } else {
+            adjacentBlocks.clear();
+            findAdjacentBlocks(adjacentBlocks, world, x, y, z);
         }
-        return super.onBlockActivated(world, x, y, z, player, side, sidex, sidey, sidez);
+        return false;
     }
 
     @Override
@@ -41,6 +46,34 @@ public class RFMonitorBlock extends Block {
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
 
+    private void findAdjacentBlocks(ConcurrentHashMap<Coordinate, BlockInfo> adjacentBlocks, World world, int x, int y, int z) {
+        for (int dy = -1 ; dy <= 1 ; dy++) {
+            int yy = y + dy;
+            if (yy >= 0 && yy < world.getActualHeight()) {
+                for (int dz = -1 ; dz <= 1 ; dz++) {
+                    int zz = z + dz;
+                    for (int dx = -1 ; dx <= 1 ; dx++) {
+                        int xx = x + dx;
+                        if (dx != 0 || dy != 0 || dz != 0) {
+                            Coordinate c = new Coordinate(xx, yy, zz);
+                            TileEntity tileEntity = world.getTileEntity(xx, yy, zz);
+                            if (tileEntity != null) {
+                                if (tileEntity instanceof IEnergyHandler) {
+                                    Block block = world.getBlock(xx, yy, zz);
+                                    adjacentBlocks.put(c, new BlockInfo(tileEntity, block, world.getBlockMetadata(xx, yy, zz), false));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    synchronized public ConcurrentHashMap<Coordinate, BlockInfo> getAdjacentBlocks() {
+        return adjacentBlocks;
+    }
 
 
     @Override
@@ -50,10 +83,5 @@ public class RFMonitorBlock extends Block {
         } else {
             return iconSide;
         }
-    }
-
-    @Override
-    public IIcon getIcon(IBlockAccess p_149673_1_, int p_149673_2_, int p_149673_3_, int p_149673_4_, int p_149673_5_) {
-        return super.getIcon(p_149673_1_, p_149673_2_, p_149673_3_, p_149673_4_, p_149673_5_);
     }
 }

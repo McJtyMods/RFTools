@@ -1,9 +1,9 @@
-package com.mcjty.rftools.items;
+package com.mcjty.rftools;
 
 public class Coordinate {
-    int x, y, z;
+    private int x, y, z;
 
-    Coordinate(int x, int y, int z) {
+    public Coordinate(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;

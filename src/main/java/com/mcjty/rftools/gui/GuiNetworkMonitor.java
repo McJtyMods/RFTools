@@ -1,35 +1,23 @@
 package com.mcjty.rftools.gui;
 
 import com.mcjty.gui.*;
+import com.mcjty.gui.Label;
+import com.mcjty.gui.Panel;
+import com.mcjty.gui.Window;
+import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.items.BlockInfo;
-import com.mcjty.rftools.items.Coordinate;
 import com.mcjty.rftools.items.NetworkMonitorItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-public class GuiBlockList extends GuiScreen {
+public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
-
-    private WidgetList list;
-    private int listDirty;
 
     // A copy of the connected blocks we're currently showing
     Map<Coordinate, BlockInfo> connectedBlocks;
@@ -47,9 +35,12 @@ public class GuiBlockList extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
     public static final int SEL_TEXT_COLOR = 0x092020;
 
-    private Widget toplevel;
+    private Window window;
+    private WidgetList list;
+    private int listDirty;
 
-    public GuiBlockList(NetworkMonitorItem monitorItem) {
+
+    public GuiNetworkMonitor(NetworkMonitorItem monitorItem) {
         this.monitorItem = monitorItem;
         listDirty = 0;
     }
@@ -69,8 +60,10 @@ public class GuiBlockList extends GuiScreen {
         list = new WidgetList(mc, this).setRowheight(16);
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        toplevel = new Panel(mc, this).setBackground(iconLocationLeft, iconLocationRight).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocationLeft, iconLocationRight).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
+
+        window = new Window(this, toplevel);
     }
 
     private void refreshList() {
@@ -106,18 +99,10 @@ public class GuiBlockList extends GuiScreen {
 
             int color = getTextColor(blockInfo);
 
-            List<ItemStack> itemStacks = block.getDrops(mc.theWorld, coordinate.getX(), coordinate.getY(), coordinate.getZ(), blockInfo.getMetadata(), 1);
-            Object descriptiveObject = block;
-            if (itemStacks != null && !itemStacks.isEmpty()) {
-                descriptiveObject = itemStacks.get(0).getItem();
-                System.out.println("itemStacks.get(0).getDisplayName() = " + itemStacks.get(0).getDisplayName());
-            }
-
-            String displayName = getReadableName(descriptiveObject, blockInfo.getMetadata());
-
+            String displayName = blockInfo.getReadableName(mc.theWorld, coordinate);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(descriptiveObject));
+            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
             EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(TEXT_COLOR).setHorizontal();
@@ -131,31 +116,19 @@ public class GuiBlockList extends GuiScreen {
     @Override
     protected void mouseClicked(int x, int y, int button) {
         super.mouseClicked(x, y, button);
-        if (toplevel.getBounds().contains(x, y)) {
-            toplevel.mouseClick(x, y, button);
-        }
+        window.mouseClicked(x, y, button);
     }
 
     @Override
     public void handleMouseInput() {
         super.handleMouseInput();
-        int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int y = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        int k = Mouse.getEventButton();
-        if (k == -1) {
-            mouseMovedOrUp(x, y, k);
-        }
+        window.handleMouseInput();
     }
 
     @Override
     protected void mouseMovedOrUp(int x, int y, int button) {
         super.mouseMovedOrUp(x, y, button);
-        // -1 == mouse move
-        if (button != -1) {
-            toplevel.mouseRelease(x, y, button);
-        } else {
-            toplevel.mouseMove(x, y);
-        }
+        window.mouseMovedOrUp(x, y, button);
     }
 
     @Override
@@ -168,7 +141,7 @@ public class GuiBlockList extends GuiScreen {
             listDirty = 5;
         }
 
-        toplevel.draw(0, 0);
+        window.draw();
     }
 
     private int getTextColor(BlockInfo blockInfo) {
@@ -179,40 +152,6 @@ public class GuiBlockList extends GuiScreen {
             color = TEXT_COLOR;
         }
         return color;
-    }
-
-    private String getReadableName(Object object, int metadata) {
-        if (object instanceof Block) {
-            return getReadableName((Block) object, metadata);
-        } else if (object instanceof Item) {
-            return getReadableName((Item) object, metadata);
-        } else {
-            return "?";
-        }
-    }
-
-    private String getReadableName(Block block, int metadata) {
-        ItemStack s = new ItemStack(block, 1, metadata);
-        String displayName = s.getDisplayName();
-        if (displayName.startsWith("tile.")) {
-            displayName = displayName.substring(5);
-        }
-        if (displayName.endsWith(".name")) {
-            displayName = displayName.substring(0, displayName.length()-5);
-        }
-        return displayName;
-    }
-
-    private String getReadableName(Item item, int metadata) {
-        ItemStack s = new ItemStack(item, 1, metadata);
-        String displayName = s.getDisplayName();
-        if (displayName.startsWith("tile.")) {
-            displayName = displayName.substring(5);
-        }
-        if (displayName.endsWith(".name")) {
-            displayName = displayName.substring(0, displayName.length()-5);
-        }
-        return displayName;
     }
 
 }
