@@ -15,12 +15,18 @@ public class BlockInfo {
     private Block block;
     private int metadata;
     private boolean first;
+    private Coordinate coordinate;
 
-    public BlockInfo(TileEntity tileEntity, Block block, int metadata, boolean first) {
+    public BlockInfo(TileEntity tileEntity, Block block, int metadata, Coordinate coordinate, boolean first) {
         this.tileEntity = tileEntity;
         this.block = block;
         this.metadata = metadata;
         this.first = first;
+        this.coordinate = coordinate;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 
     public TileEntity getTileEntity() {
@@ -39,7 +45,7 @@ public class BlockInfo {
         return first;
     }
 
-    public String getReadableName(WorldClient world, Coordinate coordinate) {
+    public String getReadableName(WorldClient world) {
         List<ItemStack> itemStacks = block.getDrops(world, coordinate.getX(), coordinate.getY(), coordinate.getZ(), metadata, 1);
         Object descriptiveObject = block;
         if (itemStacks != null && !itemStacks.isEmpty()) {

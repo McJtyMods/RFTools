@@ -8,6 +8,7 @@ import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RFMonitorBlock;
+import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -15,10 +16,12 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GuiRFMonitor extends GuiScreen {
     private RFMonitorBlock monitorBlock;
+    private RFMonitorBlockTileEntity monitorBlockTileEntity;
 
     private Window window;
     private WidgetList list;
@@ -27,7 +30,7 @@ public class GuiRFMonitor extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
 
     // A copy of the adjacent blocks we're currently showing
-    Map<Coordinate, BlockInfo> adjacentBlocks;
+    private List<BlockInfo> adjacentBlocks;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack.png");
 
@@ -37,8 +40,9 @@ public class GuiRFMonitor extends GuiScreen {
     protected int ySize = 180;
 
 
-    public GuiRFMonitor(RFMonitorBlock monitorBlock) {
+    public GuiRFMonitor(RFMonitorBlock monitorBlock, RFMonitorBlockTileEntity monitorBlockTileEntity) {
         this.monitorBlock = monitorBlock;
+        this.monitorBlockTileEntity = monitorBlockTileEntity;
     }
 
     @Override
@@ -52,7 +56,12 @@ public class GuiRFMonitor extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(16);
+        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new SelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                setSelectedBlock(index);
+            }
+        });
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
@@ -72,31 +81,50 @@ public class GuiRFMonitor extends GuiScreen {
 //        }
     }
 
+    private void setSelectedBlock(int index) {
+        System.out.println("setSelectedBlock index = " + index);
+        if (index != -1) {
+            Coordinate c = adjacentBlocks.get(index).getCoordinate();
+            monitorBlockTileEntity.setMonitor(c);
+        } else {
+            monitorBlockTileEntity.setInvalid();
+        }
+    }
+
     private void populateList() {
-        Map<Coordinate, BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
+        List<BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
         if (newAdjacentBlocks.equals(adjacentBlocks)) {
             refreshList();
             return;
         }
 
-        adjacentBlocks = new HashMap<Coordinate, BlockInfo>(newAdjacentBlocks);
+        adjacentBlocks = new ArrayList<BlockInfo>(newAdjacentBlocks);
         list.removeChildren();
 
-        for (Map.Entry<Coordinate,BlockInfo> me : adjacentBlocks.entrySet()) {
-            BlockInfo blockInfo = me.getValue();
+        int index = 0, sel = -1;
+        for (BlockInfo blockInfo : adjacentBlocks) {
             Block block = blockInfo.getBlock();
-            Coordinate coordinate = me.getKey();
+            Coordinate coordinate = blockInfo.getCoordinate();
 
             int color = TEXT_COLOR;
 
-            String displayName = blockInfo.getReadableName(mc.theWorld, coordinate);
+            String displayName = blockInfo.getReadableName(mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(120));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color));
             list.addChild(panel);
+
+            if (coordinate.getX() == monitorBlockTileEntity.getMonitorX() &&
+                    coordinate.getY() == monitorBlockTileEntity.getMonitorY() &&
+                    coordinate.getZ() == monitorBlockTileEntity.getMonitorZ()) {
+                sel = index;
+            }
+            index++;
         }
+
+        list.setSelected(sel);
     }
 
     @Override

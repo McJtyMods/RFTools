@@ -5,6 +5,7 @@ import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,11 +14,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RFMonitorBlock extends Block {
+public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
-    private ConcurrentHashMap<Coordinate,BlockInfo> adjacentBlocks = new ConcurrentHashMap<Coordinate, BlockInfo>();
+    private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
 
     private IIcon iconFront;
     private IIcon iconSide;
@@ -27,6 +30,15 @@ public class RFMonitorBlock extends Block {
         setBlockName("rfMonitorBlock");
     }
 
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return null;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        return new RFMonitorBlockTileEntity();
+    }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
@@ -46,7 +58,7 @@ public class RFMonitorBlock extends Block {
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
 
-    private void findAdjacentBlocks(ConcurrentHashMap<Coordinate, BlockInfo> adjacentBlocks, World world, int x, int y, int z) {
+    private void findAdjacentBlocks(List<BlockInfo> adjacentBlocks, World world, int x, int y, int z) {
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
             if (yy >= 0 && yy < world.getActualHeight()) {
@@ -60,7 +72,7 @@ public class RFMonitorBlock extends Block {
                             if (tileEntity != null) {
                                 if (tileEntity instanceof IEnergyHandler) {
                                     Block block = world.getBlock(xx, yy, zz);
-                                    adjacentBlocks.put(c, new BlockInfo(tileEntity, block, world.getBlockMetadata(xx, yy, zz), false));
+                                    adjacentBlocks.add(new BlockInfo(tileEntity, block, world.getBlockMetadata(xx, yy, zz), c, false));
                                 }
                             }
                         }
@@ -71,7 +83,7 @@ public class RFMonitorBlock extends Block {
     }
 
 
-    synchronized public ConcurrentHashMap<Coordinate, BlockInfo> getAdjacentBlocks() {
+    synchronized public List<BlockInfo> getAdjacentBlocks() {
         return adjacentBlocks;
     }
 

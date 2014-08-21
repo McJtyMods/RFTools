@@ -1,15 +1,18 @@
 package com.mcjty.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class WidgetList extends AbstractContainerWidget<WidgetList> implements Scrollable {
     private int rowheight = 10;
     private int first = 0;
     private int selected = -1;
+    private List<SelectionEvent> selectionEvents = null;
 
     public WidgetList(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -54,17 +57,21 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     @Override
     public Widget mouseClick(int x, int y, int button) {
+        int newSelected = -1;
         int top = 0;        // Margin@@@?
 
         for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
             Rectangle r = new Rectangle(0, top, bounds.width, rowheight);
             if (r.contains(x, y)) {
-                selected = i;
-                return null;
+                newSelected = i;
+                break;
             }
             top += rowheight;
         }
-        selected = -1;
+        if (newSelected != selected) {
+            selected = newSelected;
+            fireSelectionEvents(selected);
+        }
         return null;
     }
 
@@ -91,5 +98,27 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     @Override
     public void setFirstSelected(int first) {
         this.first = first;
+    }
+
+    public WidgetList addSelectionEvent(SelectionEvent event) {
+        if (selectionEvents == null) {
+            selectionEvents = new ArrayList<SelectionEvent> ();
+        }
+        selectionEvents.add(event);
+        return this;
+    }
+
+    public void removeSelectionEvent(SelectionEvent event) {
+        if (selectionEvents != null) {
+            selectionEvents.remove(event);
+        }
+    }
+
+    private void fireSelectionEvents(int index) {
+        if (selectionEvents != null) {
+            for (SelectionEvent event : selectionEvents) {
+                event.select(this, index);
+            }
+        }
     }
 }

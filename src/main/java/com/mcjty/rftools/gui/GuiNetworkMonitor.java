@@ -99,7 +99,7 @@ public class GuiNetworkMonitor extends GuiScreen {
 
             int color = getTextColor(blockInfo);
 
-            String displayName = blockInfo.getReadableName(mc.theWorld, coordinate);
+            String displayName = blockInfo.getReadableName(mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));

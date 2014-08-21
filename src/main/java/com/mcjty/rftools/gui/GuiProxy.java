@@ -2,12 +2,14 @@ package com.mcjty.rftools.gui;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RFMonitorBlock;
+import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.items.NetworkMonitorItem;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class GuiProxy implements IGuiHandler {
@@ -32,10 +34,12 @@ public class GuiProxy implements IGuiHandler {
             }
         } else if (guiid == RFTools.GUI_RF_MONITOR) {
             Block block = world.getBlock(x, y, z);
-            System.out.println("block = " + block);
-            if (block != null && block instanceof  RFMonitorBlock) {
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (block != null && block instanceof  RFMonitorBlock && te instanceof RFMonitorBlockTileEntity) {
+                RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
                 RFMonitorBlock monitorBlock = (RFMonitorBlock) block;
-                return new GuiRFMonitor(monitorBlock);
+                return new GuiRFMonitor(monitorBlock, monitorBlockTileEntity);
             }
         }
         return null;

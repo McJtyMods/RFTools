@@ -41,7 +41,7 @@ public class NetworkMonitorItem extends Item {
         if (tileEntity != null) {
             if (tileEntity instanceof IEnergyHandler) {
                 Block block = world.getBlock(x, y, z);
-                connectedBlocks.put(c, new BlockInfo(tileEntity, block, world.getBlockMetadata(x, y, z), first));
+                connectedBlocks.put(c, new BlockInfo(tileEntity, block, world.getBlockMetadata(x, y, z), c, first));
                 findConnectedBlocks(connectedBlocks, world, x + 1, y, z, false);
                 findConnectedBlocks(connectedBlocks, world, x - 1, y, z, false);
                 findConnectedBlocks(connectedBlocks, world, x, y - 1, z, false);

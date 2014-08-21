@@ -16,5 +16,7 @@ public final class ModBlocks {
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(machineFrame, "machineFrame");
+
+        GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
     }
 }
