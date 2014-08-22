@@ -55,7 +55,7 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         } else {
             findAdjacentBlocks(adjacentBlocks, world, x, y, z);
         }
-        return false;
+        return true;
     }
 
     @Override
