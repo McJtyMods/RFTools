@@ -5,6 +5,7 @@ import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.mobs.ModEntities;
+import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -19,6 +20,8 @@ import org.apache.logging.log4j.Level;
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent e) {
         loadConfiguration(e);
+
+        PacketHandler.registerMessages();
 
         ModItems.init();
         ModBlocks.init();

@@ -3,6 +3,8 @@ package com.mcjty.rftools;
 public class Coordinate {
     private int x, y, z;
 
+    public static final Coordinate INVALID = new Coordinate(-1, -1, -1);
+
     public Coordinate(int x, int y, int z) {
         this.x = x;
         this.y = y;

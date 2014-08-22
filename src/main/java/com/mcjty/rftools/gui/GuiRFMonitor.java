@@ -9,6 +9,8 @@ import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RFMonitorBlock;
 import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketRFMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -90,14 +92,18 @@ public class GuiRFMonitor extends GuiScreen {
         System.out.println("setSelectedBlock index = " + index);
         if (index != -1) {
             Coordinate c = adjacentBlocks.get(index).getCoordinate();
-            monitorBlockTileEntity.setMonitor(c);
+            sendChangeToServer(c);
+//            monitorBlockTileEntity.setMonitor(c);
         } else {
-            monitorBlockTileEntity.setInvalid();
+            sendChangeToServer(Coordinate.INVALID);
+//            monitorBlockTileEntity.setInvalid();
         }
-        sendChangeToServer();
+//        sendChangeToServer();
     }
 
-    private void sendChangeToServer(){
+    private void sendChangeToServer(Coordinate c) {
+        System.out.println("com.mcjty.rftools.gui.GuiRFMonitor.sendChangeToServer");
+        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, c));
 //        ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
 //        DataOutputStream outputStream = new DataOutputStream(bos);
 //        try {
@@ -121,6 +127,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void populateList() {
+        System.out.println("monitorBlockTileEntity.getMonitor() = " + monitorBlockTileEntity.getMonitorX()+","+monitorBlockTileEntity.getMonitorY()+","+monitorBlockTileEntity.getMonitorZ());
         List<BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
         if (newAdjacentBlocks.equals(adjacentBlocks)) {
             refreshList();
