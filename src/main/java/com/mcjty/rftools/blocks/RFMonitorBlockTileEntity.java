@@ -37,6 +37,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = -1;
         monitorY = -1;
         monitorZ = -1;
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 2);
     }
 
     public void setMonitor(Coordinate c) {
