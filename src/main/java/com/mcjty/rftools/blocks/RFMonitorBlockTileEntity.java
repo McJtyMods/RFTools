@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks;
 
+import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -7,6 +8,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class RFMonitorBlockTileEntity extends TileEntity {
     private int monitorX = -1;
@@ -31,19 +33,6 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         return monitorY >= 0;
     }
 
-    @Override
-    public void updateEntity() {
-        counter--;
-        if (counter <= 0) {
-            counter = 20;
-        }
-    }
-
-    @Override
-    public boolean canUpdate() {
-        return true;
-    }
-
     public void setInvalid() {
         monitorX = -1;
         monitorY = -1;
@@ -54,6 +43,45 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = c.getX();
         monitorY = c.getY();
         monitorZ = c.getZ();
+    }
+
+    @Override
+    public void updateEntity() {
+        counter--;
+        if (counter <= 0) {
+            counter = 20;
+            checkRFState();
+        }
+    }
+
+    private void checkRFState() {
+        if (isValid()) {
+            if (!worldObj.isRemote) {
+                TileEntity tileEntity = worldObj.getTileEntity(monitorX, monitorY, monitorZ);
+                if (tileEntity == null || !(tileEntity instanceof IEnergyHandler)) {
+                    setInvalid();
+                    return;
+                }
+                IEnergyHandler handler = (IEnergyHandler) tileEntity;
+                int maxEnergy = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+                int ratio = 0;  // Will be set as metadata;
+                if (maxEnergy > 0) {
+                    int stored = handler.getEnergyStored(ForgeDirection.DOWN);
+                    ratio = 1 + (stored * 5) / maxEnergy;
+                    if (ratio < 1) {
+                        ratio = 1;
+                    } else if (ratio > 5) {
+                        ratio = 5;
+                    }
+                }
+                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, ratio, 2);
+            }
+        }
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return true;
     }
 
     @Override

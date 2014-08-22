@@ -24,6 +24,11 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
 
     private IIcon iconFront;
+    private IIcon iconFront0;
+    private IIcon iconFront1;
+    private IIcon iconFront2;
+    private IIcon iconFront3;
+    private IIcon iconFront4;
     private IIcon iconSide;
 
     public RFMonitorBlock(Material material) {
@@ -43,11 +48,11 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        adjacentBlocks.clear();
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_RF_MONITOR, player.worldObj, x, y, z);
             return true;
         } else {
-            adjacentBlocks.clear();
             findAdjacentBlocks(adjacentBlocks, world, x, y, z);
         }
         return false;
@@ -56,6 +61,11 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront");
+        iconFront0 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_0");
+        iconFront1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_1");
+        iconFront2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_2");
+        iconFront3 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_3");
+        iconFront4 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_4");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
 
@@ -92,7 +102,15 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     @Override
     public IIcon getIcon(int side, int meta) {
         if (side == 2) {
-            return iconFront;
+            switch (meta) {
+                case 1: return iconFront0;
+                case 2: return iconFront1;
+                case 3: return iconFront2;
+                case 4: return iconFront3;
+                case 5: return iconFront4;
+                default: return iconFront;
+
+            }
         } else {
             return iconSide;
         }
