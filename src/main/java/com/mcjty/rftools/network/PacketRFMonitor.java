@@ -28,7 +28,6 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        System.out.println("com.mcjty.rftools.network.PacketRFMonitor.fromBytes");
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
@@ -37,7 +36,6 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
 
     @Override
     public void toBytes(ByteBuf buf) {
-        System.out.println("com.mcjty.rftools.network.PacketRFMonitor.toBytes");
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
@@ -48,7 +46,6 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
 
     @Override
     public IMessage onMessage(PacketRFMonitor message, MessageContext ctx) {
-        System.out.println((ctx.side == Side.CLIENT ? "CLIENT" : "SERVER") + ": com.mcjty.rftools.network.PacketRFMonitor.onMessage");
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         System.out.println("    player.worldObj.isRemote = " + player.worldObj.isRemote);
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
@@ -58,11 +55,6 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
             return null;
         }
         RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
-        System.out.println("    message.monitor = " + message.monitor);
-        System.out.println("    message.x = " + message.x);
-        System.out.println("    message.y = " + message.y);
-        System.out.println("    message.z = " + message.z);
-        System.out.println("### markBlockForUpdate");
         monitorBlockTileEntity.setMonitor(message.monitor);
         player.worldObj.markBlockForUpdate(x, y, z);
         return null;

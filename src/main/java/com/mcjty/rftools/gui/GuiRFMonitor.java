@@ -77,57 +77,24 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void refreshList() {
-//        for (Map.Entry<Coordinate,BlockInfo> me : adjacentBlocks.entrySet()) {
-//            BlockInfo blockInfo = me.getValue();
-//
-//            int energy = blockInfo.getEnergyStored();
-//            int maxEnergy = blockInfo.getMaxEnergyStored();
-//
-//            EnergyBar energyLabel = labelMap.get(me.getKey());
-//            energyLabel.setValue(energy).setMaxValue(maxEnergy);
-//        }
     }
 
     private void setSelectedBlock(int index) {
-        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": setSelectedBlock index = " + index);
         if (index != -1) {
             Coordinate c = adjacentBlocks.get(index).getCoordinate();
+            monitorBlockTileEntity.setMonitor(c);
             sendChangeToServer(c);
-//            monitorBlockTileEntity.setMonitor(c);
         } else {
+            monitorBlockTileEntity.setInvalid();
             sendChangeToServer(Coordinate.INVALID);
-//            monitorBlockTileEntity.setInvalid();
         }
-//        sendChangeToServer();
     }
 
     private void sendChangeToServer(Coordinate c) {
-        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": com.mcjty.rftools.gui.GuiRFMonitor.sendChangeToServer");
         PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, c));
-//        ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-//        DataOutputStream outputStream = new DataOutputStream(bos);
-//        try {
-//            outputStream.writeInt(monitorBlockTileEntity.xCoord);
-//            outputStream.writeInt(monitorBlockTileEntity.yCoord);
-//            outputStream.writeInt(monitorBlockTileEntity.zCoord);
-//            //write the relevant information here... exemple:
-//            String s = monitorBlockTileEntity.getMonitorX() + "," + monitorBlockTileEntity.getMonitorY() + "," + monitorBlockTileEntity.getMonitorZ();
-//            outputStream.writeUTF(s);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//
-//        S35PacketUpdateTileEntity packet = new S35PacketUpdateTileEntity();
-//        packet.channel = "GenericRandom";
-//        packet.data = bos.toByteArray();
-//        packet.length = bos.size();
-//
-//        PacketDispatcher.sendPacketToServer(packet);
     }
 
     private void populateList() {
-        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": monitorBlockTileEntity.getMonitor() = " + monitorBlockTileEntity.getMonitorX()+","+monitorBlockTileEntity.getMonitorY()+","+monitorBlockTileEntity.getMonitorZ());
         List<BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
         if (newAdjacentBlocks.equals(adjacentBlocks)) {
             refreshList();

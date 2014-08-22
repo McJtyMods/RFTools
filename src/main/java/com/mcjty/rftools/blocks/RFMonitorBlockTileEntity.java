@@ -13,32 +13,35 @@ public class RFMonitorBlockTileEntity extends TileEntity {
     private int monitorY = -1;  // Invalid y coordinate so we know it is not initialized yet
     private int monitorZ = -1;
 
+    private int counter = 20;
+
     public int getMonitorX() {
         return monitorX;
-    }
-
-    public void setMonitorX(int monitorX) {
-        this.monitorX = monitorX;
     }
 
     public int getMonitorY() {
         return monitorY;
     }
 
-    public void setMonitorY(int monitorY) {
-        this.monitorY = monitorY;
-    }
-
     public int getMonitorZ() {
         return monitorZ;
     }
 
-    public void setMonitorZ(int monitorZ) {
-        this.monitorZ = monitorZ;
-    }
-
     public boolean isValid() {
         return monitorY >= 0;
+    }
+
+    @Override
+    public void updateEntity() {
+        counter--;
+        if (counter <= 0) {
+            counter = 20;
+        }
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return true;
     }
 
     public void setInvalid() {
@@ -48,7 +51,6 @@ public class RFMonitorBlockTileEntity extends TileEntity {
     }
 
     public void setMonitor(Coordinate c) {
-        System.out.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": setMonitor: "+this);
         monitorX = c.getX();
         monitorY = c.getY();
         monitorZ = c.getZ();
@@ -56,7 +58,6 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public Packet getDescriptionPacket() {
-        System.err.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": getDescriptionPacket");
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
@@ -64,9 +65,10 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        System.err.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": onDataPacket");
         readFromNBT(packet.func_148857_g());
     }
+
+
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
