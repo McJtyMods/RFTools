@@ -89,7 +89,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void setSelectedBlock(int index) {
-        System.out.println("setSelectedBlock index = " + index);
+        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": setSelectedBlock index = " + index);
         if (index != -1) {
             Coordinate c = adjacentBlocks.get(index).getCoordinate();
             sendChangeToServer(c);
@@ -102,7 +102,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void sendChangeToServer(Coordinate c) {
-        System.out.println("com.mcjty.rftools.gui.GuiRFMonitor.sendChangeToServer");
+        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": com.mcjty.rftools.gui.GuiRFMonitor.sendChangeToServer");
         PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, c));
 //        ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
 //        DataOutputStream outputStream = new DataOutputStream(bos);
@@ -127,7 +127,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void populateList() {
-        System.out.println("monitorBlockTileEntity.getMonitor() = " + monitorBlockTileEntity.getMonitorX()+","+monitorBlockTileEntity.getMonitorY()+","+monitorBlockTileEntity.getMonitorZ());
+        System.out.println((mc.theWorld.isRemote ? "CLIENT" : "SERVER") + ": monitorBlockTileEntity.getMonitor() = " + monitorBlockTileEntity.getMonitorX()+","+monitorBlockTileEntity.getMonitorY()+","+monitorBlockTileEntity.getMonitorZ());
         List<BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
         if (newAdjacentBlocks.equals(adjacentBlocks)) {
             refreshList();

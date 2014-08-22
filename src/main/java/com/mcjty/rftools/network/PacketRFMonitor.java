@@ -5,6 +5,7 @@ import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -47,7 +48,7 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
 
     @Override
     public IMessage onMessage(PacketRFMonitor message, MessageContext ctx) {
-        System.out.println("com.mcjty.rftools.network.PacketRFMonitor.onMessage");
+        System.out.println((ctx.side == Side.CLIENT ? "CLIENT" : "SERVER") + ": com.mcjty.rftools.network.PacketRFMonitor.onMessage");
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         System.out.println("    player.worldObj.isRemote = " + player.worldObj.isRemote);
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
@@ -61,6 +62,7 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         System.out.println("    message.x = " + message.x);
         System.out.println("    message.y = " + message.y);
         System.out.println("    message.z = " + message.z);
+        System.out.println("### markBlockForUpdate");
         monitorBlockTileEntity.setMonitor(message.monitor);
         player.worldObj.markBlockForUpdate(x, y, z);
         return null;

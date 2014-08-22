@@ -48,7 +48,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
     }
 
     public void setMonitor(Coordinate c) {
-        System.out.println("setMonitor: "+this);
+        System.out.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": setMonitor: "+this);
         monitorX = c.getX();
         monitorY = c.getY();
         monitorZ = c.getZ();
@@ -56,7 +56,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public Packet getDescriptionPacket() {
-        System.err.println("getDescriptionPacket");
+        System.err.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": getDescriptionPacket");
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
@@ -64,7 +64,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        System.err.println("onDataPacket");
+        System.err.println((getWorldObj().isRemote ? "CLIENT" : "SERVER") + ": onDataPacket");
         readFromNBT(packet.func_148857_g());
     }
 
