@@ -53,20 +53,20 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorY = c.getY();
         monitorZ = c.getZ();
     }
-//
-//    @Override
-//    public Packet getDescriptionPacket() {
-//        System.err.println("getDescriptionPacket");
-//        NBTTagCompound nbtTag = new NBTTagCompound();
-//        this.writeToNBT(nbtTag);
-//        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
-//    }
-//
-//    @Override
-//    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-//        System.err.println("onDataPacket");
-//        readFromNBT(packet.func_148857_g());
-//    }
+
+    @Override
+    public Packet getDescriptionPacket() {
+        System.err.println("getDescriptionPacket");
+        NBTTagCompound nbtTag = new NBTTagCompound();
+        this.writeToNBT(nbtTag);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        System.err.println("onDataPacket");
+        readFromNBT(packet.func_148857_g());
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
