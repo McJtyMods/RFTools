@@ -80,6 +80,9 @@ public class Slider extends AbstractWidget<Slider> {
         } else {
             size = (scrollable.getCountSelected() * (boundsSize-4)) / scrollable.getMaximum();
         }
+        if (size < 4) {
+            size = 4;
+        }
         return size;
     }
 

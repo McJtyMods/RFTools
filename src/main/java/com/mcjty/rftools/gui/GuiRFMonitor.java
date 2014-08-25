@@ -42,9 +42,9 @@ public class GuiRFMonitor extends GuiScreen {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack.png");
 
     /** The X size of the window in pixels. */
-    protected int xSize = 256;
+    private int xSize = 256;
     /** The Y size of the window in pixels. */
-    protected int ySize = 180;
+    private int ySize = 180;
 
 
     public GuiRFMonitor(RFMonitorBlock monitorBlock, RFMonitorBlockTileEntity monitorBlockTileEntity) {
@@ -71,7 +71,16 @@ public class GuiRFMonitor extends GuiScreen {
         });
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+
+        ChoiceLabel choices = new ChoiceLabel(mc, this).addChoices("Less", "More").setDesiredWidth(60).setDesiredHeight(15).
+                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
+                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER);
+        ScrollableLabel alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(10).setRealMaximum(30);
+        Slider alarmSlider = new Slider(mc, this).setDesiredHeight(15).setHorizontal().setScrollable(alarmLabel);
+        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(choices).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
     }

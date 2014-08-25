@@ -61,7 +61,7 @@ public abstract class AbstractLayout<P extends AbstractLayout> implements Layout
             desiredHeight = height;
         }
         switch (verticalAlignment) {
-            case ALIGH_TOP: break;
+            case ALIGN_TOP: break;
             case ALIGN_BOTTOM: y += height - desiredHeight; break;
             case ALIGN_CENTER: y += (height - desiredHeight) / 2; break;
         }
