@@ -2,6 +2,8 @@ package com.mcjty.rftools.blocks;
 
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.Coordinate;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -52,11 +54,10 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public void updateEntity() {
-        // @@@ Client side should update when rflevel changes!
-        counter--;
-        if (counter <= 0) {
-            counter = 20;
-            checkRFState();
+        if (worldObj.isRemote) {
+            checkRFStateClient();
+        } else {
+            checkRFStateServer();
         }
     }
 
@@ -64,37 +65,44 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         return rflevel;
     }
 
-    private void checkRFState() {
-        if (isValid()) {
-            if (!worldObj.isRemote) {
-                TileEntity tileEntity = worldObj.getTileEntity(monitorX, monitorY, monitorZ);
-                if (tileEntity == null || !(tileEntity instanceof IEnergyHandler)) {
-                    setInvalid();
-                    return;
-                }
-                IEnergyHandler handler = (IEnergyHandler) tileEntity;
-                int maxEnergy = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-                int ratio = 0;  // Will be set as metadata;
-                if (maxEnergy > 0) {
-                    int stored = handler.getEnergyStored(ForgeDirection.DOWN);
-                    ratio = 1 + (stored * 5) / maxEnergy;
-                    if (ratio < 1) {
-                        ratio = 1;
-                    } else if (ratio > 5) {
-                        ratio = 5;
-                    }
-                }
-                rflevel = ratio;
-                System.out.println("ratio = " + ratio);
-                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-            } else {
-                if (client_rf_level != rflevel) {
-                    System.out.println("Client: RFMonitorBlockTileEntity.checkRFState");
-                    client_rf_level = rflevel;
-                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-                }
+    private void checkRFStateClient() {
+        if (client_rf_level != rflevel) {
+            client_rf_level = rflevel;
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
+
+    private void checkRFStateServer() {
+        if (!isValid()) {
+            counter = 1;
+            return;
+        }
+
+        counter--;
+        if (counter > 0) {
+            return;
+        }
+        counter = 20;
+
+        TileEntity tileEntity = worldObj.getTileEntity(monitorX, monitorY, monitorZ);
+        if (!(tileEntity instanceof IEnergyHandler)) {
+            setInvalid();
+            return;
+        }
+        IEnergyHandler handler = (IEnergyHandler) tileEntity;
+        int maxEnergy = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+        int ratio = 0;  // Will be set as metadata;
+        if (maxEnergy > 0) {
+            int stored = handler.getEnergyStored(ForgeDirection.DOWN);
+            ratio = 1 + (stored * 5) / maxEnergy;
+            if (ratio < 1) {
+                ratio = 1;
+            } else if (ratio > 5) {
+                ratio = 5;
             }
         }
+        rflevel = ratio;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -104,7 +112,6 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public Packet getDescriptionPacket() {
-        System.out.println("RFMonitorBlockTileEntity.getDescriptionPacket");
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);

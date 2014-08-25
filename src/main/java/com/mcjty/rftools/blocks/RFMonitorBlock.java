@@ -111,18 +111,18 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     }
 
     public static int determineOrientation(World world, int x, int y, int z, EntityLivingBase entityLivingBase) {
-        if (MathHelper.abs((float) entityLivingBase.posX - (float) x) < 2.0F && MathHelper.abs((float)entityLivingBase.posZ - (float)z) < 2.0F) {
-            double d0 = entityLivingBase.posY + 1.82D - (double)entityLivingBase.yOffset;
+        if (MathHelper.abs((float) entityLivingBase.posX - x) < 2.0F && MathHelper.abs((float)entityLivingBase.posZ - z) < 2.0F) {
+            double d0 = entityLivingBase.posY + 1.82D - entityLivingBase.yOffset;
 
-            if (d0 - (double)y > 2.0D) {
+            if (d0 - y > 2.0D) {
                 return 1;
             }
 
-            if ((double)y - d0 > 0.0D) {
+            if (y - d0 > 0.0D) {
                 return 0;
             }
         }
-        int l = MathHelper.floor_double((double)(entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         return l == 0 ? 2 : (l == 1 ? 5 : (l == 2 ? 3 : (l == 3 ? 4 : 0)));
     }
 
@@ -139,11 +139,9 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         TileEntity tileEntity = blockAccess.getTileEntity(x, y, z);
         int meta = blockAccess.getBlockMetadata(x, y, z);
         int k = getOrientation(meta);
-        System.out.println("GI+++: k = " + k + ", side = "+side);
         if (side == k) {
             RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
             int rflevel = monitorBlockTileEntity.getRflevel();
-            System.out.println("GET: rflevel = " + rflevel);
             switch (rflevel) {
                 case 1: return iconFront0;
                 case 2: return iconFront1;
