@@ -8,9 +8,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -20,6 +23,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RFMonitorBlock extends Block implements ITileEntityProvider {
+
+    public static final int MASK_ORIENTATION = 0x7;
 
     private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
 
@@ -56,6 +61,13 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
             findAdjacentBlocks(adjacentBlocks, world, x, y, z);
         }
         return true;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        int l = determineOrientation(world, x, y, z, entityLivingBase);
+        int meta = world.getBlockMetadata(x, y, z);
+        world.setBlockMetadataWithNotify(x, y, z, setOrientation(meta, l), 2);
     }
 
     @Override
@@ -98,11 +110,41 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         return adjacentBlocks;
     }
 
+    public static int determineOrientation(World world, int x, int y, int z, EntityLivingBase entityLivingBase) {
+        if (MathHelper.abs((float) entityLivingBase.posX - (float) x) < 2.0F && MathHelper.abs((float)entityLivingBase.posZ - (float)z) < 2.0F) {
+            double d0 = entityLivingBase.posY + 1.82D - (double)entityLivingBase.yOffset;
+
+            if (d0 - (double)y > 2.0D) {
+                return 1;
+            }
+
+            if ((double)y - d0 > 0.0D) {
+                return 0;
+            }
+        }
+        int l = MathHelper.floor_double((double)(entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        return l == 0 ? 2 : (l == 1 ? 5 : (l == 2 ? 3 : (l == 3 ? 4 : 0)));
+    }
+
+    public static int getOrientation(int metadata) {
+        return metadata & MASK_ORIENTATION;
+    }
+
+    public static int setOrientation(int metadata, int orientation) {
+        return (metadata & ~MASK_ORIENTATION) | orientation;
+    }
 
     @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 2) {
-            switch (meta) {
+    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
+        TileEntity tileEntity = blockAccess.getTileEntity(x, y, z);
+        int meta = blockAccess.getBlockMetadata(x, y, z);
+        int k = getOrientation(meta);
+        System.out.println("GI+++: k = " + k + ", side = "+side);
+        if (side == k) {
+            RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
+            int rflevel = monitorBlockTileEntity.getRflevel();
+            System.out.println("GET: rflevel = " + rflevel);
+            switch (rflevel) {
                 case 1: return iconFront0;
                 case 2: return iconFront1;
                 case 3: return iconFront2;
@@ -111,6 +153,16 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
                 default: return iconFront;
 
             }
+        } else {
+            return iconSide;
+        }
+    }
+
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        int k = getOrientation(meta);
+        if (side == k) {
+            return iconFront;
         } else {
             return iconSide;
         }

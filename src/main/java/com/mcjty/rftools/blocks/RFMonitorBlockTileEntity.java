@@ -16,6 +16,8 @@ public class RFMonitorBlockTileEntity extends TileEntity {
     private int monitorZ = -1;
 
     private int counter = 20;
+    private int rflevel = 0;
+    private int client_rf_level = -1;
 
     public int getMonitorX() {
         return monitorX;
@@ -37,7 +39,9 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = -1;
         monitorY = -1;
         monitorZ = -1;
-        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 2);
+        rflevel = 0;
+        client_rf_level = -1;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public void setMonitor(Coordinate c) {
@@ -48,11 +52,16 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public void updateEntity() {
+        // @@@ Client side should update when rflevel changes!
         counter--;
         if (counter <= 0) {
             counter = 20;
             checkRFState();
         }
+    }
+
+    public int getRflevel() {
+        return rflevel;
     }
 
     private void checkRFState() {
@@ -75,7 +84,15 @@ public class RFMonitorBlockTileEntity extends TileEntity {
                         ratio = 5;
                     }
                 }
-                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, ratio, 2);
+                rflevel = ratio;
+                System.out.println("ratio = " + ratio);
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            } else {
+                if (client_rf_level != rflevel) {
+                    System.out.println("Client: RFMonitorBlockTileEntity.checkRFState");
+                    client_rf_level = rflevel;
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                }
             }
         }
     }
@@ -87,6 +104,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public Packet getDescriptionPacket() {
+        System.out.println("RFMonitorBlockTileEntity.getDescriptionPacket");
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
         return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
@@ -94,6 +112,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        System.out.println("RFMonitorBlockTileEntity.onDataPacket");
         readFromNBT(packet.func_148857_g());
     }
 
@@ -105,10 +124,12 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = tagCompound.getInteger("monitorX");
         monitorY = tagCompound.getInteger("monitorY");
         monitorZ = tagCompound.getInteger("monitorZ");
-        System.out.println("readFromNBT: "+ this);
-        System.out.println("  monitorX = " + monitorX);
-        System.out.println("  monitorY = " + monitorY);
-        System.out.println("  monitorZ = " + monitorZ);
+        rflevel = tagCompound.getInteger("rflevel");
+        System.out.print("readFromNBT: "+ this);
+        System.out.print("  monitorX = " + monitorX);
+        System.out.print("  monitorY = " + monitorY);
+        System.out.print("  monitorZ = " + monitorZ);
+        System.out.println("  rflevel = " + rflevel);
     }
 
     @Override
@@ -117,10 +138,12 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         tagCompound.setInteger("monitorX", monitorX);
         tagCompound.setInteger("monitorY", monitorY);
         tagCompound.setInteger("monitorZ", monitorZ);
-        System.out.println("writeToNBT: " + this);
-        System.out.println("  monitorX = " + monitorX);
-        System.out.println("  monitorY = " + monitorY);
-        System.out.println("  monitorZ = " + monitorZ);
+        tagCompound.setInteger("rflevel", rflevel);
+        System.out.print("writeToNBT: " + this);
+        System.out.print("  monitorX = " + monitorX);
+        System.out.print("  monitorY = " + monitorY);
+        System.out.print("  monitorZ = " + monitorZ);
+        System.out.println("  rflevel = " + rflevel);
 
     }
 }
