@@ -55,11 +55,11 @@ public class Slider extends AbstractWidget<Slider> {
         if (horizontal) {
             int size = calculateKnobSize(divider, bounds.width);
             int first = calculateKnobOffset(divider, size, bounds.width);
-            Gui.drawRect(xx+2 + first, yy+2, xx+2 + first + size-1, yy+bounds.height-4, 0xff777777);
+            RenderHelper.drawBeveledBox(xx+2 + first, yy+2, xx+2 + first + size-1, yy+bounds.height-4, 0xffeeeeee, 0xff333333, 0xff666666);
         } else {
             int size = calculateKnobSize(divider, bounds.height);
             int first = calculateKnobOffset(divider, size, bounds.height);
-            Gui.drawRect(xx+2, yy+2 + first, xx+bounds.width-4, yy + 2 + first + size-1, 0xff777777);
+            RenderHelper.drawBeveledBox(xx+2, yy+2 + first, xx+bounds.width-4, yy + 2 + first + size-1, 0xffeeeeee, 0xff333333, 0xff666666);
         }
     }
 
