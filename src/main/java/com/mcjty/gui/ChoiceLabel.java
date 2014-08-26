@@ -36,7 +36,8 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        Gui.drawRect(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff555555);
+        RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width-1, yy+bounds.height-1, 0xffeeeeee, 0xff333333, 0xff666666);
+//        Gui.drawRect(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff555555);
 
         super.draw(x, y);
     }

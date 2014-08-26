@@ -2,6 +2,7 @@ package com.mcjty.gui;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -80,6 +81,7 @@ public class RenderHelper {
 
     /**
      * Draws a rectangle with a vertical gradient between the specified colors.
+     * x2 and y2 are not included.
      */
     public static void drawVerticalGradientRect(int x1, int y1, int x2, int y2, int color1, int color2) {
 //        this.zLevel = 300.0F;
@@ -115,6 +117,7 @@ public class RenderHelper {
 
     /**
      * Draws a rectangle with a horizontal gradient between the specified colors.
+     * x2 and y2 are not included.
      */
     public static void drawHorizontalGradientRect(int x1, int y1, int x2, int y2, int color1, int color2) {
 //        this.zLevel = 300.0F;
@@ -146,5 +149,18 @@ public class RenderHelper {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
+
+    /**
+     * Draw a beveled box. x2 and y2 are not included.
+     */
+    public static void drawBeveledBox(int x1, int y1, int x2, int y2, int topleftcolor, int botrightcolor, int fillcolor) {
+        if (fillcolor != -1) {
+            Gui.drawRect(x1+1, y1+1, x2-1, y2-1, fillcolor);
+        }
+        Gui.drawRect(x1, y1, x2-1, y1+1, topleftcolor);
+        Gui.drawRect(x1, y1, x1+1, y2-1, topleftcolor);
+        Gui.drawRect(x2-1, y1, x2, y2-1, botrightcolor);
+        Gui.drawRect(x1, y2-1, x2, y2, botrightcolor);
     }
 }
