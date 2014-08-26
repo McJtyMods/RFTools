@@ -3,11 +3,15 @@ package com.mcjty.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScrollableLabel extends Label<ScrollableLabel> implements Scrollable {
     private int realmin = 0;
     private int realmax = 100;
     private int first = 0;
     private String suffix = "";
+    private List<ValueEvent> valueEvents = null;
 
     public ScrollableLabel(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -43,7 +47,11 @@ public class ScrollableLabel extends Label<ScrollableLabel> implements Scrollabl
     }
 
     public ScrollableLabel setRealValue(int value) {
-        first = value - realmin;
+        int f = value - realmin;
+        if (f < 0) {
+            f = 0;
+        }
+        setFirstSelected(f);
         return this;
     }
 
@@ -81,5 +89,29 @@ public class ScrollableLabel extends Label<ScrollableLabel> implements Scrollabl
     public void setFirstSelected(int first) {
         this.first = first;
         setText(getRealValue() + suffix);
+        fireValueEvents(getRealValue());
     }
+
+    public ScrollableLabel addValueEvent(ValueEvent event) {
+        if (valueEvents == null) {
+            valueEvents = new ArrayList<ValueEvent>();
+        }
+        valueEvents.add(event);
+        return this;
+    }
+
+    public void removeValueEvent(ValueEvent event) {
+        if (valueEvents != null) {
+            valueEvents.remove(event);
+        }
+    }
+
+    private void fireValueEvents(int value) {
+        if (valueEvents != null) {
+            for (ValueEvent event : valueEvents) {
+                event.valueChanged(this, value);
+            }
+        }
+    }
+
 }

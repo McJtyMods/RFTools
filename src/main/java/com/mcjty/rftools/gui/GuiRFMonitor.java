@@ -13,25 +13,22 @@ import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRFMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C17PacketCustomPayload;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class GuiRFMonitor extends GuiScreen {
+    public static final String MODE_MORE = "More";
+    public static final String MODE_LESS = "Less";
     private RFMonitorBlock monitorBlock;
     private RFMonitorBlockTileEntity monitorBlockTileEntity;
 
     private Window window;
     private WidgetList list;
+    private ChoiceLabel alarmModeChoiceLabel;
+    private ScrollableLabel alarmLabel;
     private int listDirty;
 
     public static final int TEXT_COLOR = 0x19979f;
@@ -73,16 +70,45 @@ public class GuiRFMonitor extends GuiScreen {
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
 
-        ChoiceLabel choices = new ChoiceLabel(mc, this).addChoices("Less", "More").setDesiredWidth(60).setDesiredHeight(15).
+        alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(MODE_LESS, MODE_MORE).setDesiredWidth(60).setDesiredHeight(15).
                 setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
-                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER);
-        ScrollableLabel alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(10).setRealMaximum(30);
+                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeAlarmMode(MODE_MORE.equals(newChoice));
+                    }
+                });
+        if (monitorBlockTileEntity.isAlarmIfMore()) {
+            alarmModeChoiceLabel.setChoice(MODE_MORE);
+        }
+
+        alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
+                setRealValue(monitorBlockTileEntity.getAlarmLevel()).
+                addValueEvent(new ValueEvent() {
+                    @Override
+                    public void valueChanged(Widget parent, int newValue) {
+                        changeAlarmValue(newValue);
+                    }
+                });
         Slider alarmSlider = new Slider(mc, this).setDesiredHeight(15).setHorizontal().setScrollable(alarmLabel);
-        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(choices).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
+        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
+    }
+
+    private void changeAlarmMode(boolean mode) {
+        int alarmLevel = alarmLabel.getRealValue();
+        monitorBlockTileEntity.setAlarm(mode, alarmLevel);
+        sendChangeToServer(mode, alarmLevel);
+    }
+
+    private void changeAlarmValue(int newValue) {
+        boolean mode = MODE_MORE.equals(alarmModeChoiceLabel.getCurrentChoice());
+        monitorBlockTileEntity.setAlarm(mode, newValue);
+        sendChangeToServer(mode, newValue);
     }
 
     private void refreshList() {
@@ -101,6 +127,12 @@ public class GuiRFMonitor extends GuiScreen {
 
     private void sendChangeToServer(Coordinate c) {
         PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, c));
+    }
+
+    private void sendChangeToServer(boolean mode, int level) {
+        System.out.println("mode = " + mode);
+        System.out.println("level = " + level);
+        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, mode, level));
     }
 
     private void populateList() {

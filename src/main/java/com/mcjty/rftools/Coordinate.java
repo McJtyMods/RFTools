@@ -1,7 +1,7 @@
 package com.mcjty.rftools;
 
 public class Coordinate {
-    private int x, y, z;
+    private final int x, y, z;
 
     public static final Coordinate INVALID = new Coordinate(-1, -1, -1);
 

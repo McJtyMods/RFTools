@@ -13,13 +13,31 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class RFMonitorBlockTileEntity extends TileEntity {
+    // Data that is saved
     private int monitorX = -1;
     private int monitorY = -1;  // Invalid y coordinate so we know it is not initialized yet
     private int monitorZ = -1;
-
-    private int counter = 20;
     private int rflevel = 0;
+    private boolean alarmIfMore;        // If true we give redstone signal if the level goes above a certain value
+    private int alarmLevel;             // The level (in percentage) at which we give an alarm
+
+    // Temporary data
+    private int counter = 20;
     private int client_rf_level = -1;
+
+    public boolean isAlarmIfMore() {
+        return alarmIfMore;
+    }
+
+    public int getAlarmLevel() {
+        return alarmLevel;
+    }
+
+    public void setAlarm(boolean mode, int level) {
+        alarmIfMore = mode;
+        alarmLevel = level;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
     public int getMonitorX() {
         return monitorX;
@@ -50,6 +68,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = c.getX();
         monitorY = c.getY();
         monitorZ = c.getZ();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -101,8 +120,10 @@ public class RFMonitorBlockTileEntity extends TileEntity {
                 ratio = 5;
             }
         }
-        rflevel = ratio;
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        if (rflevel != ratio) {
+            rflevel = ratio;
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     @Override
@@ -132,6 +153,8 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorY = tagCompound.getInteger("monitorY");
         monitorZ = tagCompound.getInteger("monitorZ");
         rflevel = tagCompound.getInteger("rflevel");
+        alarmIfMore = tagCompound.getBoolean("alarmMode");
+        alarmLevel = tagCompound.getByte("alarmLevel");
         System.out.print("readFromNBT: "+ this);
         System.out.print("  monitorX = " + monitorX);
         System.out.print("  monitorY = " + monitorY);
@@ -146,6 +169,8 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         tagCompound.setInteger("monitorY", monitorY);
         tagCompound.setInteger("monitorZ", monitorZ);
         tagCompound.setInteger("rflevel", rflevel);
+        tagCompound.setBoolean("alarmMode", alarmIfMore);
+        tagCompound.setByte("alarmLevel", (byte) alarmLevel);
         System.out.print("writeToNBT: " + this);
         System.out.print("  monitorX = " + monitorX);
         System.out.print("  monitorY = " + monitorY);

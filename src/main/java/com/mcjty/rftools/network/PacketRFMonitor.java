@@ -14,16 +14,33 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
     private int x;
     private int y;
     private int z;
+
     private Coordinate monitor;
 
+    private int alarmLevel;
+    private boolean alarmMode;
+
     public PacketRFMonitor() {
+        monitor = new Coordinate(-1, -1, -1);
+        alarmLevel = -1;
+        alarmMode = false;
     }
 
     public PacketRFMonitor(int x, int y, int z, Coordinate monitor) {
+        this();
         this.x = x;
         this.y = y;
         this.z = z;
         this.monitor = monitor;
+    }
+
+    public PacketRFMonitor(int x, int y, int z, boolean alarmMode, int alarmLevel) {
+        this();
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.alarmLevel = alarmLevel;
+        this.alarmMode = alarmMode;
     }
 
     @Override
@@ -32,6 +49,8 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         y = buf.readInt();
         z = buf.readInt();
         monitor = new Coordinate(buf.readInt(), buf.readInt(), buf.readInt());
+        alarmLevel = buf.readInt();
+        alarmMode = buf.readBoolean();
     }
 
     @Override
@@ -42,6 +61,8 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         buf.writeInt(monitor.getX());
         buf.writeInt(monitor.getY());
         buf.writeInt(monitor.getZ());
+        buf.writeInt(alarmLevel);
+        buf.writeBoolean(alarmMode);
     }
 
     @Override
@@ -55,8 +76,12 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
             return null;
         }
         RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
-        monitorBlockTileEntity.setMonitor(message.monitor);
-        player.worldObj.markBlockForUpdate(x, y, z);
+        if (monitor.getY() != -1) {
+            monitorBlockTileEntity.setMonitor(message.monitor);
+        }
+        if (alarmLevel != -1) {
+            monitorBlockTileEntity.setAlarm(alarmMode, alarmLevel);
+        }
         return null;
     }
 }
