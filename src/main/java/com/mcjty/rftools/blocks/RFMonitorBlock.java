@@ -106,7 +106,7 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     }
 
 
-    synchronized public List<BlockInfo> getAdjacentBlocks() {
+    public synchronized List<BlockInfo> getAdjacentBlocks() {
         return adjacentBlocks;
     }
 

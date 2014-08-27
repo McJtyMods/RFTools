@@ -3,7 +3,7 @@ package com.mcjty.rftools;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import render.ModRenderers;
+import com.mcjty.rftools.render.ModRenderers;
 
 /**
  * Created by jorrit on 18/07/14.

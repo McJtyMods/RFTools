@@ -1,7 +1,9 @@
 package com.mcjty.rftools.network;
 
 import com.mcjty.rftools.Coordinate;
+import com.mcjty.rftools.blocks.RFMonitorBlock;
 import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.blocks.RFMonitorMode;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -18,12 +20,12 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
     private Coordinate monitor;
 
     private int alarmLevel;
-    private boolean alarmMode;
+    private RFMonitorMode alarmMode;
 
     public PacketRFMonitor() {
         monitor = new Coordinate(-1, -1, -1);
         alarmLevel = -1;
-        alarmMode = false;
+        alarmMode = RFMonitorMode.MODE_OFF;
     }
 
     public PacketRFMonitor(int x, int y, int z, Coordinate monitor) {
@@ -34,7 +36,7 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         this.monitor = monitor;
     }
 
-    public PacketRFMonitor(int x, int y, int z, boolean alarmMode, int alarmLevel) {
+    public PacketRFMonitor(int x, int y, int z, RFMonitorMode alarmMode, int alarmLevel) {
         this();
         this.x = x;
         this.y = y;
@@ -49,8 +51,8 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         y = buf.readInt();
         z = buf.readInt();
         monitor = new Coordinate(buf.readInt(), buf.readInt(), buf.readInt());
-        alarmLevel = buf.readInt();
-        alarmMode = buf.readBoolean();
+        alarmLevel = buf.readByte();
+        alarmMode = RFMonitorMode.getModeFromIndex(buf.readByte());
     }
 
     @Override
@@ -61,14 +63,13 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
         buf.writeInt(monitor.getX());
         buf.writeInt(monitor.getY());
         buf.writeInt(monitor.getZ());
-        buf.writeInt(alarmLevel);
-        buf.writeBoolean(alarmMode);
+        buf.writeByte(alarmLevel);
+        buf.writeByte(alarmMode.getIndex());
     }
 
     @Override
     public IMessage onMessage(PacketRFMonitor message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
-        System.out.println("    player.worldObj.isRemote = " + player.worldObj.isRemote);
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof RFMonitorBlockTileEntity)) {
             // @Todo better logging
@@ -76,11 +77,11 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
             return null;
         }
         RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
-        if (monitor.getY() != -1) {
+        if (message.monitor.getY() != -1) {
             monitorBlockTileEntity.setMonitor(message.monitor);
         }
-        if (alarmLevel != -1) {
-            monitorBlockTileEntity.setAlarm(alarmMode, alarmLevel);
+        if (message.alarmLevel != -1) {
+            monitorBlockTileEntity.setAlarm(message.alarmMode, message.alarmLevel);
         }
         return null;
     }
