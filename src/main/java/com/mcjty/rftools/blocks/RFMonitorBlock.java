@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     public static final int MASK_ORIENTATION = 0x7;
+    public static final int MASK_REDSTONE = 0x8;
 
     private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
 
@@ -126,12 +127,41 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         return l == 0 ? 2 : (l == 1 ? 5 : (l == 2 ? 3 : (l == 3 ? 4 : 0)));
     }
 
+    public static boolean getRedstoneSignal(int metadata) {
+        return (metadata & MASK_REDSTONE) != 0;
+    }
+
+    public static int setRedstoneSignal(int metadata, boolean signal) {
+        if (signal) {
+            return metadata | MASK_REDSTONE;
+        } else {
+            return metadata & ~MASK_REDSTONE;
+        }
+    }
+
     public static int getOrientation(int metadata) {
         return metadata & MASK_ORIENTATION;
     }
 
     public static int setOrientation(int metadata, int orientation) {
         return (metadata & ~MASK_ORIENTATION) | orientation;
+    }
+
+    @Override
+    public boolean canProvidePower() {
+        return true;
+    }
+
+    @Override
+    public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
+        int metadata = blockAccess.getBlockMetadata(x, y, z);
+        return getRedstoneSignal(metadata) ? 15 : 0;
+    }
+
+    @Override
+    public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
+        int metadata = blockAccess.getBlockMetadata(x, y, z);
+        return getRedstoneSignal(metadata) ? 15 : 0;
     }
 
     @Override

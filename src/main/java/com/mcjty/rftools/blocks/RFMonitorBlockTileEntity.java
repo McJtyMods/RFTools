@@ -18,12 +18,14 @@ public class RFMonitorBlockTileEntity extends TileEntity {
     private int monitorY = -1;  // Invalid y coordinate so we know it is not initialized yet
     private int monitorZ = -1;
     private int rflevel = 0;
-    private RFMonitorMode alarmMode;
-    private int alarmLevel;             // The level (in percentage) at which we give an alarm
+    private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
+    private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
+    private boolean inAlarm = false;        // If true we are in alarm right now
 
     // Temporary data
     private int counter = 20;
     private int client_rf_level = -1;
+    private int client_inAlarm = -1;
 
     public RFMonitorMode getAlarmMode() {
         return alarmMode;
@@ -61,6 +63,11 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorZ = -1;
         rflevel = 0;
         client_rf_level = -1;
+        client_inAlarm = -1;
+        inAlarm = false;
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -89,6 +96,14 @@ public class RFMonitorBlockTileEntity extends TileEntity {
             client_rf_level = rflevel;
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
+        if (client_inAlarm != (inAlarm ? 1 : 0)) {
+            System.out.println("com.mcjty.rftools.blocks.RFMonitorBlockTileEntity.checkRFStateClient");
+            client_inAlarm = (inAlarm ? 1 : 0);
+            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     private void checkRFStateServer() {
@@ -111,6 +126,8 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         IEnergyHandler handler = (IEnergyHandler) tileEntity;
         int maxEnergy = handler.getMaxEnergyStored(ForgeDirection.DOWN);
         int ratio = 0;  // Will be set as metadata;
+        boolean alarm = false;
+
         if (maxEnergy > 0) {
             int stored = handler.getEnergyStored(ForgeDirection.DOWN);
             ratio = 1 + (stored * 5) / maxEnergy;
@@ -119,9 +136,28 @@ public class RFMonitorBlockTileEntity extends TileEntity {
             } else if (ratio > 5) {
                 ratio = 5;
             }
+
+            switch (alarmMode) {
+                case MODE_OFF:
+                    alarm = false;
+                    break;
+                case MODE_LESS:
+                    alarm = ((stored * 100 / maxEnergy) < alarmLevel);
+                    break;
+                case MODE_MORE:
+                    alarm = ((stored * 100 / maxEnergy) > alarmLevel);
+                    break;
+            }
+
         }
-        if (rflevel != ratio) {
+        if (rflevel != ratio || alarm != inAlarm) {
             rflevel = ratio;
+            if (inAlarm != alarm) {
+                inAlarm = alarm;
+                int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+                worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
+            }
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }
@@ -154,9 +190,11 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         rflevel = tagCompound.getInteger("rflevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
+        inAlarm = tagCompound.getBoolean("inAlarm");
         System.out.print("@@@ readFromNBT: "+ this);
         System.out.print("  alarmMode = " + alarmMode);
         System.out.print("  alarmLevel = " + alarmLevel);
+        System.out.print("  inAlarm = " + inAlarm);
         System.out.print("  monitorX = " + monitorX);
         System.out.print("  monitorY = " + monitorY);
         System.out.print("  monitorZ = " + monitorZ);
@@ -172,9 +210,11 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         tagCompound.setInteger("rflevel", rflevel);
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
+        tagCompound.setBoolean("inAlarm", inAlarm);
         System.out.print("@@@ writeToNBT: " + this);
         System.out.print("  alarmMode = " + alarmMode);
         System.out.print("  alarmLevel = " + alarmLevel);
+        System.out.print("  inAlarm = " + inAlarm);
         System.out.print("  monitorX = " + monitorX);
         System.out.print("  monitorY = " + monitorY);
         System.out.print("  monitorZ = " + monitorZ);
