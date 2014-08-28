@@ -18,6 +18,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
 
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
+    private boolean filledRect = false;
 
     protected AbstractWidget(Minecraft mc, Gui gui) {
         this.mc = mc;
@@ -62,6 +63,11 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         return (P) this;
     }
 
+    /**
+     * Use this for a textured background.
+     * @param bg
+     * @return
+     */
     public P setBackground(ResourceLocation bg) {
         return setBackground(bg, null);
     }
@@ -69,6 +75,16 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     public P setBackground(ResourceLocation bg1, ResourceLocation bg2) {
         this.background1 = bg1;
         this.background2 = bg2;
+        return (P) this;
+    }
+
+    /**
+     * Use this instead of a textured background.
+     * @param flag
+     * @return
+     */
+    public P setFilledRect(boolean flag) {
+        filledRect = flag;
         return (P) this;
     }
 
@@ -88,7 +104,6 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         int xx = x + bounds.x;
         int yy = y + bounds.y;
         if (background1 != null) {
-
             mc.getTextureManager().bindTexture(background1);
             if (background2 == null) {
                 gui.drawTexturedModalRect(xx, yy, 0, 0, bounds.width, bounds.height);
@@ -97,6 +112,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
                 mc.getTextureManager().bindTexture(background2);
                 gui.drawTexturedModalRect(xx + 256, yy, 0, 0, bounds.width - 256, bounds.height);
             }
+        } else if (filledRect) {
+            RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width-1, yy + bounds.height-1, 0xff99aabb, 0xff334455, 0xff778899);
         }
     }
 

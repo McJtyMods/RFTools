@@ -1,6 +1,8 @@
 package com.mcjty.rftools.gui;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.CrafterBlockTileEntity;
+import com.mcjty.rftools.blocks.CrafterContainer;
 import com.mcjty.rftools.blocks.RFMonitorBlock;
 import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.items.NetworkMonitorItem;
@@ -18,6 +20,12 @@ public class GuiProxy implements IGuiHandler {
         System.out.println("#### com.mcjty.rftools.gui.GuiProxy.getServerGuiElement");
         if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_RF_MONITOR) {
             return null;
+        } else if (guiid == RFTools.GUI_CRAFTER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof CrafterBlockTileEntity) {
+                CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
+                return new CrafterContainer(entityPlayer, crafterBlockTileEntity, 0, 0);
+            }
         }
         return null;
     }
@@ -40,6 +48,13 @@ public class GuiProxy implements IGuiHandler {
                 RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
                 RFMonitorBlock monitorBlock = (RFMonitorBlock) block;
                 return new GuiRFMonitor(monitorBlock, monitorBlockTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_CRAFTER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof CrafterBlockTileEntity) {
+                CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
+                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity, 184, 184);
+                return new GuiCrafter(testContainer);
             }
         }
         return null;

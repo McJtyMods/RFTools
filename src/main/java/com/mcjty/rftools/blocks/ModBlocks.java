@@ -13,15 +13,15 @@ public final class ModBlocks {
         monitorBlock = new RFMonitorBlock(Material.iron);
         monitorBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(monitorBlock, "rfMonitorBlock");
+        GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
 
         crafterBlock = new CrafterBlock(Material.iron);
         crafterBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(crafterBlock, "crafterBlock");
+        GameRegistry.registerTileEntity(CrafterBlockTileEntity.class, "CrafterTileEntity");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(machineFrame, "machineFrame");
-
-        GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
     }
 }
