@@ -3,6 +3,7 @@ package com.mcjty.rftools.crafting;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,5 +21,7 @@ public final class ModCrafting {
 
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), new Object[]{" T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone});
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock), new Object[]{" T ", "cMc", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Blocks.crafting_table});
     }
 }

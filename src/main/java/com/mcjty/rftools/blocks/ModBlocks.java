@@ -6,12 +6,17 @@ import net.minecraft.creativetab.CreativeTabs;
 
 public final class ModBlocks {
     public static RFMonitorBlock monitorBlock;
+    public static CrafterBlock crafterBlock;
     public static MachineFrame machineFrame;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
         monitorBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(monitorBlock, "rfMonitorBlock");
+
+        crafterBlock = new CrafterBlock(Material.iron);
+        crafterBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(crafterBlock, "crafterBlock");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);
