@@ -24,9 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
-    public static final int MASK_ORIENTATION = 0x7;
-    public static final int MASK_REDSTONE = 0x8;
-
     private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
 
     private IIcon iconFront;
@@ -66,9 +63,9 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        int l = determineOrientation(world, x, y, z, entityLivingBase);
+        int l = BlockTools.determineOrientation(world, x, y, z, entityLivingBase);
         int meta = world.getBlockMetadata(x, y, z);
-        world.setBlockMetadataWithNotify(x, y, z, setOrientation(meta, l), 2);
+        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, l), 2);
     }
 
     @Override
@@ -111,42 +108,6 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         return adjacentBlocks;
     }
 
-    public static int determineOrientation(World world, int x, int y, int z, EntityLivingBase entityLivingBase) {
-        if (MathHelper.abs((float) entityLivingBase.posX - x) < 2.0F && MathHelper.abs((float)entityLivingBase.posZ - z) < 2.0F) {
-            double d0 = entityLivingBase.posY + 1.82D - entityLivingBase.yOffset;
-
-            if (d0 - y > 2.0D) {
-                return 1;
-            }
-
-            if (y - d0 > 0.0D) {
-                return 0;
-            }
-        }
-        int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        return l == 0 ? 2 : (l == 1 ? 5 : (l == 2 ? 3 : (l == 3 ? 4 : 0)));
-    }
-
-    public static boolean getRedstoneSignal(int metadata) {
-        return (metadata & MASK_REDSTONE) != 0;
-    }
-
-    public static int setRedstoneSignal(int metadata, boolean signal) {
-        if (signal) {
-            return metadata | MASK_REDSTONE;
-        } else {
-            return metadata & ~MASK_REDSTONE;
-        }
-    }
-
-    public static int getOrientation(int metadata) {
-        return metadata & MASK_ORIENTATION;
-    }
-
-    public static int setOrientation(int metadata, int orientation) {
-        return (metadata & ~MASK_ORIENTATION) | orientation;
-    }
-
     @Override
     public boolean canProvidePower() {
         return true;
@@ -155,20 +116,20 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     @Override
     public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int metadata = blockAccess.getBlockMetadata(x, y, z);
-        return getRedstoneSignal(metadata) ? 15 : 0;
+        return BlockTools.getRedstoneSignal(metadata) ? 15 : 0;
     }
 
     @Override
     public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int metadata = blockAccess.getBlockMetadata(x, y, z);
-        return getRedstoneSignal(metadata) ? 15 : 0;
+        return BlockTools.getRedstoneSignal(metadata) ? 15 : 0;
     }
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         TileEntity tileEntity = blockAccess.getTileEntity(x, y, z);
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        int k = getOrientation(meta);
+        int k = BlockTools.getOrientation(meta);
         if (side == k) {
             RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
             int rflevel = monitorBlockTileEntity.getRflevel();
@@ -188,8 +149,8 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        int k = getOrientation(meta);
-        if (side == k) {
+//        int k = getOrientation(meta);
+        if (side == 3) {
             return iconFront;
         } else {
             return iconSide;

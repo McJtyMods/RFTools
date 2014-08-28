@@ -66,7 +66,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         client_inAlarm = -1;
         inAlarm = false;
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -100,7 +100,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
             System.out.println("com.mcjty.rftools.blocks.RFMonitorBlockTileEntity.checkRFStateClient");
             client_inAlarm = (inAlarm ? 1 : 0);
             int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
             worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
@@ -155,7 +155,7 @@ public class RFMonitorBlockTileEntity extends TileEntity {
             if (inAlarm != alarm) {
                 inAlarm = alarm;
                 int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, RFMonitorBlock.setRedstoneSignal(meta, inAlarm), 2);
+                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
                 worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
             }
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
