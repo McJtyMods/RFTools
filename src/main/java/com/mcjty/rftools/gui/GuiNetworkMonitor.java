@@ -10,11 +10,13 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.NetworkMonitorItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
@@ -102,6 +104,7 @@ public class GuiNetworkMonitor extends GuiScreen {
             String displayName = blockInfo.getReadableName(mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));

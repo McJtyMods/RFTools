@@ -8,13 +8,14 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class RenderHelper {
     public static boolean renderObject(Minecraft mc, int x, int y, Object itm, boolean highlight) {
         RenderItem itemRender = new RenderItem();
-        return renderObject(mc, itemRender, x, y, itm, highlight, 150);
+        return renderObject(mc, itemRender, x, y, itm, highlight, 200);
     }
 
     public static boolean renderObject(Minecraft mc, RenderItem itemRender, int x, int y, Object itm, boolean highlight, float lvl) {
@@ -32,7 +33,15 @@ public class RenderHelper {
         if (itm instanceof ItemStack) {
             return renderItemStackWithCount(mc, itemRender, (ItemStack) itm, x, y, highlight);
         }
-        return renderItemStack(mc, itemRender, null,x,y,"",highlight);
+        if (itm instanceof IIcon) {
+            return renderIcon(mc, itemRender, (IIcon) itm, x, y, highlight);
+        }
+        return renderItemStack(mc, itemRender, null, x, y, "", highlight);
+    }
+
+    public static boolean renderIcon(Minecraft mc, RenderItem itemRender, IIcon itm, int xo, int yo, boolean highlight) {
+        itemRender.renderIcon(xo, yo, itm, 16, 16);
+        return true;
     }
 
     public static boolean renderItemStackWithCount(Minecraft mc, RenderItem itemRender, ItemStack itm, int xo, int yo, boolean highlight) {
@@ -58,9 +67,13 @@ public class RenderHelper {
         }
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-        GL11.glColor3f(1F, 1F, 1F);
+        GL11.glColor4f(1F, 1F, 1F, 1F);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_LIGHTING);
+        short short1 = 240;
+        short short2 = 240;
+        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) short1 / 1.0F, (float) short2 / 1.0F);
         itemRender.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), itm, x, y);
         itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itm, x, y, txt);
         GL11.glPopMatrix();
