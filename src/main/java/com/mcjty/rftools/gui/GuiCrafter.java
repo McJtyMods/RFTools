@@ -1,7 +1,6 @@
 package com.mcjty.rftools.gui;
 
 import com.mcjty.gui.Panel;
-import com.mcjty.gui.VerticalLayout;
 import com.mcjty.gui.Widget;
 import com.mcjty.gui.Window;
 import com.mcjty.rftools.RFTools;
@@ -26,7 +25,7 @@ public class GuiCrafter extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        Widget toplevel = new Panel(mc, this).setFilledRect(true);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
     }
