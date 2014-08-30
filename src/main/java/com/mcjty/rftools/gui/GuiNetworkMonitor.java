@@ -31,9 +31,6 @@ public class GuiNetworkMonitor extends GuiScreen {
     /** The Y size of the window in pixels. */
     protected int ySize = 180;
 
-//    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack.png");
-    private static final ResourceLocation iconLocationLeft = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack_left.png");
-    private static final ResourceLocation iconLocationRight = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack_right.png");
     public static final int TEXT_COLOR = 0x19979f;
     public static final int SEL_TEXT_COLOR = 0x092020;
 
@@ -62,7 +59,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         list = new WidgetList(mc, this).setRowheight(16);
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocationLeft, iconLocationRight).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);

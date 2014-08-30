@@ -113,7 +113,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
                 gui.drawTexturedModalRect(xx + 256, yy, 0, 0, bounds.width - 256, bounds.height);
             }
         } else if (filledRectThickness > 0) {
-            RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width-1, yy + bounds.height-1, filledRectThickness, 0xff99aabb, 0xff334455, 0xff778899);
+            RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width-1, yy + bounds.height-1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
         }
     }
 

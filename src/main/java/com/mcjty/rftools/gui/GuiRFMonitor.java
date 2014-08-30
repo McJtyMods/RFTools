@@ -35,8 +35,6 @@ public class GuiRFMonitor extends GuiScreen {
     // A copy of the adjacent blocks we're currently showing
     private List<BlockInfo> adjacentBlocks;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/networkMonitorBack.png");
-
     /** The X size of the window in pixels. */
     private int xSize = 256;
     /** The Y size of the window in pixels. */
@@ -93,7 +91,7 @@ public class GuiRFMonitor extends GuiScreen {
         Slider alarmSlider = new Slider(mc, this).setDesiredHeight(15).setHorizontal().setScrollable(alarmLabel);
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
     }
