@@ -13,9 +13,6 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class GuiCrafter extends GuiContainer {
-    private float xSize_lo;
-    private float ySize_lo;
-
     public static final int CRAFTER_WIDTH = 256;
     public static final int CRAFTER_HEIGHT = 184;
 
@@ -46,25 +43,17 @@ public class GuiCrafter extends GuiContainer {
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         super.drawScreen(par1, par2, par3);
-        this.xSize_lo = par1;
-        this.ySize_lo = par2;
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int i2) {
         String s = this.inventory.hasCustomInventoryName() ? this.inventory.getInventoryName() : inventory.getInventoryName();
-        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 0, 4210752);
-        this.fontRendererObj.drawString("container.inventory", 26, this.ySize - 96 + 4, 4210752);
+        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 5, 4210752);
+//        this.fontRendererObj.drawString("container.inventory", 26, this.ySize - 96 + 4, 4210752);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-//        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-//        this.mc.getTextureManager().bindTexture(iconLocation);
-//        int k = (this.width - this.xSize) / 2;
-//        int l = (this.height - this.ySize) / 2;
-//        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-//        GuiHelper.drawPlayerModel(k + 51, l + 75, 30, (k + 51) - this.xSize_lo, (l + 75 - 50) - this.ySize_lo, this.mc.thePlayer);
         window.draw();
     }
 }

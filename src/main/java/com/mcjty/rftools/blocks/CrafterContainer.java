@@ -16,21 +16,35 @@ public class CrafterContainer extends Container {
     }
 
     private void layoutContainer(int xSize, int ySize) {
-        addSlotToContainer(new Slot(inventory, 0, 12, 8));
+        layoutCraftingGrid();
+        layoutPlayerInventory();
+    }
 
+    private void layoutCraftingGrid() {
+        int leftCol = 170;
+        int topRow = 16;
+        for (int py = 0 ; py < 3 ; py++) {
+            for (int px = 0 ; px < 3 ; px++) {
+                addSlotToContainer(new Slot(inventory, px + py * 3, leftCol + px * 18, topRow + py * 18));
+            }
+        }
+
+        addSlotToContainer(new Slot(inventory, 9, 229, 34));
+    }
+
+    private void layoutPlayerInventory() {
         // Player inventory
         int leftCol = 85;
         int topRow = 100;
-//        int leftCol = (xSize - 162) / 2 + 1;
         for (int py = 0 ; py < 3 ; py++) {
             for (int px = 0 ; px < 9 ; px++) {
-                addSlotToContainer(new Slot(player.inventory, px + py * 9 + 9, leftCol + px * 18, topRow + py * 18));//ySize - (4-py) * 18 - 10));
+                addSlotToContainer(new Slot(player.inventory, px + py * 9 + 9, leftCol + px * 18, topRow + py * 18));
             }
         }
 
         // Hotbar
         for (int hx = 0 ; hx < 9 ; hx++) {
-            addSlotToContainer(new Slot(player.inventory, hx, leftCol + hx * 18, topRow + 3 * 18 + 5));//ySize - 24));
+            addSlotToContainer(new Slot(player.inventory, hx, leftCol + hx * 18, topRow + 3 * 18 + 5));
         }
     }
 

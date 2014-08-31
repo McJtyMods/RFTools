@@ -9,34 +9,32 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
 public class CrafterBlockTileEntity extends TileEntity implements IInventory {
-    public ItemStack singlestack;
+    public ItemStack stacks[] = new ItemStack[10];
 
-    public CrafterBlockTileEntity() {
-        singlestack = null;
-    }
+    public CrafterBlockTileEntity() { }
 
     @Override
     public int getSizeInventory() {
-        return 1;
+        return 10;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return singlestack;
+        return stacks[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (singlestack != null) {
-            if (singlestack.stackSize <= amount) {
-                ItemStack old = singlestack;
-                singlestack = null;
+        if (stacks != null) {
+            if (stacks[index].stackSize <= amount) {
+                ItemStack old = stacks[index];
+                stacks = null;
                 markDirty();
                 return old;
             }
-            ItemStack its = singlestack.splitStack(amount);
-            if (singlestack.stackSize == 0) {
-                singlestack = null;
+            ItemStack its = stacks[index].splitStack(amount);
+            if (stacks[index].stackSize == 0) {
+                stacks = null;
             }
             markDirty();
             return its;
@@ -46,14 +44,14 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
 
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
-        ItemStack old = singlestack;
+        ItemStack old = stacks[index];
         setInventorySlotContents(index, null);
         return old;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack itemStack) {
-        singlestack = itemStack;
+        stacks[index] = itemStack;
         if (itemStack != null && itemStack.stackSize > getInventoryStackLimit()) {
             itemStack.stackSize = getInventoryStackLimit();
         }
@@ -98,24 +96,24 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        singlestack = null;
-        if (nbtTagList.tagCount() > 0) {
-            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(0);
-            singlestack = ItemStack.loadItemStackFromNBT(nbtTagCompound);
-        }
+//        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+//        stacks = null;
+//        if (nbtTagList.tagCount() > 0) {
+//            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(0);
+//            stacks = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+//        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        NBTTagList nbtTagList = new NBTTagList();
-        if (singlestack != null) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            singlestack.writeToNBT(nbtTagCompound);
-            nbtTagList.appendTag(nbtTagCompound);
-        }
-        tagCompound.setTag("Items", nbtTagList);
+//        NBTTagList nbtTagList = new NBTTagList();
+//        if (stacks != null) {
+//            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+//            stacks.writeToNBT(nbtTagCompound);
+//            nbtTagList.appendTag(nbtTagCompound);
+//        }
+//        tagCompound.setTag("Items", nbtTagList);
     }
 
 }
