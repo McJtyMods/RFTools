@@ -16,22 +16,27 @@ public class GuiCrafter extends GuiContainer {
     private float xSize_lo;
     private float ySize_lo;
 
+    public static final int CRAFTER_WIDTH = 256;
+    public static final int CRAFTER_HEIGHT = 184;
+
     private Window window;
 
     private final IInventory inventory;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/inventoryitem.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
 
     @Override
     public void initGui() {
         super.initGui();
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2);
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation);//setFilledRectThickness(2);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
     }
 
     public GuiCrafter(CrafterContainer container) {
         super(container);
+        xSize = CRAFTER_WIDTH;
+        ySize = CRAFTER_HEIGHT;
         inventory = container.getContainerInventory();
     }
 
@@ -43,7 +48,6 @@ public class GuiCrafter extends GuiContainer {
         super.drawScreen(par1, par2, par3);
         this.xSize_lo = par1;
         this.ySize_lo = par2;
-        window.draw();
     }
 
     @Override
@@ -55,11 +59,12 @@ public class GuiCrafter extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(iconLocation);
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+//        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//        this.mc.getTextureManager().bindTexture(iconLocation);
+//        int k = (this.width - this.xSize) / 2;
+//        int l = (this.height - this.ySize) / 2;
+//        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 //        GuiHelper.drawPlayerModel(k + 51, l + 75, 30, (k + 51) - this.xSize_lo, (l + 75 - 50) - this.ySize_lo, this.mc.thePlayer);
+        window.draw();
     }
 }
