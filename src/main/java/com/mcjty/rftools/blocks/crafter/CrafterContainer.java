@@ -25,11 +25,11 @@ public class CrafterContainer extends Container {
         int topRow = 16;
         for (int py = 0 ; py < 3 ; py++) {
             for (int px = 0 ; px < 3 ; px++) {
-                addSlotToContainer(new Slot(inventory, px + py * 3, leftCol + px * 18, topRow + py * 18));
+                addSlotToContainer(new GhostSlot(inventory, px + py * 3, leftCol + px * 18, topRow + py * 18));
             }
         }
 
-        addSlotToContainer(new Slot(inventory, 9, 229, 34));
+        addSlotToContainer(new GhostSlot(inventory, 9, 229, 34));
     }
 
     private void layoutPlayerInventory() {

@@ -9,13 +9,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
 public class CrafterBlockTileEntity extends TileEntity implements IInventory {
-    public ItemStack stacks[] = new ItemStack[10];
+    private ItemStack stacks[] = new ItemStack[10];
 
     public CrafterBlockTileEntity() { }
 
     @Override
     public int getSizeInventory() {
-        return 10;
+        return stacks.length;
     }
 
     @Override
@@ -25,38 +25,30 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (stacks != null) {
-            if (stacks[index].stackSize <= amount) {
-                ItemStack old = stacks[index];
-                stacks = null;
-                markDirty();
-                return null;        // Crafting grid
-            }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks = null;
-            }
-            markDirty();
-            return null; // Crafting grid;
+        ItemStack old = stacks[index];
+        stacks[index] = null;
+        if (old == null) {
+            return null;
         }
-        return null;
+        old.stackSize = 0;
+        return old;
     }
 
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
-        ItemStack old = stacks[index];
-        setInventorySlotContents(index, null);
-        return null;        // Return null because this is a crafting grid so we don't keep stuff.
+        return null;
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack itemStack) {
-        itemStack = ItemStack.copyItemStack(itemStack);     // Make a copy because this is a crafting grid.
-        stacks[index] = itemStack;
-        if (itemStack != null && itemStack.stackSize > getInventoryStackLimit()) {
-            itemStack.stackSize = getInventoryStackLimit();
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (stack != null) {
+            stacks[index] = stack.copy();
+            if (index < 9) {
+                stacks[index].stackSize = 0;
+            }
+        } else {
+            stacks[index] = null;
         }
-        markDirty();
     }
 
     @Override
@@ -66,16 +58,16 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
 
     @Override
     public boolean hasCustomInventoryName() {
-        return true;
+        return false;
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return 64;
+        return 0;
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+    public boolean isUseableByPlayer(EntityPlayer player) {
         return true;
     }
 
