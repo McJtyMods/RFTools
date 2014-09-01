@@ -30,14 +30,14 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
                 ItemStack old = stacks[index];
                 stacks = null;
                 markDirty();
-                return old;
+                return null;        // Crafting grid
             }
             ItemStack its = stacks[index].splitStack(amount);
             if (stacks[index].stackSize == 0) {
                 stacks = null;
             }
             markDirty();
-            return its;
+            return null; // Crafting grid;
         }
         return null;
     }
@@ -46,11 +46,12 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
     public ItemStack getStackInSlotOnClosing(int index) {
         ItemStack old = stacks[index];
         setInventorySlotContents(index, null);
-        return old;
+        return null;        // Return null because this is a crafting grid so we don't keep stuff.
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack itemStack) {
+        itemStack = ItemStack.copyItemStack(itemStack);     // Make a copy because this is a crafting grid.
         stacks[index] = itemStack;
         if (itemStack != null && itemStack.stackSize > getInventoryStackLimit()) {
             itemStack.stackSize = getInventoryStackLimit();
