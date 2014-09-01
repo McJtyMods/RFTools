@@ -1,11 +1,14 @@
 package com.mcjty.rftools.gui;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.CrafterBlockTileEntity;
-import com.mcjty.rftools.blocks.CrafterContainer;
-import com.mcjty.rftools.blocks.RFMonitorBlock;
-import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
-import com.mcjty.rftools.items.NetworkMonitorItem;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity;
+import com.mcjty.rftools.blocks.crafter.CrafterContainer;
+import com.mcjty.rftools.blocks.monitor.GuiRFMonitor;
+import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
+import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.blocks.crafter.GuiCrafter;
+import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
+import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

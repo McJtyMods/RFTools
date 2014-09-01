@@ -1,9 +1,10 @@
-package com.mcjty.rftools.blocks;
+package com.mcjty.rftools.blocks.monitor;
 
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -13,14 +14,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RFMonitorBlock extends Block implements ITileEntityProvider {
 

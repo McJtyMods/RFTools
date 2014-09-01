@@ -1,5 +1,9 @@
 package com.mcjty.rftools.blocks;
 
+import com.mcjty.rftools.blocks.crafter.CrafterBlock;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity;
+import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
+import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;

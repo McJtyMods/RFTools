@@ -1,10 +1,10 @@
-package com.mcjty.rftools.gui;
+package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.gui.Panel;
 import com.mcjty.gui.Widget;
 import com.mcjty.gui.Window;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.CrafterContainer;
+import com.mcjty.rftools.blocks.crafter.CrafterContainer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;

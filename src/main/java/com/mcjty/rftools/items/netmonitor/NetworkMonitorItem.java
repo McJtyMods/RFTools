@@ -1,4 +1,4 @@
-package com.mcjty.rftools.items;
+package com.mcjty.rftools.items.netmonitor;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;

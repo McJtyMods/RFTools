@@ -1,13 +1,11 @@
-package com.mcjty.rftools.network;
+package com.mcjty.rftools.items.netmonitor;
 
 import com.mcjty.rftools.Coordinate;
-import com.mcjty.rftools.blocks.RFMonitorBlock;
-import com.mcjty.rftools.blocks.RFMonitorBlockTileEntity;
-import com.mcjty.rftools.blocks.RFMonitorMode;
+import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.blocks.monitor.RFMonitorMode;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

@@ -1,4 +1,4 @@
-package com.mcjty.rftools.gui;
+package com.mcjty.rftools.items.netmonitor;
 
 import com.mcjty.gui.*;
 import com.mcjty.gui.Label;
@@ -6,14 +6,9 @@ import com.mcjty.gui.Panel;
 import com.mcjty.gui.Window;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
-import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.items.NetworkMonitorItem;
+import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.util.*;

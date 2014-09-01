@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks;
+package com.mcjty.rftools.blocks.monitor;
 
 public enum RFMonitorMode {
     MODE_OFF (0, "Off"),

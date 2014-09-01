@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 

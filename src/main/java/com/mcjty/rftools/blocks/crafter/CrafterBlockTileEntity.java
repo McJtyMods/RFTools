@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks;
+package com.mcjty.rftools.blocks.crafter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

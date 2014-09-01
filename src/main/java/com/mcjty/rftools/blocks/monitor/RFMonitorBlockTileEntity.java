@@ -1,11 +1,10 @@
-package com.mcjty.rftools.blocks;
+package com.mcjty.rftools.blocks.monitor;
 
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.Coordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;

@@ -1,6 +1,7 @@
-package com.mcjty.rftools.blocks;
+package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
