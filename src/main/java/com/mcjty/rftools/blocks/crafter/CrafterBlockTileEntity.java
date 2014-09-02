@@ -17,6 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class CrafterBlockTileEntity extends TileEntity implements IInventory, IEnergyHandler {
     private ItemStack stacks[] = new ItemStack[10];
 
+    public int value = 0;
+
     public static final int MAXENERGY = 32000;
 
     protected EnergyStorage storage = new EnergyStorage(MAXENERGY);

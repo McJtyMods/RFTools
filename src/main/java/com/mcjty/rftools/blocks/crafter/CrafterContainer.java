@@ -2,14 +2,15 @@ package com.mcjty.rftools.blocks.crafter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 public class CrafterContainer extends Container {
-    private IInventory inventory;
+    private CrafterBlockTileEntity inventory;
     private EntityPlayer player;
 
-    public CrafterContainer(EntityPlayer player, IInventory containerInventory, int xSize, int ySize) {
+    public CrafterContainer(EntityPlayer player, CrafterBlockTileEntity containerInventory, int xSize, int ySize) {
         inventory = containerInventory;
         this.player = player;
         layoutContainer(xSize, ySize);
@@ -59,8 +60,22 @@ public class CrafterContainer extends Container {
 
     @Override
     public void detectAndSendChanges() {
+        System.out.println("com.mcjty.rftools.blocks.crafter.CrafterContainer.detectAndSendChanges");
         super.detectAndSendChanges();
-        super.updateProgressBar(0, 0);
+        inventory.value++;
+        System.out.println("inventory.value = " + inventory.value);
+        for (Object crafter : this.crafters) {
+            ICrafting icrafting = (ICrafting) crafter;
+            icrafting.sendProgressBarUpdate(this, 0, 0);
+            inventory.value++;
+        }
+    }
+
+    @Override
+    public void addCraftingToCrafters(ICrafting crafting) {
+        System.out.println("com.mcjty.rftools.blocks.crafter.CrafterContainer.addCraftingToCrafters");
+        super.addCraftingToCrafters(crafting);
+        crafting.sendProgressBarUpdate(this, 0, 0);
     }
 
     //    @Override

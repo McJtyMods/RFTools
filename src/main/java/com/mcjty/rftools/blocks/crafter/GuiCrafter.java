@@ -60,5 +60,6 @@ public class GuiCrafter extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
+        System.out.println("crafterBlockTileEntity.value = " + crafterBlockTileEntity.value);
     }
 }
