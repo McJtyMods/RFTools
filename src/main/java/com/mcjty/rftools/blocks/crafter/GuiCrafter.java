@@ -1,7 +1,7 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.gui.*;
 import com.mcjty.gui.Panel;
-import com.mcjty.gui.Widget;
 import com.mcjty.gui.Window;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.crafter.CrafterContainer;
@@ -18,6 +18,7 @@ public class GuiCrafter extends GuiContainer {
 
     private Window window;
 
+    private final CrafterBlockTileEntity crafterBlockTileEntity;
     private final IInventory inventory;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
@@ -25,13 +26,17 @@ public class GuiCrafter extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation);//setFilledRectThickness(2);
+
+        EnergyBar energyBar = new EnergyBar(mc, this).setVertical().setHandler(crafterBlockTileEntity).setLayoutHint(new PositionalLayout.PositionalHint(20, 80, 16, 40));
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+
         window = new Window(this, toplevel);
     }
 
-    public GuiCrafter(CrafterContainer container) {
+    public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
         super(container);
+        this.crafterBlockTileEntity = crafterBlockTileEntity;
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
         inventory = container.getContainerInventory();

@@ -90,4 +90,14 @@ public interface Widget<P extends Widget> {
      * @param y
      */
     void mouseMove(int x, int y);
+
+    /**
+     * Some layout managers need a layout hint.
+     *
+     * @param hint
+     * @return this widget
+     */
+    P setLayoutHint(LayoutHint hint);
+
+    LayoutHint getLayoutHint();
 }

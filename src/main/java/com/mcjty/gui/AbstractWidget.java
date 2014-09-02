@@ -13,6 +13,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     private int desiredHeight = SIZE_UNKNOWN;
     protected Minecraft mc;
     protected Gui gui;
+    private LayoutHint layoutHint = null;
 
     private boolean layoutDirty = true;
 
@@ -150,4 +151,15 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         return layoutDirty;
     }
 
+    @Override
+    public P setLayoutHint(LayoutHint hint) {
+        layoutHint = hint;
+        layoutDirty = true;
+        return (P) this;
+    }
+
+    @Override
+    public LayoutHint getLayoutHint() {
+        return layoutHint;
+    }
 }

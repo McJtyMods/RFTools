@@ -57,7 +57,13 @@ public class CrafterContainer extends Container {
         return inventory.isUseableByPlayer(entityPlayer);
     }
 
-//    @Override
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        super.updateProgressBar(0, 0);
+    }
+
+    //    @Override
 //    public ItemStack transferStackInSlot(EntityPlayer player, int i) {
 //        ItemStack itemStack = null;
 //        Slot slot = (Slot) inventorySlots.get(i);

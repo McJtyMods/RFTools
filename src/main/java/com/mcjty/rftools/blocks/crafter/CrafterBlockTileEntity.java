@@ -1,15 +1,25 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class CrafterBlockTileEntity extends TileEntity implements IInventory {
+public class CrafterBlockTileEntity extends TileEntity implements IInventory, IEnergyHandler {
     private ItemStack stacks[] = new ItemStack[10];
+
+    public static final int MAXENERGY = 32000;
+
+    protected EnergyStorage storage = new EnergyStorage(MAXENERGY);
 
     public CrafterBlockTileEntity() { }
 
@@ -87,8 +97,23 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
     }
 
     @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound nbtTag = new NBTTagCompound();
+        this.writeToNBT(nbtTag);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        readFromNBT(packet.func_148857_g());
+    }
+
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        storage.readFromNBT(tagCompound);
+
 //        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
 //        stacks = null;
 //        if (nbtTagList.tagCount() > 0) {
@@ -100,6 +125,7 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        storage.writeToNBT(tagCompound);
 //        NBTTagList nbtTagList = new NBTTagList();
 //        if (stacks != null) {
 //            NBTTagCompound nbtTagCompound = new NBTTagCompound();
@@ -109,4 +135,28 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory {
 //        tagCompound.setTag("Items", nbtTagList);
     }
 
+    @Override
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+        return storage.receiveEnergy(maxReceive, simulate);
+    }
+
+    @Override
+    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+        return storage.extractEnergy(maxExtract, simulate);
+    }
+
+    @Override
+    public int getEnergyStored(ForgeDirection from) {
+        return storage.getEnergyStored();
+    }
+
+    @Override
+    public int getMaxEnergyStored(ForgeDirection from) {
+        return storage.getMaxEnergyStored();
+    }
+
+    @Override
+    public boolean canConnectEnergy(ForgeDirection from) {
+        return true;
+    }
 }
