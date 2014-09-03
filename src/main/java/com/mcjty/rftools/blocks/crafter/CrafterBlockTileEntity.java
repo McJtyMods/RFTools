@@ -4,6 +4,7 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class CrafterBlockTileEntity extends TileEntity implements IInventory, IEnergyHandler {
+public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
     private ItemStack stacks[] = new ItemStack[10];
 
     public int value = 0;
@@ -96,6 +97,21 @@ public class CrafterBlockTileEntity extends TileEntity implements IInventory, IE
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int side) {
+        return new int[0];
+    }
+
+    @Override
+    public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_) {
+        return false;
+    }
+
+    @Override
+    public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_) {
+        return false;
     }
 
     @Override
