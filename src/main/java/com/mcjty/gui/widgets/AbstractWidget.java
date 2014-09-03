@@ -1,5 +1,7 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.layout.LayoutHint;
+import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -114,7 +116,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
                 gui.drawTexturedModalRect(xx + 256, yy, 0, 0, bounds.width - 256, bounds.height);
             }
         } else if (filledRectThickness > 0) {
-            RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width-1, yy + bounds.height-1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
+            RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
         }
     }
 

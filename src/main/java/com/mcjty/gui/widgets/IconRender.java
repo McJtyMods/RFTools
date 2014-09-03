@@ -1,5 +1,6 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.IIcon;

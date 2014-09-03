@@ -1,5 +1,8 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Scrollable;
+import com.mcjty.gui.events.SelectionEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -48,7 +51,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             Widget child = children.get(i);
             child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rowheight));
             if (i == selected) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy+top, xx+bounds.width, yy+top+rowheight, 0xff666666, 0xff444444);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff666666, 0xff444444);
             }
             child.draw(xx, yy);
             top += rowheight;

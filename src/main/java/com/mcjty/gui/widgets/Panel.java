@@ -1,10 +1,9 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.layout.HorizontalLayout;
+import com.mcjty.gui.layout.Layout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 public class Panel extends AbstractContainerWidget<Panel> {
 

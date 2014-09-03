@@ -1,6 +1,6 @@
 package com.mcjty.gui;
 
-import net.minecraft.client.gui.Gui;
+import com.mcjty.gui.widgets.Widget;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 

@@ -1,5 +1,7 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Scrollable;
+import com.mcjty.gui.events.ValueEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 

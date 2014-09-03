@@ -1,9 +1,16 @@
 package com.mcjty.rftools.blocks.monitor;
 
-import com.mcjty.gui.*;
-import com.mcjty.gui.Label;
-import com.mcjty.gui.Panel;
+import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.SelectionEvent;
+import com.mcjty.gui.events.ValueEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
+import com.mcjty.gui.layout.HorizontalLayout;
+import com.mcjty.gui.layout.VerticalAlignment;
+import com.mcjty.gui.layout.VerticalLayout;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.widgets.Label;
+import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.network.PacketHandler;

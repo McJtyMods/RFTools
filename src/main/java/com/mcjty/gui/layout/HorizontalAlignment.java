@@ -1,4 +1,4 @@
-package com.mcjty.gui;
+package com.mcjty.gui.layout;
 
 public enum HorizontalAlignment {
     ALIGH_LEFT,

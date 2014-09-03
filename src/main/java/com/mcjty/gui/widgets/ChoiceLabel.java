@@ -1,5 +1,7 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -43,7 +45,7 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width-1, yy+bounds.height-1, 0xffeeeeee, 0xff333333, 0xff666666);
+        RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
 
         super.draw(x, y);
     }

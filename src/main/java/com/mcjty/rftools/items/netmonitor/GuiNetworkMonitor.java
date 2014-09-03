@@ -1,12 +1,12 @@
 package com.mcjty.rftools.items.netmonitor;
 
-import com.mcjty.gui.*;
-import com.mcjty.gui.Label;
-import com.mcjty.gui.Panel;
+import com.mcjty.gui.layout.HorizontalLayout;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.widgets.Label;
+import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
-import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 

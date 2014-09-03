@@ -1,7 +1,6 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import com.mcjty.gui.layout.LayoutHint;
 
 import java.awt.*;
 

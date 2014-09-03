@@ -1,5 +1,7 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Scrollable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -55,7 +57,7 @@ public class Slider extends AbstractWidget<Slider> {
         if (horizontal) {
             int size = calculateKnobSize(divider, bounds.width);
             int first = calculateKnobOffset(divider, size, bounds.width);
-            RenderHelper.drawBeveledBox(xx+2 + first, yy+2, xx+2 + first + size-1, yy+bounds.height-4, 0xffeeeeee, 0xff333333, 0xff666666);
+            RenderHelper.drawBeveledBox(xx + 2 + first, yy + 2, xx + 2 + first + size - 1, yy + bounds.height - 4, 0xffeeeeee, 0xff333333, 0xff666666);
         } else {
             int size = calculateKnobSize(divider, bounds.height);
             int first = calculateKnobOffset(divider, size, bounds.height);

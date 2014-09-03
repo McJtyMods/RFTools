@@ -1,4 +1,6 @@
-package com.mcjty.gui;
+package com.mcjty.gui.layout;
+
+import com.mcjty.gui.widgets.Widget;
 
 import java.util.Collection;
 

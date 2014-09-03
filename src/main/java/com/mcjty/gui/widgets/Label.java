@@ -1,5 +1,7 @@
-package com.mcjty.gui;
+package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.layout.HorizontalAlignment;
+import com.mcjty.gui.layout.VerticalAlignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 

@@ -1,5 +1,8 @@
 package com.mcjty.gui;
 
+/**
+ * Implement this interface if you want something to be controllable by a slider.
+ */
 public interface Scrollable {
     /**
      * Get the maximum amount of items.
