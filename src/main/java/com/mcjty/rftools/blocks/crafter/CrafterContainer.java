@@ -21,22 +21,26 @@ public class CrafterContainer extends Container {
         layoutPlayerInventory();
     }
 
+// Output (13x2):
+//    int leftCol = 13;
+//    int topRow = 89;
+
     private void layoutCraftingGrid() {
-        int leftCol = 170;
-        int topRow = 16;
+        int leftCol = 13;
+        int topRow = 134;
         for (int py = 0 ; py < 3 ; py++) {
             for (int px = 0 ; px < 3 ; px++) {
                 addSlotToContainer(new GhostSlot(inventory, px + py * 3, leftCol + px * 18, topRow + py * 18));
             }
         }
 
-        addSlotToContainer(new GhostSlot(inventory, 9, 229, 34));
+        addSlotToContainer(new GhostSlot(inventory, 9, leftCol, 192));
     }
 
     private void layoutPlayerInventory() {
         // Player inventory
         int leftCol = 85;
-        int topRow = 100;
+        int topRow = 134;
         for (int py = 0 ; py < 3 ; py++) {
             for (int px = 0 ; px < 9 ; px++) {
                 addSlotToContainer(new Slot(player.inventory, px + py * 9 + 9, leftCol + px * 18, topRow + py * 18));
@@ -44,8 +48,9 @@ public class CrafterContainer extends Container {
         }
 
         // Hotbar
+        topRow = 192;
         for (int hx = 0 ; hx < 9 ; hx++) {
-            addSlotToContainer(new Slot(player.inventory, hx, leftCol + hx * 18, topRow + 3 * 18 + 5));
+            addSlotToContainer(new Slot(player.inventory, hx, leftCol + hx * 18, topRow));
         }
     }
 

@@ -14,7 +14,7 @@ import java.awt.*;
 
 public class GuiCrafter extends GuiContainer {
     public static final int CRAFTER_WIDTH = 256;
-    public static final int CRAFTER_HEIGHT = 184;
+    public static final int CRAFTER_HEIGHT = 216;
 
     private Window window;
 
@@ -27,7 +27,7 @@ public class GuiCrafter extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        EnergyBar energyBar = new EnergyBar(mc, this).setVertical().setHandler(crafterBlockTileEntity).setLayoutHint(new PositionalLayout.PositionalHint(20, 80, 16, 40));
+        EnergyBar energyBar = new EnergyBar(mc, this).setVertical().setHandler(crafterBlockTileEntity).setLayoutHint(new PositionalLayout.PositionalHint(10, 10, 16, 40));
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

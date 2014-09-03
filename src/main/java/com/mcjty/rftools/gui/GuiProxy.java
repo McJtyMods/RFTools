@@ -56,7 +56,7 @@ public class GuiProxy implements IGuiHandler {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof CrafterBlockTileEntity) {
                 CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
-                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity, 256, 184);
+                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity, GuiCrafter.CRAFTER_WIDTH, GuiCrafter.CRAFTER_HEIGHT);
                 return new GuiCrafter(crafterBlockTileEntity, testContainer);
             }
         }
