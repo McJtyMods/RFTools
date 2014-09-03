@@ -9,6 +9,7 @@ import com.mcjty.rftools.RFTools;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.awt.*;
 
@@ -17,6 +18,7 @@ public class GuiCrafter extends GuiContainer {
     public static final int CRAFTER_HEIGHT = 216;
 
     private Window window;
+    private EnergyBar energyBar;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
     private final IInventory inventory;
@@ -27,7 +29,9 @@ public class GuiCrafter extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        EnergyBar energyBar = new EnergyBar(mc, this).setVertical().setHandler(crafterBlockTileEntity).setLayoutHint(new PositionalLayout.PositionalHint(10, 10, 16, 40));
+        int maxEnergyStored = crafterBlockTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 10, 16, 40));
+        energyBar.setValue(crafterBlockTileEntity.getCurrentRF());
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -37,6 +41,9 @@ public class GuiCrafter extends GuiContainer {
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
         super(container);
         this.crafterBlockTileEntity = crafterBlockTileEntity;
+        crafterBlockTileEntity.setOldRF(-1);
+        crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
+
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
         inventory = container.getContainerInventory();
@@ -60,6 +67,7 @@ public class GuiCrafter extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
-        System.out.println("crafterBlockTileEntity.value = " + crafterBlockTileEntity.value);
+        int currentRF = crafterBlockTileEntity.getCurrentRF();
+        energyBar.setValue(currentRF);
     }
 }

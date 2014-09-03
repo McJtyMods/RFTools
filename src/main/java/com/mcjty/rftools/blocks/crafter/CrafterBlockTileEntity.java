@@ -18,13 +18,15 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainer.BUFFER_SIZE];
 
-    public int value = 0;
-
     public static final int MAXENERGY = 32000;
 
     protected EnergyStorage storage = new EnergyStorage(MAXENERGY);
+    private int oldRF = -1;             // Optimization for client syncing
+    private int currentRF = 0;
 
-    public CrafterBlockTileEntity() { }
+    public CrafterBlockTileEntity() {
+        storage.setMaxReceive(80);
+    }
 
     @Override
     public int getSizeInventory() {
@@ -181,6 +183,22 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 //            nbtTagList.appendTag(nbtTagCompound);
 //        }
 //        tagCompound.setTag("Items", nbtTagList);
+    }
+
+    public int getOldRF() {
+        return oldRF;
+    }
+
+    public void setOldRF(int oldRF) {
+        this.oldRF = oldRF;
+    }
+
+    public int getCurrentRF() {
+        return currentRF;
+    }
+
+    public void setCurrentRF(int currentRF) {
+        this.currentRF = currentRF;
     }
 
     @Override

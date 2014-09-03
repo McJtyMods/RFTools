@@ -1,10 +1,13 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterContainer extends Container {
     private CrafterBlockTileEntity inventory;
@@ -78,20 +81,28 @@ public class CrafterContainer extends Container {
 
     @Override
     public void detectAndSendChanges() {
-        System.out.println("com.mcjty.rftools.blocks.crafter.CrafterContainer.detectAndSendChanges");
         super.detectAndSendChanges();
-        inventory.value++;
-        System.out.println("inventory.value = " + inventory.value);
-        for (Object crafter : this.crafters) {
-            ICrafting icrafting = (ICrafting) crafter;
-            icrafting.sendProgressBarUpdate(this, 0, 0);
-            inventory.value++;
+        int energyStored = inventory.getEnergyStored(ForgeDirection.DOWN);
+        if (energyStored != inventory.getOldRF()) {
+            inventory.setOldRF(energyStored);
+            for (Object crafter : this.crafters) {
+                ICrafting icrafting = (ICrafting) crafter;
+                icrafting.sendProgressBarUpdate(this, 0, energyStored);
+            }
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void updateProgressBar(int type, int value) {
+        super.updateProgressBar(type, value);
+        if (type == 0) {
+            inventory.setCurrentRF(value);
         }
     }
 
     @Override
     public void addCraftingToCrafters(ICrafting crafting) {
-        System.out.println("com.mcjty.rftools.blocks.crafter.CrafterContainer.addCraftingToCrafters");
         super.addCraftingToCrafters(crafting);
         crafting.sendProgressBarUpdate(this, 0, 0);
     }
