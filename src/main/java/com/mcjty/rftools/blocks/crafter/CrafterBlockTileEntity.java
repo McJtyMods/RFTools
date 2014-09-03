@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
-    private ItemStack stacks[] = new ItemStack[10];
+    private ItemStack stacks[] = new ItemStack[10 + CrafterContainer.BUFFER_SIZE];
 
     public int value = 0;
 
@@ -38,13 +38,35 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        ItemStack old = stacks[index];
-        stacks[index] = null;
-        if (old == null) {
+        if (isGhostSlot(index)) {
+            ItemStack old = stacks[index];
+            stacks[index] = null;
+            if (old == null) {
+                return null;
+            }
+            old.stackSize = 0;
+            return old;
+        } else {
+            if (stacks[index] != null) {
+                if (stacks[index].stackSize <= amount) {
+                    ItemStack old = stacks[index];
+                    stacks[index] = null;
+                    markDirty();
+                    return old;
+                }
+                ItemStack its = stacks[index].splitStack(amount);
+                if (stacks[index].stackSize == 0) {
+                    stacks[index] = null;
+                }
+                markDirty();
+                return its;
+            }
             return null;
         }
-        old.stackSize = 0;
-        return old;
+    }
+
+    private boolean isGhostSlot(int index) {
+        return index <= CrafterContainer.SLOT_CRAFTOUTPUT;
     }
 
     @Override
@@ -54,13 +76,21 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (stack != null) {
-            stacks[index] = stack.copy();
-            if (index < 9) {
-                stacks[index].stackSize = 0;
+        if (isGhostSlot(index)) {
+            if (stack != null) {
+                stacks[index] = stack.copy();
+                if (index < 9) {
+                    stacks[index].stackSize = 0;
+                }
+            } else {
+                stacks[index] = null;
             }
         } else {
-            stacks[index] = null;
+            stacks[index] = stack;
+            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
+                stack.stackSize = getInventoryStackLimit();
+            }
+            markDirty();
         }
     }
 
@@ -76,7 +106,7 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public int getInventoryStackLimit() {
-        return 0;
+        return 64;
     }
 
     @Override
