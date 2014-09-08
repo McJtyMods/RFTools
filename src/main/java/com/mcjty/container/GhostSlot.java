@@ -1,10 +1,13 @@
-package com.mcjty.rftools.blocks.crafter;
+package com.mcjty.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+/**
+ * A slot typically used for crafting grids.
+ */
 public class GhostSlot extends Slot {
 
     public GhostSlot(IInventory inventory, int index, int x, int y) {
