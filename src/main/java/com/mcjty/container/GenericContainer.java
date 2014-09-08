@@ -14,92 +14,47 @@ import java.util.Map;
  * Generic container support.
  */
 public class GenericContainer extends Container {
-    protected IInventory inventory;
+    protected Map<String,IInventory> inventories = new HashMap<String, IInventory>();
     protected EntityPlayer player;
+    private ContainerFactory factory;
 
-    private Map<Integer,SlotType> indexToType = new HashMap<Integer, SlotType>();
-    private Map<SlotType,SlotRanges> slotRangesMap = new HashMap<SlotType,SlotRanges>();
-
-    public GenericContainer(EntityPlayer player, IInventory inventory) {
-        this.inventory = inventory;
+    public GenericContainer(ContainerFactory factory, EntityPlayer player) {
+        this.factory = factory;
         this.player = player;
+    }
+
+    public void addInventory(String name, IInventory inventory) {
+        inventories.put(name, inventory);
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
-        return inventory.isUseableByPlayer(entityPlayer);
-    }
-
-    public IInventory getContainerInventory() {
-        return inventory;
+        for (IInventory inventory : inventories.values()) {
+            if (!inventory.isUseableByPlayer(entityPlayer)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public SlotType getSlotType(int index) {
-        SlotType slotType = indexToType.get(index);
-        if (slotType == null) {
-            return SlotType.SLOT_UNKNOWN;
+        return factory.getSlotType(index);
+    }
+
+    public void generateSlots() {
+        for (SlotFactory slotFactory : factory.getSlots()) {
+            Slot slot;
+            if (slotFactory.getSlotType() == SlotType.SLOT_GHOST) {
+                slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+            } else {
+                slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+            }
+            addSlotToContainer(slot);
         }
-        return slotType;
-    }
-
-    public boolean isOutputSlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_OUTPUT;
-    }
-
-    public boolean isInputSlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_INPUT;
-    }
-
-    public boolean isGhostSlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_GHOST;
-    }
-
-    public boolean isPlayerInventorySlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_PLAYERINV;
-    }
-
-    public boolean isPlayerHotbarSlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_PLAYERHOTBAR;
-    }
-
-    public void addSlot(SlotType slotType, IInventory inventory, int index, int x, int y) {
-        Slot slot;
-        if (slotType == SlotType.SLOT_GHOST) {
-            slot = new GhostSlot(inventory, index, x, y); //@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        } else {
-            slot = new Slot(inventory, index, x, y);
-        }
-        addSlotToContainer(slot);
-
-        SlotRanges slotRanges = slotRangesMap.get(slotType);
-        if (slotRanges == null) {
-            slotRanges = new SlotRanges(slotType);
-            slotRangesMap.put(slotType, slotRanges);
-        }
-        slotRanges.addSingle(slot.slotNumber);
-
-        indexToType.put(slot.slotNumber, slotType);
-    }
-
-    public int addSlotRange(SlotType slotType, IInventory inventory, int index, int x, int y, int amount, int dx) {
-        for (int i = 0 ; i < amount ; i++) {
-            addSlot(slotType, inventory, index, x, y);
-            x += dx;
-            index++;
-        }
-        return index;
-    }
-
-    public int addSlotBox(SlotType slotType, IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0 ; j < verAmount ; j++) {
-            index = addSlotRange(slotType, inventory, index, x, y, horAmount, dx);
-            y += dy;
-        }
-        return index;
     }
 
     private boolean mergeItemStacks(ItemStack itemStack, SlotType slotType, boolean reverse) {
-        SlotRanges ranges = slotRangesMap.get(slotType);
+        SlotRanges ranges = factory.getSlotRangesMap().get(slotType);
         for (Range<Integer> r : ranges.asRanges()) {
             Integer start = r.lowerEndpoint();
             int end = r.upperEndpoint() + 1;
@@ -120,20 +75,20 @@ public class GenericContainer extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (isOutputSlot(index) || isInputSlot(index)) {
+            if (factory.isOutputSlot(index) || factory.isInputSlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, true)) {
                     return null;
                 }
                 slot.onSlotChange(itemstack1, itemstack);
-            } else if (isGhostSlot(index)) {
+            } else if (factory.isGhostSlot(index)) {
                 return null; // @@@ Right?
-            } else if (isPlayerInventorySlot(index)) {
+            } else if (factory.isPlayerInventorySlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
                     if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
                         return null;
                     }
                 }
-            } else if (isPlayerHotbarSlot(index)) {
+            } else if (factory.isPlayerHotbarSlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
                     if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, false)) {
                         return null;

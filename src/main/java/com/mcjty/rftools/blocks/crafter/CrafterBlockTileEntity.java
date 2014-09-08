@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
-    private ItemStack stacks[] = new ItemStack[10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE];
+    private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
 
     public static final int MAXENERGY = 32000;
 
@@ -40,7 +40,7 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (isGhostSlot(index)) {
+        if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
             ItemStack old = stacks[index];
             stacks[index] = null;
             if (old == null) {
@@ -67,10 +67,6 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
         }
     }
 
-    private boolean isGhostSlot(int index) {
-        return index <= CrafterContainer.SLOT_CRAFTOUTPUT;
-    }
-
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
         return null;
@@ -78,7 +74,7 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (isGhostSlot(index)) {
+        if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
             if (stack != null) {
                 stacks[index] = stack.copy();
                 if (index < 9) {

@@ -21,7 +21,6 @@ public class GuiCrafter extends GuiContainer {
     private EnergyBar energyBar;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
-    private final IInventory inventory;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
 
@@ -46,7 +45,6 @@ public class GuiCrafter extends GuiContainer {
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
-        inventory = container.getContainerInventory();
     }
 
     /**
@@ -59,8 +57,8 @@ public class GuiCrafter extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        String s = this.inventory.hasCustomInventoryName() ? this.inventory.getInventoryName() : inventory.getInventoryName();
-        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 5, 4210752);
+//        String s = this.inventory.hasCustomInventoryName() ? this.inventory.getInventoryName() : inventory.getInventoryName();
+//        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 5, 4210752);
 //        this.fontRendererObj.drawString("container.inventory", 26, this.ySize - 96 + 4, 4210752);
     }
 
