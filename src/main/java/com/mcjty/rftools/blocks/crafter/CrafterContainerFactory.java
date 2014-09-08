@@ -39,7 +39,7 @@ public class CrafterContainerFactory extends ContainerFactory {
         addSlotBox(SlotType.SLOT_INPUT, CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 12, 18, 2, 18);
         // Output slots
         for (int py = 0 ; py < 2 ; py++) {
-            addSlot(SlotType.SLOT_OUTPUT, CONTAINER_INVENTORY, SLOT_BUFFEROUT + py, leftCol + 13 * 18, topRow + py * 18);
+            addSlot(SlotType.SLOT_OUTPUT, CONTAINER_INVENTORY, SLOT_BUFFEROUT + py, leftCol + 12 * 18, topRow + py * 18);
         }
     }
 
