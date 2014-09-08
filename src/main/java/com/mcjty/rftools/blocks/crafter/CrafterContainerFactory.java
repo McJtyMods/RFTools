@@ -3,6 +3,9 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.ContainerFactory;
 import com.mcjty.container.SlotType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CrafterContainerFactory extends ContainerFactory {
     public static final String CONTAINER_INVENTORY = "container";
     public static final String CONTAINER_PLAYER = "player";
@@ -18,7 +21,7 @@ public class CrafterContainerFactory extends ContainerFactory {
 
     private static CrafterContainerFactory instance = null;
 
-    public static CrafterContainerFactory getInstance() {
+    public static synchronized CrafterContainerFactory getInstance() {
         if (instance == null) {
             instance = new CrafterContainerFactory();
         }

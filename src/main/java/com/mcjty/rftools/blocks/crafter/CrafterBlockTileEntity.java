@@ -129,17 +129,17 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[0];
+        return CrafterContainerFactory.getInstance().getAccessibleSlots();
     }
 
     @Override
-    public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_) {
-        return false;
+    public boolean canInsertItem(int index, ItemStack item, int side) {
+        return CrafterContainerFactory.getInstance().isInputSlot(index);
     }
 
     @Override
-    public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_) {
-        return false;
+    public boolean canExtractItem(int index, ItemStack item, int side) {
+        return CrafterContainerFactory.getInstance().isOutputSlot(index);
     }
 
     @Override
