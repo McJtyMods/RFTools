@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
-    private ItemStack stacks[] = new ItemStack[10 + CrafterContainer.BUFFER_SIZE];
+    private ItemStack stacks[] = new ItemStack[10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE];
 
     public static final int MAXENERGY = 32000;
 

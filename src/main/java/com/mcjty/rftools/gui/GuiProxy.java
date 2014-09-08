@@ -27,7 +27,7 @@ public class GuiProxy implements IGuiHandler {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof CrafterBlockTileEntity) {
                 CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
-                return new CrafterContainer(entityPlayer, crafterBlockTileEntity, 0, 0);
+                return new CrafterContainer(entityPlayer, crafterBlockTileEntity);
             }
         }
         return null;
@@ -56,7 +56,7 @@ public class GuiProxy implements IGuiHandler {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof CrafterBlockTileEntity) {
                 CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
-                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity, GuiCrafter.CRAFTER_WIDTH, GuiCrafter.CRAFTER_HEIGHT);
+                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
                 return new GuiCrafter(crafterBlockTileEntity, testContainer);
             }
         }
