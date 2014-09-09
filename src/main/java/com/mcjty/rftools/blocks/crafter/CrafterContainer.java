@@ -51,4 +51,19 @@ public class CrafterContainer extends GenericContainer {
         super.addCraftingToCrafters(crafting);
         crafting.sendProgressBarUpdate(this, 0, 0);
     }
+
+    @Override
+    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+        System.out.print("slotClick: index = " + index);
+        System.out.print(", button = " + button);
+        System.out.println(", mode = " + mode);
+
+        if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
+            Slot slot = getSlot(index);
+            if (slot.getHasStack()) {
+                slot.putStack(null);
+            }
+        }
+        return super.slotClick(index, button, mode, player);
+    }
 }
