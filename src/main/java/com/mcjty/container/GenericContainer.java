@@ -29,7 +29,6 @@ public class GenericContainer extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
-        System.out.println("canInteractWith");
         for (IInventory inventory : inventories.values()) {
             if (!inventory.isUseableByPlayer(entityPlayer)) {
                 return false;
@@ -46,7 +45,6 @@ public class GenericContainer extends Container {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
             if (slotFactory.getSlotType() == SlotType.SLOT_GHOST) {
-                System.out.println("com.mcjty.container.GenericContainer.generateSlots");
                 slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else {
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
@@ -69,7 +67,6 @@ public class GenericContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        System.out.println("transferStackInSlot: index = " + index);
         ItemStack itemstack = null;
         Slot slot = (Slot)this.inventorySlots.get(index);
 
@@ -116,13 +113,4 @@ public class GenericContainer extends Container {
 
         return itemstack;
     }
-
-    @Override
-    protected boolean mergeItemStack(ItemStack stack, int start, int end, boolean reverse) {
-        System.out.println("mergeItemStack: start = " + start + ", end = " + end);
-
-        return super.mergeItemStack(stack, start, end, reverse);
-    }
-
-
 }

@@ -21,8 +21,6 @@ public class GhostSlot extends Slot {
 
     @Override
     public ItemStack decrStackSize(int amount) {
-        System.out.println("GhostSlot.decrStackSize: index = " + getSlotIndex());
-
         return null;
     }
 
@@ -38,7 +36,6 @@ public class GhostSlot extends Slot {
 
     @Override
     public void putStack(ItemStack stack) {
-        System.out.println("GhostSlot.putStack: index = " + getSlotIndex());
         if (stack != null) {
             stack.stackSize = 0;
         }

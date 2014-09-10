@@ -7,7 +7,6 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 

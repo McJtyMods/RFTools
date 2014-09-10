@@ -1,9 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
-import com.mcjty.container.ContainerFactory;
 import com.mcjty.container.GenericContainer;
-import com.mcjty.container.GhostSlot;
-import com.mcjty.container.SlotType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +19,7 @@ public class CrafterContainer extends GenericContainer {
         generateSlots();
 
         crafterBlockTileEntity = containerInventory;
+        crafterBlockTileEntity.setOldRF(-1);
     }
 
     @Override
@@ -32,7 +30,7 @@ public class CrafterContainer extends GenericContainer {
             crafterBlockTileEntity.setOldRF(energyStored);
             for (Object crafter : this.crafters) {
                 ICrafting icrafting = (ICrafting) crafter;
-                icrafting.sendProgressBarUpdate(this, 0, energyStored);
+                icrafting.sendProgressBarUpdate(this, 1, energyStored);
             }
         }
     }
@@ -41,7 +39,7 @@ public class CrafterContainer extends GenericContainer {
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int type, int value) {
         super.updateProgressBar(type, value);
-        if (type == 0) {
+        if (type == 1) {
             crafterBlockTileEntity.setCurrentRF(value);
         }
     }
@@ -54,10 +52,6 @@ public class CrafterContainer extends GenericContainer {
 
     @Override
     public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
-        System.out.print("slotClick: index = " + index);
-        System.out.print(", button = " + button);
-        System.out.println(", mode = " + mode);
-
         if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
             Slot slot = getSlot(index);
             if (slot.getHasStack()) {

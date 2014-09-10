@@ -40,7 +40,6 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        System.out.println("decrStackSize: index = " + index + ", amount = " + amount);
         if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
             ItemStack old = stacks[index];
             stacks[index] = null;
@@ -75,7 +74,6 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        System.out.println("setInventorySlotContents: index = " + index + ", ghost = " + CrafterContainerFactory.getInstance().isGhostSlot(index));
         if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
             if (stack != null) {
                 stacks[index] = stack.copy();
