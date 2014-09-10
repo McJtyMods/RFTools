@@ -1,30 +1,31 @@
 package com.mcjty.rftools.blocks.monitor;
 
 import cofh.api.energy.IEnergyHandler;
+import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class RFMonitorBlockTileEntity extends TileEntity {
+public class RFMonitorBlockTileEntity extends GenericTileEntity {
     // Data that is saved
     private int monitorX = -1;
     private int monitorY = -1;  // Invalid y coordinate so we know it is not initialized yet
     private int monitorZ = -1;
-    private int rflevel = 0;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
     private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
-    private boolean inAlarm = false;        // If true we are in alarm right now
 
     // Temporary data
     private int counter = 20;
-    private int client_rf_level = -1;
-    private int client_inAlarm = -1;
+    private SyncedValue<Integer> rflevel = new SyncedValue<Integer>(0);
+    private SyncedValue<Boolean> inAlarm = new SyncedValue<Boolean>(false);
+
+    public RFMonitorBlockTileEntity() {
+        registerSyncedValue(rflevel);
+        registerSyncedValue(inAlarm);
+    }
 
     public RFMonitorMode getAlarmMode() {
         return alarmMode;
@@ -56,18 +57,12 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         return monitorY >= 0;
     }
 
+    @Override
     public void setInvalid() {
         monitorX = -1;
         monitorY = -1;
         monitorZ = -1;
-        rflevel = 0;
-        client_rf_level = -1;
-        client_inAlarm = -1;
-        inAlarm = false;
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
-        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        super.setInvalid();
     }
 
     public void setMonitor(Coordinate c) {
@@ -77,35 +72,18 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    @Override
-    public void updateEntity() {
-        if (worldObj.isRemote) {
-            checkRFStateClient();
-        } else {
-            checkRFStateServer();
-        }
-    }
-
     public int getRflevel() {
-        return rflevel;
+        return rflevel.getValue();
     }
 
-    private void checkRFStateClient() {
-        if (client_rf_level != rflevel) {
-            client_rf_level = rflevel;
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
-        if (client_inAlarm != (inAlarm ? 1 : 0)) {
-            System.out.println("com.mcjty.rftools.blocks.RFMonitorBlockTileEntity.checkRFStateClient");
-            client_inAlarm = (inAlarm ? 1 : 0);
-            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
+    @Override
+    protected int updateMetaData(int meta) {
+        meta = super.updateMetaData(meta);
+        return BlockTools.setRedstoneSignal(meta, inAlarm.getValue());
     }
 
-    private void checkRFStateServer() {
+    @Override
+    protected void checkStateServer() {
         if (!isValid()) {
             counter = 1;
             return;
@@ -149,35 +127,14 @@ public class RFMonitorBlockTileEntity extends TileEntity {
             }
 
         }
-        if (rflevel != ratio || alarm != inAlarm) {
-            rflevel = ratio;
-            if (inAlarm != alarm) {
-                inAlarm = alarm;
-                int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-                worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, BlockTools.setRedstoneSignal(meta, inAlarm), 2);
-                worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, ModBlocks.monitorBlock);
+        if (rflevel.getValue() != ratio || alarm != inAlarm.getValue()) {
+            rflevel.setValue(ratio);
+            if (inAlarm.getValue() != alarm) {
+                inAlarm.setValue(alarm);
             }
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            notifyBlockUpdate();
         }
     }
-
-    @Override
-    public boolean canUpdate() {
-        return true;
-    }
-
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        this.writeToNBT(nbtTag);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
-    }
-
 
 
     @Override
@@ -186,10 +143,10 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         monitorX = tagCompound.getInteger("monitorX");
         monitorY = tagCompound.getInteger("monitorY");
         monitorZ = tagCompound.getInteger("monitorZ");
-        rflevel = tagCompound.getInteger("rflevel");
+        rflevel.setValue(tagCompound.getInteger("rflevel"));
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
-        inAlarm = tagCompound.getBoolean("inAlarm");
+        inAlarm.setValue(tagCompound.getBoolean("inAlarm"));
     }
 
     @Override
@@ -198,9 +155,9 @@ public class RFMonitorBlockTileEntity extends TileEntity {
         tagCompound.setInteger("monitorX", monitorX);
         tagCompound.setInteger("monitorY", monitorY);
         tagCompound.setInteger("monitorZ", monitorZ);
-        tagCompound.setInteger("rflevel", rflevel);
+        tagCompound.setInteger("rflevel", rflevel.getValue());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
-        tagCompound.setBoolean("inAlarm", inAlarm);
+        tagCompound.setBoolean("inAlarm", inAlarm.getValue());
     }
 }
