@@ -9,6 +9,8 @@ public class ContainerFactory {
     private Map<SlotType,SlotRanges> slotRangesMap = new HashMap<SlotType,SlotRanges>();
     private List<SlotFactory> slots = new ArrayList<SlotFactory>();
 
+    public static final String CONTAINER_PLAYER = "player";
+
     private boolean slotsSetup = false;
     protected int[] accessibleSlots;
     protected int[] accessibleInputSlots;
@@ -135,5 +137,14 @@ public class ContainerFactory {
         return index;
     }
 
+    protected void layoutPlayerInventorySlots(int leftCol, int topRow) {
+        // Player inventory
+        addSlotBox(SlotType.SLOT_PLAYERINV, CONTAINER_PLAYER, 9, leftCol, topRow, 9, 18, 3, 18);
+
+        // Hotbar
+        topRow += 58;
+        addSlotRange(SlotType.SLOT_PLAYERHOTBAR, CONTAINER_PLAYER, 0, leftCol, topRow, 9, 18);
+
+    }
 
 }

@@ -1,31 +1,18 @@
 package com.mcjty.rftools.blocks.crafter;
 
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyHandler;
+import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class CrafterBlockTileEntity extends TileEntity implements ISidedInventory, IEnergyHandler {
+public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
 
     public static final int MAXENERGY = 32000;
 
-    protected EnergyStorage storage = new EnergyStorage(MAXENERGY);
-    private int oldRF = -1;             // Optimization for client syncing
-    private int currentRF = 0;
-
     public CrafterBlockTileEntity() {
-        storage.setMaxReceive(80);
+        super(MAXENERGY, 80);
     }
 
     @Override
@@ -143,22 +130,8 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
     }
 
     @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        this.writeToNBT(nbtTag);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
-    }
-
-
-    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        storage.readFromNBT(tagCompound);
 
 //        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
 //        stacks = null;
@@ -171,7 +144,6 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        storage.writeToNBT(tagCompound);
 //        NBTTagList nbtTagList = new NBTTagList();
 //        if (stacks != null) {
 //            NBTTagCompound nbtTagCompound = new NBTTagCompound();
@@ -181,44 +153,9 @@ public class CrafterBlockTileEntity extends TileEntity implements ISidedInventor
 //        tagCompound.setTag("Items", nbtTagList);
     }
 
-    public int getOldRF() {
-        return oldRF;
-    }
-
-    public void setOldRF(int oldRF) {
-        this.oldRF = oldRF;
-    }
-
-    public int getCurrentRF() {
-        return currentRF;
-    }
-
-    public void setCurrentRF(int currentRF) {
-        this.currentRF = currentRF;
-    }
-
     @Override
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return storage.receiveEnergy(maxReceive, simulate);
-    }
-
-    @Override
-    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return storage.extractEnergy(maxExtract, simulate);
-    }
-
-    @Override
-    public int getEnergyStored(ForgeDirection from) {
-        return storage.getEnergyStored();
-    }
-
-    @Override
-    public int getMaxEnergyStored(ForgeDirection from) {
-        return storage.getMaxEnergyStored();
-    }
-
-    @Override
-    public boolean canConnectEnergy(ForgeDirection from) {
-        return true;
+    public boolean canUpdate() {
+        // We currently don't need updates for this tile entity yet
+        return false;
     }
 }

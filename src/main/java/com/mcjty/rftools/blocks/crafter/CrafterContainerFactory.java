@@ -3,12 +3,8 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.ContainerFactory;
 import com.mcjty.container.SlotType;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CrafterContainerFactory extends ContainerFactory {
     public static final String CONTAINER_INVENTORY = "container";
-    public static final String CONTAINER_PLAYER = "player";
 
     public static final int SLOT_CRAFTINPUT = 0;
     public static final int SLOT_CRAFTOUTPUT = 9;
@@ -31,7 +27,7 @@ public class CrafterContainerFactory extends ContainerFactory {
     public CrafterContainerFactory() {
         layoutCraftingGrid();
         layoutBuffer();
-        layoutPlayerInventory();
+        layoutPlayerInventorySlots(85, 134);
     }
 
     private void layoutBuffer() {
@@ -51,17 +47,6 @@ public class CrafterContainerFactory extends ContainerFactory {
         int topRow = 134;
         addSlotBox(SlotType.SLOT_GHOST, CONTAINER_INVENTORY, SLOT_CRAFTINPUT, leftCol, topRow, 3, 18, 3, 18);
         addSlot(SlotType.SLOT_GHOST, CONTAINER_INVENTORY, SLOT_CRAFTOUTPUT, leftCol, 192);
-    }
-
-    private void layoutPlayerInventory() {
-        // Player inventory
-        int leftCol = 85;
-        int topRow = 134;
-        addSlotBox(SlotType.SLOT_PLAYERINV, CONTAINER_PLAYER, 9, leftCol, topRow, 9, 18, 3, 18);
-
-        // Hotbar
-        topRow = 192;
-        addSlotRange(SlotType.SLOT_PLAYERHOTBAR, CONTAINER_PLAYER, 0, leftCol, topRow, 9, 18);
     }
 
 
