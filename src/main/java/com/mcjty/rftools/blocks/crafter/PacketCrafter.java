@@ -27,8 +27,14 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         z = buf.readInt();
         recipeIndex = buf.readByte();
         int l = buf.readByte();
+        items = new ItemStack[l];
         for (int i = 0 ; i < l ; i++) {
-            items[i] = NetworkTools.readItemStack(buf);
+            boolean b = buf.readBoolean();
+            if (b) {
+                items[i] = NetworkTools.readItemStack(buf);
+            } else {
+                items[i] = null;
+            }
         }
     }
 
@@ -40,8 +46,16 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         buf.writeByte(recipeIndex);
         buf.writeByte(items.length);
         for (ItemStack item : items) {
-            NetworkTools.writeItemStack(buf, item);
+            if (item == null) {
+                buf.writeBoolean(false);
+            } else {
+                buf.writeBoolean(true);
+                NetworkTools.writeItemStack(buf, item);
+            }
         }
+    }
+
+    public PacketCrafter() {
     }
 
     public PacketCrafter(int x, int y, int z, int recipeIndex, ItemStack[] items) {

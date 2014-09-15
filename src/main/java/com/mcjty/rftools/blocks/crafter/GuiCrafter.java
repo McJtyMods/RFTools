@@ -84,12 +84,17 @@ public class GuiCrafter extends GuiContainer {
                 addChild(recipeList).addChild(listSlider);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
+        selectRecipe();
+
         window = new Window(this, toplevel);
     }
 
     private void selectRecipe() {
         int selected = recipeList.getSelected();
         if (selected == -1) {
+            for (int i = 0 ; i < 10 ; i++) {
+                inventorySlots.getSlot(i).putStack(null);
+            }
             return;
         }
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
@@ -99,18 +104,6 @@ public class GuiCrafter extends GuiContainer {
     }
 
     private void rememberRecipe() {
-        int selected = recipeList.getSelected();
-        if (selected == -1) {
-            return;
-        }
-        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
-        ItemStack[] items = new ItemStack[10];
-        for (int i = 0 ; i < 10 ; i++) {
-            items[i] = inventorySlots.getSlot(i).getStack();
-        }
-        craftingRecipe.setRecipe(items);
-
-
         InventoryCrafting inv = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -123,6 +116,23 @@ public class GuiCrafter extends GuiContainer {
         }
         ItemStack matches = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
         inventorySlots.getSlot(9).putStack(matches);
+
+        int selected = recipeList.getSelected();
+        if (selected == -1) {
+            return;
+        }
+        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        ItemStack[] items = new ItemStack[10];
+        for (int i = 0 ; i < 10 ; i++) {
+            items[i] = inventorySlots.getSlot(i).getStack();
+        }
+        craftingRecipe.setRecipe(items);
+
+        sendChangeToServer(selected, items);
+    }
+
+    private void sendChangeToServer(int index, ItemStack[] items) {
+        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, items));
     }
 
     private void addRecipeLine(String label, Object craftingResult) {
@@ -141,10 +151,6 @@ public class GuiCrafter extends GuiContainer {
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
-    }
-
-    private void sendChangeToServer(Coordinate c) {
-//        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, c));
     }
 
     /**

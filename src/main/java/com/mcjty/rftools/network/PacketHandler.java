@@ -1,5 +1,6 @@
 package com.mcjty.rftools.network;
 
+import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -17,5 +18,6 @@ public class PacketHandler {
     public static void registerMessages() {
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("rftools");
         INSTANCE.registerMessage(PacketRFMonitor.class, PacketRFMonitor.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketCrafter.class, PacketCrafter.class, nextID(), Side.SERVER);
     }
 }
