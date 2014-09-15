@@ -42,7 +42,6 @@ public class GenericEnergyHandlerContainer extends GenericContainer {
     @Override
     public void addCraftingToCrafters(ICrafting crafting) {
         super.addCraftingToCrafters(crafting);
-        crafting.sendProgressBarUpdate(this, 1, 0);
     }
 
 }
