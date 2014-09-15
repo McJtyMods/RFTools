@@ -10,10 +10,18 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -57,7 +65,7 @@ public class GuiCrafter extends GuiContainer {
                 addSelectionEvent(new SelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
-
+                        selectRecipe();
                     }
                 }).
                 setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
@@ -79,6 +87,44 @@ public class GuiCrafter extends GuiContainer {
         window = new Window(this, toplevel);
     }
 
+    private void selectRecipe() {
+        int selected = recipeList.getSelected();
+        if (selected == -1) {
+            return;
+        }
+        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        for (int i = 0 ; i < 10 ; i++) {
+            inventorySlots.getSlot(i).putStack(craftingRecipe.getItemStack(i));
+        }
+    }
+
+    private void rememberRecipe() {
+        int selected = recipeList.getSelected();
+        if (selected == -1) {
+            return;
+        }
+        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        ItemStack[] items = new ItemStack[10];
+        for (int i = 0 ; i < 10 ; i++) {
+            items[i] = inventorySlots.getSlot(i).getStack();
+        }
+        craftingRecipe.setRecipe(items);
+
+
+        InventoryCrafting inv = new InventoryCrafting(new Container() {
+            @Override
+            public boolean canInteractWith(EntityPlayer var1) {
+                return false;
+            }
+        }, 3, 3);
+
+        for(int i=0 ; i<9 ; i++) {
+            inv.setInventorySlotContents(i, inventorySlots.getSlot(i).getStack());
+        }
+        ItemStack matches = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
+        inventorySlots.getSlot(9).putStack(matches);
+    }
+
     private void addRecipeLine(String label, Object craftingResult) {
         Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(new Label(mc, this).setText(label).setDesiredWidth(8)).
@@ -97,12 +143,17 @@ public class GuiCrafter extends GuiContainer {
         ySize = CRAFTER_HEIGHT;
     }
 
+    private void sendChangeToServer(Coordinate c) {
+//        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, c));
+    }
+
     /**
      * Draws the screen and all the components in it.
      */
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         super.drawScreen(par1, par2, par3);
+        rememberRecipe();
     }
 
     @Override

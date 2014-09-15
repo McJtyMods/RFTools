@@ -14,7 +14,6 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.items.netmonitor.PacketRFMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 

@@ -1,8 +1,6 @@
-package com.mcjty.rftools.items.netmonitor;
+package com.mcjty.rftools.blocks.monitor;
 
 import com.mcjty.rftools.Coordinate;
-import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
-import com.mcjty.rftools.blocks.monitor.RFMonitorMode;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;

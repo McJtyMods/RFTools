@@ -5,14 +5,28 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
+    private CraftingRecipe recipes[] = new CraftingRecipe[8];
 
     public static final int MAXENERGY = 32000;
 
     public CrafterBlockTileEntity() {
         super(MAXENERGY, 80);
+        for (int i = 0 ; i < recipes.length ; i++) {
+            recipes[i] = new CraftingRecipe();
+        }
+    }
+
+    public void setRecipe(int index, ItemStack[] items) {
+        recipes[index].setRecipe(items);
+    }
+
+    public CraftingRecipe getRecipe(int index) {
+        return recipes[index];
     }
 
     @Override
@@ -132,25 +146,54 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        readBufferFromNBT(tagCompound);
+        readRecipesFromNBT(tagCompound);
+    }
 
-//        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-//        stacks = null;
-//        if (nbtTagList.tagCount() > 0) {
-//            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(0);
-//            stacks = ItemStack.loadItemStackFromNBT(nbtTagCompound);
-//        }
+    private void readBufferFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(0);
+            stacks[i+ CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+        }
+    }
+
+    private void readRecipesFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = recipeTagList.getCompoundTagAt(0);
+            recipes[i].readFromNBT(nbtTagCompound);
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-//        NBTTagList nbtTagList = new NBTTagList();
-//        if (stacks != null) {
-//            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//            stacks.writeToNBT(nbtTagCompound);
-//            nbtTagList.appendTag(nbtTagCompound);
-//        }
-//        tagCompound.setTag("Items", nbtTagList);
+        writeBufferToNBT(tagCompound);
+        writeRecipesToNBT(tagCompound);
+    }
+
+    private void writeBufferToNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = new NBTTagList();
+        for (int i = CrafterContainerFactory.SLOT_BUFFER ; i < stacks.length ; i++) {
+            ItemStack stack = stacks[i];
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            if (stack != null) {
+                stack.writeToNBT(nbtTagCompound);
+            }
+            bufferTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("Items", bufferTagList);
+    }
+
+    private void writeRecipesToNBT(NBTTagCompound tagCompound) {
+        NBTTagList recipeTagList = new NBTTagList();
+        for (CraftingRecipe recipe : recipes) {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            recipe.writeToNBT(nbtTagCompound);
+            recipeTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("Recipes", recipeTagList);
     }
 
     @Override

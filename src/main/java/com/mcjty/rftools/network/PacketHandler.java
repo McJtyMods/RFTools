@@ -1,6 +1,6 @@
 package com.mcjty.rftools.network;
 
-import com.mcjty.rftools.items.netmonitor.PacketRFMonitor;
+import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
