@@ -1,12 +1,19 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.gui.events.SelectionEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
+import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
+import com.mcjty.gui.layout.VerticalAlignment;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -19,6 +26,8 @@ public class GuiCrafter extends GuiContainer {
     private Window window;
     private EnergyBar energyBar;
     private WidgetList recipeList;
+    private ChoiceLabel keepItem;
+    private ChoiceLabel internalRecipe;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
 
@@ -32,20 +41,50 @@ public class GuiCrafter extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
         energyBar.setValue(crafterBlockTileEntity.getCurrentRF());
 
-        recipeList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(13, 7, 175, 80));
-        recipeList.addChild(new Label(mc, this).setText("label 1"));
-        recipeList.addChild(new Label(mc, this).setText("label 2"));
-        recipeList.addChild(new Label(mc, this).setText("label 3"));
-        recipeList.addChild(new Label(mc, this).setText("label 4"));
-        recipeList.addChild(new Label(mc, this).setText("label 5"));
-        recipeList.addChild(new Label(mc, this).setText("label 6"));
-        recipeList.addChild(new Label(mc, this).setText("label 7"));
-        recipeList.addChild(new Label(mc, this).setText("label 8"));
+        keepItem = new ChoiceLabel(mc, this).
+                addChoices("All", "Keep").
+                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
+                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
+                setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
+        internalRecipe = new ChoiceLabel(mc, this).
+                addChoices("Int", "Ext").
+                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
+                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
+                setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(recipeList);
+        recipeList = new WidgetList(mc, this).
+                setRowheight(16).
+                addSelectionEvent(new SelectionEvent() {
+                    @Override
+                    public void select(Widget parent, int index) {
+
+                    }
+                }).
+                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
+        addRecipeLine("1", Blocks.brick_stairs);
+        addRecipeLine("2", Blocks.crafting_table);
+        addRecipeLine("3", Items.apple);
+        addRecipeLine("4", Items.arrow);
+        addRecipeLine("5", null);
+        addRecipeLine("6", null);
+        addRecipeLine("7", null);
+        addRecipeLine("8", null);
+
+        Slider listSlider = new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
+                addChild(recipeList).addChild(listSlider);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void addRecipeLine(String label, Object craftingResult) {
+        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, this).setText(label).setDesiredWidth(8)).
+                addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
+                addChild(new Label(mc, this).setText(BlockInfo.getReadableName(craftingResult, 0)));
+        recipeList.addChild(panel);
     }
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
@@ -68,9 +107,6 @@ public class GuiCrafter extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int i2) {
-//        String s = this.inventory.hasCustomInventoryName() ? this.inventory.getInventoryName() : inventory.getInventoryName();
-//        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 5, 4210752);
-//        this.fontRendererObj.drawString("container.inventory", 26, this.ySize - 96 + 4, 4210752);
     }
 
     @Override
@@ -78,5 +114,23 @@ public class GuiCrafter extends GuiContainer {
         window.draw();
         int currentRF = crafterBlockTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) {
+        super.mouseClicked(x, y, button);
+        window.mouseClicked(x, y, button);
+    }
+
+    @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
+        window.handleMouseInput();
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int x, int y, int button) {
+        super.mouseMovedOrUp(x, y, button);
+        window.mouseMovedOrUp(x, y, button);
     }
 }

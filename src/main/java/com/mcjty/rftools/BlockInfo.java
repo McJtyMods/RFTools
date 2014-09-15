@@ -57,7 +57,7 @@ public class BlockInfo {
         return displayName;
     }
 
-    private static String getReadableName(Object object, int metadata) {
+    public static String getReadableName(Object object, int metadata) {
         if (object instanceof Block) {
             return getReadableName((Block) object, metadata);
         } else if (object instanceof Item) {
