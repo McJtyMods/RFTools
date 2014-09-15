@@ -1,10 +1,10 @@
 package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.gui.layout.PositionalLayout;
-import com.mcjty.gui.widgets.EnergyBar;
-import com.mcjty.gui.widgets.Panel;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.Window;
-import com.mcjty.gui.widgets.Widget;
+import com.mcjty.gui.widgets.Label;
+import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
@@ -14,10 +14,11 @@ import java.awt.*;
 
 public class GuiCrafter extends GuiContainer {
     public static final int CRAFTER_WIDTH = 256;
-    public static final int CRAFTER_HEIGHT = 216;
+    public static final int CRAFTER_HEIGHT = 224;
 
     private Window window;
     private EnergyBar energyBar;
+    private WidgetList recipeList;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
 
@@ -28,9 +29,20 @@ public class GuiCrafter extends GuiContainer {
         super.initGui();
 
         int maxEnergyStored = crafterBlockTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 10, 16, 40));
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
         energyBar.setValue(crafterBlockTileEntity.getCurrentRF());
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
+
+        recipeList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(13, 7, 175, 80));
+        recipeList.addChild(new Label(mc, this).setText("label 1"));
+        recipeList.addChild(new Label(mc, this).setText("label 2"));
+        recipeList.addChild(new Label(mc, this).setText("label 3"));
+        recipeList.addChild(new Label(mc, this).setText("label 4"));
+        recipeList.addChild(new Label(mc, this).setText("label 5"));
+        recipeList.addChild(new Label(mc, this).setText("label 6"));
+        recipeList.addChild(new Label(mc, this).setText("label 7"));
+        recipeList.addChild(new Label(mc, this).setText("label 8"));
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(recipeList);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

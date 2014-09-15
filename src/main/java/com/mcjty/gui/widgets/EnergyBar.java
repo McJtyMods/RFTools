@@ -12,6 +12,7 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
     private int color = 0xFF000000;
     private boolean horizontal = false;
     private IEnergyHandler handler = null;
+    private boolean showText = true;
 
     public EnergyBar(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -42,6 +43,15 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
 
     public boolean isVertical() {
         return !horizontal;
+    }
+
+    public boolean isShowText() {
+        return showText;
+    }
+
+    public EnergyBar setShowText(boolean showText) {
+        this.showText = showText;
+        return this;
     }
 
     public int getValue() {
@@ -89,11 +99,13 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
                 RenderHelper.drawHorizontalGradientRect(x + bounds.x, y + bounds.y, x + bounds.x + w, y + bounds.y + bounds.height - 1, 0xFFFF0000, 0xFF550000);
             } else {
                 w = (int) ((bounds.height) * (float) currentValue / maximum);
-                RenderHelper.drawVerticalGradientRect(x + bounds.x, y + bounds.y, x + bounds.x + bounds.width - 1, y + bounds.y + w, 0xFFFF0000, 0xFF550000);
+                RenderHelper.drawVerticalGradientRect(x + bounds.x, y + bounds.y + bounds.height - w, x + bounds.x + bounds.width - 1, y + bounds.y + bounds.height, 0xFFFF0000, 0xFF550000);
             }
         }
-        String s = currentValue + "/" + maximum;
-        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, getBounds().width), x+bounds.x, y+bounds.y+(bounds.height-mc.fontRenderer.FONT_HEIGHT)/2, color);
+        if (showText) {
+            String s = currentValue + "/" + maximum;
+            mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, getBounds().width), x+bounds.x, y+bounds.y+(bounds.height-mc.fontRenderer.FONT_HEIGHT)/2, color);
+        }
     }
 
 }
