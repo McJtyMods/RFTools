@@ -19,6 +19,8 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
 
     private int recipeIndex;
     private ItemStack items[];
+    private boolean keepOne;
+    private boolean craftInternal;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -27,13 +29,17 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         z = buf.readInt();
         recipeIndex = buf.readByte();
         int l = buf.readByte();
-        items = new ItemStack[l];
-        for (int i = 0 ; i < l ; i++) {
-            boolean b = buf.readBoolean();
-            if (b) {
-                items[i] = NetworkTools.readItemStack(buf);
-            } else {
-                items[i] = null;
+        if (l == 0) {
+            items = null;
+        } else {
+            items = new ItemStack[l];
+            for (int i = 0 ; i < l ; i++) {
+                boolean b = buf.readBoolean();
+                if (b) {
+                    items[i] = NetworkTools.readItemStack(buf);
+                } else {
+                    items[i] = null;
+                }
             }
         }
     }
@@ -44,26 +50,32 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         buf.writeInt(y);
         buf.writeInt(z);
         buf.writeByte(recipeIndex);
-        buf.writeByte(items.length);
-        for (ItemStack item : items) {
-            if (item == null) {
-                buf.writeBoolean(false);
-            } else {
-                buf.writeBoolean(true);
-                NetworkTools.writeItemStack(buf, item);
+        if (items != null) {
+            buf.writeByte(items.length);
+            for (ItemStack item : items) {
+                if (item == null) {
+                    buf.writeBoolean(false);
+                } else {
+                    buf.writeBoolean(true);
+                    NetworkTools.writeItemStack(buf, item);
+                }
             }
+        } else {
+            buf.writeByte(0);
         }
     }
 
     public PacketCrafter() {
     }
 
-    public PacketCrafter(int x, int y, int z, int recipeIndex, ItemStack[] items) {
+    public PacketCrafter(int x, int y, int z, int recipeIndex, ItemStack[] items, boolean keepOne, boolean craftInternal) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.recipeIndex = recipeIndex;
         this.items = items;
+        this.keepOne = keepOne;
+        this.craftInternal = craftInternal;
     }
 
     @Override
@@ -77,7 +89,9 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         }
         CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
         if (message.recipeIndex != -1) {
-            crafterBlockTileEntity.setRecipe(message.recipeIndex, message.items);
+            CraftingRecipe recipe = crafterBlockTileEntity.setRecipe(message.recipeIndex, message.items);
+            recipe.setKeepOne(message.keepOne);
+            recipe.setCraftInternal(message.craftInternal);
         }
         return null;
     }

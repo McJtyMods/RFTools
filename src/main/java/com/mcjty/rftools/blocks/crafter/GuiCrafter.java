@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -14,8 +15,6 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -51,11 +50,23 @@ public class GuiCrafter extends GuiContainer {
                 addChoices("All", "Keep").
                 setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
                 setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        updateRecipe();
+                    }
+                }).
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
         internalRecipe = new ChoiceLabel(mc, this).
-                addChoices("Int", "Ext").
+                addChoices("Ext", "Int").
                 setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
                 setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        updateRecipe();
+                    }
+                }).
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
 
         recipeList = new WidgetList(mc, this).
@@ -76,7 +87,7 @@ public class GuiCrafter extends GuiContainer {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
-        sendChangeToServer(-1, null);
+        sendChangeToServer(-1, null, false, false);
 
         window = new Window(this, toplevel);
     }
@@ -85,23 +96,17 @@ public class GuiCrafter extends GuiContainer {
         recipeList.removeChildren();
         for (int i = 0 ; i < 8 ; i++) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
-            String indexString = String.valueOf(i + 1);
             ItemStack stack = recipe.getItemStack(9);
-            addRecipeLine(indexString, stack);
+            addRecipeLine(stack);
         }
     }
 
-    private void addRecipeLine(String label, Object craftingResult) {
+    private void addRecipeLine(Object craftingResult) {
         Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, this).setText(label).setDesiredWidth(8)).
                 addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
                 addChild(new Label(mc, this).setText(BlockInfo.getReadableName(craftingResult, 0)));
         recipeList.addChild(panel);
     }
-
-//    private void changeRecipeLine(int index, CraftingRecipe craftingRecipe) {
-//        String indexString = String.valueOf(index + 1);
-//    }
 
     private void selectRecipe() {
         int selected = recipeList.getSelected();
@@ -109,6 +114,8 @@ public class GuiCrafter extends GuiContainer {
             for (int i = 0 ; i < 10 ; i++) {
                 inventorySlots.getSlot(i).putStack(null);
             }
+            keepItem.setChoice("All");
+            internalRecipe.setChoice("Ext");
             return;
         }
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
@@ -152,9 +159,22 @@ public class GuiCrafter extends GuiContainer {
 
         if (dirty) {
             craftingRecipe.setRecipe(items);
-            sendChangeToServer(selected, items);
+            updateRecipe();
             populateList();
         }
+    }
+
+    private void updateRecipe() {
+        int selected = recipeList.getSelected();
+        if (selected == -1) {
+            return;
+        }
+        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        boolean keepOne = "Keep".equals(keepItem.getCurrentChoice());
+        boolean craftInternal = "Int".equals(internalRecipe.getCurrentChoice());
+        craftingRecipe.setKeepOne(keepOne);
+        craftingRecipe.setCraftInternal(craftInternal);
+        sendChangeToServer(selected, craftingRecipe.getItems(), keepOne, craftInternal);
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
@@ -167,8 +187,9 @@ public class GuiCrafter extends GuiContainer {
         }
     }
 
-    private void sendChangeToServer(int index, ItemStack[] items) {
-        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, items));
+    private void sendChangeToServer(int index, ItemStack[] items, boolean keepOne, boolean craftInternal) {
+        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, items,
+                keepOne, craftInternal));
     }
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {

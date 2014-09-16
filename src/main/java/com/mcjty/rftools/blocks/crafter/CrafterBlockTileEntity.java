@@ -21,8 +21,9 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         }
     }
 
-    public void setRecipe(int index, ItemStack[] items) {
+    public CraftingRecipe setRecipe(int index, ItemStack[] items) {
         recipes[index].setRecipe(items);
+        return recipes[index];
     }
 
     public CraftingRecipe getRecipe(int index) {
