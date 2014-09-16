@@ -76,7 +76,9 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
             return null;
         }
         CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
-        crafterBlockTileEntity.setRecipe(message.recipeIndex, message.items);
+        if (message.recipeIndex != -1) {
+            crafterBlockTileEntity.setRecipe(message.recipeIndex, message.items);
+        }
         return null;
     }
 

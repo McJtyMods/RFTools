@@ -76,11 +76,13 @@ public class GuiCrafter extends GuiContainer {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
+        sendChangeToServer(-1, null);
 
         window = new Window(this, toplevel);
     }
 
     private void populateList() {
+        recipeList.removeChildren();
         for (int i = 0 ; i < 8 ; i++) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
             String indexString = String.valueOf(i + 1);
@@ -88,6 +90,18 @@ public class GuiCrafter extends GuiContainer {
             addRecipeLine(indexString, stack);
         }
     }
+
+    private void addRecipeLine(String label, Object craftingResult) {
+        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, this).setText(label).setDesiredWidth(8)).
+                addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
+                addChild(new Label(mc, this).setText(BlockInfo.getReadableName(craftingResult, 0)));
+        recipeList.addChild(panel);
+    }
+
+//    private void changeRecipeLine(int index, CraftingRecipe craftingRecipe) {
+//        String indexString = String.valueOf(index + 1);
+//    }
 
     private void selectRecipe() {
         int selected = recipeList.getSelected();
@@ -115,32 +129,46 @@ public class GuiCrafter extends GuiContainer {
             inv.setInventorySlotContents(i, inventorySlots.getSlot(i).getStack());
         }
         ItemStack matches = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
-        inventorySlots.getSlot(9).putStack(matches);
+        // Compare current contents to avoid unneeded slot update.
+        ItemStack oldStack = inventorySlots.getSlot(9).getStack();
+        if (!itemStacksEqual(matches, oldStack)) {
+            inventorySlots.getSlot(9).putStack(matches);
+        }
 
         int selected = recipeList.getSelected();
         if (selected == -1) {
             return;
         }
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        boolean dirty = false;
         ItemStack[] items = new ItemStack[10];
         for (int i = 0 ; i < 10 ; i++) {
             items[i] = inventorySlots.getSlot(i).getStack();
+            ItemStack oldItem = craftingRecipe.getItemStack(i);
+            if (!itemStacksEqual(oldItem, items[i])) {
+                dirty = true;
+            }
         }
-        craftingRecipe.setRecipe(items);
 
-        sendChangeToServer(selected, items);
+        if (dirty) {
+            craftingRecipe.setRecipe(items);
+            sendChangeToServer(selected, items);
+            populateList();
+        }
+    }
+
+    private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
+        if (matches == null) {
+            return oldStack == null;
+        } else if (oldStack == null) {
+            return false;
+        } else {
+            return matches.isItemEqual(oldStack);
+        }
     }
 
     private void sendChangeToServer(int index, ItemStack[] items) {
         PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, items));
-    }
-
-    private void addRecipeLine(String label, Object craftingResult) {
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, this).setText(label).setDesiredWidth(8)).
-                addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
-                addChild(new Label(mc, this).setText(BlockInfo.getReadableName(craftingResult, 0)));
-        recipeList.addChild(panel);
     }
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
