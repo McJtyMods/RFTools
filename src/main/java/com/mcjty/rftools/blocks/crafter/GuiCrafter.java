@@ -1,16 +1,15 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.layout.VerticalAlignment;
 import com.mcjty.gui.widgets.*;
-import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
-import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -21,7 +20,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -69,14 +67,7 @@ public class GuiCrafter extends GuiContainer {
                     }
                 }).
                 setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
-        addRecipeLine("1", Blocks.brick_stairs);
-        addRecipeLine("2", Blocks.crafting_table);
-        addRecipeLine("3", Items.apple);
-        addRecipeLine("4", Items.arrow);
-        addRecipeLine("5", null);
-        addRecipeLine("6", null);
-        addRecipeLine("7", null);
-        addRecipeLine("8", null);
+        populateList();
 
         Slider listSlider = new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
 
@@ -87,6 +78,15 @@ public class GuiCrafter extends GuiContainer {
         selectRecipe();
 
         window = new Window(this, toplevel);
+    }
+
+    private void populateList() {
+        for (int i = 0 ; i < 8 ; i++) {
+            CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
+            String indexString = String.valueOf(i + 1);
+            ItemStack stack = recipe.getItemStack(9);
+            addRecipeLine(indexString, stack);
+        }
     }
 
     private void selectRecipe() {

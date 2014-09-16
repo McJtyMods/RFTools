@@ -62,6 +62,9 @@ public class BlockInfo {
             return getReadableName((Block) object, metadata);
         } else if (object instanceof Item) {
             return getReadableName((Item) object, metadata);
+        } else if (object instanceof ItemStack) {
+            ItemStack s = (ItemStack) object;
+            return s.getDisplayName();
         } else {
             return "?";
         }
