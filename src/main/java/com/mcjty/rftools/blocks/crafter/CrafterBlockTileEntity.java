@@ -153,15 +153,15 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(0);
-            stacks[i+ CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks[i+CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
     private void readRecipesFromNBT(NBTTagCompound tagCompound) {
         NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = recipeTagList.getCompoundTagAt(0);
+            NBTTagCompound nbtTagCompound = recipeTagList.getCompoundTagAt(i);
             recipes[i].readFromNBT(nbtTagCompound);
         }
     }

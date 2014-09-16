@@ -11,7 +11,7 @@ public class CraftingRecipe {
     public void readFromNBT(NBTTagCompound tagCompound) {
         NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < nbtTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(0);
+            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(i);
             stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
