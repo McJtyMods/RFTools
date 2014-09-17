@@ -45,7 +45,7 @@ public class RenderHelper {
     }
 
     public static boolean renderItemStackWithCount(Minecraft mc, RenderItem itemRender, ItemStack itm, int xo, int yo, boolean highlight) {
-        if (itm.stackSize==1) {
+        if (itm.stackSize==1 || itm.stackSize==0) {
             return renderItemStack(mc, itemRender, itm, xo, yo, "", highlight);
         } else {
             return renderItemStack(mc, itemRender, itm, xo, yo, "" + itm.stackSize, highlight);
