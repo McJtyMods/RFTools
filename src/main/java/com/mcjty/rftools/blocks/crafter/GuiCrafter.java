@@ -15,6 +15,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -87,7 +88,7 @@ public class GuiCrafter extends GuiContainer {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
-        sendChangeToServer(-1, null, false, false);
+        sendChangeToServer(-1, null, null, false, false);
 
         window = new Window(this, toplevel);
     }
@@ -96,7 +97,7 @@ public class GuiCrafter extends GuiContainer {
         recipeList.removeChildren();
         for (int i = 0 ; i < 8 ; i++) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
-            ItemStack stack = recipe.getItemStack(9);
+            ItemStack stack = recipe.getResult();
             addRecipeLine(stack);
         }
     }
@@ -119,9 +120,11 @@ public class GuiCrafter extends GuiContainer {
             return;
         }
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
-        for (int i = 0 ; i < 10 ; i++) {
-            inventorySlots.getSlot(i).putStack(craftingRecipe.getItemStack(i));
+        InventoryCrafting inv = craftingRecipe.getInventory();
+        for (int i = 0 ; i < 9 ; i++) {
+            inventorySlots.getSlot(i).putStack(inv.getStackInSlot(i));
         }
+        inventorySlots.getSlot(9).putStack(craftingRecipe.getResult());
         keepItem.setChoice(craftingRecipe.isKeepOne() ? "Keep" : "All");
         internalRecipe.setChoice(craftingRecipe.isCraftInternal() ? "Int" : "Ext");
     }
@@ -151,16 +154,19 @@ public class GuiCrafter extends GuiContainer {
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
         boolean dirty = false;
         ItemStack[] items = new ItemStack[10];
+        InventoryCrafting oldInv = craftingRecipe.getInventory();
         for (int i = 0 ; i < 10 ; i++) {
             items[i] = inventorySlots.getSlot(i).getStack();
-            ItemStack oldItem = craftingRecipe.getItemStack(i);
+//            ItemStack oldItem = craftingRecipe.getItemStack(i);
+            ItemStack oldItem = oldInv.getStackInSlot(i);
             if (!itemStacksEqual(oldItem, items[i])) {
                 dirty = true;
             }
         }
 
         if (dirty) {
-            craftingRecipe.setRecipe(items);
+//            craftingRecipe.setRecipe(items);
+            craftingRecipe.setRecipe(inv, items[9]);
             updateRecipe();
             populateList();
         }
@@ -176,7 +182,7 @@ public class GuiCrafter extends GuiContainer {
         boolean craftInternal = "Int".equals(internalRecipe.getCurrentChoice());
         craftingRecipe.setKeepOne(keepOne);
         craftingRecipe.setCraftInternal(craftInternal);
-        sendChangeToServer(selected, craftingRecipe.getItems(), keepOne, craftInternal);
+        sendChangeToServer(selected, craftingRecipe.getInventory(), craftingRecipe.getResult(), keepOne, craftInternal);
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
@@ -189,9 +195,9 @@ public class GuiCrafter extends GuiContainer {
         }
     }
 
-    private void sendChangeToServer(int index, ItemStack[] items, boolean keepOne, boolean craftInternal) {
-        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, items,
-                keepOne, craftInternal));
+    private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
+        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, inv,
+                result, keepOne, craftInternal));
     }
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {

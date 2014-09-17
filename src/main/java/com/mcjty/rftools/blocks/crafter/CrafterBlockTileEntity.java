@@ -12,6 +12,9 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
     private CraftingRecipe recipes[] = new CraftingRecipe[8];
 
+    // This flag means something has changed about the configuration and we might have to recalculate stuff.
+    private boolean stateDirty = true;
+
     public static final int MAXENERGY = 32000;
 
     public CrafterBlockTileEntity() {
@@ -19,11 +22,11 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         for (int i = 0 ; i < recipes.length ; i++) {
             recipes[i] = new CraftingRecipe();
         }
+        stateDirty = true;
     }
 
-    public CraftingRecipe setRecipe(int index, ItemStack[] items) {
-        recipes[index].setRecipe(items);
-        return recipes[index];
+    public void setStateDirty(boolean stateDirty) {
+        this.stateDirty = stateDirty;
     }
 
     public CraftingRecipe getRecipe(int index) {
@@ -198,8 +201,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     }
 
     @Override
-    public boolean canUpdate() {
-        // We currently don't need updates for this tile entity yet
-        return false;
+    protected void checkStateServer() {
+        super.checkStateServer();
+
     }
 }

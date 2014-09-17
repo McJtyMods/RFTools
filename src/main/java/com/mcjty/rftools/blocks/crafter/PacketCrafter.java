@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.tileentity.TileEntity;
@@ -74,12 +75,18 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
     public PacketCrafter() {
     }
 
-    public PacketCrafter(int x, int y, int z, int recipeIndex, ItemStack[] items, boolean keepOne, boolean craftInternal) {
+    public PacketCrafter(int x, int y, int z, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.recipeIndex = recipeIndex;
-        this.items = items;
+        this.items = new ItemStack[10];
+        if (inv != null) {
+            for (int i = 0 ; i < 9 ; i++) {
+                items[i] = inv.getStackInSlot(i);
+            }
+        }
+        items[9] = result;
         this.keepOne = keepOne;
         this.craftInternal = craftInternal;
     }
@@ -95,9 +102,11 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         }
         CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
         if (message.recipeIndex != -1) {
-            CraftingRecipe recipe = crafterBlockTileEntity.setRecipe(message.recipeIndex, message.items);
+            CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
+            recipe.setRecipe(message.items, message.items[9]);
             recipe.setKeepOne(message.keepOne);
             recipe.setCraftInternal(message.craftInternal);
+            crafterBlockTileEntity.setStateDirty(true);
         }
         return null;
     }
