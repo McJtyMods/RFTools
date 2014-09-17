@@ -14,7 +14,6 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 
 public class CraftingRecipe {
-    //    private ItemStack stacks[] = new ItemStack[10];
     private InventoryCrafting inv = new InventoryCrafting(new Container() {
         @Override
         public boolean canInteractWith(EntityPlayer var1) {
@@ -42,7 +41,6 @@ public class CraftingRecipe {
         NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
             NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(i);
-//            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
             inv.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
         NBTTagCompound resultCompound = tagCompound.getCompoundTag("Result");
@@ -75,10 +73,6 @@ public class CraftingRecipe {
         tagCompound.setBoolean("Int", craftInternal);
     }
 
-//    public void setRecipe(ItemStack[] items) {
-//        stacks = items;
-//    }
-
     public void setRecipe(InventoryCrafting inv, ItemStack result) {
         this.inv = inv;
         this.result = result;
@@ -93,6 +87,10 @@ public class CraftingRecipe {
 
     public InventoryCrafting getInventory() {
         return inv;
+    }
+
+    public void setResult(ItemStack result) {
+        this.result = result;
     }
 
     public ItemStack getResult() {

@@ -130,43 +130,33 @@ public class GuiCrafter extends GuiContainer {
     }
 
     private void rememberRecipe() {
-        InventoryCrafting inv = new InventoryCrafting(new Container() {
-            @Override
-            public boolean canInteractWith(EntityPlayer var1) {
-                return false;
-            }
-        }, 3, 3);
-
-        for(int i=0 ; i<9 ; i++) {
-            inv.setInventorySlotContents(i, inventorySlots.getSlot(i).getStack());
-        }
-        ItemStack matches = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
-        // Compare current contents to avoid unneeded slot update.
-        ItemStack oldStack = inventorySlots.getSlot(9).getStack();
-        if (!itemStacksEqual(matches, oldStack)) {
-            inventorySlots.getSlot(9).putStack(matches);
-        }
-
         int selected = recipeList.getSelected();
         if (selected == -1) {
             return;
         }
+
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        InventoryCrafting inv = craftingRecipe.getInventory();
+
         boolean dirty = false;
-        ItemStack[] items = new ItemStack[10];
-        InventoryCrafting oldInv = craftingRecipe.getInventory();
-        for (int i = 0 ; i < 10 ; i++) {
-            items[i] = inventorySlots.getSlot(i).getStack();
-//            ItemStack oldItem = craftingRecipe.getItemStack(i);
-            ItemStack oldItem = oldInv.getStackInSlot(i);
-            if (!itemStacksEqual(oldItem, items[i])) {
+        for (int i = 0 ; i < 9 ; i++) {
+            ItemStack oldStack = inv.getStackInSlot(i);
+            ItemStack newStack = inventorySlots.getSlot(i).getStack();
+            if (!itemStacksEqual(oldStack, newStack)) {
                 dirty = true;
+                inv.setInventorySlotContents(i, newStack);
             }
         }
 
+        // Compare current contents to avoid unneeded slot update.
+        ItemStack newResult = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
+        ItemStack oldResult = inventorySlots.getSlot(9).getStack();
+        if (!itemStacksEqual(oldResult, newResult)) {
+            inventorySlots.getSlot(9).putStack(newResult);
+        }
+
         if (dirty) {
-//            craftingRecipe.setRecipe(items);
-            craftingRecipe.setRecipe(inv, items[9]);
+            craftingRecipe.setResult(newResult);
             updateRecipe();
             populateList();
         }
