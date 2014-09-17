@@ -1,12 +1,18 @@
 package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.entity.SyncedValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.List;
 
 public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
@@ -14,6 +20,9 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
 
     // This flag means something has changed about the configuration and we might have to recalculate stuff.
     private boolean stateDirty = true;
+
+    private SyncedValue<Integer> stepIndex = new SyncedValue<Integer>(0);
+
 
     public static final int MAXENERGY = 32000;
 
@@ -23,6 +32,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             recipes[i] = new CraftingRecipe();
         }
         stateDirty = true;
+        registerSyncedValue(stepIndex);
     }
 
     public void setStateDirty(boolean stateDirty) {
@@ -152,6 +162,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         super.readFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
+        stepIndex.setValue(tagCompound.getInteger("Step"));
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -175,6 +186,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         super.writeToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
+        tagCompound.setInteger("Step", stepIndex.getValue());
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -203,6 +215,140 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
+        if (stateDirty) {
+            stateDirty = false;
+            stepIndex.setValue(0);
+        }
 
+        int index = stepIndex.getValue();
+        CraftingRecipe craftingRecipe = recipes[index];
+        stepIndex.setValue((index+1) % 8);
+
+        if (craftingRecipe != null) {
+            IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+            if (recipe != null) {
+                List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
+                int keep = craftingRecipe.isKeepOne() ? 1 : 0;
+                if (checkIfRecipeWorks(stackWithCounts, keep)) {
+                    ItemStack result = craftingRecipe.getResult();
+                    // First check if we have room for the result. If yes we can actually craft.
+                    boolean internal = craftingRecipe.isCraftInternal();
+                    if (placeResult(internal, result)) {
+                        consumeCraftingItems(stackWithCounts, keep);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean checkIfRecipeWorks(List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
+        for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
+            ItemStack stack = stackWithCount.getStack();
+            int count = stackWithCount.getCount();
+            for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
+                ItemStack input = stacks[CrafterContainerFactory.SLOT_BUFFER + j];
+                if (input != null && input.stackSize > keep) {
+                    if (OreDictionary.itemMatches(stack, input, false)) {
+                        int ss = count;
+                        if (input.stackSize - ss < keep) {
+                            ss = input.stackSize - keep;
+                        }
+                        count -= ss;
+                    }
+                }
+            }
+            if (count > 0) {
+                return false;       // We couldn't find all needed items
+            }
+        }
+        return true;
+    }
+
+    private void consumeCraftingItems(List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
+        for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
+            ItemStack stack = stackWithCount.getStack();
+            int count = stackWithCount.getCount();
+            for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
+                ItemStack input = stacks[CrafterContainerFactory.SLOT_BUFFER + j];
+                if (input != null && input.stackSize > keep) {
+                    if (OreDictionary.itemMatches(stack, input, false)) {
+                        int ss = count;
+                        if (input.stackSize - ss < keep) {
+                            ss = input.stackSize - keep;
+                        }
+                        count -= ss;
+                        input.splitStack(ss);        // This consumes the items
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean placeResult(boolean internal, ItemStack result) {
+        int start;
+        int stop;
+        if (internal) {
+            start = CrafterContainerFactory.SLOT_BUFFER;
+            stop = CrafterContainerFactory.SLOT_BUFFER + CrafterContainerFactory.BUFFER_SIZE;
+        } else {
+            start = CrafterContainerFactory.SLOT_BUFFEROUT;
+            stop = CrafterContainerFactory.SLOT_BUFFEROUT + CrafterContainerFactory.BUFFEROUT_SIZE;
+        }
+        return mergeItemStack(result, start, stop);
+    }
+
+    /**
+     * Merges provided ItemStack with the first avaliable one in this inventory.
+     */
+    protected boolean mergeItemStack(ItemStack result, int start, int stop) {
+        boolean flag1 = false;
+        int k = start;
+
+        ItemStack itemstack1;
+
+        if (result.isStackable()) {
+            while (result.stackSize > 0 && (k < stop)) {
+                itemstack1 = getStackInSlot(k);
+
+                if (itemstack1 != null && itemstack1.getItem() == result.getItem() && (!result.getHasSubtypes() || result.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(result, itemstack1)) {
+                    int l = itemstack1.stackSize + result.stackSize;
+
+                    if (l <= result.getMaxStackSize()) {
+//                        result.stackSize = 0;
+                        itemstack1.stackSize = l;
+                        markDirty();
+                        flag1 = true;
+                    }
+                    else if (itemstack1.stackSize < result.getMaxStackSize()) {
+//                        result.stackSize -= result.getMaxStackSize() - itemstack1.stackSize;
+                        itemstack1.stackSize = result.getMaxStackSize();
+                        markDirty();
+                        flag1 = true;
+                    }
+                }
+
+                ++k;
+            }
+        }
+
+        if (result.stackSize > 0) {
+            k = start;
+
+            while (k < stop) {
+                itemstack1 = getStackInSlot(k);
+
+                if (itemstack1 == null) {
+                    setInventorySlotContents(k, result.copy());
+                    markDirty();
+//                    result.stackSize = 0;
+                    flag1 = true;
+                    break;
+                }
+
+                ++k;
+            }
+        }
+
+        return flag1;
     }
 }

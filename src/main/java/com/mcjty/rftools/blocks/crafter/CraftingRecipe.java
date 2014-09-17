@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CraftingRecipe {
@@ -22,13 +23,17 @@ public class CraftingRecipe {
     }, 3, 3);
     private ItemStack result;
 
+    private boolean recipePresent = false;
+    private IRecipe recipe = null;
+    private List<StackWithCount> stacksWithCount = new ArrayList<StackWithCount>();
+
     private boolean keepOne = false;
     private boolean craftInternal = false;
 
     public IRecipe findRecipe(World world) {
         List recipes = CraftingManager.getInstance().getRecipeList();
-        for (Object recipe : recipes) {
-            IRecipe irecipe = (IRecipe) recipe;
+        for (Object r : recipes) {
+            IRecipe irecipe = (IRecipe) r;
 
             if (irecipe.matches(inv, world)) {
                 return irecipe;
@@ -51,6 +56,7 @@ public class CraftingRecipe {
         }
         keepOne = tagCompound.getBoolean("Keep");
         craftInternal = tagCompound.getBoolean("Int");
+        recipePresent = false;
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -73,16 +79,12 @@ public class CraftingRecipe {
         tagCompound.setBoolean("Int", craftInternal);
     }
 
-    public void setRecipe(InventoryCrafting inv, ItemStack result) {
-        this.inv = inv;
-        this.result = result;
-    }
-
     public void setRecipe(ItemStack[] items, ItemStack result) {
         for (int i = 0 ; i < 9 ; i++) {
             inv.setInventorySlotContents(i, items[i]);
         }
         this.result = result;
+        recipePresent = false;
     }
 
     public InventoryCrafting getInventory() {
@@ -95,6 +97,37 @@ public class CraftingRecipe {
 
     public ItemStack getResult() {
         return result;
+    }
+
+    private void putStackInCache(ItemStack stack) {
+        for (StackWithCount aStacksWithCount : stacksWithCount) {
+            if (stack.isItemEqual(aStacksWithCount.stack)) {
+                aStacksWithCount.count++;
+                return;
+            }
+        }
+        stacksWithCount.add(new StackWithCount(stack, 1));
+    }
+
+    public List<StackWithCount> getStacksWithCount() {
+        return stacksWithCount;
+    }
+
+    public IRecipe getCachedRecipe(World world) {
+        if (!recipePresent) {
+            recipePresent = true;
+            recipe = findRecipe(world);
+            stacksWithCount.clear();
+            if (recipe != null) {
+                for (int i = 0 ; i < 9 ; i++) {
+                    ItemStack stack = inv.getStackInSlot(i);
+                    if (stack != null) {
+                        putStackInCache(stack);
+                    }
+                }
+            }
+        }
+        return recipe;
     }
 
     public boolean isKeepOne() {
@@ -112,4 +145,23 @@ public class CraftingRecipe {
     public void setCraftInternal(boolean craftInternal) {
         this.craftInternal = craftInternal;
     }
+
+    public class StackWithCount {
+        ItemStack stack;
+        int count;
+
+        private StackWithCount(ItemStack stack, int count) {
+            this.stack = stack;
+            this.count = count;
+        }
+
+        public ItemStack getStack() {
+            return stack;
+        }
+
+        public int getCount() {
+            return count;
+        }
+    }
+
 }
