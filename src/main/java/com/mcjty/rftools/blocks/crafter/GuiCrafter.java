@@ -20,6 +20,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -149,7 +150,13 @@ public class GuiCrafter extends GuiContainer {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        ItemStack newResult = CraftingManager.getInstance().findMatchingRecipe(inv, mc.theWorld);
+        IRecipe recipe = craftingRecipe.findRecipe(mc.theWorld);
+        ItemStack newResult;
+        if (recipe == null) {
+            newResult = null;
+        } else {
+            newResult = recipe.getCraftingResult(inv);
+        }
         ItemStack oldResult = inventorySlots.getSlot(9).getStack();
         if (!itemStacksEqual(oldResult, newResult)) {
             inventorySlots.getSlot(9).putStack(newResult);
