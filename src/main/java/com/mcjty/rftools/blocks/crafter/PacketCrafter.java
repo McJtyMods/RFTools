@@ -27,6 +27,9 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
+        keepOne = buf.readBoolean();
+        craftInternal = buf.readBoolean();
+
         recipeIndex = buf.readByte();
         int l = buf.readByte();
         if (l == 0) {
@@ -49,6 +52,9 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
+        buf.writeBoolean(keepOne);
+        buf.writeBoolean(craftInternal);
+
         buf.writeByte(recipeIndex);
         if (items != null) {
             buf.writeByte(items.length);

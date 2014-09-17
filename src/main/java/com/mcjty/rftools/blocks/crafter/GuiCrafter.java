@@ -122,6 +122,8 @@ public class GuiCrafter extends GuiContainer {
         for (int i = 0 ; i < 10 ; i++) {
             inventorySlots.getSlot(i).putStack(craftingRecipe.getItemStack(i));
         }
+        keepItem.setChoice(craftingRecipe.isKeepOne() ? "Keep" : "All");
+        internalRecipe.setChoice(craftingRecipe.isCraftInternal() ? "Int" : "Ext");
     }
 
     private void rememberRecipe() {
