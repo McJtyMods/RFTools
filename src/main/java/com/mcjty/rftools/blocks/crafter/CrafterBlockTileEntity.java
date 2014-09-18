@@ -4,7 +4,6 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -93,7 +92,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             if (stack != null) {
                 stacks[index] = stack.copy();
                 if (index < 9) {
-                    stacks[index].stackSize = 0;
+                    stacks[index].stackSize = 1;
                 }
             } else {
                 stacks[index] = null;
@@ -300,30 +299,30 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     /**
      * Merges provided ItemStack with the first avaliable one in this inventory.
      */
-    protected boolean mergeItemStack(ItemStack result, int start, int stop) {
-        boolean flag1 = false;
+    private boolean mergeItemStack(ItemStack result, int start, int stop) {
+        boolean success = false;
         int k = start;
 
         ItemStack itemstack1;
+        int itemsToPlace = result.stackSize;
 
         if (result.isStackable()) {
-            while (result.stackSize > 0 && (k < stop)) {
+            while (itemsToPlace > 0 && (k < stop)) {
                 itemstack1 = getStackInSlot(k);
 
                 if (itemstack1 != null && itemstack1.getItem() == result.getItem() && (!result.getHasSubtypes() || result.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(result, itemstack1)) {
-                    int l = itemstack1.stackSize + result.stackSize;
+                    int l = itemstack1.stackSize + itemsToPlace;
 
                     if (l <= result.getMaxStackSize()) {
-//                        result.stackSize = 0;
+                        itemsToPlace = 0;
                         itemstack1.stackSize = l;
                         markDirty();
-                        flag1 = true;
-                    }
-                    else if (itemstack1.stackSize < result.getMaxStackSize()) {
-//                        result.stackSize -= result.getMaxStackSize() - itemstack1.stackSize;
+                        success = true;
+                    } else if (itemstack1.stackSize < result.getMaxStackSize()) {
+                        itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
                         itemstack1.stackSize = result.getMaxStackSize();
                         markDirty();
-                        flag1 = true;
+                        success = true;
                     }
                 }
 
@@ -331,7 +330,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             }
         }
 
-        if (result.stackSize > 0) {
+        if (itemsToPlace > 0) {
             k = start;
 
             while (k < stop) {
@@ -340,8 +339,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
                 if (itemstack1 == null) {
                     setInventorySlotContents(k, result.copy());
                     markDirty();
-//                    result.stackSize = 0;
-                    flag1 = true;
+                    itemsToPlace = 0;
+                    success = true;
                     break;
                 }
 
@@ -349,6 +348,6 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             }
         }
 
-        return flag1;
+        return success;
     }
 }
