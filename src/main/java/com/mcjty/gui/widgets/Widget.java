@@ -50,6 +50,13 @@ public interface Widget<P extends Widget> {
     int getDesiredHeight();
 
     /**
+     * Enable or disable mouse interaction with this widget. This is true by default.
+     */
+    P setEnabled(boolean enabled);
+
+    boolean isEnabled();
+
+    /**
      * Get the bounds for this widget relative to the parents coordinate system.
      * @return
      */

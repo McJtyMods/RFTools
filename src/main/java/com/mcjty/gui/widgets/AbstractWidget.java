@@ -16,6 +16,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     protected Minecraft mc;
     protected Gui gui;
     private LayoutHint layoutHint = null;
+    protected boolean enabled = true;
 
     private boolean layoutDirty = true;
 
@@ -33,6 +34,17 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         gui.drawRect(xx + bounds.width, yy, xx + bounds.width, yy + bounds.height, color);
         gui.drawRect(xx, yy, xx + bounds.width, yy, color);
         gui.drawRect(xx, yy + bounds.height, xx + bounds.width, yy + bounds.height, color);
+    }
+
+    @Override
+    public P setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return (P) this;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override

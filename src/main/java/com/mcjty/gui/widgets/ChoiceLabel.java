@@ -45,21 +45,27 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
+        if (enabled) {
+            RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
+        } else {
+            RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff888888, 0xff555555, 0xff666666);
+        }
 
         super.draw(x, y);
     }
 
     @Override
     public Widget mouseClick(int x, int y, int button) {
-        int index = choiceList.indexOf(currentChoice);
-        index++;
-        if (index >= choiceList.size()) {
-            index = 0;
+        if (enabled) {
+            int index = choiceList.indexOf(currentChoice);
+            index++;
+            if (index >= choiceList.size()) {
+                index = 0;
+            }
+            currentChoice = choiceList.get(index);
+            setText(currentChoice);
+            fireChoiceEvents(currentChoice);
         }
-        currentChoice = choiceList.get(index);
-        setText(currentChoice);
-        fireChoiceEvents(currentChoice);
         return null;
     }
 

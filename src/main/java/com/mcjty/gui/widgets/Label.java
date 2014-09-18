@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Gui;
 public class Label<P extends Label> extends AbstractWidget<P> {
     private String text;
     private int color = 0xFF000000;
+    private int disabledColor = 0xFF444444;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGH_LEFT;
     private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_TOP;
 
@@ -51,6 +52,15 @@ public class Label<P extends Label> extends AbstractWidget<P> {
         return (P) this;
     }
 
+    public int getDisabledColor() {
+        return disabledColor;
+    }
+
+    public P setDisabledColor(int disabledColor) {
+        this.disabledColor = disabledColor;
+        return (P) this;
+    }
+
     public HorizontalAlignment getHorizontalAlignment() {
         return horizontalAlignment;
     }
@@ -76,10 +86,15 @@ public class Label<P extends Label> extends AbstractWidget<P> {
         int dx = calculateHorizontalOffset();
         int dy = calculateVerticalOffset();
 
+        int col = color;
+        if (!enabled) {
+            col = disabledColor;
+        }
+
         if (text == null) {
-            mc.fontRenderer.drawString("", x+dx+bounds.x, y+dy+bounds.y, color);
+            mc.fontRenderer.drawString("", x+dx+bounds.x, y+dy+bounds.y, col);
         } else {
-            mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(text, bounds.width), x+dx+bounds.x, y+dy+bounds.y, color);
+            mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(text, bounds.width), x+dx+bounds.x, y+dy+bounds.y, col);
         }
     }
 
