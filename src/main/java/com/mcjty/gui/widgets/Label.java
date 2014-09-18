@@ -9,8 +9,8 @@ public class Label<P extends Label> extends AbstractWidget<P> {
     private String text;
     private int color = 0xFF000000;
     private int disabledColor = 0xFF444444;
-    private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGH_LEFT;
-    private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_TOP;
+    private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGN_CENTER;
+    private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_CENTER;
 
     public Label(Minecraft mc, Gui gui) {
         super(mc, gui);
