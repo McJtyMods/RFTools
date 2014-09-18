@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedValue;
 import net.minecraft.entity.player.EntityPlayer;
@@ -293,61 +294,6 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             start = CrafterContainerFactory.SLOT_BUFFEROUT;
             stop = CrafterContainerFactory.SLOT_BUFFEROUT + CrafterContainerFactory.BUFFEROUT_SIZE;
         }
-        return mergeItemStack(result, start, stop);
-    }
-
-    /**
-     * Merges provided ItemStack with the first avaliable one in this inventory.
-     */
-    private boolean mergeItemStack(ItemStack result, int start, int stop) {
-        boolean success = false;
-        int k = start;
-
-        ItemStack itemstack1;
-        int itemsToPlace = result.stackSize;
-
-        if (result.isStackable()) {
-            while (itemsToPlace > 0 && (k < stop)) {
-                itemstack1 = getStackInSlot(k);
-
-                if (itemstack1 != null && itemstack1.getItem() == result.getItem() && (!result.getHasSubtypes() || result.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(result, itemstack1)) {
-                    int l = itemstack1.stackSize + itemsToPlace;
-
-                    if (l <= result.getMaxStackSize()) {
-                        itemsToPlace = 0;
-                        itemstack1.stackSize = l;
-                        markDirty();
-                        success = true;
-                    } else if (itemstack1.stackSize < result.getMaxStackSize()) {
-                        itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
-                        itemstack1.stackSize = result.getMaxStackSize();
-                        markDirty();
-                        success = true;
-                    }
-                }
-
-                ++k;
-            }
-        }
-
-        if (itemsToPlace > 0) {
-            k = start;
-
-            while (k < stop) {
-                itemstack1 = getStackInSlot(k);
-
-                if (itemstack1 == null) {
-                    setInventorySlotContents(k, result.copy());
-                    markDirty();
-                    itemsToPlace = 0;
-                    success = true;
-                    break;
-                }
-
-                ++k;
-            }
-        }
-
-        return success;
+        return InventoryTools.mergeItemStack(this, result, start, stop);
     }
 }
