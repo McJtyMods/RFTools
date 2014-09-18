@@ -30,7 +30,7 @@ public class CraftingRecipe {
     private boolean keepOne = false;
     private boolean craftInternal = false;
 
-    public IRecipe findRecipe(World world) {
+    public static IRecipe findRecipe(World world, InventoryCrafting inv) {
         List recipes = CraftingManager.getInstance().getRecipeList();
         for (Object r : recipes) {
             IRecipe irecipe = (IRecipe) r;
@@ -116,7 +116,7 @@ public class CraftingRecipe {
     public IRecipe getCachedRecipe(World world) {
         if (!recipePresent) {
             recipePresent = true;
-            recipe = findRecipe(world);
+            recipe = findRecipe(world, inv);
             stacksWithCount.clear();
             if (recipe != null) {
                 for (int i = 0 ; i < 9 ; i++) {

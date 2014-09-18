@@ -71,8 +71,6 @@ public class GuiRFMonitor extends GuiScreen {
         alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
                 setDesiredWidth(60).setDesiredHeight(15).
-                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
-                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {

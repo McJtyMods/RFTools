@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Button extends Label<Button> {
     private List<ButtonEvent> buttonEvents = null;
+    private boolean pressed = false;
 
     public Button(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -21,7 +22,11 @@ public class Button extends Label<Button> {
         int yy = y + bounds.y;
 
         if (enabled) {
-            RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
+            if (pressed) {
+                RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff666666, 0xff333333, 0xffeeeeee);
+            } else {
+                RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
+            }
         } else {
             RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff888888, 0xff555555, 0xff666666);
         }
@@ -32,9 +37,21 @@ public class Button extends Label<Button> {
     @Override
     public Widget mouseClick(int x, int y, int button) {
         if (enabled) {
-            fireButtonEvents();
+            pressed = true;
+            return this;
         }
         return null;
+    }
+
+    @Override
+    public void mouseRelease(int x, int y, int button) {
+        super.mouseRelease(x, y, button);
+        if (pressed) {
+            pressed = false;
+            if (enabled) {
+                fireButtonEvents();
+            }
+        }
     }
 
     public Button addButtonEvent(ButtonEvent event) {

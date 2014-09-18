@@ -1,13 +1,13 @@
 package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.SelectionEvent;
-import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
-import com.mcjty.gui.layout.VerticalAlignment;
 import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
@@ -15,11 +15,9 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,6 +33,7 @@ public class GuiCrafter extends GuiContainer {
     private WidgetList recipeList;
     private ChoiceLabel keepItem;
     private ChoiceLabel internalRecipe;
+    private Button applyButton;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
 
@@ -50,8 +49,6 @@ public class GuiCrafter extends GuiContainer {
 
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
-                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
-                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -61,8 +58,6 @@ public class GuiCrafter extends GuiContainer {
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
         internalRecipe = new ChoiceLabel(mc, this).
                 addChoices("Ext", "Int").
-                setHorizontalAlignment(HorizontalAlignment.ALIGN_CENTER).
-                setVerticalAlignment(VerticalAlignment.ALIGN_CENTER).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -83,9 +78,18 @@ public class GuiCrafter extends GuiContainer {
         populateList();
 
         Slider listSlider = new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
+        applyButton = new Button(mc, this).
+                setText("Apply").
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        applyRecipe();
+                    }
+                }).
+                setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider);
+                addChild(recipeList).addChild(listSlider).addChild(applyButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
@@ -130,7 +134,36 @@ public class GuiCrafter extends GuiContainer {
         internalRecipe.setChoice(craftingRecipe.isCraftInternal() ? "Int" : "Ext");
     }
 
-    private void rememberRecipe() {
+    private void testRecipe() {
+        int selected = recipeList.getSelected();
+        if (selected == -1) {
+            return;
+        }
+
+        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        InventoryCrafting inv = new InventoryCrafting(new Container() {
+            @Override
+            public boolean canInteractWith(EntityPlayer var1) {
+                return false;
+            }
+        }, 3, 3);
+
+        for (int i = 0 ; i < 9 ; i++) {
+            inv.setInventorySlotContents(i, inventorySlots.getSlot(i).getStack());
+        }
+
+        // Compare current contents to avoid unneeded slot update.
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        ItemStack newResult;
+        if (recipe == null) {
+            newResult = null;
+        } else {
+            newResult = recipe.getCraftingResult(inv);
+        }
+        inventorySlots.getSlot(9).putStack(newResult);
+    }
+
+    private void applyRecipe() {
         int selected = recipeList.getSelected();
         if (selected == -1) {
             return;
@@ -139,18 +172,16 @@ public class GuiCrafter extends GuiContainer {
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
         InventoryCrafting inv = craftingRecipe.getInventory();
 
-        boolean dirty = false;
         for (int i = 0 ; i < 9 ; i++) {
             ItemStack oldStack = inv.getStackInSlot(i);
             ItemStack newStack = inventorySlots.getSlot(i).getStack();
             if (!itemStacksEqual(oldStack, newStack)) {
-                dirty = true;
                 inv.setInventorySlotContents(i, newStack);
             }
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = craftingRecipe.findRecipe(mc.theWorld);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
         ItemStack newResult;
         if (recipe == null) {
             newResult = null;
@@ -162,11 +193,9 @@ public class GuiCrafter extends GuiContainer {
             inventorySlots.getSlot(9).putStack(newResult);
         }
 
-        if (dirty) {
-            craftingRecipe.setResult(newResult);
-            updateRecipe();
-            populateList();
-        }
+        craftingRecipe.setResult(newResult);
+        updateRecipe();
+        populateList();
     }
 
     private void updateRecipe() {
@@ -213,7 +242,7 @@ public class GuiCrafter extends GuiContainer {
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         super.drawScreen(par1, par2, par3);
-        rememberRecipe();
+        testRecipe();
     }
 
     @Override
