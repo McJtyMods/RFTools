@@ -6,6 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EnergyBar extends AbstractWidget<EnergyBar> {
     private int value;
     private int maxValue;
@@ -43,6 +46,18 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
 
     public boolean isVertical() {
         return !horizontal;
+    }
+
+    @Override
+    public List<String> getTooltips() {
+        if (tooltips == null) {
+            String s = getValue() + " / " + getMaxValue();
+            ArrayList<String> tt = new ArrayList<String>();
+            tt.add(s);
+            return tt;
+        } else {
+            return tooltips;
+        }
     }
 
     public boolean isShowText() {

@@ -9,9 +9,11 @@ import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
@@ -137,6 +139,14 @@ public class GuiNetworkMonitor extends GuiScreen {
         }
 
         window.draw();
+        List<String> tooltips = window.getTooltips();
+        if (tooltips != null) {
+            int guiLeft = (this.width - this.xSize) / 2;
+            int guiTop = (this.height - this.ySize) / 2;
+            int x = Mouse.getEventX() * width / mc.displayWidth;
+            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+        }
     }
 
     private int getTextColor(BlockInfo blockInfo) {

@@ -3,6 +3,7 @@ package com.mcjty.gui.widgets;
 import com.mcjty.gui.layout.LayoutHint;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * A widget is a rectangular object in a GUI. Can be anything from a simple button to a
@@ -50,6 +51,13 @@ public interface Widget<P extends Widget> {
     int getDesiredHeight();
 
     /**
+     * Set the tooltip for this widget.
+     */
+    P setTooltips(String... tooltips);
+
+    List<String> getTooltips();
+
+    /**
      * Enable or disable mouse interaction with this widget. This is true by default.
      */
     P setEnabled(boolean enabled);
@@ -61,6 +69,13 @@ public interface Widget<P extends Widget> {
      * @return
      */
     Rectangle getBounds();
+
+    /**
+     * Find the widget at the given position. It can be assumed in this function that it
+     * is only called for valid coordaintes that are guaranteed to be in this widget. So widgets
+     * that don't have children should just return themselves.
+     */
+    Widget getWidgetAtPosition(int x, int y);
 
     /**
      * Draw this widget on the GUI at the specific position. This position is usually supplied by the

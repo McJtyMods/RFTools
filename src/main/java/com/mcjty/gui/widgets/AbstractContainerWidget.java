@@ -19,6 +19,19 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         super.setBounds(bounds);
     }
 
+    @Override
+    public Widget getWidgetAtPosition(int x, int y) {
+        x -= bounds.x;
+        y -= bounds.y;
+
+        for (Widget child : children) {
+            if (child.getBounds().contains(x, y)) {
+                return child.getWidgetAtPosition(x, y);
+            }
+        }
+
+        return this;
+    }
 
     public P addChild(Widget child) {
         children.add(child);

@@ -4,6 +4,8 @@ import com.mcjty.gui.widgets.Widget;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
+import java.util.List;
+
 /**
  * This class represents a window. It contains a single Widget which
  * represents the contents of this window. That widget is usually a Panel.
@@ -48,5 +50,18 @@ public class Window {
 
     public void draw() {
         toplevel.draw(0, 0);
+    }
+
+    public List<String> getTooltips() {
+        int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
+        int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
+        if (toplevel.getBounds().contains(x, y)) {
+            Widget w = toplevel.getWidgetAtPosition(x, y);
+            List<String> tooltips = w.getTooltips();
+            if (tooltips != null) {
+                return tooltips;
+            }
+        }
+        return null;
     }
 }

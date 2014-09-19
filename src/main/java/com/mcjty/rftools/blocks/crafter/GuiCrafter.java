@@ -21,8 +21,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.List;
 
 public class GuiCrafter extends GuiContainer {
     public static final int CRAFTER_WIDTH = 256;
@@ -49,6 +51,7 @@ public class GuiCrafter extends GuiContainer {
 
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
+                setTooltips("'Keep' will keep one", "item in every inventory", "slot").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -58,6 +61,7 @@ public class GuiCrafter extends GuiContainer {
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
         internalRecipe = new ChoiceLabel(mc, this).
                 addChoices("Ext", "Int").
+                setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -80,6 +84,7 @@ public class GuiCrafter extends GuiContainer {
         Slider listSlider = new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
         applyButton = new Button(mc, this).
                 setText("Apply").
+                setTooltips("Press to apply the", "recipe to the crafter").
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -247,6 +252,12 @@ public class GuiCrafter extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int i2) {
+        List<String> tooltips = window.getTooltips();
+        if (tooltips != null) {
+            int x = Mouse.getEventX() * width / mc.displayWidth;
+            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+        }
     }
 
     @Override

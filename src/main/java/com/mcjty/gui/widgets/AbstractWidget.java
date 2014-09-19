@@ -8,6 +8,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractWidget<P extends AbstractWidget> implements Widget<P> {
     protected Rectangle bounds;
@@ -17,6 +19,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     protected Gui gui;
     private LayoutHint layoutHint = null;
     protected boolean enabled = true;
+    protected List<String> tooltips = null;
 
     private boolean layoutDirty = true;
 
@@ -34,6 +37,29 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         gui.drawRect(xx + bounds.width, yy, xx + bounds.width, yy + bounds.height, color);
         gui.drawRect(xx, yy, xx + bounds.width, yy, color);
         gui.drawRect(xx, yy + bounds.height, xx + bounds.width, yy + bounds.height, color);
+    }
+
+    @Override
+    public Widget getWidgetAtPosition(int x, int y) {
+        return this;
+    }
+
+    @Override
+    public P setTooltips(String... tooltips) {
+        if (tooltips.length > 0) {
+            this.tooltips = new ArrayList<String>();
+            for (String s : tooltips) {
+                this.tooltips.add(s);
+            }
+        } else {
+            this.tooltips = null;
+        }
+        return (P) this;
+    }
+
+    @Override
+    public List<String> getTooltips() {
+        return tooltips;
     }
 
     @Override

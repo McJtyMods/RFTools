@@ -16,6 +16,7 @@ import com.mcjty.rftools.Coordinate;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
@@ -183,7 +184,6 @@ public class GuiRFMonitor extends GuiScreen {
         window.mouseMovedOrUp(x, y, button);
     }
 
-
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
@@ -195,5 +195,13 @@ public class GuiRFMonitor extends GuiScreen {
         }
 
         window.draw();
+        List<String> tooltips = window.getTooltips();
+        if (tooltips != null) {
+            int guiLeft = (this.width - this.xSize) / 2;
+            int guiTop = (this.height - this.ySize) / 2;
+            int x = Mouse.getEventX() * width / mc.displayWidth;
+            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+        }
     }
 }
