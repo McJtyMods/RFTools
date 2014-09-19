@@ -1,6 +1,5 @@
 package com.mcjty.rftools.blocks.crafter;
 
-import com.mcjty.container.ContainerFactory;
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedValue;
@@ -11,6 +10,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
 
     private SyncedValue<Integer> stepIndex = new SyncedValue<Integer>(0);
 
-
     public static final int MAXENERGY = 32000;
+    public static int rfPerOperation = 100;
 
     public CrafterBlockTileEntity() {
         super(MAXENERGY, 80);
@@ -227,6 +227,10 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             stepIndex.setValue(0);
         }
 
+        if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+            return;
+        }
+
         int index = stepIndex.getValue();
         CraftingRecipe craftingRecipe = recipes[index];
         stepIndex.setValue((index+1) % 8);
@@ -242,6 +246,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
                     boolean internal = craftingRecipe.isCraftInternal();
                     if (placeResult(internal, result)) {
                         consumeCraftingItems(stackWithCounts, keep);
+                        extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
                     }
                 }
             }

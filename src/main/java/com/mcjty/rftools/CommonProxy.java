@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity;
 import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
@@ -32,8 +33,7 @@ public class CommonProxy {
         Configuration cfg = new Configuration(e.getSuggestedConfigurationFile());
         try {
             cfg.load();
-            String test = cfg.get(Configuration.CATEGORY_GENERAL, "test", "Default").getString();
-            System.out.println("test = " + test);
+            CrafterBlockTileEntity.rfPerOperation = cfg.get("Crafter", "rfPerOperation", CrafterBlockTileEntity.rfPerOperation, "Amount of RF used per crafting operation").getInt();
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {
