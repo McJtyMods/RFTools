@@ -46,7 +46,7 @@ public class CrafterContainerFactory extends ContainerFactory {
         int leftCol = 193;
         int topRow = 7;
         addSlotBox(SlotType.SLOT_GHOST, CONTAINER_INVENTORY, SLOT_CRAFTINPUT, leftCol, topRow, 3, 18, 3, 18);
-        addSlot(SlotType.SLOT_GHOST, CONTAINER_INVENTORY, SLOT_CRAFTOUTPUT, leftCol, 65);
+        addSlot(SlotType.SLOT_GHOSTOUT, CONTAINER_INVENTORY, SLOT_CRAFTOUTPUT, leftCol, 65);
     }
 
 

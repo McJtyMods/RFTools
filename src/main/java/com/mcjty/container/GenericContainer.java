@@ -46,6 +46,8 @@ public class GenericContainer extends Container {
             Slot slot;
             if (slotFactory.getSlotType() == SlotType.SLOT_GHOST) {
                 slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_GHOSTOUT) {
+                    slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else {
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             }
@@ -80,7 +82,7 @@ public class GenericContainer extends Container {
                     return null;
                 }
                 slot.onSlotChange(itemstack1, itemstack);
-            } else if (factory.isGhostSlot(index)) {
+            } else if (factory.isGhostSlot(index) || factory.isGhostOutputSlot(index)) {
                 return null; // @@@ Right?
             } else if (factory.isPlayerInventorySlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {

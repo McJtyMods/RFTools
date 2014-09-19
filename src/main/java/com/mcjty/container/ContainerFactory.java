@@ -98,6 +98,10 @@ public class ContainerFactory {
         return getSlotType(index) == SlotType.SLOT_GHOST;
     }
 
+    public boolean isGhostOutputSlot(int index) {
+        return getSlotType(index) == SlotType.SLOT_GHOSTOUT;
+    }
+
     public boolean isPlayerInventorySlot(int index) {
         return getSlotType(index) == SlotType.SLOT_PLAYERINV;
     }

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.container.ContainerFactory;
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedValue;
@@ -55,7 +56,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
+        if (CrafterContainerFactory.getInstance().isGhostSlot(index) || CrafterContainerFactory.getInstance().isGhostOutputSlot(index)) {
             ItemStack old = stacks[index];
             stacks[index] = null;
             if (old == null) {
@@ -95,6 +96,12 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
                 if (index < 9) {
                     stacks[index].stackSize = 1;
                 }
+            } else {
+                stacks[index] = null;
+            }
+        } else if (CrafterContainerFactory.getInstance().isGhostOutputSlot(index)) {
+            if (stack != null) {
+                stacks[index] = stack.copy();
             } else {
                 stacks[index] = null;
             }
