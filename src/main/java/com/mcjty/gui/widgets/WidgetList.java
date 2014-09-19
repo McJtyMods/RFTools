@@ -61,10 +61,10 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     @Override
     public Widget mouseClick(int x, int y, int button) {
         int newSelected = -1;
-        int top = 0;        // Margin@@@?
+        int top = bounds.y;        // Margin@@@?
 
         for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
-            Rectangle r = new Rectangle(0, top, bounds.width, rowheight);
+            Rectangle r = new Rectangle(bounds.x, top, bounds.width, rowheight);
             if (r.contains(x, y)) {
                 newSelected = i;
                 break;
