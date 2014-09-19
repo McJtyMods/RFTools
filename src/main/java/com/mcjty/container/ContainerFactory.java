@@ -1,7 +1,5 @@
 package com.mcjty.container;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.*;
 
 public class ContainerFactory {
@@ -77,7 +75,6 @@ public class ContainerFactory {
      * @param index
      * @return
      */
-    @NotNull
     public SlotType getSlotType(int index) {
         SlotType slotType = indexToType.get(index);
         if (slotType == null) {
