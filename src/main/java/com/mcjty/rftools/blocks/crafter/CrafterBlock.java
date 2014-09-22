@@ -12,13 +12,8 @@ import net.minecraft.world.World;
 public class CrafterBlock extends GenericContainerBlock {
 
     public CrafterBlock(Material material) {
-        super(material);
+        super(material, CrafterBlockTileEntity.class);
         setBlockName("crafterBlock");
-    }
-
-    @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        return new CrafterBlockTileEntity();
     }
 
     @Override
@@ -40,20 +35,12 @@ public class CrafterBlock extends GenericContainerBlock {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof CrafterBlockTileEntity)) {
-            return true;
-        }
-        if (world.isRemote) {
-            return true;
-        }
-        player.openGui(RFTools.instance, RFTools.GUI_CRAFTER, world, x, y, z);
-        return true;
+    public String getFrontIconName() {
+        return "machineCrafter";
     }
 
     @Override
-    public String getFrontIconName() {
-        return "machineCrafter";
+    public int getGuiID() {
+        return RFTools.GUI_CRAFTER;
     }
 }
