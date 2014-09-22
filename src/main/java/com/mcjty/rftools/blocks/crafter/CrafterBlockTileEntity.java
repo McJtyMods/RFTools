@@ -25,10 +25,11 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     private SyncedValue<Integer> stepIndex = new SyncedValue<Integer>(0);
 
     public static final int MAXENERGY = 32000;
+    public static final int RECEIVEPERTICK = 80;
     public static int rfPerOperation = 100;
 
     public CrafterBlockTileEntity() {
-        super(MAXENERGY, 80);
+        super(MAXENERGY, RECEIVEPERTICK);
         for (int i = 0 ; i < recipes.length ; i++) {
             recipes[i] = new CraftingRecipe();
         }

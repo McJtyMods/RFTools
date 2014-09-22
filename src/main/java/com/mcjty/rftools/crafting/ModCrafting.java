@@ -23,5 +23,7 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), new Object[]{" T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone});
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock), new Object[]{" T ", "cMc", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Blocks.crafting_table});
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.storageMonitorBlock), new Object[]{"ToT", "oMo", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl});
     }
 }
