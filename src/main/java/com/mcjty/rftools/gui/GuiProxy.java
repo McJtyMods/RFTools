@@ -7,6 +7,9 @@ import com.mcjty.rftools.blocks.monitor.GuiRFMonitor;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.crafter.GuiCrafter;
+import com.mcjty.rftools.blocks.storagemonitor.GuiStorageMonitor;
+import com.mcjty.rftools.blocks.storagemonitor.StorageMonitorContainer;
+import com.mcjty.rftools.blocks.storagemonitor.StorageMonitorTileEntity;
 import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -28,6 +31,12 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof CrafterBlockTileEntity) {
                 CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
                 return new CrafterContainer(entityPlayer, crafterBlockTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_STORAGE_MONITOR) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof StorageMonitorTileEntity) {
+                StorageMonitorTileEntity storageMonitorTileEntity = (StorageMonitorTileEntity) te;
+                return new StorageMonitorContainer(entityPlayer, storageMonitorTileEntity);
             }
         }
         return null;
@@ -56,8 +65,15 @@ public class GuiProxy implements IGuiHandler {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof CrafterBlockTileEntity) {
                 CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
-                CrafterContainer testContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
-                return new GuiCrafter(crafterBlockTileEntity, testContainer);
+                CrafterContainer crafterContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
+                return new GuiCrafter(crafterBlockTileEntity, crafterContainer);
+            }
+        } else if (guiid == RFTools.GUI_STORAGE_MONITOR) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof StorageMonitorTileEntity) {
+                StorageMonitorTileEntity storageMonitorTileEntity = (StorageMonitorTileEntity) te;
+                StorageMonitorContainer storageMonitorContainer = new StorageMonitorContainer(entityPlayer, storageMonitorTileEntity);
+                return new GuiStorageMonitor(storageMonitorTileEntity, storageMonitorContainer);
             }
         }
         return null;

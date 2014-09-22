@@ -41,6 +41,16 @@ public class GuiCrafter extends GuiContainer {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
 
+    public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
+        super(container);
+        this.crafterBlockTileEntity = crafterBlockTileEntity;
+        crafterBlockTileEntity.setOldRF(-1);
+        crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
+
+        xSize = CRAFTER_WIDTH;
+        ySize = CRAFTER_HEIGHT;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -229,16 +239,6 @@ public class GuiCrafter extends GuiContainer {
     private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
         PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, inv,
                 result, keepOne, craftInternal));
-    }
-
-    public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
-        super(container);
-        this.crafterBlockTileEntity = crafterBlockTileEntity;
-        crafterBlockTileEntity.setOldRF(-1);
-        crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
-
-        xSize = CRAFTER_WIDTH;
-        ySize = CRAFTER_HEIGHT;
     }
 
     /**
