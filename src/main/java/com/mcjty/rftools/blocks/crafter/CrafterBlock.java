@@ -7,12 +7,16 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 public class CrafterBlock extends BlockContainer {
 
@@ -32,6 +36,18 @@ public class CrafterBlock extends BlockContainer {
     @Override
     public TileEntity createTileEntity(World world, int metadata) {
         return new CrafterBlockTileEntity();
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity)world.getTileEntity(x, y, z);
+
+        if (crafterBlockTileEntity != null) {
+            BlockTools.emptyInventoryInWorld(world, x, y, z, block, crafterBlockTileEntity);
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+
     }
 
     @Override
