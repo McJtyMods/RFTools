@@ -1,18 +1,18 @@
 package com.mcjty.rftools.blocks.storagemonitor;
 
-import com.mcjty.gui.NumericScrollable;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.*;
 
 
 public class GuiStorageMonitor extends GuiContainer {
@@ -20,6 +20,8 @@ public class GuiStorageMonitor extends GuiContainer {
     public static final int STORAGE_MONITOR_HEIGHT = 224;
 
     private Window window;
+    private EnergyBar energyBar;
+    private ScrollableLabel radiusLabel;
     private final StorageMonitorTileEntity storageMonitorTileEntity;
 
     public GuiStorageMonitor(StorageMonitorTileEntity storageMonitorTileEntity, StorageMonitorContainer storageMonitorContainer) {
@@ -36,18 +38,44 @@ public class GuiStorageMonitor extends GuiContainer {
     public void initGui() {
         super.initGui();
 
+        int maxEnergyStored = storageMonitorTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
+        energyBar.setValue(storageMonitorTileEntity.getCurrentRF());
+
         WidgetList storageList = new WidgetList(mc, this);
         WidgetList itemList = new WidgetList(mc, this);
-        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(storageList).addChild(itemList);
+        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(energyBar).addChild(storageList).addChild(itemList);
 
-        Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Start a scan of", "all storage units", "in radius");
-        Slider radiusSlider = new Slider(mc, this).setHorizontal().setTooltips("Radius of scan").setScrollable(new NumericScrollable(20, 1, 1));
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(radiusSlider);
+        Button scanButton = new Button(mc, this).
+                setText("Scan").
+                setDesiredWidth(50).
+                setDesiredHeight(16).
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        startScan();
+                    }
+                }).
+                setTooltips("Start a scan of", "all storage units", "in radius");
+        radiusLabel = new ScrollableLabel(mc, this).
+                setRealMinimum(1).
+                setRealMaximum(20).
+                setDesiredWidth(30);
+        Slider radiusSlider = new Slider(mc, this).
+                setHorizontal().
+                setTooltips("Radius of scan").
+                setScrollable(radiusLabel);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(radiusSlider).addChild(radiusLabel);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(bottomPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void startScan() {
+        int radius = radiusLabel.getRealValue();
+        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord, radius));
     }
 
     @Override
@@ -64,7 +92,7 @@ public class GuiStorageMonitor extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
         int currentRF = storageMonitorTileEntity.getCurrentRF();
-//        energyBar.setValue(currentRF);
+        energyBar.setValue(currentRF);
     }
 
     @Override

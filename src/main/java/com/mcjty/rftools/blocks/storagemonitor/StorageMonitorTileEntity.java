@@ -10,4 +10,8 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
     public StorageMonitorTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
     }
+
+    public void startScan(int radius) {
+
+    }
 }
