@@ -72,6 +72,7 @@ public class GuiRFMonitor extends GuiScreen {
         alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
                 setDesiredWidth(60).setDesiredHeight(15).
+                setTooltips("Control when a redstone", "signal should be sent").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -88,7 +89,11 @@ public class GuiRFMonitor extends GuiScreen {
                         changeAlarmValue(newValue);
                     }
                 });
-        Slider alarmSlider = new Slider(mc, this).setDesiredHeight(15).setHorizontal().setScrollable(alarmLabel);
+        Slider alarmSlider = new Slider(mc, this).
+                setDesiredHeight(15).
+                setHorizontal().
+                setTooltips("Alarm level").
+                setScrollable(alarmLabel);
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
