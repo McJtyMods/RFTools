@@ -43,6 +43,12 @@ public class CrafterBlock extends BlockContainer {
         CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity)world.getTileEntity(x, y, z);
 
         if (crafterBlockTileEntity != null) {
+            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
+            // we first clear out the crafting grid here.
+            for (int i = CrafterContainerFactory.SLOT_CRAFTINPUT ; i <= CrafterContainerFactory.SLOT_CRAFTOUTPUT ; i++) {
+                crafterBlockTileEntity.setInventorySlotContents(i, null);
+            }
+
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, crafterBlockTileEntity);
         }
 
