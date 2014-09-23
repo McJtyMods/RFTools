@@ -3,7 +3,6 @@ package com.mcjty.rftools.network;
 import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import com.mcjty.rftools.blocks.storagemonitor.PacketStartScan;
-import com.mcjty.rftools.blocks.storagemonitor.PacketStopScan;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
@@ -22,6 +21,5 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketRFMonitor.class, PacketRFMonitor.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCrafter.class, PacketCrafter.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketStartScan.class, PacketStartScan.class, nextID(), Side.SERVER);
-        INSTANCE.registerMessage(PacketStopScan.class, PacketStopScan.class, nextID(), Side.CLIENT);
     }
 }
