@@ -1,4 +1,6 @@
-package com.mcjty.rftools;
+package com.mcjty.varia;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 public class Coordinate {
     private final int x, y, z;
@@ -49,4 +51,20 @@ public class Coordinate {
     public String toString() {
         return x + "," + y + "," + z;
     }
+
+    public static Coordinate readFromNBT(NBTTagCompound tagCompound, String tagName) {
+        int[] array = tagCompound.getIntArray(tagName);
+        return new Coordinate(array[0], array[1], array[2]);
+    }
+
+    public static void writeToNBT(NBTTagCompound tagCompound, String tagName, Coordinate coordinate) {
+        tagCompound.setIntArray(tagName, new int[] { coordinate.getX(), coordinate.getY(), coordinate.getZ() });
+    }
+
+    public static NBTTagCompound writeToNBT(Coordinate coordinate) {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        writeToNBT(tagCompound, "c", coordinate);
+        return tagCompound;
+    }
+
 }

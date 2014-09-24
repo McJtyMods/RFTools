@@ -1,10 +1,8 @@
 package com.mcjty.rftools.items.netmonitor;
 
-import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyStorage;
 import com.mcjty.rftools.BlockInfo;
-import com.mcjty.rftools.Coordinate;
+import com.mcjty.varia.Coordinate;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkMonitorItem extends Item {

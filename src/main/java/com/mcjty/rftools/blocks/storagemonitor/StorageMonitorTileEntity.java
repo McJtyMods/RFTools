@@ -1,8 +1,11 @@
 package com.mcjty.rftools.blocks.storagemonitor;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.entity.SyncedCoordinate;
 import com.mcjty.entity.SyncedValue;
+import com.mcjty.entity.SyncedValueList;
 import com.mcjty.rftools.BlockInfo;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,49 +18,47 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Serverside
     private SyncedValue<Boolean> scanning = new SyncedValue<Boolean>(false);
-    private SyncedValue<Integer> x1 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> y1 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> z1 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> x2 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> y2 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> z2 = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> curx = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> cury = new SyncedValue<Integer>(0);
-    private SyncedValue<Integer> curz = new SyncedValue<Integer>(0);
+    private SyncedCoordinate c1 = new SyncedCoordinate(Coordinate.INVALID);
+    private SyncedCoordinate c2 = new SyncedCoordinate(Coordinate.INVALID);
+    private SyncedCoordinate cur = new SyncedCoordinate(Coordinate.INVALID);
+    private SyncedValueList<InvBlockInfo> inventories = new SyncedValueList<InvBlockInfo>() {
+        @Override
+        public InvBlockInfo readElementFromNBT(NBTTagCompound tagCompound) {
+            return InvBlockInfo.readFromNBT(tagCompound);
+        }
+
+        @Override
+        public NBTTagCompound writeElementToNBT(InvBlockInfo element) {
+            return element.writeToNBT();
+        }
+    };
 
     public StorageMonitorTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
-        registerSyncedValue(scanning);
-        registerSyncedValue(x1);
-        registerSyncedValue(y1);
-        registerSyncedValue(z1);
-        registerSyncedValue(x2);
-        registerSyncedValue(y2);
-        registerSyncedValue(z2);
-        registerSyncedValue(curx);
-        registerSyncedValue(cury);
-        registerSyncedValue(curz);
+        registerSyncedObject(scanning);
+        registerSyncedObject(c1);
+        registerSyncedObject(c2);
+        registerSyncedObject(cur);
+        registerSyncedObject(inventories);
     }
 
     public void startScan(int radius) {
         if (!worldObj.isRemote) {
+            System.out.println("radius = " + radius);
             // Only on server
-            x1.setValue(xCoord - radius);
-            y1.setValue(yCoord - radius);
-            z1.setValue(zCoord - radius);
-            x2.setValue(xCoord + radius);
-            y2.setValue(yCoord + radius);
-            z2.setValue(zCoord + radius);
-            if (y1.getValue() < 0) {
-                y1.setValue(0);
+            int y1 = yCoord-radius;
+            if (y1 < 0) {
+                y1 = 0;
             }
-            if (y2.getValue() >= worldObj.getActualHeight()) {
-                y2.setValue(worldObj.getActualHeight()-1);
+            c1.setCoordinate(new Coordinate(xCoord-radius, y1, zCoord-radius));
+            int y2 = yCoord+radius;
+            if (y2 >= worldObj.getActualHeight()) {
+                y2 = worldObj.getActualHeight()-1;
             }
+            c2.setCoordinate(new Coordinate(xCoord+radius, y2, zCoord+radius));
+
             scanning.setValue(true);
-            curx.setValue(x1.getValue());
-            cury.setValue(y1.getValue());
-            curz.setValue(z1.getValue());
+            cur.setCoordinate(c1.getCoordinate());
         }
     }
 
@@ -65,63 +66,65 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
     protected void checkStateServer() {
         super.checkStateServer();
         if (scanning.getValue()) {
-            TileEntity tileEntity = worldObj.getTileEntity(curx.getValue(), cury.getValue(), curz.getValue());
+            Coordinate c = cur.getCoordinate();
+            int cx = c.getX();
+            int cy = c.getY();
+            int cz = c.getZ();
+            System.out.print("cx = " + cx);
+            System.out.print(", cy = " + cy);
+            System.out.println(", cz = " + cz);
+
+
+            TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
             if (tileEntity instanceof IInventory) {
                 IInventory inventory = (IInventory) tileEntity;
                 if (inventory.getSizeInventory() > 0) {
-                    Block block = worldObj.getBlock(curx.getValue(), cury.getValue(), curz.getValue());
-                    System.out.print("Block: " + BlockInfo.getReadableName(block, worldObj.getBlockMetadata(curx.getValue(), cury.getValue(), curz.getValue())));
+                    Block block = worldObj.getBlock(cx, cy, cz);
+                    System.out.print("Block: " + BlockInfo.getReadableName(block, worldObj.getBlockMetadata(cx, cy, cz)));
                     System.out.println(", invsize:" + inventory.getSizeInventory());
-                }
+                    inventories.add(new InvBlockInfo(new Coordinate(cx, cy, cz), inventory.getSizeInventory()));
+                    notifyBlockUpdate();                }
             }
-            curx.setValue(curx.getValue()+1);
-            if (curx.getValue() > x2.getValue()) {
-                curx.setValue(x1.getValue());
-                cury.setValue(cury.getValue()+1);
-                if (cury.getValue() > y2.getValue()) {
-                    cury.setValue(y1.getValue());
-                    curz.setValue(curz.getValue()+1);
-                    if (curz.getValue() > z2.getValue()) {
+            cx++;
+            Coordinate lo = c1.getCoordinate();
+            Coordinate up = c2.getCoordinate();
+            if (cx > up.getX()) {
+                cx = lo.getX();
+                cy++;
+                if (cy > up.getY()) {
+                    cy = lo.getY();
+                    cz++;
+                    if (cz > up.getZ()) {
                         scanning.setValue(false);
                         // DONE!
                     }
                 }
             }
+            cur.setCoordinate(new Coordinate(cx, cy, cz));
         }
     }
 
-    // Client side
-    public void progressScan(int bx, int by, int bz, int sizeInventory) {
-
+    public SyncedValueList<InvBlockInfo> getInventories() {
+        return inventories;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         scanning.setValue(tagCompound.getBoolean("scanning"));
-        x1.setValue(tagCompound.getInteger("x1"));
-        y1.setValue(tagCompound.getInteger("y1"));
-        z1.setValue(tagCompound.getInteger("z1"));
-        x2.setValue(tagCompound.getInteger("x2"));
-        y2.setValue(tagCompound.getInteger("y2"));
-        z2.setValue(tagCompound.getInteger("z2"));
-        curx.setValue(tagCompound.getInteger("curx"));
-        cury.setValue(tagCompound.getInteger("cury"));
-        curz.setValue(tagCompound.getInteger("curz"));
+        c1.readFromNBT(tagCompound, "c1");
+        c2.readFromNBT(tagCompound, "c2");
+        cur.readFromNBT(tagCompound, "cur");
+        inventories.readFromNBT(tagCompound, "inv");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("scanning", scanning.getValue());
-        tagCompound.setInteger("x1", x1.getValue());
-        tagCompound.setInteger("y1", y1.getValue());
-        tagCompound.setInteger("z1", z1.getValue());
-        tagCompound.setInteger("x2", x2.getValue());
-        tagCompound.setInteger("y2", y2.getValue());
-        tagCompound.setInteger("z2", z2.getValue());
-        tagCompound.setInteger("curx", curx.getValue());
-        tagCompound.setInteger("cury", cury.getValue());
-        tagCompound.setInteger("curz", curz.getValue());
+        c1.writeToNBT(tagCompound, "c1");
+        c2.writeToNBT(tagCompound, "c2");
+        cur.writeToNBT(tagCompound, "cur");
+        inventories.writeToNBT(tagCompound, "inv");
     }
 }

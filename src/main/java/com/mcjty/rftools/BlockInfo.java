@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import cofh.api.energy.IEnergyHandler;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.Item;

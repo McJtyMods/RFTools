@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.monitor;
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
-import com.mcjty.rftools.Coordinate;
+import com.mcjty.varia.Coordinate;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -23,8 +23,8 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     private SyncedValue<Boolean> inAlarm = new SyncedValue<Boolean>(false);
 
     public RFMonitorBlockTileEntity() {
-        registerSyncedValue(rflevel);
-        registerSyncedValue(inAlarm);
+        registerSyncedObject(rflevel);
+        registerSyncedObject(inAlarm);
     }
 
     public RFMonitorMode getAlarmMode() {

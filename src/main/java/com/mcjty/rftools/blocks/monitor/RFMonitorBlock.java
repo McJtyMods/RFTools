@@ -2,7 +2,7 @@ package com.mcjty.rftools.blocks.monitor;
 
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.BlockInfo;
-import com.mcjty.rftools.Coordinate;
+import com.mcjty.varia.Coordinate;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;

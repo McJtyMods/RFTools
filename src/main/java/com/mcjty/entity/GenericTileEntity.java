@@ -11,10 +11,10 @@ import java.util.List;
 
 public class GenericTileEntity extends TileEntity {
 
-    private List<SyncedValue> syncedValues = new ArrayList<SyncedValue>();
+    private List<SyncedObject> syncedObjects = new ArrayList<SyncedObject>();
 
     public void setInvalid() {
-        for (SyncedValue value : syncedValues) {
+        for (SyncedObject value : syncedObjects) {
             value.setInvalid();
         }
 
@@ -39,7 +39,7 @@ public class GenericTileEntity extends TileEntity {
     protected void checkStateClient() {
         // Sync all values from the server.
         boolean syncNeeded = false;
-        for (SyncedValue value : syncedValues) {
+        for (SyncedObject value : syncedObjects) {
             if (!value.isClientValueUptodate()) {
                 value.updateClientValue();
                 syncNeeded = true;
@@ -67,10 +67,9 @@ public class GenericTileEntity extends TileEntity {
         return meta;
     }
 
-    protected void registerSyncedValue(SyncedValue value) {
-        syncedValues.add(value);
+    protected void registerSyncedObject(SyncedObject value) {
+        syncedObjects.add(value);
     }
-
 
     @Override
     public boolean canUpdate() {

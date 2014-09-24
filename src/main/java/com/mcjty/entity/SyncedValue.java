@@ -6,7 +6,7 @@ package com.mcjty.entity;
  * world if needed.
  * @param <T>
  */
-public class SyncedValue<T> {
+public class SyncedValue<T> implements SyncedObject {
     private T value = null;
     private T clientValue = null;
 
@@ -17,11 +17,13 @@ public class SyncedValue<T> {
         this.value = value;
     }
 
+    @Override
     public void setInvalid() {
         value = null;
         clientValue = null;
     }
 
+    @Override
     public boolean isClientValueUptodate() {
         if (value == null && clientValue == null) {
             return false;
@@ -29,6 +31,7 @@ public class SyncedValue<T> {
         return value != null && value.equals(clientValue);
     }
 
+    @Override
     public void updateClientValue() {
         clientValue = value;
     }

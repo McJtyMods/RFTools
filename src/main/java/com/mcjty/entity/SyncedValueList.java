@@ -1,7 +1,6 @@
 package com.mcjty.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
@@ -10,16 +9,20 @@ import java.util.*;
 /**
  * A synchronized list of values.
  */
-public abstract class SyncedValueList<T> implements List {
+public abstract class SyncedValueList<T> implements List<T>, SyncedObject {
     private final List<T> value = new ArrayList<T>();
-    private final List<T> clientValue = new ArrayList<T>();
-    private boolean valueDirty = false;
+    private int serverVersion = 0;
+    private int clientVersion = -1;
 
     public SyncedValueList() {
     }
 
+    public int getClientVersion() {
+        return clientVersion;
+    }
+
     public void readFromNBT(NBTTagCompound tagCompound) {
-        valueDirty = tagCompound.getBoolean("dirty");
+        serverVersion = tagCompound.getInteger("version");
         NBTTagList list = tagCompound.getTagList("list", Constants.NBT.TAG_COMPOUND);
         value.clear();
         for (int i = 0 ; i < list.tagCount() ; i++) {
@@ -27,31 +30,45 @@ public abstract class SyncedValueList<T> implements List {
         }
     }
 
+    public void readFromNBT(NBTTagCompound tagCompound, String tagName) {
+        NBTTagCompound compound = tagCompound.getCompoundTag(tagName);
+        if (compound != null) {
+            readFromNBT(compound);
+        }
+    }
+
     public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setBoolean("dirty", valueDirty);
+        tagCompound.setInteger("version", serverVersion);
         NBTTagList list = new NBTTagList();
         for (T element : value) {
             list.appendTag(writeElementToNBT(element));
         }
     }
 
+    public void writeToNBT(NBTTagCompound tagCompound, String tagName) {
+        NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+        tagCompound.setTag(tagName, compound);
+    }
+
     public abstract T readElementFromNBT(NBTTagCompound tagCompound);
     public abstract NBTTagCompound writeElementToNBT(T element);
 
+    @Override
     public void setInvalid() {
         value.clear();
-        clientValue.clear();
-        valueDirty = false;
+        serverVersion = 0;
+        clientVersion = -1;
     }
 
+    @Override
     public boolean isClientValueUptodate() {
-        return !valueDirty;
+        return serverVersion != clientVersion;
     }
 
+    @Override
     public void updateClientValue() {
-        clientValue.clear();
-        clientValue.addAll(value);
-        valueDirty = false;
+        clientVersion = serverVersion;
     }
 
     @Override
@@ -75,8 +92,8 @@ public abstract class SyncedValueList<T> implements List {
     }
 
     @Override
-    public Object[] toArray() {
-        return value.toArray();
+    public T[] toArray() {
+        return (T[]) value.toArray();
     }
 
     @Override
@@ -86,7 +103,7 @@ public abstract class SyncedValueList<T> implements List {
 
     @Override
     public boolean add(Object o) {
-        valueDirty = true;
+        serverVersion++;
         return value.add((T)o);
     }
 
@@ -102,54 +119,54 @@ public abstract class SyncedValueList<T> implements List {
 
     @Override
     public boolean addAll(Collection c) {
-        valueDirty = true;
+        serverVersion++;
         return value.addAll(c);
     }
 
     @Override
     public boolean addAll(int index, Collection c) {
-        valueDirty = true;
+        serverVersion++;
         return value.addAll(index, c);
     }
 
     @Override
     public boolean removeAll(Collection c) {
-        valueDirty = true;
+        serverVersion++;
         return value.removeAll(c);
     }
 
     @Override
     public boolean retainAll(Collection c) {
-        valueDirty = true;
+        serverVersion++;
         return value.retainAll(c);
     }
 
     @Override
     public void clear() {
-        valueDirty = true;
+        serverVersion++;
         value.clear();
     }
 
     @Override
-    public Object get(int index) {
+    public T get(int index) {
         return value.get(index);
     }
 
     @Override
-    public Object set(int index, Object element) {
-        valueDirty = true;
-        return value.set(index, (T) element);
+    public T set(int index, T element) {
+        serverVersion++;
+        return value.set(index, element);
     }
 
     @Override
-    public void add(int index, Object element) {
-        valueDirty = true;
-        value.add(index, (T) element);
+    public void add(int index, T element) {
+        serverVersion++;
+        value.add(index, element);
     }
 
     @Override
-    public Object remove(int index) {
-        valueDirty = true;
+    public T remove(int index) {
+        serverVersion++;
         return value.remove(index);
     }
 

@@ -34,7 +34,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
             recipes[i] = new CraftingRecipe();
         }
         stateDirty = true;
-        registerSyncedValue(stepIndex);
+        registerSyncedObject(stepIndex);
     }
 
     public void setStateDirty(boolean stateDirty) {

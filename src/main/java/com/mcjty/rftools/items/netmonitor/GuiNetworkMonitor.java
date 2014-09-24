@@ -6,7 +6,7 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
-import com.mcjty.rftools.Coordinate;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
