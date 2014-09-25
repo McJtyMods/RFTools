@@ -15,8 +15,9 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
     public static final int RECEIVEPERTICK = 100;
     public static int rfPerOperation = 100;
+    public static int scansPerOperation = 5;
 
-    // Serverside
+    private SyncedValue<Integer> radius = new SyncedValue<Integer>(1);
     private SyncedValue<Boolean> scanning = new SyncedValue<Boolean>(false);
     private SyncedCoordinate c1 = new SyncedCoordinate(Coordinate.INVALID);
     private SyncedCoordinate c2 = new SyncedCoordinate(Coordinate.INVALID);
@@ -42,66 +43,89 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
         registerSyncedObject(inventories);
     }
 
-    public void startScan(int radius) {
+    public void startScan() {
         if (!worldObj.isRemote) {
-            System.out.println("radius = " + radius);
+            int r = radius.getValue();
+            System.out.println("radius = " + r);
             // Only on server
-            int y1 = yCoord-radius;
+            int y1 = yCoord-r;
             if (y1 < 0) {
                 y1 = 0;
             }
-            c1.setCoordinate(new Coordinate(xCoord-radius, y1, zCoord-radius));
-            int y2 = yCoord+radius;
+            c1.setCoordinate(new Coordinate(xCoord-r, y1, zCoord-r));
+            int y2 = yCoord+r;
             if (y2 >= worldObj.getActualHeight()) {
                 y2 = worldObj.getActualHeight()-1;
             }
-            c2.setCoordinate(new Coordinate(xCoord+radius, y2, zCoord+radius));
+            c2.setCoordinate(new Coordinate(xCoord+r, y2, zCoord+r));
 
             scanning.setValue(true);
             cur.setCoordinate(c1.getCoordinate());
+
+            inventories.clear();
+            notifyBlockUpdate();
         }
+    }
+
+    public int getRadius() {
+        return radius.getValue();
+    }
+
+    public void setRadius(int v) {
+        radius.setValue(v);
     }
 
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
         if (scanning.getValue()) {
-            Coordinate c = cur.getCoordinate();
-            int cx = c.getX();
-            int cy = c.getY();
-            int cz = c.getZ();
-            System.out.print("cx = " + cx);
-            System.out.print(", cy = " + cy);
-            System.out.println(", cz = " + cz);
-
-
-            TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
-            if (tileEntity instanceof IInventory) {
-                IInventory inventory = (IInventory) tileEntity;
-                if (inventory.getSizeInventory() > 0) {
-                    Block block = worldObj.getBlock(cx, cy, cz);
-                    System.out.print("Block: " + BlockInfo.getReadableName(block, worldObj.getBlockMetadata(cx, cy, cz)));
-                    System.out.println(", invsize:" + inventory.getSizeInventory());
-                    inventories.add(new InvBlockInfo(new Coordinate(cx, cy, cz), inventory.getSizeInventory()));
-                    notifyBlockUpdate();                }
-            }
-            cx++;
-            Coordinate lo = c1.getCoordinate();
-            Coordinate up = c2.getCoordinate();
-            if (cx > up.getX()) {
-                cx = lo.getX();
-                cy++;
-                if (cy > up.getY()) {
-                    cy = lo.getY();
-                    cz++;
-                    if (cz > up.getZ()) {
-                        scanning.setValue(false);
-                        // DONE!
-                    }
+            for (int i = 0 ; i < scansPerOperation ; i++) {
+                Coordinate c = cur.getCoordinate();
+                checkInventoryStatus(c.getX(), c.getY(), c.getZ());
+                if (!advanceCurrent()) {
+                    return;
                 }
             }
-            cur.setCoordinate(new Coordinate(cx, cy, cz));
         }
+    }
+
+    private void checkInventoryStatus(int cx, int cy, int cz) {
+        TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
+        if (tileEntity instanceof IInventory) {
+            IInventory inventory = (IInventory) tileEntity;
+            if (inventory.getSizeInventory() > 0) {
+                Block block = worldObj.getBlock(cx, cy, cz);
+                System.out.print("Block: " + BlockInfo.getReadableName(block, worldObj.getBlockMetadata(cx, cy, cz)));
+                System.out.println(", invsize:" + inventory.getSizeInventory());
+                inventories.add(new InvBlockInfo(new Coordinate(cx, cy, cz), inventory.getSizeInventory()));
+                notifyBlockUpdate();                }
+        }
+    }
+
+    // Advance the 'cur' index to the next block. Return false when done.
+    // When done 'scanning' will be set to false as well.
+    private boolean advanceCurrent() {
+        Coordinate c = cur.getCoordinate();
+        int cx = c.getX();
+        int cy = c.getY();
+        int cz = c.getZ();
+        cx++;
+        Coordinate lo = c1.getCoordinate();
+        Coordinate up = c2.getCoordinate();
+        if (cx > up.getX()) {
+            cx = lo.getX();
+            cy++;
+            if (cy > up.getY()) {
+                cy = lo.getY();
+                cz++;
+                if (cz > up.getZ()) {
+                    scanning.setValue(false);
+                    return false;
+                }
+            }
+        }
+        cur.setCoordinate(new Coordinate(cx, cy, cz));
+        return true;
     }
 
     public SyncedValueList<InvBlockInfo> getInventories() {
@@ -111,6 +135,7 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        radius.setValue(tagCompound.getInteger("radius"));
         scanning.setValue(tagCompound.getBoolean("scanning"));
         c1.readFromNBT(tagCompound, "c1");
         c2.readFromNBT(tagCompound, "c2");
@@ -121,6 +146,7 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setInteger("radius", radius.getValue());
         tagCompound.setBoolean("scanning", scanning.getValue());
         c1.writeToNBT(tagCompound, "c1");
         c2.writeToNBT(tagCompound, "c2");

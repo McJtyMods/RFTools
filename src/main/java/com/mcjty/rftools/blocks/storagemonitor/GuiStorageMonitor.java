@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.storagemonitor;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.Button;
@@ -65,6 +66,13 @@ public class GuiStorageMonitor extends GuiContainer {
                 }).
                 setTooltips("Start a scan of", "all storage units", "in radius");
         radiusLabel = new ScrollableLabel(mc, this).
+                setRealValue(storageMonitorTileEntity.getRadius()).
+                addValueEvent(new ValueEvent() {
+                    @Override
+                    public void valueChanged(Widget parent, int newValue) {
+                        changeRadius(newValue);
+                    }
+                }).
                 setRealMinimum(1).
                 setRealMaximum(20).
                 setDesiredWidth(30);
@@ -80,16 +88,16 @@ public class GuiStorageMonitor extends GuiContainer {
         window = new Window(this, toplevel);
     }
 
+    private void changeRadius(int r) {
+        PacketHandler.INSTANCE.sendToServer(new PacketSetRadius(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord, r));
+    }
+
     private void startScan() {
-        int radius = radiusLabel.getRealValue();
-        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord, radius));
+        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord));
     }
 
     private void updateStorageList() {
         SyncedValueList<InvBlockInfo> inventories = storageMonitorTileEntity.getInventories();
-        if (inventories.getClientVersion() != -1) {
-            System.out.println("inventories.getClientVersion() = " + inventories.getClientVersion());
-        }
         if (inventories.getClientVersion() != clientVersion) {
             clientVersion = inventories.getClientVersion();
             storageList.removeChildren();

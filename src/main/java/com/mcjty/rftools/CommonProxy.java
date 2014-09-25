@@ -42,6 +42,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(CATEGORY_STORAGE_MONITOR, "Settings for the storage monitor machine");
             CrafterBlockTileEntity.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity.rfPerOperation, "Amount of RF used per crafting operation").getInt();
             StorageMonitorTileEntity.rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", StorageMonitorTileEntity.rfPerOperation, "Amount of RF used per scan operation").getInt();
+            StorageMonitorTileEntity.scansPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "scansPerOperation", StorageMonitorTileEntity.scansPerOperation, "How many blocks to scan per operation").getInt();
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

@@ -7,16 +7,18 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-public class PacketStartScan implements IMessage, IMessageHandler<PacketStartScan, IMessage> {
+public class PacketSetRadius implements IMessage, IMessageHandler<PacketSetRadius, IMessage> {
     private int x;
     private int y;
     private int z;
+    private int radius;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
+        radius = buf.readInt();
     }
 
     @Override
@@ -24,19 +26,21 @@ public class PacketStartScan implements IMessage, IMessageHandler<PacketStartSca
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
+        buf.writeInt(radius);
     }
 
-    public PacketStartScan() {
+    public PacketSetRadius() {
     }
 
-    public PacketStartScan(int x, int y, int z) {
+    public PacketSetRadius(int x, int y, int z, int radius) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.radius = radius;
     }
 
     @Override
-    public IMessage onMessage(PacketStartScan message, MessageContext ctx) {
+    public IMessage onMessage(PacketSetRadius message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof StorageMonitorTileEntity)) {
@@ -45,7 +49,7 @@ public class PacketStartScan implements IMessage, IMessageHandler<PacketStartSca
             return null;
         }
         StorageMonitorTileEntity storageMonitorTileEntity = (StorageMonitorTileEntity) te;
-        storageMonitorTileEntity.startScan();
+        storageMonitorTileEntity.setRadius(message.radius);
         return null;
     }
 

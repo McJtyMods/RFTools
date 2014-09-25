@@ -21,8 +21,14 @@ public abstract class SyncedValueList<T> implements List<T>, SyncedObject {
         return clientVersion;
     }
 
+    // @@@ TEMPORARY!
+    public int getServerVersion() {
+        return serverVersion;
+    }
+
     public void readFromNBT(NBTTagCompound tagCompound) {
         serverVersion = tagCompound.getInteger("version");
+//        clientVersion = tagCompound.getInteger("cVersion");
         NBTTagList list = tagCompound.getTagList("list", Constants.NBT.TAG_COMPOUND);
         value.clear();
         for (int i = 0 ; i < list.tagCount() ; i++) {
@@ -39,10 +45,12 @@ public abstract class SyncedValueList<T> implements List<T>, SyncedObject {
 
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("version", serverVersion);
+//        tagCompound.setInteger("cVersion", clientVersion);
         NBTTagList list = new NBTTagList();
         for (T element : value) {
             list.appendTag(writeElementToNBT(element));
         }
+        tagCompound.setTag("list", list);
     }
 
     public void writeToNBT(NBTTagCompound tagCompound, String tagName) {
@@ -63,7 +71,7 @@ public abstract class SyncedValueList<T> implements List<T>, SyncedObject {
 
     @Override
     public boolean isClientValueUptodate() {
-        return serverVersion != clientVersion;
+        return serverVersion == clientVersion;
     }
 
     @Override
