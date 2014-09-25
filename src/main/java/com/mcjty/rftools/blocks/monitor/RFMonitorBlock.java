@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +62,9 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        int l = BlockTools.determineOrientation(world, x, y, z, entityLivingBase);
+        ForgeDirection direction = BlockTools.determineOrientation( x, y, z, entityLivingBase);
         int meta = world.getBlockMetadata(x, y, z);
-        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, l), 2);
+        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, direction), 2);
     }
 
     @Override
@@ -127,8 +128,8 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         TileEntity tileEntity = blockAccess.getTileEntity(x, y, z);
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        int k = BlockTools.getOrientation(meta);
-        if (side == k) {
+        ForgeDirection k = BlockTools.getOrientation(meta);
+        if (side == k.ordinal()) {
             RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
             int rflevel = monitorBlockTileEntity.getRflevel();
             switch (rflevel) {

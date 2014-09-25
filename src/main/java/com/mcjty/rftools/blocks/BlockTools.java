@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Random;
 
@@ -18,12 +19,12 @@ public class BlockTools {
     public static final int MASK_ORIENTATION = 0x7;
     public static final int MASK_REDSTONE = 0x8;
 
-    public static int getOrientation(int metadata) {
-        return metadata & MASK_ORIENTATION;
+    public static ForgeDirection getOrientation(int metadata) {
+        return ForgeDirection.getOrientation(metadata & MASK_ORIENTATION);
     }
 
-    public static int setOrientation(int metadata, int orientation) {
-        return (metadata & ~MASK_ORIENTATION) | orientation;
+    public static int setOrientation(int metadata, ForgeDirection orientation) {
+        return (metadata & ~MASK_ORIENTATION) | orientation.ordinal();
     }
 
     public static boolean getRedstoneSignal(int metadata) {
@@ -38,20 +39,20 @@ public class BlockTools {
         }
     }
 
-    public static int determineOrientation(World world, int x, int y, int z, EntityLivingBase entityLivingBase) {
+    public static ForgeDirection determineOrientation(int x, int y, int z, EntityLivingBase entityLivingBase) {
         if (MathHelper.abs((float) entityLivingBase.posX - x) < 2.0F && MathHelper.abs((float)entityLivingBase.posZ - z) < 2.0F) {
             double d0 = entityLivingBase.posY + 1.82D - entityLivingBase.yOffset;
 
             if (d0 - y > 2.0D) {
-                return 1;
+                return ForgeDirection.UP;
             }
 
             if (y - d0 > 0.0D) {
-                return 0;
+                return ForgeDirection.DOWN;
             }
         }
         int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        return l == 0 ? 2 : (l == 1 ? 5 : (l == 2 ? 3 : (l == 3 ? 4 : 0)));
+        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
     }
 
 
