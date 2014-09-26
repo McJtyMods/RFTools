@@ -64,7 +64,7 @@ public class GuiStorageScanner extends GuiContainer {
                 storageScannerTileEntity.clearShowingItems();
                 getInventoryOnServer();
             }
-        });
+        }).setFilledRectThickness(1);
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
 
         Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
@@ -72,7 +72,7 @@ public class GuiStorageScanner extends GuiContainer {
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this).setRowheight(16);
+        itemList = new WidgetList(mc, this).setRowheight(16).setFilledRectThickness(1);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(itemList).addChild(itemListSlider);
@@ -188,7 +188,7 @@ public class GuiStorageScanner extends GuiContainer {
         if (tooltips != null) {
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+            drawHoveringText(tooltips, x - guiLeft, y - guiTop, mc.fontRenderer);
         }
     }
 

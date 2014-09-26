@@ -155,6 +155,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
             }
         } else if (filledRectThickness > 0) {
             RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
+        } else if (filledRectThickness < 0) {
+            RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, -filledRectThickness, 0xffc6c6c6, 0xff555555, 0xffffffff);
         }
     }
 

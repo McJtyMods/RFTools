@@ -82,6 +82,7 @@ public class GuiCrafter extends GuiContainer {
 
         recipeList = new WidgetList(mc, this).
                 setRowheight(16).
+                setFilledRectThickness(1).
                 addSelectionEvent(new SelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
