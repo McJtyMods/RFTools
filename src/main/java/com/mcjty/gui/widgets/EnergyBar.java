@@ -13,6 +13,8 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
     private int value;
     private int maxValue;
     private int color = 0xFF000000;
+    private int leftColor = 0xFFFF0000;
+    private int rightColor = 0xFF550000;
     private boolean horizontal = false;
     private IEnergyHandler handler = null;
     private boolean showText = true;
@@ -102,6 +104,24 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
         return this;
     }
 
+    public int getColor1() {
+        return leftColor;
+    }
+
+    public EnergyBar setColor1(int leftColor) {
+        this.leftColor = leftColor;
+        return this;
+    }
+
+    public int getColor2() {
+        return rightColor;
+    }
+
+    public EnergyBar setColor2(int rightColor) {
+        this.rightColor = rightColor;
+        return this;
+    }
+
     @Override
     public void draw(final int x, final int y) {
         super.draw(x, y);
@@ -111,10 +131,10 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
             int w = 0;
             if (horizontal) {
                 w = (int) ((bounds.width) * (float) currentValue / maximum);
-                RenderHelper.drawHorizontalGradientRect(x + bounds.x, y + bounds.y, x + bounds.x + w, y + bounds.y + bounds.height - 1, 0xFFFF0000, 0xFF550000);
+                RenderHelper.drawHorizontalGradientRect(x + bounds.x, y + bounds.y, x + bounds.x + w, y + bounds.y + bounds.height - 1, leftColor, rightColor);
             } else {
                 w = (int) ((bounds.height) * (float) currentValue / maximum);
-                RenderHelper.drawVerticalGradientRect(x + bounds.x, y + bounds.y + bounds.height - w, x + bounds.x + bounds.width - 1, y + bounds.y + bounds.height, 0xFFFF0000, 0xFF550000);
+                RenderHelper.drawVerticalGradientRect(x + bounds.x, y + bounds.y + bounds.height - w, x + bounds.x + bounds.width - 1, y + bounds.y + bounds.height, leftColor, rightColor);
             }
         }
         if (showText) {

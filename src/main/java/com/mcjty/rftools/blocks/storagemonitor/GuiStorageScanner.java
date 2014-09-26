@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.storagemonitor;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -16,6 +17,9 @@ import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Mouse;
 
@@ -28,8 +32,11 @@ public class GuiStorageScanner extends GuiContainer {
 
     private Window window;
     private WidgetList storageList;
+    private WidgetList itemList;
     private EnergyBar energyBar;
+    private EnergyBar progressBar;
     private ScrollableLabel radiusLabel;
+    private Button scanButton;
     private final StorageScannerTileEntity storageScannerTileEntity;
     private int clientVersion = -1;
 
@@ -51,7 +58,12 @@ public class GuiStorageScanner extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(storageScannerTileEntity.getCurrentRF());
 
-        storageList = new WidgetList(mc, this).setRowheight(16);
+        storageList = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new SelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                showContents();
+            }
+        });
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
 
         Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
@@ -59,24 +71,26 @@ public class GuiStorageScanner extends GuiContainer {
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        WidgetList itemList = new WidgetList(mc, this);
+        itemList = new WidgetList(mc, this).setRowheight(16);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(itemList).addChild(itemListSlider);
 
-        Button scanButton = new Button(mc, this).
+        scanButton = new Button(mc, this).
                 setText("Scan").
                 setDesiredWidth(50).
                 setDesiredHeight(16).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
-                        startScan();
+                        startStopScan();
                     }
                 }).
-                setTooltips("Start a scan of", "all storage units", "in radius");
+                setTooltips("Start/stop a scan of", "all storage units", "in radius");
+        progressBar = new EnergyBar(mc, this).setShowText(false).
+                setColor1(0xFF777777).setColor2(0xFF555555).
+                setHorizontal().setMaxValue(100).setDesiredWidth(30).setValue(0);
         radiusLabel = new ScrollableLabel(mc, this).
-                setRealValue(storageScannerTileEntity.getRadius()).
                 addValueEvent(new ValueEvent() {
                     @Override
                     public void valueChanged(Widget parent, int newValue) {
@@ -86,11 +100,13 @@ public class GuiStorageScanner extends GuiContainer {
                 setRealMinimum(1).
                 setRealMaximum(20).
                 setDesiredWidth(30);
+        radiusLabel.setRealValue(storageScannerTileEntity.getRadius());
+
         Slider radiusSlider = new Slider(mc, this).
                 setHorizontal().
                 setTooltips("Radius of scan").
                 setScrollable(radiusLabel);
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(radiusSlider).addChild(radiusLabel);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(midPanel).addChild(bottomPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -102,8 +118,37 @@ public class GuiStorageScanner extends GuiContainer {
         PacketHandler.INSTANCE.sendToServer(new PacketSetRadius(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord, r));
     }
 
-    private void startScan() {
-        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord));
+    private void startStopScan() {
+        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
+                !storageScannerTileEntity.isScanning()));
+    }
+
+    private void showContents() {
+        int selected = storageList.getSelected();
+        if (selected != -1) {
+            SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
+            if (selected < inventories.size()) {
+                InvBlockInfo invBlockInfo = inventories.get(selected);
+                Coordinate c = invBlockInfo.getCoordinate();
+                TileEntity te = mc.theWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (te instanceof IInventory) {
+                    itemList.removeChildren();
+                    IInventory inventory = (IInventory) te;
+                    for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                        ItemStack stack = inventory.getStackInSlot(i);
+
+                        if (stack != null) {
+                            String displayName = BlockInfo.getReadableName(stack, 0);
+
+                            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+                            panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
+                            panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                            itemList.addChild(panel);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void updateStorageList() {
@@ -139,6 +184,13 @@ public class GuiStorageScanner extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateStorageList();
+        if (storageScannerTileEntity.isScanning()) {
+            scanButton.setText("Stop");
+            progressBar.setValue(storageScannerTileEntity.getProgress());
+        } else {
+            scanButton.setText("Scan");
+            progressBar.setValue(0);
+        }
         window.draw();
         int currentRF = storageScannerTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);

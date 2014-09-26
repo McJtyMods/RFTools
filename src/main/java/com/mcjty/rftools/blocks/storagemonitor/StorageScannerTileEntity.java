@@ -43,8 +43,14 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         registerSyncedObject(inventories);
     }
 
-    public void startScan() {
+    public void startScan(boolean start) {
         if (!worldObj.isRemote) {
+            if (!start) {
+                scanning.setValue(false);
+                notifyBlockUpdate();
+                return;
+            }
+
             int r = radius.getValue();
             System.out.println("radius = " + r);
             // Only on server
@@ -73,6 +79,18 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
 
     public void setRadius(int v) {
         radius.setValue(v);
+        notifyBlockUpdate();
+    }
+
+    public boolean isScanning() {
+        return scanning.getValue();
+    }
+
+    public int getProgress() {
+        int z1 = c1.getCoordinate().getZ();
+        int z2 = c2.getCoordinate().getZ();
+        int z = cur.getCoordinate().getZ();
+        return (z-z1) * 100 / (z2-z1);
     }
 
     @Override
@@ -120,11 +138,13 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
                 cz++;
                 if (cz > up.getZ()) {
                     scanning.setValue(false);
+                    notifyBlockUpdate();
                     return false;
                 }
             }
         }
         cur.setCoordinate(new Coordinate(cx, cy, cz));
+        notifyBlockUpdate();
         return true;
     }
 

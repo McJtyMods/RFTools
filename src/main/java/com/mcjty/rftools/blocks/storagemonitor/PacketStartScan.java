@@ -11,12 +11,14 @@ public class PacketStartScan implements IMessage, IMessageHandler<PacketStartSca
     private int x;
     private int y;
     private int z;
+    private boolean start;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
+        start = buf.readBoolean();
     }
 
     @Override
@@ -24,15 +26,17 @@ public class PacketStartScan implements IMessage, IMessageHandler<PacketStartSca
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
+        buf.writeBoolean(start);
     }
 
     public PacketStartScan() {
     }
 
-    public PacketStartScan(int x, int y, int z) {
+    public PacketStartScan(int x, int y, int z, boolean start) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.start = start;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class PacketStartScan implements IMessage, IMessageHandler<PacketStartSca
             return null;
         }
         StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
-        storageScannerTileEntity.startScan();
+        storageScannerTileEntity.startScan(message.start);
         return null;
     }
 
