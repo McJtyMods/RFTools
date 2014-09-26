@@ -8,15 +8,22 @@ import com.mcjty.rftools.BlockInfo;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
     public static final int RECEIVEPERTICK = 100;
     public static int rfPerOperation = 100;
     public static int scansPerOperation = 5;
+
+    // For client side: the items of the inventory we're currently looking at.
+    private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
 
     private SyncedValue<Integer> radius = new SyncedValue<Integer>(1);
     private SyncedValue<Boolean> scanning = new SyncedValue<Boolean>(false);
@@ -111,6 +118,39 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
                 }
             }
         }
+    }
+
+    public void storeItemsForClient(List<ItemStack> items) {
+        showingItems = new ArrayList<ItemStack>(items);
+    }
+
+    public List<ItemStack> getInventoryForBlock(int cx, int cy, int cz) {
+        showingItems = new ArrayList<ItemStack>();
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+            return showingItems;
+        }
+        extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+
+        TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
+        if (tileEntity instanceof IInventory) {
+            IInventory inventory = (IInventory) tileEntity;
+            for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                ItemStack itemStack = inventory.getStackInSlot(i);
+                if (itemStack != null) {
+                    showingItems.add(itemStack);
+                }
+            }
+        }
+        return showingItems;
+    }
+
+    public List<ItemStack> getShowingItems() {
+        return showingItems;
+    }
+
+    public void clearShowingItems() {
+        showingItems.clear();
     }
 
     private void checkInventoryStatus(int cx, int cy, int cz) {

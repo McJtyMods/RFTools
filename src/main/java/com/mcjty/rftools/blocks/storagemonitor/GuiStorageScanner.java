@@ -8,8 +8,8 @@ import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
@@ -17,13 +17,12 @@ import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.List;
 
 
 public class GuiStorageScanner extends GuiContainer {
@@ -61,13 +60,15 @@ public class GuiStorageScanner extends GuiContainer {
         storageList = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new SelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
-                showContents();
+                itemList.removeChildren();
+                storageScannerTileEntity.clearShowingItems();
+                getInventoryOnServer();
             }
         });
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
 
         Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                setDesiredHeight(100).
+                setDesiredHeight(90).
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
@@ -123,29 +124,39 @@ public class GuiStorageScanner extends GuiContainer {
                 !storageScannerTileEntity.isScanning()));
     }
 
-    private void showContents() {
+    private void getInventoryOnServer() {
+        InvBlockInfo invBlockInfo = getSelectedContainer();
+        if (invBlockInfo != null) {
+            Coordinate c = invBlockInfo.getCoordinate();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetInventory(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
+                    c.getX(), c.getY(), c.getZ()));
+        }
+    }
+
+    private InvBlockInfo getSelectedContainer() {
         int selected = storageList.getSelected();
         if (selected != -1) {
             SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
             if (selected < inventories.size()) {
                 InvBlockInfo invBlockInfo = inventories.get(selected);
-                Coordinate c = invBlockInfo.getCoordinate();
-                TileEntity te = mc.theWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof IInventory) {
-                    itemList.removeChildren();
-                    IInventory inventory = (IInventory) te;
-                    for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
-                        ItemStack stack = inventory.getStackInSlot(i);
+                return invBlockInfo;
+            }
+        }
+        return null;
+    }
 
-                        if (stack != null) {
-                            String displayName = BlockInfo.getReadableName(stack, 0);
+    private void updateContentsList() {
+        List<ItemStack> items = storageScannerTileEntity.getShowingItems();
+        if (itemList.getMaximum() == 0) {
+            // We need to refresh.
+            for (ItemStack stack : items) {
+                if (stack != null) {
+                    String displayName = BlockInfo.getReadableName(stack, 0);
 
-                            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-                            panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
-                            panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-                            itemList.addChild(panel);
-                        }
-                    }
+                    Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+                    panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
+                    panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                    itemList.addChild(panel);
                 }
             }
         }
@@ -184,6 +195,7 @@ public class GuiStorageScanner extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateStorageList();
+        updateContentsList();
         if (storageScannerTileEntity.isScanning()) {
             scanButton.setText("Stop");
             progressBar.setValue(storageScannerTileEntity.getProgress());
