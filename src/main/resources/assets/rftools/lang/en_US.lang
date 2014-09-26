@@ -1,5 +1,5 @@
 item.NetworkMonitor.name=RF Network Monitor
 tile.crafterBlock.name=Crafter
-tile.storageMonitorBlock.name=Storage Monitor
+tile.storageScannerBlock.name=Storage Scanner
 tile.rfMonitorBlock.name=RF Monitor
 tile.machineFrame.name=Machine Frame

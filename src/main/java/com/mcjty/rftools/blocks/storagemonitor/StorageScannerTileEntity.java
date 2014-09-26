@@ -11,7 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
+public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
     public static final int RECEIVEPERTICK = 100;
     public static int rfPerOperation = 100;
@@ -34,7 +34,7 @@ public class StorageMonitorTileEntity extends GenericEnergyHandlerTileEntity {
         }
     };
 
-    public StorageMonitorTileEntity() {
+    public StorageScannerTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
         registerSyncedObject(scanning);
         registerSyncedObject(c1);

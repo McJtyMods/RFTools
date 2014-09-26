@@ -22,7 +22,7 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 
 
-public class GuiStorageMonitor extends GuiContainer {
+public class GuiStorageScanner extends GuiContainer {
     public static final int STORAGE_MONITOR_WIDTH = 256;
     public static final int STORAGE_MONITOR_HEIGHT = 224;
 
@@ -30,14 +30,14 @@ public class GuiStorageMonitor extends GuiContainer {
     private WidgetList storageList;
     private EnergyBar energyBar;
     private ScrollableLabel radiusLabel;
-    private final StorageMonitorTileEntity storageMonitorTileEntity;
+    private final StorageScannerTileEntity storageScannerTileEntity;
     private int clientVersion = -1;
 
-    public GuiStorageMonitor(StorageMonitorTileEntity storageMonitorTileEntity, StorageMonitorContainer storageMonitorContainer) {
-        super(storageMonitorContainer);
-        this.storageMonitorTileEntity = storageMonitorTileEntity;
-        storageMonitorTileEntity.setOldRF(-1);
-        storageMonitorTileEntity.setCurrentRF(storageMonitorTileEntity.getEnergyStored(ForgeDirection.DOWN));
+    public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
+        super(storageScannerContainer);
+        this.storageScannerTileEntity = storageScannerTileEntity;
+        storageScannerTileEntity.setOldRF(-1);
+        storageScannerTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = STORAGE_MONITOR_WIDTH;
         ySize = STORAGE_MONITOR_HEIGHT;
@@ -47,9 +47,9 @@ public class GuiStorageMonitor extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = storageMonitorTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        int maxEnergyStored = storageScannerTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
-        energyBar.setValue(storageMonitorTileEntity.getCurrentRF());
+        energyBar.setValue(storageScannerTileEntity.getCurrentRF());
 
         storageList = new WidgetList(mc, this).setRowheight(16);
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
@@ -76,7 +76,7 @@ public class GuiStorageMonitor extends GuiContainer {
                 }).
                 setTooltips("Start a scan of", "all storage units", "in radius");
         radiusLabel = new ScrollableLabel(mc, this).
-                setRealValue(storageMonitorTileEntity.getRadius()).
+                setRealValue(storageScannerTileEntity.getRadius()).
                 addValueEvent(new ValueEvent() {
                     @Override
                     public void valueChanged(Widget parent, int newValue) {
@@ -99,15 +99,15 @@ public class GuiStorageMonitor extends GuiContainer {
     }
 
     private void changeRadius(int r) {
-        PacketHandler.INSTANCE.sendToServer(new PacketSetRadius(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord, r));
+        PacketHandler.INSTANCE.sendToServer(new PacketSetRadius(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord, r));
     }
 
     private void startScan() {
-        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageMonitorTileEntity.xCoord, storageMonitorTileEntity.yCoord, storageMonitorTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord));
     }
 
     private void updateStorageList() {
-        SyncedValueList<InvBlockInfo> inventories = storageMonitorTileEntity.getInventories();
+        SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
         if (inventories.getClientVersion() != clientVersion) {
             clientVersion = inventories.getClientVersion();
             storageList.removeChildren();
@@ -140,7 +140,7 @@ public class GuiStorageMonitor extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateStorageList();
         window.draw();
-        int currentRF = storageMonitorTileEntity.getCurrentRF();
+        int currentRF = storageScannerTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
     }
 

@@ -43,13 +43,13 @@ public class PacketSetRadius implements IMessage, IMessageHandler<PacketSetRadiu
     public IMessage onMessage(PacketSetRadius message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
-        if(!(te instanceof StorageMonitorTileEntity)) {
+        if(!(te instanceof StorageScannerTileEntity)) {
             // @Todo better logging
-            System.out.println("createStartScanPacket: TileEntity is not a StorageMonitorTileEntity!");
+            System.out.println("createStartScanPacket: TileEntity is not a StorageScannerTileEntity!");
             return null;
         }
-        StorageMonitorTileEntity storageMonitorTileEntity = (StorageMonitorTileEntity) te;
-        storageMonitorTileEntity.setRadius(message.radius);
+        StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
+        storageScannerTileEntity.setRadius(message.radius);
         return null;
     }
 

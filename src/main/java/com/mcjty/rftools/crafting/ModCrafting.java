@@ -8,8 +8,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import java.util.Iterator;
-
 public final class ModCrafting {
 
     public static final void init() {
@@ -24,6 +22,6 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock), new Object[]{" T ", "cMc", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Blocks.crafting_table});
 
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.storageMonitorBlock), new Object[]{"ToT", "oMo", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.storageScannerBlock), new Object[]{"ToT", "oMo", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl});
     }
 }
