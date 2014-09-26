@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
@@ -97,6 +98,11 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     protected void checkStateServer() {
         super.checkStateServer();
         if (scanning.getValue()) {
+            if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+                return;
+            }
+            extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+
             for (int i = 0 ; i < scansPerOperation ; i++) {
                 Coordinate c = cur.getCoordinate();
                 checkInventoryStatus(c.getX(), c.getY(), c.getZ());
