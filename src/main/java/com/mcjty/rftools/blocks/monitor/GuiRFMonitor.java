@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.monitor;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.events.ValueEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
@@ -154,7 +155,7 @@ public class GuiRFMonitor extends GuiScreen {
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(120));
+            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(120));
             panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color));
             list.addChild(panel);
 

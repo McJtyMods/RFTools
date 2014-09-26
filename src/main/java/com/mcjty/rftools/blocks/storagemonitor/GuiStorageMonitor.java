@@ -4,6 +4,7 @@ import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ValueEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.Button;
@@ -50,9 +51,18 @@ public class GuiStorageMonitor extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(storageMonitorTileEntity.getCurrentRF());
 
-        storageList = new WidgetList(mc, this);
+        storageList = new WidgetList(mc, this).setRowheight(16);
+        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
+
+        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+                setDesiredHeight(100).
+                addChild(energyBar).
+                addChild(storageList).addChild(storageListSlider);
+
         WidgetList itemList = new WidgetList(mc, this);
-        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(energyBar).addChild(storageList).addChild(itemList);
+        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(itemList);
+        Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+                addChild(itemList).addChild(itemListSlider);
 
         Button scanButton = new Button(mc, this).
                 setText("Scan").
@@ -82,7 +92,7 @@ public class GuiStorageMonitor extends GuiContainer {
                 setScrollable(radiusLabel);
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(radiusSlider).addChild(radiusLabel);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(bottomPanel);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(midPanel).addChild(bottomPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -109,7 +119,7 @@ public class GuiStorageMonitor extends GuiContainer {
 
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
                 panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-                panel.addChild(new Label(mc, this).setText(displayName).setDesiredWidth(120));
+                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(120));
                 panel.addChild(new Label(mc, this).setText(c.toString()));
                 storageList.addChild(panel);
             }
