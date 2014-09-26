@@ -39,7 +39,7 @@ public class CommonProxy {
         try {
             cfg.load();
             cfg.addCustomCategoryComment(CATEGORY_CRAFTER, "Settings for the automatic crafter machine");
-            cfg.addCustomCategoryComment(CATEGORY_STORAGE_MONITOR, "Settings for the storage monitor machine");
+            cfg.addCustomCategoryComment(CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
             CrafterBlockTileEntity.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity.rfPerOperation, "Amount of RF used per crafting operation").getInt();
             StorageScannerTileEntity.rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", StorageScannerTileEntity.rfPerOperation, "Amount of RF used per scan operation").getInt();
             StorageScannerTileEntity.scansPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "scansPerOperation", StorageScannerTileEntity.scansPerOperation, "How many blocks to scan per operation").getInt();
