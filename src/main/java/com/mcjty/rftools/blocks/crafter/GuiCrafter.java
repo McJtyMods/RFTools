@@ -40,6 +40,9 @@ public class GuiCrafter extends GuiContainer {
     private final CrafterBlockTileEntity crafterBlockTileEntity;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
+    private static final ResourceLocation iconRedstoneAlwaysOn = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_alwayson.png");
+    private static final ResourceLocation iconRedstoneSignalOff = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_signaloff.png");
+    private static final ResourceLocation iconRedstoneSignalOn = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_signalon.png");
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
         super(container);
@@ -104,8 +107,11 @@ public class GuiCrafter extends GuiContainer {
                 }).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
+        ImageLabel redstoneMode = new ImageLabel(mc, this).setImage(iconRedstoneAlwaysOn).setLayoutHint(new PositionalLayout.PositionalHint(31, 160, 16, 16));
+
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider).addChild(applyButton);
+                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
@@ -113,6 +119,7 @@ public class GuiCrafter extends GuiContainer {
 
         window = new Window(this, toplevel);
     }
+
 
     private void populateList() {
         recipeList.removeChildren();
