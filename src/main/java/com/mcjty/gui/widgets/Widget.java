@@ -66,9 +66,15 @@ public interface Widget<P extends Widget> {
 
     /**
      * Get the bounds for this widget relative to the parents coordinate system.
+     * Can be null in case the layout for this widget hasn't been set yet.
      * @return
      */
     Rectangle getBounds();
+
+    /**
+     * Check if a coordinate is in the bounds of this widget.
+     */
+    boolean in(int x, int y);
 
     /**
      * Find the widget at the given position. It can be assumed in this function that it

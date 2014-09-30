@@ -25,7 +25,7 @@ public class Window {
     }
 
     public void mouseClicked(int x, int y, int button) {
-        if (toplevel.getBounds().contains(x, y)) {
+        if (toplevel.in(x, y)) {
             toplevel.mouseClick(x, y, button);
         }
     }
@@ -55,7 +55,7 @@ public class Window {
     public List<String> getTooltips() {
         int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
         int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
-        if (toplevel.getBounds().contains(x, y)) {
+        if (toplevel.in(x, y)) {
             Widget w = toplevel.getWidgetAtPosition(x, y);
             List<String> tooltips = w.getTooltips();
             if (tooltips != null) {

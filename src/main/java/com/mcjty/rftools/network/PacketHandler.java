@@ -1,6 +1,7 @@
 package com.mcjty.rftools.network;
 
 import com.mcjty.rftools.blocks.crafter.PacketCrafter;
+import com.mcjty.rftools.blocks.crafter.PacketCrafterMode;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import com.mcjty.rftools.blocks.storagemonitor.PacketGetInventory;
 import com.mcjty.rftools.blocks.storagemonitor.PacketInventoryReady;
@@ -23,6 +24,7 @@ public class PacketHandler {
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("rftools");
         INSTANCE.registerMessage(PacketRFMonitor.class, PacketRFMonitor.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCrafter.class, PacketCrafter.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketCrafterMode.class, PacketCrafterMode.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketStartScan.class, PacketStartScan.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketSetRadius.class, PacketSetRadius.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetInventory.class, PacketGetInventory.class, nextID(), Side.SERVER);

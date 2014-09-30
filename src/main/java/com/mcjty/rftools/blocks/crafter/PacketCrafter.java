@@ -106,7 +106,6 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
             recipe.setRecipe(message.items, message.items[9]);
             recipe.setKeepOne(message.keepOne);
             recipe.setCraftInternal(message.craftInternal);
-            crafterBlockTileEntity.setStateDirty(true);
         }
         return null;
     }

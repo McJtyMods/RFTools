@@ -25,7 +25,7 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         y -= bounds.y;
 
         for (Widget child : children) {
-            if (child.getBounds().contains(x, y)) {
+            if (child.in(x, y)) {
                 return child.getWidgetAtPosition(x, y);
             }
         }
@@ -34,6 +34,9 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
     }
 
     public P addChild(Widget child) {
+        if (child == null) {
+            throw new RuntimeException("THIS IS NOT POSSIBLE!");
+        }
         children.add(child);
         markDirty();
         return (P) this;

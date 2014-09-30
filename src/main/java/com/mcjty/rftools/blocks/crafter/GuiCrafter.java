@@ -4,6 +4,7 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.SelectionEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
@@ -36,13 +37,13 @@ public class GuiCrafter extends GuiContainer {
     private ChoiceLabel keepItem;
     private ChoiceLabel internalRecipe;
     private Button applyButton;
+    private ImageChoiceLabel redstoneMode;
+    private ImageChoiceLabel speedMode;
 
     private final CrafterBlockTileEntity crafterBlockTileEntity;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
-    private static final ResourceLocation iconRedstoneAlwaysOn = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_alwayson.png");
-    private static final ResourceLocation iconRedstoneSignalOff = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_signaloff.png");
-    private static final ResourceLocation iconRedstoneSignalOn = new ResourceLocation(RFTools.MODID, "textures/gui/redstone_signalon.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
         super(container);
@@ -107,11 +108,33 @@ public class GuiCrafter extends GuiContainer {
                 }).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
-        ImageLabel redstoneMode = new ImageLabel(mc, this).setImage(iconRedstoneAlwaysOn).setLayoutHint(new PositionalLayout.PositionalHint(31, 160, 16, 16));
+        redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeRedstoneMode();
+                    }
+                }).
+                addChoice("Ignored", "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
+                addChoice("Off", "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
+                addChoice("On", "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
+        redstoneMode.setCurrentChoice(crafterBlockTileEntity.getRedstoneMode());
 
+        speedMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeSpeedMode();
+                    }
+                }).
+                addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
+                addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
+        speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
+        speedMode.setCurrentChoice(crafterBlockTileEntity.getSpeedMode());
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode);
+                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
@@ -120,6 +143,22 @@ public class GuiCrafter extends GuiContainer {
         window = new Window(this, toplevel);
     }
 
+    private void changeRedstoneMode() {
+        crafterBlockTileEntity.setRedstoneMode(redstoneMode.getCurrentChoice());
+        sendChangeToServer();
+    }
+
+    private void changeSpeedMode() {
+        crafterBlockTileEntity.setSpeedMode(speedMode.getCurrentChoice());
+        sendChangeToServer();
+    }
+
+    private void sendChangeToServer() {
+        int rsMode = redstoneMode.getCurrentChoice();
+        int sMode = speedMode.getCurrentChoice();
+        PacketHandler.INSTANCE.sendToServer(new PacketCrafterMode(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord,
+                rsMode, sMode));
+    }
 
     private void populateList() {
         recipeList.removeChildren();
@@ -133,7 +172,7 @@ public class GuiCrafter extends GuiContainer {
     private void addRecipeLine(Object craftingResult) {
         Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
-                addChild(new Label(mc, this).setText(BlockInfo.getReadableName(craftingResult, 0)));
+                addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setText(BlockInfo.getReadableName(craftingResult, 0)));
         recipeList.addChild(panel);
     }
 

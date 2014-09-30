@@ -139,6 +139,15 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         return bounds;
     }
 
+    @Override
+    public boolean in(int x, int y) {
+        if (bounds == null) {
+            return false;
+        } else {
+            return bounds.contains(x, y);
+        }
+    }
+
     protected void drawBackground(int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 

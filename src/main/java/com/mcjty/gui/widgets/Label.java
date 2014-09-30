@@ -11,14 +11,27 @@ public class Label<P extends Label> extends AbstractWidget<P> {
     private int disabledColor = 0xFF444444;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGN_CENTER;
     private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_CENTER;
+    private boolean dynamic = false;        // The size of this label is dynamic and not based on the contents
 
     public Label(Minecraft mc, Gui gui) {
         super(mc, gui);
     }
 
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public P setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
+        return (P) this;
+    }
+
     @Override
     public int getDesiredWidth() {
         int w = super.getDesiredWidth();
+        if (dynamic) {
+            return w;
+        }
         if (w == -1) {
             w = mc.fontRenderer.getStringWidth(text);
         }
@@ -28,6 +41,9 @@ public class Label<P extends Label> extends AbstractWidget<P> {
     @Override
     public int getDesiredHeight() {
         int h = super.getDesiredHeight();
+        if (dynamic) {
+            return h;
+        }
         if (h == -1) {
             h = mc.fontRenderer.FONT_HEIGHT;
         }
@@ -94,7 +110,7 @@ public class Label<P extends Label> extends AbstractWidget<P> {
         if (text == null) {
             mc.fontRenderer.drawString("", x+dx+bounds.x, y+dy+bounds.y, col);
         } else {
-            mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(text, bounds.width), x+dx+bounds.x, y+dy+bounds.y, col);
+            mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(text, bounds.width), x + dx + bounds.x, y + dy + bounds.y, col);
         }
     }
 

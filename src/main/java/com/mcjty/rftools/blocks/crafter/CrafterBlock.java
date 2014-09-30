@@ -35,6 +35,18 @@ public class CrafterBlock extends GenericContainerBlock {
     }
 
     @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        int meta = world.getBlockMetadata(x, y, z);
+        System.out.print("meta = " + meta);
+        boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
+        System.out.print(", powered = " + powered);
+        meta = BlockTools.setRedstoneSignal(meta, powered);
+        System.out.println(", -> meta = " + meta);
+
+        world.setBlockMetadataWithNotify(x, y, z, meta, 2);
+    }
+
+    @Override
     public String getFrontIconName() {
         return "machineCrafter";
     }

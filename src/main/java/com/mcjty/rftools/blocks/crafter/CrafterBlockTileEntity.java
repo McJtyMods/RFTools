@@ -2,7 +2,7 @@ package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
-import com.mcjty.entity.SyncedValue;
+import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -16,29 +16,46 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.List;
 
 public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+    public static final int REDSTONE_IGNORED = 0;
+    public static final int REDSTONE_OFFREQUIRED = 1;
+    public static final int REDSTONE_ONREQUIRED = 2;
+    public static final int SPEED_SLOW = 0;
+    public static final int SPEED_FAST = 1;
+
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
     private CraftingRecipe recipes[] = new CraftingRecipe[8];
 
-    // This flag means something has changed about the configuration and we might have to recalculate stuff.
-    private boolean stateDirty = true;
-
-    private SyncedValue<Integer> stepIndex = new SyncedValue<Integer>(0);
+    private int redstoneMode = REDSTONE_IGNORED;
+    private int speedMode = SPEED_SLOW;
 
     public static final int MAXENERGY = 32000;
     public static final int RECEIVEPERTICK = 80;
     public static int rfPerOperation = 100;
+    public static int speedOperations = 10;
 
     public CrafterBlockTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
         for (int i = 0 ; i < recipes.length ; i++) {
             recipes[i] = new CraftingRecipe();
         }
-        stateDirty = true;
-        registerSyncedObject(stepIndex);
     }
 
-    public void setStateDirty(boolean stateDirty) {
-        this.stateDirty = stateDirty;
+    public int getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(int redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getSpeedMode() {
+        return speedMode;
+    }
+
+    public void setSpeedMode(int speedMode) {
+        this.speedMode = speedMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public CraftingRecipe getRecipe(int index) {
@@ -170,7 +187,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         super.readFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
-        stepIndex.setValue(tagCompound.getInteger("Step"));
+        redstoneMode = tagCompound.getByte("rsMode");
+        speedMode = tagCompound.getByte("speedMode");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -194,7 +212,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
         super.writeToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
-        tagCompound.setInteger("Step", stepIndex.getValue());
+        tagCompound.setByte("rsMode", (byte)redstoneMode);
+        tagCompound.setByte("speedMode", (byte)speedMode);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -223,34 +242,59 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
-        if (stateDirty) {
-            stateDirty = false;
-            stepIndex.setValue(0);
+
+        if (redstoneMode != REDSTONE_IGNORED) {
+            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            boolean rs = BlockTools.getRedstoneSignal(meta);
+            if (redstoneMode == REDSTONE_OFFREQUIRED && rs) {
+                return;
+            } else if (redstoneMode == REDSTONE_ONREQUIRED && !rs) {
+                return;
+            }
         }
 
+        int steps = 1;
+        if (speedMode == SPEED_FAST) {
+            steps = speedOperations;
+        }
+
+        for (int i = 0 ; i < steps ; i++) {
+            craftOneCycle();
+        }
+    }
+
+    private void craftOneCycle() {
         if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
             return;
         }
 
-        int index = stepIndex.getValue();
-        CraftingRecipe craftingRecipe = recipes[index];
-        stepIndex.setValue((index+1) % 8);
+        boolean energyConsumed = false;
 
-        if (craftingRecipe != null) {
-            IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-            if (recipe != null) {
-                List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
-                int keep = craftingRecipe.isKeepOne() ? 1 : 0;
-                if (checkIfRecipeWorks(stackWithCounts, keep)) {
-                    ItemStack result = craftingRecipe.getResult();
-                    // First check if we have room for the result. If yes we can actually craft.
-                    boolean internal = craftingRecipe.isCraftInternal();
-                    if (placeResult(internal, result)) {
-                        consumeCraftingItems(stackWithCounts, keep);
-                        extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+        for (int index = 0 ; index < 8 ; index++) {
+            CraftingRecipe craftingRecipe = recipes[index];
+
+            if (craftingRecipe != null) {
+                IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+                if (recipe != null) {
+                    List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
+                    int keep = craftingRecipe.isKeepOne() ? 1 : 0;
+                    if (checkIfRecipeWorks(stackWithCounts, keep)) {
+                        ItemStack result = craftingRecipe.getResult();
+                        // First check if we have room for the result. If yes we can actually craft.
+                        boolean internal = craftingRecipe.isCraftInternal();
+                        if (placeResult(internal, result)) {
+                            consumeCraftingItems(stackWithCounts, keep);
+                            energyConsumed = true;
+                        }
                     }
                 }
             }
+        }
+
+        if (energyConsumed) {
+            extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+        } else {
+            return;
         }
     }
 
@@ -291,6 +335,9 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
                         }
                         count -= ss;
                         input.splitStack(ss);        // This consumes the items
+                        if (input.stackSize == 0) {
+                            stacks[CrafterContainerFactory.SLOT_BUFFER + j] = null;
+                        }
                     }
                 }
             }
