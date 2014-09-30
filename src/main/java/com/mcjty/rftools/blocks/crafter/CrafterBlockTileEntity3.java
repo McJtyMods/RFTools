@@ -15,7 +15,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
-public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity implements ISidedInventory {
     public static final int REDSTONE_IGNORED = 0;
     public static final int REDSTONE_OFFREQUIRED = 1;
     public static final int REDSTONE_ONREQUIRED = 2;
@@ -23,7 +23,8 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     public static final int SPEED_FAST = 1;
 
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
-    private CraftingRecipe recipes[] = new CraftingRecipe[8];
+    private CraftingRecipe recipes[];
+    private int supportedRecipes;
 
     private int redstoneMode = REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
@@ -31,13 +32,23 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
     public static final int MAXENERGY = 32000;
     public static final int RECEIVEPERTICK = 80;
     public static int rfPerOperation = 100;
-    public static int speedOperations = 10;
+    public static int speedOperations = 5;
 
-    public CrafterBlockTileEntity() {
+    public CrafterBlockTileEntity3() {
         super(MAXENERGY, RECEIVEPERTICK);
+        setSupportedRecipes(8);
+    }
+
+    public void setSupportedRecipes(int supportedRecipes) {
+        this.supportedRecipes = supportedRecipes;
+        recipes =  new CraftingRecipe[supportedRecipes];
         for (int i = 0 ; i < recipes.length ; i++) {
             recipes[i] = new CraftingRecipe();
         }
+    }
+
+    public int getSupportedRecipes() {
+        return supportedRecipes;
     }
 
     public int getRedstoneMode() {
@@ -270,7 +281,7 @@ public class CrafterBlockTileEntity extends GenericEnergyHandlerTileEntity imple
 
         boolean energyConsumed = false;
 
-        for (int index = 0 ; index < 8 ; index++) {
+        for (int index = 0 ; index < supportedRecipes ; index++) {
             CraftingRecipe craftingRecipe = recipes[index];
 
             if (craftingRecipe != null) {

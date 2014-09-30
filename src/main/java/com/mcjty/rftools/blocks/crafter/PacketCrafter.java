@@ -8,10 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.tileentity.TileEntity;
-
-import java.io.IOException;
 
 public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, IMessage> {
     private int x;
@@ -95,12 +92,12 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
     public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
-        if(!(te instanceof CrafterBlockTileEntity)) {
+        if(!(te instanceof CrafterBlockTileEntity3)) {
             // @Todo better logging
             System.out.println("createPowerMonitotPacket: TileEntity is not a CrafterBlockTileEntity!");
             return null;
         }
-        CrafterBlockTileEntity crafterBlockTileEntity = (CrafterBlockTileEntity) te;
+        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) te;
         if (message.recipeIndex != -1) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
             recipe.setRecipe(message.items, message.items[9]);

@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class CrafterContainer extends GenericEnergyHandlerContainer {
 
-    public CrafterContainer(EntityPlayer player, CrafterBlockTileEntity containerInventory) {
+    public CrafterContainer(EntityPlayer player, CrafterBlockTileEntity3 containerInventory) {
         super(CrafterContainerFactory.getInstance(), player, containerInventory);
         addInventory(CrafterContainerFactory.CONTAINER_INVENTORY, containerInventory);
         addInventory(CrafterContainerFactory.CONTAINER_PLAYER, player.inventory);

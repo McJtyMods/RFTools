@@ -1,7 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.ModBlocks;
-import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
@@ -40,8 +40,8 @@ public class CommonProxy {
             cfg.load();
             cfg.addCustomCategoryComment(CATEGORY_CRAFTER, "Settings for the automatic crafter machine");
             cfg.addCustomCategoryComment(CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
-            CrafterBlockTileEntity.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity.rfPerOperation, "Amount of RF used per crafting operation").getInt();
-            CrafterBlockTileEntity.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity.speedOperations, "How many operations to do at once in fast mode").getInt();
+            CrafterBlockTileEntity3.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity3.rfPerOperation, "Amount of RF used per crafting operation").getInt();
+            CrafterBlockTileEntity3.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity3.speedOperations, "How many operations to do at once in fast mode").getInt();
             StorageScannerTileEntity.rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", StorageScannerTileEntity.rfPerOperation, "Amount of RF used per scan operation").getInt();
             StorageScannerTileEntity.scansPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "scansPerOperation", StorageScannerTileEntity.scansPerOperation, "How many blocks to scan per operation").getInt();
         } catch (Exception e1) {

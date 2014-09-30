@@ -1,6 +1,5 @@
 package com.mcjty.rftools.blocks;
 
-import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;

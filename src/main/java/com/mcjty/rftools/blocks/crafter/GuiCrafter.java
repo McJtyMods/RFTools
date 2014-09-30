@@ -40,12 +40,12 @@ public class GuiCrafter extends GuiContainer {
     private ImageChoiceLabel redstoneMode;
     private ImageChoiceLabel speedMode;
 
-    private final CrafterBlockTileEntity crafterBlockTileEntity;
+    private final CrafterBlockTileEntity3 crafterBlockTileEntity;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiCrafter(CrafterBlockTileEntity crafterBlockTileEntity, CrafterContainer container) {
+    public GuiCrafter(CrafterBlockTileEntity3 crafterBlockTileEntity, CrafterContainer container) {
         super(container);
         this.crafterBlockTileEntity = crafterBlockTileEntity;
         crafterBlockTileEntity.setOldRF(-1);
@@ -162,7 +162,7 @@ public class GuiCrafter extends GuiContainer {
 
     private void populateList() {
         recipeList.removeChildren();
-        for (int i = 0 ; i < 8 ; i++) {
+        for (int i = 0 ; i < crafterBlockTileEntity.getSupportedRecipes() ; i++) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
             ItemStack stack = recipe.getResult();
             addRecipeLine(stack);

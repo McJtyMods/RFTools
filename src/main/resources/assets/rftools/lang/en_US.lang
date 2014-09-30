@@ -1,5 +1,7 @@
 item.NetworkMonitor.name=RF Network Monitor
-tile.crafterBlock.name=Crafter
+tile.crafterBlock1.name=Crafter Tier 1
+tile.crafterBlock2.name=Crafter Tier 2
+tile.crafterBlock3.name=Crafter Tier 3
 tile.storageScannerBlock.name=Storage Scanner
 tile.rfMonitorBlock.name=RF Monitor
 tile.machineFrame.name=Machine Frame
