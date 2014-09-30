@@ -33,12 +33,15 @@ public class TextField extends AbstractWidget<TextField> {
     }
 
     @Override
-    public void keyTyped(Window window, char typedChar, int keyCode) {
-        super.keyTyped(window, typedChar, keyCode);
+    public boolean keyTyped(Window window, char typedChar, int keyCode) {
+        boolean rc = super.keyTyped(window, typedChar, keyCode);
+        if (rc) {
+            return true;
+        }
         if (enabled) {
             System.out.print("typedChar = " + typedChar);
             System.out.println(", keyCode = " + keyCode);
-            if (keyCode == Keyboard.KEY_RETURN) {
+            if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
                 window.setTextFocus(null);
             } else if (keyCode == Keyboard.KEY_BACK) {
                 if (!text.isEmpty() && cursor > 0) {
@@ -50,14 +53,16 @@ public class TextField extends AbstractWidget<TextField> {
                     cursor--;
                 }
             } else if (keyCode == Keyboard.KEY_RIGHT) {
-                if (cursor < text.length()-1) {
+                if (cursor < text.length()) {
                     cursor++;
                 }
             } else {
                 text = text.substring(0, cursor) + typedChar + text.substring(cursor);
                 cursor++;
             }
+            return true;
         }
+        return false;
     }
 
     private int calculateVerticalOffset() {

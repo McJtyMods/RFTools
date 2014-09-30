@@ -127,8 +127,9 @@ public interface Widget<P extends Widget> {
      * @param window
      * @param typedChar
      * @param keyCode
+     * @return true if key was handled
      */
-    void keyTyped(Window window, char typedChar, int keyCode);
+    boolean keyTyped(Window window, char typedChar, int keyCode);
 
     /**
      * Some layout managers need a layout hint.

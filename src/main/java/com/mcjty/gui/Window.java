@@ -58,10 +58,11 @@ public class Window {
         return textFocus;
     }
 
-    public void keyTyped(char typedChar, int keyCode) {
+    public boolean keyTyped(char typedChar, int keyCode) {
         if (textFocus != null) {
-            textFocus.keyTyped(this, typedChar, keyCode);
+            return textFocus.keyTyped(this, typedChar, keyCode);
         }
+        return false;
     }
 
     public void draw() {

@@ -189,7 +189,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     }
 
     @Override
-    public void keyTyped(Window window, char typedChar, int keyCode) {
+    public boolean keyTyped(Window window, char typedChar, int keyCode) {
+        return false;
     }
 
     /**
