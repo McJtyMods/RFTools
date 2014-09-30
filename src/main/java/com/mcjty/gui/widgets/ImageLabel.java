@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -26,8 +27,8 @@ public class ImageLabel<P extends ImageLabel> extends AbstractWidget<P> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
 
         if (image != null) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

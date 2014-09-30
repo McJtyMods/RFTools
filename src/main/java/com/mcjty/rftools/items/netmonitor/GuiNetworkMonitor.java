@@ -129,6 +129,12 @@ public class GuiNetworkMonitor extends GuiScreen {
     }
 
     @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        super.keyTyped(typedChar, keyCode);
+        window.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 

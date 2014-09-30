@@ -208,4 +208,10 @@ public class GuiRFMonitor extends GuiScreen {
             drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
         }
     }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        super.keyTyped(typedChar, keyCode);
+        window.keyTyped(typedChar, keyCode);
+    }
 }

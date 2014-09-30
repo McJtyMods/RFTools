@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.LayoutHint;
 
 import java.awt.*;
@@ -16,7 +17,6 @@ public interface Widget<P extends Widget> {
         DIMENSION_WIDTH,
         DIMENSION_HEIGHT
     }
-
 
     /**
      * Set the actual bounds for this widget. These coordinates are relative to the parents
@@ -89,17 +89,20 @@ public interface Widget<P extends Widget> {
      * The given coordinates are the absolute coordinates of the parent. This does *not* include
      * the top/left x,y of this widget itself.
      */
-    void draw(int x, int y);
+    void draw(Window window, int x, int y);
 
     /**
      * Handle a mouse click for this widget. This widget does not have to check if the coordinate is
      * in the bounds. The given coordinates are relative to the parent of this widget.
+     *
+     *
+     * @param window
      * @param x
      * @param y
      * @param button
      * @return a reference to the widget that wants focus (or null if not)
      */
-    Widget mouseClick(int x, int y, int button);
+    Widget mouseClick(Window window, int x, int y, int button);
 
     /**
      * Handle a mouse release for this widget.
@@ -117,6 +120,15 @@ public interface Widget<P extends Widget> {
      * @param y
      */
     void mouseMove(int x, int y);
+
+    /**
+     * Handle a keyboard event.
+     *
+     * @param window
+     * @param typedChar
+     * @param keyCode
+     */
+    void keyTyped(Window window, char typedChar, int keyCode);
 
     /**
      * Some layout managers need a layout hint.

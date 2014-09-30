@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -46,7 +47,7 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
     }
 
     @Override
-    public Widget mouseClick(int x, int y, int button) {
+    public Widget mouseClick(Window window, int x, int y, int button) {
         if (enabled) {
             currentChoice++;
             if (currentChoice >= choiceList.size()) {

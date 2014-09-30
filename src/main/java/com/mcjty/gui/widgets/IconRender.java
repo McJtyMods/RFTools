@@ -1,6 +1,7 @@
 package com.mcjty.gui.widgets;
 
 import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.IIcon;
@@ -24,8 +25,8 @@ public class IconRender extends AbstractWidget<IconRender> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
         if (icon != null) {
             RenderHelper.renderObject(mc, x + bounds.x, y + bounds.y, icon, false);
         }

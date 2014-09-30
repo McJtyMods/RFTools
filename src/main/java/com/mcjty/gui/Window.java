@@ -14,6 +14,7 @@ public class Window {
 
     private final Widget toplevel;
     private final GuiScreen gui;
+    private Widget textFocus = null;
 
     public Window(GuiScreen gui, Widget toplevel) {
         this.gui = gui;
@@ -25,8 +26,9 @@ public class Window {
     }
 
     public void mouseClicked(int x, int y, int button) {
+        textFocus = null;
         if (toplevel.in(x, y)) {
-            toplevel.mouseClick(x, y, button);
+            toplevel.mouseClick(this, x, y, button);
         }
     }
 
@@ -48,8 +50,22 @@ public class Window {
         }
     }
 
+    public void setTextFocus(Widget focus) {
+        textFocus = focus;
+    }
+
+    public Widget getTextFocus() {
+        return textFocus;
+    }
+
+    public void keyTyped(char typedChar, int keyCode) {
+        if (textFocus != null) {
+            textFocus.keyTyped(this, typedChar, keyCode);
+        }
+    }
+
     public void draw() {
-        toplevel.draw(0, 0);
+        toplevel.draw(this, 0, 0);
     }
 
     public List<String> getTooltips() {

@@ -1,6 +1,7 @@
 package com.mcjty.gui.widgets;
 
 import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -23,8 +24,8 @@ public class BlockRender extends AbstractWidget<BlockRender> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
         if (renderItem != null) {
             RenderHelper.renderObject(mc, x + bounds.x, y + bounds.y, renderItem, false);
         }

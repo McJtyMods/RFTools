@@ -12,6 +12,7 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
@@ -103,13 +104,16 @@ public class GuiStorageScanner extends GuiContainer {
                 setDesiredWidth(30);
         radiusLabel.setRealValue(storageScannerTileEntity.getRadius());
 
+        TextField textField = new TextField(mc, this);
+        Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
+
         Slider radiusSlider = new Slider(mc, this).
                 setHorizontal().
                 setTooltips("Radius of scan").
                 setScrollable(radiusLabel);
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
+        Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(midPanel).addChild(bottomPanel);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(midPanel).addChild(searchPanel).addChild(scanPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -226,4 +230,9 @@ public class GuiStorageScanner extends GuiContainer {
         window.mouseMovedOrUp(x, y, button);
     }
 
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        super.keyTyped(typedChar, keyCode);
+        window.keyTyped(typedChar, keyCode);
+    }
 }

@@ -2,6 +2,7 @@ package com.mcjty.gui.widgets;
 
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -123,8 +124,8 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
     }
 
     @Override
-    public void draw(final int x, final int y) {
-        super.draw(x, y);
+    public void draw(Window window, final int x, final int y) {
+        super.draw(window, x, y);
         int currentValue = getValue();
         int maximum = getMaxValue();
         if (maximum > 0) {

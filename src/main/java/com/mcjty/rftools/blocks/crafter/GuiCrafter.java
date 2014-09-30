@@ -331,4 +331,11 @@ public class GuiCrafter extends GuiContainer {
         super.mouseMovedOrUp(x, y, button);
         window.mouseMovedOrUp(x, y, button);
     }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        super.keyTyped(typedChar, keyCode);
+        window.keyTyped(typedChar, keyCode);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.mcjty.gui.widgets;
 
 import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.Scrollable;
+import com.mcjty.gui.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -44,8 +45,8 @@ public class Slider extends AbstractWidget<Slider> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
 
         int xx = x + bounds.x;
         int yy = y + bounds.y;
@@ -112,8 +113,8 @@ public class Slider extends AbstractWidget<Slider> {
     }
 
     @Override
-    public Widget mouseClick(int x, int y, int button) {
-        super.mouseClick(x, y, button);
+    public Widget mouseClick(Window window, int x, int y, int button) {
+        super.mouseClick(window, x, y, button);
         dragging = true;
 
         int divider = scrollable.getMaximum() - scrollable.getCountSelected();

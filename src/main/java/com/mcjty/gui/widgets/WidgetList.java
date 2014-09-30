@@ -1,7 +1,7 @@
 package com.mcjty.gui.widgets;
 
-import com.mcjty.gui.RenderHelper;
-import com.mcjty.gui.Scrollable;
+import com.mcjty.gui.*;
+import com.mcjty.gui.Window;
 import com.mcjty.gui.events.SelectionEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -40,8 +40,8 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
         int xx = x + bounds.x;
         int yy = y + bounds.y;
         int top = 0;        // Margin@@@?
@@ -53,13 +53,13 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             if (i == selected) {
                 RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff666666, 0xff444444);
             }
-            child.draw(xx, yy);
+            child.draw(window, xx, yy);
             top += rowheight;
         }
     }
 
     @Override
-    public Widget mouseClick(int x, int y, int button) {
+    public Widget mouseClick(Window window, int x, int y, int button) {
         int newSelected = -1;
         int top = bounds.y;        // Margin@@@?
 

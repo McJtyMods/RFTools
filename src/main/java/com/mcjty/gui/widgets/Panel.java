@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.Layout;
 import net.minecraft.client.Minecraft;
@@ -22,8 +23,8 @@ public class Panel extends AbstractContainerWidget<Panel> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 //        drawBox(xx, yy, 0xffff0000);
@@ -35,20 +36,20 @@ public class Panel extends AbstractContainerWidget<Panel> {
         }
 
         for (Widget child : children) {
-            child.draw(xx, yy);
+            child.draw(window, xx, yy);
         }
     }
 
     @Override
-    public Widget mouseClick(int x, int y, int button) {
-        super.mouseClick(x, y, button);
+    public Widget mouseClick(Window window, int x, int y, int button) {
+        super.mouseClick(window, x, y, button);
 
         x -= bounds.x;
         y -= bounds.y;
 
         for (Widget child : children) {
             if (child.in(x, y)) {
-                focus = child.mouseClick(x, y, button);
+                focus = child.mouseClick(window, x, y, button);
                 return this;
             }
         }
@@ -92,6 +93,5 @@ public class Panel extends AbstractContainerWidget<Panel> {
                 }
             }
         }
-
     }
 }

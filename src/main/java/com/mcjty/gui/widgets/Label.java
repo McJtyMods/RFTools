@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.VerticalAlignment;
 import net.minecraft.client.Minecraft;
@@ -96,8 +97,8 @@ public class Label<P extends Label> extends AbstractWidget<P> {
     }
 
     @Override
-    public void draw(int x, int y) {
-        super.draw(x, y);
+    public void draw(Window window, int x, int y) {
+        super.draw(window, x, y);
 
         int dx = calculateHorizontalOffset();
         int dy = calculateVerticalOffset();

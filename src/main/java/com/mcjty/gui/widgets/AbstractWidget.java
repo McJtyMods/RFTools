@@ -1,5 +1,6 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.LayoutHint;
 import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
@@ -170,12 +171,12 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     }
 
     @Override
-    public void draw(int x, int y) {
+    public void draw(Window window, int x, int y) {
         drawBackground(x, y);
     }
 
     @Override
-    public Widget mouseClick(int x, int y, int button) {
+    public Widget mouseClick(Window window, int x, int y, int button) {
         return null;
     }
 
@@ -185,6 +186,10 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
 
     @Override
     public void mouseMove(int x, int y) {
+    }
+
+    @Override
+    public void keyTyped(Window window, char typedChar, int keyCode) {
     }
 
     /**
