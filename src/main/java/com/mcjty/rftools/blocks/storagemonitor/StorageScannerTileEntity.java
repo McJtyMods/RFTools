@@ -18,7 +18,7 @@ import java.util.List;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
-    public static final int RECEIVEPERTICK = 100;
+    public static final int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;
     public static int scansPerOperation = 5;
 
@@ -60,7 +60,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             }
 
             int r = radius.getValue();
-            System.out.println("radius = " + r);
             // Only on server
             int y1 = yCoord-r;
             if (y1 < 0) {
