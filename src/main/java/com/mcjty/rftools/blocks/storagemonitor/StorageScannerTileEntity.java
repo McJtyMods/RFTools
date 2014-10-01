@@ -14,7 +14,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
@@ -24,6 +26,8 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
 
     // For client side: the items of the inventory we're currently looking at.
     private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
+    // For client side: the hilighted coordinates.
+    private Set<Coordinate> coordinates = new HashSet<Coordinate> ();
 
     private SyncedValue<Integer> radius = new SyncedValue<Integer>(1);
     private SyncedValue<Boolean> scanning = new SyncedValue<Boolean>(false);
@@ -49,6 +53,29 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         registerSyncedObject(c2);
         registerSyncedObject(cur);
         registerSyncedObject(inventories);
+    }
+
+    public Set<Coordinate> startSearch(String search) {
+        search = search.toLowerCase();
+        Set<Coordinate> output = new HashSet<Coordinate>();
+        for (InvBlockInfo invBlockInfo : inventories) {
+            Coordinate c = invBlockInfo.getCoordinate();
+            TileEntity tileEntity = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (tileEntity instanceof IInventory) {
+                IInventory inventory = (IInventory) tileEntity;
+                for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                    ItemStack itemStack = inventory.getStackInSlot(i);
+                    if (itemStack != null) {
+                        String readableName = itemStack.getDisplayName();
+                        if (readableName.toLowerCase().contains(search)) {
+                            output.add(c);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return output;
     }
 
     public void startScan(boolean start) {
@@ -123,6 +150,26 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         showingItems = new ArrayList<ItemStack>(items);
     }
 
+    public List<ItemStack> getShowingItems() {
+        return showingItems;
+    }
+
+    public void clearShowingItems() {
+        showingItems.clear();
+    }
+
+    public void storeCoordinatesForClient(Set<Coordinate> coordinates) {
+        this.coordinates = new HashSet<Coordinate>(coordinates);
+    }
+
+    public Set<Coordinate> getCoordinates() {
+        return coordinates;
+    }
+
+    public void clearCoordinates() {
+        coordinates.clear();
+    }
+
     public List<ItemStack> getInventoryForBlock(int cx, int cy, int cz) {
         showingItems = new ArrayList<ItemStack>();
 
@@ -142,14 +189,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             }
         }
         return showingItems;
-    }
-
-    public List<ItemStack> getShowingItems() {
-        return showingItems;
-    }
-
-    public void clearShowingItems() {
-        showingItems.clear();
     }
 
     private void checkInventoryStatus(int cx, int cy, int cz) {

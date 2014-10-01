@@ -8,7 +8,9 @@ import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class WidgetList extends AbstractContainerWidget<WidgetList> implements Scrollable {
@@ -16,6 +18,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     private int first = 0;
     private int selected = -1;
     private List<SelectionEvent> selectionEvents = null;
+    private Set<Integer> hilightedRows = new HashSet<Integer>();
 
     public WidgetList(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -39,6 +42,14 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         return this;
     }
 
+    public void addHilightedRow(int index) {
+        hilightedRows.add(index);
+    }
+
+    public void clearHilightedRows() {
+        hilightedRows.clear();
+    }
+
     @Override
     public void draw(Window window, int x, int y) {
         super.draw(window, x, y);
@@ -50,8 +61,13 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
             Widget child = children.get(i);
             child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rowheight));
-            if (i == selected) {
+            boolean hilighted = hilightedRows.contains(i);
+            if (i == selected && hilighted) {
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff888844, 0xff666622);
+            } else if (i == selected) {
                 RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff666666, 0xff444444);
+            } else if (hilighted) {
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xffbbbb00, 0xff999900);
             }
             child.draw(window, xx, yy);
             top += rowheight;
@@ -123,5 +139,28 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
                 event.select(this, index);
             }
         }
+    }
+
+    @Override
+    public WidgetList removeChild(Widget child) {
+        int index = children.indexOf(child);
+        if (index != -1) {
+            Set<Integer> newHighlights = new HashSet<Integer>();
+            for (Integer i : hilightedRows) {
+                if (i < index) {
+                    newHighlights.add(i);
+                } else if (i > index) {
+                    newHighlights.add(i-1);
+                }
+            }
+            hilightedRows = newHighlights;
+        }
+        return super.removeChild(child);
+    }
+
+    @Override
+    public void removeChildren() {
+        super.removeChildren();
+        hilightedRows.clear();
     }
 }

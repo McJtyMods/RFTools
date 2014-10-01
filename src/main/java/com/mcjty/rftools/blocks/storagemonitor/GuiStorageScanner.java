@@ -25,6 +25,7 @@ import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 
 public class GuiStorageScanner extends GuiContainer {
@@ -108,7 +109,9 @@ public class GuiStorageScanner extends GuiContainer {
         TextField textField = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
-                updateSearchText();
+                storageList.clearHilightedRows();
+                storageScannerTileEntity.clearCoordinates();
+                startSearch(newText);
             }
         });
         Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
@@ -134,8 +137,11 @@ public class GuiStorageScanner extends GuiContainer {
                 !storageScannerTileEntity.isScanning()));
     }
 
-    private void updateSearchText() {
-
+    private void startSearch(String text) {
+        if (!text.isEmpty()) {
+            PacketHandler.INSTANCE.sendToServer(new PacketSearchItems(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
+                    text));
+        }
     }
 
     private void getInventoryOnServer() {
@@ -194,6 +200,16 @@ public class GuiStorageScanner extends GuiContainer {
                 storageList.addChild(panel);
             }
         }
+        storageList.clearHilightedRows();
+        Set<Coordinate> coordinates = storageScannerTileEntity.getCoordinates();
+        int i = 0;
+        for (InvBlockInfo blockInfo : inventories) {
+            Coordinate c = blockInfo.getCoordinate();
+            if (coordinates.contains(c)) {
+                storageList.addHilightedRow(i);
+            }
+            i++;
+        }
     }
 
     @Override
@@ -210,6 +226,13 @@ public class GuiStorageScanner extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateStorageList();
         updateContentsList();
+        updateScanButton();
+        window.draw();
+        int currentRF = storageScannerTileEntity.getCurrentRF();
+        energyBar.setValue(currentRF);
+    }
+
+    private void updateScanButton() {
         if (storageScannerTileEntity.isScanning()) {
             scanButton.setText("Stop");
             progressBar.setValue(storageScannerTileEntity.getProgress());
@@ -217,9 +240,6 @@ public class GuiStorageScanner extends GuiContainer {
             scanButton.setText("Scan");
             progressBar.setValue(0);
         }
-        window.draw();
-        int currentRF = storageScannerTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
     }
 
     @Override
