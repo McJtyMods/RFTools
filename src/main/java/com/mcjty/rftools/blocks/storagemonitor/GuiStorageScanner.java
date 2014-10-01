@@ -4,6 +4,7 @@ import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.SelectionEvent;
+import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -104,7 +105,12 @@ public class GuiStorageScanner extends GuiContainer {
                 setDesiredWidth(30);
         radiusLabel.setRealValue(storageScannerTileEntity.getRadius());
 
-        TextField textField = new TextField(mc, this);
+        TextField textField = new TextField(mc, this).addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                updateSearchText();
+            }
+        });
         Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
 
         Slider radiusSlider = new Slider(mc, this).
@@ -126,6 +132,10 @@ public class GuiStorageScanner extends GuiContainer {
     private void startStopScan() {
         PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
                 !storageScannerTileEntity.isScanning()));
+    }
+
+    private void updateSearchText() {
+
     }
 
     private void getInventoryOnServer() {
