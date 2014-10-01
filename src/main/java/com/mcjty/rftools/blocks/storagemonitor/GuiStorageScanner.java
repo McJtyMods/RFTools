@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.storagemonitor;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
-import com.mcjty.gui.events.SelectionEvent;
+import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -15,6 +15,7 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -31,6 +32,7 @@ import java.util.Set;
 public class GuiStorageScanner extends GuiContainer {
     public static final int STORAGE_MONITOR_WIDTH = 256;
     public static final int STORAGE_MONITOR_HEIGHT = 224;
+    public static int hilightTime = 5;
 
     private Window window;
     private WidgetList storageList;
@@ -60,12 +62,17 @@ public class GuiStorageScanner extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(storageScannerTileEntity.getCurrentRF());
 
-        storageList = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new SelectionEvent() {
+        storageList = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 itemList.removeChildren();
                 storageScannerTileEntity.clearShowingItems();
                 getInventoryOnServer();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedContainer(index);
             }
         }).setFilledRectThickness(1);
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
@@ -126,6 +133,16 @@ public class GuiStorageScanner extends GuiContainer {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void hilightSelectedContainer(int index) {
+        if (index == -1) {
+            return;
+        }
+        SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
+        Coordinate c = inventories.get(index).getCoordinate();
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* hilightTime);
+        mc.getMinecraft().thePlayer.closeScreen();
     }
 
     private void changeRadius(int r) {
@@ -191,7 +208,13 @@ public class GuiStorageScanner extends GuiContainer {
                 Coordinate c = blockInfo.getCoordinate();
                 Block block = mc.theWorld.getBlock(c.getX(), c.getY(), c.getZ());
                 int meta = mc.theWorld.getBlockMetadata(c.getX(), c.getY(), c.getZ());
-                String displayName = BlockInfo.getReadableName(block, meta);
+                String displayName;
+                if (block == null || block.isAir(mc.theWorld, c.getX(), c.getY(), c.getZ())) {
+                    displayName = "[REMOVED]";
+                    block = null;
+                } else {
+                    displayName = BlockInfo.getReadableName(block, meta);
+                }
 
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
                 panel.addChild(new BlockRender(mc, this).setRenderItem(block));

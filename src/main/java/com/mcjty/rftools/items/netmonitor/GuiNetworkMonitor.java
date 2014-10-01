@@ -1,11 +1,14 @@
 package com.mcjty.rftools.items.netmonitor;
 
+import com.mcjty.gui.events.DefaultSelectionEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,11 +20,14 @@ import java.util.List;
 
 public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
+    public static int hilightTime = 5;
 
     // A copy of the connected blocks we're currently showing
     Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
     Map<Coordinate, EnergyBar> labelMap;
+    // A map mapping index in our widget list to coordinates.
+    Map<Integer, Coordinate> indexToCoordinate;
 
     /** The X size of the window in pixels. */
     protected int xSize = 356;
@@ -53,13 +59,27 @@ public class GuiNetworkMonitor extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(16);
+        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightBlock(index);
+            }
+        });
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void hilightBlock(int index) {
+        if (index == -1) {
+            return;
+        }
+        Coordinate c = indexToCoordinate.get(index);
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*hilightTime);
+        mc.getMinecraft().thePlayer.closeScreen();
     }
 
     private void refreshList() {
@@ -83,8 +103,10 @@ public class GuiNetworkMonitor extends GuiScreen {
 
         connectedBlocks = new HashMap<Coordinate, BlockInfo>(newConnectedBlocks);
         labelMap = new HashMap<Coordinate, EnergyBar>();
+        indexToCoordinate = new HashMap<Integer, Coordinate>();
         list.removeChildren();
 
+        int index = 0;
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
             Block block = blockInfo.getBlock();
@@ -100,13 +122,15 @@ public class GuiNetworkMonitor extends GuiScreen {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
+            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
             EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(TEXT_COLOR).setHorizontal();
             panel.addChild(energyLabel);
             list.addChild(panel);
 
             labelMap.put(coordinate, energyLabel);
+            indexToCoordinate.put(index, coordinate);
+            index++;
         }
     }
 

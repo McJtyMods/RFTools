@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.monitor;
 
 import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -58,7 +59,7 @@ public class GuiRFMonitor extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new SelectionEvent() {
+        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 setSelectedBlock(index);

@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -87,7 +88,7 @@ public class GuiCrafter extends GuiContainer {
         recipeList = new WidgetList(mc, this).
                 setRowheight(16).
                 setFilledRectThickness(1).
-                addSelectionEvent(new SelectionEvent() {
+                addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
                         selectRecipe();

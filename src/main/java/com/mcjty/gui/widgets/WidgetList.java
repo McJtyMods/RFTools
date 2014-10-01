@@ -17,6 +17,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     private int rowheight = 10;
     private int first = 0;
     private int selected = -1;
+    private long prevTime = -1;
     private List<SelectionEvent> selectionEvents = null;
     private Set<Integer> hilightedRows = new HashSet<Integer>();
 
@@ -91,6 +92,12 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             selected = newSelected;
             fireSelectionEvents(selected);
         }
+        long t = mc.theWorld.getTotalWorldTime();
+        if (prevTime != -1 && (t - prevTime) < 5) {
+            fireDoubleClickEvent(selected);
+        }
+        prevTime = t;
+
         return null;
     }
 
@@ -141,6 +148,13 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         }
     }
 
+    private void fireDoubleClickEvent(int index) {
+        if (selectionEvents != null) {
+            for (SelectionEvent event : selectionEvents) {
+                event.doubleClick(this, index);
+            }
+        }
+    }
     @Override
     public WidgetList removeChild(Widget child) {
         int index = children.indexOf(child);

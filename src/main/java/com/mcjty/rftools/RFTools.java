@@ -1,5 +1,6 @@
 package com.mcjty.rftools;
 
+import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -25,6 +26,9 @@ public class RFTools {
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
 
+    private Coordinate hilightedBlock = null;
+    private long expireHilight = 0;
+
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
     public static final int GUI_RF_MONITOR = modGuiIndex++;
@@ -33,6 +37,19 @@ public class RFTools {
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);
+    }
+
+    public void hilightBlock(Coordinate c, long expireHilight) {
+        hilightedBlock = c;
+        this.expireHilight = expireHilight;
+    }
+
+    public Coordinate getHilightedBlock() {
+        return hilightedBlock;
+    }
+
+    public long getExpireHilight() {
+        return expireHilight;
     }
 
     /**
