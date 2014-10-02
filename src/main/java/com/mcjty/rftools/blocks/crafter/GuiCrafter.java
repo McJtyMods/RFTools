@@ -73,6 +73,7 @@ public class GuiCrafter extends GuiContainer {
                         updateRecipe();
                     }
                 }).
+                setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
         internalRecipe = new ChoiceLabel(mc, this).
                 addChoices("Ext", "Int").
@@ -83,6 +84,7 @@ public class GuiCrafter extends GuiContainer {
                         updateRecipe();
                     }
                 }).
+                setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
 
         recipeList = new WidgetList(mc, this).
@@ -107,6 +109,7 @@ public class GuiCrafter extends GuiContainer {
                         applyRecipe();
                     }
                 }).
+                setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
         redstoneMode = new ImageChoiceLabel(mc, this).
@@ -185,6 +188,9 @@ public class GuiCrafter extends GuiContainer {
             }
             keepItem.setChoice("All");
             internalRecipe.setChoice("Ext");
+            keepItem.setEnabled(false);
+            internalRecipe.setEnabled(false);
+            applyButton.setEnabled(false);
             return;
         }
         CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
@@ -195,6 +201,9 @@ public class GuiCrafter extends GuiContainer {
         inventorySlots.getSlot(9).putStack(craftingRecipe.getResult());
         keepItem.setChoice(craftingRecipe.isKeepOne() ? "Keep" : "All");
         internalRecipe.setChoice(craftingRecipe.isCraftInternal() ? "Int" : "Ext");
+        keepItem.setEnabled(true);
+        internalRecipe.setEnabled(true);
+        applyButton.setEnabled(true);
     }
 
     private void testRecipe() {
