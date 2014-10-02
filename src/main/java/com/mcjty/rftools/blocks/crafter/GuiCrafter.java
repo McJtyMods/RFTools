@@ -4,7 +4,6 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
-import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;

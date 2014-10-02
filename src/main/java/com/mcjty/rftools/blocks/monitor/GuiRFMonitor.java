@@ -1,25 +1,24 @@
 package com.mcjty.rftools.blocks.monitor;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
-import com.mcjty.gui.events.SelectionEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
-import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
-import com.mcjty.varia.Coordinate;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuiRFMonitor extends GuiScreen {
@@ -202,11 +201,9 @@ public class GuiRFMonitor extends GuiScreen {
         window.draw();
         List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
-            int guiLeft = (this.width - this.xSize) / 2;
-            int guiTop = (this.height - this.ySize) / 2;
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+            drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
 

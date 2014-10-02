@@ -3,6 +3,8 @@ package com.mcjty.rftools.blocks;
 import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.blocks.relay.RelayBlock;
+import com.mcjty.rftools.blocks.relay.RelayTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -15,6 +17,7 @@ public final class ModBlocks {
     public static CrafterBlock crafterBlock2;
     public static CrafterBlock crafterBlock3;
     public static StorageScannerBlock storageScannerBlock;
+    public static RelayBlock relayBlock;
     public static MachineFrame machineFrame;
 
     public static final void init() {
@@ -35,6 +38,11 @@ public final class ModBlocks {
         GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");
+
+        relayBlock = new RelayBlock(Material.iron);
+        relayBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(relayBlock, "relayBlock");
+        GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
 
         storageScannerBlock = new StorageScannerBlock(Material.iron);
         storageScannerBlock.setCreativeTab(CreativeTabs.tabMisc);
