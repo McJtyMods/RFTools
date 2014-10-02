@@ -32,7 +32,6 @@ import java.util.Set;
 public class GuiStorageScanner extends GuiContainer {
     public static final int STORAGE_MONITOR_WIDTH = 256;
     public static final int STORAGE_MONITOR_HEIGHT = 224;
-    public static int hilightTime = 5;
 
     private Window window;
     private WidgetList storageList;
@@ -141,7 +140,7 @@ public class GuiStorageScanner extends GuiContainer {
         }
         SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
         Coordinate c = inventories.get(index).getCoordinate();
-        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* hilightTime);
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* StorageScannerTileEntity.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 

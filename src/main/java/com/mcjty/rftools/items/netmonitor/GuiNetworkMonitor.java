@@ -20,7 +20,6 @@ import java.util.List;
 
 public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
-    public static int hilightTime = 5;
 
     // A copy of the connected blocks we're currently showing
     Map<Coordinate, BlockInfo> connectedBlocks;
@@ -78,7 +77,7 @@ public class GuiNetworkMonitor extends GuiScreen {
             return;
         }
         Coordinate c = indexToCoordinate.get(index);
-        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*hilightTime);
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* NetworkMonitorItem.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 

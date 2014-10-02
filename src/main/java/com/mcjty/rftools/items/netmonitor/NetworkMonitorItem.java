@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkMonitorItem extends Item {
+    public static int hilightTime = 5;
     private ConcurrentHashMap<Coordinate,BlockInfo> connectedBlocks = new ConcurrentHashMap<Coordinate, BlockInfo>();
 
     public NetworkMonitorItem() {

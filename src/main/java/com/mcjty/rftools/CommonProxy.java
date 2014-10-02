@@ -2,12 +2,11 @@ package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
-import com.mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
+import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.mobs.ModEntities;
 import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -48,8 +47,8 @@ public class CommonProxy {
             CrafterBlockTileEntity3.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity3.speedOperations, "How many operations to do at once in fast mode").getInt();
             StorageScannerTileEntity.rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", StorageScannerTileEntity.rfPerOperation, "Amount of RF used per scan operation").getInt();
             StorageScannerTileEntity.scansPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "scansPerOperation", StorageScannerTileEntity.scansPerOperation, "How many blocks to scan per operation").getInt();
-            GuiStorageScanner.hilightTime = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightTime", GuiStorageScanner.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
-            GuiNetworkMonitor.hilightTime = cfg.get(CATEGORY_NETWORK_MONITOR, "hilightTime", GuiNetworkMonitor.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
+            StorageScannerTileEntity.hilightTime = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightTime", StorageScannerTileEntity.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
+            NetworkMonitorItem.hilightTime = cfg.get(CATEGORY_NETWORK_MONITOR, "hilightTime", NetworkMonitorItem.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

@@ -23,6 +23,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;
     public static int scansPerOperation = 5;
+    public static int hilightTime = 5;
 
     // For client side: the items of the inventory we're currently looking at.
     private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
