@@ -35,6 +35,11 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
             return;
         }
 
+        int energyStored = getEnergyStored(ForgeDirection.DOWN);
+        if (energyStored <= 0) {
+            return;
+        }
+
         for (int i = 0 ; i < 6 ; i++) {
             ForgeDirection dir = ForgeDirection.getOrientation(i);
             TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
@@ -42,9 +47,16 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
                 IEnergyHandler handler = (IEnergyHandler) te;
                 ForgeDirection opposite = dir.getOpposite();
                 if (handler.canConnectEnergy(opposite)) {
-                    int received = handler.receiveEnergy(opposite, rf, false);
-                    rf -= received;
-                    if (rf <= 0) {
+                    int rfToGive;
+                    if (rf <= energyStored) {
+                        rfToGive = rf;
+                    } else {
+                        rfToGive = energyStored;
+                    }
+
+                    int received = handler.receiveEnergy(opposite, rfToGive, false);
+                    energyStored -= extractEnergy(ForgeDirection.DOWN, received, false);
+                    if (energyStored <= 0) {
                         return;
                     }
                 }
