@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RFMonitorBlock extends Block implements ITileEntityProvider {
-
-    private List<BlockInfo> adjacentBlocks = new ArrayList<BlockInfo>();
-
     private IIcon iconFront;
     private IIcon iconFront0;
     private IIcon iconFront1;
@@ -50,12 +47,9 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        adjacentBlocks.clear();
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_RF_MONITOR, player.worldObj, x, y, z);
             return true;
-        } else {
-            findAdjacentBlocks(adjacentBlocks, world, x, y, z);
         }
         return true;
     }
@@ -76,35 +70,6 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
         iconFront3 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_3");
         iconFront4 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineFront_4");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
-    }
-
-    private void findAdjacentBlocks(List<BlockInfo> adjacentBlocks, World world, int x, int y, int z) {
-        for (int dy = -1 ; dy <= 1 ; dy++) {
-            int yy = y + dy;
-            if (yy >= 0 && yy < world.getActualHeight()) {
-                for (int dz = -1 ; dz <= 1 ; dz++) {
-                    int zz = z + dz;
-                    for (int dx = -1 ; dx <= 1 ; dx++) {
-                        int xx = x + dx;
-                        if (dx != 0 || dy != 0 || dz != 0) {
-                            Coordinate c = new Coordinate(xx, yy, zz);
-                            TileEntity tileEntity = world.getTileEntity(xx, yy, zz);
-                            if (tileEntity != null) {
-                                if (tileEntity instanceof IEnergyHandler) {
-                                    Block block = world.getBlock(xx, yy, zz);
-                                    adjacentBlocks.add(new BlockInfo(tileEntity, block, world.getBlockMetadata(xx, yy, zz), c, false));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    public synchronized List<BlockInfo> getAdjacentBlocks() {
-        return adjacentBlocks;
     }
 
     @Override
@@ -148,7 +113,6 @@ public class RFMonitorBlock extends Block implements ITileEntityProvider {
 
     @Override
     public IIcon getIcon(int side, int meta) {
-//        int k = getOrientation(meta);
         if (side == 3) {
             return iconFront;
         } else {

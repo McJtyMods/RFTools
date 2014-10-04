@@ -34,7 +34,7 @@ public class GuiRFMonitor extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
 
     // A copy of the adjacent blocks we're currently showing
-    private List<BlockInfo> adjacentBlocks;
+    private List<Coordinate> adjacentBlocks;
 
     /** The X size of the window in pixels. */
     private int xSize = 256;
@@ -98,6 +98,8 @@ public class GuiRFMonitor extends GuiScreen {
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
+
+        requestAdjacentBlocksFromServer();
     }
 
     private void changeAlarmMode(RFMonitorMode mode) {
@@ -117,7 +119,7 @@ public class GuiRFMonitor extends GuiScreen {
 
     private void setSelectedBlock(int index) {
         if (index != -1) {
-            Coordinate c = adjacentBlocks.get(index).getCoordinate();
+            Coordinate c = adjacentBlocks.get(index);
             monitorBlockTileEntity.setMonitor(c);
             sendChangeToServer(c);
         } else {
@@ -134,24 +136,31 @@ public class GuiRFMonitor extends GuiScreen {
         PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, mode, level));
     }
 
+    private void requestAdjacentBlocksFromServer() {
+        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord));
+    }
+
     private void populateList() {
-        List<BlockInfo> newAdjacentBlocks = monitorBlock.getAdjacentBlocks();
+        List<Coordinate> newAdjacentBlocks = monitorBlockTileEntity.getClientAdjacentBlocks();
+        if (newAdjacentBlocks == null) {
+            return;
+        }
         if (newAdjacentBlocks.equals(adjacentBlocks)) {
             refreshList();
             return;
         }
 
-        adjacentBlocks = new ArrayList<BlockInfo>(newAdjacentBlocks);
+        adjacentBlocks = new ArrayList<Coordinate>(newAdjacentBlocks);
         list.removeChildren();
 
         int index = 0, sel = -1;
-        for (BlockInfo blockInfo : adjacentBlocks) {
-            Block block = blockInfo.getBlock();
-            Coordinate coordinate = blockInfo.getCoordinate();
+        for (Coordinate coordinate : adjacentBlocks) {
+            Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+            int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
 
             int color = TEXT_COLOR;
 
-            String displayName = blockInfo.getReadableName(mc.theWorld);
+            String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));

@@ -46,7 +46,7 @@ public class BlockInfo {
         return first;
     }
 
-    public String getReadableName(WorldClient world) {
+    public static String getReadableName(Block block, Coordinate coordinate, int metadata, WorldClient world) {
         List<ItemStack> itemStacks = block.getDrops(world, coordinate.getX(), coordinate.getY(), coordinate.getZ(), metadata, 1);
         Object descriptiveObject = block;
         if (itemStacks != null && !itemStacks.isEmpty()) {

@@ -2,6 +2,8 @@ package com.mcjty.rftools.network;
 
 import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.crafter.PacketCrafterMode;
+import com.mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
+import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import com.mcjty.rftools.blocks.relay.PacketRelaySettings;
 import com.mcjty.rftools.blocks.storagemonitor.*;
@@ -23,6 +25,7 @@ public class PacketHandler {
 
         // Server side
         INSTANCE.registerMessage(PacketRFMonitor.class, PacketRFMonitor.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetAdjacentBlocks.class, PacketGetAdjacentBlocks.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCrafter.class, PacketCrafter.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCrafterMode.class, PacketCrafterMode.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketStartScan.class, PacketStartScan.class, nextID(), Side.SERVER);
@@ -34,5 +37,6 @@ public class PacketHandler {
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSearchReady.class, PacketSearchReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketAdjacentBlocksReady.class, PacketAdjacentBlocksReady.class, nextID(), Side.CLIENT);
     }
 }

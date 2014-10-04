@@ -3,11 +3,16 @@ package com.mcjty.rftools.blocks.monitor;
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
+import com.mcjty.rftools.BlockInfo;
 import com.mcjty.varia.Coordinate;
 import com.mcjty.rftools.blocks.BlockTools;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RFMonitorBlockTileEntity extends GenericTileEntity {
     // Data that is saved
@@ -19,8 +24,12 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
 
     // Temporary data
     private int counter = 20;
+
     private SyncedValue<Integer> rflevel = new SyncedValue<Integer>(0);
     private SyncedValue<Boolean> inAlarm = new SyncedValue<Boolean>(false);
+
+    // Client side only
+    private List<Coordinate> clientAdjacentBlocks = null;
 
     public RFMonitorBlockTileEntity() {
         registerSyncedObject(rflevel);
@@ -81,6 +90,44 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         meta = super.updateMetaData(meta);
         return BlockTools.setRedstoneSignal(meta, inAlarm.getValue());
     }
+
+    public List<Coordinate> findAdjacentBlocks() {
+        int x = xCoord;
+        int y = yCoord;
+        int z = zCoord;
+        List<Coordinate> adjacentBlocks = new ArrayList<Coordinate>();
+        for (int dy = -1 ; dy <= 1 ; dy++) {
+            int yy = y + dy;
+            if (yy >= 0 && yy < worldObj.getActualHeight()) {
+                for (int dz = -1 ; dz <= 1 ; dz++) {
+                    int zz = z + dz;
+                    for (int dx = -1 ; dx <= 1 ; dx++) {
+                        int xx = x + dx;
+                        if (dx != 0 || dy != 0 || dz != 0) {
+                            Coordinate c = new Coordinate(xx, yy, zz);
+                            TileEntity tileEntity = worldObj.getTileEntity(xx, yy, zz);
+                            if (tileEntity != null) {
+                                if (tileEntity instanceof IEnergyHandler) {
+                                    Block block = worldObj.getBlock(xx, yy, zz);
+                                    adjacentBlocks.add(new Coordinate(xx, yy, zz));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return adjacentBlocks;
+    }
+
+    public void storeAdjacentBlocksForClient(List<Coordinate> coordinates) {
+        clientAdjacentBlocks = new ArrayList<Coordinate>(coordinates);
+    }
+
+    public List<Coordinate> getClientAdjacentBlocks() {
+        return clientAdjacentBlocks;
+    }
+
 
     @Override
     protected void checkStateServer() {
