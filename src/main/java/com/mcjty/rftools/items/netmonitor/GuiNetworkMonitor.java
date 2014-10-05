@@ -9,8 +9,10 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
@@ -22,11 +24,17 @@ public class GuiNetworkMonitor extends GuiScreen {
     private NetworkMonitorItem monitorItem;
 
     // A copy of the connected blocks we're currently showing
-    Map<Coordinate, BlockInfo> connectedBlocks;
+    private Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
-    Map<Coordinate, EnergyBar> labelMap;
+    private Map<Coordinate, EnergyBar> labelMap;
     // A map mapping index in our widget list to coordinates.
-    Map<Integer, Coordinate> indexToCoordinate;
+    private Map<Integer, Coordinate> indexToCoordinate;
+
+    // The result of the server.
+    private static Map<Coordinate, BlockInfo> serverConnectedBlocks = null;
+    private static int selectedX;
+    private static int selectedY;
+    private static int selectedZ;
 
     /** The X size of the window in pixels. */
     protected int xSize = 356;
@@ -40,11 +48,25 @@ public class GuiNetworkMonitor extends GuiScreen {
     private WidgetList list;
     private int listDirty;
 
+    public static void setSelected(int x, int y, int z) {
+        selectedX = x;
+        selectedY = y;
+        selectedZ = z;
+    }
 
     public GuiNetworkMonitor(NetworkMonitorItem monitorItem) {
         this.monitorItem = monitorItem;
         listDirty = 0;
     }
+
+    public static void setServerConnectedBlocks(Map<Coordinate, BlockInfo> serverConnectedBlocks) {
+        GuiNetworkMonitor.serverConnectedBlocks = new HashMap<Coordinate, BlockInfo>(serverConnectedBlocks);
+    }
+
+    private void requestConnectedBlocksFromServer() {
+        PacketHandler.INSTANCE.sendToServer(new PacketGetConnectedBlocks(selectedX, selectedY, selectedZ));
+    }
+
 
     @Override
     public boolean doesGuiPauseGame() {
@@ -70,6 +92,8 @@ public class GuiNetworkMonitor extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        serverConnectedBlocks = null;
     }
 
     private void hilightBlock(int index) {
@@ -94,13 +118,17 @@ public class GuiNetworkMonitor extends GuiScreen {
     }
 
     private void populateList() {
-        Map<Coordinate, BlockInfo> newConnectedBlocks = monitorItem.getConnectedBlocks();
-        if (newConnectedBlocks.equals(connectedBlocks)) {
+        requestConnectedBlocksFromServer();
+
+        if (serverConnectedBlocks == null) {
+            return;
+        }
+        if (serverConnectedBlocks.equals(connectedBlocks)) {
             refreshList();
             return;
         }
 
-        connectedBlocks = new HashMap<Coordinate, BlockInfo>(newConnectedBlocks);
+        connectedBlocks = new HashMap<Coordinate, BlockInfo>(serverConnectedBlocks);
         labelMap = new HashMap<Coordinate, EnergyBar>();
         indexToCoordinate = new HashMap<Integer, Coordinate>();
         list.removeChildren();
@@ -108,15 +136,19 @@ public class GuiNetworkMonitor extends GuiScreen {
         int index = 0;
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
-            Block block = blockInfo.getBlock();
             Coordinate coordinate = me.getKey();
+            Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+            if (block == null || block.isAir(mc.theWorld, coordinate.getX(), coordinate.getY(), coordinate.getZ())) {
+                continue;
+            }
 
             int energy = blockInfo.getEnergyStored();
             int maxEnergy = blockInfo.getMaxEnergyStored();
 
             int color = getTextColor(blockInfo);
 
-            String displayName = blockInfo.getReadableName(block, coordinate, blockInfo.getMetadata(), mc.theWorld);
+            int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+            String displayName = blockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
@@ -164,7 +196,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         listDirty--;
         if (listDirty <= 0) {
             populateList();
-            listDirty = 5;
+            listDirty = 10;
         }
 
         window.draw();

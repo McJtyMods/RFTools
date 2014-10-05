@@ -12,34 +12,26 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.List;
 
 public class BlockInfo {
-    private TileEntity tileEntity;
-    private Block block;
-    private int metadata;
     private boolean first;
     private Coordinate coordinate;
+    int energyStored;
+    int maxEnergyStored;
 
-    public BlockInfo(TileEntity tileEntity, Block block, int metadata, Coordinate coordinate, boolean first) {
-        this.tileEntity = tileEntity;
-        this.block = block;
-        this.metadata = metadata;
+    public BlockInfo(TileEntity tileEntity, Coordinate coordinate, boolean first) {
         this.first = first;
         this.coordinate = coordinate;
+        fetchEnergyValues(tileEntity);
+    }
+
+    public BlockInfo(boolean first, Coordinate coordinate, int energyStored, int maxEnergyStored) {
+        this.first = first;
+        this.coordinate = coordinate;
+        this.energyStored = energyStored;
+        this.maxEnergyStored = maxEnergyStored;
     }
 
     public Coordinate getCoordinate() {
         return coordinate;
-    }
-
-    public TileEntity getTileEntity() {
-        return tileEntity;
-    }
-
-    public Block getBlock() {
-        return block;
-    }
-
-    public int getMetadata() {
-        return metadata;
     }
 
     public boolean isFirst() {
@@ -95,24 +87,24 @@ public class BlockInfo {
         return displayName;
     }
 
-    public int getEnergyStored() {
+    private void fetchEnergyValues(TileEntity tileEntity) {
         try {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            return handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
         } catch (ClassCastException e) {
             // Not an energy handler. Just ignore
-            return 0;
+            maxEnergyStored = 0;
+            energyStored = 0;
         }
     }
 
+    public int getEnergyStored() {
+        return energyStored;
+    }
+
     public int getMaxEnergyStored() {
-        try {
-            IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            return handler.getMaxEnergyStored(ForgeDirection.DOWN);
-        } catch (ClassCastException e) {
-            // Not an energy handler. Just ignore
-            return 0;
-        }
+        return maxEnergyStored;
     }
 
     @Override
@@ -122,20 +114,20 @@ public class BlockInfo {
 
         BlockInfo blockInfo = (BlockInfo) o;
 
+        if (energyStored != blockInfo.energyStored) return false;
         if (first != blockInfo.first) return false;
-        if (metadata != blockInfo.metadata) return false;
-        if (block != null ? !block.equals(blockInfo.block) : blockInfo.block != null) return false;
-        if (tileEntity != null ? !tileEntity.equals(blockInfo.tileEntity) : blockInfo.tileEntity != null) return false;
+        if (maxEnergyStored != blockInfo.maxEnergyStored) return false;
+        if (coordinate != null ? !coordinate.equals(blockInfo.coordinate) : blockInfo.coordinate != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = tileEntity != null ? tileEntity.hashCode() : 0;
-        result = 31 * result + (block != null ? block.hashCode() : 0);
-        result = 31 * result + metadata;
-        result = 31 * result + (first ? 1 : 0);
+        int result = (first ? 1 : 0);
+        result = 31 * result + (coordinate != null ? coordinate.hashCode() : 0);
+        result = 31 * result + energyStored;
+        result = 31 * result + maxEnergyStored;
         return result;
     }
 }

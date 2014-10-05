@@ -7,6 +7,8 @@ import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import com.mcjty.rftools.blocks.relay.PacketRelaySettings;
 import com.mcjty.rftools.blocks.storagemonitor.*;
+import com.mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
+import com.mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
@@ -33,10 +35,12 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetInventory.class, PacketGetInventory.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketSearchItems.class, PacketSearchItems.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketRelaySettings.class, PacketRelaySettings.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetConnectedBlocks.class, PacketGetConnectedBlocks.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSearchReady.class, PacketSearchReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketAdjacentBlocksReady.class, PacketAdjacentBlocksReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketConnectedBlocksReady.class, PacketConnectedBlocksReady.class, nextID(), Side.CLIENT);
     }
 }

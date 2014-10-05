@@ -99,6 +99,7 @@ public class GuiRFMonitor extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
 
+        monitorBlockTileEntity.storeAdjacentBlocksForClient(new ArrayList<Coordinate>());
         requestAdjacentBlocksFromServer();
     }
 
