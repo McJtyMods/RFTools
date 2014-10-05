@@ -24,7 +24,8 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock2), new Object[]{" T ", "cMc", " T ", 'M', ModBlocks.crafterBlock1, 'T', redstoneTorch, 'c', Blocks.crafting_table});
         GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock3), new Object[]{" T ", "cMc", " T ", 'M', ModBlocks.crafterBlock2, 'T', redstoneTorch, 'c', Blocks.crafting_table});
 
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.storageScannerBlock), new Object[]{"ToT", "oMo", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.storageScannerBlock), new Object[]{"ToT", "gMg", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl,
+                'g', Items.gold_ingot});
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.relayBlock), new Object[]{"gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.gold_ingot});
     }
