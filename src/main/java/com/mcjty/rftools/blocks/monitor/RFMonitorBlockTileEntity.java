@@ -88,7 +88,8 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        return BlockTools.setRedstoneSignal(meta, inAlarm.getValue());
+        Boolean value = inAlarm.getValue();
+        return BlockTools.setRedstoneSignal(meta, value == null ? false : value);
     }
 
     public List<Coordinate> findAdjacentBlocks() {
@@ -174,9 +175,11 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
             }
 
         }
-        if (rflevel.getValue() != ratio || alarm != inAlarm.getValue()) {
+        Boolean v = inAlarm.getValue();
+        boolean alarmValue = v == null ? false : v;
+        if (rflevel.getValue() != ratio || alarm != alarmValue) {
             rflevel.setValue(ratio);
-            if (inAlarm.getValue() != alarm) {
+            if (alarmValue != alarm) {
                 inAlarm.setValue(alarm);
             }
             notifyBlockUpdate();
@@ -205,6 +208,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         tagCompound.setInteger("rflevel", rflevel.getValue());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
-        tagCompound.setBoolean("inAlarm", inAlarm.getValue());
+        Boolean value = inAlarm.getValue();
+        tagCompound.setBoolean("inAlarm", value == null ? false : value);
     }
 }
