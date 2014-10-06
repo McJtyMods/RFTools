@@ -35,6 +35,8 @@ public class RFTools {
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_STORAGE_SCANNER = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;
+    public static final int GUI_MATTER_TRANSMITTER = modGuiIndex++;
+    public static final int GUI_MATTER_RECEIVER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

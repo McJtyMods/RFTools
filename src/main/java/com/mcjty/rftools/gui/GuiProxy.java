@@ -13,6 +13,7 @@ import com.mcjty.rftools.blocks.relay.RelayTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -27,7 +28,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         System.out.println("#### com.mcjty.rftools.gui.GuiProxy.getServerGuiElement");
-        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY) {
+        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ) {
             return null;
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -40,6 +41,18 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof StorageScannerTileEntity) {
                 StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
                 return new StorageScannerContainer(entityPlayer, storageScannerTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_MATTER_TRANSMITTER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof MatterTransmitterTileEntity) {
+                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+                return new MatterTransmitterContainer(entityPlayer, matterTransmitterTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_MATTER_RECEIVER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof MatterReceiverTileEntity) {
+                MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+                return new MatterReceiverContainer(entityPlayer, matterReceiverTileEntity);
             }
         }
         return null;
@@ -77,6 +90,22 @@ public class GuiProxy implements IGuiHandler {
                 StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
                 StorageScannerContainer storageScannerContainer = new StorageScannerContainer(entityPlayer, storageScannerTileEntity);
                 return new GuiStorageScanner(storageScannerTileEntity, storageScannerContainer);
+            }
+        } else if (guiid == RFTools.GUI_MATTER_TRANSMITTER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (te instanceof MatterTransmitterTileEntity) {
+                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+                MatterTransmitterContainer matterTransmitterContainer = new MatterTransmitterContainer(entityPlayer, matterTransmitterTileEntity);
+                return new GuiMatterTransmitter(matterTransmitterTileEntity, matterTransmitterContainer);
+            }
+        } else if (guiid == RFTools.GUI_MATTER_RECEIVER) {
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (te instanceof MatterReceiverTileEntity) {
+                MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+                MatterReceiverContainer matterReceiverContainer = new MatterReceiverContainer(entityPlayer, matterReceiverTileEntity);
+                return new GuiMatterReceiver(matterReceiverTileEntity, matterReceiverContainer);
             }
         } else if (guiid == RFTools.GUI_RELAY) {
             Block block = world.getBlock(x, y, z);
