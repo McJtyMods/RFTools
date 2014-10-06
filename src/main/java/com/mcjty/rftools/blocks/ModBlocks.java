@@ -7,18 +7,31 @@ import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import com.mcjty.rftools.blocks.teleporter.DestinationAnalyzerBlock;
+import com.mcjty.rftools.blocks.teleporter.DialingDeviceBlock;
+import com.mcjty.rftools.blocks.teleporter.MatterReceiverBlock;
+import com.mcjty.rftools.blocks.teleporter.MatterTransmitterBlock;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 public final class ModBlocks {
+    public static MachineFrame machineFrame;
+
     public static RFMonitorBlock monitorBlock;
+
     public static CrafterBlock crafterBlock1;
     public static CrafterBlock crafterBlock2;
     public static CrafterBlock crafterBlock3;
+
     public static StorageScannerBlock storageScannerBlock;
+
     public static RelayBlock relayBlock;
-    public static MachineFrame machineFrame;
+
+    public static MatterTransmitterBlock matterTransmitterBlock;
+    public static MatterReceiverBlock matterReceiverBlock;
+    public static DialingDeviceBlock dialingDeviceBlock;
+    public static DestinationAnalyzerBlock destinationAnalyzerBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -48,6 +61,19 @@ public final class ModBlocks {
         storageScannerBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(storageScannerBlock, "storageScannerBlock");
         GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
+
+        matterTransmitterBlock = new MatterTransmitterBlock(Material.iron);
+        matterTransmitterBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(matterTransmitterBlock, "matterTransmitterBlock");
+        matterReceiverBlock = new MatterReceiverBlock(Material.iron);
+        matterReceiverBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(matterReceiverBlock, "matterReceiverBlock");
+        dialingDeviceBlock = new DialingDeviceBlock(Material.iron);
+        dialingDeviceBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(dialingDeviceBlock, "dialingDeviceBlock");
+        destinationAnalyzerBlock = new DestinationAnalyzerBlock(Material.iron);
+        destinationAnalyzerBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);

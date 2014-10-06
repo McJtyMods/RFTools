@@ -6,3 +6,7 @@ tile.relayBlock.name=能量继电器
 tile.storageScannerBlock.name=存储检测器
 tile.rfMonitorBlock.name=RF监视器
 tile.machineFrame.name=机械框架
+tile.matterTransmitterBlock.name=Matter Transmitter
+tile.matterReceiverBlock.name=Matter Receiver
+tile.dialingDeviceBlock.name=Dialing Device
+tile.destinationAnalyzerBlock.name=Destination Analyzer

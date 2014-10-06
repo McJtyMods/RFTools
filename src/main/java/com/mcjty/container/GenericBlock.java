@@ -90,7 +90,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        if (side == 3) {
+        if (side == ForgeDirection.SOUTH.ordinal()) {
             return iconFront;
         } else {
             return iconSide;

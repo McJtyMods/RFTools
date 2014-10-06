@@ -6,3 +6,7 @@ tile.relayBlock.name=Power Relay
 tile.storageScannerBlock.name=Storage Scanner
 tile.rfMonitorBlock.name=RF Monitor
 tile.machineFrame.name=Machine Frame
+tile.matterTransmitterBlock.name=Matter Transmitter
+tile.matterReceiverBlock.name=Matter Receiver
+tile.dialingDeviceBlock.name=Dialing Device
+tile.destinationAnalyzerBlock.name=Destination Analyzer
