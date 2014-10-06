@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.relay;
 
+import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
@@ -15,40 +16,23 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class RelayBlock extends Block implements ITileEntityProvider {
-    private IIcon iconFront;
-    private IIcon iconFront_on;
-    private IIcon iconSide;
+public class RelayBlock extends GenericBlock {
+
+    private IIcon iconFront_off;
 
     public RelayBlock(Material material) {
-        super(material);
+        super(material, RelayTileEntity.class);
         setBlockName("relayBlock");
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int i) {
-        return null;
+    public int getGuiID() {
+        return RFTools.GUI_RELAY;
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        return new RelayTileEntity();
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_RELAY, player.worldObj, x, y, z);
-            return true;
-        }
-        return true;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        ForgeDirection direction = BlockTools.determineOrientation( x, y, z, entityLivingBase);
-        int meta = world.getBlockMetadata(x, y, z);
-        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, direction), 2);
+    public String getFrontIconName() {
+        return "machineRelay_on";
     }
 
     @Override
@@ -61,9 +45,8 @@ public class RelayBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay");
-        iconFront_on = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay_on");
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+        super.registerBlockIcons(iconRegister);
+        iconFront_off = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay");
     }
 
     @Override
@@ -73,19 +56,10 @@ public class RelayBlock extends Block implements ITileEntityProvider {
         if (side == k.ordinal()) {
             boolean rs = BlockTools.getRedstoneSignal(meta);
             if (rs) {
-                return iconFront_on;
-            } else {
                 return iconFront;
+            } else {
+                return iconFront_off;
             }
-        } else {
-            return iconSide;
-        }
-    }
-
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 3) {
-            return iconFront_on;
         } else {
             return iconSide;
         }

@@ -2,7 +2,8 @@ package com.mcjty.container;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,28 +15,15 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public abstract class GenericContainerBlock extends BlockContainer {
+public abstract class GenericBlock extends Block implements ITileEntityProvider {
 
     protected IIcon iconFront;
     protected IIcon iconSide;
     private final Class<? extends TileEntity> tileEntityClass;
 
-    protected GenericContainerBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
+    public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);
         this.tileEntityClass = tileEntityClass;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!tileEntityClass.isInstance(te)) {
-            return true;
-        }
-        if (world.isRemote) {
-            return true;
-        }
-        player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
-        return true;
     }
 
     @Override
@@ -54,6 +42,22 @@ public abstract class GenericContainerBlock extends BlockContainer {
         }
     }
 
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        if (world.isRemote) {
+            player.openGui(RFTools.instance, getGuiID(), player.worldObj, x, y, z);
+            return true;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        ForgeDirection dir = BlockTools.determineOrientation(x, y, z, entityLivingBase);
+        int meta = world.getBlockMetadata(x, y, z);
+        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
+    }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
@@ -72,13 +76,6 @@ public abstract class GenericContainerBlock extends BlockContainer {
      * @return
      */
     public abstract int getGuiID();
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        ForgeDirection dir = BlockTools.determineOrientation(x, y, z, entityLivingBase);
-        int meta = world.getBlockMetadata(x, y, z);
-        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
-    }
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
