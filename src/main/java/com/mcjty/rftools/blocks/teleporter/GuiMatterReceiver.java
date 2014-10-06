@@ -1,12 +1,14 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -48,7 +50,13 @@ public class GuiMatterReceiver extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(matterReceiverTileEntity.getCurrentRF());
 
-        TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this receiver", "in the dialer");
+        TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this receiver", "in the dialer").addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                setReceiverName(newText);
+            }
+        });
+        textField.setText(matterReceiverTileEntity.getName());
         Panel bottemPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(6).setVerticalMargin(6)).
@@ -57,6 +65,12 @@ public class GuiMatterReceiver extends GuiContainer {
         window = new com.mcjty.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
     }
+
+    private void setReceiverName(String text) {
+        PacketHandler.INSTANCE.sendToServer(new PacketSetReceiverName(matterReceiverTileEntity.xCoord, matterReceiverTileEntity.yCoord, matterReceiverTileEntity.zCoord,
+                text));
+    }
+
 
     @Override
     public void onGuiClosed() {
@@ -102,8 +116,8 @@ public class GuiMatterReceiver extends GuiContainer {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
+        if (!window.keyTyped(typedChar, keyCode)) {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
-
 }

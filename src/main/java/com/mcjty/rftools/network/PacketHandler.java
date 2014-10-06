@@ -7,6 +7,8 @@ import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
 import com.mcjty.rftools.blocks.relay.PacketRelaySettings;
 import com.mcjty.rftools.blocks.storagemonitor.*;
+import com.mcjty.rftools.blocks.teleporter.PacketSetReceiverName;
+import com.mcjty.rftools.blocks.teleporter.PacketSetTransmitterName;
 import com.mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
 import com.mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -36,6 +38,8 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSearchItems.class, PacketSearchItems.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketRelaySettings.class, PacketRelaySettings.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetConnectedBlocks.class, PacketGetConnectedBlocks.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketSetTransmitterName.class, PacketSetTransmitterName.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketSetReceiverName.class, PacketSetReceiverName.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
