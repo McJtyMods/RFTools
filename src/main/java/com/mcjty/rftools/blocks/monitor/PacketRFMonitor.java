@@ -65,8 +65,7 @@ public class PacketRFMonitor implements IMessage, IMessageHandler<PacketRFMonito
 
     @Override
     public IMessage onMessage(PacketRFMonitor message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof RFMonitorBlockTileEntity)) {
             // @Todo better logging
             System.out.println("createPowerMonitotPacket: TileEntity is not a RFMonitorBlockTileEntity!");

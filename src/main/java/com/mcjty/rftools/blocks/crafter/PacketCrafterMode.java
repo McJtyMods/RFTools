@@ -46,8 +46,7 @@ public class PacketCrafterMode implements IMessage, IMessageHandler<PacketCrafte
 
     @Override
     public IMessage onMessage(PacketCrafterMode message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof CrafterBlockTileEntity3)) {
             // @Todo better logging
             System.out.println("createPowerMonitotPacket: TileEntity is not a CrafterBlockTileEntity!");

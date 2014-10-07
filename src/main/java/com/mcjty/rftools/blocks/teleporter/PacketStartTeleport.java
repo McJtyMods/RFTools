@@ -61,7 +61,7 @@ public class PacketStartTeleport implements IMessage, IMessageHandler<PacketStar
 
     @Override
     public IMessage onMessage(PacketStartTeleport message, MessageContext ctx) {
-        TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof DialingDeviceTileEntity)) {
             // @Todo better logging
             System.out.println("createInventoryReadyPacket: TileEntity is not a DialingDeviceTileEntity!");

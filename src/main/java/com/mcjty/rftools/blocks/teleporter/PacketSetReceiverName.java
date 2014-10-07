@@ -44,8 +44,7 @@ public class PacketSetReceiverName implements IMessage, IMessageHandler<PacketSe
 
     @Override
     public IMessage onMessage(PacketSetReceiverName message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof MatterReceiverTileEntity)) {
             // @Todo better logging
             System.out.println("createGetInventoryPacket: TileEntity is not a MatterReceiverTileEntity!");

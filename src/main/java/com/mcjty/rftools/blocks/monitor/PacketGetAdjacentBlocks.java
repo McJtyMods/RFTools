@@ -40,8 +40,7 @@ public class PacketGetAdjacentBlocks implements IMessage, IMessageHandler<Packet
 
     @Override
     public PacketAdjacentBlocksReady onMessage(PacketGetAdjacentBlocks message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof RFMonitorBlockTileEntity)) {
             // @Todo better logging
             System.out.println("createGetInventoryPacket: TileEntity is not a RFMonitorBlockTileEntity!");

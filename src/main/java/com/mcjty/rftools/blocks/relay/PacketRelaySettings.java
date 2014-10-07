@@ -47,8 +47,7 @@ public class PacketRelaySettings implements IMessage, IMessageHandler<PacketRela
 
     @Override
     public IMessage onMessage(PacketRelaySettings message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof RelayTileEntity)) {
             // @Todo better logging
             System.out.println("createSettingsPacket: TileEntity is not a RelayTileEntity!");

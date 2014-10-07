@@ -39,8 +39,7 @@ public class PacketGetTransmitters implements IMessage, IMessageHandler<PacketGe
 
     @Override
     public PacketTransmittersReady onMessage(PacketGetTransmitters message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        TileEntity te = player.worldObj.getTileEntity(message.x, message.y, message.z);
+        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof DialingDeviceTileEntity)) {
             // @Todo better logging
             System.out.println("createStartScanPacket: TileEntity is not a DialingDeviceTileEntity!");

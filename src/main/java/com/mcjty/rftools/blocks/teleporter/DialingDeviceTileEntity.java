@@ -2,9 +2,12 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +86,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void startTeleport(TeleportDestination destination, String playerName) {
-        System.out.print("Teleporting playerName = " + playerName);
-        System.out.println(", to = " + destination.getCoordinate());
         EntityPlayer player = worldObj.getPlayerEntityByName(playerName);
+        player.closeScreen();
+        player.addChatComponentMessage(new ChatComponentText("Teleporting player " + playerName + " to " + destination.getCoordinate()));
         Coordinate c = destination.getCoordinate();
-        player.setPosition(c.getX(), c.getY(), c.getZ());
+        player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
     }
 }
