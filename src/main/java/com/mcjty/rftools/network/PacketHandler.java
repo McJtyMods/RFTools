@@ -41,6 +41,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSetReceiverName.class, PacketSetReceiverName.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetTransmitters.class, PacketGetTransmitters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetReceivers.class, PacketGetReceivers.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketStartTeleport.class, PacketStartTeleport.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);

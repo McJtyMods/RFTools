@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
@@ -64,7 +65,12 @@ public class GuiDialingDevice extends GuiContainer {
         energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
 
         transmitterList = new WidgetList(mc, this).setFilledRectThickness(1).setDesiredHeight(90);
-        receiverList = new WidgetList(mc, this).setFilledRectThickness(1);
+        receiverList = new WidgetList(mc, this).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                testTeleport(index);
+            }
+        });
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).
                 addChild(energyBar).addChild(new Label(mc, this).setText("Transmitters:")).addChild(transmitterList).
@@ -75,6 +81,12 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
+    }
+
+    private void testTeleport(int index) {
+        TeleportDestination destination = receivers.get(index);
+        PacketHandler.INSTANCE.sendToServer(new PacketStartTeleport(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
+                destination, mc.thePlayer.getDisplayName()));
     }
 
     private void requestReceivers() {
