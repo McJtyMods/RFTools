@@ -1,13 +1,18 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Map;
 
 public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
 
     public static final int MAXENERGY = 100000;
     public static final int RECEIVEPERTICK = 500;
+
+    public static final String CMD_SETNAME = "setName";
 
     private String name = null;
 
@@ -43,5 +48,18 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
         if (name != null && !name.isEmpty()) {
             tagCompound.setString("tpName", name);
         }
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETNAME.equals(command)) {
+            setName(args.get("name").getString());
+            return true;
+        }
+        return false;
     }
 }

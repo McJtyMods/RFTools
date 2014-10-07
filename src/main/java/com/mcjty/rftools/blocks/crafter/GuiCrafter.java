@@ -13,7 +13,9 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -158,8 +160,9 @@ public class GuiCrafter extends GuiContainer {
     private void sendChangeToServer() {
         int rsMode = redstoneMode.getCurrentChoice();
         int sMode = speedMode.getCurrentChoice();
-        PacketHandler.INSTANCE.sendToServer(new PacketCrafterMode(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord,
-                rsMode, sMode));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord,
+                CrafterBlockTileEntity3.CMD_MODE,
+                new Argument("rs", rsMode), new Argument("speed", sMode)));
     }
 
     private void populateList() {

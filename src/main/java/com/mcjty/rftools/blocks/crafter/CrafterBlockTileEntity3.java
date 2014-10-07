@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
+import java.util.Map;
 
 public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity implements ISidedInventory {
     public static final int REDSTONE_IGNORED = 0;
@@ -21,6 +23,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     public static final int REDSTONE_ONREQUIRED = 2;
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
+
+    public static final String CMD_MODE = "mode";
 
     private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
     private CraftingRecipe recipes[];
@@ -366,5 +370,19 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             stop = CrafterContainerFactory.SLOT_BUFFEROUT + CrafterContainerFactory.BUFFEROUT_SIZE;
         }
         return InventoryTools.mergeItemStack(this, result, start, stop);
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_MODE.equals(command)) {
+            setRedstoneMode(args.get("rs").getInteger());
+            setSpeedMode(args.get("speed").getInteger());
+            return true;
+        }
+        return false;
     }
 }

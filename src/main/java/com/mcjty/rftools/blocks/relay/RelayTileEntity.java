@@ -3,14 +3,19 @@ package com.mcjty.rftools.blocks.relay;
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Map;
 
 public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
 
     public static final int MAXENERGY = 30000;
     public static final int RECEIVEPERTICK = 20000;
+
+    public static final String CMD_SETTINGS = "settings";
 
     private int rfOn = 1000;
     private int rfOff = 0;
@@ -94,5 +99,19 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfOn", rfOn);
         tagCompound.setInteger("rfOff", rfOff);
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETTINGS.equals(command)) {
+            setRfOn(args.get("on").getInteger());
+            setRfOff(args.get("off").getInteger());
+            return true;
+        }
+        return false;
     }
 }

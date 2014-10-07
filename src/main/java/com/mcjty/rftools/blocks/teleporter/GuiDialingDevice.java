@@ -9,7 +9,9 @@ import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -85,8 +87,13 @@ public class GuiDialingDevice extends GuiContainer {
 
     private void testTeleport(int index) {
         TeleportDestination destination = receivers.get(index);
-        PacketHandler.INSTANCE.sendToServer(new PacketStartTeleport(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
-                destination, mc.thePlayer.getDisplayName()));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
+                DialingDeviceTileEntity.CMD_TELEPORT,
+                new Argument("dest", destination.getCoordinate()),
+                new Argument("dim", destination.getDimension()),
+                new Argument("player", mc.thePlayer.getDisplayName())));
+//        PacketHandler.INSTANCE.sendToServer(new PacketStartTeleport(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
+//                destination, mc.thePlayer.getDisplayName()));
     }
 
     private void requestReceivers() {

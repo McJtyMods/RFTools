@@ -9,7 +9,9 @@ import com.mcjty.gui.widgets.ImageLabel;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
@@ -77,7 +79,9 @@ public class GuiRelay extends GuiScreen {
     private void changeRfOutput() {
         int onValue = new Integer(choicesOn.getCurrentChoice());
         int offValue = new Integer(choicesOff.getCurrentChoice());
-        PacketHandler.INSTANCE.sendToServer(new PacketRelaySettings(relayTileEntity.xCoord, relayTileEntity.yCoord, relayTileEntity.zCoord, onValue, offValue));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(relayTileEntity.xCoord, relayTileEntity.yCoord, relayTileEntity.zCoord,
+                RelayTileEntity.CMD_SETTINGS,
+                new Argument("on", onValue), new Argument("off", offValue)));
     }
 
     @Override

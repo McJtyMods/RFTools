@@ -9,7 +9,9 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -68,8 +70,9 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
     private void setTransmitterName(String text) {
-        PacketHandler.INSTANCE.sendToServer(new PacketSetTransmitterName(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
-                text));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
+                MatterTransmitterTileEntity.CMD_SETNAME,
+                new Argument("name", text)));
     }
 
 

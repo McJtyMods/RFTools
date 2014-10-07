@@ -17,7 +17,9 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -155,12 +157,15 @@ public class GuiStorageScanner extends GuiContainer {
     }
 
     private void changeRadius(int r) {
-        PacketHandler.INSTANCE.sendToServer(new PacketSetRadius(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord, r));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
+                StorageScannerTileEntity.CMD_SETRADIUS,
+                new Argument("r", r)));
     }
 
     private void startStopScan() {
-        PacketHandler.INSTANCE.sendToServer(new PacketStartScan(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
-                !storageScannerTileEntity.isScanning()));
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(storageScannerTileEntity.xCoord, storageScannerTileEntity.yCoord, storageScannerTileEntity.zCoord,
+                StorageScannerTileEntity.CMD_STARTSCAN,
+                new Argument("start", !storageScannerTileEntity.isScanning())));
     }
 
     private void startSearch(String text) {

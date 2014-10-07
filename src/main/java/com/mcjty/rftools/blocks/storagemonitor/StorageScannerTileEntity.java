@@ -5,6 +5,7 @@ import com.mcjty.entity.SyncedCoordinate;
 import com.mcjty.entity.SyncedValue;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.rftools.BlockInfo;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -13,10 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int MAXENERGY = 100000;
@@ -24,6 +22,9 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public static int rfPerOperation = 100;
     public static int scansPerOperation = 10;
     public static int hilightTime = 5;
+
+    public static final String CMD_SETRADIUS = "setRadius";
+    public static final String CMD_STARTSCAN = "startScan";
 
     // For client side: the items of the inventory we're currently looking at.
     private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
@@ -257,5 +258,21 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         c2.writeToNBT(tagCompound, "c2");
         cur.writeToNBT(tagCompound, "cur");
         inventories.writeToNBT(tagCompound, "inv");
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETRADIUS.equals(command)) {
+            setRadius(args.get("r").getInteger());
+            return true;
+        } else if (CMD_STARTSCAN.equals(command)) {
+            startScan(args.get("start").getBoolean());
+            return true;
+        }
+        return false;
     }
 }

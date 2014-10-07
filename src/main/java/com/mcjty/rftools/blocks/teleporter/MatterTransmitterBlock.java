@@ -4,6 +4,7 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -34,6 +35,12 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
+    }
+
+    @Override
+    public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
+        super.onEntityWalking(world, x, y, z, entity);
+        System.out.println("world.isRemote = " + world.isRemote);
     }
 
     @Override

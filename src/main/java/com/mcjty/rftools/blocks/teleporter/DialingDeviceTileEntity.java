@@ -1,21 +1,23 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 100;
+
+    public static final String CMD_TELEPORT = "tp";
 
     // For client.
     private List<TeleportDestination> receivers = null;
@@ -85,11 +87,23 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return transmitters;
     }
 
-    public void startTeleport(TeleportDestination destination, String playerName) {
-        EntityPlayer player = worldObj.getPlayerEntityByName(playerName);
-        player.closeScreen();
-        player.addChatComponentMessage(new ChatComponentText("Teleporting player " + playerName + " to " + destination.getCoordinate()));
-        Coordinate c = destination.getCoordinate();
-        player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
+    @Override
+    public boolean execute(String command, Map<String,Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_TELEPORT.equals(command)) {
+            Argument playerName = args.get("player");
+            Argument dest = args.get("dest");
+            Argument dim = args.get("dim");
+            EntityPlayer player = worldObj.getPlayerEntityByName(playerName.getString());
+            player.closeScreen();
+            player.addChatComponentMessage(new ChatComponentText("Begin to teleport player " + playerName.getString() + " to " + dest.getCoordinate()));
+            Coordinate c = dest.getCoordinate();
+            player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
+            return true;
+        }
+        return false;
     }
 }
