@@ -80,7 +80,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
                 hilightBlock(index);

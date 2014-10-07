@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.storagemonitor;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
@@ -44,7 +45,7 @@ public class GuiStorageScanner extends GuiContainer {
     private final StorageScannerTileEntity storageScannerTileEntity;
     private int clientVersion = -1;
 
-    public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
+    public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer<StorageScannerTileEntity> storageScannerContainer) {
         super(storageScannerContainer);
         this.storageScannerTileEntity = storageScannerTileEntity;
         storageScannerTileEntity.setOldRF(-1);
@@ -62,7 +63,7 @@ public class GuiStorageScanner extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(storageScannerTileEntity.getCurrentRF());
 
-        storageList = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
+        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 itemList.removeChildren();
@@ -82,7 +83,7 @@ public class GuiStorageScanner extends GuiContainer {
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this).setRowheight(16).setFilledRectThickness(1);
+        itemList = new WidgetList(mc, this).setFilledRectThickness(1);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(itemList).addChild(itemListSlider);

@@ -1,12 +1,13 @@
 package com.mcjty.rftools;
 
 import com.mcjty.varia.Coordinate;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -37,6 +38,7 @@ public class RFTools {
     public static final int GUI_RELAY = modGuiIndex++;
     public static final int GUI_MATTER_TRANSMITTER = modGuiIndex++;
     public static final int GUI_MATTER_RECEIVER = modGuiIndex++;
+    public static final int GUI_DIALING_DEVICE = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

@@ -70,6 +70,7 @@ public final class ModBlocks {
         dialingDeviceBlock = new DialingDeviceBlock(Material.iron);
         dialingDeviceBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(dialingDeviceBlock, "dialingDeviceBlock");
+        GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
         destinationAnalyzerBlock = new DestinationAnalyzerBlock(Material.iron);
         destinationAnalyzerBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");

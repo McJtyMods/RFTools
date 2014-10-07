@@ -14,6 +14,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -61,7 +62,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
         ModEntities.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
-
+        MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
     }
 
     public void postInit(FMLPostInitializationEvent e) {

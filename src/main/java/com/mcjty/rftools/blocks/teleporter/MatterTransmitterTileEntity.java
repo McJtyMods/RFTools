@@ -8,14 +8,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final int MAXENERGY = 1000000;
     public static final int RECEIVEPERTICK = 1000;
 
-    private String name;
+    private String name = null;
 
     public MatterTransmitterTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
     }
 
     public String getName() {
-        return name;
+        return name == null ? "" : name;
     }
 
     public void setName(String name) {
@@ -32,6 +32,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setString("tpName", name);
+        if (name != null && !name.isEmpty()) {
+            tagCompound.setString("tpName", name);
+        }
     }
 }

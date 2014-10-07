@@ -87,7 +87,6 @@ public class GuiCrafter extends GuiContainer {
                 setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
 
         recipeList = new WidgetList(mc, this).
-                setRowheight(16).
                 setFilledRectThickness(1).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override

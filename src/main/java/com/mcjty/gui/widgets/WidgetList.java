@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 public class WidgetList extends AbstractContainerWidget<WidgetList> implements Scrollable {
-    private int rowheight = 10;
+    private int rowheight = 16;
     private int first = 0;
     private int selected = -1;
     private long prevTime = -1;

@@ -34,7 +34,7 @@ public class GuiRFMonitor extends GuiScreen {
     public static final int TEXT_COLOR = 0x19979f;
 
     // A copy of the adjacent blocks we're currently showing
-    private List<Coordinate> adjacentBlocks;
+    private List<Coordinate> adjacentBlocks = null;
 
     /** The X size of the window in pixels. */
     private int xSize = 256;
@@ -58,7 +58,7 @@ public class GuiRFMonitor extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setRowheight(16).addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 setSelectedBlock(index);

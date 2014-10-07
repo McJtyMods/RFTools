@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -25,7 +26,7 @@ public class GuiMatterReceiver extends GuiContainer {
 
     private final MatterReceiverTileEntity matterReceiverTileEntity;
 
-    public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, MatterReceiverContainer container) {
+    public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer<MatterReceiverTileEntity> container) {
         super(container);
         this.matterReceiverTileEntity = matterReceiverTileEntity;
         matterReceiverTileEntity.setOldRF(-1);

@@ -104,11 +104,9 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            Coordinate c = new Coordinate(xx, yy, zz);
                             TileEntity tileEntity = worldObj.getTileEntity(xx, yy, zz);
                             if (tileEntity != null) {
                                 if (tileEntity instanceof IEnergyHandler) {
-                                    Block block = worldObj.getBlock(xx, yy, zz);
                                     adjacentBlocks.add(new Coordinate(xx, yy, zz));
                                 }
                             }

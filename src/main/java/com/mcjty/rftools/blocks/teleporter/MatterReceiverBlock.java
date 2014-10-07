@@ -2,12 +2,12 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -36,6 +36,29 @@ public class MatterReceiverBlock extends GenericContainerBlock {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
+    }
+
+    @Override
+    public int onBlockPlaced(World world, int x, int y, int z, int side, float sx, float sy, float sz, int meta) {
+        int rc = super.onBlockPlaced(world, x, y, z, side, sx, sy, sz, meta);
+        if (world.isRemote) {
+            return rc;
+        }
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        destinations.addDestination(new Coordinate(x, y, z), 0);
+        destinations.save(world);
+        return rc;
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        super.breakBlock(world, x, y, z, block, meta);
+        if (world.isRemote) {
+            return;
+        }
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        destinations.removeDestination(new Coordinate(x, y, z), 0);
+        destinations.save(world);
     }
 
     @Override
