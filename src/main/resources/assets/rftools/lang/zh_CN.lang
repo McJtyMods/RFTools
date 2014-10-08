@@ -10,3 +10,4 @@ tile.matterTransmitterBlock.name=Matter Transmitter
 tile.matterReceiverBlock.name=Matter Receiver
 tile.dialingDeviceBlock.name=Dialing Device
 tile.destinationAnalyzerBlock.name=Destination Analyzer
+tile.teleportBeamBlock.name=Teleporter Beam

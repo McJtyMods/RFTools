@@ -29,6 +29,7 @@ public final class ModBlocks {
     public static MatterReceiverBlock matterReceiverBlock;
     public static DialingDeviceBlock dialingDeviceBlock;
     public static DestinationAnalyzerBlock destinationAnalyzerBlock;
+    public static TeleportBeamBlock teleportBeamBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -74,6 +75,8 @@ public final class ModBlocks {
         destinationAnalyzerBlock = new DestinationAnalyzerBlock(Material.iron);
         destinationAnalyzerBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
+        teleportBeamBlock = new TeleportBeamBlock(Material.portal);
+        GameRegistry.registerBlock(teleportBeamBlock, "teleportBeamBlock");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);

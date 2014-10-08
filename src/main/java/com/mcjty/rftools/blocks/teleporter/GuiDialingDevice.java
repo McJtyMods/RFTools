@@ -66,7 +66,12 @@ public class GuiDialingDevice extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
 
-        transmitterList = new WidgetList(mc, this).setFilledRectThickness(1).setDesiredHeight(90);
+        transmitterList = new WidgetList(mc, this).setFilledRectThickness(1).setDesiredHeight(90).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                testDial(index);
+            }
+        });
         receiverList = new WidgetList(mc, this).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
@@ -92,8 +97,12 @@ public class GuiDialingDevice extends GuiContainer {
                 new Argument("dest", destination.getCoordinate()),
                 new Argument("dim", destination.getDimension()),
                 new Argument("player", mc.thePlayer.getDisplayName())));
-//        PacketHandler.INSTANCE.sendToServer(new PacketStartTeleport(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
-//                destination, mc.thePlayer.getDisplayName()));
+    }
+
+    private void testDial(int index) {
+        TransmitterInfo transmitterInfo = transmitters.get(index);
+        Coordinate c = transmitterInfo.getCoordinate();
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(c.getX(), c.getY(), c.getZ(), MatterTransmitterTileEntity.CMD_DIAL));
     }
 
     private void requestReceivers() {

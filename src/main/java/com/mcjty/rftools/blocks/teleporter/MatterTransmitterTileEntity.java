@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -12,6 +13,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final int RECEIVEPERTICK = 1000;
 
     public static final String CMD_SETNAME = "setName";
+    public static final String CMD_DIAL = "dial";
 
     private String name = null;
 
@@ -42,6 +44,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
     }
 
+    private void dial() {
+        worldObj.setBlock(xCoord, yCoord+1, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+        worldObj.setBlock(xCoord, yCoord+2, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+    }
+
     @Override
     public boolean execute(String command, Map<String, Argument> args) {
         boolean rc = super.execute(command, args);
@@ -50,6 +57,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         if (CMD_SETNAME.equals(command)) {
             setName(args.get("name").getString());
+            return true;
+        } else if (CMD_DIAL.equals(command)) {
+            dial();
             return true;
         }
         return false;
