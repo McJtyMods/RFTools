@@ -1,22 +1,21 @@
 package com.mcjty.rftools.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 
-public class PacketServerCommand extends AbstractServerCommand implements IMessageHandler<PacketServerCommand, IMessage> {
+import java.util.List;
 
-    public PacketServerCommand() {
+public abstract class PacketRequestListFromClient<T extends ByteBufConverter, S extends PacketRequestListFromClient, C extends PacketListFromClient<C,T>> extends AbstractServerCommand implements IMessageHandler<S, C> {
+    public PacketRequestListFromClient() {
     }
 
-    public PacketServerCommand(int x, int y, int z, String command, Argument... arguments) {
+    public PacketRequestListFromClient(int x, int y, int z, String command, Argument... arguments) {
         super(x, y, z, command, arguments);
     }
 
     @Override
-    public IMessage onMessage(PacketServerCommand message, MessageContext ctx) {
+    public C onMessage(S message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof CommandHandler)) {
             // @Todo better logging
@@ -24,10 +23,13 @@ public class PacketServerCommand extends AbstractServerCommand implements IMessa
             return null;
         }
         CommandHandler commandHandler = (CommandHandler) te;
-        if (!commandHandler.execute(message.command, message.args)) {
+        List<T> list = (List<T>) commandHandler.executeWithResult(message.command, message.args);
+        if (list == null) {
             System.out.println("Command "+message.command+" was not handled!");
+            return null;
         }
-        return null;
+        return createMessageToClient(message.x, message.y, message.z, list);
     }
 
+    protected abstract C createMessageToClient(int x, int y, int z, List<T> result);
 }

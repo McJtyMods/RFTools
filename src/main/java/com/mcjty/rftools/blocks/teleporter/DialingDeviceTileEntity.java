@@ -18,6 +18,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int RECEIVEPERTICK = 100;
 
     public static final String CMD_TELEPORT = "tp";
+    public static final String CMD_GETRECEIVERS = "getReceivers";
+    public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
+    public static final String CMD_GETTRANSMITTERS = "getTransmitters";
+    public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
 
     // For client.
     private List<TeleportDestination> receivers = null;
@@ -102,6 +106,36 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             player.addChatComponentMessage(new ChatComponentText("Begin to teleport player " + playerName.getString() + " to " + dest.getCoordinate()));
             Coordinate c = dest.getCoordinate();
             player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List executeWithResult(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETRECEIVERS.equals(command)) {
+            return searchReceivers();
+        } else if (CMD_GETTRANSMITTERS.equals(command)) {
+            return searchTransmitters();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETRECEIVERS.equals(command)) {
+            storeReceiversForClient((List<TeleportDestination>) list);
+            return true;
+        } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
+            storeTransmittersForClient((List<TransmitterInfo>) list);
             return true;
         }
         return false;
