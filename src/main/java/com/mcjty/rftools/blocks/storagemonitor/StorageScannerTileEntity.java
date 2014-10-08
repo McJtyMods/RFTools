@@ -25,6 +25,8 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_STARTSCAN = "startScan";
+    public static final String CMD_STARTSEARCH = "startSearch";
+    public static final String CLIENTCMD_SEARCHREADY = "searchReady";
 
     // For client side: the items of the inventory we're currently looking at.
     private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
@@ -57,9 +59,9 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         registerSyncedObject(inventories);
     }
 
-    public Set<Coordinate> startSearch(String search) {
+    public List<Coordinate> startSearch(String search) {
         search = search.toLowerCase();
-        Set<Coordinate> output = new HashSet<Coordinate>();
+        List<Coordinate> output = new ArrayList<Coordinate>();
         for (InvBlockInfo invBlockInfo : inventories) {
             Coordinate c = invBlockInfo.getCoordinate();
             TileEntity tileEntity = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
@@ -160,7 +162,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         showingItems.clear();
     }
 
-    public void storeCoordinatesForClient(Set<Coordinate> coordinates) {
+    public void storeCoordinatesForClient(List<Coordinate> coordinates) {
         this.coordinates = new HashSet<Coordinate>(coordinates);
     }
 
@@ -271,6 +273,31 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         } else if (CMD_STARTSCAN.equals(command)) {
             startScan(args.get("start").getBoolean());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List executeWithResult(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_STARTSEARCH.equals(command)) {
+            return startSearch(args.get("search").getString());
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_SEARCHREADY.equals(command)) {
+            storeCoordinatesForClient((List<Coordinate>) list);
             return true;
         }
         return false;

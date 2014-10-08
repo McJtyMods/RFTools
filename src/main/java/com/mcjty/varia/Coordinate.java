@@ -1,16 +1,29 @@
 package com.mcjty.varia;
 
+import com.mcjty.rftools.network.ByteBufConverter;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class Coordinate {
+public class Coordinate implements ByteBufConverter {
     private final int x, y, z;
 
     public static final Coordinate INVALID = new Coordinate(-1, -1, -1);
+
+    public Coordinate(ByteBuf buf) {
+        this(buf.readInt(), buf.readInt(), buf.readInt());
+    }
 
     public Coordinate(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(x);
+        buf.writeInt(y);
+        buf.writeInt(z);
     }
 
     @Override

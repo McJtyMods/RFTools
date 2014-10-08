@@ -2,16 +2,10 @@ package com.mcjty.entity;
 
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
-import com.mcjty.rftools.network.Argument;
-import com.mcjty.rftools.network.ClientCommandHandler;
-import com.mcjty.rftools.network.CommandHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.List;
-import java.util.Map;
-
-public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements IEnergyHandler, CommandHandler, ClientCommandHandler {
+public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements IEnergyHandler {
 
     private EnergyStorage storage;
 
@@ -77,20 +71,5 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
 
     public void setCurrentRF(int currentRF) {
         this.currentRF = currentRF;
-    }
-
-    @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        return false;
-    }
-
-    @Override
-    public List executeWithResult(String command, Map<String, Argument> args) {
-        return null;
-    }
-
-    @Override
-    public boolean execute(String command, List list) {
-        return false;
     }
 }

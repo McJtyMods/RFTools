@@ -4,6 +4,7 @@ import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +13,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RFMonitorBlockTileEntity extends GenericTileEntity {
     // Data that is saved
@@ -20,6 +22,9 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     private int monitorZ = -1;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
     private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
+
+    public static final String CMD_GETADJACENTBLOCKS = "getAdj";
+    public static final String CLIENTCMD_ADJACENTBLOCKSREADY = "adjReady";
 
     // Temporary data
     private int counter = 20;
@@ -207,5 +212,30 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
         Boolean value = inAlarm.getValue();
         tagCompound.setBoolean("inAlarm", value == null ? false : value);
+    }
+
+    @Override
+    public List executeWithResult(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETADJACENTBLOCKS.equals(command)) {
+            return findAdjacentBlocks();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
+            storeAdjacentBlocksForClient((List<Coordinate>) list);
+            return true;
+        }
+        return false;
     }
 }
