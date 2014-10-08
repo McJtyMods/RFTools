@@ -1,12 +1,12 @@
 package com.mcjty.rftools.blocks.storagemonitor;
 
-import com.mcjty.rftools.network.PacketListFromClient;
+import com.mcjty.rftools.network.PacketListFromServer;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
-public class PacketSearchReady extends PacketListFromClient<PacketSearchReady,Coordinate> {
+public class PacketSearchReady extends PacketListFromServer<PacketSearchReady,Coordinate> {
 
     public PacketSearchReady() {
     }

@@ -1,11 +1,11 @@
 package com.mcjty.rftools.blocks.monitor;
 
-import com.mcjty.rftools.network.PacketRequestListFromClient;
+import com.mcjty.rftools.network.PacketRequestListFromServer;
 import com.mcjty.varia.Coordinate;
 
 import java.util.List;
 
-public class PacketGetAdjacentBlocks extends PacketRequestListFromClient<Coordinate, PacketGetAdjacentBlocks, PacketAdjacentBlocksReady> {
+public class PacketGetAdjacentBlocks extends PacketRequestListFromServer<Coordinate, PacketGetAdjacentBlocks, PacketAdjacentBlocksReady> {
 
     public PacketGetAdjacentBlocks() {
     }

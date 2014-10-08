@@ -10,7 +10,14 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PacketListFromClient<S extends PacketListFromClient, T extends ByteBufConverter> implements IMessage, IMessageHandler<S, IMessage> {
+/**
+ * This is typically used in combination with PacketRequestListFromServer although you can also use it standalone.
+ * You use this by making a subclass of this class. This implements a message that is sent from the server back to the client.
+ *
+ * @param S is the type of the subclass of this class. i.e. the class you're implementing
+ * @param T is the type of the items in the list that is requested from the server
+ */
+public abstract class PacketListFromServer<S extends PacketListFromServer, T extends ByteBufConverter> implements IMessage, IMessageHandler<S, IMessage> {
     private int x;
     private int y;
     private int z;
@@ -52,10 +59,10 @@ public abstract class PacketListFromClient<S extends PacketListFromClient, T ext
         }
     }
 
-    public PacketListFromClient() {
+    public PacketListFromServer() {
     }
 
-    public PacketListFromClient(int x, int y, int z, String command, List<T> list) {
+    public PacketListFromServer(int x, int y, int z, String command, List<T> list) {
         this.x = x;
         this.y = y;
         this.z = z;

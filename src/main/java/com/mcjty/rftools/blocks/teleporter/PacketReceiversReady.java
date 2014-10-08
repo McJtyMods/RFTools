@@ -1,11 +1,11 @@
 package com.mcjty.rftools.blocks.teleporter;
 
-import com.mcjty.rftools.network.PacketListFromClient;
+import com.mcjty.rftools.network.PacketListFromServer;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
-public class PacketReceiversReady extends PacketListFromClient<PacketReceiversReady,TeleportDestination> {
+public class PacketReceiversReady extends PacketListFromServer<PacketReceiversReady,TeleportDestination> {
 
     public PacketReceiversReady() {
     }

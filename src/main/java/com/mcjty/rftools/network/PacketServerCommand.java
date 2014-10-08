@@ -6,6 +6,11 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 
+/**
+ * This is a packet that can be used to send a command from the client side (typically the GUI) to
+ * a tile entity on the server side that implements CommandHandler. This will call 'execute()' on
+ * that command handler.
+ */
 public class PacketServerCommand extends AbstractServerCommand implements IMessageHandler<PacketServerCommand, IMessage> {
 
     public PacketServerCommand() {

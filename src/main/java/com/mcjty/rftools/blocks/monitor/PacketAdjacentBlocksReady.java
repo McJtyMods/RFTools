@@ -1,18 +1,12 @@
 package com.mcjty.rftools.blocks.monitor;
 
-import com.mcjty.rftools.network.PacketListFromClient;
+import com.mcjty.rftools.network.PacketListFromServer;
 import com.mcjty.varia.Coordinate;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PacketAdjacentBlocksReady extends PacketListFromClient<PacketAdjacentBlocksReady,Coordinate> {
+public class PacketAdjacentBlocksReady extends PacketListFromServer<PacketAdjacentBlocksReady,Coordinate> {
 
     public PacketAdjacentBlocksReady() {
     }
