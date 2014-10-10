@@ -11,17 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is typically used in combination with PacketRequestListFromServer although you can also use it standalone.
+ * This is typically used in combination with PacketRequestIntegerFromServer although you can also use it standalone.
  * You use this by making a subclass of this class. This implements a message that is sent from the server back to the client.
  *
  * @param S is the type of the subclass of this class. i.e. the class you're implementing
- * @param T is the type of the items in the list that is requested from the server
  */
-public abstract class PacketListFromServer<S extends PacketListFromServer, T extends ByteBufConverter> implements IMessage, IMessageHandler<S, IMessage> {
+public abstract class PacketIntegerFromServer<S extends PacketIntegerFromServer> implements IMessage, IMessageHandler<S, IMessage> {
     private int x;
     private int y;
     private int z;
-    private List<T> list;
+    private Integer result;
     private String command;
 
     @Override
@@ -34,19 +33,13 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
         buf.readBytes(dst);
         command = new String(dst);
 
-        int size = buf.readInt();
-        if (size != -1) {
-            list = new ArrayList<T>(size);
-            for (int i = 0 ; i < size ; i++) {
-                T item = createItem(buf);
-                list.add(item);
-            }
+        boolean resultPresent = buf.readBoolean();
+        if (resultPresent) {
+            result = buf.readInt();
         } else {
-            list = null;
+            result = null;
         }
     }
-
-    protected abstract T createItem(ByteBuf buf);
 
     @Override
     public void toBytes(ByteBuf buf) {
@@ -57,26 +50,21 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
         buf.writeInt(command.length());
         buf.writeBytes(command.getBytes());
 
-        if (list == null) {
-            buf.writeInt(-1);
-        } else {
-            buf.writeInt(list.size());
-            for (T item : list) {
-                item.toBytes(buf);
-            }
+        buf.writeBoolean(result != null);
+        if (result != null) {
+            buf.writeInt(result);
         }
     }
 
-    public PacketListFromServer() {
+    public PacketIntegerFromServer() {
     }
 
-    public PacketListFromServer(int x, int y, int z, String command, List<T> list) {
+    public PacketIntegerFromServer(int x, int y, int z, String command, Integer result) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.command = command;
-        this.list = new ArrayList<T>();
-        this.list.addAll(list);
+        this.result = result;
     }
 
     @Override
@@ -88,7 +76,7 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
             return null;
         }
         ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-        clientCommandHandler.execute(message.command, message.list);
+        clientCommandHandler.execute(message.command, message.result);
         return null;
     }
 

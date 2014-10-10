@@ -35,7 +35,7 @@ public abstract class PacketRequestListFromServer<T extends ByteBufConverter, S 
             return null;
         }
         CommandHandler commandHandler = (CommandHandler) te;
-        List<T> list = (List<T>) commandHandler.executeWithResult(message.command, message.args);
+        List<T> list = (List<T>) commandHandler.executeWithResultList(message.command, message.args);
         if (list == null) {
             System.out.println("Command "+message.command+" was not handled!");
             return null;

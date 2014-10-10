@@ -6,7 +6,6 @@ import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -215,8 +214,8 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public List executeWithResult(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResult(command, args);
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
         if (rc != null) {
             return rc;
         }

@@ -112,8 +112,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     @Override
-    public List executeWithResult(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResult(command, args);
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
         if (rc != null) {
             return rc;
         }

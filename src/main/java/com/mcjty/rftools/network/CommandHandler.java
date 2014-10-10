@@ -11,6 +11,9 @@ public interface CommandHandler {
     /// Return true if command was handled correctly. False if not.
     boolean execute(String command, Map<String,Argument> args);
 
-    /// Return the result which will be sent back to the client.
-    List executeWithResult(String command, Map<String,Argument> args);
+    /// Return the result which will be sent back to the client. Returns nulli f command was not handled.
+    List executeWithResultList(String command, Map<String, Argument> args);
+
+    /// Return a numeric result which will be sent back to the client. Returns null if command was not handled.
+    Integer executeWithResultInteger(String command, Map<String, Argument> args);
 }

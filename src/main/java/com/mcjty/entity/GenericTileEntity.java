@@ -98,12 +98,22 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     }
 
     @Override
-    public List executeWithResult(String command, Map<String, Argument> args) {
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        return null;
+    }
+
+    @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
         return null;
     }
 
     @Override
     public boolean execute(String command, List list) {
+        return false;
+    }
+
+    @Override
+    public boolean execute(String command, Integer result) {
         return false;
     }
 }

@@ -33,6 +33,9 @@ public class TeleportBeamBlock extends Block {
 
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+        if (!world.isRemote) {
+            System.out.println("com.mcjty.rftools.blocks.teleporter.TeleportBeamBlock.onEntityCollidedWithBlock");
+        }
     }
 
     @Override
