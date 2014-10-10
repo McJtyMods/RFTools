@@ -29,13 +29,13 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.relayBlock), new Object[]{"gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.gold_ingot});
 
-//        GameRegistry.addRecipe(new ItemStack(ModBlocks.matterTransmitterBlock), new Object[]{"ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
-//                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot});
-//        GameRegistry.addRecipe(new ItemStack(ModBlocks.matterReceiverBlock), new Object[]{"iii", "rMr", "ooo", 'M', ModBlocks.machineFrame,
-//                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot});
-//        GameRegistry.addRecipe(new ItemStack(ModBlocks.dialingDeviceBlock), new Object[]{"rrr", "TMT", "rrr", 'M', ModBlocks.machineFrame, 'r', Items.redstone,
-//                'T', redstoneTorch});
-//        GameRegistry.addRecipe(new ItemStack(ModBlocks.destinationAnalyzerBlock), new Object[]{"o o", " M ", "o o", 'M', ModBlocks.machineFrame,
-//                'o', Items.ender_pearl});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.matterTransmitterBlock), new Object[]{"ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
+                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.matterReceiverBlock), new Object[]{"iii", "rMr", "ooo", 'M', ModBlocks.machineFrame,
+                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dialingDeviceBlock), new Object[]{"rrr", "TMT", "rrr", 'M', ModBlocks.machineFrame, 'r', Items.redstone,
+                'T', redstoneTorch});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.destinationAnalyzerBlock), new Object[]{"o o", " M ", "o o", 'M', ModBlocks.machineFrame,
+                'o', Items.ender_pearl});
     }
 }

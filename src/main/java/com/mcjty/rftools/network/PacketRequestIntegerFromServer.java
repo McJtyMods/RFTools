@@ -2,29 +2,46 @@ package com.mcjty.rftools.network;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
 
 /**
- * Make a subclass of this class to implement a command that can be sent from the client (typically in a GUI)
- * and will perform some command on the server-side tile entity. The result of that command (an integer) will
- * be sent back to the client through the 'PacketIntegerFromServer' class. So typically
- * you would also make a subclass of PacketIntegerFromServer.
- *
- * @param S is the type of the subclass of this class. i.e. the class you're implementing
- * @param C is the type of the subclass of PacketIntegerFromServer. i.e. the class sent back from the server.
+ * This is a packet that can be used to send a command from the client side (typically the GUI) to
+ * a tile entity on the server side that implements CommandHandler. This will call 'executeWithResultInteger()' on
+ * that command handler. A PacketIntegerFromServer will be sent back from the client.
  */
-public abstract class PacketRequestIntegerFromServer<S extends PacketRequestIntegerFromServer, C extends PacketIntegerFromServer<C>> extends AbstractServerCommand implements IMessageHandler<S, C> {
+public class PacketRequestIntegerFromServer extends AbstractServerCommand implements IMessageHandler<PacketRequestIntegerFromServer, PacketIntegerFromServer> {
+    private String clientCommand;
+
     public PacketRequestIntegerFromServer() {
     }
 
-    public PacketRequestIntegerFromServer(int x, int y, int z, String command, Argument... arguments) {
-        super(x, y, z, command, arguments);
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        super.fromBytes(buf);
+
+        byte[] dst = new byte[buf.readInt()];
+        buf.readBytes(dst);
+        clientCommand = new String(dst);
     }
 
     @Override
-    public C onMessage(S message, MessageContext ctx) {
+    public void toBytes(ByteBuf buf) {
+        super.toBytes(buf);
+
+        buf.writeInt(clientCommand.length());
+        buf.writeBytes(clientCommand.getBytes());
+    }
+
+    public PacketRequestIntegerFromServer(int x, int y, int z, String command, String clientCommand, Argument... arguments) {
+        super(x, y, z, command, arguments);
+        this.clientCommand = clientCommand;
+    }
+
+    @Override
+    public PacketIntegerFromServer onMessage(PacketRequestIntegerFromServer message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof CommandHandler)) {
             // @Todo better logging
@@ -37,8 +54,6 @@ public abstract class PacketRequestIntegerFromServer<S extends PacketRequestInte
             System.out.println("Command "+message.command+" was not handled!");
             return null;
         }
-        return createMessageToClient(message.x, message.y, message.z, result);
+        return new PacketIntegerFromServer(message.x, message.y, message.z, message.clientCommand, result);
     }
-
-    protected abstract C createMessageToClient(int x, int y, int z, Integer result);
 }

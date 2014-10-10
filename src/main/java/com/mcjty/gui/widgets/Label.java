@@ -34,7 +34,7 @@ public class Label<P extends Label> extends AbstractWidget<P> {
             return w;
         }
         if (w == -1) {
-            w = mc.fontRenderer.getStringWidth(text);
+            w = mc.fontRenderer.getStringWidth(text)+6;
         }
         return w;
     }
@@ -46,7 +46,7 @@ public class Label<P extends Label> extends AbstractWidget<P> {
             return h;
         }
         if (h == -1) {
-            h = mc.fontRenderer.FONT_HEIGHT;
+            h = mc.fontRenderer.FONT_HEIGHT+2;
         }
         return h;
     }

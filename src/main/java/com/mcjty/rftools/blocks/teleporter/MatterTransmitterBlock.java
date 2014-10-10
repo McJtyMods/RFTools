@@ -14,7 +14,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class MatterTransmitterBlock extends GenericContainerBlock {
 
-    private IIcon iconSide;
     private IIcon iconTop;
 
     public MatterTransmitterBlock(Material material) {
@@ -35,12 +34,6 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
-    }
-
-    @Override
-    public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
-        super.onEntityWalking(world, x, y, z, entity);
-        System.out.println("world.isRemote = " + world.isRemote);
     }
 
     @Override

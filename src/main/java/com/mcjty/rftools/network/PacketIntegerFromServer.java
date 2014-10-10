@@ -11,12 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is typically used in combination with PacketRequestIntegerFromServer although you can also use it standalone.
- * You use this by making a subclass of this class. This implements a message that is sent from the server back to the client.
- *
- * @param S is the type of the subclass of this class. i.e. the class you're implementing
+ * This packet is used (typically by PacketRequestIntegerFromServer) to send back an integer to the client.
  */
-public abstract class PacketIntegerFromServer<S extends PacketIntegerFromServer> implements IMessage, IMessageHandler<S, IMessage> {
+public class PacketIntegerFromServer implements IMessage, IMessageHandler<PacketIntegerFromServer, IMessage> {
     private int x;
     private int y;
     private int z;
@@ -68,7 +65,7 @@ public abstract class PacketIntegerFromServer<S extends PacketIntegerFromServer>
     }
 
     @Override
-    public IMessage onMessage(S message, MessageContext ctx) {
+    public IMessage onMessage(PacketIntegerFromServer message, MessageContext ctx) {
         TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof ClientCommandHandler)) {
             // @Todo better logging

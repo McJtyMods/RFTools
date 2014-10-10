@@ -34,6 +34,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetTransmitters.class, PacketGetTransmitters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetReceivers.class, PacketGetReceivers.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketServerCommand.class, PacketServerCommand.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketRequestIntegerFromServer.class, PacketRequestIntegerFromServer.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
@@ -42,5 +43,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketConnectedBlocksReady.class, PacketConnectedBlocksReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketTransmittersReady.class, PacketTransmittersReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReceiversReady.class, PacketReceiversReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketIntegerFromServer.class, PacketIntegerFromServer.class, nextID(), Side.CLIENT);
     }
 }

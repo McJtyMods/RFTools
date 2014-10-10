@@ -1,11 +1,16 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.network.Argument;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -34,7 +39,32 @@ public class TeleportBeamBlock extends Block {
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
         if (!world.isRemote) {
-            System.out.println("com.mcjty.rftools.blocks.teleporter.TeleportBeamBlock.onEntityCollidedWithBlock");
+            int yy = y-1;
+            Block b = world.getBlock(x, yy, z);
+            while (ModBlocks.teleportBeamBlock.equals(b)) {
+                yy--;
+                b = world.getBlock(x, yy, z);
+            }
+            if (ModBlocks.matterTransmitterBlock.equals(b)) {
+                MatterTransmitterTileEntity matterTransmitterTileEntity;
+                try {
+                    matterTransmitterTileEntity = (MatterTransmitterTileEntity) world.getTileEntity(x, yy, z);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+                TeleportDestination destination = matterTransmitterTileEntity.getTeleportDestination();
+                if (destination != null) {
+                    EntityPlayer player = (EntityPlayer) entity;
+                    player.addChatComponentMessage(new ChatComponentText("Start teleportation"));
+                    Coordinate c = destination.getCoordinate();
+                    player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
+
+                } else {
+                    System.out.println("Somehow destination is null!");
+                }
+
+            }
         }
     }
 

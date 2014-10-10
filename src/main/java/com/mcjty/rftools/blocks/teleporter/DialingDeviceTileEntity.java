@@ -22,10 +22,20 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
+    public static final String CMD_CHECKSTATUS = "checkStatus";
+    public static final String CLIENTCMD_STATUS = "status";
+    public static final int DIAL_RECEIVER_BLOCKED_MASK = 0x1;       // One value for blocked or not on receiver side
+    public static final int DIAL_TRANSMITTER_BLOCKED_MASK = 0x2;    // One value for blocked or not on transmitter side
+    public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;         // The destination is somehow invalid
+    public static final int DIAL_POWER_LOW_MASK = 0x8;                   // The transmitter itself is low on power
+    public static final int DIAL_ENERGY_MASK = 0x0f0;               // Sixteen energy levels for receiver (15 = sufficient, 0 = completely empty)
+    public static final int DIAL_MATTER_MASK = 0xf00;               // Sixteen matter levels for receiver (16 = sufficient, 0 = completely empty)
+    public static final int DIAL_OK = 0;                            // All is ok
 
     // For client.
     private List<TeleportDestination> receivers = null;
     private List<TransmitterInfo> transmitters = null;
+    private int receiverStatus = -1;
 
     public DialingDeviceTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -72,7 +82,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
                             if (tileEntity != null) {
                                 if (tileEntity instanceof MatterTransmitterTileEntity) {
                                     MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
-                                    transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName()));
+                                    transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
                                 }
                             }
                         }
@@ -89,6 +99,26 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     public List<TransmitterInfo> getTransmitters() {
         return transmitters;
+    }
+
+    public int getReceiverStatus() {
+        return receiverStatus;
+    }
+
+    public void setReceiverStatus(int receiverStatus) {
+        this.receiverStatus = receiverStatus;
+    }
+
+    private int checkStatus(Coordinate c) {
+        MatterReceiverTileEntity matterReceiverTileEntity;
+        try {
+            matterReceiverTileEntity = (MatterReceiverTileEntity) worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        return matterReceiverTileEntity.checkStatus();
     }
 
     @Override
@@ -126,6 +156,19 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+        Integer rc = super.executeWithResultInteger(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_CHECKSTATUS.equals(command)) {
+            Coordinate c = args.get("c").getCoordinate();
+            return checkStatus(c);
+        }
+        return null;
+    }
+
+    @Override
     public boolean execute(String command, List list) {
         boolean rc = super.execute(command, list);
         if (rc) {
@@ -136,6 +179,19 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
             storeTransmittersForClient((List<TransmitterInfo>) list);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean execute(String command, Integer result) {
+        boolean rc = super.execute(command, result);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_STATUS.equals(command)) {
+            setReceiverStatus(result);
             return true;
         }
         return false;

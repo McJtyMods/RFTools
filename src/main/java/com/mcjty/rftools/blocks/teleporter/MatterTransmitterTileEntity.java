@@ -3,6 +3,8 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.network.Argument;
+import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
@@ -14,6 +16,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_DIAL = "dial";
+    public static final String CLIENTCMD_DIAL = "dialResult";
+
+    // Client side
+    private int dialResult;     // This result comes from the server and is read on the client in the GUI.
+
+    // Server side: current dialing destination
+    private TeleportDestination teleportDestination = null;
 
     private String name = null;
 
@@ -34,6 +43,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         name = tagCompound.getString("tpName");
+        Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
+        if (c == null) {
+            teleportDestination = null;
+        } else {
+            int dim = tagCompound.getInteger("dim");
+            teleportDestination = new TeleportDestination(c, dim);
+        }
     }
 
     @Override
@@ -42,11 +58,80 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (name != null && !name.isEmpty()) {
             tagCompound.setString("tpName", name);
         }
+        if (teleportDestination != null) {
+            Coordinate c = teleportDestination.getCoordinate();
+            if (c != null) {
+                Coordinate.writeToNBT(tagCompound, "dest", c);
+                tagCompound.setInteger("dim", teleportDestination.getDimension());
+            }
+        }
     }
 
-    private void dial() {
-        worldObj.setBlock(xCoord, yCoord+1, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
-        worldObj.setBlock(xCoord, yCoord+2, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+    private int dial(Coordinate coordinate, int dimension) {
+        if (coordinate == null) {
+            clearBeam(1, 4);
+            teleportDestination = null;
+            return DialingDeviceTileEntity.DIAL_OK;
+        }
+
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        teleportDestination = destinations.getDestination(coordinate, dimension);
+        if (teleportDestination == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+        if (!makeBeam(1, 4, 2)) {
+            teleportDestination = null;
+            return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
+        }
+        return DialingDeviceTileEntity.DIAL_OK;
+    }
+
+    private void clearBeam(int dy1, int dy2) {
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = worldObj.getBlock(xCoord, yCoord+dy, zCoord);
+            if (ModBlocks.teleportBeamBlock.equals(b)) {
+                worldObj.setBlockToAir(xCoord, yCoord+dy, zCoord);
+            } else {
+                return;
+            }
+        }
+    }
+
+
+    private boolean makeBeam(int dy1, int dy2, int errory) {
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = worldObj.getBlock(xCoord, yCoord+dy, zCoord);
+            if ((!b.isAir(worldObj, xCoord, yCoord+dy, zCoord)) && !ModBlocks.teleportBeamBlock.equals(b)) {
+                if (dy <= errory) {
+                    // Everything below errory must be free.
+                    return false;
+                } else {
+                    // Everything higher then errory doesn't have to be free.
+                    break;
+                }
+            }
+        }
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = worldObj.getBlock(xCoord, yCoord+dy, zCoord);
+            if (b.isAir(worldObj, xCoord, yCoord+dy, zCoord) || ModBlocks.teleportBeamBlock.equals(b)) {
+                worldObj.setBlock(xCoord, yCoord+dy, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+            } else {
+                break;
+            }
+        }
+        return true;
+    }
+
+    public int getDialResult() {
+        return dialResult;
+    }
+
+    public void setDialResult(int dialResult) {
+        this.dialResult = dialResult;
+    }
+
+    public TeleportDestination getTeleportDestination() {
+        return teleportDestination;
     }
 
     @Override
@@ -58,11 +143,34 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (CMD_SETNAME.equals(command)) {
             setName(args.get("name").getString());
             return true;
-        } else if (CMD_DIAL.equals(command)) {
-            dial();
-            return true;
         }
         return false;
     }
 
+    @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+        Integer rc = super.executeWithResultInteger(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_DIAL.equals(command)) {
+            Coordinate c = args.get("c").getCoordinate();
+            int dim = args.get("dim").getInteger();
+            return dial(c, dim);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, Integer result) {
+        boolean rc = super.execute(command, result);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_DIAL.equals(command)) {
+            setDialResult(result);
+            return true;
+        }
+        return false;
+    }
 }

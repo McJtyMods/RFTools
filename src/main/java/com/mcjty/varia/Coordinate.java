@@ -67,11 +67,19 @@ public class Coordinate implements ByteBufConverter {
 
     public static Coordinate readFromNBT(NBTTagCompound tagCompound, String tagName) {
         int[] array = tagCompound.getIntArray(tagName);
-        return new Coordinate(array[0], array[1], array[2]);
+        if (array.length == 0) {
+            return null;
+        } else {
+            return new Coordinate(array[0], array[1], array[2]);
+        }
     }
 
     public static void writeToNBT(NBTTagCompound tagCompound, String tagName, Coordinate coordinate) {
-        tagCompound.setIntArray(tagName, new int[] { coordinate.getX(), coordinate.getY(), coordinate.getZ() });
+        if (coordinate == null) {
+            tagCompound.setIntArray(tagName, new int[] { });
+        } else {
+            tagCompound.setIntArray(tagName, new int[] { coordinate.getX(), coordinate.getY(), coordinate.getZ() });
+        }
     }
 
     public static NBTTagCompound writeToNBT(Coordinate coordinate) {

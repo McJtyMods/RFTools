@@ -42,7 +42,14 @@ public class AbstractServerCommand implements IMessage {
                         args.put(key, new Argument(key, buf.readInt()));
                         break;
                     case TYPE_COORDINATE:
-                        args.put(key, new Argument(key, new Coordinate(buf.readInt(), buf.readInt(), buf.readInt())));
+                        int cx = buf.readInt();
+                        int cy = buf.readInt();
+                        int cz = buf.readInt();
+                        if (cx == -1 && cy == -1 && cz == -1) {
+                            args.put(key, new Argument(key, (Coordinate) null));
+                        } else {
+                            args.put(key, new Argument(key, new Coordinate(cx, cy, cz)));
+                        }
                         break;
                     case TYPE_BOOLEAN:
                         args.put(key, new Argument(key, buf.readByte() == 1));
@@ -81,9 +88,15 @@ public class AbstractServerCommand implements IMessage {
                         break;
                     case TYPE_COORDINATE:
                         Coordinate c = arg.getCoordinate();
-                        buf.writeInt(c.getX());
-                        buf.writeInt(c.getY());
-                        buf.writeInt(c.getZ());
+                        if (c == null) {
+                            buf.writeInt(-1);
+                            buf.writeInt(-1);
+                            buf.writeInt(-1);
+                        } else {
+                            buf.writeInt(c.getX());
+                            buf.writeInt(c.getY());
+                            buf.writeInt(c.getZ());
+                        }
                         break;
                     case TYPE_BOOLEAN:
                         buf.writeByte(arg.getBoolean() ? 1 : 0);

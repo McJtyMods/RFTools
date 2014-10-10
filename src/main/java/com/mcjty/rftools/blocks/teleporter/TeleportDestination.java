@@ -14,7 +14,14 @@ public class TeleportDestination implements ByteBufConverter {
     private final Set<String> allowedPlayers;
 
     public TeleportDestination(ByteBuf buf) {
-        coordinate = new Coordinate(buf.readInt(), buf.readInt(), buf.readInt());
+        int cx = buf.readInt();
+        int cy = buf.readInt();
+        int cz = buf.readInt();
+        if (cx == -1 && cy == -1 && cz == -1) {
+            coordinate = null;
+        } else {
+            coordinate = new Coordinate(cx, cy, cz);
+        }
         dimension = buf.readInt();
         byte[] dst = new byte[buf.readInt()];
         buf.readBytes(dst);
@@ -34,11 +41,21 @@ public class TeleportDestination implements ByteBufConverter {
         this.allowedPlayers = new HashSet<String>();
     }
 
+    public boolean isValid() {
+        return coordinate != null;
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(coordinate.getX());
-        buf.writeInt(coordinate.getY());
-        buf.writeInt(coordinate.getZ());
+        if (coordinate == null) {
+            buf.writeInt(-1);
+            buf.writeInt(-1);
+            buf.writeInt(-1);
+        } else {
+            buf.writeInt(coordinate.getX());
+            buf.writeInt(coordinate.getY());
+            buf.writeInt(coordinate.getZ());
+        }
         buf.writeInt(dimension);
         buf.writeInt(getName().length());
         buf.writeBytes(getName().getBytes());
@@ -78,7 +95,7 @@ public class TeleportDestination implements ByteBufConverter {
         if (dimension != that.dimension) return false;
         if (allowedPlayers != null ? !allowedPlayers.equals(that.allowedPlayers) : that.allowedPlayers != null)
             return false;
-        if (!coordinate.equals(that.coordinate)) return false;
+        if (coordinate != null ? !coordinate.equals(that.coordinate) : that.coordinate != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
@@ -86,7 +103,7 @@ public class TeleportDestination implements ByteBufConverter {
 
     @Override
     public int hashCode() {
-        int result = coordinate.hashCode();
+        int result = coordinate != null ? coordinate.hashCode() : 0;
         result = 31 * result + dimension;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (allowedPlayers != null ? allowedPlayers.hashCode() : 0);

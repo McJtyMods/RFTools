@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
@@ -34,6 +35,18 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int checkStatus() {
+        Block block = worldObj.getBlock(xCoord, yCoord-1, zCoord);
+        if (!block.isAir(worldObj, xCoord, yCoord-1, zCoord)) {
+            return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
+        }
+        block = worldObj.getBlock(xCoord, yCoord-2, zCoord);
+        if (!block.isAir(worldObj, xCoord, yCoord-2, zCoord)) {
+            return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
+        }
+        return DialingDeviceTileEntity.DIAL_OK;
     }
 
     @Override
