@@ -38,7 +38,7 @@ public class TeleportBeamBlock extends Block {
 
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        if (!world.isRemote) {
+        if (!world.isRemote && entity instanceof EntityPlayer) {
             int yy = y-1;
             Block b = world.getBlock(x, yy, z);
             while (ModBlocks.teleportBeamBlock.equals(b)) {
@@ -53,17 +53,7 @@ public class TeleportBeamBlock extends Block {
                     e.printStackTrace();
                     return;
                 }
-                TeleportDestination destination = matterTransmitterTileEntity.getTeleportDestination();
-                if (destination != null) {
-                    EntityPlayer player = (EntityPlayer) entity;
-                    player.addChatComponentMessage(new ChatComponentText("Start teleportation"));
-                    Coordinate c = destination.getCoordinate();
-                    player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
-
-                } else {
-                    System.out.println("Somehow destination is null!");
-                }
-
+                matterTransmitterTileEntity.startTeleportation(entity);
             }
         }
     }

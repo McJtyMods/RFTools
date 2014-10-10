@@ -5,7 +5,11 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
 
 import java.util.Map;
 
@@ -25,6 +29,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private TeleportDestination teleportDestination = null;
 
     private String name = null;
+
+    // Server side: the player we're currently teleporting.
+    private EntityPlayer teleportingPlayer = null;
+    private int teleportTimer = 0;
 
     public MatterTransmitterTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -50,6 +58,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             int dim = tagCompound.getInteger("dim");
             teleportDestination = new TeleportDestination(c, dim);
         }
+        teleportTimer = tagCompound.getInteger("tpTimer");
+        String playerName = tagCompound.getString("tpPlayer");
+        if (playerName != null && !playerName.isEmpty()) {
+            teleportingPlayer = worldObj.getPlayerEntityByName(playerName);
+        } else {
+            teleportingPlayer = null;
+        }
     }
 
     @Override
@@ -64,6 +79,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 Coordinate.writeToNBT(tagCompound, "dest", c);
                 tagCompound.setInteger("dim", teleportDestination.getDimension());
             }
+        }
+        tagCompound.setInteger("tpTimer", teleportTimer);
+        if (teleportingPlayer != null) {
+            tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
         }
     }
 
@@ -132,6 +151,57 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     public TeleportDestination getTeleportDestination() {
         return teleportDestination;
+    }
+
+    @Override
+    protected void checkStateServer() {
+        super.checkStateServer();
+        if (teleportingPlayer != null) {
+            if (teleportDestination == null) {
+                teleportingPlayer.addChatComponentMessage(new ChatComponentText("The destination vanished! Aborting."));
+                teleportingPlayer = null;
+                return;
+            }
+
+
+
+            Vec3 playerloc = teleportingPlayer.getPosition(1.0f);
+            Vec3 thislock = Vec3.createVectorHelper(xCoord, yCoord, zCoord);
+            thislock.yCoord = playerloc.yCoord;
+            double dist = playerloc.squareDistanceTo(thislock);
+            if (dist > 1) {
+                teleportingPlayer.addChatComponentMessage(new ChatComponentText("Teleportation was interrupted!"));
+                teleportingPlayer = null;
+                return;
+            }
+
+            teleportTimer--;
+            if (teleportTimer <= 0) {
+                teleportingPlayer.addChatComponentMessage(new ChatComponentText("Whoosh!"));
+                Coordinate c = teleportDestination.getCoordinate();
+                teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()-2, c.getZ());
+                teleportingPlayer = null;
+            }
+        }
+    }
+
+    public void startTeleportation(Entity entity) {
+        if (teleportingPlayer != null) {
+            // Already teleporting
+            return;
+        }
+        if (!(entity instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer player = (EntityPlayer) entity;
+
+        if (teleportDestination != null) {
+            player.addChatComponentMessage(new ChatComponentText("Start teleportation..."));
+            teleportingPlayer = player;
+            teleportTimer = 40;
+        } else {
+            player.addChatComponentMessage(new ChatComponentText("Something is wrong with the destination!"));
+        }
     }
 
     @Override
