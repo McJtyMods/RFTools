@@ -67,13 +67,17 @@ public class PacketIntegerFromServer implements IMessage, IMessageHandler<Packet
     @Override
     public IMessage onMessage(PacketIntegerFromServer message, MessageContext ctx) {
         TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.x, message.y, message.z);
+        System.out.println("Minecraft.getMinecraft().theWorld.provider.dimensionId = " + Minecraft.getMinecraft().theWorld.provider.dimensionId);
+        System.out.println("te = " + te);
         if(!(te instanceof ClientCommandHandler)) {
             // @Todo better logging
             System.out.println("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
             return null;
         }
         ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-        clientCommandHandler.execute(message.command, message.result);
+        if (!clientCommandHandler.execute(message.command, message.result)) {
+            System.out.println("Command "+message.command+" was not handled!");
+        }
         return null;
     }
 

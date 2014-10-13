@@ -28,6 +28,29 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final String CMD_DIAL = "dial";
     public static final String CLIENTCMD_DIAL = "dialResult";
 
+    public static int horizontalDialerRange = 10;           // Horizontal range the dialing device can check for transmitters
+    public static int verticalDialerRange = 5;              // Vertical range the dialing device can check for transmitters
+
+    public static int rfPerDial = 1000;                     // RF Consumed by dialing device when making a new dial
+    public static int rfPerCheck = 5000;                    // RF Used to do a check on a receiver.
+    public static int rfDialedConnectionPerTick = 10;       // RF Consumed by transmitter when a dial is active and not doing anything else
+
+    // The following flags are used to calculate power usage for even starting a teleport. The rfStartTeleportBaseDim (cost of
+    // teleporting to another dimension) is also the cap of the local teleport which is calculated by doing
+    // rfStartTelelportBaseLocal + dist * rfStartTeleportDist
+    public static int rfStartTeleportBaseLocal = 5000;      // Base RF consumed by transmitter when starting a teleport in same dimension
+    public static int rfStartTeleportBaseDim = 100000;      // Base RF consumed by transmitter when starting a teleport to another dimension
+    public static int rfStartTeleportDist = 10;             // RF per distance unit when starting a teleport
+    public static int rfTeleportPerTick = 500;              // During the time the teleport is busy this RF is used per tick on the transmitter
+
+    public static int rfPerTeleportReceiver = 5000;         // On the receiver side we need this amount of power
+
+    // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
+    // the power usage above with regards to local/dimensional teleport.
+    public static int timeTeleportBaseLocal = 5;
+    public static int timeTeleportBaseDim = 100;
+    public static int timeTeleportDist = 10;                // Value in militicks (1000 == 1 tick)
+
     // Client side
     private int dialResult;     // This result comes from the server and is read on the client in the GUI.
 

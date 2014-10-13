@@ -3,10 +3,10 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final String CLIENTCMD_STATUS = "status";
     public static final int DIAL_RECEIVER_BLOCKED_MASK = 0x1;       // One value for blocked or not on receiver side
     public static final int DIAL_TRANSMITTER_BLOCKED_MASK = 0x2;    // One value for blocked or not on transmitter side
-    public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;         // The destination is somehow invalid
-    public static final int DIAL_POWER_LOW_MASK = 0x8;                   // The transmitter itself is low on power
+    public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;    // The destination is somehow invalid
+    public static final int DIAL_POWER_LOW_MASK = 0x8;              // The transmitter itself is low on power
     public static final int DIAL_ENERGY_MASK = 0x0f0;               // Sixteen energy levels for receiver (15 = sufficient, 0 = completely empty)
     public static final int DIAL_MATTER_MASK = 0xf00;               // Sixteen matter levels for receiver (16 = sufficient, 0 = completely empty)
     public static final int DIAL_OK = 0;                            // All is ok
@@ -68,13 +68,17 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         int x = xCoord;
         int y = yCoord;
         int z = zCoord;
+
+        int hrange = MatterTransmitterTileEntity.horizontalDialerRange;
+        int vrange = MatterTransmitterTileEntity.verticalDialerRange;
+
         List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
-        for (int dy = -3 ; dy <= 3 ; dy++) {
+        for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
             if (yy >= 0 && yy < worldObj.getActualHeight()) {
-                for (int dz = -10 ; dz <= 10 ; dz++) {
+                for (int dz = -hrange ; dz <= hrange; dz++) {
                     int zz = z + dz;
-                    for (int dx = -10 ; dx <= 10 ; dx++) {
+                    for (int dx = -hrange ; dx <= hrange ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             Coordinate c = new Coordinate(xx, yy, zz);
@@ -109,36 +113,17 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         this.receiverStatus = receiverStatus;
     }
 
-    private int checkStatus(Coordinate c) {
+    private int checkStatus(Coordinate c, int dim) {
         MatterReceiverTileEntity matterReceiverTileEntity;
         try {
-            matterReceiverTileEntity = (MatterReceiverTileEntity) worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            World w = DimensionManager.getProvider(dim).worldObj;
+            matterReceiverTileEntity = (MatterReceiverTileEntity) w.getTileEntity(c.getX(), c.getY(), c.getZ());
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
 
         return matterReceiverTileEntity.checkStatus();
-    }
-
-    @Override
-    public boolean execute(String command, Map<String,Argument> args) {
-        boolean rc = super.execute(command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_TELEPORT.equals(command)) {
-            Argument playerName = args.get("player");
-            Argument dest = args.get("dest");
-            Argument dim = args.get("dim");
-            EntityPlayer player = worldObj.getPlayerEntityByName(playerName.getString());
-            player.closeScreen();
-            player.addChatComponentMessage(new ChatComponentText("Begin to teleport player " + playerName.getString() + " to " + dest.getCoordinate()));
-            Coordinate c = dest.getCoordinate();
-            player.setPositionAndUpdate(c.getX(), c.getY(), c.getZ());
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -163,7 +148,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
         if (CMD_CHECKSTATUS.equals(command)) {
             Coordinate c = args.get("c").getCoordinate();
-            return checkStatus(c);
+            int dim = args.get("dim").getInteger();
+            return checkStatus(c, dim);
         }
         return null;
     }

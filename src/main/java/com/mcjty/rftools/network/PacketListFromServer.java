@@ -88,7 +88,9 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
             return null;
         }
         ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-        clientCommandHandler.execute(message.command, message.list);
+        if (!clientCommandHandler.execute(message.command, message.list)) {
+            System.out.println("Command "+message.command+" was not handled!");
+        }
         return null;
     }
 

@@ -47,7 +47,7 @@ public class GuiDialingDevice extends GuiContainer {
     private final DialingDeviceTileEntity dialingDeviceTileEntity;
 
     private MatterTransmitterTileEntity lastDialedTransmitter = null;
-    private MatterReceiverTileEntity lastCheckedReceiver = null;
+    private boolean lastCheckedReceiver = false;
 
     // A copy of the receivers we're currently showing.
     private List<TeleportDestination> receivers = null;
@@ -87,7 +87,7 @@ public class GuiDialingDevice extends GuiContainer {
             @Override
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
-                lastCheckedReceiver = null;
+                lastCheckedReceiver = false;
                 selectReceiverFromTransmitter();
             }
         });
@@ -95,12 +95,7 @@ public class GuiDialingDevice extends GuiContainer {
             @Override
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
-                lastCheckedReceiver = null;
-            }
-
-            @Override
-            public void doubleClick(Widget parent, int index) {
-                testTeleport(index);
+                lastCheckedReceiver = false;
             }
         });
 
@@ -143,7 +138,7 @@ public class GuiDialingDevice extends GuiContainer {
 
         listDirty = 0;
         lastDialedTransmitter = null;
-        lastCheckedReceiver = null;
+        lastCheckedReceiver = false;
 
         requestReceivers();
         requestTransmitters();
@@ -170,13 +165,7 @@ public class GuiDialingDevice extends GuiContainer {
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
                 DialingDeviceTileEntity.CLIENTCMD_STATUS, new Argument("c", c), new Argument("dim", destination.getDimension())));
 
-        try {
-            lastCheckedReceiver = (MatterReceiverTileEntity) mc.theWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-        } catch (Exception e) {
-            lastCheckedReceiver = null;   // Something went wrong
-            e.printStackTrace();
-        }
-
+        lastCheckedReceiver = true;
         listDirty = 0;
     }
 
@@ -249,18 +238,9 @@ public class GuiDialingDevice extends GuiContainer {
                 MatterTransmitterTileEntity.CLIENTCMD_DIAL, new Argument("c", (Coordinate) null), new Argument("dim", 0)));
         listDirty = 0;
 
-        lastCheckedReceiver = null;
+        lastCheckedReceiver = false;
         lastDialedTransmitter = null;
         setStatusMessage("Interrupted");
-    }
-
-    private void testTeleport(int index) {
-        TeleportDestination destination = receivers.get(index);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
-                DialingDeviceTileEntity.CMD_TELEPORT,
-                new Argument("dest", destination.getCoordinate()),
-                new Argument("dim", destination.getDimension()),
-                new Argument("player", mc.thePlayer.getDisplayName())));
     }
 
     private void requestReceivers() {
@@ -373,7 +353,7 @@ public class GuiDialingDevice extends GuiContainer {
         if (lastDialedTransmitter != null) {
             int dialResult = lastDialedTransmitter.getDialResult();
             showStatus(dialResult);
-        } else if (lastCheckedReceiver != null) {
+        } else if (lastCheckedReceiver) {
             int dialResult = dialingDeviceTileEntity.getReceiverStatus();
             showStatus(dialResult);
         } else {
