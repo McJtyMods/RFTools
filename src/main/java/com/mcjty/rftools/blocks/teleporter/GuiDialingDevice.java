@@ -86,7 +86,7 @@ public class GuiDialingDevice extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
 
-        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(60).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(76).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
@@ -99,7 +99,10 @@ public class GuiDialingDevice extends GuiContainer {
                 hilightSelectedTransmitter(index);
             }
         });
-        receiverList = new WidgetList(mc, this).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
+        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(transmitterList);
+        Panel transmitterPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(transmitterList).addChild(transmitterSlider);
+
+        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
@@ -111,6 +114,8 @@ public class GuiDialingDevice extends GuiContainer {
                 hilightSelectedReceiver(index);
             }
         });
+        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(receiverList);
+        Panel receiverPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(receiverList).addChild(receiverSlider);
 
         dialButton = new Button(mc, this).setText("Dial").setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver").
                 setDesiredHeight(14).
@@ -143,8 +148,8 @@ public class GuiDialingDevice extends GuiContainer {
         Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Status")).addChild(statusLabel).setDesiredHeight(16);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).
-                addChild(energyBar).addChild(new Label(mc, this).setText("Transmitters:")).addChild(transmitterList).
-                addChild(new Label(mc, this).setText("Receivers:")).addChild(receiverList).addChild(buttonPanel).addChild(statusPanel);
+                addChild(energyBar).addChild(transmitterPanel).
+                addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
         toplevel.setBounds(new Rectangle(k, l, DIALER_WIDTH, DIALER_HEIGHT));
         window = new com.mcjty.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
