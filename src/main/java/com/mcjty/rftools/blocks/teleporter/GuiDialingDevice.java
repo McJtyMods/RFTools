@@ -422,13 +422,34 @@ public class GuiDialingDevice extends GuiContainer {
         }
     }
 
+    private int calculateRFCost(int transmitterSelected, int receiverSelected) {
+        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
+        TeleportDestination teleportDestination = receivers.get(receiverSelected);
+
+        if (mc.theWorld.provider.dimensionId != teleportDestination.getDimension()) {
+            return MatterTransmitterTileEntity.rfStartTeleportBaseDim;
+        } else {
+            Coordinate c1 = transmitterInfo.getCoordinate();
+            Coordinate c2 = teleportDestination.getCoordinate();
+            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
+            int rf = MatterTransmitterTileEntity.rfStartTeleportBaseLocal + (int)(MatterTransmitterTileEntity.rfStartTeleportDist * dist);
+            if (rf > MatterTransmitterTileEntity.rfStartTeleportBaseDim) {
+                rf = MatterTransmitterTileEntity.rfStartTeleportBaseDim;
+            }
+            return rf;
+        }
+    }
+
     private void enableButtons() {
         int transmitterSelected = transmitterList.getSelected();
         int receiverSelected = receiverList.getSelected();
         if (transmitterSelected != -1 && receiverSelected != -1) {
             dialButton.setEnabled(true);
+            int cost = calculateRFCost(transmitterSelected, receiverSelected);
+            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver.", "Cost: "+cost+"RF");
         } else {
             dialButton.setEnabled(false);
+            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver");
         }
         if (transmitterSelected != -1) {
             TeleportDestination destination = getSelectedTransmitterDestination();
