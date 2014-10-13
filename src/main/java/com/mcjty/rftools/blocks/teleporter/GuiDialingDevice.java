@@ -19,6 +19,7 @@ import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -87,6 +88,7 @@ public class GuiDialingDevice extends GuiContainer {
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
                 lastCheckedReceiver = null;
+                selectReceiverFromTransmitter();
             }
         });
         receiverList = new WidgetList(mc, this).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
@@ -198,6 +200,22 @@ public class GuiDialingDevice extends GuiContainer {
         setStatusMessage("Dial ok!");
     }
 
+    private void selectReceiverFromTransmitter() {
+        receiverList.setSelected(-1);
+        TeleportDestination destination = getSelectedTransmitterDestination();
+        if (destination == null) {
+            return;
+        }
+        int i = 0;
+        for (TeleportDestination receiver : receivers) {
+            if (receiver.getDimension() == destination.getDimension() && receiver.getCoordinate().equals(destination.getCoordinate())) {
+                receiverList.setSelected(i);
+                return;
+            }
+            i++;
+        }
+    }
+
     private void dial() {
         int transmitterSelected = transmitterList.getSelected();
         int receiverSelected = receiverList.getSelected();
@@ -268,10 +286,27 @@ public class GuiDialingDevice extends GuiContainer {
         for (TeleportDestination destination : receivers) {
             Coordinate coordinate = destination.getCoordinate();
 
+            String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(120));
+            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
+            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(60));
             receiverList.addChild(panel);
+        }
+    }
+
+    private TeleportDestination getSelectedTransmitterDestination() {
+        int transmitterSelected = transmitterList.getSelected();
+        if (transmitterSelected == -1) {
+            return null;
+        }
+        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
+        TeleportDestination destination = transmitterInfo.getTeleportDestination();
+        if (destination.isValid()) {
+            return destination;
+        } else {
+            return null;
         }
     }
 
@@ -370,7 +405,8 @@ public class GuiDialingDevice extends GuiContainer {
             dialButton.setEnabled(false);
         }
         if (transmitterSelected != -1) {
-            interruptButton.setEnabled(true);
+            TeleportDestination destination = getSelectedTransmitterDestination();
+            interruptButton.setEnabled(destination != null);
         } else {
             interruptButton.setEnabled(false);
         }
