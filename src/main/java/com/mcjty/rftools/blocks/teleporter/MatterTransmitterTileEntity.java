@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldProvider;
@@ -168,12 +169,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 return;
             }
 
-            // @@@ TODO: Check here if the player is still in the teleportation beam. The proper way.
-            Vec3 playerloc = teleportingPlayer.getPosition(1.0f);
-            Vec3 thislock = Vec3.createVectorHelper(xCoord, yCoord, zCoord);
-            thislock.yCoord = playerloc.yCoord;
-            double dist = playerloc.squareDistanceTo(thislock);
-            if (dist > 1) {
+            AxisAlignedBB playerBB = teleportingPlayer.boundingBox;
+            AxisAlignedBB beamBB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord+2, zCoord+1);
+            if (!playerBB.intersectsWith(beamBB)) {
                 teleportingPlayer.addChatComponentMessage(new ChatComponentText("Teleportation was interrupted!"));
                 teleportingPlayer = null;
                 return;
