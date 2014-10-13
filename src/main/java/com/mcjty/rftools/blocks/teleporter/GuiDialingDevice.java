@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.EmptyContainer;
-import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
@@ -13,12 +12,10 @@ import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.storagemonitor.InvBlockInfo;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
-import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.*;
@@ -49,7 +46,7 @@ public class GuiDialingDevice extends GuiContainer {
     private Label statusLabel;
     private final DialingDeviceTileEntity dialingDeviceTileEntity;
 
-    private MatterTransmitterTileEntity lastDialedTransmitter = null;
+    private boolean lastDialedTransmitter = false;
     private boolean lastCheckedReceiver = false;
 
     // A copy of the receivers we're currently showing.
@@ -89,8 +86,7 @@ public class GuiDialingDevice extends GuiContainer {
         transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(76).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
-                lastDialedTransmitter = null;
-                lastCheckedReceiver = false;
+                clearSelectedStatus();
                 selectReceiverFromTransmitter();
             }
 
@@ -105,8 +101,7 @@ public class GuiDialingDevice extends GuiContainer {
         receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
-                lastDialedTransmitter = null;
-                lastCheckedReceiver = false;
+                clearSelectedStatus();
             }
 
             @Override
@@ -155,11 +150,15 @@ public class GuiDialingDevice extends GuiContainer {
         Keyboard.enableRepeatEvents(true);
 
         listDirty = 0;
-        lastDialedTransmitter = null;
-        lastCheckedReceiver = false;
+        clearSelectedStatus();
 
         requestReceivers();
         requestTransmitters();
+    }
+
+    private void clearSelectedStatus() {
+        lastDialedTransmitter = false;
+        lastCheckedReceiver = false;
     }
 
     private void hilightSelectedTransmitter(int index) {
@@ -217,7 +216,7 @@ public class GuiDialingDevice extends GuiContainer {
 
     private void showStatus(int dialResult) {
         if ((dialResult & DialingDeviceTileEntity.DIAL_POWER_LOW_MASK) != 0) {
-            setStatusError("Transmitter power low!");
+            setStatusError("Dialing device power low!");
             return;
         }
         if ((dialResult & DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK) != 0) {
@@ -259,17 +258,13 @@ public class GuiDialingDevice extends GuiContainer {
         }
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         TeleportDestination destination = receivers.get(receiverSelected);
-        Coordinate c = transmitterInfo.getCoordinate();
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(c.getX(), c.getY(), c.getZ(), MatterTransmitterTileEntity.CMD_DIAL,
-                MatterTransmitterTileEntity.CLIENTCMD_DIAL, new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
-        try {
-            lastDialedTransmitter = (MatterTransmitterTileEntity) mc.theWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-        } catch (Exception e) {
-            lastDialedTransmitter = null;   // Something went wrong
-            e.printStackTrace();
-        }
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+                DialingDeviceTileEntity.CLIENTCMD_DIAL,
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
+                new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
+        lastDialedTransmitter = true;
         listDirty = 0;
     }
 
@@ -279,13 +274,13 @@ public class GuiDialingDevice extends GuiContainer {
             return; // Shouldn't happen. Just to be sure.
         }
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
-        Coordinate c = transmitterInfo.getCoordinate();
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(c.getX(), c.getY(), c.getZ(), MatterTransmitterTileEntity.CMD_DIAL,
-                MatterTransmitterTileEntity.CLIENTCMD_DIAL, new Argument("c", (Coordinate) null), new Argument("dim", 0)));
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+                DialingDeviceTileEntity.CLIENTCMD_DIAL,
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
+                new Argument("c", (Coordinate) null), new Argument("dim", 0)));
         listDirty = 0;
 
-        lastCheckedReceiver = false;
-        lastDialedTransmitter = null;
+        clearSelectedStatus();
         setStatusMessage("Interrupted");
     }
 
@@ -396,8 +391,8 @@ public class GuiDialingDevice extends GuiContainer {
         populateReceivers();
         populateTransmitters();
 
-        if (lastDialedTransmitter != null) {
-            int dialResult = lastDialedTransmitter.getDialResult();
+        if (lastDialedTransmitter) {
+            int dialResult = dialingDeviceTileEntity.getDialResult();
             showStatus(dialResult);
         } else if (lastCheckedReceiver) {
             int dialResult = dialingDeviceTileEntity.getReceiverStatus();
@@ -422,22 +417,11 @@ public class GuiDialingDevice extends GuiContainer {
         }
     }
 
-    private int calculateRFCost(int transmitterSelected, int receiverSelected) {
+    private String calculateDistance(int transmitterSelected, int receiverSelected) {
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         TeleportDestination teleportDestination = receivers.get(receiverSelected);
 
-        if (mc.theWorld.provider.dimensionId != teleportDestination.getDimension()) {
-            return MatterTransmitterTileEntity.rfStartTeleportBaseDim;
-        } else {
-            Coordinate c1 = transmitterInfo.getCoordinate();
-            Coordinate c2 = teleportDestination.getCoordinate();
-            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int rf = MatterTransmitterTileEntity.rfStartTeleportBaseLocal + (int)(MatterTransmitterTileEntity.rfStartTeleportDist * dist);
-            if (rf > MatterTransmitterTileEntity.rfStartTeleportBaseDim) {
-                rf = MatterTransmitterTileEntity.rfStartTeleportBaseDim;
-            }
-            return rf;
-        }
+        return DialingDeviceTileEntity.calculateDistance(mc.theWorld, transmitterInfo, teleportDestination);
     }
 
     private void enableButtons() {
@@ -445,8 +429,8 @@ public class GuiDialingDevice extends GuiContainer {
         int receiverSelected = receiverList.getSelected();
         if (transmitterSelected != -1 && receiverSelected != -1) {
             dialButton.setEnabled(true);
-            int cost = calculateRFCost(transmitterSelected, receiverSelected);
-            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver.", "Cost: "+cost+"RF");
+            String distance = calculateDistance(transmitterSelected, receiverSelected);
+            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver.", "Distance: "+distance);
         } else {
             dialButton.setEnabled(false);
             dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver");

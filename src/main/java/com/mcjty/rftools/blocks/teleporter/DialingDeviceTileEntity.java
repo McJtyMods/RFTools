@@ -1,12 +1,16 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
+    public static final String CMD_DIAL = "dial";
+    public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CMD_CHECKSTATUS = "checkStatus";
@@ -27,7 +33,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_RECEIVER_BLOCKED_MASK = 0x1;       // One value for blocked or not on receiver side
     public static final int DIAL_TRANSMITTER_BLOCKED_MASK = 0x2;    // One value for blocked or not on transmitter side
     public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;    // The destination is somehow invalid
-    public static final int DIAL_POWER_LOW_MASK = 0x8;              // The transmitter itself is low on power
+    public static final int DIAL_POWER_LOW_MASK = 0x8;              // The dialer itself is low on power
     public static final int DIAL_ENERGY_MASK = 0x0f0;               // Sixteen energy levels for receiver (15 = sufficient, 0 = completely empty)
     public static final int DIAL_MATTER_MASK = 0xf00;               // Sixteen matter levels for receiver (16 = sufficient, 0 = completely empty)
     public static final int DIAL_OK = 0;                            // All is ok
@@ -37,8 +43,51 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     private List<TransmitterInfo> transmitters = null;
     private int receiverStatus = -1;
 
+    // Client side
+    private int dialResult;     // This result comes from the server and is read on the client in the GUI.
+
     public DialingDeviceTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
+    }
+
+    /**
+     * Calculate the cost of doing a dial between a transmitter and a destination.
+     * @param world
+     * @param transmitterInfo
+     * @param teleportDestination
+     * @return
+     */
+    public static int calculateRFCost(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
+        if (world.provider.dimensionId != teleportDestination.getDimension()) {
+            return MatterTransmitterTileEntity.rfStartTeleportBaseDim;
+        } else {
+            Coordinate c1 = transmitterInfo.getCoordinate();
+            Coordinate c2 = teleportDestination.getCoordinate();
+            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
+            int rf = MatterTransmitterTileEntity.rfStartTeleportBaseLocal + (int)(MatterTransmitterTileEntity.rfStartTeleportDist * dist);
+            if (rf > MatterTransmitterTileEntity.rfStartTeleportBaseDim) {
+                rf = MatterTransmitterTileEntity.rfStartTeleportBaseDim;
+            }
+            return rf;
+        }
+    }
+
+    /**
+     * Calculate the distance (in string form) between a transmitter and receiver.
+     * @param world
+     * @param transmitterInfo
+     * @param teleportDestination
+     * @return the distance or else 'dimension warp' in case it is another dimension.
+     */
+    public static String calculateDistance(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
+        if (world.provider.dimensionId != teleportDestination.getDimension()) {
+            return "dimension warp";
+        } else {
+            Coordinate c1 = transmitterInfo.getCoordinate();
+            Coordinate c2 = teleportDestination.getCoordinate();
+            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
+            return Integer.toString((int) dist);
+        }
     }
 
     @Override
@@ -113,6 +162,80 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         this.receiverStatus = receiverStatus;
     }
 
+    private void clearBeam(World world, int dy1, int dy2) {
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
+            if (ModBlocks.teleportBeamBlock.equals(b)) {
+                world.setBlockToAir(xCoord, yCoord+dy, zCoord);
+            } else {
+                return;
+            }
+        }
+    }
+
+
+    private boolean makeBeam(World world, int dy1, int dy2, int errory) {
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
+            if ((!b.isAir(world, xCoord, yCoord+dy, zCoord)) && !ModBlocks.teleportBeamBlock.equals(b)) {
+                if (dy <= errory) {
+                    // Everything below errory must be free.
+                    return false;
+                } else {
+                    // Everything higher then errory doesn't have to be free.
+                    break;
+                }
+            }
+        }
+        for (int dy = dy1 ; dy <= dy2 ; dy++) {
+            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
+            if (b.isAir(world, xCoord, yCoord+dy, zCoord) || ModBlocks.teleportBeamBlock.equals(b)) {
+                world.setBlock(xCoord, yCoord+dy, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+            } else {
+                break;
+            }
+        }
+        return true;
+    }
+
+    public int getDialResult() {
+        return dialResult;
+    }
+
+    public void setDialResult(int dialResult) {
+        this.dialResult = dialResult;
+    }
+
+    private int dial(Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
+        World transWorld = DimensionManager.getProvider(transDim).worldObj;
+        MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
+        if (coordinate == null) {
+            clearBeam(transWorld, 1, 4);
+            transmitterTileEntity.setTeleportDestination(null);
+            return DialingDeviceTileEntity.DIAL_OK;
+        }
+
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
+        if (teleportDestination == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+
+        int cost = MatterTransmitterTileEntity.rfPerDial;
+        if (getEnergyStored(ForgeDirection.DOWN) < cost) {
+            return DialingDeviceTileEntity.DIAL_POWER_LOW_MASK;
+        }
+
+        if (!makeBeam(transWorld, 1, 4, 2)) {
+            return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
+        }
+
+        extractEnergy(ForgeDirection.DOWN, cost, false);
+        transmitterTileEntity.setTeleportDestination(teleportDestination);
+
+        return DialingDeviceTileEntity.DIAL_OK;
+    }
+
     private int checkStatus(Coordinate c, int dim) {
         MatterReceiverTileEntity matterReceiverTileEntity;
         try {
@@ -150,6 +273,17 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             Coordinate c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
             return checkStatus(c, dim);
+        } else if (CMD_DIAL.equals(command)) {
+            Coordinate transmitter = args.get("trans").getCoordinate();
+            int transDim = args.get("transDim").getInteger();
+            Coordinate c = args.get("c").getCoordinate();
+            int dim = args.get("dim").getInteger();
+            System.out.println("transmitter = " + transmitter);
+            System.out.println("transDim = " + transDim);
+            System.out.println("c = " + c);
+            System.out.println("dim = " + dim);
+
+            return dial(transmitter, transDim, c, dim);
         }
         return null;
     }
@@ -178,6 +312,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
         if (CLIENTCMD_STATUS.equals(command)) {
             setReceiverStatus(result);
+            return true;
+        } else if (CLIENTCMD_DIAL.equals(command)) {
+            setDialResult(result);
             return true;
         }
         return false;
