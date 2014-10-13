@@ -45,7 +45,7 @@ public class MatterReceiverBlock extends GenericContainerBlock {
             return rc;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        destinations.addDestination(new Coordinate(x, y, z), 0);
+        destinations.addDestination(new Coordinate(x, y, z), world.provider.dimensionId);
         destinations.save(world);
         return rc;
     }

@@ -5,11 +5,16 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.WorldProvider;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.Map;
 
@@ -163,8 +168,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 return;
             }
 
-
-
+            // @@@ TODO: Check here if the player is still in the teleportation beam. The proper way.
             Vec3 playerloc = teleportingPlayer.getPosition(1.0f);
             Vec3 thislock = Vec3.createVectorHelper(xCoord, yCoord, zCoord);
             thislock.yCoord = playerloc.yCoord;
@@ -177,6 +181,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
             teleportTimer--;
             if (teleportTimer <= 0) {
+                int currentId = teleportingPlayer.worldObj.provider.dimensionId;
+                if (currentId != teleportDestination.getDimension()) {
+                    MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());
+                }
                 teleportingPlayer.addChatComponentMessage(new ChatComponentText("Whoosh!"));
                 Coordinate c = teleportDestination.getCoordinate();
                 teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()-2, c.getZ());

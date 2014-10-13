@@ -28,7 +28,7 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     public void setName(String name) {
         this.name = name;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination destination = destinations.getDestination(new Coordinate(xCoord, yCoord, zCoord), 0);
+        TeleportDestination destination = destinations.getDestination(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
         if (destination != null) {
             destination.setName(name);
             destinations.save(worldObj);
