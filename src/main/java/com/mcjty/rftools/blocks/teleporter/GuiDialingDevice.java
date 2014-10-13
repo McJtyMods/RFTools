@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.EmptyContainer;
+import com.mcjty.entity.SyncedValueList;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
@@ -12,13 +13,15 @@ import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.storagemonitor.InvBlockInfo;
+import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -80,15 +83,20 @@ public class GuiDialingDevice extends GuiContainer {
         int l = (this.height - DIALER_HEIGHT) / 2;
 
         int maxEnergyStored = dialingDeviceTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
 
-        transmitterList = new WidgetList(mc, this).setFilledRectThickness(1).setDesiredHeight(60).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(60).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
                 lastCheckedReceiver = false;
                 selectReceiverFromTransmitter();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedTransmitter(index);
             }
         });
         receiverList = new WidgetList(mc, this).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
@@ -96,6 +104,11 @@ public class GuiDialingDevice extends GuiContainer {
             public void select(Widget parent, int index) {
                 lastDialedTransmitter = null;
                 lastCheckedReceiver = false;
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedReceiver(index);
             }
         });
 
@@ -142,6 +155,34 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
+    }
+
+    private void hilightSelectedTransmitter(int index) {
+        if (index == -1) {
+            return;
+        }
+        TransmitterInfo transmitterInfo = transmitters.get(index);
+        Coordinate c = transmitterInfo.getCoordinate();
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
+        mc.getMinecraft().thePlayer.closeScreen();
+    }
+
+    private void hilightSelectedReceiver(int index) {
+        if (index == -1) {
+            return;
+        }
+        TeleportDestination destination = receivers.get(index);
+
+        Coordinate c = destination.getCoordinate();
+        double distance = Vec3.createVectorHelper(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPosition(1.0f));
+
+        if (destination.getDimension() != mc.theWorld.provider.dimensionId || distance > 150) {
+            mc.thePlayer.addChatComponentMessage(new ChatComponentText("Receiver is too far to hilight!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            mc.getMinecraft().thePlayer.closeScreen();
+            return;
+        }
+        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
+        mc.getMinecraft().thePlayer.closeScreen();
     }
 
     private void setStatusError(String message) {
