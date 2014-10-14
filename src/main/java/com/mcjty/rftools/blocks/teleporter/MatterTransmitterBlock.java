@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -31,6 +32,11 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
         return RFTools.GUI_MATTER_TRANSMITTER;
     }
 
+//    @Override
+//    public int getRenderType() {
+//        return ModRenderers.RENDERID_TRANSMITTER;
+//    }
+//
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.

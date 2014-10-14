@@ -51,28 +51,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     /**
-     * Calculate the cost of doing a dial between a transmitter and a destination.
-     * @param world
-     * @param transmitterInfo
-     * @param teleportDestination
-     * @return
-     */
-    public static int calculateRFCost(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
-        if (world.provider.dimensionId != teleportDestination.getDimension()) {
-            return MatterTransmitterTileEntity.rfStartTeleportBaseDim;
-        } else {
-            Coordinate c1 = transmitterInfo.getCoordinate();
-            Coordinate c2 = teleportDestination.getCoordinate();
-            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int rf = MatterTransmitterTileEntity.rfStartTeleportBaseLocal + (int)(MatterTransmitterTileEntity.rfStartTeleportDist * dist);
-            if (rf > MatterTransmitterTileEntity.rfStartTeleportBaseDim) {
-                rf = MatterTransmitterTileEntity.rfStartTeleportBaseDim;
-            }
-            return rf;
-        }
-    }
-
-    /**
      * Calculate the distance (in string form) between a transmitter and receiver.
      * @param world
      * @param transmitterInfo

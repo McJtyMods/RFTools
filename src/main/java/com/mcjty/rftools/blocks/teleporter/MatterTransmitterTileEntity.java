@@ -10,6 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 import java.util.Map;
 
@@ -63,6 +65,28 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public void setName(String name) {
         this.name = name;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    /**
+     * Calculate the cost of doing a dial between a transmitter and a destination.
+     * @param world
+     * @param transmitterInfo
+     * @param teleportDestination
+     * @return
+     */
+    public static int calculateRFCost(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
+        if (world.provider.dimensionId != teleportDestination.getDimension()) {
+            return rfStartTeleportBaseDim;
+        } else {
+            Coordinate c1 = transmitterInfo.getCoordinate();
+            Coordinate c2 = teleportDestination.getCoordinate();
+            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
+            int rf = rfStartTeleportBaseLocal + (int)(rfStartTeleportDist * dist);
+            if (rf > rfStartTeleportBaseDim) {
+                rf = rfStartTeleportBaseDim;
+            }
+            return rf;
+        }
     }
 
     @Override
