@@ -140,11 +140,11 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         this.receiverStatus = receiverStatus;
     }
 
-    private void clearBeam(World world, int dy1, int dy2) {
+    private void clearBeam(Coordinate c, World world, int dy1, int dy2) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
+            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
             if (ModBlocks.teleportBeamBlock.equals(b)) {
-                world.setBlockToAir(xCoord, yCoord+dy, zCoord);
+                world.setBlockToAir(c.getX(), c.getY()+dy, c.getZ());
             } else {
                 return;
             }
@@ -152,9 +152,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
 
-    private boolean makeBeam(World world, int dy1, int dy2, int errory) {
+    private boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
+            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
             if ((!b.isAir(world, xCoord, yCoord+dy, zCoord)) && !ModBlocks.teleportBeamBlock.equals(b)) {
                 if (dy <= errory) {
                     // Everything below errory must be free.
@@ -166,9 +166,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             }
         }
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(xCoord, yCoord+dy, zCoord);
-            if (b.isAir(world, xCoord, yCoord+dy, zCoord) || ModBlocks.teleportBeamBlock.equals(b)) {
-                world.setBlock(xCoord, yCoord+dy, zCoord, ModBlocks.teleportBeamBlock, 0, 2);
+            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
+            if (b.isAir(world, c.getX(), c.getY()+dy, c.getZ()) || ModBlocks.teleportBeamBlock.equals(b)) {
+                world.setBlock(c.getX(), c.getY()+dy, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
             } else {
                 break;
             }
@@ -188,7 +188,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         World transWorld = DimensionManager.getProvider(transDim).worldObj;
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
         if (coordinate == null) {
-            clearBeam(transWorld, 1, 4);
+            clearBeam(transmitter, transWorld, 1, 4);
             transmitterTileEntity.setTeleportDestination(null);
             return DialingDeviceTileEntity.DIAL_OK;
         }
@@ -204,7 +204,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_POWER_LOW_MASK;
         }
 
-        if (!makeBeam(transWorld, 1, 4, 2)) {
+        if (!makeBeam(transmitter, transWorld, 1, 4, 2)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
         }
 
@@ -223,6 +223,12 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             e.printStackTrace();
             return -1;
         }
+
+        int cost = MatterTransmitterTileEntity.rfPerCheck;
+        if (getEnergyStored(ForgeDirection.DOWN) < cost) {
+            return DialingDeviceTileEntity.DIAL_POWER_LOW_MASK;
+        }
+        extractEnergy(ForgeDirection.DOWN, cost, false);
 
         return matterReceiverTileEntity.checkStatus();
     }
@@ -256,10 +262,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             int transDim = args.get("transDim").getInteger();
             Coordinate c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
-            System.out.println("transmitter = " + transmitter);
-            System.out.println("transDim = " + transDim);
-            System.out.println("c = " + c);
-            System.out.println("dim = " + dim);
 
             return dial(transmitter, transDim, c, dim);
         }
