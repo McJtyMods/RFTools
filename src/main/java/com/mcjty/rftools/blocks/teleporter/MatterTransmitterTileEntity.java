@@ -7,17 +7,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
 public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity {
 
-    public static final int MAXENERGY = 1000000;
+    public static final int MAXENERGY = 100000;
     public static final int RECEIVEPERTICK = 1000;
 
     public static final String CMD_SETNAME = "setName";
@@ -53,6 +54,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     // Server side: the player we're currently teleporting.
     private EntityPlayer teleportingPlayer = null;
     private int teleportTimer = 0;
+    private int cooldownTimer = 0;
+    private int totalTicks;
+    private int goodTicks;
+    private int badTicks;
 
     public MatterTransmitterTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -70,15 +75,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     /**
      * Calculate the cost of doing a dial between a transmitter and a destination.
      * @param world
-     * @param transmitterInfo
+     * @param c1 the start coordinate
      * @param teleportDestination
      * @return
      */
-    public static int calculateRFCost(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
+    public static int calculateRFCost(World world, Coordinate c1, TeleportDestination teleportDestination) {
         if (world.provider.dimensionId != teleportDestination.getDimension()) {
             return rfStartTeleportBaseDim;
         } else {
-            Coordinate c1 = transmitterInfo.getCoordinate();
             Coordinate c2 = teleportDestination.getCoordinate();
             double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
             int rf = rfStartTeleportBaseLocal + (int)(rfStartTeleportDist * dist);
@@ -86,6 +90,27 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 rf = rfStartTeleportBaseDim;
             }
             return rf;
+        }
+    }
+
+    /**
+     * Calculate the time in ticks of doing a dial between a transmitter and a destination.
+     * @param world
+     * @param c1 the start coordinate
+     * @param teleportDestination
+     * @return
+     */
+    public static int calculateTime(World world, Coordinate c1, TeleportDestination teleportDestination) {
+        if (world.provider.dimensionId != teleportDestination.getDimension()) {
+            return timeTeleportBaseDim;
+        } else {
+            Coordinate c2 = teleportDestination.getCoordinate();
+            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
+            int time = timeTeleportBaseLocal + (int)(timeTeleportDist * dist / 1000);
+            if (time > timeTeleportBaseDim) {
+                time = timeTeleportBaseDim;
+            }
+            return time;
         }
     }
 
@@ -101,6 +126,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             teleportDestination = new TeleportDestination(c, dim);
         }
         teleportTimer = tagCompound.getInteger("tpTimer");
+        cooldownTimer = tagCompound.getInteger("cooldownTimer");
+        totalTicks = tagCompound.getInteger("totalTicks");
+        goodTicks = tagCompound.getInteger("goodTicks");
+        badTicks = tagCompound.getInteger("badTicks");
         String playerName = tagCompound.getString("tpPlayer");
         if (playerName != null && !playerName.isEmpty()) {
             teleportingPlayer = worldObj.getPlayerEntityByName(playerName);
@@ -123,6 +152,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             }
         }
         tagCompound.setInteger("tpTimer", teleportTimer);
+        tagCompound.setInteger("cooldownTimer", cooldownTimer);
+        tagCompound.setInteger("totalTicks", totalTicks);
+        tagCompound.setInteger("goodTicks", goodTicks);
+        tagCompound.setInteger("badTicks", badTicks);
         if (teleportingPlayer != null) {
             tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
         }
@@ -137,12 +170,27 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         this.teleportDestination = teleportDestination;
     }
 
+    private void interruptWithBadEffect() {
+        teleportingPlayer.addChatComponentMessage(new ChatComponentText("Power failure during transit!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+        teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
+        cooldownTimer = 1000;
+        teleportingPlayer = null;
+    }
+
+
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
+
+        cooldownTimer--;
+        if (cooldownTimer < 0) {
+            cooldownTimer = 0;
+        }
+
         if (teleportingPlayer != null) {
             if (teleportDestination == null) {
                 teleportingPlayer.addChatComponentMessage(new ChatComponentText("The destination vanished! Aborting."));
+                cooldownTimer = 80;
                 teleportingPlayer = null;
                 return;
             }
@@ -151,9 +199,24 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             AxisAlignedBB beamBB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord+2, zCoord+1);
             if (!playerBB.intersectsWith(beamBB)) {
                 teleportingPlayer.addChatComponentMessage(new ChatComponentText("Teleportation was interrupted!"));
+                cooldownTimer = 80;
                 teleportingPlayer = null;
                 return;
             }
+
+            if (getEnergyStored(ForgeDirection.DOWN) < rfTeleportPerTick) {
+                // Not enough energy. This is a bad tick.
+                badTicks++;
+                if (badTicks > (totalTicks / 2)) {
+                    // Too many bad ticks. Total failure!
+                    interruptWithBadEffect();
+                }
+                return;
+            }
+
+            // We have enough energy so this is a good tick.
+            extractEnergy(ForgeDirection.DOWN, rfTeleportPerTick, false);
+            goodTicks++;
 
             teleportTimer--;
             if (teleportTimer <= 0) {
@@ -170,6 +233,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     public void startTeleportation(Entity entity) {
+        if (cooldownTimer > 0) {
+            // In cooldown. We can't do teleport right now.
+            return;
+        }
         if (teleportingPlayer != null) {
             // Already teleporting
             return;
@@ -180,9 +247,22 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         EntityPlayer player = (EntityPlayer) entity;
 
         if (teleportDestination != null) {
+            Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
+            int cost = calculateRFCost(worldObj, cthis, teleportDestination);
+            if (getEnergyStored(ForgeDirection.DOWN) < cost) {
+                player.addChatComponentMessage(new ChatComponentText("Not enough power to start the teleport!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                cooldownTimer = 80;
+                return;
+            }
+            extractEnergy(ForgeDirection.DOWN, cost, false);
+
             player.addChatComponentMessage(new ChatComponentText("Start teleportation..."));
             teleportingPlayer = player;
-            teleportTimer = 40;
+            teleportTimer = calculateTime(worldObj, cthis, teleportDestination);
+            totalTicks = teleportTimer;
+            goodTicks = 0;
+            badTicks = 0;
+            System.out.println("teleportTimer = " + teleportTimer);
         } else {
             player.addChatComponentMessage(new ChatComponentText("Something is wrong with the destination!"));
         }

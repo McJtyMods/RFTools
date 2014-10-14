@@ -38,19 +38,14 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public int checkStatus() {
-        System.out.println("1");
         Block block = worldObj.getBlock(xCoord, yCoord-1, zCoord);
         if (!block.isAir(worldObj, xCoord, yCoord-1, zCoord)) {
-            System.out.println("2");
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
-        System.out.println("3");
         block = worldObj.getBlock(xCoord, yCoord-2, zCoord);
         if (!block.isAir(worldObj, xCoord, yCoord-2, zCoord)) {
-            System.out.println("4");
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
-        System.out.println("5");
         return DialingDeviceTileEntity.DIAL_OK;
     }
 
