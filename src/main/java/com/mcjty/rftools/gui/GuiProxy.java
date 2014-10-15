@@ -16,6 +16,8 @@ import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import com.mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
+import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +29,7 @@ import net.minecraft.world.World;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ) {
+        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ) {
             return null;
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -68,7 +70,12 @@ public class GuiProxy implements IGuiHandler {
         if (guiid == RFTools.GUI_LIST_BLOCKS) {
             NetworkMonitorItem item = getNetworkMonitorItem(entityPlayer);
             if (item != null) {
-                return new GuiNetworkMonitor(item);
+                return new GuiNetworkMonitor();
+            }
+        } else if (guiid == RFTools.GUI_TELEPORTPROBE) {
+            TeleportProbeItem item = getTeleportProbeItem(entityPlayer);
+            if (item != null) {
+                return new GuiTeleportProbe();
             }
         } else if (guiid == RFTools.GUI_RF_MONITOR) {
             Block block = world.getBlock(x, y, z);
@@ -144,6 +151,23 @@ public class GuiProxy implements IGuiHandler {
             }
         }
         RFTools.logError("Held item is not a network monitor item!");
+        return null;
+    }
+
+    private TeleportProbeItem getTeleportProbeItem(EntityPlayer entityPlayer) {
+        ItemStack stack = entityPlayer.getHeldItem();
+        if (stack != null) {
+            Item item = stack.getItem();
+            if (item != null) {
+                try {
+                    TeleportProbeItem teleportProbeItem = (TeleportProbeItem) item;
+                    return teleportProbeItem;
+                } catch (ClassCastException e) {
+                    RFTools.logError("Held item is not a teleport probe item!");
+                }
+            }
+        }
+        RFTools.logError("Held item is not a teleport probe item!");
         return null;
     }
 

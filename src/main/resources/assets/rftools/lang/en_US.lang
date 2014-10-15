@@ -1,4 +1,5 @@
 item.NetworkMonitor.name=RF Network Monitor
+item.TeleportProbe.name=Teleporter Probe
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3

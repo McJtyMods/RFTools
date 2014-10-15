@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.List;
 
 public class GuiNetworkMonitor extends GuiScreen {
-    private NetworkMonitorItem monitorItem;
-
     // A copy of the connected blocks we're currently showing
     private Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
@@ -54,8 +52,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         selectedZ = z;
     }
 
-    public GuiNetworkMonitor(NetworkMonitorItem monitorItem) {
-        this.monitorItem = monitorItem;
+    public GuiNetworkMonitor() {
         listDirty = 0;
     }
 
