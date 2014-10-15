@@ -7,8 +7,8 @@ import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
@@ -18,7 +18,8 @@ import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -181,11 +182,12 @@ public class GuiDialingDevice extends GuiContainer {
         double distance = Vec3.createVectorHelper(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPosition(1.0f));
 
         if (destination.getDimension() != mc.theWorld.provider.dimensionId || distance > 150) {
-            mc.thePlayer.addChatComponentMessage(new ChatComponentText("Receiver is too far to hilight!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            RFTools.warn(mc.thePlayer, "Receiver is too far to hilight!");
             mc.getMinecraft().thePlayer.closeScreen();
             return;
         }
         RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
+        RFTools.message(mc.thePlayer, "The receiver is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }
 

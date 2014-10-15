@@ -5,9 +5,12 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -80,5 +83,13 @@ public class RFTools {
     @EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
+    }
+
+    public static void message(EntityPlayer player, String message) {
+        player.addChatComponentMessage(new ChatComponentText(message));
+    }
+
+    public static void warn(EntityPlayer player, String message) {
+        player.addChatComponentMessage(new ChatComponentText(message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 }

@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.entity.Entity;
@@ -10,8 +11,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
@@ -186,8 +191,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         return severity;
     }
 
-    private void applyBadEffectIfNeeded() {
-        int severity = calculateSeverity();
+    private void applyBadEffectIfNeeded(int severity) {
+        severity += calculateSeverity();
+        if (severity > 10) {
+            severity = 10;
+        }
         switch (severity) {
             case 0:
                 break;
@@ -234,8 +242,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private void interruptWithBadEffect() {
-        teleportingPlayer.addChatComponentMessage(new ChatComponentText("Power failure during transit!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-        applyBadEffectIfNeeded();
+        RFTools.warn(teleportingPlayer, "Power failure during transit!");
+        applyBadEffectIfNeeded(0);
         cooldownTimer = 200;
         teleportingPlayer = null;
     }
@@ -252,7 +260,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         if (teleportingPlayer != null) {
             if (teleportDestination == null) {
-                teleportingPlayer.addChatComponentMessage(new ChatComponentText("The destination vanished! Aborting."));
+                RFTools.warn(teleportingPlayer, "The destination vanished! Aborting.");
                 cooldownTimer = 80;
                 teleportingPlayer = null;
                 return;
@@ -261,7 +269,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             AxisAlignedBB playerBB = teleportingPlayer.boundingBox;
             AxisAlignedBB beamBB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord+2, zCoord+1);
             if (!playerBB.intersectsWith(beamBB)) {
-                teleportingPlayer.addChatComponentMessage(new ChatComponentText("Teleportation was interrupted!"));
+                RFTools.message(teleportingPlayer, "Teleportation was interrupted!");
+                applyBadEffectIfNeeded(0);
                 cooldownTimer = 80;
                 teleportingPlayer = null;
                 return;
@@ -287,13 +296,35 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 if (currentId != teleportDestination.getDimension()) {
                     MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());
                 }
-                teleportingPlayer.addChatComponentMessage(new ChatComponentText("Whoosh!"));
+
                 Coordinate c = teleportDestination.getCoordinate();
+                RFTools.message(teleportingPlayer, "Whoosh!");
                 teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()-2, c.getZ());
-                applyBadEffectIfNeeded();
+                int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
+                applyBadEffectIfNeeded(severity);
                 teleportingPlayer = null;
             }
         }
+    }
+
+    /**
+     * Consume energy on the receiving side and return a number indicating how good this went.
+     *
+     * @param c
+     * @param dimension
+     * @return 0 in case of success. 10 in case of severe failure
+     */
+    private int consumeReceiverEnergy(Coordinate c, int dimension) {
+        World world = DimensionManager.getWorld(dimension);
+        TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(te instanceof MatterReceiverTileEntity)) {
+            RFTools.warn(teleportingPlayer, "Something went wrong with the destination!");
+            return 0;
+        }
+
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, rfPerTeleportReceiver, false);
+        return 10 - (extracted * 10 / rfPerTeleportReceiver);
     }
 
     private boolean mustInterrupt() {
@@ -318,20 +349,20 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
             int cost = calculateRFCost(worldObj, cthis, teleportDestination);
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
-                player.addChatComponentMessage(new ChatComponentText("Not enough power to start the teleport!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                RFTools.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
                 return;
             }
             extractEnergy(ForgeDirection.DOWN, cost, false);
 
-            player.addChatComponentMessage(new ChatComponentText("Start teleportation..."));
+            RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
             teleportTimer = calculateTime(worldObj, cthis, teleportDestination);
             totalTicks = teleportTimer;
             goodTicks = 0;
             badTicks = 0;
         } else {
-            player.addChatComponentMessage(new ChatComponentText("Something is wrong with the destination!"));
+            RFTools.warn(player, "Something is wrong with the destination!");
         }
     }
 

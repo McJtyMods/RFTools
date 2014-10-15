@@ -102,6 +102,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         }
         Coordinate c = indexToCoordinate.get(index);
         RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* NetworkMonitorItem.hilightTime);
+        RFTools.message(mc.thePlayer, "The block is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
