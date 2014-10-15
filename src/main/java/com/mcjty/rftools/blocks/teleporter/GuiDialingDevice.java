@@ -12,11 +12,13 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
@@ -47,6 +49,7 @@ public class GuiDialingDevice extends GuiContainer {
     private Label statusLabel;
     private final DialingDeviceTileEntity dialingDeviceTileEntity;
 
+    private boolean analyzerAvailable = false;
     private boolean lastDialedTransmitter = false;
     private boolean lastCheckedReceiver = false;
 
@@ -129,14 +132,23 @@ public class GuiDialingDevice extends GuiContainer {
                         interruptDial();
                     }
                 });
-        statusButton = new Button(mc, this).setText("Check").setTooltips("Check the status of", "the selected receiver").
+
+        analyzerAvailable =  isDestinationAnalyzerAvailable();
+        statusButton = new Button(mc, this).setText("Check").
                 setDesiredHeight(14).
+                setEnabled(analyzerAvailable).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
                         checkStatus();
                     }
                 });
+        if (analyzerAvailable) {
+            statusButton.setTooltips("Check the status of", "the selected receiver");
+        } else {
+            statusButton.setTooltips("Check the status of", "the selected receiver", "(needs an adjacent analyzer!)");
+        }
+
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(interruptButton).addChild(statusButton).setDesiredHeight(16);
 
         statusLabel = new Label(mc, this);
@@ -155,6 +167,31 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
+    }
+
+    private boolean isDestinationAnalyzerAvailable() {
+        int x = dialingDeviceTileEntity.xCoord;
+        int y = dialingDeviceTileEntity.yCoord;
+        int z = dialingDeviceTileEntity.zCoord;
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x+1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x-1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y+1, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y-1, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y, z+1))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y, z-1))) {
+            return true;
+        }
+        return false;
     }
 
     private void clearSelectedStatus() {
@@ -444,7 +481,7 @@ public class GuiDialingDevice extends GuiContainer {
             interruptButton.setEnabled(false);
         }
         if (receiverSelected != -1) {
-            statusButton.setEnabled(true);
+            statusButton.setEnabled(analyzerAvailable);
         } else {
             statusButton.setEnabled(false);
         }
