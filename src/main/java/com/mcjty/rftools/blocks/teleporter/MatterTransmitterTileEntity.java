@@ -170,10 +170,73 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         this.teleportDestination = teleportDestination;
     }
 
+    /**
+     * Return a number between 0 and 10 indicating the severity of the teleportation.
+     * @return
+     */
+    private int calculateSeverity() {
+        int severity = badTicks * 10 / totalTicks;
+        if (mustInterrupt()) {
+            // If an interrupt was done then severity is worse.
+            severity += 2;
+        }
+        if (severity > 10) {
+            severity = 10;
+        }
+        return severity;
+    }
+
+    private void applyBadEffectIfNeeded() {
+        int severity = calculateSeverity();
+        switch (severity) {
+            case 0:
+                break;
+            case 2:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
+                break;
+            case 3:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 0.5f);
+                break;
+            case 4:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 0.5f);
+                break;
+            case 5:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 1.0f);
+                break;
+            case 6:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 1.0f);
+                break;
+            case 7:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 200));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 2.0f);
+                break;
+            case 8:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 300));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 2.0f);
+                break;
+            case 9:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 400));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 3.0f);
+                break;
+            case 10:
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 500));
+                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 500));
+                teleportingPlayer.attackEntityFrom(DamageSource.generic, 3.0f);
+                break;
+        }
+    }
+
     private void interruptWithBadEffect() {
         teleportingPlayer.addChatComponentMessage(new ChatComponentText("Power failure during transit!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-        teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
-        cooldownTimer = 1000;
+        applyBadEffectIfNeeded();
+        cooldownTimer = 200;
         teleportingPlayer = null;
     }
 
@@ -207,7 +270,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             if (getEnergyStored(ForgeDirection.DOWN) < rfTeleportPerTick) {
                 // Not enough energy. This is a bad tick.
                 badTicks++;
-                if (badTicks > (totalTicks / 2)) {
+                if (mustInterrupt()) {
                     // Too many bad ticks. Total failure!
                     interruptWithBadEffect();
                 }
@@ -227,9 +290,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 teleportingPlayer.addChatComponentMessage(new ChatComponentText("Whoosh!"));
                 Coordinate c = teleportDestination.getCoordinate();
                 teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()-2, c.getZ());
+                applyBadEffectIfNeeded();
                 teleportingPlayer = null;
             }
         }
+    }
+
+    private boolean mustInterrupt() {
+        return badTicks > (totalTicks / 2);
     }
 
     public void startTeleportation(Entity entity) {
@@ -262,7 +330,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             totalTicks = teleportTimer;
             goodTicks = 0;
             badTicks = 0;
-            System.out.println("teleportTimer = " + teleportTimer);
         } else {
             player.addChatComponentMessage(new ChatComponentText("Something is wrong with the destination!"));
         }
