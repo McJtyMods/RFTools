@@ -299,7 +299,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
                 Coordinate c = teleportDestination.getCoordinate();
                 RFTools.message(teleportingPlayer, "Whoosh!");
-                teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()-2, c.getZ());
+                teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
                 int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
                 applyBadEffectIfNeeded(severity);
                 teleportingPlayer = null;

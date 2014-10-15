@@ -215,14 +215,13 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private int checkStatus(Coordinate c, int dim) {
-        MatterReceiverTileEntity matterReceiverTileEntity;
-        try {
-            World w = DimensionManager.getProvider(dim).worldObj;
-            matterReceiverTileEntity = (MatterReceiverTileEntity) w.getTileEntity(c.getX(), c.getY(), c.getZ());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
+        World w = DimensionManager.getProvider(dim).worldObj;
+        TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(tileEntity instanceof  MatterReceiverTileEntity)) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
+
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
 
         int cost = MatterTransmitterTileEntity.rfPerCheck;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
