@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class MatterReceiverBlock extends GenericContainerBlock {
 
     private IIcon iconSide;
-    private IIcon iconBottom;
+    private IIcon iconTop;
 
     public MatterReceiverBlock(Material material) {
         super(material, MatterReceiverTileEntity.class);
@@ -57,20 +57,20 @@ public class MatterReceiverBlock extends GenericContainerBlock {
             return;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        destinations.removeDestination(new Coordinate(x, y, z), 0);
+        destinations.removeDestination(new Coordinate(x, y, z), world.provider.dimensionId);
         destinations.save(world);
     }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconBottom = iconRegister.registerIcon(RFTools.MODID + ":" + "machineReceiver");
+        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineReceiver");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        if (side == ForgeDirection.DOWN.ordinal()) {
-            return iconBottom;
+        if (side == ForgeDirection.UP.ordinal()) {
+            return iconTop;
         } else {
             return iconSide;
         }
@@ -78,8 +78,8 @@ public class MatterReceiverBlock extends GenericContainerBlock {
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        if (side == ForgeDirection.DOWN.ordinal()) {
-            return iconBottom;
+        if (side == ForgeDirection.UP.ordinal()) {
+            return iconTop;
         } else {
             return iconSide;
         }
