@@ -17,8 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
-    public static final int MAXENERGY = 100000;
-    public static final int RECEIVEPERTICK = 500;
+    public static int MAXENERGY = 100000;
+    public static int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;
     public static int scansPerOperation = 10;
     public static int hilightTime = 5;

@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
-    public static final int MAXENERGY = 50000;
-    public static final int RECEIVEPERTICK = 100;
+    public static int MAXENERGY = 50000;
+    public static int RECEIVEPERTICK = 100;
 
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";

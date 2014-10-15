@@ -33,8 +33,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     private int redstoneMode = REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
 
-    public static final int MAXENERGY = 32000;
-    public static final int RECEIVEPERTICK = 80;
+    public static int MAXENERGY = 32000;
+    public static int RECEIVEPERTICK = 80;
     public static int rfPerOperation = 100;
     public static int speedOperations = 5;
 

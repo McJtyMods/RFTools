@@ -3,6 +3,8 @@ package com.mcjty.rftools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import com.mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity;
+import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
 import com.mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity;
 import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
@@ -50,12 +52,35 @@ public class CommonProxy {
 
             CrafterBlockTileEntity3.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity3.rfPerOperation, "Amount of RF used per crafting operation").getInt();
             CrafterBlockTileEntity3.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity3.speedOperations, "How many operations to do at once in fast mode").getInt();
+            CrafterBlockTileEntity3.MAXENERGY = cfg.get(CATEGORY_CRAFTER, "crafterMaxRF", CrafterBlockTileEntity3.MAXENERGY,
+                    "Maximum RF storage that the crafter can hold").getInt();
+            CrafterBlockTileEntity3.RECEIVEPERTICK = cfg.get(CATEGORY_CRAFTER, "crafterRFPerTick", CrafterBlockTileEntity3.RECEIVEPERTICK,
+                    "RF per tick that the crafter can receive").getInt();
 
             StorageScannerTileEntity.rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", StorageScannerTileEntity.rfPerOperation, "Amount of RF used per scan operation").getInt();
             StorageScannerTileEntity.scansPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "scansPerOperation", StorageScannerTileEntity.scansPerOperation, "How many blocks to scan per operation").getInt();
             StorageScannerTileEntity.hilightTime = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightTime", StorageScannerTileEntity.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
+            StorageScannerTileEntity.MAXENERGY = cfg.get(CATEGORY_STORAGE_MONITOR, "scannerMaxRF", StorageScannerTileEntity.MAXENERGY,
+                    "Maximum RF storage that the storage scanner can hold").getInt();
+            StorageScannerTileEntity.RECEIVEPERTICK = cfg.get(CATEGORY_STORAGE_MONITOR, "scannerRFPerTick", StorageScannerTileEntity.RECEIVEPERTICK,
+                    "RF per tick that the storage scanner can receive").getInt();
 
             NetworkMonitorItem.hilightTime = cfg.get(CATEGORY_NETWORK_MONITOR, "hilightTime", NetworkMonitorItem.hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
+
+            MatterTransmitterTileEntity.MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", MatterTransmitterTileEntity.MAXENERGY,
+                    "Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'").getInt();
+            MatterTransmitterTileEntity.RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "transmitterRFPerTick", MatterTransmitterTileEntity.RECEIVEPERTICK,
+                    "RF per tick that the matter transmitter can receive. It is recommended to keep this at least equal to 'rfTeleportPerTick'").getInt();
+
+            MatterReceiverTileEntity.MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "receiverMaxRF", MatterReceiverTileEntity.MAXENERGY,
+                    "Maximum RF storage that the matter receiver can hold").getInt();
+            MatterReceiverTileEntity.RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "receiverRFPerTick", MatterReceiverTileEntity.RECEIVEPERTICK,
+                    "RF per tick that the matter receiver can receive").getInt();
+
+            DialingDeviceTileEntity.MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "dialerMaxRF", DialingDeviceTileEntity.MAXENERGY,
+                    "Maximum RF storage that the dialing device can hold").getInt();
+            DialingDeviceTileEntity.RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "dialerRFPerTick", DialingDeviceTileEntity.RECEIVEPERTICK,
+                    "RF per tick that the dialing device can receive").getInt();
 
             MatterTransmitterTileEntity.horizontalDialerRange = cfg.get(CATEGORY_TELEPORTER, "horizontalDialerRange", MatterTransmitterTileEntity.horizontalDialerRange,
                     "The horizontal range the dialing device uses to check for transmitters. These are the transmitters the dialing device will be able to control").getInt();

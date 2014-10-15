@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
 
-    public static final int MAXENERGY = 100000;
-    public static final int RECEIVEPERTICK = 500;
+    public static int MAXENERGY = 100000;
+    public static int RECEIVEPERTICK = 500;
 
     public static final String CMD_SETNAME = "setName";
 
