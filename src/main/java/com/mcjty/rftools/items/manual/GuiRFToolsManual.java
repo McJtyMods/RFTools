@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items.manual;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.Button;
@@ -13,6 +14,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.*;
@@ -28,6 +30,9 @@ public class GuiRFToolsManual extends GuiScreen {
 
     private int pageIndex = 0;
     private Window window;
+    private TextPage textPage;
+    private Button prevButton;
+    private Button nextButton;
 
     private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "docs/manual.txt");
 
@@ -82,10 +87,20 @@ public class GuiRFToolsManual extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        TextPage textPage = new TextPage(mc, this).setPage(pages.get(pageIndex));
+        textPage = new TextPage(mc, this).setPage(pages.get(pageIndex));
 
-        Button prevButton = new Button(mc, this).setText("<");
-        Button nextButton = new Button(mc, this).setText(">");
+        prevButton = new Button(mc, this).setText("<").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                prevPage();
+            }
+        });
+        nextButton = new Button(mc, this).setText(">").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                nextPage();
+            }
+        });
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16).addChild(prevButton).addChild(nextButton);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(textPage).addChild(buttonPanel);
@@ -94,6 +109,21 @@ public class GuiRFToolsManual extends GuiScreen {
         window = new Window(this, toplevel);
     }
 
+    private void prevPage() {
+        pageIndex--;
+        if (pageIndex < 0) {
+            pageIndex = 0;
+        }
+        textPage.setPage(pages.get(pageIndex));
+    }
+
+    private void nextPage() {
+        pageIndex++;
+        if (pageIndex >= pages.size()) {
+            pageIndex = pages.size()-1;
+        }
+        textPage.setPage(pages.get(pageIndex));
+    }
 
     @Override
     public boolean doesGuiPauseGame() {
@@ -122,12 +152,21 @@ public class GuiRFToolsManual extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
+        if (!window.keyTyped(typedChar, keyCode)) {
+            if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_LEFT) {
+                prevPage();
+            } else if (keyCode == Keyboard.KEY_SPACE || keyCode == Keyboard.KEY_RIGHT) {
+                nextPage();
+            }
+        }
     }
 
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
+
+        prevButton.setEnabled(pageIndex > 0);
+        nextButton.setEnabled(pageIndex < pages.size()-1);
 
         window.draw();
         java.util.List<String> tooltips = window.getTooltips();
