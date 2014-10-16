@@ -36,27 +36,6 @@ public class TeleportBeamBlock extends Block {
         return null;
     }
 
-    @Override
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        if (!world.isRemote && entity instanceof EntityPlayer) {
-            int yy = y-1;
-            Block b = world.getBlock(x, yy, z);
-            while (ModBlocks.teleportBeamBlock.equals(b)) {
-                yy--;
-                b = world.getBlock(x, yy, z);
-            }
-            if (ModBlocks.matterTransmitterBlock.equals(b)) {
-                MatterTransmitterTileEntity matterTransmitterTileEntity;
-                try {
-                    matterTransmitterTileEntity = (MatterTransmitterTileEntity) world.getTileEntity(x, yy, z);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-                matterTransmitterTileEntity.startTeleportation(entity);
-            }
-        }
-    }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {

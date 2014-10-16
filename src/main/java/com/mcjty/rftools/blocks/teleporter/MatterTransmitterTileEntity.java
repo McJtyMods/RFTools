@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.List;
 import java.util.Map;
 
 public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity {
@@ -63,6 +64,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private int totalTicks;
     private int goodTicks;
     private int badTicks;
+
+    private AxisAlignedBB beamBox = null;
 
     public MatterTransmitterTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -241,70 +244,127 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
     }
 
-    private void interruptWithBadEffect() {
-        RFTools.warn(teleportingPlayer, "Power failure during transit!");
-        applyBadEffectIfNeeded(0);
-        cooldownTimer = 200;
-        teleportingPlayer = null;
-    }
-
 
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
 
-        cooldownTimer--;
-        if (cooldownTimer < 0) {
-            cooldownTimer = 0;
-        }
-
-        if (teleportingPlayer != null) {
-            if (teleportDestination == null) {
-                RFTools.warn(teleportingPlayer, "The destination vanished! Aborting.");
-                cooldownTimer = 80;
-                teleportingPlayer = null;
-                return;
+        if (isCoolingDown()) {
+            // We're still in cooldown. Do nothing.
+            return;
+        } else if (teleportingPlayer == null) {
+            // If we have a valid destination we check here if there is a player on this transmitter.
+            if (isDestinationValid()) {
+                searchForNearestPlayer();
             }
-
-            AxisAlignedBB playerBB = teleportingPlayer.boundingBox;
-            AxisAlignedBB beamBB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord+1, yCoord+2, zCoord+1);
-            if (!playerBB.intersectsWith(beamBB)) {
-                RFTools.message(teleportingPlayer, "Teleportation was interrupted!");
-                applyBadEffectIfNeeded(0);
-                cooldownTimer = 80;
-                teleportingPlayer = null;
-                return;
-            }
-
-            if (getEnergyStored(ForgeDirection.DOWN) < rfTeleportPerTick) {
-                // Not enough energy. This is a bad tick.
-                badTicks++;
-                if (mustInterrupt()) {
-                    // Too many bad ticks. Total failure!
-                    interruptWithBadEffect();
-                }
-                return;
-            }
-
+        } else if (teleportDestination == null) {
+            // We were teleporting a player but for some reason the destination went away. Interrupt.
+            RFTools.warn(teleportingPlayer, "The destination vanished! Aborting.");
+            clearTeleport(80);
+        } else if (isPlayerOutsideBeam()) {
+            // The player moved outside the beam. Interrupt the teleport.
+            clearTeleport(80);
+        } else if (getEnergyStored(ForgeDirection.DOWN) < rfTeleportPerTick) {
+            // We don't have enough energy to handle this tick.
+            handleEnergyShortage();
+        } else {
             // We have enough energy so this is a good tick.
             extractEnergy(ForgeDirection.DOWN, rfTeleportPerTick, false);
             goodTicks++;
 
             teleportTimer--;
             if (teleportTimer <= 0) {
-                int currentId = teleportingPlayer.worldObj.provider.dimensionId;
-                if (currentId != teleportDestination.getDimension()) {
-                    MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());
-                }
-
-                Coordinate c = teleportDestination.getCoordinate();
-                RFTools.message(teleportingPlayer, "Whoosh!");
-                teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
-                int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
-                applyBadEffectIfNeeded(severity);
-                teleportingPlayer = null;
+                performTeleport();
             }
         }
+    }
+
+    private void clearTeleport(int cooldown) {
+        applyBadEffectIfNeeded(0);
+        cooldownTimer = cooldown;
+        teleportingPlayer = null;
+    }
+
+    private boolean isDestinationValid() {
+        return teleportDestination != null && teleportDestination.isValid();
+    }
+
+    private boolean isCoolingDown() {
+        cooldownTimer--;
+        if (cooldownTimer <= 0) {
+            cooldownTimer = 0;
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private void searchForNearestPlayer() {
+        if (beamBox == null) {
+            beamBox = AxisAlignedBB.getBoundingBox(xCoord, yCoord+1, zCoord, xCoord+1, yCoord+3, zCoord+1);
+        }
+
+        List<Entity> l = worldObj.getEntitiesWithinAABB(EntityPlayer.class, beamBox);
+        Entity nearestPlayer = findNearestPlayer(l);
+
+        if (nearestPlayer == null) {
+            cooldownTimer = 5;
+            return;
+        }
+        AxisAlignedBB playerBB = nearestPlayer.boundingBox;
+        if (playerBB.intersectsWith(beamBox)) {
+            startTeleportation(nearestPlayer);
+        } else {
+            cooldownTimer = 5;
+        }
+    }
+
+    private Entity findNearestPlayer(List<Entity> l) {
+        Entity nearestPlayer = null;
+        double dmax = Double.MAX_VALUE;
+        for (Entity entity : l) {
+            double d1 = entity.getDistanceSq(xCoord + .5, yCoord + 1.5, zCoord + .5);
+
+            if (d1 <= dmax) {
+                nearestPlayer = entity;
+                dmax = d1;
+            }
+        }
+        return nearestPlayer;
+    }
+
+    private void performTeleport() {
+        int currentId = teleportingPlayer.worldObj.provider.dimensionId;
+        if (currentId != teleportDestination.getDimension()) {
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());
+        }
+
+        Coordinate c = teleportDestination.getCoordinate();
+        RFTools.message(teleportingPlayer, "Whoosh!");
+        teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
+        int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
+        applyBadEffectIfNeeded(severity);
+        teleportingPlayer = null;
+    }
+
+    private void handleEnergyShortage() {
+        // Not enough energy. This is a bad tick.
+        badTicks++;
+        if (mustInterrupt()) {
+            // Too many bad ticks. Total failure!
+            RFTools.warn(teleportingPlayer, "Power failure during transit!");
+            clearTeleport(200);
+        }
+        return;
+    }
+
+    private boolean isPlayerOutsideBeam() {
+        AxisAlignedBB playerBB = teleportingPlayer.boundingBox;
+        if (!playerBB.intersectsWith(beamBox)) {
+            RFTools.message(teleportingPlayer, "Teleportation was interrupted!");
+            return true;
+        }
+        return false;
     }
 
     /**
