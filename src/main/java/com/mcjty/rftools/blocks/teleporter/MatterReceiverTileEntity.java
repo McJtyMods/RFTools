@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -50,6 +51,11 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
         if (!block.isAir(worldObj, xCoord, yCoord+2, zCoord)) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
+
+        if (getEnergyStored(ForgeDirection.DOWN) < MatterTransmitterTileEntity.rfPerTeleportReceiver) {
+            return DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK;
+        }
+
         return DialingDeviceTileEntity.DIAL_OK;
     }
 

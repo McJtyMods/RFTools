@@ -18,7 +18,6 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
@@ -254,8 +253,12 @@ public class GuiDialingDevice extends GuiContainer {
     }
 
     private void showStatus(int dialResult) {
-        if ((dialResult & DialingDeviceTileEntity.DIAL_POWER_LOW_MASK) != 0) {
+        if ((dialResult & DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK) != 0) {
             setStatusError("Dialing device power low!");
+            return;
+        }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK) != 0) {
+            setStatusError("Matter receiver power low!");
             return;
         }
         if ((dialResult & DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK) != 0) {

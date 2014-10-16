@@ -33,9 +33,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_RECEIVER_BLOCKED_MASK = 0x1;       // One value for blocked or not on receiver side
     public static final int DIAL_TRANSMITTER_BLOCKED_MASK = 0x2;    // One value for blocked or not on transmitter side
     public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;    // The destination is somehow invalid
-    public static final int DIAL_POWER_LOW_MASK = 0x8;              // The dialer itself is low on power
-    public static final int DIAL_ENERGY_MASK = 0x0f0;               // Sixteen energy levels for receiver (15 = sufficient, 0 = completely empty)
-    public static final int DIAL_MATTER_MASK = 0xf00;               // Sixteen matter levels for receiver (16 = sufficient, 0 = completely empty)
+    public static final int DIAL_DIALER_POWER_LOW_MASK = 0x8;       // The dialer itself is low on power
+    public static final int DIAL_RECEIVER_POWER_LOW_MASK = 0x10;    // The receiver is low on power
     public static final int DIAL_OK = 0;                            // All is ok
 
     // For client.
@@ -201,7 +200,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
         int cost = MatterTransmitterTileEntity.rfPerDial;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
-            return DialingDeviceTileEntity.DIAL_POWER_LOW_MASK;
+            return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
 
         if (!makeBeam(transmitter, transWorld, 1, 4, 2)) {
@@ -225,7 +224,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
         int cost = MatterTransmitterTileEntity.rfPerCheck;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
-            return DialingDeviceTileEntity.DIAL_POWER_LOW_MASK;
+            return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
         extractEnergy(ForgeDirection.DOWN, cost, false);
 
