@@ -14,6 +14,8 @@ public final class ModCrafting {
         Object inkSac = Item.itemRegistry.getObjectById(351);
         GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), new Object[]{"rlr", "iri", "rlr", 'r', Items.redstone, 'i', Items.iron_ingot, 'l', inkSac});
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), new Object[]{" r ", "rbr", " r ", 'r', Items.redstone, 'b', Items.book});
+
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), new Object[]{"ili", "g g", "ili", 'i', Items.iron_ingot, 'g', Items.gold_nugget, 'l', lapisStack});
 

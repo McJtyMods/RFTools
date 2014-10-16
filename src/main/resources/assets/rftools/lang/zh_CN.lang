@@ -1,5 +1,6 @@
 item.NetworkMonitor.name=RF网络监视器
 item.TeleportProbe.name=Teleporter Probe
+item.RFToolsManual.name=RFTools Manual
 tile.crafterBlock1.name=自动合成台 Tier1
 tile.crafterBlock2.name=自动合成台 Tier2
 tile.crafterBlock3.name=自动合成台 Tier3
