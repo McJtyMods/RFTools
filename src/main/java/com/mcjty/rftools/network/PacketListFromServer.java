@@ -18,11 +18,11 @@ import java.util.List;
  * @param T is the type of the items in the list that is requested from the server
  */
 public abstract class PacketListFromServer<S extends PacketListFromServer, T extends ByteBufConverter> implements IMessage, IMessageHandler<S, IMessage> {
-    private int x;
-    private int y;
-    private int z;
-    private List<T> list;
-    private String command;
+    int x;
+    int y;
+    int z;
+    List<T> list;
+    String command;
 
     @Override
     public void fromBytes(ByteBuf buf) {

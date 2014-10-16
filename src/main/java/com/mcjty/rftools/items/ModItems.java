@@ -28,7 +28,7 @@ public final class ModItems {
         rfToolsManualItem = new RFToolsManualItem();
         rfToolsManualItem.setUnlocalizedName("RFToolsManual");
         rfToolsManualItem.setCreativeTab(CreativeTabs.tabMisc);
-        rfToolsManualItem.setTextureName(RFTools.MODID + ":rfToolsManual");
+        rfToolsManualItem.setTextureName(RFTools.MODID + ":rftoolsManual");
         GameRegistry.registerItem(rfToolsManualItem, "rfToolsManualItem");
     }
 }

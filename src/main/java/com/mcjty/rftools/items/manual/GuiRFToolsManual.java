@@ -9,10 +9,15 @@ import com.mcjty.gui.widgets.TextPage;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiRFToolsManual extends GuiScreen {
 
@@ -24,32 +29,60 @@ public class GuiRFToolsManual extends GuiScreen {
     private int pageIndex = 0;
     private Window window;
 
-//    private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "docs/manual.txt");
+    private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "docs/manual.txt");
 
+    private final List<TextPage.Page> pages = new ArrayList<TextPage.Page>();
 
     public GuiRFToolsManual() {
+    }
+
+    private void newPage(TextPage.Page page) {
+        if (!page.isEmpty()) {
+            pages.add(page);
+        }
+    }
+
+    static String convertStreamToString(InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    private void readManual() {
+        TextPage.Page page = new TextPage.Page();
+        try {
+            IResourceManager resourceManager = mc.getResourceManager();
+            IResource iresource = resourceManager.getResource(manualText);
+            InputStream inputstream = iresource.getInputStream();
+            String manualText = convertStreamToString(inputstream);
+            String[] lines = manualText.split("\n");
+
+            for (String line : lines) {
+                if ("---".equals(line)) {
+                    newPage(page);
+                    page = new TextPage.Page();
+                } else {
+                    page.addLine(line);
+                }
+            }
+            newPage(page);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initGui() {
         super.initGui();
 
+        readManual();
+
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-
-        TextPage textPage = new TextPage(mc, this).
-                addLine("ºlThis is the first line").
-                addLine("This is the second line").
-                addLine("This is the third line").
-                addLine("This is the first line").
-                addLine("This is the second line").
-                addLine("This is the third line").
-                addLine("This is the first line").
-                addLine("This is the second line").
-                addLine("This is the third line").
-                addLine("This is the first line").
-                addLine("This is the second line");
+        TextPage textPage = new TextPage(mc, this).setPage(pages.get(pageIndex));
 
         Button prevButton = new Button(mc, this).setText("<");
         Button nextButton = new Button(mc, this).setText(">");

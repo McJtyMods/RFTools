@@ -19,6 +19,15 @@ public class TextPage extends AbstractWidget<TextPage> {
         return this;
     }
 
+    public TextPage setPage(Page page) {
+        lines.clear();
+        for (String line : page.lines) {
+            addLine(line);
+        }
+        return this;
+    }
+
+
     @Override
     public void draw(Window window, int x, int y) {
         super.draw(window, x, y);
@@ -29,5 +38,18 @@ public class TextPage extends AbstractWidget<TextPage> {
             y += 14;
         }
     }
+
+    public static class Page {
+        final List<String> lines = new ArrayList<String>();
+
+        public boolean isEmpty() {
+            return lines.isEmpty();
+        }
+
+        public void addLine(String line) {
+            lines.add(line);
+        }
+    }
+
 
 }
