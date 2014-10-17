@@ -159,6 +159,9 @@ to a receiver will appear on top of this block. Note that a receiver needs
 energy. If the receiver doesn't have enough energy then teleportation will
 go on but bad things will happen as soon as the player arrives at this
 destination. So be careful!
+
+If you give the matter receiver a name (using the GUI) then that name will
+be shown in the dialing device which makes it easier to recognize.
 {}
 {b}Dialing Device
 {n:tpdialer}
