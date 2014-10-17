@@ -4,7 +4,7 @@ Table of contents:
 {l:netmon}RF Network Monitor Item
 {l:mframe}Machine Frame
 {l:rfmoni}RF Monitor
-{l:stomon}Storage Monitor
+{l:stomon}Storage Scanner
 {l:crafte}Automatic Crafter
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
@@ -30,22 +30,165 @@ The machine frame is the base ingredient for all blocks in this mod.
 {n:rfmoni}
 {rb:rfMonitorBlock}
 The RF Monitor is a block that you place in the world and that
-can examine a nearby (3x3x3 area around the monitor) block and give
-a visual indication of how much RF is left in that block. This
-block can also give out redstone signals in case the RF in the
-monitored block is too low or too high. You can use this
+can examine a nearby (3x3x3 area around the monitor) block and
+gives a visual indication of how much RF is left in that block.
+This block can also give out redstone signals in case the RF in
+the monitored block is too low or too high. You can use this
 redstone signal with the Power Relay (see below) to control
 parts of your RF network.
 {}
-{b}Storage Monitor
+{b}Storage Scanner
 {n:stomon}
+{rb:storageScannerBlock}
+The Storage Scanner is a block that can scan the surrounding
+area for inventories (chests, furnaces, other devices, basically
+anything that can hold items) and show them in a list. You can
+then select an inventory in that list and it will display the
+contents of that inventory. Scanning the environment uses energy
+and can take a while if you select a big radius. It also uses
+RF to perform this scan.
+{}
+If you open the user interface of this scanner you get two lists.
+The top list is initially empty but will be filled when you press
+the 'Scan' button. It contains all the inventories (chests, furnaces
+and so on) that it could find in the selected area. If you
+previously scanned an area you don't have to do it again. If a line
+shows 'REMOVED' that means the specific block was removed after
+the scan.
+
+If you select an inventory in the top list then the bottom list will
+show the contents of that inventory.
+
+Doubleclick on an inventory in the top list will close this
+window and hilight it in the world for 5 seconds (by default).
+{}
+You can search for items in all inventories that it scanned. It will
+mark all the inventories where it found an item that matches what
+you typed with a yellow color. This gives you an easy way to find
+out where you put that diamond pickaxe again.
+
+The slider next to the 'Scan' button allows you to select the radius
+that this machine will use to scan the area. A value of '4' means
+that an area of 9x9x9 will be scanned. Note that this operation can
+take a while.
 {}
 {b}Automatic Crafter
 {n:crafte}
+{rb:crafterBlock1}
+The Crafter is a powerful automatic crafting machine that can handle
+up to eight different recipes in a single block. It can be used to
+craft multiple items independent from each other or else it can be
+used for more complicated multi-step crafting recipes. By default it
+uses 100 RF for every crafting cycle (where it does all crafting
+operations in one step).
+{}
+The list at the top-left allows you to select all the supported
+recipes. If you select a recipe you can edit it in the right grid
+by dragging over the right items.
+
+The crafter also has an internal inventory and four output slots
+for crafting results.
+{}
+The 'Keep/All' button is only active when a recipe is selected and
+allows you to control if this recipe will always keep at least a single
+item in the internal inventory.
+
+The 'Int/Ext' button is also only active when a recipe is selected
+and allows you to control where the result of the crafting operation
+of this recipe goes too. With 'Ext' (default) the result is put in
+an output slot where it can be extracted by an external pipe.
+With 'Int' the result goes in the internal inventory where it
+can be used by other recipes in this crafter.
+
+The crafter also has a redstone mode (button below which can be set
+to 'ignore', 'off', or 'on') and it also has a speed mode which is set
+to slow by default. Fast mode uses more energy.
 {}
 {b}RF Power Relay
 {n:prelay}
+{rb:relayBlock}
+The Power Relay allows you to control how much RF to output based on a
+redstone signal. In its GUI you can set the amount of RF/tick to give
+in case redstone signal is off and also in case redstone signal is on.
+Typically you would use 0 in case the redstone signal is off and some
+other value in case the redstone signal is on. You can use this in
+combination with the RF Monitor to turn off a portion of your RF network
+in case power is low. For example, to turn off ore processing machines.
 {}
 {b}Teleporting System
 {n:telepo}
+RFTools supports a teleportation system that uses RF to do the
+transfer of matter. A teleporter is essentially one-directional and
+consists of a transmitter and a receiver. So you need a pair for
+two-way teleportation. To connect a transmitter and a receiver you
+will also need a dialing device.
 
+Energy cost of teleportation depends on the distance traveled. Also
+travelling to another dimension is a lot more expensive.
+
+If you're an admin and want to troubleshoot the portal network
+you can use the Teleport Probe item (has no recipe). You can use
+this item to check for problems with all receivers in the world.
+Doubleclick on an item in the list will teleport you without using RF.
+{}
+{b}Teleportation Blocks
+
+{l:tptransmitter}Matter Transmitter
+{l:tpreceiver}Matter Receiver
+{l:tpdialer}Dialing Device
+{l:tpdestcheck}Destination Analyzer
+{l:tpaccess}Access Control
+{}
+{b}Matter Transmitter
+{n:tptransmitter}
+{rb:matterTransmitterBlock}
+The matter transmitter is placed on the ground and (when dialed to a
+valid destination) will teleport a player that is standing on it. There
+is a fixed energy cost which is consumed immediatelly when the player
+stands on it. Then during the duration of the teleport (witch varies
+depending on the traveled distance) power is also consumed. If there
+is not sufficient power during the first power usage then teleportation
+will simply not start. But if there is a power failure during transit
+then potentially very bad things can happen to the player.
+{}
+{b}Matter Receiver
+{n:tpreceiver}
+{rb:matterReceiverBlock}
+The matter receiver is also placed on the ground. Players that teleport
+to a receiver will appear on top of this block. Note that a receiver needs
+energy. If the receiver doesn't have enough energy then teleportation will
+go on but bad things will happen as soon as the player arrives at this
+destination. So be careful!
+{}
+{b}Dialing Device
+{n:tpdialer}
+{rb:dialingDeviceBlock}
+The dialing device is an important block which is needed to connect
+nearby matter transmitters to receivers anywhere in the world. It shows
+a list of all transmitters in the vicinity (by default an area of 21x11x21).
+It also shows a list of all receivers in the world. Note that a dialed
+transmitter will consume a little bit of energy while it is holding its
+connection.
+
+The 'Check' button is disabled by default unless you have a destination
+analyzer connected to this machine (see below).
+{}
+{b}Destination Analyzer
+{n:tpdestcheck}
+{rb:destinationAnalyzerBlock}
+This is a passive block that you can place next to a dialing device.
+It enables the dialing device to check the status of a receiver. This way
+you can be sure that a receiver has enough power or is not blocked
+before attempting to make a connection.
+
+In the future you will also be able to place destination analyzers next
+to matter transmitters allowing them to warn you before entering the
+teleportation beam.
+{}
+{b}Access Control
+{n:tpaccess}
+This is not implemented yet but in the future you will be able to control
+who has access to a transmitter or receiver and you will also be able
+to give out keys to other players so that they can access parts of
+your network.
+{}
