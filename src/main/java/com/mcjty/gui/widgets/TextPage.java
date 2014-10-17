@@ -1,12 +1,22 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.Window;
+import com.mcjty.rftools.RFTools;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,9 +31,19 @@ public class TextPage extends AbstractWidget<TextPage> {
     private int pageIndex = 0;
     private final List<Line> lines = new ArrayList<Line>();
     private final List<Link> links = new ArrayList<Link>();
+    private ResourceLocation arrowImage = null;
+    private int arrowU;
+    private int arrowV;
 
     public TextPage(Minecraft mc, Gui gui) {
         super(mc, gui);
+    }
+
+    public TextPage setArrowImage(ResourceLocation image, int u, int v) {
+        this.arrowImage = image;
+        this.arrowU = u;
+        this.arrowV = v;
+        return this;
     }
 
     private void setPage(Page page) {
@@ -36,7 +56,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                 if (line.isLink()) {
                     links.add(new Link(y, y+13, line.node));
                 }
-                y += 14;
+                y += line.height;
             }
         }
     }
@@ -158,8 +178,22 @@ public class TextPage extends AbstractWidget<TextPage> {
         y += 3;
         int dx;
         for (Line line : lines) {
-            System.out.println("line.line = " + line.line);
-            if (line.line != null) {
+            if (line.recipe != null) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                // @TODO: need support for shapeless and better error checking
+                ShapedRecipes shapedRecipes = (ShapedRecipes) line.recipe;
+                for (int i = 0 ; i < 3 ; i++) {
+                    for (int j = 0 ; j < 3 ; j++) {
+                        RenderHelper.renderObject(mc, 25 + x+i*16, y+j*16, shapedRecipes.recipeItems[i+j*3], false);
+                    }
+                }
+                if (arrowImage != null) {
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    mc.getTextureManager().bindTexture(arrowImage);
+                    gui.drawTexturedModalRect(x+25+60, y+16, arrowU, arrowV, 16, 16);
+                }
+                RenderHelper.renderObject(mc, x+25+86, y + 16, shapedRecipes.getRecipeOutput(), false);
+            } else if (line.line != null) {
                 String s = "";
                 int col = 0xFF000000;
                 dx = 0;
@@ -175,8 +209,8 @@ public class TextPage extends AbstractWidget<TextPage> {
                 }
                 s += line.line;
                 mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, bounds.width-dx), x + dx + bounds.x, y + bounds.y, col);
-                y += 14;
             }
+            y += line.height;
         }
     }
 
@@ -186,6 +220,8 @@ public class TextPage extends AbstractWidget<TextPage> {
         private boolean isnode;
         String node;
         String line;
+        IRecipe recipe;
+        int height;
 
         public boolean isBold() {
             return bold;
@@ -203,6 +239,9 @@ public class TextPage extends AbstractWidget<TextPage> {
             bold = false;
             islink = false;
             node = null;
+            this.line = null;
+            recipe = null;
+            height = 14;
 
             if (line.startsWith("{b}")) {
                 bold = true;
@@ -217,6 +256,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                     isnode = true;
                     this.line = null;
                 }
+                height = 0;
             } else if (line.startsWith("{l:")) {
                 int end = line.indexOf('}');
                 if (end == -1) {
@@ -227,10 +267,53 @@ public class TextPage extends AbstractWidget<TextPage> {
                     islink = true;
                     this.line = line.substring(end+1);
                 }
+            } else if (line.startsWith("{ri:")) {
+                int end = line.indexOf('}');
+                if (end == -1) {
+                    // Error, just put in the entire line
+                    this.line = line;
+                } else {
+                    Item item = GameRegistry.findItem(RFTools.MODID, line.substring(4, end));
+                    recipe = findRecipe(new ItemStack(item));
+                    if (recipe == null) {
+                        // Error,
+                        this.line = line;
+                    } else {
+                        height = 16*3+5;
+                    }
+                }
+            } else if (line.startsWith("{rb:")) {
+                int end = line.indexOf('}');
+                if (end == -1) {
+                    // Error, just put in the entire line
+                    this.line = line;
+                } else {
+                    Block block = GameRegistry.findBlock(RFTools.MODID, line.substring(4, end));
+                    recipe = findRecipe(new ItemStack(block));
+                    if (recipe == null) {
+                        // Error,
+                        this.line = line;
+                    } else {
+                        height = 16*3+5;
+                    }
+                }
             } else {
                 this.line = line;
             }
         }
+    }
+
+    private static IRecipe findRecipe(ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+        for (IRecipe recipe : recipes) {
+            if (recipe.getRecipeOutput().isItemEqual(item)) {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     public static class Page {

@@ -20,7 +20,7 @@ public class GuiRFToolsManual extends GuiScreen {
     /** The X size of the window in pixels. */
     protected int xSize = 356;
     /** The Y size of the window in pixels. */
-    protected int ySize = 180;
+    protected int ySize = 200;
 
     private Window window;
     private TextPage textPage;
@@ -29,6 +29,7 @@ public class GuiRFToolsManual extends GuiScreen {
     private Button nextButton;
 
     private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "docs/manual.txt");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual() {
     }
@@ -40,12 +41,13 @@ public class GuiRFToolsManual extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        textPage = new TextPage(mc, this).setText(manualText);
+        textPage = new TextPage(mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0);
 
         prevButton = new Button(mc, this).setText("<").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 textPage.prevPage();
+                window.setTextFocus(textPage);
             }
         });
         pageLabel = new Label(mc, this).setText("0 / 0");
@@ -53,6 +55,7 @@ public class GuiRFToolsManual extends GuiScreen {
             @Override
             public void buttonClicked(Widget parent) {
                 textPage.nextPage();
+                window.setTextFocus(textPage);
             }
         });
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16).addChild(prevButton).addChild(pageLabel).addChild(nextButton);
