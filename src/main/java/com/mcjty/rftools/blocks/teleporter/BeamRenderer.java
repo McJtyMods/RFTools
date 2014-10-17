@@ -9,10 +9,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
-/**
- * @TODO Unused for now
- */
-public class MatterTransmitterRenderer implements ISimpleBlockRenderingHandler {
+public class BeamRenderer implements ISimpleBlockRenderingHandler {
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
         renderWorldBlock(null, 0, 0, 0, block, modelId, renderer);
@@ -47,36 +44,62 @@ public class MatterTransmitterRenderer implements ISimpleBlockRenderingHandler {
     private static final Quad quads[] = new Quad[] {
             new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
             new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
-            new Quad(new Vt(0, 0, 1), new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1)),       // NORTH
-            new Quad(new Vt(0, 1, 0), new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0)),       // SOUTH
+            new Quad(new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1), new Vt(0, 0, 1)),       // NORTH
+            new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // SOUTH
             new Quad(new Vt(0, 0, 1), new Vt(0, 1, 1), new Vt(0, 1, 0), new Vt(0, 0, 0)),       // WEST
             new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
     };
 
-    private void addSide(Block block, Tessellator tessellator, int side) {
+//    private void addSide(Block block, Tessellator tessellator, int side) {
+//        IIcon c = block.getIcon(side, 0);
+//        float u1 = c.getMinU();
+//        float v1 = c.getMinV();
+//        float u2 = c.getMaxU();
+//        float v2 = c.getMaxV();
+//        Quad quad = quads[side];
+//        tessellator.addVertexWithUV(quad.v1.x, quad.v1.y, quad.v1.z, u1, v1);
+//        tessellator.addVertexWithUV(quad.v2.x, quad.v2.y, quad.v2.z, u1, v2);
+//        tessellator.addVertexWithUV(quad.v3.x, quad.v3.y, quad.v3.z, u2, v2);
+//        tessellator.addVertexWithUV(quad.v4.x, quad.v4.y, quad.v4.z, u2, v1);
+//    }
+//
+    private void addBeamSide(Block block, Tessellator tessellator, int side) {
         IIcon c = block.getIcon(side, 0);
         float u1 = c.getMinU();
         float v1 = c.getMinV();
         float u2 = c.getMaxU();
         float v2 = c.getMaxV();
+
         Quad quad = quads[side];
-        tessellator.addVertexWithUV(quad.v1.x, quad.v1.y, quad.v1.z, u1, v1);
-        tessellator.addVertexWithUV(quad.v2.x, quad.v2.y, quad.v2.z, u1, v2);
-        tessellator.addVertexWithUV(quad.v3.x, quad.v3.y, quad.v3.z, u2, v2);
-        tessellator.addVertexWithUV(quad.v4.x, quad.v4.y, quad.v4.z, u2, v1);
+
+        int y1 = quad.v1.y == 0 ? 0 : 3;
+        int y2 = quad.v2.y == 0 ? 0 : 3;
+        int y3 = quad.v3.y == 0 ? 0 : 3;
+        int y4 = quad.v4.y == 0 ? 0 : 3;
+        tessellator.addVertexWithUV(quad.v1.x, y1, quad.v1.z, u1, v1);
+        tessellator.addVertexWithUV(quad.v2.x, y2, quad.v2.z, u1, v2);
+        tessellator.addVertexWithUV(quad.v3.x, y3, quad.v3.z, u2, v2);
+        tessellator.addVertexWithUV(quad.v4.x, y4, quad.v4.z, u2, v1);
     }
 
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
         Tessellator tessellator = Tessellator.instance;
+        tessellator.setColorOpaque(255, 255, 255);
+        tessellator.setBrightness(255);
         tessellator.addTranslation(x, y, z);
+//
+//        addSide(block, tessellator, Constants.SIDE_DOWN);
+//        addSide(block, tessellator, Constants.SIDE_UP);
+//        addSide(block, tessellator, Constants.SIDE_NORTH);
+//        addSide(block, tessellator, Constants.SIDE_SOUTH);
+//        addSide(block, tessellator, Constants.SIDE_WEST);
+//        addSide(block, tessellator, Constants.SIDE_EAST);
 
-        addSide(block, tessellator, Constants.SIDE_DOWN);
-        addSide(block, tessellator, Constants.SIDE_UP);
-        addSide(block, tessellator, Constants.SIDE_NORTH);
-        addSide(block, tessellator, Constants.SIDE_SOUTH);
-        addSide(block, tessellator, Constants.SIDE_WEST);
-        addSide(block, tessellator, Constants.SIDE_EAST);
+        addBeamSide(block, tessellator, Constants.SIDE_NORTH);
+        addBeamSide(block, tessellator, Constants.SIDE_SOUTH);
+        addBeamSide(block, tessellator, Constants.SIDE_WEST);
+        addBeamSide(block, tessellator, Constants.SIDE_EAST);
 
         tessellator.addTranslation(-x, -y, -z);
         return true;
@@ -89,6 +112,6 @@ public class MatterTransmitterRenderer implements ISimpleBlockRenderingHandler {
 
     @Override
     public int getRenderId() {
-        return ModRenderers.RENDERID_TRANSMITTER;
+        return ModRenderers.RENDERID_BEAM;
     }
 }

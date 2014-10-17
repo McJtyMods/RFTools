@@ -139,14 +139,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         this.receiverStatus = receiverStatus;
     }
 
-    private void clearBeam(Coordinate c, World world, int dy1, int dy2) {
-        for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
-            if (ModBlocks.teleportBeamBlock.equals(b)) {
-                world.setBlockToAir(c.getX(), c.getY()+dy, c.getZ());
-            } else {
-                return;
-            }
+    private void clearBeam(Coordinate c, World world) {
+        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
+        if (ModBlocks.teleportBeamBlock.equals(b)) {
+            world.setBlockToAir(c.getX(), c.getY()+1, c.getZ());
         }
     }
 
@@ -164,13 +160,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
                 }
             }
         }
-        for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
-            if (b.isAir(world, c.getX(), c.getY()+dy, c.getZ()) || ModBlocks.teleportBeamBlock.equals(b)) {
-                world.setBlock(c.getX(), c.getY()+dy, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
-            } else {
-                break;
-            }
+        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
+        if (b.isAir(world, c.getX(), c.getY()+1, c.getZ()) || ModBlocks.teleportBeamBlock.equals(b)) {
+            world.setBlock(c.getX(), c.getY()+1, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
         }
         return true;
     }
@@ -187,7 +179,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         World transWorld = DimensionManager.getProvider(transDim).worldObj;
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
         if (coordinate == null) {
-            clearBeam(transmitter, transWorld, 1, 4);
+            clearBeam(transmitter, transWorld);
             transmitterTileEntity.setTeleportDestination(null);
             return DialingDeviceTileEntity.DIAL_OK;
         }

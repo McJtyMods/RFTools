@@ -1,16 +1,11 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.ModBlocks;
-import com.mcjty.rftools.network.Argument;
-import com.mcjty.varia.Coordinate;
+import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -24,6 +19,7 @@ public class TeleportBeamBlock extends Block {
     public TeleportBeamBlock(Material material) {
         super(material);
         setBlockName("teleportBeamBlock");
+        setBlockUnbreakable();
     }
 
     @Override
@@ -36,7 +32,6 @@ public class TeleportBeamBlock extends Block {
         return null;
     }
 
-
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporter");
@@ -46,6 +41,11 @@ public class TeleportBeamBlock extends Block {
     @Override
     public int getRenderBlockPass() {
         return 1;
+    }
+
+    @Override
+    public int getRenderType() {
+        return ModRenderers.RENDERID_BEAM;
     }
 
     @Override
