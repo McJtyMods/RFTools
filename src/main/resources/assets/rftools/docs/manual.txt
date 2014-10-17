@@ -1,14 +1,15 @@
-RFTools Manual
+{b}RFTools Manual
 
 Table of contents:
-    RF Network Monitor Item
-    RF Monitor
-    Storage Monitor
-    Automatic Crafter
-    RF Power Relay
-    Teleporting System
----
-RF Network Monitor Item
+{l:netmon}RF Network Monitor Item
+{l:rfmoni}RF Monitor
+{l:stomon}Storage Monitor
+{l:crafte}Automatic Crafter
+{l:prelay}RF Power Relay
+{l:telepo}Teleporting System
+{}
+{b}RF Network Monitor Item
+{n:netmon}
 
 With the RF Network Monitor you can select a block and it will try
 to find all blocks that use or produce RF which are connected
@@ -18,6 +19,19 @@ this item to help debug RF related network problems.
 
 Doubleclick on a line in the list of blocks will close the window and
 the block will be hilighted for 5 seconds (configurable).
----
-RF Monitor
+{}
+{b}RF Monitor
+{n:rfmoni}
+{}
+{b}Storage Monitor
+{n:stomon}
+{}
+{b}Automatic Crafter
+{n:crafte}
+{}
+{b}RF Power Relay
+{n:prelay}
+{}
+{b}Teleporting System
+{n:telepo}
 
