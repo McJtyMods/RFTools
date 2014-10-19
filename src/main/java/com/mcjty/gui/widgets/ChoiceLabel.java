@@ -5,12 +5,16 @@ import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChoiceLabel extends Label<ChoiceLabel> {
     private ArrayList<String> choiceList = new ArrayList<String>();
+    private Map<String,List<String>> tooltipMap = new HashMap<String, List<String>>();
     private String currentChoice = null;
     private List<ChoiceEvent> choiceEvents = null;
 
@@ -31,6 +35,11 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
         return this;
     }
 
+    public ChoiceLabel setChoiceTooltip(String choice, String... tooltips) {
+        tooltipMap.put(choice, Arrays.asList(tooltips));
+        return this;
+    }
+
     public ChoiceLabel setChoice(String choice) {
         currentChoice = choice;
         setText(currentChoice);
@@ -39,6 +48,16 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
 
     public String getCurrentChoice() {
         return currentChoice;
+    }
+
+    @Override
+    public List<String> getTooltips() {
+        List<String> tooltips = tooltipMap.get(currentChoice);
+        if (tooltips == null) {
+            return super.getTooltips();
+        } else {
+            return tooltips;
+        }
     }
 
     @Override
