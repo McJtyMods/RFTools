@@ -184,14 +184,22 @@ It enables the dialing device to check the status of a receiver. This way
 you can be sure that a receiver has enough power or is not blocked
 before attempting to make a connection.
 
-In the future you will also be able to place destination analyzers next
-to matter transmitters allowing them to warn you before entering the
-teleportation beam.
+You can also place a destination analyzer next to a transmitter. In
+that case the transmitter will show a red colored teleportation beam
+if there is something wrong on the receiving end. You can check the
+actual problem in the dialing device.
 {}
 {b}Access Control
 {n:tpaccess}
-This is not implemented yet but in the future you will be able to control
-who has access to a transmitter or receiver and you will also be able
-to give out keys to other players so that they can access parts of
-your network.
+Both the transmitter and the receiver can be set in public mode (default)
+or private. In case the mode is private you have to insert a list of
+players who can access this transmitter or receiver.
+
+In case of a transmitter an unauthorized player will not be able to dial
+to a receiver or to interrupt a dial and he/she will also not be able
+to step through the teleporter.
+
+In case of a receiver an unauthorized player can not dial to that
+receiver but he/she can teleport to it if there is an authorized
+transmitter already dialed to that receiver.
 {}
