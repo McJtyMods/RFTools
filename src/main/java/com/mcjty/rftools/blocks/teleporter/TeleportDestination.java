@@ -11,7 +11,6 @@ public class TeleportDestination implements ByteBufConverter {
     private final Coordinate coordinate;
     private final int dimension;
     private String name = "";
-    private final Set<String> allowedPlayers;
 
     public TeleportDestination(ByteBuf buf) {
         int cx = buf.readInt();
@@ -26,19 +25,11 @@ public class TeleportDestination implements ByteBufConverter {
         byte[] dst = new byte[buf.readInt()];
         buf.readBytes(dst);
         setName(new String(dst));
-        this.allowedPlayers = new HashSet<String>();
-    }
-
-    public TeleportDestination(Coordinate coordinate, int dimension, Set<String> allowedPlayers) {
-        this.coordinate = coordinate;
-        this.dimension = dimension;
-        this.allowedPlayers = new HashSet<String>(allowedPlayers);
     }
 
     public TeleportDestination(Coordinate coordinate, int dimension) {
         this.coordinate = coordinate;
         this.dimension = dimension;
-        this.allowedPlayers = new HashSet<String>();
     }
 
     public boolean isValid() {
@@ -81,10 +72,6 @@ public class TeleportDestination implements ByteBufConverter {
         return dimension;
     }
 
-    public Set<String> getAllowedPlayers() {
-        return allowedPlayers;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,8 +80,6 @@ public class TeleportDestination implements ByteBufConverter {
         TeleportDestination that = (TeleportDestination) o;
 
         if (dimension != that.dimension) return false;
-        if (allowedPlayers != null ? !allowedPlayers.equals(that.allowedPlayers) : that.allowedPlayers != null)
-            return false;
         if (coordinate != null ? !coordinate.equals(that.coordinate) : that.coordinate != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
@@ -106,7 +91,6 @@ public class TeleportDestination implements ByteBufConverter {
         int result = coordinate != null ? coordinate.hashCode() : 0;
         result = 31 * result + dimension;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (allowedPlayers != null ? allowedPlayers.hashCode() : 0);
         return result;
     }
 }

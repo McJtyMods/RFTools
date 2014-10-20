@@ -82,7 +82,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     public List<TeleportDestination> searchReceivers() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return destinations.getValidDestinations("");
+        return new ArrayList<TeleportDestination>(destinations.getValidDestinations());
     }
 
     public void storeReceiversForClient(List<TeleportDestination> receivers) {
@@ -196,6 +196,17 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
         if (teleportDestination == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+
+        Coordinate c = teleportDestination.getCoordinate();
+        World recWorld = DimensionManager.getProvider(teleportDestination.getDimension()).worldObj;
+        TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+        if (!matterReceiverTileEntity.checkAccess(player)) {
+            return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }
 
         int cost = MatterTransmitterTileEntity.rfPerDial;

@@ -237,7 +237,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             playerTagList.appendTag(new NBTTagString(player));
         }
         tagCompound.setTag("players", playerTagList);
-
     }
 
 

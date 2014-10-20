@@ -42,19 +42,8 @@ public class TeleportDestinations extends WorldSavedData {
         return instance;
     }
 
-    public List<TeleportDestination> getValidDestinations(String player) {
-        List<TeleportDestination> validDestinations = new ArrayList<TeleportDestination>();
-        for (TeleportDestination destination : destinations.values()) {
-            Set<String> allowedPlayers = destination.getAllowedPlayers();
-            if (allowedPlayers == null || allowedPlayers.isEmpty() || player == null || player.isEmpty()) {
-                validDestinations.add(destination);
-            } else {
-                if (allowedPlayers.contains(player)) {
-                    validDestinations.add(destination);
-                }
-            }
-        }
-        return validDestinations;
+    public Collection<TeleportDestination> getValidDestinations() {
+        return destinations.values();
     }
 
     public void addDestination(Coordinate coordinate, int dimension) {
@@ -83,22 +72,10 @@ public class TeleportDestinations extends WorldSavedData {
             int dim = tc.getInteger("dim");
             String name = tc.getString("name");
 
-            Set<String> allowedPlayers = readPlayerList(tc);
-
-            TeleportDestination destination = new TeleportDestination(c, dim, allowedPlayers);
+            TeleportDestination destination = new TeleportDestination(c, dim);
             destination.setName(name);
             destinations.put(new TeleportDestinationKey(c, dim), destination);
         }
-    }
-
-    private Set<String> readPlayerList(NBTTagCompound tagCompound) {
-        Set<String> allowedPlayers = new HashSet<String>();
-        NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < playerList.tagCount() ; i++) {
-            NBTTagCompound tc = playerList.getCompoundTagAt(i);
-            allowedPlayers.add(tc.getString("player"));
-        }
-        return allowedPlayers;
     }
 
     @Override
@@ -111,19 +88,8 @@ public class TeleportDestinations extends WorldSavedData {
             tc.setInteger("z", destination.getCoordinate().getZ());
             tc.setInteger("dim", destination.getDimension());
             tc.setString("name", destination.getName());
-            writePlayerList(tc, destination.getAllowedPlayers());
             lst.appendTag(tc);
         }
         tagCompound.setTag("destinations", lst);
-    }
-
-    private void writePlayerList(NBTTagCompound tagCompound, Set<String> allowedPlayers) {
-        NBTTagList lst = new NBTTagList();
-        for (String player : allowedPlayers) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("player", player);
-            lst.appendTag(tc);
-        }
-        tagCompound.setTag("players", lst);
     }
 }

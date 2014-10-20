@@ -159,7 +159,7 @@ public class GuiMatterTransmitter extends GuiContainer {
 
 
     private void requestPlayers() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetReceivers(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetPlayers(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord));
     }
 
     private void populatePlayers() {
@@ -226,9 +226,7 @@ public class GuiMatterTransmitter extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         requestListsIfNeeded();
-
         populatePlayers();
-
         enableButtons();
 
         window.draw();
