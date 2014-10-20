@@ -5,6 +5,9 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.crafter.CrafterContainer;
 import com.mcjty.rftools.blocks.crafter.GuiCrafter;
+import com.mcjty.rftools.blocks.endergen.EndergenicBlock;
+import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
+import com.mcjty.rftools.blocks.endergen.GuiEndergenic;
 import com.mcjty.rftools.blocks.monitor.GuiRFMonitor;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
@@ -26,7 +29,8 @@ import net.minecraft.world.World;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_MANUAL || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ) {
+        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE ||
+                guiid == RFTools.GUI_MANUAL || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY) {
             return null;
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -51,6 +55,12 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof MatterReceiverTileEntity) {
                 MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
                 return new EmptyContainer<MatterReceiverTileEntity>(entityPlayer, matterReceiverTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_ENDERGENIC) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof EndergenicTileEntity) {
+                EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
+                return new EmptyContainer<EndergenicTileEntity>(entityPlayer, endergenicTileEntity);
             }
         } else if (guiid == RFTools.GUI_DIALING_DEVICE) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -109,14 +119,22 @@ public class GuiProxy implements IGuiHandler {
                 EmptyContainer<MatterReceiverTileEntity> matterReceiverContainer = new EmptyContainer<MatterReceiverTileEntity>(entityPlayer, matterReceiverTileEntity);
                 return new GuiMatterReceiver(matterReceiverTileEntity, matterReceiverContainer);
             }
+        } else if (guiid == RFTools.GUI_ENDERGENIC) {
+            Block block = world.getBlock(x, y, z);
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (block != null && block instanceof EndergenicBlock && te instanceof EndergenicTileEntity) {
+                EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
+                EmptyContainer<EndergenicTileEntity> endergenicContainer = new EmptyContainer<EndergenicTileEntity>(entityPlayer, endergenicTileEntity);
+                return new GuiEndergenic(endergenicTileEntity, endergenicContainer);
+            }
         } else if (guiid == RFTools.GUI_RELAY) {
             Block block = world.getBlock(x, y, z);
             TileEntity te = world.getTileEntity(x, y, z);
 
             if (block != null && block instanceof RelayBlock && te instanceof RelayTileEntity) {
                 RelayTileEntity relayTileEntity = (RelayTileEntity) te;
-                RelayBlock relayBlock = (RelayBlock) block;
-                return new GuiRelay(relayBlock, relayTileEntity);
+                return new GuiRelay(relayTileEntity);
             }
         } else if (guiid == RFTools.GUI_DIALING_DEVICE) {
             TileEntity te = world.getTileEntity(x, y, z);

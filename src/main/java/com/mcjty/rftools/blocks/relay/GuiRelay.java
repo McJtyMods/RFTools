@@ -28,11 +28,9 @@ public class GuiRelay extends GuiScreen {
     private ChoiceLabel choicesOn;
     private ChoiceLabel choicesOff;
 
-    private final RelayBlock relayBlock;
     private final RelayTileEntity relayTileEntity;
 
-    public GuiRelay(RelayBlock relayBlock, RelayTileEntity relayTileEntity) {
-        this.relayBlock = relayBlock;
+    public GuiRelay(RelayTileEntity relayTileEntity) {
         this.relayTileEntity = relayTileEntity;
     }
 

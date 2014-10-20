@@ -1,6 +1,8 @@
 package com.mcjty.rftools.blocks;
 
 import com.mcjty.rftools.blocks.crafter.*;
+import com.mcjty.rftools.blocks.endergen.EndergenicBlock;
+import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
@@ -30,6 +32,8 @@ public final class ModBlocks {
     public static DialingDeviceBlock dialingDeviceBlock;
     public static DestinationAnalyzerBlock destinationAnalyzerBlock;
     public static TeleportBeamBlock teleportBeamBlock;
+
+    public static EndergenicBlock endergenicBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -77,6 +81,11 @@ public final class ModBlocks {
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
         teleportBeamBlock = new TeleportBeamBlock(Material.portal);
         GameRegistry.registerBlock(teleportBeamBlock, "teleportBeamBlock");
+
+        endergenicBlock = new EndergenicBlock(Material.iron);
+        endergenicBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(endergenicBlock, "endergenicBlock");
+        GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);

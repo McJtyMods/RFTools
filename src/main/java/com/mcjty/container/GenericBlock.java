@@ -61,7 +61,9 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + getFrontIconName());
+        if (getFrontIconName() != null) {
+            iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + getFrontIconName());
+        }
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
 
@@ -69,7 +71,9 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
      * Return the name of the icon to be used for the front side of the machine.
      * @return
      */
-    public abstract String getFrontIconName();
+    public String getFrontIconName() {
+        return null;
+    }
 
     /**
      * Return the id of the gui to use for this block.

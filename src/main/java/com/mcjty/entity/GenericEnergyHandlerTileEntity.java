@@ -18,6 +18,12 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
         storage.setMaxReceive(maxReceive);
     }
 
+    public GenericEnergyHandlerTileEntity(int maxEnergy, int maxReceive, int maxExtract) {
+        storage = new EnergyStorage(maxEnergy);
+        storage.setMaxReceive(maxReceive);
+        storage.setMaxExtract(maxExtract);
+    }
+
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
         return storage.receiveEnergy(maxReceive, simulate);
