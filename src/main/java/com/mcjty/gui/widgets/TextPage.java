@@ -309,8 +309,11 @@ public class TextPage extends AbstractWidget<TextPage> {
         }
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
         for (IRecipe recipe : recipes) {
-            if (recipe.getRecipeOutput().isItemEqual(item)) {
-                return recipe;
+            if (recipe != null) {
+                ItemStack recipeOutput = recipe.getRecipeOutput();
+                if (recipeOutput != null && recipeOutput.isItemEqual(item)) {
+                    return recipe;
+                }
             }
         }
         return null;
