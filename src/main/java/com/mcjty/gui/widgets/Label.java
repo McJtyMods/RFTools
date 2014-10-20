@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Gui;
 public class Label<P extends Label> extends AbstractWidget<P> {
     private String text;
     private int color = 0xFF000000;
-    private int disabledColor = 0xFF444444;
+    private int disabledColor = 0xFF555555;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.ALIGN_CENTER;
     private VerticalAlignment verticalAlignment = VerticalAlignment.ALIGN_CENTER;
     private boolean dynamic = false;        // The size of this label is dynamic and not based on the contents

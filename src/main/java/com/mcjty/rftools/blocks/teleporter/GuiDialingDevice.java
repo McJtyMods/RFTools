@@ -261,6 +261,14 @@ public class GuiDialingDevice extends GuiContainer {
             setStatusError("Matter receiver power low!");
             return;
         }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS) != 0) {
+            setStatusError("No access to transmitter!");
+            return;
+        }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS) != 0) {
+            setStatusError("No access to receiver!");
+            return;
+        }
         if ((dialResult & DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK) != 0) {
             setStatusError("Invalid destination!");
             return;
@@ -271,6 +279,10 @@ public class GuiDialingDevice extends GuiContainer {
         }
         if ((dialResult & DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK) != 0) {
             setStatusError("Transmitter blocked!");
+            return;
+        }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_INTERRUPTED) != 0) {
+            setStatusMessage("Interrupted!");
             return;
         }
         setStatusMessage("Dial ok!");
@@ -303,6 +315,7 @@ public class GuiDialingDevice extends GuiContainer {
 
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
+                new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
                 new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
@@ -318,12 +331,12 @@ public class GuiDialingDevice extends GuiContainer {
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
+                new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
                 new Argument("c", (Coordinate) null), new Argument("dim", 0)));
-        listDirty = 0;
 
-        clearSelectedStatus();
-        setStatusMessage("Interrupted");
+        lastDialedTransmitter = true;
+        listDirty = 0;
     }
 
     private void requestReceivers() {

@@ -70,13 +70,23 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             } else if (hilighted) {
                 RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xffbbbb00, 0xff999900);
             }
-            child.draw(window, xx, yy);
+            if (enabled) {
+                child.draw(window, xx, yy);
+            } else {
+                boolean en = child.isEnabled();
+                child.setEnabled(false);
+                child.draw(window, xx, yy);
+                child.setEnabled(en);
+            }
             top += rowheight;
         }
     }
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
+        if (!enabled) {
+            return null;
+        }
         int newSelected = -1;
         int top = bounds.y;        // Margin@@@?
 

@@ -7,6 +7,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -25,6 +27,12 @@ public class TeleportBeamBlock extends Block {
     @Override
     public boolean isOpaqueCube() {
         return false;
+    }
+
+    @Override
+    public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
+        // We don't want left and right clicks to do anything for this beam
+        return null;
     }
 
     @Override

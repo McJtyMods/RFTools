@@ -35,6 +35,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;    // The destination is somehow invalid
     public static final int DIAL_DIALER_POWER_LOW_MASK = 0x8;       // The dialer itself is low on power
     public static final int DIAL_RECEIVER_POWER_LOW_MASK = 0x10;    // The receiver is low on power
+    public static final int DIAL_TRANSMITTER_NOACCESS = 0x20;       // No access to transmitter
+    public static final int DIAL_RECEIVER_NOACCESS = 0x40;          // No access to receiver
+    public static final int DIAL_INTERRUPTED = 0x80;                // The dial was interrupted
     public static final int DIAL_OK = 0;                            // All is ok
 
     // For client.
@@ -175,13 +178,18 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         this.dialResult = dialResult;
     }
 
-    private int dial(Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
+    private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
         World transWorld = DimensionManager.getProvider(transDim).worldObj;
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
+
+        if (!transmitterTileEntity.checkAccess(player)) {
+            return DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS;
+        }
+
         if (coordinate == null) {
             clearBeam(transmitter, transWorld);
             transmitterTileEntity.setTeleportDestination(null);
-            return DialingDeviceTileEntity.DIAL_OK;
+            return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
 
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
@@ -248,12 +256,13 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             int dim = args.get("dim").getInteger();
             return checkStatus(c, dim);
         } else if (CMD_DIAL.equals(command)) {
+            String player = args.get("player").getString();
             Coordinate transmitter = args.get("trans").getCoordinate();
             int transDim = args.get("transDim").getInteger();
             Coordinate c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
 
-            return dial(transmitter, transDim, c, dim);
+            return dial(player, transmitter, transDim, c, dim);
         }
         return null;
     }

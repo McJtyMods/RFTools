@@ -5,10 +5,11 @@ import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
@@ -21,6 +22,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuiMatterTransmitter extends GuiContainer {
     public static final int MATTER_WIDTH = 200;
@@ -35,6 +39,10 @@ public class GuiMatterTransmitter extends GuiContainer {
     private Button addButton;
     private Button delButton;
     private TextField nameField;
+
+    // A copy of the players we're currently showing.
+    private List<String> players = null;
+    private int listDirty = 0;
 
     private final MatterTransmitterTileEntity transmitterTileEntity;
 
@@ -72,7 +80,7 @@ public class GuiMatterTransmitter extends GuiContainer {
         textField.setText(transmitterTileEntity.getName());
         Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
-        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setChoice(ACCESS_PUBLIC).setDesiredHeight(13).setDesiredWidth(60).
+        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(13).setDesiredWidth(60).
             setChoiceTooltip(ACCESS_PUBLIC, "Everyone can access this transmitter", "and change the dialing destination").
             setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can access this transmitter").
             addChoiceEvent(new ChoiceEvent() {
@@ -81,6 +89,11 @@ public class GuiMatterTransmitter extends GuiContainer {
                     changeAccessMode(newChoice);
                 }
             });
+        if (transmitterTileEntity.isPrivateAccess()) {
+            privateSetting.setChoice(ACCESS_PRIVATE);
+        } else {
+            privateSetting.setChoice(ACCESS_PUBLIC);
+        }
         Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
 
         allowedPlayers = new WidgetList(mc, this).
@@ -110,6 +123,9 @@ public class GuiMatterTransmitter extends GuiContainer {
         toplevel.setBounds(new Rectangle(k, l, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
+
+        listDirty = 0;
+        requestPlayers();
     }
 
     private void setTransmitterName(String text) {
@@ -119,17 +135,48 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
     private void changeAccessMode(String newAccess) {
-        allowedPlayers.setEnabled(ACCESS_PRIVATE.equals(newAccess));
-        // @todo: send this to server
+        boolean isPrivate = ACCESS_PRIVATE.equals(newAccess);
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
+                MatterTransmitterTileEntity.CMD_SETPRIVATE,
+                new Argument("private", isPrivate)));
     }
 
     private void addPlayer() {
         String name = nameField.getText();
-        // @todo
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
+                MatterTransmitterTileEntity.CMD_ADDPLAYER,
+                new Argument("player", name)));
+        listDirty = 0;
     }
 
     private void delPlayer() {
-        // @todo
+        int selected = allowedPlayers.getSelected();
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
+                MatterTransmitterTileEntity.CMD_DELPLAYER,
+                new Argument("player", players.get(selected))));
+        listDirty = 0;
+    }
+
+
+    private void requestPlayers() {
+        PacketHandler.INSTANCE.sendToServer(new PacketGetReceivers(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord));
+    }
+
+    private void populatePlayers() {
+        List<String> newPlayers = transmitterTileEntity.getClientAllowedPlayers();
+        Collections.sort(newPlayers);
+        if (newPlayers == null) {
+            return;
+        }
+        if (newPlayers.equals(players)) {
+            return;
+        }
+
+        players = new ArrayList<String>(newPlayers);
+        allowedPlayers.removeChildren();
+        for (String player : players) {
+            allowedPlayers.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        }
     }
 
 
@@ -160,7 +207,7 @@ public class GuiMatterTransmitter extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        java.util.List<String> tooltips = window.getTooltips();
+        List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
@@ -168,8 +215,20 @@ public class GuiMatterTransmitter extends GuiContainer {
         }
     }
 
+    private void requestListsIfNeeded() {
+        listDirty--;
+        if (listDirty <= 0) {
+            requestPlayers();
+            listDirty = 20;
+        }
+    }
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        requestListsIfNeeded();
+
+        populatePlayers();
+
         enableButtons();
 
         window.draw();
@@ -178,10 +237,14 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
     private void enableButtons() {
+        boolean isPrivate = ACCESS_PRIVATE.equals(privateSetting.getCurrentChoice());
+        allowedPlayers.setEnabled(isPrivate);
+        nameField.setEnabled(isPrivate);
+
         int isPlayerSelected = allowedPlayers.getSelected();
-        delButton.setEnabled(isPlayerSelected != -1);
+        delButton.setEnabled(isPrivate && (isPlayerSelected != -1));
         String name = nameField.getText();
-        addButton.setEnabled(name != null && !name.isEmpty());
+        addButton.setEnabled(isPrivate && name != null && !name.isEmpty());
     }
 
     @Override
