@@ -70,6 +70,28 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
     }
 
+    public static boolean isDestinationAnalyzerAvailable(World world, int x, int y, int z) {
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x + 1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x - 1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y + 1, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y - 1, z))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y, z + 1))) {
+            return true;
+        }
+        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y, z - 1))) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -227,7 +249,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     private int checkStatus(Coordinate c, int dim) {
         World w = DimensionManager.getProvider(dim).worldObj;
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!(tileEntity instanceof  MatterReceiverTileEntity)) {
+        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 

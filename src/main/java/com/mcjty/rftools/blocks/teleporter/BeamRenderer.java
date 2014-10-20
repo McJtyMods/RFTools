@@ -63,8 +63,8 @@ public class BeamRenderer implements ISimpleBlockRenderingHandler {
 //        tessellator.addVertexWithUV(quad.v4.x, quad.v4.y, quad.v4.z, u2, v1);
 //    }
 //
-    private void addBeamSide(Block block, Tessellator tessellator, int side) {
-        IIcon c = block.getIcon(side, 0);
+    private void addBeamSide(Block block, Tessellator tessellator, int side, int meta) {
+        IIcon c = block.getIcon(side, meta);
         float u1 = c.getMinU();
         float v1 = c.getMinV();
         float u2 = c.getMaxU();
@@ -95,11 +95,12 @@ public class BeamRenderer implements ISimpleBlockRenderingHandler {
 //        addSide(block, tessellator, Constants.SIDE_SOUTH);
 //        addSide(block, tessellator, Constants.SIDE_WEST);
 //        addSide(block, tessellator, Constants.SIDE_EAST);
+        int meta = world.getBlockMetadata(x, y, z);
 
-        addBeamSide(block, tessellator, Constants.SIDE_NORTH);
-        addBeamSide(block, tessellator, Constants.SIDE_SOUTH);
-        addBeamSide(block, tessellator, Constants.SIDE_WEST);
-        addBeamSide(block, tessellator, Constants.SIDE_EAST);
+        addBeamSide(block, tessellator, Constants.SIDE_NORTH, meta);
+        addBeamSide(block, tessellator, Constants.SIDE_SOUTH, meta);
+        addBeamSide(block, tessellator, Constants.SIDE_WEST, meta);
+        addBeamSide(block, tessellator, Constants.SIDE_EAST, meta);
 
         tessellator.addTranslation(-x, -y, -z);
         return true;

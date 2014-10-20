@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TeleportBeamBlock extends Block {
 
     private IIcon icon;
+    private IIcon iconWarn;
     private IIcon iconTransparent;
 
     public TeleportBeamBlock(Material material) {
@@ -43,6 +44,7 @@ public class TeleportBeamBlock extends Block {
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporter");
+        iconWarn = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporterWarn");
         iconTransparent = iconRegister.registerIcon(RFTools.MODID + ":" + "transparent");
     }
 
@@ -61,6 +63,10 @@ public class TeleportBeamBlock extends Block {
         if (side == ForgeDirection.DOWN.ordinal() || side == ForgeDirection.UP.ordinal()) {
             return iconTransparent;
         }
+        int meta = blockAccess.getBlockMetadata(x, y, z);
+        if ((meta & 1) != 0) {
+            return iconWarn;
+        }
         return icon;
     }
 
@@ -68,6 +74,9 @@ public class TeleportBeamBlock extends Block {
     public IIcon getIcon(int side, int meta) {
         if (side == ForgeDirection.DOWN.ordinal() || side == ForgeDirection.UP.ordinal()) {
             return iconTransparent;
+        }
+        if ((meta & 1) != 0) {
+            return iconWarn;
         }
         return icon;
     }

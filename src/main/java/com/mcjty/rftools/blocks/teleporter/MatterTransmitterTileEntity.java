@@ -74,6 +74,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private int goodTicks;
     private int badTicks;
 
+    private int checkReceiverStatusCounter = 20;
+
     private AxisAlignedBB beamBox = null;
 
     public MatterTransmitterTileEntity() {
@@ -319,6 +321,19 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     protected void checkStateServer() {
         super.checkStateServer();
 
+        // Every few times we check if the receiver is ok (if we're dialed).
+        if (teleportDestination != null) {
+            checkReceiverStatusCounter--;
+            if (checkReceiverStatusCounter <= 0) {
+                checkReceiverStatusCounter = 20;
+                if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, xCoord, yCoord, zCoord) && !checkReceiverStatus()) {
+                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, 1, 2);
+                } else {
+                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, 0, 2);
+                }
+            }
+        }
+
         if (isCoolingDown()) {
             // We're still in cooldown. Do nothing.
             return;
@@ -347,6 +362,20 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 performTeleport();
             }
         }
+    }
+
+    private boolean checkReceiverStatus() {
+        World w = DimensionManager.getProvider(teleportDestination.getDimension()).worldObj;
+        Coordinate c = teleportDestination.getCoordinate();
+        TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+            return false;
+        }
+
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+
+        int status = matterReceiverTileEntity.checkStatus();
+        return status == DialingDeviceTileEntity.DIAL_OK;
     }
 
     private void clearTeleport(int cooldown) {

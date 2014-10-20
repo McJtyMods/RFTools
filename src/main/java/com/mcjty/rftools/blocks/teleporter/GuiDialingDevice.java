@@ -12,7 +12,6 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
@@ -132,7 +131,7 @@ public class GuiDialingDevice extends GuiContainer {
                     }
                 });
 
-        analyzerAvailable =  isDestinationAnalyzerAvailable();
+        analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord);
         statusButton = new Button(mc, this).setText("Check").
                 setDesiredHeight(14).
                 setEnabled(analyzerAvailable).
@@ -166,31 +165,6 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
-    }
-
-    private boolean isDestinationAnalyzerAvailable() {
-        int x = dialingDeviceTileEntity.xCoord;
-        int y = dialingDeviceTileEntity.yCoord;
-        int z = dialingDeviceTileEntity.zCoord;
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x+1, y, z))) {
-            return true;
-        }
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x-1, y, z))) {
-            return true;
-        }
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y+1, z))) {
-            return true;
-        }
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y-1, z))) {
-            return true;
-        }
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y, z+1))) {
-            return true;
-        }
-        if (ModBlocks.destinationAnalyzerBlock.equals(mc.theWorld.getBlock(x, y, z-1))) {
-            return true;
-        }
-        return false;
     }
 
     private void clearSelectedStatus() {
