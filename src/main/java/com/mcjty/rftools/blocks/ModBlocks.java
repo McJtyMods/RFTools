@@ -7,6 +7,8 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
+import com.mcjty.rftools.blocks.sequencer.SequencerBlock;
+import com.mcjty.rftools.blocks.sequencer.SequencerTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -16,6 +18,7 @@ import net.minecraft.creativetab.CreativeTabs;
 
 public final class ModBlocks {
     public static MachineFrame machineFrame;
+    public static MachineBase machineBase;
 
     public static RFMonitorBlock monitorBlock;
 
@@ -34,6 +37,8 @@ public final class ModBlocks {
     public static TeleportBeamBlock teleportBeamBlock;
 
     public static EndergenicBlock endergenicBlock;
+
+    public static SequencerBlock sequencerBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -87,8 +92,17 @@ public final class ModBlocks {
         GameRegistry.registerBlock(endergenicBlock, "endergenicBlock");
         GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
 
+        sequencerBlock = new SequencerBlock(Material.iron);
+        sequencerBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(sequencerBlock, "sequencerBlock");
+        GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
+
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(machineFrame, "machineFrame");
+
+        machineBase = new MachineBase(Material.iron);
+        machineBase.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(machineBase, "machineBase");
     }
 }

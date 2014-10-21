@@ -45,6 +45,7 @@ public class RFTools {
     public static final int GUI_TELEPORTPROBE = modGuiIndex++;
     public static final int GUI_MANUAL = modGuiIndex++;
     public static final int GUI_ENDERGENIC = modGuiIndex++;
+    public static final int GUI_SEQUENCER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

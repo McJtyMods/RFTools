@@ -2,6 +2,7 @@ package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
+import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity;
 import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
@@ -30,6 +31,7 @@ public class CommonProxy {
     public static final String CATEGORY_STORAGE_MONITOR = "StorageMonitor";
     public static final String CATEGORY_NETWORK_MONITOR = "NetworkMonitor";
     public static final String CATEGORY_TELEPORTER = "Teleporter";
+    public static final String CATEGORY_ENDERGENIC = "Endergenic";
 
     public void preInit(FMLPreInitializationEvent e) {
         loadConfiguration(e);
@@ -49,6 +51,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
             cfg.addCustomCategoryComment(CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
             cfg.addCustomCategoryComment(CATEGORY_TELEPORTER, "Settings for the teleporter system");
+            cfg.addCustomCategoryComment(CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
 
             CrafterBlockTileEntity3.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity3.rfPerOperation, "Amount of RF used per crafting operation").getInt();
             CrafterBlockTileEntity3.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity3.speedOperations, "How many operations to do at once in fast mode").getInt();
@@ -112,6 +115,11 @@ public class CommonProxy {
                     "The base time used for a teleportation to another dimension. The 'timeTeleportDist' value is not used").getInt();
             MatterTransmitterTileEntity.timeTeleportDist = cfg.get(CATEGORY_TELEPORTER, "timeTeleportDist", MatterTransmitterTileEntity.timeTeleportDist,
                     "The amount of time that is added depending on distance for a local teleport. This value is in militicks which means that 1000 is one tick and one tick is 1/20 of a second").getInt();
+
+            EndergenicTileEntity.chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", EndergenicTileEntity.chanceLost,
+                    "The chance (in percent) that an endergenic pearl is lost while trying to hold it").getInt();
+            EndergenicTileEntity.rfToHoldPearl = cfg.get(CATEGORY_ENDERGENIC, "endergenicRfHolding", EndergenicTileEntity.rfToHoldPearl,
+                    "The amount of RF that is consumed every tick to hold the endergenic pearl").getInt();
 
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

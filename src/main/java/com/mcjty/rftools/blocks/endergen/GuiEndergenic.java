@@ -2,10 +2,12 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.EnergyBar;
+import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
-import com.mcjty.gui.widgets.Widget;
+import com.mcjty.gui.widgets.TextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Mouse;
@@ -20,6 +22,7 @@ public class GuiEndergenic extends GuiContainer {
 
     private Window window;
     private EnergyBar energyBar;
+    private TextField averageRF;
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer<EndergenicTileEntity> container) {
         super(container);
@@ -43,8 +46,11 @@ public class GuiEndergenic extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(endergenicTileEntity.getCurrentRF());
 
+        Label avgLabel = new Label(mc, this).setText("Average RF:");
+        averageRF = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(110);
+        Panel averageRFPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(avgLabel).addChild(averageRF);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).addChild(averageRFPanel);
         toplevel.setBounds(new Rectangle(k, l, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new com.mcjty.gui.Window(this, toplevel);
     }
@@ -82,6 +88,8 @@ public class GuiEndergenic extends GuiContainer {
         window.draw();
         int currentRF = endergenicTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        int avgRF = endergenicTileEntity.getAverageRF();
+        averageRF.setText(avgRF + " RF/tick");
     }
 
     @Override

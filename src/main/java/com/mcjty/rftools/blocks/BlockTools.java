@@ -15,8 +15,14 @@ import java.util.Random;
 public class BlockTools {
     private static final Random random = new Random();
 
+    // Use these flags if you want to support a single redstone signal and 3 bits for orientation.
     public static final int MASK_ORIENTATION = 0x7;
     public static final int MASK_REDSTONE = 0x8;
+
+    // Use these flags if you want to support both redstone in and output and only 2 bits for orientation.
+    public static final int MASK_ORIENTATION_HORIZONTAL = 0x3;          // Only two bits for orientation
+    public static final int MASK_REDSTONE_IN = 0x8;                     // Redstone in
+    public static final int MASK_REDSTONE_OUT = 0x4;                    // Redstone out
 
     public static ForgeDirection getOrientation(int metadata) {
         return ForgeDirection.getOrientation(metadata & MASK_ORIENTATION);
@@ -24,6 +30,14 @@ public class BlockTools {
 
     public static int setOrientation(int metadata, ForgeDirection orientation) {
         return (metadata & ~MASK_ORIENTATION) | orientation.ordinal();
+    }
+
+    public static ForgeDirection getOrientationHoriz(int metadata) {
+        return ForgeDirection.getOrientation((metadata & MASK_ORIENTATION_HORIZONTAL)+2);
+    }
+
+    public static int setOrientationHoriz(int metadata, ForgeDirection orientation) {
+        return (metadata & ~MASK_ORIENTATION_HORIZONTAL) | (orientation.ordinal()-2);
     }
 
     public static boolean getRedstoneSignal(int metadata) {
@@ -35,6 +49,30 @@ public class BlockTools {
             return metadata | MASK_REDSTONE;
         } else {
             return metadata & ~MASK_REDSTONE;
+        }
+    }
+
+    public static boolean getRedstoneSignalIn(int metadata) {
+        return (metadata & MASK_REDSTONE_IN) != 0;
+    }
+
+    public static int setRedstoneSignalIn(int metadata, boolean signal) {
+        if (signal) {
+            return metadata | MASK_REDSTONE_IN;
+        } else {
+            return metadata & ~MASK_REDSTONE_IN;
+        }
+    }
+
+    public static boolean getRedstoneSignalOut(int metadata) {
+        return (metadata & MASK_REDSTONE_OUT) != 0;
+    }
+
+    public static int setRedstoneSignalOut(int metadata, boolean signal) {
+        if (signal) {
+            return metadata | MASK_REDSTONE_OUT;
+        } else {
+            return metadata & ~MASK_REDSTONE_OUT;
         }
     }
 
@@ -50,6 +88,11 @@ public class BlockTools {
                 return ForgeDirection.DOWN;
             }
         }
+        int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
+    }
+
+    public static ForgeDirection determineOrientationHoriz(int x, int y, int z, EntityLivingBase entityLivingBase) {
         int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
     }

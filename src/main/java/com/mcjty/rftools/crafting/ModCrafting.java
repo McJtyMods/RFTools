@@ -19,6 +19,8 @@ public final class ModCrafting {
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), new Object[]{"ili", "g g", "ili", 'i', Items.iron_ingot, 'g', Items.gold_nugget, 'l', lapisStack});
 
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), new Object[]{"   ", "ggg", "sss", 'g', Items.gold_nugget, 's', Blocks.stone});
+
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), new Object[]{" T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone});
 
@@ -39,5 +41,9 @@ public final class ModCrafting {
                 'T', redstoneTorch});
         GameRegistry.addRecipe(new ItemStack(ModBlocks.destinationAnalyzerBlock), new Object[]{"o o", " M ", "o o", 'M', ModBlocks.machineFrame,
                 'o', Items.ender_pearl});
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.sequencerBlock), new Object[]{"rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase});
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.endergenicBlock), new Object[]{"DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.diamond, 'o', Items.ender_pearl});
     }
 }
