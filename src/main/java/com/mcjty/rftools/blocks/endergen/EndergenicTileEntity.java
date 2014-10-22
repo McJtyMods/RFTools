@@ -128,8 +128,28 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode = CHARGE_IDLE;
     }
 
+    /**
+     * Get the current destination. This function checks first if that destination is
+     * still valid and if not it is reset to null (i.e. the destination was removed).
+     * @return
+     */
+    private EndergenicTileEntity getDestinationTE() {
+        if (destination == null) {
+            return null;
+        }
+        TileEntity te = worldObj.getTileEntity(destination.getX(), destination.getY(), destination.getZ());
+        if (te instanceof EndergenicTileEntity) {
+            return (EndergenicTileEntity) te;
+        } else {
+            destination = null;
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return null;
+        }
+    }
+
     public void firePearl() {
         // This method assumes we're in holding mode.
+        getDestinationTE();
         if (destination == null) {
             // There is no destination so the pearl is simply lost.
             discardPearl();
@@ -167,14 +187,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (otherTE == null) {
             // None selected. Just select this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(this);
-            EndergenicTileEntity destTE = null;
-            if (destination != null) {
-                TileEntity te = worldObj.getTileEntity(destination.getX(), destination.getY(), destination.getZ());
-                if (te instanceof EndergenicTileEntity) {
-                    destTE = (EndergenicTileEntity) te;
-                }
-            }
-            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(destTE);
+            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(getDestinationTE());
             RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
         } else if (otherTE == this) {
             // Unselect this one.
@@ -200,10 +213,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     public int getAverageRF() {
         return rfAverage;
-    }
-
-    public Coordinate getDestination() {
-        return destination;
     }
 
     public void setDestination(Coordinate destination) {
