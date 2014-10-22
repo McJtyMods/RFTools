@@ -5,9 +5,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.crafter.CrafterContainer;
 import com.mcjty.rftools.blocks.crafter.GuiCrafter;
-import com.mcjty.rftools.blocks.endergen.EndergenicBlock;
-import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
-import com.mcjty.rftools.blocks.endergen.GuiEndergenic;
+import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.monitor.GuiRFMonitor;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
@@ -41,6 +39,12 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof CrafterBlockTileEntity3) {
                 CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) te;
                 return new CrafterContainer(entityPlayer, crafterBlockTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_PEARL_INJECTOR) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof PearlInjectorTileEntity) {
+                PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity) te;
+                return new PearlInjectorContainer(entityPlayer, pearlInjectorTileEntity);
             }
         } else if (guiid == RFTools.GUI_STORAGE_SCANNER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -99,6 +103,13 @@ public class GuiProxy implements IGuiHandler {
                 CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) te;
                 CrafterContainer crafterContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
                 return new GuiCrafter(crafterBlockTileEntity, crafterContainer);
+            }
+        } else if (guiid == RFTools.GUI_PEARL_INJECTOR) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof PearlInjectorTileEntity) {
+                PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity) te;
+                PearlInjectorContainer pearlInjectorContainer = new PearlInjectorContainer(entityPlayer, pearlInjectorTileEntity);
+                return new GuiPearlInjector(pearlInjectorTileEntity, pearlInjectorContainer);
             }
         } else if (guiid == RFTools.GUI_STORAGE_SCANNER) {
             TileEntity te = world.getTileEntity(x, y, z);

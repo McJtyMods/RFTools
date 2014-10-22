@@ -2,6 +2,7 @@ package com.mcjty.container;
 
 import com.google.common.collect.Range;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -47,7 +48,14 @@ public class GenericContainer extends Container {
             if (slotFactory.getSlotType() == SlotType.SLOT_GHOST) {
                 slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else if (slotFactory.getSlotType() == SlotType.SLOT_GHOSTOUT) {
-                    slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+                slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_ENDERPEARL) {
+                slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
+                    @Override
+                    public boolean isItemValid(ItemStack stack) {
+                        return Items.ender_pearl.equals(stack.getItem());
+                    }
+                };
             } else {
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             }

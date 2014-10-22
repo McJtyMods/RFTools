@@ -3,6 +3,8 @@ package com.mcjty.rftools.blocks;
 import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.endergen.EndergenicBlock;
 import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
+import com.mcjty.rftools.blocks.endergen.PearlInjectorBlock;
+import com.mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
@@ -37,6 +39,7 @@ public final class ModBlocks {
     public static TeleportBeamBlock teleportBeamBlock;
 
     public static EndergenicBlock endergenicBlock;
+    public static PearlInjectorBlock pearlInjectorBlock;
 
     public static SequencerBlock sequencerBlock;
 
@@ -91,6 +94,11 @@ public final class ModBlocks {
         endergenicBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(endergenicBlock, "endergenicBlock");
         GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
+
+        pearlInjectorBlock = new PearlInjectorBlock(Material.iron);
+        pearlInjectorBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(pearlInjectorBlock, "pearlInjectorBlock");
+        GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
 
         sequencerBlock = new SequencerBlock(Material.iron);
         sequencerBlock.setCreativeTab(CreativeTabs.tabMisc);

@@ -45,5 +45,7 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.sequencerBlock), new Object[]{"rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase});
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.endergenicBlock), new Object[]{"DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.diamond, 'o', Items.ender_pearl});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.pearlInjectorBlock), new Object[]{" C ", "rMr", " H ", 'C', Blocks.chest, 'r', Items.redstone,
+                'M', ModBlocks.machineFrame, 'H', Blocks.hopper});
     }
 }
