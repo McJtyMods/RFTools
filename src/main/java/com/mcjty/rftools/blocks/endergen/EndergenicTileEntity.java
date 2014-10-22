@@ -3,16 +3,26 @@ package com.mcjty.rftools.blocks.endergen;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity;
+import com.mcjty.rftools.network.Argument;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
+import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.Map;
 import java.util.Random;
 
 public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     private static Random random = new Random();
+
+    public static String CMD_SETDESTINATION = "setDest";
 
     public static final int CHARGE_IDLE = 0;
     public static final int CHARGE_HOLDING = -1;
@@ -28,6 +38,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // The location of the destination endergenic generator.
     private Coordinate destination = null;
+    private int distance = 0;           // Distance between this block and destination in ticks
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -156,14 +167,24 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (otherTE == null) {
             // None selected. Just select this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(this);
+            EndergenicTileEntity destTE = null;
+            if (destination != null) {
+                TileEntity te = worldObj.getTileEntity(destination.getX(), destination.getY(), destination.getZ());
+                if (te instanceof EndergenicTileEntity) {
+                    destTE = (EndergenicTileEntity) te;
+                }
+            }
+            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(destTE);
             RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
         } else if (otherTE == this) {
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
+            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
         } else {
             // Make a link.
             otherTE.setDestination(new Coordinate(xCoord, yCoord, zCoord));
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
+            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
             RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set");
         }
     }
@@ -187,6 +208,19 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     public void setDestination(Coordinate destination) {
         this.destination = destination;
+
+        double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(
+                Vec3.createVectorHelper(xCoord, yCoord, zCoord));
+        distance = (int) (d / 5.0f) + 1;
+
+        if (worldObj.isRemote) {
+            // We're on the client. Send change to server.
+            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
+                    EndergenicTileEntity.CMD_SETDESTINATION,
+                    new Argument("dest", destination)));
+        } else {
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     @Override
@@ -195,6 +229,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         chargingMode = tagCompound.getInteger("charging");
         destination = Coordinate.readFromNBT(tagCompound, "dest");
+        distance = tagCompound.getInteger("distance");
         rfAverage = tagCompound.getInteger("rfAverage");
         prevIn = tagCompound.getBoolean("prevIn");
     }
@@ -205,7 +240,21 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         tagCompound.setInteger("charging", chargingMode);
         Coordinate.writeToNBT(tagCompound, "dest", destination);
+        tagCompound.setInteger("distance", distance);
         tagCompound.setInteger("rfAverage", rfAverage);
         tagCompound.setBoolean("prevIn", prevIn);
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETDESTINATION.equals(command)) {
+            setDestination(args.get("dest").getCoordinate());
+            return true;
+        }
+        return false;
     }
 }

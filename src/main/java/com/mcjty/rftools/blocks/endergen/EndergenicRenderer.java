@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.endergen;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.render.DefaultISBRH;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -12,17 +11,24 @@ import org.lwjgl.opengl.GL11;
 
 public class EndergenicRenderer extends TileEntitySpecialRenderer {
 
-    private static final ResourceLocation hilightTexture = new ResourceLocation(RFTools.MODID, "textures/blocks/redglow.png");
+    private static final ResourceLocation redglow = new ResourceLocation(RFTools.MODID, "textures/blocks/redglow.png");
+    private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
         EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) tileEntity;
 
-        if (endergenicTileEntity != RFTools.instance.clientInfo.getSelectedEndergenicTileEntity()) {
+        ResourceLocation txt;
+
+        if (endergenicTileEntity == RFTools.instance.clientInfo.getSelectedEndergenicTileEntity()) {
+            txt = redglow;
+        } else if (endergenicTileEntity == RFTools.instance.clientInfo.getDestinationEndergenicTileEntity()) {
+            txt = blueglow;
+        } else {
             return;
         }
 
-        this.bindTexture(hilightTexture);
+        this.bindTexture(txt);
 
         Tessellator tessellator = Tessellator.instance;
         GL11.glPushMatrix();

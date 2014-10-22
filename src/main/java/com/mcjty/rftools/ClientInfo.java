@@ -8,6 +8,7 @@ import com.mcjty.varia.Coordinate;
  */
 public class ClientInfo {
     private EndergenicTileEntity selectedEndergenicTileEntity = null;
+    private EndergenicTileEntity destinationEndergenicTileEntity = null;
 
     private Coordinate hilightedBlock = null;
     private long expireHilight = 0;
@@ -31,5 +32,13 @@ public class ClientInfo {
 
     public void setSelectedEndergenicTileEntity(EndergenicTileEntity selectedEndergenicTileEntity) {
         this.selectedEndergenicTileEntity = selectedEndergenicTileEntity;
+    }
+
+    public EndergenicTileEntity getDestinationEndergenicTileEntity() {
+        return destinationEndergenicTileEntity;
+    }
+
+    public void setDestinationEndergenicTileEntity(EndergenicTileEntity destinationEndergenicTileEntity) {
+        this.destinationEndergenicTileEntity = destinationEndergenicTileEntity;
     }
 }
