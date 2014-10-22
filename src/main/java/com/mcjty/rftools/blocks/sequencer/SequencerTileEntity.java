@@ -106,6 +106,7 @@ public class SequencerTileEntity extends GenericTileEntity {
             handlePulse();
         }
 
+        markDirty();
         timer--;
         if (timer <= 0) {
             timer = delay;

@@ -354,6 +354,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             handleEnergyShortage();
         } else {
             // We have enough energy so this is a good tick.
+            markDirty();
             extractEnergy(ForgeDirection.DOWN, rfTeleportPerTick, false);
             goodTicks++;
 
@@ -379,6 +380,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private void clearTeleport(int cooldown) {
+        markDirty();
         applyBadEffectIfNeeded(0);
         cooldownTimer = cooldown;
         teleportingPlayer = null;
@@ -389,6 +391,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private boolean isCoolingDown() {
+        markDirty();
         cooldownTimer--;
         if (cooldownTimer <= 0) {
             cooldownTimer = 0;
@@ -451,6 +454,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private void handleEnergyShortage() {
+        markDirty();
         // Not enough energy. This is a bad tick.
         badTicks++;
         if (mustInterrupt()) {

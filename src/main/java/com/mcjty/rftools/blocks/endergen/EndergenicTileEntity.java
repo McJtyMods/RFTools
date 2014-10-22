@@ -117,6 +117,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         // Else we're charging up.
+        markDirty();
         chargingMode++;
         if (chargingMode >= 16) {
             chargingMode = CHARGE_IDLE;
@@ -124,6 +125,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void discardPearl() {
+        markDirty();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
     }
@@ -148,6 +150,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void firePearl() {
+        markDirty();
         // This method assumes we're in holding mode.
         getDestinationTE();
         if (destination == null) {
@@ -161,6 +164,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void receivePearl() {
+        markDirty();
         if (chargingMode == CHARGE_HOLDING) {
             // If this block is already holding a pearl and it still has one then both pearls are
             // automatically lost.
@@ -177,6 +181,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void startCharging() {
+        markDirty();
         chargingMode = 1;
         pearlsOpportunities++;
     }
@@ -216,6 +221,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void setDestination(Coordinate destination) {
+        markDirty();
         this.destination = destination;
 
         double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(
@@ -227,8 +233,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
                     EndergenicTileEntity.CMD_SETDESTINATION,
                     new Argument("dest", destination)));
-        } else {
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }
 
