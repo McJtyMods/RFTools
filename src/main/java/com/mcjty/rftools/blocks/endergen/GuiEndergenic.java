@@ -15,7 +15,7 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 
 public class GuiEndergenic extends GuiContainer {
-    public static final int ENDERGENIC_WIDTH = 140;
+    public static final int ENDERGENIC_WIDTH = 180;
     public static final int ENDERGENIC_HEIGHT = 50;
 
     private final EndergenicTileEntity endergenicTileEntity;
@@ -47,7 +47,7 @@ public class GuiEndergenic extends GuiContainer {
         energyBar.setValue(endergenicTileEntity.getCurrentRF());
 
         Label avgLabel = new Label(mc, this).setText("Average RF:");
-        averageRF = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(110);
+        averageRF = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(90).setDesiredHeight(15);
         Panel averageRFPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(avgLabel).addChild(averageRF);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).addChild(averageRFPanel);
