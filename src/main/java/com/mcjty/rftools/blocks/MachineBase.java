@@ -10,6 +10,7 @@ public class MachineBase extends Block {
         super(material);
         setBlockName("machineBase");
         setBlockTextureName(RFTools.MODID + ":" + "machineSide");
+        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
     @Override

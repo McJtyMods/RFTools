@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
 
@@ -76,9 +77,43 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
         tessellator.addVertexWithUV(quad.v4.x, y4, quad.v4.z, u2, v1);
     }
 
+    protected void drawInventoryBlock(Block block, int meta, RenderBlocks renderer) {
+        Tessellator t = Tessellator.instance;
+
+        t.startDrawingQuads();
+        t.setNormal(-1, 0, 0);
+        renderer.renderFaceXNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.WEST.ordinal(), meta));
+        t.draw();
+
+        t.startDrawingQuads();
+        t.setNormal(1, 0, 0);
+        renderer.renderFaceXPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.EAST.ordinal(), meta));
+        t.draw();
+
+        t.startDrawingQuads();
+        t.setNormal(0, 0, -1);
+        renderer.renderFaceZNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.NORTH.ordinal(), meta));
+        t.draw();
+
+        t.startDrawingQuads();
+        t.setNormal(0, 0, 1);
+        renderer.renderFaceZPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.SOUTH.ordinal(), meta));
+        t.draw();
+
+        t.startDrawingQuads();
+        t.setNormal(0, -1, 0);
+        renderer.renderFaceYNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.DOWN.ordinal(), meta));
+        t.draw();
+
+        t.startDrawingQuads();
+        t.setNormal(0, 1, 0);
+        renderer.renderFaceYPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, ForgeDirection.UP.ordinal(), meta));
+        t.draw();
+    }
+
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        renderWorldBlock(null, 0, 0, 0, block, modelId, renderer);
+        drawInventoryBlock(block, metadata, renderer);
     }
 
     @Override

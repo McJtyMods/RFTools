@@ -22,6 +22,7 @@ public class SequencerBlock extends GenericBlock {
     public SequencerBlock(Material material) {
         super(material, SequencerTileEntity.class);
         setBlockName("sequencerBlock");
+        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
     @Override

@@ -36,4 +36,9 @@ public class SequenceRenderer extends DefaultISBRH {
     public int getRenderId() {
         return ModRenderers.RENDERID_SEQUENCER;
     }
+
+    @Override
+    public boolean shouldRender3DInInventory(int modelId) {
+        return true;
+    }
 }
