@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -25,6 +26,9 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // The location of the destination endergenic generator.
     private Coordinate destination = null;
+
+    // For pulse detection.
+    private boolean prevIn = false;
 
     // Statistics for this generator.
     private int rfRemembered = 0;
@@ -64,6 +68,20 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             pearlsOpportunities = 0;
         }
 
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        boolean newvalue = BlockTools.getRedstoneSignalIn(meta);
+        boolean pulse = newvalue && !prevIn;
+        prevIn = newvalue;
+        if (pulse) {
+            if (chargingMode == CHARGE_IDLE) {
+                startCharging();
+                return;
+            } else if (chargingMode == CHARGE_HOLDING) {
+                firePearl();
+                return;
+            }
+        }
+
         if (chargingMode == CHARGE_IDLE) {
             // Do nothing
             return;
@@ -98,6 +116,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void firePearl() {
+        // This method assumes we're in holding mode.
         if (destination == null) {
             // There is no destination so the pearl is simply lost.
             discardPearl();
@@ -152,6 +171,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode = tagCompound.getInteger("charging");
         destination = Coordinate.readFromNBT(tagCompound, "dest");
         rfAverage = tagCompound.getInteger("rfAverage");
+        prevIn = tagCompound.getBoolean("prevIn");
     }
 
     @Override
@@ -161,5 +181,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         tagCompound.setInteger("charging", chargingMode);
         Coordinate.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("rfAverage", rfAverage);
+        tagCompound.setBoolean("prevIn", prevIn);
     }
 }

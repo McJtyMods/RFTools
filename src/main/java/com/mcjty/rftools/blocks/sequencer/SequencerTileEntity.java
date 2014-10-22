@@ -25,7 +25,10 @@ public class SequencerTileEntity extends GenericTileEntity {
     private int mode = MODE_ONCE1;
     private long cycleBits = 0;
     private int currentStep = -1;
+
+    // For pulse detection.
     private boolean prevIn = false;
+
     private int delay = 1;
     private int timer = 0;
     private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
