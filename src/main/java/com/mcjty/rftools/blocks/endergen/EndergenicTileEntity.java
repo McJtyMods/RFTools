@@ -1,8 +1,10 @@
 package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -146,6 +148,29 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     public void startCharging() {
         chargingMode = 1;
         pearlsOpportunities++;
+    }
+
+    // Called from client side when a wrench is used.
+    public void useWrench() {
+        EndergenicTileEntity otherTE = RFTools.instance.clientInfo.getSelectedEndergenicTileEntity();
+        if (otherTE == null) {
+            // None selected. Just select this one.
+            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(this);
+            RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
+        } else if (otherTE == this) {
+            // Unselect this one.
+            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
+        } else {
+            // Make a link.
+            otherTE.setDestination(new Coordinate(xCoord, yCoord, zCoord));
+            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
+            RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set");
+        }
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
     }
 
     public int getChargingMode() {

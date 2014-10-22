@@ -38,14 +38,14 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent evt) {
-        Coordinate c = RFTools.instance.getHilightedBlock();
+        Coordinate c = RFTools.instance.clientInfo.getHilightedBlock();
         if (c == null) {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
         long time = mc.theWorld.getTotalWorldTime();
-        if (time > RFTools.instance.getExpireHilight()) {
-            RFTools.instance.hilightBlock(null, -1);
+        if (time > RFTools.instance.clientInfo.getExpireHilight()) {
+            RFTools.instance.clientInfo.hilightBlock(null, -1);
             return;
         }
 

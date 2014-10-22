@@ -30,8 +30,7 @@ public class RFTools {
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
 
-    private Coordinate hilightedBlock = null;
-    private long expireHilight = 0;
+    public ClientInfo clientInfo = new ClientInfo();
 
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
@@ -49,19 +48,6 @@ public class RFTools {
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);
-    }
-
-    public void hilightBlock(Coordinate c, long expireHilight) {
-        hilightedBlock = c;
-        this.expireHilight = expireHilight;
-    }
-
-    public Coordinate getHilightedBlock() {
-        return hilightedBlock;
-    }
-
-    public long getExpireHilight() {
-        return expireHilight;
     }
 
     /**

@@ -178,7 +178,7 @@ public class GuiDialingDevice extends GuiContainer {
         }
         TransmitterInfo transmitterInfo = transmitters.get(index);
         Coordinate c = transmitterInfo.getCoordinate();
-        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
@@ -196,7 +196,7 @@ public class GuiDialingDevice extends GuiContainer {
             mc.getMinecraft().thePlayer.closeScreen();
             return;
         }
-        RFTools.instance.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20*StorageScannerTileEntity.hilightTime);
         RFTools.message(mc.thePlayer, "The receiver is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }

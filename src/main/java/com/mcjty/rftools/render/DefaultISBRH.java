@@ -45,7 +45,19 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
             new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
     };
 
-    protected void addSide(Block block, Tessellator tessellator, int side, int meta) {
+    public static void addSideFullTexture(Tessellator tessellator, int side, float mult, float offset) {
+        float u1 = 0;
+        float v1 = 0;
+        float u2 = 1;
+        float v2 = 1;
+        Quad quad = quads[side];
+        tessellator.addVertexWithUV(quad.v1.x * mult + offset, quad.v1.y * mult + offset, quad.v1.z * mult + offset, u1, v1);
+        tessellator.addVertexWithUV(quad.v2.x * mult + offset, quad.v2.y * mult + offset, quad.v2.z * mult + offset, u1, v2);
+        tessellator.addVertexWithUV(quad.v3.x * mult + offset, quad.v3.y * mult + offset, quad.v3.z * mult + offset, u2, v2);
+        tessellator.addVertexWithUV(quad.v4.x * mult + offset, quad.v4.y * mult + offset, quad.v4.z * mult + offset, u2, v1);
+    }
+
+    public static void addSide(Block block, Tessellator tessellator, int side, int meta) {
         IIcon c = block.getIcon(side, meta);
         float u1 = c.getMinU();
         float v1 = c.getMinV();
@@ -58,7 +70,7 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
         tessellator.addVertexWithUV(quad.v4.x, quad.v4.y, quad.v4.z, u2, v1);
     }
 
-    protected void addSideHeight(Block block, Tessellator tessellator, int side, int meta, double height) {
+    public static void addSideHeight(Block block, Tessellator tessellator, int side, int meta, double height) {
         IIcon c = block.getIcon(side, meta);
         float u1 = c.getMinU();
         float v1 = c.getMinV();
