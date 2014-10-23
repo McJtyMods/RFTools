@@ -57,10 +57,10 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     }
 
     private boolean takePearl() {
-        for (ItemStack stack : stacks) {
-            if (Items.ender_pearl.equals(stack.getItem()) && stack.stackSize > 0) {
-                stack.stackSize--;
-                markDirty();
+        for (int i = 0 ; i < stacks.length ; i++) {
+            ItemStack stack = stacks[i];
+            if (stack != null && Items.ender_pearl.equals(stack.getItem()) && stack.stackSize > 0) {
+                decrStackSize(i, 1);
                 return true;
             }
         }

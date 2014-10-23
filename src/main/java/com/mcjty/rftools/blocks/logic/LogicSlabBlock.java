@@ -81,6 +81,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
     }
 
 
+
     @Override
     public boolean canProvidePower() {
         return true;
