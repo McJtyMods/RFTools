@@ -65,6 +65,9 @@ public class GenericContainer extends Container {
 
     private boolean mergeItemStacks(ItemStack itemStack, SlotType slotType, boolean reverse) {
         SlotRanges ranges = factory.getSlotRangesMap().get(slotType);
+        if (ranges == null) {
+            return false;
+        }
         for (Range<Integer> r : ranges.asRanges()) {
             Integer start = r.lowerEndpoint();
             int end = r.upperEndpoint() + 1;

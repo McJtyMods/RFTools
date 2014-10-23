@@ -7,7 +7,9 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements IInventory {
@@ -92,13 +94,36 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
+        readBufferFromNBT(tagCompound);
+    }
+
+    private void readBufferFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks[i+PearlInjectorContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("prevIn", prevIn);
+        writeBufferToNBT(tagCompound);
     }
+
+    private void writeBufferToNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = new NBTTagList();
+        for (ItemStack stack : stacks) {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            if (stack != null) {
+                stack.writeToNBT(nbtTagCompound);
+            }
+            bufferTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("Items", bufferTagList);
+    }
+
 
     @Override
     public int getSizeInventory() {

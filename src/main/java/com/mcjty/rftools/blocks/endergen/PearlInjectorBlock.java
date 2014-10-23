@@ -25,6 +25,18 @@ public class PearlInjectorBlock extends GenericContainerBlock {
     }
 
     @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity)world.getTileEntity(x, y, z);
+
+        if (pearlInjectorTileEntity != null) {
+            BlockTools.emptyInventoryInWorld(world, x, y, z, block, pearlInjectorTileEntity);
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+
+    }
+
+    @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         int meta = world.getBlockMetadata(x, y, z);
         boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
