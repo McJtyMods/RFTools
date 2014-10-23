@@ -12,14 +12,14 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 
 public class GuiPearlInjector  extends GuiContainer {
-    public static final int PEARLINJECTOR_WIDTH = 256;
-    public static final int PEARLINJECTOR_HEIGHT = 224;
+    public static final int PEARLINJECTOR_WIDTH = 180;
+    public static final int PEARLINJECTOR_HEIGHT = 152;
 
     private Window window;
 
     private final PearlInjectorTileEntity pearlInjectorTileEntity;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/pearlinjector.png");
 
     public GuiPearlInjector(PearlInjectorTileEntity pearlInjectorTileEntity, PearlInjectorContainer container) {
         super(container);
