@@ -9,7 +9,7 @@ Table of contents:
 {l:crafte}Automatic Crafter
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
-{}
+{-------------------------------------------------------------}
 {b}RF Network Monitor Item
 {n:netmon}
 {ri:networkMonitorItem}
@@ -18,22 +18,23 @@ to find all blocks that use or produce RF which are connected
 (directly or inderectly) to the selected block. It will also show
 you how much RF is in each of the blocks and the coordinate. You
 can use this item to help debug RF related network problems.
-{}
+{-------------------------------------------------------------}
 Doubleclick on a line in the list of blocks will close the window and
 the block will be hilighted for 5 seconds (configurable).
-{}
+{-------------------------------------------------------------}
 {b}Base Ingredients
 {n:base}
 {rb:machineFrame}
 The machine frame is the base ingredient for most machines in this mod.
 {rb:machineBase}
 The machine base is the base ingredient for a few other machines.
-{}
+{-------------------------------------------------------------}
 {b}Logic Gates
 {n:logic}
 
 {l:sequencer}Sequencer
-{}
+{l:timer}Timer
+{-------------------------------------------------------------} 
 {b}Sequencer
 {n:sequencer}
 {rb:sequencerBlock}
@@ -44,15 +45,29 @@ edit the pattern of these signals in the gui of this block.
 The modes of this block are explained in the next page. You can
 also set the speed at which the cycles are played. Default is 1
 which means that the cycle will proceed every tick.
-{}
+{-------------------------------------------------------------} 
 It has six different modes:
+
     Once1: cycle once when pulse arrives. Ignore further pulses
     Once2: cycle once when pulse arrives. Restart on pulse
     Loop1: loop continuously, ignore redstone signal
     Loop2: loop continuously, restart on pulse
     Loop3: loop continuously while redstone signal is on
     Step: step through the cycle one by one
-{}
+{-------------------------------------------------------------}
+{b}Timer
+{n:timer}
+{rb:timerBlock}
+The timer is a simple gate that will repeatedly send a redstone
+pulse. You can input any value for the delay so it can be used
+for very long timeouts.
+
+What is special about this timer is that it restart when it
+itself receives a redstone pulse at its input. So given timely
+input pulses this block will never output a pulseitself. By using
+this feature this block can be used as a way to detect that a
+certain activity is overdue.
+{-------------------------------------------------------------}
 {b}RF Monitor
 {n:rfmoni}
 {rb:rfMonitorBlock}
@@ -63,7 +78,7 @@ This block can also give out redstone signals in case the RF in
 the monitored block is too low or too high. You can use this
 redstone signal with the Power Relay (see below) to control
 parts of your RF network.
-{}
+{-------------------------------------------------------------} 
 {b}Storage Scanner
 {n:stomon}
 {rb:storageScannerBlock}
@@ -74,7 +89,7 @@ then select an inventory in that list and it will display the
 contents of that inventory. Scanning the environment uses energy
 and can take a while if you select a big radius. It also uses
 RF to perform this scan.
-{}
+{-------------------------------------------------------------} 
 If you open the user interface of this scanner you get two lists.
 The top list is initially empty but will be filled when you press
 the 'Scan' button. It contains all the inventories (chests, furnaces
@@ -88,7 +103,7 @@ show the contents of that inventory.
 
 Doubleclick on an inventory in the top list will close this
 window and hilight it in the world for 5 seconds (by default).
-{}
+{-------------------------------------------------------------} 
 You can search for items in all inventories that it scanned. It will
 mark all the inventories where it found an item that matches what
 you typed with a yellow color. This gives you an easy way to find
@@ -98,7 +113,7 @@ The slider next to the 'Scan' button allows you to select the radius
 that this machine will use to scan the area. A value of '4' means
 that an area of 9x9x9 will be scanned. Note that this operation can
 take a while.
-{}
+{-------------------------------------------------------------} 
 {b}Automatic Crafter
 {n:crafte}
 {rb:crafterBlock1}
@@ -108,14 +123,14 @@ craft multiple items independent from each other or else it can be
 used for more complicated multi-step crafting recipes. By default it
 uses 100 RF for every crafting cycle (where it does all crafting
 operations in one step).
-{}
+{-------------------------------------------------------------} 
 The list at the top-left allows you to select all the supported
 recipes. If you select a recipe you can edit it in the right grid
 by dragging over the right items.
 
 The crafter also has an internal inventory and four output slots
 for crafting results.
-{}
+{-------------------------------------------------------------} 
 The 'Keep/All' button is only active when a recipe is selected and
 allows you to control if this recipe will always keep at least a single
 item in the internal inventory.
@@ -130,7 +145,7 @@ can be used by other recipes in this crafter.
 The crafter also has a redstone mode (button below which can be set
 to 'ignore', 'off', or 'on') and it also has a speed mode which is set
 to slow by default. Fast mode uses more energy.
-{}
+{-------------------------------------------------------------} 
 {b}RF Power Relay
 {n:prelay}
 {rb:relayBlock}
@@ -141,7 +156,7 @@ Typically you would use 0 in case the redstone signal is off and some
 other value in case the redstone signal is on. You can use this in
 combination with the RF Monitor to turn off a portion of your RF network
 in case power is low. For example, to turn off ore processing machines.
-{}
+{-------------------------------------------------------------} 
 {b}Teleporting System
 {n:telepo}
 RFTools supports a teleportation system that uses RF to do the
@@ -157,7 +172,7 @@ If you're an admin and want to troubleshoot the portal network
 you can use the Teleport Probe item (has no recipe). You can use
 this item to check for problems with all receivers in the world.
 Doubleclick on an item in the list will teleport you without using RF.
-{}
+{-------------------------------------------------------------} 
 {b}Teleportation Blocks
 
 {l:tptransmitter}Matter Transmitter
@@ -165,7 +180,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {l:tpdialer}Dialing Device
 {l:tpdestcheck}Destination Analyzer
 {l:tpaccess}Access Control
-{}
+{-------------------------------------------------------------} 
 {b}Matter Transmitter
 {n:tptransmitter}
 {rb:matterTransmitterBlock}
@@ -177,7 +192,7 @@ depending on the traveled distance) power is also consumed. If there
 is not sufficient power during the first power usage then teleportation
 will simply not start. But if there is a power failure during transit
 then potentially very bad things can happen to the player.
-{}
+{-------------------------------------------------------------} 
 {b}Matter Receiver
 {n:tpreceiver}
 {rb:matterReceiverBlock}
@@ -189,7 +204,7 @@ destination. So be careful!
 
 If you give the matter receiver a name (using the GUI) then that name will
 be shown in the dialing device which makes it easier to recognize.
-{}
+{-------------------------------------------------------------} 
 {b}Dialing Device
 {n:tpdialer}
 {rb:dialingDeviceBlock}
@@ -202,7 +217,7 @@ connection.
 
 The 'Check' button is disabled by default unless you have a destination
 analyzer connected to this machine (see below).
-{}
+{-------------------------------------------------------------} 
 {b}Destination Analyzer
 {n:tpdestcheck}
 {rb:destinationAnalyzerBlock}
@@ -215,7 +230,7 @@ You can also place a destination analyzer next to a transmitter. In
 that case the transmitter will show a red colored teleportation beam
 if there is something wrong on the receiving end. You can check the
 actual problem in the dialing device.
-{}
+{-------------------------------------------------------------} 
 {b}Access Control
 {n:tpaccess}
 Both the transmitter and the receiver can be set in public mode (default)
@@ -229,4 +244,4 @@ to step through the teleporter.
 In case of a receiver an unauthorized player can not dial to that
 receiver but he/she can teleport to it if there is an authorized
 transmitter already dialed to that receiver.
-{}
+{-------------------------------------------------------------} 

@@ -84,7 +84,7 @@ public class TextPage extends AbstractWidget<TextPage> {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
             String line = br.readLine();
             while (line != null) {
-                if ("{}".equals(line)) {
+                if (line.startsWith("{------")) {
                     newPage(page);
                     page = new TextPage.Page();
                 } else {
