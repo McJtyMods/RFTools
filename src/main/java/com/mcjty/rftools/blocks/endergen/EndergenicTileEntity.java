@@ -11,10 +11,14 @@ import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -36,6 +40,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     // back to idle.
     private int chargingMode = CHARGE_IDLE;
 
+    // The current age of the pearl we're holding. Will be used to calculate bonuses
+    // for powergeneration on pearls that are in the network for a longer time.
+    private int currentAge = 0;
+
     // The location of the destination endergenic generator.
     private Coordinate destination = null;
     private int distance = 0;           // Distance between this block and destination in ticks
@@ -50,6 +58,9 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     private int pearlsOpportunities = 0;
     private int ticks = 100;
     private int rfAverage = 0;
+
+    // Current traveling pearls.
+    private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
 
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
@@ -81,6 +92,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             pearlsOpportunities = 0;
         }
 
+        handlePearls();
+
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         boolean newvalue = BlockTools.getRedstoneSignalIn(meta);
         boolean pulse = newvalue && !prevIn;
@@ -107,6 +120,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             } else {
                 // Consume energy to keep the endergenic pearl.
                 int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
+                System.out.println("Endergenic: consume energy "+rfToHoldPearl);
                 if (rfExtracted < rfToHoldPearl) {
                     // Not enough energy. Pearl is lost.
                     discardPearl();
@@ -124,7 +138,25 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
     }
 
+    // Handle all pearls that are currently in transit.
+    private void handlePearls() {
+        if (pearls.isEmpty()) {
+            return;
+        }
+        List<EndergenicPearl> newlist = new ArrayList<EndergenicPearl>();
+        for (EndergenicPearl pearl : pearls) {
+            if (!pearl.handleTick(worldObj)) {
+                // Keep the pearl. It has not arrived yet.
+                newlist.add(pearl);
+            }
+        }
+
+        // Replace the old list with the new one.
+        pearls = newlist;
+    }
+
     private void discardPearl() {
+        System.out.println("Endergenic: pearl is lost");
         markDirty();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
@@ -159,25 +191,51 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else {
             chargingMode = CHARGE_IDLE;
             pearlsLaunched++;
-            // @todo Fire pearl
+            pearls.add(new EndergenicPearl(distance, destination, currentAge+1));
         }
     }
 
-    public void receivePearl() {
+    public void firePearlFromInjector() {
+        markDirty();
+        // This method assumes we're not in holding mode.
+        getDestinationTE();
+        chargingMode = CHARGE_IDLE;
+        if (destination == null) {
+            // There is no destination so the injected pearl is simply lost.
+        } else {
+            pearlsLaunched++;
+            pearls.add(new EndergenicPearl(distance, destination, 0));
+        }
+    }
+
+    // This generator receives a pearl. The age of the pearl is how many times the pearl has
+    // already generated power.
+    public void receivePearl(int age) {
         markDirty();
         if (chargingMode == CHARGE_HOLDING) {
             // If this block is already holding a pearl and it still has one then both pearls are
             // automatically lost.
+            System.out.println("Endergenic: pearl collsion! Pearl is lost");
             chargingMode = CHARGE_IDLE;
         } else if (chargingMode == CHARGE_IDLE) {
             // If this block is idle and it is hit by a pearl then the pearl is lost and nothing
             // happens.
+            System.out.println("Endergenic: we're idle, can't do anything with this pearl. Sorry!");
             chargingMode = CHARGE_IDLE;
         } else {
             // Otherwise we get RF and this block goes into holding mode.
             // @todo more energy for a pearl that has been around for a while
-            receiveEnergy(ForgeDirection.DOWN, rfPerHit[chargingMode], false);
+            int rf = rfPerHit[chargingMode];
+            // Give a bonus for pearls that have been around a bit longer.
+            int a = age*10;
+            if (a > 100) {
+                a = 100;
+            }
+            rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
+            receiveEnergy(ForgeDirection.DOWN, rf, false);
+            System.out.println("Endergenic: receive energy " + rf + ", pearl age " + age);
             chargingMode = CHARGE_HOLDING;
+            currentAge = age;
         }
     }
 
@@ -193,8 +251,14 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (otherTE == null) {
             // None selected. Just select this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(this);
-            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(getDestinationTE());
-            RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
+            EndergenicTileEntity destinationTE = getDestinationTE();
+            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(destinationTE);
+            if (destinationTE == null) {
+                RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
+            } else {
+                int distance = getDistanceInTicks();
+                RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination (current distance "+distance+")");
+            }
         } else if (otherTE == this) {
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
@@ -204,7 +268,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             otherTE.setDestination(new Coordinate(xCoord, yCoord, zCoord));
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
-            RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set");
+            RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
         }
     }
 
@@ -237,15 +301,27 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
     }
 
+    public int getDistanceInTicks() {
+        return distance;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
         chargingMode = tagCompound.getInteger("charging");
+        currentAge = tagCompound.getInteger("age");
         destination = Coordinate.readFromNBT(tagCompound, "dest");
         distance = tagCompound.getInteger("distance");
         rfAverage = tagCompound.getInteger("rfAverage");
         prevIn = tagCompound.getBoolean("prevIn");
+        pearls.clear();
+        NBTTagList list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = list.getCompoundTagAt(i);
+            EndergenicPearl pearl = new EndergenicPearl(tc);
+            pearls.add(pearl);
+        }
     }
 
     @Override
@@ -253,10 +329,16 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         super.writeToNBT(tagCompound);
 
         tagCompound.setInteger("charging", chargingMode);
+        tagCompound.setInteger("age", currentAge);
         Coordinate.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("distance", distance);
         tagCompound.setInteger("rfAverage", rfAverage);
         tagCompound.setBoolean("prevIn", prevIn);
+        NBTTagList pearlList = new NBTTagList();
+        for (EndergenicPearl pearl : pearls) {
+            pearlList.appendTag(pearl.getTagCompound());
+        }
+        tagCompound.setTag("pearls", pearlList);
     }
 
     @Override
