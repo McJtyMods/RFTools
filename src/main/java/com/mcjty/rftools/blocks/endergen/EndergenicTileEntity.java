@@ -57,7 +57,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // This value indicates the chance (with 0 being no chance and 100 being 100% chance) that an
     // endergenic pearl is lost while holding it.
-    public static int chanceLost = 2;
+    public static int chanceLost = 1;
 
     // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
     public static int rfToHoldPearl = 1000;
@@ -175,6 +175,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             chargingMode = CHARGE_IDLE;
         } else {
             // Otherwise we get RF and this block goes into holding mode.
+            // @todo more energy for a pearl that has been around for a while
             receiveEnergy(ForgeDirection.DOWN, rfPerHit[chargingMode], false);
             chargingMode = CHARGE_HOLDING;
         }
