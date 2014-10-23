@@ -182,6 +182,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void firePearl() {
+        System.out.println("Endergenic: fire pearl");
         markDirty();
         // This method assumes we're in holding mode.
         getDestinationTE();
@@ -240,6 +241,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void startCharging() {
+        System.out.println("Endergenic: start charging");
         markDirty();
         chargingMode = 1;
         pearlsOpportunities++;

@@ -115,8 +115,6 @@ public class SequencerTileEntity extends GenericTileEntity {
             return;
         }
 
-        handleCycle(newvalue);
-
         boolean newout;
         if (currentStep == -1) {
             newout = false;
@@ -128,6 +126,8 @@ public class SequencerTileEntity extends GenericTileEntity {
             redstoneOut.setValue(newout);
             notifyBlockUpdate();
         }
+
+        handleCycle(newvalue);
     }
 
     /**
