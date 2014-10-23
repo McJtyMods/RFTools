@@ -1,46 +1,34 @@
-package com.mcjty.rftools.blocks.sequencer;
+package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class SequencerBlock extends GenericBlock {
+/**
+ * The superclass for all logic slabs in RFTools.
+ */
+public abstract class LogicSlabBlock extends GenericBlock {
 
-    private IIcon iconTop;
-
-    public SequencerBlock(Material material) {
-        super(material, SequencerTileEntity.class);
-        setBlockName("sequencerBlock");
+    public LogicSlabBlock(Material material, String name, Class<? extends TileEntity> tileEntityClass) {
+        super(material, tileEntityClass);
+        setBlockName(name);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
     @Override
-    public int getGuiID() {
-        return RFTools.GUI_SEQUENCER;
-    }
-
-    @Override
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSequencerTop");
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
-    }
-
-
-
-    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         ForgeDirection dir = BlockTools.determineOrientationHoriz(x, y, z, entityLivingBase);
+        System.out.println("dir = " + dir);
         int meta = world.getBlockMetadata(x, y, z);
         int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
         meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
@@ -63,7 +51,7 @@ public class SequencerBlock extends GenericBlock {
 
     @Override
     public int getRenderType() {
-        return ModRenderers.RENDERID_SEQUENCER;
+        return ModRenderers.RENDERID_LOGICSLAB;
     }
 
     @Override
@@ -108,7 +96,7 @@ public class SequencerBlock extends GenericBlock {
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         if (side == ForgeDirection.UP.ordinal()) {
-            return iconTop;
+            return iconInd;
         } else {
             return iconSide;
         }
@@ -117,7 +105,7 @@ public class SequencerBlock extends GenericBlock {
     @Override
     public IIcon getIcon(int side, int meta) {
         if (side == ForgeDirection.UP.ordinal()) {
-            return iconTop;
+            return iconInd;
         } else {
             return iconSide;
         }

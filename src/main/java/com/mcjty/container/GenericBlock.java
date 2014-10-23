@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class GenericBlock extends Block implements ITileEntityProvider {
 
-    protected IIcon iconFront;
+    protected IIcon iconInd;        // The identifying face of the block (front by default but can be different).
     protected IIcon iconSide;
     private final Class<? extends TileEntity> tileEntityClass;
 
@@ -61,8 +61,8 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        if (getFrontIconName() != null) {
-            iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + getFrontIconName());
+        if (getIdentifyingIconName() != null) {
+            iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + getIdentifyingIconName());
         }
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
     }
@@ -71,7 +71,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
      * Return the name of the icon to be used for the front side of the machine.
      * @return
      */
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return null;
     }
 
@@ -86,7 +86,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         int meta = blockAccess.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientation(meta);
         if (side == k.ordinal()) {
-            return iconFront;
+            return iconInd;
         } else {
             return iconSide;
         }
@@ -95,7 +95,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     @Override
     public IIcon getIcon(int side, int meta) {
         if (side == ForgeDirection.SOUTH.ordinal()) {
-            return iconFront;
+            return iconInd;
         } else {
             return iconSide;
         }

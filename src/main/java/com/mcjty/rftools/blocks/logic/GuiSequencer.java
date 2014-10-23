@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.sequencer;
+package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;

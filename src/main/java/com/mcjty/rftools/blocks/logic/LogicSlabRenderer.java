@@ -1,14 +1,16 @@
-package com.mcjty.rftools.blocks.sequencer;
+package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.rftools.Constants;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.render.DefaultISBRH;
 import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class SequenceRenderer extends DefaultISBRH {
+public class LogicSlabRenderer extends DefaultISBRH {
 
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
@@ -20,12 +22,13 @@ public class SequenceRenderer extends DefaultISBRH {
         if (world != null) {
             meta = world.getBlockMetadata(x, y, z);
         }
+        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
 
         addSideHeight(block, tessellator, Constants.SIDE_NORTH, meta, .3);
         addSideHeight(block, tessellator, Constants.SIDE_SOUTH, meta, .3);
         addSideHeight(block, tessellator, Constants.SIDE_WEST, meta, .3);
         addSideHeight(block, tessellator, Constants.SIDE_EAST, meta, .3);
-        addSideHeight(block, tessellator, Constants.SIDE_UP, meta, .3);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_UP, meta, .3, k);
         addSideHeight(block, tessellator, Constants.SIDE_DOWN, meta, .3);
 
         tessellator.addTranslation(-x, -y, -z);
@@ -34,7 +37,7 @@ public class SequenceRenderer extends DefaultISBRH {
 
     @Override
     public int getRenderId() {
-        return ModRenderers.RENDERID_SEQUENCER;
+        return ModRenderers.RENDERID_LOGICSLAB;
     }
 
     @Override

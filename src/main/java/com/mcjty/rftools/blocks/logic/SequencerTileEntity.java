@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.sequencer;
+package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;

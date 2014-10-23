@@ -23,7 +23,7 @@ public class RFMonitorBlock extends GenericBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return "machineFront";
     }
 
@@ -73,7 +73,7 @@ public class RFMonitorBlock extends GenericBlock {
                 case 3: return iconFront2;
                 case 4: return iconFront3;
                 case 5: return iconFront4;
-                default: return iconFront;
+                default: return iconInd;
 
             }
         } else {

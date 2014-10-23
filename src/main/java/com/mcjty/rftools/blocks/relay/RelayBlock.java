@@ -4,13 +4,8 @@ import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,7 +26,7 @@ public class RelayBlock extends GenericBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return "machineRelay_on";
     }
 
@@ -56,7 +51,7 @@ public class RelayBlock extends GenericBlock {
         if (side == k.ordinal()) {
             boolean rs = BlockTools.getRedstoneSignal(meta);
             if (rs) {
-                return iconFront;
+                return iconInd;
             } else {
                 return iconFront_off;
             }
