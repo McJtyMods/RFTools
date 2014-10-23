@@ -6,15 +6,13 @@ import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.crafter.CrafterContainer;
 import com.mcjty.rftools.blocks.crafter.GuiCrafter;
 import com.mcjty.rftools.blocks.endergen.*;
+import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.GuiRFMonitor;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.GuiRelay;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
-import com.mcjty.rftools.blocks.logic.GuiSequencer;
-import com.mcjty.rftools.blocks.logic.SequencerBlock;
-import com.mcjty.rftools.blocks.logic.SequencerTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -32,7 +30,7 @@ public class GuiProxy implements IGuiHandler {
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE ||
                 guiid == RFTools.GUI_MANUAL || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ||
-                guiid == RFTools.GUI_SEQUENCER) {
+                guiid == RFTools.GUI_SEQUENCER || guiid == RFTools.GUI_TIMER) {
             return null;
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -158,6 +156,14 @@ public class GuiProxy implements IGuiHandler {
             if (block != null && block instanceof SequencerBlock && te instanceof SequencerTileEntity) {
                 SequencerTileEntity sequencerTileEntity = (SequencerTileEntity) te;
                 return new GuiSequencer(sequencerTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_TIMER) {
+            Block block = world.getBlock(x, y, z);
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (block != null && block instanceof TimerBlock && te instanceof TimerTileEntity) {
+                TimerTileEntity timerTileEntity = (TimerTileEntity) te;
+                return new GuiTimer(timerTileEntity);
             }
         } else if (guiid == RFTools.GUI_DIALING_DEVICE) {
             TileEntity te = world.getTileEntity(x, y, z);

@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -55,7 +54,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         int meta = world.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-        int power = world.isBlockProvidingPowerTo(x + k.offsetX, y + k.offsetY, z + k.offsetZ, k.ordinal());
+        int power = world.isBlockProvidingPowerTo(x + k.offsetX, y + k.offsetY, z + k.offsetZ, k.getOpposite().ordinal());
         meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
         world.setBlockMetadataWithNotify(x, y, z, meta, 2);
     }

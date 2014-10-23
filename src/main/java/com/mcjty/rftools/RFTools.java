@@ -46,6 +46,7 @@ public class RFTools {
     public static final int GUI_ENDERGENIC = modGuiIndex++;
     public static final int GUI_SEQUENCER = modGuiIndex++;
     public static final int GUI_PEARL_INJECTOR = modGuiIndex++;
+    public static final int GUI_TIMER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

@@ -10,13 +10,27 @@ import java.util.Map;
 
 public class TimerTileEntity extends GenericTileEntity {
 
+    public static final String CMD_SETDELAY = "setDelay";
+
     // For pulse detection.
     private boolean prevIn = false;
 
+    private int delay = 1;
+    private int timer = 0;
     private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
 
     public TimerTileEntity() {
         registerSyncedObject(redstoneOut);
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+        timer = delay;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -28,11 +42,26 @@ public class TimerTileEntity extends GenericTileEntity {
         boolean pulse = newvalue && !prevIn;
         prevIn = newvalue;
 
+        markDirty();
+
         if (pulse) {
-//            handlePulse();
+            timer = delay;
         }
 
-//        markDirty();
+        boolean newout;
+
+        timer--;
+        if (timer <= 0) {
+            timer = delay;
+            newout = true;
+        } else {
+            newout = false;
+        }
+
+        if (newout != redstoneOut.getValue()) {
+            redstoneOut.setValue(newout);
+            notifyBlockUpdate();
+        }
     }
 
     @Override
@@ -47,6 +76,8 @@ public class TimerTileEntity extends GenericTileEntity {
         super.readFromNBT(tagCompound);
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
         prevIn = tagCompound.getBoolean("prevIn");
+        timer = tagCompound.getInteger("timer");
+        delay = tagCompound.getInteger("delay");
     }
 
     @Override
@@ -55,27 +86,20 @@ public class TimerTileEntity extends GenericTileEntity {
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
         tagCompound.setBoolean("prevIn", prevIn);
+        tagCompound.setInteger("timer", timer);
+        tagCompound.setInteger("delay", delay);
     }
 
-//    @Override
-//    public boolean execute(String command, Map<String, Argument> args) {
-//        boolean rc = super.execute(command, args);
-//        if (rc) {
-//            return true;
-//        }
-//        if (CMD_MODE.equals(command)) {
-//            setMode(args.get("mode").getInteger());
-//            return true;
-//        } else if (CMD_SETBIT.equals(command)) {
-//            setCycleBit(args.get("bit").getInteger(), args.get("choice").getBoolean());
-//            return true;
-//        } else if (CMD_SETBITS.equals(command)) {
-//            setCycleBits(args.get("start").getInteger(), args.get("stop").getInteger(), args.get("choice").getBoolean());
-//            return true;
-//        } else if (CMD_SETDELAY.equals(command)) {
-//            setDelay(args.get("delay").getInteger());
-//            return true;
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETDELAY.equals(command)) {
+            setDelay(args.get("delay").getInteger());
+            return true;
+        }
+        return false;
+    }
 }

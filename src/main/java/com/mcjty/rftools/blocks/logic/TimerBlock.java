@@ -11,7 +11,7 @@ public class TimerBlock extends LogicSlabBlock {
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_SEQUENCER;
+        return RFTools.GUI_TIMER;
     }
 
     @Override

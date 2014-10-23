@@ -43,6 +43,7 @@ public class SequencerTileEntity extends GenericTileEntity {
 
     public void setDelay(int delay) {
         this.delay = delay;
+        timer = delay;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
