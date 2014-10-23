@@ -2,10 +2,12 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -25,10 +27,24 @@ public abstract class LogicSlabBlock extends GenericBlock {
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
+        boolean wrenchUsed = testWrenchUsage(x, y, z, player);
+        if (wrenchUsed) {
+            int meta = world.getBlockMetadata(x, y, z);
+            ForgeDirection dir = BlockTools.getOrientationHoriz(meta);
+            dir = dir.getRotation(ForgeDirection.UP);
+            world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
+            return true;
+        } else {
+            return super.onBlockActivated(world, x, y, z, player, side, sx, sy, sz);
+        }
+    }
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         ForgeDirection dir = BlockTools.determineOrientationHoriz(x, y, z, entityLivingBase);
-        System.out.println("dir = " + dir);
         int meta = world.getBlockMetadata(x, y, z);
         int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
         meta = BlockTools.setRedstoneSignalIn(meta, power > 0);

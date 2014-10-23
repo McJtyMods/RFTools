@@ -1,5 +1,7 @@
 package com.mcjty.container;
 
+import buildcraft.api.tools.IToolWrench;
+import cofh.api.item.IToolHammer;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
@@ -8,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -40,6 +43,27 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // This if this block was activated with a wrench
+    protected boolean testWrenchUsage(int x, int y, int z, EntityPlayer player) {
+        ItemStack itemStack = player.getHeldItem();
+        boolean wrenchUsed = false;
+        if (itemStack != null) {
+            Item item = itemStack.getItem();
+            if (item != null) {
+                if (item instanceof IToolWrench) {
+                    IToolWrench wrench = (IToolWrench) item;
+                    wrench.wrenchUsed(player, x, y, z);
+                    wrenchUsed = true;
+                } else if (item instanceof IToolHammer) {
+                    IToolHammer hammer = (IToolHammer) item;
+                    hammer.toolUsed(itemStack, player, x, y, z);
+                    wrenchUsed = true;
+                }
+            }
+        }
+        return wrenchUsed;
     }
 
     @Override

@@ -2,12 +2,11 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.IIcon;
 
-public class SequencerBlock extends LogicSlabBlock {
+public class TimerBlock extends LogicSlabBlock {
 
-    public SequencerBlock(Material material) {
-        super(material, "sequencerBlock", SequencerTileEntity.class);
+    public TimerBlock(Material material) {
+        super(material, "timerBlock", TimerTileEntity.class);
     }
 
     @Override
@@ -17,6 +16,6 @@ public class SequencerBlock extends LogicSlabBlock {
 
     @Override
     public String getIdentifyingIconName() {
-        return "machineSequencerTop";
+        return "machineTimerTop";
     }
 }

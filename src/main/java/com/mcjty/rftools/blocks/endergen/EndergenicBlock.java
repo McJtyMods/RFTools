@@ -40,22 +40,7 @@ public class EndergenicBlock extends GenericContainerBlock {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        ItemStack itemStack = player.getHeldItem();
-        boolean wrenchUsed = false;
-        if (itemStack != null) {
-            Item item = itemStack.getItem();
-            if (item != null) {
-                if (item instanceof IToolWrench) {
-                    IToolWrench wrench = (IToolWrench) item;
-                    wrench.wrenchUsed(player, x, y, z);
-                    wrenchUsed = true;
-                } else if (item instanceof IToolHammer) {
-                    IToolHammer hammer = (IToolHammer) item;
-                    hammer.toolUsed(itemStack, player, x, y, z);
-                    wrenchUsed = true;
-                }
-            }
-        }
+        boolean wrenchUsed = testWrenchUsage(x, y, z, player);
         if (wrenchUsed) {
             if (world.isRemote) {
                 EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(x, y, z);
