@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.endergen;
 
+import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
@@ -7,25 +8,32 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     private static Random random = new Random();
 
     public static String CMD_SETDESTINATION = "setDest";
+    public static String CMD_GETSTAT_RF = "getStatRF";
+    public static String CLIENTCMD_GETSTAT_RF = "getStatRF";
+    public static String CMD_GETSTAT_LOST = "getStatLost";
+    public static String CLIENTCMD_GETSTAT_LOST = "getStatLost";
+    public static String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
 
     public static final int CHARGE_IDLE = 0;
     public static final int CHARGE_HOLDING = -1;
@@ -51,12 +59,19 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     private boolean prevIn = false;
 
     // Statistics for this generator.
-    private int rfRemembered = 0;
+    // These values count what is happening.
+    private int rfGained = 0;
+    private int rfLost = 0;
     private int pearlsLaunched = 0;
     private int pearlsLost = 0;
     private int pearlsOpportunities = 0;
     private int ticks = 100;
-    private int rfAverage = 0;
+
+    // These values actually contain valid statistics.
+    private int lastRfPerTick = 0;
+    private int lastPearlsLost = 0;
+    private int lastPearlsLaunched = 0;
+    private int lastPearlOpportunities = 0;
 
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
@@ -72,8 +87,11 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
     public static int rfToHoldPearl = 1000;
 
+    // This value indicates how much RF/tick this block can send out to neighbours
+    public static int rfOutput = 20000;
+
     public EndergenicTileEntity() {
-        super(1000000, 20000, 20000);
+        super(1000000, 0, 20000);
     }
 
     @Override
@@ -82,16 +100,21 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         ticks--;
         if (ticks < 0) {
+            lastRfPerTick = (rfGained - rfLost) / 100;
+            lastPearlsLost = pearlsLost;
+            lastPearlsLaunched = pearlsLaunched;
+            lastPearlOpportunities = pearlsOpportunities;
+
             ticks = 100;
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            rfAverage = (rf-rfRemembered) / 100;
-            rfRemembered = rf;
+            rfGained = 0;
+            rfLost = 0;
             pearlsLaunched = 0;
             pearlsLost = 0;
             pearlsOpportunities = 0;
         }
 
         handlePearls();
+        handleSendingEnergy();
 
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         boolean newvalue = BlockTools.getRedstoneSignalIn(meta);
@@ -120,6 +143,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 // Consume energy to keep the endergenic pearl.
                 int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
                 System.out.println("Endergenic: consume energy "+rfToHoldPearl+", rfExtracted " + rfExtracted);
+                rfLost += rfExtracted;
                 if (rfExtracted < rfToHoldPearl) {
                     // Not enough energy. Pearl is lost.
                     discardPearl();
@@ -134,6 +158,41 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode++;
         if (chargingMode >= 16) {
             chargingMode = CHARGE_IDLE;
+        }
+    }
+
+    @Override
+    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z) {
+        return super.shouldRefresh(oldBlock, newBlock, oldMeta, newMeta, world, x, y, z);
+    }
+
+    private void handleSendingEnergy() {
+        int energyStored = getEnergyStored(ForgeDirection.DOWN);
+        if (energyStored <= 0) {
+            return;
+        }
+
+        for (int i = 0 ; i < 6 ; i++) {
+            ForgeDirection dir = ForgeDirection.getOrientation(i);
+            TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+            if (te instanceof IEnergyHandler) {
+                IEnergyHandler handler = (IEnergyHandler) te;
+                ForgeDirection opposite = dir.getOpposite();
+                if (handler.canConnectEnergy(opposite)) {
+                    int rfToGive;
+                    if (rfOutput <= energyStored) {
+                        rfToGive = rfOutput;
+                    } else {
+                        rfToGive = energyStored;
+                    }
+
+                    int received = handler.receiveEnergy(opposite, rfToGive, false);
+                    energyStored -= extractEnergy(ForgeDirection.DOWN, received, false);
+                    if (energyStored <= 0) {
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -233,7 +292,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 a = 100;
             }
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
-            receiveEnergy(ForgeDirection.DOWN, rf, false);
+            rfGained += rf;
+            modifyEnergyStored(rf);
 
             spawnParticles("portal");
 
@@ -293,10 +353,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         return chargingMode;
     }
 
-    public int getAverageRF() {
-        return rfAverage;
-    }
-
     public void setDestination(Coordinate destination) {
         markDirty();
         this.destination = destination;
@@ -325,7 +381,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         currentAge = tagCompound.getInteger("age");
         destination = Coordinate.readFromNBT(tagCompound, "dest");
         distance = tagCompound.getInteger("distance");
-        rfAverage = tagCompound.getInteger("rfAverage");
         prevIn = tagCompound.getBoolean("prevIn");
         pearls.clear();
         NBTTagList list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
@@ -344,7 +399,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         tagCompound.setInteger("age", currentAge);
         Coordinate.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("distance", distance);
-        tagCompound.setInteger("rfAverage", rfAverage);
         tagCompound.setBoolean("prevIn", prevIn);
         NBTTagList pearlList = new NBTTagList();
         for (EndergenicPearl pearl : pearls) {
@@ -361,6 +415,47 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
         if (CMD_SETDESTINATION.equals(command)) {
             setDestination(args.get("dest").getCoordinate());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+        Integer rc = super.executeWithResultInteger(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETSTAT_RF.equals(command)) {
+            return lastRfPerTick;
+        } else if (CMD_GETSTAT_LOST.equals(command)) {
+            return lastPearlsLost;
+        } else if (CMD_GETSTAT_LAUNCHED.equals(command)) {
+            return lastPearlsLaunched;
+        } else if (CMD_GETSTAT_OPPORTUNITIES.equals(command)) {
+            System.out.println("executeWithResultInteger: lastPearlOpportunities = " + lastPearlOpportunities + " (remote:"+worldObj.isRemote+") "+this);
+            return lastPearlOpportunities;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, Integer value) {
+        boolean rc = super.execute(command, value);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETSTAT_RF.equals(command)) {
+            GuiEndergenic.fromServer_lastRfPerTick = value;
+            return true;
+        } else if (CLIENTCMD_GETSTAT_LOST.equals(command)) {
+            GuiEndergenic.fromServer_lastPearlsLost = value;
+            return true;
+        } else if (CLIENTCMD_GETSTAT_LAUNCHED.equals(command)) {
+            GuiEndergenic.fromServer_lastPearlsLaunched = value;
+            return true;
+        } else if (CLIENTCMD_GETSTAT_OPPORTUNITIES.equals(command)) {
+            GuiEndergenic.fromServer_lastPearlOpportunities = value;
             return true;
         }
         return false;

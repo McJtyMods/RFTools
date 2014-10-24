@@ -12,6 +12,9 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
     private int oldRF = -1;             // Optimization for client syncing
     private int currentRF = 0;
 
+    public void modifyEnergyStored(int energy) {
+        storage.modifyEnergyStored(energy);
+    }
 
     public GenericEnergyHandlerTileEntity(int maxEnergy, int maxReceive) {
         storage = new EnergyStorage(maxEnergy);
