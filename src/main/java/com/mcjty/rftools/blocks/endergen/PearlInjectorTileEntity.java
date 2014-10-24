@@ -16,32 +16,28 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     private ItemStack stacks[] = new ItemStack[PearlInjectorContainerFactory.BUFFER_SIZE];
 
-    private EndergenicTileEntity endergenicTileEntity = null;
-
     // For pulse detection.
     private boolean prevIn = false;
 
     private EndergenicTileEntity findEndergenicTileEntity() {
-        if (endergenicTileEntity == null) {
-            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-            ForgeDirection k = BlockTools.getOrientation(meta);
-            if (!getEndergenicGeneratorAt(k.getOpposite())) {
-                getEndergenicGeneratorAt(ForgeDirection.UP);
-            }
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection k = BlockTools.getOrientation(meta);
+        EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
+        if (te != null) {
+            return te;
         }
-        return endergenicTileEntity;
+        return getEndergenicGeneratorAt(ForgeDirection.UP);
     }
 
-    private boolean getEndergenicGeneratorAt(ForgeDirection k) {
+    private EndergenicTileEntity getEndergenicGeneratorAt(ForgeDirection k) {
         int x = xCoord + k.offsetX;
         int y = yCoord + k.offsetY;
         int z = zCoord + k.offsetZ;
         TileEntity te = worldObj.getTileEntity(x, y, z);
         if (te instanceof EndergenicTileEntity) {
-            endergenicTileEntity = (EndergenicTileEntity) te;
-            return true;
+            return (EndergenicTileEntity) te;
         }
-        return false;
+        return null;
     }
 
     @Override
