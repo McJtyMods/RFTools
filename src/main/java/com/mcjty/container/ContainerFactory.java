@@ -103,6 +103,10 @@ public class ContainerFactory {
         return getSlotType(index) == SlotType.SLOT_PLAYERINV;
     }
 
+    public boolean isEnderpearlSlot(int index) {
+        return getSlotType(index) == SlotType.SLOT_ENDERPEARL;
+    }
+
     public boolean isPlayerHotbarSlot(int index) {
         return getSlotType(index) == SlotType.SLOT_PLAYERHOTBAR;
     }

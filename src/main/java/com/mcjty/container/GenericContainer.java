@@ -68,6 +68,9 @@ public class GenericContainer extends Container {
         if (ranges == null) {
             return false;
         }
+        if (itemStack.getItem() != null && slotType == SlotType.SLOT_ENDERPEARL && !Items.ender_pearl.equals(itemStack.getItem())) {
+            return false;
+        }
         for (Range<Integer> r : ranges.asRanges()) {
             Integer start = r.lowerEndpoint();
             int end = r.upperEndpoint();
@@ -88,7 +91,7 @@ public class GenericContainer extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (factory.isOutputSlot(index) || factory.isInputSlot(index)) {
+            if (factory.isOutputSlot(index) || factory.isInputSlot(index) || factory.isEnderpearlSlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, true)) {
                     return null;
                 }
@@ -97,8 +100,10 @@ public class GenericContainer extends Container {
                 return null; // @@@ Right?
             } else if (factory.isPlayerInventorySlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
-                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
-                        return null;
+                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_ENDERPEARL, false)) {
+                        if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
+                            return null;
+                        }
                     }
                 }
             } else if (factory.isPlayerHotbarSlot(index)) {
