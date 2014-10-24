@@ -50,6 +50,8 @@ public abstract class LogicSlabBlock extends GenericBlock {
         world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
     }
 
+
+
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         int meta = world.getBlockMetadata(x, y, z);
@@ -80,7 +82,29 @@ public abstract class LogicSlabBlock extends GenericBlock {
         return false;
     }
 
+    /*
+    *  -1: UP
+    *   0: NORTH
+    *   1: EAST
+    *   2: SOUTH
+    *   3: WEST
+*/
 
+    @Override
+    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
+        int meta = world.getBlockMetadata(x, y, z);
+        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
+        switch (k) {
+            case NORTH:
+            case SOUTH:
+                return side == 0 || side == 2;      // Can connect for north and south.
+            case WEST:
+            case EAST:
+                return side == 1 || side == 3;      // Can connect for east and west.
+            default:
+                return false;
+        }
+    }
 
     @Override
     public boolean canProvidePower() {

@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -120,7 +121,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             } else {
                 // Consume energy to keep the endergenic pearl.
                 int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
-                System.out.println("Endergenic: consume energy "+rfToHoldPearl);
+                System.out.println("Endergenic: consume energy "+rfToHoldPearl+", rfExtracted " + rfExtracted);
                 if (rfExtracted < rfToHoldPearl) {
                     // Not enough energy. Pearl is lost.
                     discardPearl();
@@ -234,6 +235,12 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             }
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
             receiveEnergy(ForgeDirection.DOWN, rf, false);
+
+            float vecX = (random.nextFloat() - 0.5F) * 0.2F;
+            float vecY = (random.nextFloat()) * 0.1F;
+            float vecZ = (random.nextFloat() - 0.5F) * 0.2F;
+            ((WorldServer)worldObj).func_147487_a("portal", xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, 10, vecX, vecY, vecZ, 0.3f);
+
             System.out.println("Endergenic: receive energy " + rf + ", pearl age " + age);
             chargingMode = CHARGE_HOLDING;
             currentAge = age;
