@@ -155,6 +155,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void discardPearl() {
+        spawnParticles("smoke");
         System.out.println("Endergenic: pearl is lost");
         markDirty();
         pearlsLost++;
@@ -234,15 +235,19 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
             receiveEnergy(ForgeDirection.DOWN, rf, false);
 
-            float vecX = (random.nextFloat() - 0.5F) * 0.2F;
-            float vecY = (random.nextFloat()) * 0.1F;
-            float vecZ = (random.nextFloat() - 0.5F) * 0.2F;
-            ((WorldServer)worldObj).func_147487_a("portal", xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, 10, vecX, vecY, vecZ, 0.3f);
+            spawnParticles("portal");
 
             System.out.println("Endergenic: receive energy " + rf + ", pearl age " + age);
             chargingMode = CHARGE_HOLDING;
             currentAge = age;
         }
+    }
+
+    private void spawnParticles(String name) {
+        float vecX = (random.nextFloat() - 0.5F) * 0.2F;
+        float vecY = (random.nextFloat()) * 0.1F;
+        float vecZ = (random.nextFloat() - 0.5F) * 0.2F;
+        ((WorldServer)worldObj).func_147487_a(name, xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, 10, vecX, vecY, vecZ, 0.3f);
     }
 
     public void startCharging() {
