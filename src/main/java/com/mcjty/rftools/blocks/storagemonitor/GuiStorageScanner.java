@@ -29,6 +29,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +47,9 @@ public class GuiStorageScanner extends GuiContainer {
     private Button scanButton;
     private final StorageScannerTileEntity storageScannerTileEntity;
     private int clientVersion = -1;
+
+    // For client side: the hilighted coordinates.
+    public static Set<Coordinate> fromServer_coordinates = new HashSet<Coordinate>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer<StorageScannerTileEntity> storageScannerContainer) {
         super(storageScannerContainer);
@@ -120,7 +124,7 @@ public class GuiStorageScanner extends GuiContainer {
             @Override
             public void textChanged(Widget parent, String newText) {
                 storageList.clearHilightedRows();
-                storageScannerTileEntity.clearCoordinates();
+                fromServer_coordinates.clear();
                 startSearch(newText);
             }
         });
@@ -239,7 +243,7 @@ public class GuiStorageScanner extends GuiContainer {
             }
         }
         storageList.clearHilightedRows();
-        Set<Coordinate> coordinates = storageScannerTileEntity.getCoordinates();
+        Set<Coordinate> coordinates = fromServer_coordinates;
         int i = 0;
         for (InvBlockInfo blockInfo : inventories) {
             Coordinate c = blockInfo.getCoordinate();

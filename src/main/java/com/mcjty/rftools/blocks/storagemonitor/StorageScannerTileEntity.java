@@ -30,8 +30,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
 
     // For client side: the items of the inventory we're currently looking at.
     private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
-    // For client side: the hilighted coordinates.
-    private Set<Coordinate> coordinates = new HashSet<Coordinate> ();
 
     private SyncedValue<Integer> radius = new SyncedValue<Integer>(1);
     private SyncedValue<Boolean> scanning = new SyncedValue<Boolean>(false);
@@ -162,18 +160,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         showingItems.clear();
     }
 
-    public void storeCoordinatesForClient(List<Coordinate> coordinates) {
-        this.coordinates = new HashSet<Coordinate>(coordinates);
-    }
-
-    public Set<Coordinate> getCoordinates() {
-        return coordinates;
-    }
-
-    public void clearCoordinates() {
-        coordinates.clear();
-    }
-
     public List<ItemStack> getInventoryForBlock(int cx, int cy, int cz) {
         showingItems = new ArrayList<ItemStack>();
 
@@ -297,7 +283,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         }
         if (CLIENTCMD_SEARCHREADY.equals(command)) {
-            storeCoordinatesForClient((List<Coordinate>) list);
+            GuiStorageScanner.fromServer_coordinates = new HashSet<Coordinate>(list);
             return true;
         }
         return false;

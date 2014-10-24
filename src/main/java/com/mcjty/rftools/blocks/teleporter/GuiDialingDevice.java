@@ -53,6 +53,8 @@ public class GuiDialingDevice extends GuiContainer {
 
     public static int fromServer_receiverStatus = -1;
     public static int fromServer_dialResult = -1;
+    public static List<TeleportDestination> fromServer_receivers = null;
+    public static List<TransmitterInfo> fromServer_transmitters = null;
 
     // A copy of the receivers we're currently showing.
     private List<TeleportDestination> receivers = null;
@@ -325,7 +327,7 @@ public class GuiDialingDevice extends GuiContainer {
     }
 
     private void populateReceivers() {
-        List<TeleportDestination> newReceivers = dialingDeviceTileEntity.getReceivers();
+        List<TeleportDestination> newReceivers = fromServer_receivers;
         if (newReceivers == null) {
             return;
         }
@@ -364,7 +366,7 @@ public class GuiDialingDevice extends GuiContainer {
     }
 
     private void populateTransmitters() {
-        List<TransmitterInfo> newTransmitters = dialingDeviceTileEntity.getTransmitters();
+        List<TransmitterInfo> newTransmitters = fromServer_transmitters;
         if (newTransmitters == null) {
             return;
         }

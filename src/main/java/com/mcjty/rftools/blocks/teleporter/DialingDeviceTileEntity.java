@@ -40,10 +40,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_INTERRUPTED = 0x80;                // The dial was interrupted
     public static final int DIAL_OK = 0;                            // All is ok
 
-    // For client.
-    private List<TeleportDestination> receivers = null;
-    private List<TransmitterInfo> transmitters = null;
-
     public DialingDeviceTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
     }
@@ -103,14 +99,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return new ArrayList<TeleportDestination>(destinations.getValidDestinations());
     }
 
-    public void storeReceiversForClient(List<TeleportDestination> receivers) {
-        this.receivers = new ArrayList<TeleportDestination>(receivers);
-    }
-
-    public List<TeleportDestination> getReceivers() {
-        return receivers;
-    }
-
     public List<TransmitterInfo> searchTransmitters() {
         int x = xCoord;
         int y = yCoord;
@@ -141,14 +129,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
                 }
             }
         }
-        return transmitters;
-    }
-
-    public void storeTransmittersForClient(List<TransmitterInfo> transmitters) {
-        this.transmitters = new ArrayList<TransmitterInfo>(transmitters);
-    }
-
-    public List<TransmitterInfo> getTransmitters() {
         return transmitters;
     }
 
@@ -287,10 +267,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         }
         if (CLIENTCMD_GETRECEIVERS.equals(command)) {
-            storeReceiversForClient((List<TeleportDestination>) list);
+            GuiDialingDevice.fromServer_receivers = new ArrayList<TeleportDestination>(list);
             return true;
         } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
-            storeTransmittersForClient((List<TransmitterInfo>) list);
+            GuiDialingDevice.fromServer_transmitters = new ArrayList<TransmitterInfo>(list);
             return true;
         }
         return false;

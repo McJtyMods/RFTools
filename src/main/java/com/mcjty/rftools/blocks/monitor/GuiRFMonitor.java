@@ -36,6 +36,10 @@ public class GuiRFMonitor extends GuiScreen {
     // A copy of the adjacent blocks we're currently showing
     private List<Coordinate> adjacentBlocks = null;
 
+    // From server.
+    public static List<Coordinate> fromServer_clientAdjacentBlocks = null;
+
+
     /** The X size of the window in pixels. */
     private int xSize = 256;
     /** The Y size of the window in pixels. */
@@ -99,7 +103,7 @@ public class GuiRFMonitor extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
         window = new Window(this, toplevel);
 
-        monitorBlockTileEntity.storeAdjacentBlocksForClient(new ArrayList<Coordinate>());
+        fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>();
         requestAdjacentBlocksFromServer();
     }
 
@@ -142,7 +146,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     private void populateList() {
-        List<Coordinate> newAdjacentBlocks = monitorBlockTileEntity.getClientAdjacentBlocks();
+        List<Coordinate> newAdjacentBlocks = fromServer_clientAdjacentBlocks;
         if (newAdjacentBlocks == null) {
             return;
         }

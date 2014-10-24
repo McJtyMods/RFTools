@@ -31,9 +31,6 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     private SyncedValue<Integer> rflevel = new SyncedValue<Integer>(0);
     private SyncedValue<Boolean> inAlarm = new SyncedValue<Boolean>(false);
 
-    // Client side only
-    private List<Coordinate> clientAdjacentBlocks = null;
-
     public RFMonitorBlockTileEntity() {
         registerSyncedObject(rflevel);
         registerSyncedObject(inAlarm);
@@ -121,15 +118,6 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         }
         return adjacentBlocks;
     }
-
-    public void storeAdjacentBlocksForClient(List<Coordinate> coordinates) {
-        clientAdjacentBlocks = new ArrayList<Coordinate>(coordinates);
-    }
-
-    public List<Coordinate> getClientAdjacentBlocks() {
-        return clientAdjacentBlocks;
-    }
-
 
     @Override
     protected void checkStateServer() {
@@ -232,7 +220,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            storeAdjacentBlocksForClient((List<Coordinate>) list);
+            GuiRFMonitor.fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>(list);
             return true;
         }
         return false;
