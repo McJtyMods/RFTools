@@ -70,7 +70,7 @@ public class GenericContainer extends Container {
         }
         for (Range<Integer> r : ranges.asRanges()) {
             Integer start = r.lowerEndpoint();
-            int end = r.upperEndpoint() + 1;
+            int end = r.upperEndpoint();
             if (mergeItemStack(itemStack, start, end, reverse)) {
                 return true;
             }
