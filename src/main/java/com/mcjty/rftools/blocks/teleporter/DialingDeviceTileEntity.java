@@ -43,10 +43,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     // For client.
     private List<TeleportDestination> receivers = null;
     private List<TransmitterInfo> transmitters = null;
-    private int receiverStatus = -1;
-
-    // Client side
-    private int dialResult;     // This result comes from the server and is read on the client in the GUI.
 
     public DialingDeviceTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -156,14 +152,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return transmitters;
     }
 
-    public int getReceiverStatus() {
-        return receiverStatus;
-    }
-
-    public void setReceiverStatus(int receiverStatus) {
-        this.receiverStatus = receiverStatus;
-    }
-
     private void clearBeam(Coordinate c, World world) {
         Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
         if (ModBlocks.teleportBeamBlock.equals(b)) {
@@ -190,14 +178,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             world.setBlock(c.getX(), c.getY()+1, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
         }
         return true;
-    }
-
-    public int getDialResult() {
-        return dialResult;
-    }
-
-    public void setDialResult(int dialResult) {
-        this.dialResult = dialResult;
     }
 
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
@@ -323,10 +303,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         }
         if (CLIENTCMD_STATUS.equals(command)) {
-            setReceiverStatus(result);
+            GuiDialingDevice.fromServer_receiverStatus = result;
             return true;
         } else if (CLIENTCMD_DIAL.equals(command)) {
-            setDialResult(result);
+            GuiDialingDevice.fromServer_dialResult = result;
             return true;
         }
         return false;

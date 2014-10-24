@@ -51,6 +51,9 @@ public class GuiDialingDevice extends GuiContainer {
     private boolean lastDialedTransmitter = false;
     private boolean lastCheckedReceiver = false;
 
+    public static int fromServer_receiverStatus = -1;
+    public static int fromServer_dialResult = -1;
+
     // A copy of the receivers we're currently showing.
     private List<TeleportDestination> receivers = null;
 
@@ -421,11 +424,9 @@ public class GuiDialingDevice extends GuiContainer {
         populateTransmitters();
 
         if (lastDialedTransmitter) {
-            int dialResult = dialingDeviceTileEntity.getDialResult();
-            showStatus(dialResult);
+            showStatus(fromServer_dialResult);
         } else if (lastCheckedReceiver) {
-            int dialResult = dialingDeviceTileEntity.getReceiverStatus();
-            showStatus(dialResult);
+            showStatus(fromServer_receiverStatus);
         } else {
             statusLabel.setText("");
         }
