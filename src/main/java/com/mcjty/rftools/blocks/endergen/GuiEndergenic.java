@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
@@ -20,7 +21,7 @@ import java.awt.*;
 
 public class GuiEndergenic extends GuiContainer {
     public static final int ENDERGENIC_WIDTH = 190;
-    public static final int ENDERGENIC_HEIGHT = 90;
+    public static final int ENDERGENIC_HEIGHT = 108;
 
     private final EndergenicTileEntity endergenicTileEntity;
 
@@ -61,6 +62,8 @@ public class GuiEndergenic extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(endergenicTileEntity.getCurrentRF());
 
+        Label descriptionLabel = new Label(mc, this).setText("Averages over last 5 seconds:").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+
         lastRfPerTick = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(90).setDesiredHeight(15);
         Panel p1 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Gain:").setDesiredWidth(70)).addChild(lastRfPerTick);
 
@@ -74,6 +77,7 @@ public class GuiEndergenic extends GuiContainer {
         Panel p4 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Chances:").setDesiredWidth(70)).addChild(lastOpportunities);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
+                addChild(descriptionLabel).
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(k, l, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new com.mcjty.gui.Window(this, toplevel);
