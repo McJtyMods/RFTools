@@ -22,8 +22,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 public class GuiMatterTransmitter extends GuiContainer {
@@ -45,6 +44,16 @@ public class GuiMatterTransmitter extends GuiContainer {
     private int listDirty = 0;
 
     private final MatterTransmitterTileEntity transmitterTileEntity;
+
+    private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
+    public static void storeAllowedPlayersForClient(List<PlayerName> players) {
+        Set<String> p = new HashSet<String>();
+        for (PlayerName n : players) {
+            p.add(n.getName());
+        }
+        fromServer_allowedPlayers = p;
+    }
+
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer<MatterTransmitterTileEntity> container) {
         super(container);
@@ -163,7 +172,7 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = transmitterTileEntity.getClientAllowedPlayers();
+        List<String> newPlayers = new ArrayList<String>(fromServer_allowedPlayers);
         Collections.sort(newPlayers);
         if (newPlayers == null) {
             return;

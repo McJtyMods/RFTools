@@ -115,10 +115,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         return p;
     }
 
-    public List<String> getClientAllowedPlayers() {
-        return new ArrayList<String> (allowedPlayers);
-    }
-
     public void addPlayer(String player) {
         if (!allowedPlayers.contains(player)) {
             allowedPlayers.add(player);
@@ -567,14 +563,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         return null;
     }
 
-    public void storeAllowedPlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<String>();
-        for (PlayerName n : players) {
-            p.add(n.getName());
-        }
-        this.allowedPlayers = p;
-    }
-
     @Override
     public boolean execute(String command, List list) {
         boolean rc = super.execute(command, list);
@@ -582,7 +570,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            storeAllowedPlayersForClient(list);
+            GuiMatterTransmitter.storeAllowedPlayersForClient(list);
             return true;
         }
         return false;
