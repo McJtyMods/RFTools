@@ -331,7 +331,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 int distance = getDistanceInTicks();
                 RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination (current distance "+distance+")");
             }
-        } else if (otherTE == this) {
+        } else if (otherTE.equals(this)) {
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);

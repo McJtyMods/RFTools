@@ -3,6 +3,7 @@ package com.mcjty.entity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.ClientCommandHandler;
 import com.mcjty.rftools.network.CommandHandler;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class GenericTileEntity extends TileEntity implements CommandHandler, ClientCommandHandler {
 
     private List<SyncedObject> syncedObjects = new ArrayList<SyncedObject>();
+    private Coordinate coordinate;
 
     public void setInvalid() {
         for (SyncedObject value : syncedObjects) {
@@ -115,5 +117,24 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     @Override
     public boolean execute(String command, Integer result) {
         return false;
+    }
+
+    public Coordinate getCoordinate() {
+        if (coordinate == null) {
+            coordinate = new Coordinate(xCoord, yCoord, zCoord);
+        }
+        return coordinate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GenericTileEntity)) return false;
+        return getCoordinate().equals(((GenericTileEntity) o).getCoordinate());
+    }
+
+    @Override
+    public int hashCode() {
+        return getCoordinate().hashCode();
     }
 }

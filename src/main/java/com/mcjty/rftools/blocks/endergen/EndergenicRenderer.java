@@ -20,9 +20,9 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer {
 
         ResourceLocation txt;
 
-        if (endergenicTileEntity == RFTools.instance.clientInfo.getSelectedEndergenicTileEntity()) {
+        if (endergenicTileEntity.equals(RFTools.instance.clientInfo.getSelectedEndergenicTileEntity())) {
             txt = redglow;
-        } else if (endergenicTileEntity == RFTools.instance.clientInfo.getDestinationEndergenicTileEntity()) {
+        } else if (endergenicTileEntity.equals(RFTools.instance.clientInfo.getDestinationEndergenicTileEntity())) {
             txt = blueglow;
         } else {
             return;
