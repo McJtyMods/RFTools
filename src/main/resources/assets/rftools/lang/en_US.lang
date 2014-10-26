@@ -18,3 +18,4 @@ tile.endergenicBlock.name=Endergenic Generator
 tile.pearlInjectorBlock.name=Pearl Injector
 tile.sequencerBlock.name=Sequencer
 tile.timerBlock.name=Timer
+tile.enderMonitorBlock.name=Ender Monitor

@@ -30,7 +30,7 @@ public class GuiProxy implements IGuiHandler {
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE ||
                 guiid == RFTools.GUI_MANUAL || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ||
-                guiid == RFTools.GUI_SEQUENCER || guiid == RFTools.GUI_TIMER) {
+                guiid == RFTools.GUI_SEQUENCER || guiid == RFTools.GUI_TIMER || guiid == RFTools.GUI_ENDERMONITOR) {
             return null;
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -164,6 +164,14 @@ public class GuiProxy implements IGuiHandler {
             if (block != null && block instanceof TimerBlock && te instanceof TimerTileEntity) {
                 TimerTileEntity timerTileEntity = (TimerTileEntity) te;
                 return new GuiTimer(timerTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_ENDERMONITOR) {
+            Block block = world.getBlock(x, y, z);
+            TileEntity te = world.getTileEntity(x, y, z);
+
+            if (block != null && block instanceof EnderMonitorBlock && te instanceof EnderMonitorTileEntity) {
+                EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
+                return new GuiEnderMonitor(enderMonitorTileEntity);
             }
         } else if (guiid == RFTools.GUI_DIALING_DEVICE) {
             TileEntity te = world.getTileEntity(x, y, z);

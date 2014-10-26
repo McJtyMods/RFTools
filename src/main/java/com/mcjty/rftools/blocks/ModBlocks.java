@@ -1,10 +1,7 @@
 package com.mcjty.rftools.blocks;
 
 import com.mcjty.rftools.blocks.crafter.*;
-import com.mcjty.rftools.blocks.endergen.EndergenicBlock;
-import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
-import com.mcjty.rftools.blocks.endergen.PearlInjectorBlock;
-import com.mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
+import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.logic.TimerBlock;
 import com.mcjty.rftools.blocks.logic.TimerTileEntity;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
@@ -42,6 +39,7 @@ public final class ModBlocks {
 
     public static EndergenicBlock endergenicBlock;
     public static PearlInjectorBlock pearlInjectorBlock;
+    public static EnderMonitorBlock enderMonitorBlock;
 
     public static SequencerBlock sequencerBlock;
     public static TimerBlock timerBlock;
@@ -102,6 +100,11 @@ public final class ModBlocks {
         pearlInjectorBlock.setCreativeTab(CreativeTabs.tabMisc);
         GameRegistry.registerBlock(pearlInjectorBlock, "pearlInjectorBlock");
         GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
+
+        enderMonitorBlock = new EnderMonitorBlock(Material.iron);
+        enderMonitorBlock.setCreativeTab(CreativeTabs.tabMisc);
+        GameRegistry.registerBlock(enderMonitorBlock, "enderMonitorBlock");
+        GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
 
         sequencerBlock = new SequencerBlock(Material.iron);
         sequencerBlock.setCreativeTab(CreativeTabs.tabMisc);
