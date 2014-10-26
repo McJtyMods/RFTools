@@ -5,6 +5,8 @@ import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -17,6 +19,9 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
     public static final String CMD_MODE = "mode";
 
     private int mode = MODE_LOSTPEARL;
+
+    private int timer = 10;
+    private EndergenicTileEntity linkedEndergen = null;
 
     private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
 
@@ -33,13 +38,35 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    private void findEndergenic() {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
+        TileEntity te = worldObj.getTileEntity(xCoord + k.offsetX, yCoord + k.offsetY, zCoord + k.offsetZ);
+        if (te instanceof EndergenicTileEntity) {
+            linkedEndergen = (EndergenicTileEntity) te;
+            linkedEndergen.addMonitor(this);
+        }
+    }
+
+    public void cleanEndergenic() {
+        linkedEndergen = null;
+    }
+
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
 
-        markDirty();
+        boolean newout = false;
 
-        boolean newout = true;
+        if (linkedEndergen == null) {
+            timer--;
+            if (timer <= 0) {
+                findEndergenic();
+                timer = 10;
+            }
+        } else {
+
+        }
 
 
         if (newout != redstoneOut.getValue()) {
@@ -47,8 +74,6 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
             notifyBlockUpdate();
         }
     }
-
-
 
     @Override
     protected int updateMetaData(int meta) {

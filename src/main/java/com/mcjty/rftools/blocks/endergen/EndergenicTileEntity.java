@@ -76,6 +76,9 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
 
+    // List of monitors for this endergenic.
+    private final List<EnderMonitorTileEntity> monitors = new ArrayList<EnderMonitorTileEntity>();
+
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
     private static int rfPerHit[] = new int[]{ 0, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 6400, 3200, 1600, 800, 400, 200, 100 };
@@ -158,6 +161,16 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode++;
         if (chargingMode >= 16) {
             chargingMode = CHARGE_IDLE;
+        }
+    }
+
+    public void addMonitor(EnderMonitorTileEntity monitorTileEntity) {
+        monitors.add(monitorTileEntity);
+    }
+
+    private void cleanMonitors() {
+        for (EnderMonitorTileEntity monitor : monitors) {
+            monitor.cleanEndergenic();
         }
     }
 
