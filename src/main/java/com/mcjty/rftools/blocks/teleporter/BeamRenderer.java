@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BeamRenderer extends DefaultISBRH {
 
@@ -28,10 +29,10 @@ public class BeamRenderer extends DefaultISBRH {
             meta = world.getBlockMetadata(x, y, z);
         }
 
-        addSideHeight(block, tessellator, Constants.SIDE_NORTH, meta, 3);
-        addSideHeight(block, tessellator, Constants.SIDE_SOUTH, meta, 3);
-        addSideHeight(block, tessellator, Constants.SIDE_WEST, meta, 3);
-        addSideHeight(block, tessellator, Constants.SIDE_EAST, meta, 3);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_NORTH, meta, 4, ForgeDirection.NORTH);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_SOUTH, meta, 4, ForgeDirection.SOUTH);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_WEST, meta, 4, ForgeDirection.NORTH);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_EAST, meta, 4, ForgeDirection.NORTH);
 
         tessellator.addTranslation(-x, -y, -z);
         return true;
