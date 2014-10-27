@@ -410,7 +410,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     public int calculateDistance(Coordinate destination) {
         double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(
                 Vec3.createVectorHelper(xCoord, yCoord, zCoord));
-        return (int) (d / 5.0f) + 1;
+        return (int) (d / 3.0f) + 1;
     }
 
     public void setDestination(Coordinate destination) {
