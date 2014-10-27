@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +20,8 @@ import net.minecraftforge.common.util.ForgeDirection;
  * The superclass for all logic slabs in RFTools.
  */
 public abstract class LogicSlabBlock extends GenericBlock {
+
+    public static int RENDERID_LOGICSLAB;
 
     public LogicSlabBlock(Material material, String name, Class<? extends TileEntity> tileEntityClass) {
         super(material, tileEntityClass);
@@ -82,7 +83,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
 
     @Override
     public int getRenderType() {
-        return ModRenderers.RENDERID_LOGICSLAB;
+        return RENDERID_LOGICSLAB;
     }
 
     @Override

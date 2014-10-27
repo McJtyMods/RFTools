@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.logic;
 import com.mcjty.rftools.Constants;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.render.DefaultISBRH;
-import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -38,7 +37,7 @@ public class LogicSlabRenderer extends DefaultISBRH {
 
     @Override
     public int getRenderId() {
-        return ModRenderers.RENDERID_LOGICSLAB;
+        return LogicSlabBlock.RENDERID_LOGICSLAB;
     }
 
     @Override

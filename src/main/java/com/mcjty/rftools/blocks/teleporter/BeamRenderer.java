@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.rftools.Constants;
 import com.mcjty.rftools.render.DefaultISBRH;
-import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -40,6 +39,6 @@ public class BeamRenderer extends DefaultISBRH {
 
     @Override
     public int getRenderId() {
-        return ModRenderers.RENDERID_BEAM;
+        return TeleportBeamBlock.RENDERID_BEAM;
     }
 }

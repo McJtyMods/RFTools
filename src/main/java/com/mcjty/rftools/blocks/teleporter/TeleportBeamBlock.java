@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.render.ModRenderers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -14,6 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TeleportBeamBlock extends Block {
+
+    public static int RENDERID_BEAM;
 
     private IIcon icon;
     private IIcon iconWarn;
@@ -55,7 +56,7 @@ public class TeleportBeamBlock extends Block {
 
     @Override
     public int getRenderType() {
-        return ModRenderers.RENDERID_BEAM;
+        return RENDERID_BEAM;
     }
 
     @Override
