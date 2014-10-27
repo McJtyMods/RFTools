@@ -69,7 +69,7 @@ public class EndergenicBlock extends GenericContainerBlock {
             if (world.isRemote) {
                 EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(x, y, z);
                 world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
-                endergenicTileEntity.useWrench();
+                endergenicTileEntity.useWrench(player);
             }
             return true;
         } else {

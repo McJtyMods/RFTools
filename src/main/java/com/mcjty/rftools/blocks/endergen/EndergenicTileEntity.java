@@ -9,7 +9,7 @@ import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -19,7 +19,10 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
@@ -365,7 +368,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     // Called from client side when a wrench is used.
-    public void useWrench() {
+    public void useWrench(EntityPlayer player) {
         EndergenicTileEntity otherTE = RFTools.instance.clientInfo.getSelectedEndergenicTileEntity();
         if (otherTE == null) {
             // None selected. Just select this one.
@@ -373,10 +376,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             EndergenicTileEntity destinationTE = getDestinationTE();
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(destinationTE);
             if (destinationTE == null) {
-                RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination");
+                RFTools.message(player, "Select another endergenic generator as destination");
             } else {
                 int distance = getDistanceInTicks();
-                RFTools.message(Minecraft.getMinecraft().thePlayer, "Select another endergenic generator as destination (current distance "+distance+")");
+                RFTools.message(player, "Select another endergenic generator as destination (current distance "+distance+")");
             }
         } else if (otherTE.equals(this)) {
             // Unselect this one.
@@ -387,13 +390,13 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             Coordinate c = new Coordinate(xCoord, yCoord, zCoord);
             int distance = otherTE.calculateDistance(c);
             if (distance >= 5) {
-                RFTools.warn(Minecraft.getMinecraft().thePlayer, "Distance is too far (maximum 4)");
+                RFTools.warn(player, "Distance is too far (maximum 4)");
                 return;
             }
             otherTE.setDestination(c);
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
-            RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
+            RFTools.message(player, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
         }
     }
 
