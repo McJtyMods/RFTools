@@ -122,6 +122,10 @@ public class CommonProxy {
                     "The amount of RF that is consumed every tick to hold the endergenic pearl").getInt();
             EndergenicTileEntity.rfOutput = cfg.get(CATEGORY_ENDERGENIC, "endergenicRfOutput", EndergenicTileEntity.rfOutput,
                     "The amount of RF per tick that this generator can give from its internal buffer to adjacent blocks").getInt();
+            EndergenicTileEntity.goodParticleCount = cfg.get(CATEGORY_ENDERGENIC, "endergenicGoodParticles", EndergenicTileEntity.goodParticleCount,
+                    "The amount of particles to spawn whenever energy is generated (use 0 to disable)").getInt();
+            EndergenicTileEntity.badParticleCount = cfg.get(CATEGORY_ENDERGENIC, "endergenicBadParticles", EndergenicTileEntity.badParticleCount,
+                    "The amount of particles to spawn whenever a pearl is lost (use 0 to disable)").getInt();
 
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

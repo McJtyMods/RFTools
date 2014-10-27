@@ -20,8 +20,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
 
     private int mode = MODE_LOSTPEARL;
 
-    private int timer = 10;
-    private EndergenicTileEntity linkedEndergen = null;
+    private boolean needpulse = false;
 
     private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
 
@@ -38,18 +37,17 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    private void findEndergenic() {
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-        TileEntity te = worldObj.getTileEntity(xCoord + k.offsetX, yCoord + k.offsetY, zCoord + k.offsetZ);
-        if (te instanceof EndergenicTileEntity) {
-            linkedEndergen = (EndergenicTileEntity) te;
-            linkedEndergen.addMonitor(this);
+    /**
+     * Callback from the endergenic in case something happens.
+     * @param mode
+     */
+    public void fireFromEndergenic(int mode, EndergenicTileEntity endergenicTileEntity) {
+        if (this.mode != mode) {
+            return; // Not monitoring this mode. We do nothing.
         }
-    }
 
-    public void cleanEndergenic() {
-        linkedEndergen = null;
+        needpulse = true;
+        markDirty();
     }
 
     @Override
@@ -58,16 +56,11 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
 
         boolean newout = false;
 
-        if (linkedEndergen == null) {
-            timer--;
-            if (timer <= 0) {
-                findEndergenic();
-                timer = 10;
-            }
-        } else {
-
+        if (needpulse) {
+            markDirty();
+            newout = true;
+            needpulse = false;
         }
-
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
@@ -87,6 +80,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         super.readFromNBT(tagCompound);
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
         mode = tagCompound.getInteger("mode");
+        needpulse = tagCompound.getBoolean("needPulse");
     }
 
     @Override
@@ -95,6 +89,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
         tagCompound.setInteger("mode", mode);
+        tagCompound.setBoolean("needPulse", needpulse);
     }
 
     @Override

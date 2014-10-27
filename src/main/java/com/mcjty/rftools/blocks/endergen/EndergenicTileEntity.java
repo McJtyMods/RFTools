@@ -77,7 +77,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
 
     // List of monitors for this endergenic.
-    private final List<EnderMonitorTileEntity> monitors = new ArrayList<EnderMonitorTileEntity>();
+    private List<Coordinate> monitors = new ArrayList<Coordinate>();
 
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
@@ -92,6 +92,9 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // This value indicates how much RF/tick this block can send out to neighbours
     public static int rfOutput = 20000;
+
+    public static int goodParticleCount = 10;
+    public static int badParticleCount = 10;
 
     public EndergenicTileEntity() {
         super(1000000, 0, 20000);
@@ -145,7 +148,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             } else {
                 // Consume energy to keep the endergenic pearl.
                 int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
-                System.out.println("Endergenic: consume energy "+rfToHoldPearl+", rfExtracted " + rfExtracted);
                 rfLost += rfExtracted;
                 if (rfExtracted < rfToHoldPearl) {
                     // Not enough energy. Pearl is lost.
@@ -164,13 +166,40 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
     }
 
-    public void addMonitor(EnderMonitorTileEntity monitorTileEntity) {
-        monitors.add(monitorTileEntity);
+    public void addMonitor(Coordinate c) {
+        monitors.add(c);
     }
 
-    private void cleanMonitors() {
-        for (EnderMonitorTileEntity monitor : monitors) {
-            monitor.cleanEndergenic();
+    public void removeMonitor(Coordinate c) {
+        monitors.remove(c);
+    }
+
+    /**
+     * Something happens, we need to notify all ender monitors.
+     * @param mode
+     */
+    private void fireMonitors(int mode) {
+        boolean cleanup = false;
+        for (Coordinate c : monitors) {
+            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (te instanceof EnderMonitorTileEntity) {
+                EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
+                enderMonitorTileEntity.fireFromEndergenic(mode, this);
+            } else {
+                cleanup = true;
+            }
+        }
+        // This should normally not be needed but to be safe we make sure that we clean
+        // up defunct monitor references.
+        if (cleanup) {
+            List<Coordinate> newMonitors = new ArrayList<Coordinate>();
+            for (Coordinate c : monitors) {
+                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (te instanceof EnderMonitorTileEntity) {
+                    newMonitors.add(c);
+                }
+            }
+            monitors = newMonitors;
         }
     }
 
@@ -227,11 +256,11 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void discardPearl() {
-        spawnParticles("smoke");
-        System.out.println("Endergenic: pearl is lost");
+        spawnParticles("smoke", badParticleCount);
         markDirty();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
+        fireMonitors(EnderMonitorTileEntity.MODE_LOSTPEARL);
     }
 
     /**
@@ -254,7 +283,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     public void firePearl() {
-        System.out.println("Endergenic: fire pearl");
         markDirty();
         // This method assumes we're in holding mode.
         getDestinationTE();
@@ -265,6 +293,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             chargingMode = CHARGE_IDLE;
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, currentAge+1));
+            fireMonitors(EnderMonitorTileEntity.MODE_PEARLFIRED);
         }
     }
 
@@ -278,22 +307,22 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else {
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, 0));
+            fireMonitors(EnderMonitorTileEntity.MODE_PEARLFIRED);
         }
     }
 
     // This generator receives a pearl. The age of the pearl is how many times the pearl has
     // already generated power.
     public void receivePearl(int age) {
+        fireMonitors(EnderMonitorTileEntity.MODE_PEARLARRIVED);
         markDirty();
         if (chargingMode == CHARGE_HOLDING) {
             // If this block is already holding a pearl and it still has one then both pearls are
             // automatically lost.
-            System.out.println("Endergenic: pearl collsion! Pearl is lost");
-            chargingMode = CHARGE_IDLE;
+            discardPearl();
         } else if (chargingMode == CHARGE_IDLE) {
             // If this block is idle and it is hit by a pearl then the pearl is lost and nothing
             // happens.
-            System.out.println("Endergenic: we're idle, can't do anything with this pearl. Sorry!");
             chargingMode = CHARGE_IDLE;
         } else {
             // Otherwise we get RF and this block goes into holding mode.
@@ -308,23 +337,24 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             rfGained += rf;
             modifyEnergyStored(rf);
 
-            spawnParticles("portal");
+            spawnParticles("portal", goodParticleCount);
 
-            System.out.println("Endergenic: receive energy " + rf + ", pearl age " + age);
             chargingMode = CHARGE_HOLDING;
             currentAge = age;
         }
     }
 
-    private void spawnParticles(String name) {
+    private void spawnParticles(String name, int amount) {
+        if (amount <= 0) {
+            return;
+        }
         float vecX = (random.nextFloat() - 0.5F) * 0.2F;
         float vecY = (random.nextFloat()) * 0.1F;
         float vecZ = (random.nextFloat() - 0.5F) * 0.2F;
-        ((WorldServer)worldObj).func_147487_a(name, xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, 10, vecX, vecY, vecZ, 0.3f);
+        ((WorldServer)worldObj).func_147487_a(name, xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, amount, vecX, vecY, vecZ, 0.3f);
     }
 
     public void startCharging() {
-        System.out.println("Endergenic: start charging");
         markDirty();
         chargingMode = 1;
         pearlsOpportunities++;
@@ -350,7 +380,13 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
         } else {
             // Make a link.
-            otherTE.setDestination(new Coordinate(xCoord, yCoord, zCoord));
+            Coordinate c = new Coordinate(xCoord, yCoord, zCoord);
+            int distance = otherTE.calculateDistance(c);
+            if (distance >= 5) {
+                RFTools.warn(Minecraft.getMinecraft().thePlayer, "Distance is too far (maximum 4)");
+                return;
+            }
+            otherTE.setDestination(c);
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
             RFTools.message(Minecraft.getMinecraft().thePlayer, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
@@ -366,13 +402,21 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         return chargingMode;
     }
 
+    /**
+     * Calculate the distance in ticks between this endergenic generator and the given coordinate.
+     * @param destination
+     * @return
+     */
+    public int calculateDistance(Coordinate destination) {
+        double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(
+                Vec3.createVectorHelper(xCoord, yCoord, zCoord));
+        return (int) (d / 5.0f) + 1;
+    }
+
     public void setDestination(Coordinate destination) {
         markDirty();
         this.destination = destination;
-
-        double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(
-                Vec3.createVectorHelper(xCoord, yCoord, zCoord));
-        distance = (int) (d / 5.0f) + 1;
+        distance = calculateDistance(destination);
 
         if (worldObj.isRemote) {
             // We're on the client. Send change to server.
@@ -446,7 +490,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else if (CMD_GETSTAT_LAUNCHED.equals(command)) {
             return lastPearlsLaunched;
         } else if (CMD_GETSTAT_OPPORTUNITIES.equals(command)) {
-            System.out.println("executeWithResultInteger: lastPearlOpportunities = " + lastPearlOpportunities + " (remote:"+worldObj.isRemote+") "+this);
             return lastPearlOpportunities;
         }
         return null;
