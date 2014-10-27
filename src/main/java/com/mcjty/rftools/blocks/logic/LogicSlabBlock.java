@@ -7,9 +7,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -50,13 +52,25 @@ public abstract class LogicSlabBlock extends GenericBlock {
         world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
     }
 
+    /**
+     * Returns the signal strength at one input of the block. Args: world, X, Y, Z, side
+     */
+    private int getInputStrength(World world, int x, int y, int z, int side) {
+        int dir = Direction.facingToDirection[side];
+        int xoffset = x + Direction.offsetX[dir];
+        int zoffset = z + Direction.offsetZ[dir];
+        int power = world.getIndirectPowerLevelTo(xoffset, y, zoffset, side);
+        int wirePower = world.getBlock(xoffset, y, zoffset) == Blocks.redstone_wire ? world.getBlockMetadata(xoffset, y, zoffset) : 0;
+        return power >= 15 ? power : Math.max(power, wirePower);
+    }
+
 
 
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         int meta = world.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-        int power = world.isBlockProvidingPowerTo(x + k.offsetX, y + k.offsetY, z + k.offsetZ, k.getOpposite().ordinal());
+        int power = getInputStrength(world, x, y, z, k.ordinal());
         meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
         world.setBlockMetadataWithNotify(x, y, z, meta, 2);
     }
