@@ -1,16 +1,12 @@
 package com.mcjty.gui.widgets;
 
+import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
-import com.mcjty.gui.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ChoiceLabel extends Label<ChoiceLabel> {
     private ArrayList<String> choiceList = new ArrayList<String>();
