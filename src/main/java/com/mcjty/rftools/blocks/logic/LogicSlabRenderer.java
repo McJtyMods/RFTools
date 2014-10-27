@@ -17,6 +17,7 @@ public class LogicSlabRenderer extends DefaultISBRH {
         Tessellator tessellator = Tessellator.instance;
         tessellator.setColorOpaque(255, 255, 255);
         tessellator.addTranslation(x, y, z);
+        tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
 
         int meta = 0;
         if (world != null) {
