@@ -191,6 +191,7 @@ public class TextPage extends AbstractWidget<TextPage> {
         int dx;
         for (Line line : lines) {
             if (line.recipe != null) {
+                y += 4;
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // @TODO: need support for shapeless and better error checking
                 ShapedRecipes shapedRecipes = (ShapedRecipes) line.recipe;
@@ -215,6 +216,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                     gui.drawTexturedModalRect(x+25+92, y + 16, craftU, craftV, 18, 18);
                 }
                 RenderHelper.renderObject(mc, x+25+92, y + 16, shapedRecipes.getRecipeOutput(), false);
+                y -= 4;
             } else if (line.line != null) {
                 String s = "";
                 int col = 0xFF000000;
@@ -301,7 +303,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                         // Error,
                         this.line = line;
                     } else {
-                        height = 19*3+5;
+                        height = 18*3+8;
                     }
                 }
             } else if (line.startsWith("{rb:")) {
@@ -316,7 +318,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                         // Error,
                         this.line = line;
                     } else {
-                        height = 16*3+5;
+                        height = 18*3+8;
                     }
                 }
             } else {

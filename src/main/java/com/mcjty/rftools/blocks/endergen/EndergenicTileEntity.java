@@ -97,7 +97,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     public static int badParticleCount = 10;
 
     public EndergenicTileEntity() {
-        super(1000000, 0, 20000);
+        super(5000000, 0, 20000);
     }
 
     @Override
@@ -122,6 +122,14 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         handlePearls();
         handleSendingEnergy();
 
+        // First check if we're holding a pearl to see if the pearl will be lost.
+        if (chargingMode == CHARGE_HOLDING) {
+            if (random.nextInt(100) <= chanceLost) {
+                // Pearl is lost.
+                discardPearl();
+            }
+        }
+
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         boolean newvalue = BlockTools.getRedstoneSignalIn(meta);
         boolean pulse = newvalue && !prevIn;
@@ -142,18 +150,13 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         if (chargingMode == CHARGE_HOLDING) {
-            if (random.nextInt(100) <= chanceLost) {
-                // Pearl is lost.
+            // Consume energy to keep the endergenic pearl.
+            int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
+            rfLost += rfExtracted;
+            if (rfExtracted < rfToHoldPearl) {
+                // Not enough energy. Pearl is lost.
                 discardPearl();
-            } else {
-                // Consume energy to keep the endergenic pearl.
-                int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
-                rfLost += rfExtracted;
-                if (rfExtracted < rfToHoldPearl) {
-                    // Not enough energy. Pearl is lost.
-                    discardPearl();
 
-                }
             }
             return;
         }
@@ -304,6 +307,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode = CHARGE_IDLE;
         if (destination == null) {
             // There is no destination so the injected pearl is simply lost.
+            discardPearl();
         } else {
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, 0));

@@ -9,6 +9,7 @@ Table of contents:
 {l:crafte}Automatic Crafter
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
+{l:power}Power Generator
 {-------------------------------------------------------------}
 {b}RF Network Monitor Item
 {n:netmon}
@@ -34,6 +35,7 @@ The machine base is the base ingredient for a few other machines.
 
 {l:sequencer}Sequencer
 {l:timer}Timer
+{l:endermon}Ender Monitor
 {-------------------------------------------------------------} 
 {b}Sequencer
 {n:sequencer}
@@ -58,15 +60,27 @@ It has six different modes:
 {b}Timer
 {n:timer}
 {rb:timerBlock}
-The timer is a simple gate that will repeatedly send a redstone
-pulse. You can input any value for the delay so it can be used
-for very long timeouts.
+The timer is a simple gate that will repeatedly send a redstone pulse.
+You can input any value for the delay so it can be used for very long
+timeouts.
 
-What is special about this timer is that it restart when it
-itself receives a redstone pulse at its input. So given timely
-input pulses this block will never output a pulseitself. By using
-this feature this block can be used as a way to detect that a
-certain activity is overdue.
+What is special about this timer is that it restart when it itself
+receives a redstone pulse at its input. So given timely input pulses
+this block will never output a pulseitself. By using this feature this
+block can be used as a way to detect that a certain activity is overdue.
+{-------------------------------------------------------------}
+{b}Ender Monitor
+{n:endermon}
+{rb:enderMonitorBlock}
+The Ender Monitor only works in combination with the Endergenic
+Generator. It will send a pulse based on three diffferent conditions:
+
+    Lost Pearl: send a redstone pulse when a pearl is lost
+    Pearl Fired: send a pulse when a pearl is fired
+    Pearl Arrived: send a pulse when a pearl arrives
+
+Note that the redstone signal outputs on the red dot side and this
+has to face away from the Endergenic Generator.
 {-------------------------------------------------------------}
 {b}RF Monitor
 {n:rfmoni}
@@ -245,3 +259,95 @@ In case of a receiver an unauthorized player can not dial to that
 receiver but he/she can teleport to it if there is an authorized
 transmitter already dialed to that receiver.
 {-------------------------------------------------------------} 
+{b}Power Generator
+{n:power}
+
+Scientists working in The End have discovered an interesting property
+of ender pearls. When a pearl is thrown in some controlled manner the
+mystic properties that occur on arrival can be harnessed and converted
+to RF. If done at exactly the right moment this can produce a lot of
+power. A pearl thrown this way is called an 'Endergenic Pearl'.
+
+In addition it appears that pearls 'remember' that they have been
+captured this way. If a pearl is captured and then thrown again as soon
+as possible its internal power capacity increases which can give big
+benefits for producing RF from this. However, this means that the pearl
+has to be fired again as soon as possible, as trying to restrain a pearl
+from firing is very costly on energy.
+{-------------------------------------------------------------}
+Note that even in optimal conditions it is possible that pearls are
+lost. So a way has to be found to ensure that the system stays operational
+at all times.
+
+{b}Power Blocks
+
+{l:powendergenic}Endergenic Generator
+{l:powinjector}Pearl Injector
+{-------------------------------------------------------------}
+{b}Endergenic Generator
+{n:powendergenic}
+{rb:endergenicBlock}
+
+The Endergenic Generator is the main block in the power generator system.
+This device can capture endergenic pearls and fire them again. It has three
+basic modes which are controlled by giving redstone pulses to this device:
+
+    Idle: this is the default mode. It just waits
+    Charging: in this mode the device can receive endergenic pearls
+    Holding: in this mode the device is holding a pearl
+{-------------------------------------------------------------}
+Charging mode is a 15-tick cycle. The most optimal time to capture a pearl
+is at tick 8 (starting with tick 1). RF will also be generated if an
+endergenic pearl arrives at any other point in the charging cycle but the
+RF that can be generated will be a lot less.
+
+When the charging cycle ends without a pearl being received then
+the machine will go into idle mode again.
+
+If a pearl is received then charging mode immediatelly ends and the machine
+goes into holding mode. In this mode it will consume RF every tick. Be
+careful holding the pearl for too long as you will then end up consuming
+more RF then you gained. If the internal storage of the generator does not
+have enough RF to hold the pearl then it will automatically be lost. Also
+each tick there is a small chance that the pearl will be lost in any case.
+{-------------------------------------------------------------}
+You can use a BuildCraft or Thermal Expansion compatible wrench to control
+the destination of each generator. If you don't set a destination then pearls
+will be automatically lost as soon as they are fired.
+
+When selecting a generator with a wrench (right click) it will turn red
+and then you can go to the destination generator (right click it again) to
+set the destination. Pay attention to the message you get when you do this
+as it tells you the distance (in ticks) between the two generators. This can
+help you to time the rest of the system exactly right. Note that the maximum
+distance is set to 4 ticks so keep that in mind.
+{-------------------------------------------------------------}
+This mechanic of charging, holding and firing endergenic pearls at specific
+times implies precise timing and cooperation of multiple Endergenic
+Generators. You will need at least two generators to be able to produce
+power although it will probably be hard to get optimal RF production using
+only two generators.
+
+If you have plenty of ender pearls and don't care too much about less then
+optimal generation you can just throw in as many pearls as you want from
+one generator and capture them in another. Then it that other generator
+you just fire them away immediatelly without caring about a destination.
+You will quickly consume lots of ender pearls this way so this might not
+be the best way to proceed.
+{-------------------------------------------------------------}
+{b}Pearl Injector
+{n:powinjector}
+{rb:pearlInjectorBlock}
+
+This block has to be placed facing an Endergenic Generator or else
+directly below it. This machine provides the only way to inject an ender
+pearl into the power system. When it receives a redstone signal it will
+convert the ender pearl to an endergenic pearl and immediatelly insert it
+into the adjacent Endergenic Generator. If that generator was already
+holding a pearl then nothing happens and the new pearl is lost.
+{-------------------------------------------------------------}
+Otherwise the endergenic pearl is immediatelly fired from the
+generator and the system starts.
+
+This injector has an internal buffer that can only store ender pearls.
+{-------------------------------------------------------------}
