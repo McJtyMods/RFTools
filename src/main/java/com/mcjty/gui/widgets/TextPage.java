@@ -31,9 +31,14 @@ public class TextPage extends AbstractWidget<TextPage> {
     private int pageIndex = 0;
     private final List<Line> lines = new ArrayList<Line>();
     private final List<Link> links = new ArrayList<Link>();
+
     private ResourceLocation arrowImage = null;
     private int arrowU;
     private int arrowV;
+
+    private ResourceLocation craftingGridImage = null;
+    private int craftU;
+    private int craftV;
 
     public TextPage(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -43,6 +48,13 @@ public class TextPage extends AbstractWidget<TextPage> {
         this.arrowImage = image;
         this.arrowU = u;
         this.arrowV = v;
+        return this;
+    }
+
+    public TextPage setCraftingGridImage(ResourceLocation image, int u, int v) {
+        this.craftingGridImage = image;
+        this.craftU = u;
+        this.craftV = v;
         return this;
     }
 
@@ -182,17 +194,27 @@ public class TextPage extends AbstractWidget<TextPage> {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // @TODO: need support for shapeless and better error checking
                 ShapedRecipes shapedRecipes = (ShapedRecipes) line.recipe;
+                if (craftingGridImage != null) {
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    mc.getTextureManager().bindTexture(craftingGridImage);
+                    gui.drawTexturedModalRect(25+x, y, craftU, craftV, 19*3, 19*3);
+                }
                 for (int i = 0 ; i < 3 ; i++) {
                     for (int j = 0 ; j < 3 ; j++) {
-                        RenderHelper.renderObject(mc, 25 + x+i*16, y+j*16, shapedRecipes.recipeItems[i+j*3], false);
+                        RenderHelper.renderObject(mc, 25 + x+i*18, y+j*18, shapedRecipes.recipeItems[i+j*3], false);
                     }
                 }
                 if (arrowImage != null) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     mc.getTextureManager().bindTexture(arrowImage);
-                    gui.drawTexturedModalRect(x+25+60, y+16, arrowU, arrowV, 16, 16);
+                    gui.drawTexturedModalRect(x+25+67, y+16, arrowU, arrowV, 16, 16);
                 }
-                RenderHelper.renderObject(mc, x+25+86, y + 16, shapedRecipes.getRecipeOutput(), false);
+                if (craftingGridImage != null) {
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    mc.getTextureManager().bindTexture(craftingGridImage);
+                    gui.drawTexturedModalRect(x+25+92, y + 16, craftU, craftV, 18, 18);
+                }
+                RenderHelper.renderObject(mc, x+25+92, y + 16, shapedRecipes.getRecipeOutput(), false);
             } else if (line.line != null) {
                 String s = "";
                 int col = 0xFF000000;
@@ -279,7 +301,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                         // Error,
                         this.line = line;
                     } else {
-                        height = 16*3+5;
+                        height = 19*3+5;
                     }
                 }
             } else if (line.startsWith("{rb:")) {

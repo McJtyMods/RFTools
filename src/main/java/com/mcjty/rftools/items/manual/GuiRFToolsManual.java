@@ -41,7 +41,7 @@ public class GuiRFToolsManual extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        textPage = new TextPage(mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0);
+        textPage = new TextPage(mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0).setCraftingGridImage(iconGuiElements, 0, 192);
 
         prevButton = new Button(mc, this).setText("<").addButtonEvent(new ButtonEvent() {
             @Override
