@@ -450,6 +450,16 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             EndergenicPearl pearl = new EndergenicPearl(tc);
             pearls.add(pearl);
         }
+
+        monitors.clear();
+        NBTTagList monitorList = tagCompound.getTagList("monitors", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < monitorList.tagCount() ; i++) {
+            NBTTagCompound tc = monitorList.getCompoundTagAt(i);
+            Coordinate c = Coordinate.readFromNBT(tc, "c");
+            if (c != null) {
+                monitors.add(c);
+            }
+        }
     }
 
     @Override
@@ -461,11 +471,18 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         Coordinate.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("distance", distance);
         tagCompound.setBoolean("prevIn", prevIn);
+
         NBTTagList pearlList = new NBTTagList();
         for (EndergenicPearl pearl : pearls) {
             pearlList.appendTag(pearl.getTagCompound());
         }
         tagCompound.setTag("pearls", pearlList);
+
+        NBTTagList monitorList = new NBTTagList();
+        for (Coordinate c : monitors) {
+            monitorList.appendTag(Coordinate.writeToNBT(c));
+        }
+        tagCompound.setTag("monitors", monitorList);
     }
 
     @Override

@@ -32,13 +32,17 @@ public class EnderMonitorBlock extends LogicSlabBlock {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         if (!world.isRemote) {
-            int meta = world.getBlockMetadata(x, y, z);
-            ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-            TileEntity te = world.getTileEntity(x + k.offsetX, y + k.offsetY, z + k.offsetZ);
-            if (te instanceof EndergenicTileEntity) {
-                EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
-                endergenicTileEntity.addMonitor(new Coordinate(x, y, z));
-            }
+            registerWithEndergenic(world, x, y, z);
+        }
+    }
+
+    public void registerWithEndergenic(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
+        TileEntity te = world.getTileEntity(x + k.offsetX, y + k.offsetY, z + k.offsetZ);
+        if (te instanceof EndergenicTileEntity) {
+            EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
+            endergenicTileEntity.addMonitor(new Coordinate(x, y, z));
         }
     }
 
