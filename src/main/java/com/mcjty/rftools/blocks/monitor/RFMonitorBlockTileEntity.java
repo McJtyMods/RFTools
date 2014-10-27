@@ -82,7 +82,11 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
     }
 
     public int getRflevel() {
-        return rflevel.getValue();
+        Integer value = rflevel.getValue();
+        if (value == null) {
+            return 0;
+        }
+        return value;
     }
 
     @Override
@@ -166,7 +170,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         }
         Boolean v = inAlarm.getValue();
         boolean alarmValue = v == null ? false : v;
-        if (rflevel.getValue() != ratio || alarm != alarmValue) {
+        if (getRflevel() != ratio || alarm != alarmValue) {
             rflevel.setValue(ratio);
             if (alarmValue != alarm) {
                 inAlarm.setValue(alarm);
@@ -194,7 +198,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         tagCompound.setInteger("monitorX", monitorX);
         tagCompound.setInteger("monitorY", monitorY);
         tagCompound.setInteger("monitorZ", monitorZ);
-        tagCompound.setInteger("rflevel", rflevel.getValue());
+        tagCompound.setInteger("rflevel", getRflevel());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
         Boolean value = inAlarm.getValue();
