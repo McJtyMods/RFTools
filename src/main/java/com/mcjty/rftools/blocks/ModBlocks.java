@@ -98,7 +98,7 @@ public final class ModBlocks {
 
         pearlInjectorBlock = new PearlInjectorBlock(Material.iron);
         pearlInjectorBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(pearlInjectorBlock, "pearlInjectorBlock");
+        GameRegistry.registerBlock(pearlInjectorBlock, PearlInjectorItemBlock.class, "pearlInjectorBlock");
         GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
 
         enderMonitorBlock = new EnderMonitorBlock(Material.iron);
