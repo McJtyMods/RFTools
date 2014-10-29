@@ -17,30 +17,10 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class GuiEnderMonitor extends GuiScreen {
     public static final int MONITOR_WIDTH = 140;
     public static final int MONITOR_HEIGHT = 30;
-
-    private static final String MODE_LOSTPEARL = "Lost Pearl";
-    private static final String MODE_PEARLFIRED = "Pearl Fired";
-    private static final String MODE_PEARLARRIVED = "Pearl Arrived";
-
-    private static final Map<String,Integer> modeToMode = new HashMap<String, Integer>();
-    private static final List<String> modes = new ArrayList<String>();
-    static {
-        modeToMode.put(MODE_LOSTPEARL, EnderMonitorTileEntity.MODE_LOSTPEARL);
-        modeToMode.put(MODE_PEARLFIRED, EnderMonitorTileEntity.MODE_PEARLFIRED);
-        modeToMode.put(MODE_PEARLARRIVED, EnderMonitorTileEntity.MODE_PEARLARRIVED);
-
-        modes.add(MODE_LOSTPEARL);
-        modes.add(MODE_PEARLFIRED);
-        modes.add(MODE_PEARLARRIVED);
-    }
 
     private Window window;
     private ChoiceLabel mode;
@@ -62,16 +42,20 @@ public class GuiEnderMonitor extends GuiScreen {
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
         Label label = new Label(mc, this).setText("Mode:");
-        mode = new ChoiceLabel(mc, this).addChoices(MODE_LOSTPEARL, MODE_PEARLFIRED, MODE_PEARLARRIVED).addChoiceEvent(new ChoiceEvent() {
+        mode = new ChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 changeMode();
             }
         }).setDesiredHeight(13).setDesiredWidth(80);
-        mode.setChoiceTooltip(MODE_LOSTPEARL, "Send a redstone pulse when a", "pearl is lost");
-        mode.setChoiceTooltip(MODE_PEARLFIRED, "Send a redstone pulse when a", "pearl is fired");
-        mode.setChoiceTooltip(MODE_PEARLARRIVED, "Send a redstone pulse when a", "pearl arrives");
-        mode.setChoice(modes.get(enderMonitorTileEntity.getMode()));
+        for (EnderMonitorMode m : EnderMonitorMode.values()) {
+            mode.addChoices(m.getDescription());
+        }
+
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_LOSTPEARL.getDescription(), "Send a redstone pulse when a", "pearl is lost");
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
+        mode.setChoice(enderMonitorTileEntity.getMode().getDescription());
 
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(mode);
         toplevel.addChild(bottomPanel);
@@ -86,8 +70,8 @@ public class GuiEnderMonitor extends GuiScreen {
     }
 
     private void changeMode() {
-        Integer newMode = modeToMode.get(mode.getCurrentChoice());
-        enderMonitorTileEntity.setMode(newMode);
+        Integer newMode = EnderMonitorMode.modeToMode.get(mode.getCurrentChoice());
+        enderMonitorTileEntity.setMode(EnderMonitorMode.values()[newMode]);
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(enderMonitorTileEntity.xCoord, enderMonitorTileEntity.yCoord, enderMonitorTileEntity.zCoord,
                 EnderMonitorTileEntity.CMD_MODE,
                 new Argument("mode", newMode)));

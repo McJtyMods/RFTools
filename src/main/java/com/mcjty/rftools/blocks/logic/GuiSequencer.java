@@ -21,38 +21,11 @@ import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GuiSequencer extends GuiScreen {
     public static final int SEQUENCER_WIDTH = 160;
     public static final int SEQUENCER_HEIGHT = 184;
-
-    private static final String MODE_ONCE1 = "Once1";
-    private static final String MODE_ONCE2 = "Once2";
-    private static final String MODE_LOOP1 = "Loop1";
-    private static final String MODE_LOOP2 = "Loop2";
-    private static final String MODE_LOOP3 = "Loop3";
-    private static final String MODE_STEP = "Step";
-
-    private static final Map<String,Integer> modeToMode = new HashMap<String, Integer>();
-    private static final List<String> modes = new ArrayList<String>();
-    static {
-        modeToMode.put(MODE_ONCE1, SequencerTileEntity.MODE_ONCE1);
-        modeToMode.put(MODE_ONCE2, SequencerTileEntity.MODE_ONCE2);
-        modeToMode.put(MODE_LOOP1, SequencerTileEntity.MODE_LOOP1);
-        modeToMode.put(MODE_LOOP2, SequencerTileEntity.MODE_LOOP2);
-        modeToMode.put(MODE_LOOP3, SequencerTileEntity.MODE_LOOP3);
-        modeToMode.put(MODE_STEP, SequencerTileEntity.MODE_STEP);
-
-        modes.add(MODE_ONCE1);
-        modes.add(MODE_ONCE2);
-        modes.add(MODE_LOOP1);
-        modes.add(MODE_LOOP2);
-        modes.add(MODE_LOOP3);
-        modes.add(MODE_STEP);
-    }
 
     private Window window;
     private List<ImageChoiceLabel> bits = new ArrayList<ImageChoiceLabel>();
@@ -111,20 +84,23 @@ public class GuiSequencer extends GuiScreen {
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(fillButton);
         toplevel.addChild(buttonPanel);
 
-        mode = new ChoiceLabel(mc, this).addChoices(MODE_ONCE1, MODE_ONCE2, MODE_LOOP1, MODE_LOOP2, MODE_LOOP3, MODE_STEP).
+        mode = new ChoiceLabel(mc, this).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
                         changeMode();
                     }
                 }).setDesiredHeight(13).setDesiredWidth(55);
-        mode.setChoiceTooltip(MODE_ONCE1, "When a redstone signal is", "received, loop the cycle once.", "Ignore further pulses");
-        mode.setChoiceTooltip(MODE_ONCE2, "When a redstone signal is", "received, loop the cycle once.", "Restart if new pulse arrives");
-        mode.setChoiceTooltip(MODE_LOOP1, "Loop the cycle all the time.", "Ignore redstone signals");
-        mode.setChoiceTooltip(MODE_LOOP2, "Loop the cycle all the time.", "Restart on redstone pulse");
-        mode.setChoiceTooltip(MODE_LOOP3, "Loop the cycle when redstone.", "signal is present");
-        mode.setChoiceTooltip(MODE_STEP, "Do one step in the cycle", "for every redstone pulse");
-        mode.setChoice(modes.get(sequencerTileEntity.getMode()));
+        for (SequencerMode m : SequencerMode.values()) {
+            mode.addChoices(m.getDescription());
+        }
+        mode.setChoiceTooltip(SequencerMode.MODE_ONCE1.getDescription(), "When a redstone signal is", "received, loop the cycle once.", "Ignore further pulses");
+        mode.setChoiceTooltip(SequencerMode.MODE_ONCE2.getDescription(), "When a redstone signal is", "received, loop the cycle once.", "Restart if new pulse arrives");
+        mode.setChoiceTooltip(SequencerMode.MODE_LOOP1.getDescription(), "Loop the cycle all the time.", "Ignore redstone signals");
+        mode.setChoiceTooltip(SequencerMode.MODE_LOOP2.getDescription(), "Loop the cycle all the time.", "Restart on redstone pulse");
+        mode.setChoiceTooltip(SequencerMode.MODE_LOOP3.getDescription(), "Loop the cycle when redstone.", "signal is present");
+        mode.setChoiceTooltip(SequencerMode.MODE_STEP.getDescription(), "Do one step in the cycle", "for every redstone pulse");
+        mode.setChoice(sequencerTileEntity.getMode().getDescription());
         Label label = new Label(mc, this).setText("Delay:");
 
         speedField = new TextField(mc, this).addTextEvent(new TextEvent() {
@@ -182,8 +158,8 @@ public class GuiSequencer extends GuiScreen {
     }
 
     private void changeMode() {
-        Integer newMode = modeToMode.get(mode.getCurrentChoice());
-        sequencerTileEntity.setMode(newMode);
+        Integer newMode = SequencerMode.modeToMode.get(mode.getCurrentChoice());
+        sequencerTileEntity.setMode(SequencerMode.values()[newMode]);
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
                 SequencerTileEntity.CMD_MODE,
                 new Argument("mode", newMode)));

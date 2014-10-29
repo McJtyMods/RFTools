@@ -2,14 +2,11 @@ package com.mcjty.rftools.blocks;
 
 import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.endergen.*;
-import com.mcjty.rftools.blocks.logic.TimerBlock;
-import com.mcjty.rftools.blocks.logic.TimerTileEntity;
+import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
-import com.mcjty.rftools.blocks.logic.SequencerBlock;
-import com.mcjty.rftools.blocks.logic.SequencerTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -52,13 +49,13 @@ public final class ModBlocks {
 
         crafterBlock1 = new CrafterBlock(Material.iron, "crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
         crafterBlock1.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(crafterBlock1, "crafterBlock1");
+        GameRegistry.registerBlock(crafterBlock1, CrafterItemBlock.class, "crafterBlock1");
         crafterBlock2 = new CrafterBlock(Material.iron, "crafterBlock2", "machineCrafter2", CrafterBlockTileEntity2.class);
         crafterBlock2.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(crafterBlock2, "crafterBlock2");
+        GameRegistry.registerBlock(crafterBlock2, CrafterItemBlock.class, "crafterBlock2");
         crafterBlock3 = new CrafterBlock(Material.iron, "crafterBlock3", "machineCrafter3", CrafterBlockTileEntity3.class);
         crafterBlock3.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(crafterBlock3, "crafterBlock3");
+        GameRegistry.registerBlock(crafterBlock3, CrafterItemBlock.class, "crafterBlock3");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");
@@ -103,17 +100,17 @@ public final class ModBlocks {
 
         enderMonitorBlock = new EnderMonitorBlock(Material.iron);
         enderMonitorBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(enderMonitorBlock, "enderMonitorBlock");
+        GameRegistry.registerBlock(enderMonitorBlock, EnderMonitorItemBlock.class, "enderMonitorBlock");
         GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
 
         sequencerBlock = new SequencerBlock(Material.iron);
         sequencerBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(sequencerBlock, "sequencerBlock");
+        GameRegistry.registerBlock(sequencerBlock, SequencerItemBlock.class, "sequencerBlock");
         GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
 
         timerBlock = new TimerBlock(Material.iron);
         timerBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(timerBlock, "timerBlock");
+        GameRegistry.registerBlock(timerBlock, TimerItemBlock.class, "timerBlock");
         GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
 
         machineFrame = new MachineFrame(Material.iron);

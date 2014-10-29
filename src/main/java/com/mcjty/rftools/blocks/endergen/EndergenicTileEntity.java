@@ -184,13 +184,13 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
      * Something happens, we need to notify all ender monitors.
      * @param mode
      */
-    private void fireMonitors(int mode) {
+    private void fireMonitors(EnderMonitorMode mode) {
         boolean cleanup = false;
         for (Coordinate c : monitors) {
             TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                enderMonitorTileEntity.fireFromEndergenic(mode, this);
+                enderMonitorTileEntity.fireFromEndergenic(mode);
             } else {
                 cleanup = true;
             }
@@ -266,7 +266,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         markDirty();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
-        fireMonitors(EnderMonitorTileEntity.MODE_LOSTPEARL);
+        fireMonitors(EnderMonitorMode.MODE_LOSTPEARL);
     }
 
     /**
@@ -299,7 +299,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             chargingMode = CHARGE_IDLE;
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, currentAge+1));
-            fireMonitors(EnderMonitorTileEntity.MODE_PEARLFIRED);
+            fireMonitors(EnderMonitorMode.MODE_PEARLFIRED);
         }
     }
 
@@ -314,14 +314,14 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else {
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, 0));
-            fireMonitors(EnderMonitorTileEntity.MODE_PEARLFIRED);
+            fireMonitors(EnderMonitorMode.MODE_PEARLFIRED);
         }
     }
 
     // This generator receives a pearl. The age of the pearl is how many times the pearl has
     // already generated power.
     public void receivePearl(int age) {
-        fireMonitors(EnderMonitorTileEntity.MODE_PEARLARRIVED);
+        fireMonitors(EnderMonitorMode.MODE_PEARLARRIVED);
         markDirty();
         if (chargingMode == CHARGE_HOLDING) {
             // If this block is already holding a pearl and it still has one then both pearls are

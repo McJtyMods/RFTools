@@ -10,19 +10,12 @@ import java.util.Map;
 
 public class SequencerTileEntity extends GenericTileEntity {
 
-    public static final int MODE_ONCE1 = 0;             // Cycle once as soon as a redstone signal is received. Ignores new signals until cycleBits is done
-    public static final int MODE_ONCE2 = 1;             // Cycle once as soon as a redstone signal is received. Restarts cycleBits if a new redstone signal arrives
-    public static final int MODE_LOOP1 = 2;             // Cycle all the time. Ignore redstone signals
-    public static final int MODE_LOOP2 = 3;             // Cycle all the time. Restone signal sets cycle to the beginning
-    public static final int MODE_LOOP3 = 4;             // Cycle for as long as a redstone signal is given. Stop as soon as the signal ends
-    public static final int MODE_STEP = 5;              // Proceed one step in the cycleBits every time a redstone signal comes in
-
     public static final String CMD_MODE = "mode";
     public static final String CMD_SETBIT = "setBit";
     public static final String CMD_SETBITS = "setBits";
     public static final String CMD_SETDELAY = "setDelay";
 
-    private int mode = MODE_ONCE1;
+    private SequencerMode mode = SequencerMode.MODE_ONCE1;
     private long cycleBits = 0;
     private int currentStep = -1;
 
@@ -47,11 +40,11 @@ public class SequencerTileEntity extends GenericTileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    public int getMode() {
+    public SequencerMode getMode() {
         return mode;
     }
 
-    public void setMode(int mode) {
+    public void setMode(SequencerMode mode) {
         this.mode = mode;
         switch (mode) {
             case MODE_ONCE1:
@@ -216,7 +209,8 @@ public class SequencerTileEntity extends GenericTileEntity {
         super.readFromNBT(tagCompound);
         cycleBits = tagCompound.getLong("bits");
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
-        mode = tagCompound.getInteger("mode");
+        int m = tagCompound.getInteger("mode");
+        mode = SequencerMode.values()[m];
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
@@ -232,7 +226,7 @@ public class SequencerTileEntity extends GenericTileEntity {
         tagCompound.setLong("bits", cycleBits);
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
-        tagCompound.setInteger("mode", mode);
+        tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
@@ -246,7 +240,12 @@ public class SequencerTileEntity extends GenericTileEntity {
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            setMode(args.get("mode").getInteger());
+            Integer m = args.get("mode").getInteger();
+            int mm = SequencerMode.MODE_LOOP1.ordinal();
+            if (m != null) {
+                mm = m;
+            }
+            setMode(SequencerMode.values()[mm]);
             return true;
         } else if (CMD_SETBIT.equals(command)) {
             setCycleBit(args.get("bit").getInteger(), args.get("choice").getBoolean());

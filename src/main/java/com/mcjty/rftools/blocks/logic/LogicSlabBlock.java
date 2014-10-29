@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
+import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -32,16 +33,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        boolean wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed) {
-            int meta = world.getBlockMetadata(x, y, z);
-            ForgeDirection dir = BlockTools.getOrientationHoriz(meta);
-            dir = dir.getRotation(ForgeDirection.UP);
-            world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
-            return true;
-        } else {
-            return super.onBlockActivated(world, x, y, z, player, side, sx, sy, sz);
-        }
+        return onBlockActivatedDefaultWrench(world, x, y, z, player);
     }
 
     @Override
@@ -51,6 +43,8 @@ public abstract class LogicSlabBlock extends GenericBlock {
         int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
         meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
         world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
+
+        restoreBlockFromNBT(world, x, y, z, itemStack);
     }
 
     /**

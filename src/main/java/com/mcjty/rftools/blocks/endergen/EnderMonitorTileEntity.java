@@ -12,13 +12,9 @@ import java.util.Map;
 
 public class EnderMonitorTileEntity extends GenericTileEntity {
 
-    public static final int MODE_LOSTPEARL = 0;
-    public static final int MODE_PEARLFIRED = 1;
-    public static final int MODE_PEARLARRIVED = 2;
-
     public static final String CMD_MODE = "mode";
 
-    private int mode = MODE_LOSTPEARL;
+    private EnderMonitorMode mode = EnderMonitorMode.MODE_LOSTPEARL;
 
     private boolean needpulse = false;
 
@@ -28,11 +24,11 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         registerSyncedObject(redstoneOut);
     }
 
-    public int getMode() {
+    public EnderMonitorMode getMode() {
         return mode;
     }
 
-    public void setMode(int mode) {
+    public void setMode(EnderMonitorMode mode) {
         this.mode = mode;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -41,7 +37,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
      * Callback from the endergenic in case something happens.
      * @param mode
      */
-    public void fireFromEndergenic(int mode, EndergenicTileEntity endergenicTileEntity) {
+    public void fireFromEndergenic(EnderMonitorMode mode) {
         if (this.mode != mode) {
             return; // Not monitoring this mode. We do nothing.
         }
@@ -79,7 +75,10 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
-        mode = tagCompound.getInteger("mode");
+
+        int m = tagCompound.getInteger("mode");
+        mode = EnderMonitorMode.values()[m];
+
         needpulse = tagCompound.getBoolean("needPulse");
     }
 
@@ -88,7 +87,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         super.writeToNBT(tagCompound);
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
-        tagCompound.setInteger("mode", mode);
+        tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setBoolean("needPulse", needpulse);
     }
 
@@ -99,7 +98,12 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            setMode(args.get("mode").getInteger());
+            Integer m = args.get("mode").getInteger();
+            int mm = EnderMonitorMode.MODE_LOSTPEARL.ordinal();
+            if (m != null) {
+                mm = m;
+            }
+            setMode(EnderMonitorMode.values()[mm]);
             return true;
         }
         return false;

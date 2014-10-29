@@ -5,8 +5,12 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterBlock extends GenericContainerBlock {
     private String frontName;
@@ -15,6 +19,12 @@ public class CrafterBlock extends GenericContainerBlock {
         super(material, tileEntityClass);
         setBlockName(blockName);
         this.frontName = frontName;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+        restoreBlockFromNBT(world, x, y, z, itemStack);
     }
 
     @Override
@@ -32,7 +42,25 @@ public class CrafterBlock extends GenericContainerBlock {
         }
 
         super.breakBlock(world, x, y, z, block, meta);
+    }
 
+    @Override
+    protected void breakWithWrench(World world, int x, int y, int z) {
+        // To avoid the inventory being dropped all over the place when wrenching we clear it first.
+        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3)world.getTileEntity(x, y, z);
+
+        if (crafterBlockTileEntity != null) {
+            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
+            // we first clear out the crafting grid here.
+            for (int i = 0 ; i < crafterBlockTileEntity.getSizeInventory() ; i++) {
+                crafterBlockTileEntity.setInventorySlotContents(i, null);
+            }
+        }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
+        return onBlockActivatedDefaultWrench(world, x, y, z, player);
     }
 
     @Override

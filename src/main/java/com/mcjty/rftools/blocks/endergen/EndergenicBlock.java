@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.endergen;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.mcjty.container.GenericContainerBlock;
+import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
@@ -64,8 +65,8 @@ public class EndergenicBlock extends GenericContainerBlock {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        boolean wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed) {
+        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
+        if (wrenchUsed == WrenchUsage.NORMAL) {
             if (world.isRemote) {
                 EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(x, y, z);
                 world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
