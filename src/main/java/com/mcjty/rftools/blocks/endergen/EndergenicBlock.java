@@ -41,7 +41,6 @@ public class EndergenicBlock extends GenericContainerBlock {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         checkForMonitor4Sides(world, x, y, z);
-        restoreBlockFromNBT(world, x, y, z, itemStack);
     }
 
     private void checkForMonitor4Sides(World world, int x, int y, int z) {

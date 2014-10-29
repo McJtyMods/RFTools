@@ -90,6 +90,11 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         rfOn = tagCompound.getInteger("rfOn");
         rfOff = tagCompound.getInteger("rfOff");
     }
@@ -97,6 +102,11 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("rfOn", rfOn);
         tagCompound.setInteger("rfOff", rfOff);
     }

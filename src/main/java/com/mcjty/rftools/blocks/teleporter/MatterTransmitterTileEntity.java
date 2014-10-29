@@ -174,14 +174,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        name = tagCompound.getString("tpName");
-        Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
-        if (c == null) {
-            teleportDestination = null;
-        } else {
-            int dim = tagCompound.getInteger("dim");
-            teleportDestination = new TeleportDestination(c, dim);
-        }
         teleportTimer = tagCompound.getInteger("tpTimer");
         cooldownTimer = tagCompound.getInteger("cooldownTimer");
         totalTicks = tagCompound.getInteger("totalTicks");
@@ -193,7 +185,19 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         } else {
             teleportingPlayer = null;
         }
+    }
 
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        name = tagCompound.getString("tpName");
+        Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
+        if (c == null) {
+            teleportDestination = null;
+        } else {
+            int dim = tagCompound.getInteger("dim");
+            teleportDestination = new TeleportDestination(c, dim);
+        }
         privateAccess = tagCompound.getBoolean("private");
 
         allowedPlayers.clear();
@@ -209,6 +213,19 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setInteger("tpTimer", teleportTimer);
+        tagCompound.setInteger("cooldownTimer", cooldownTimer);
+        tagCompound.setInteger("totalTicks", totalTicks);
+        tagCompound.setInteger("goodTicks", goodTicks);
+        tagCompound.setInteger("badTicks", badTicks);
+        if (teleportingPlayer != null) {
+            tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
+        }
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         if (name != null && !name.isEmpty()) {
             tagCompound.setString("tpName", name);
         }
@@ -219,14 +236,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 tagCompound.setInteger("dim", teleportDestination.getDimension());
             }
         }
-        tagCompound.setInteger("tpTimer", teleportTimer);
-        tagCompound.setInteger("cooldownTimer", cooldownTimer);
-        tagCompound.setInteger("totalTicks", totalTicks);
-        tagCompound.setInteger("goodTicks", goodTicks);
-        tagCompound.setInteger("badTicks", badTicks);
-        if (teleportingPlayer != null) {
-            tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
-        }
 
         tagCompound.setBoolean("private", privateAccess);
 
@@ -236,7 +245,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         tagCompound.setTag("players", playerTagList);
     }
-
 
     public TeleportDestination getTeleportDestination() {
         return teleportDestination;

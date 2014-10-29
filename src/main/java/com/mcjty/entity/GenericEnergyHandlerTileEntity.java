@@ -56,15 +56,24 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         storage.readFromNBT(tagCompound);
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        storage.writeToNBT(tagCompound);
     }
 
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        storage.writeToNBT(tagCompound);
+    }
 
     public int getOldRF() {
         return oldRF;

@@ -76,7 +76,7 @@ public final class ModBlocks {
         GameRegistry.registerTileEntity(MatterTransmitterTileEntity.class, "MatterTransmitterTileEntity");
         matterReceiverBlock = new MatterReceiverBlock(Material.iron);
         matterReceiverBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(matterReceiverBlock, "matterReceiverBlock");
+        GameRegistry.registerBlock(matterReceiverBlock, MatterReceiverItemBlock.class, "matterReceiverBlock");
         GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
         dialingDeviceBlock = new DialingDeviceBlock(Material.iron);
         dialingDeviceBlock.setCreativeTab(CreativeTabs.tabMisc);

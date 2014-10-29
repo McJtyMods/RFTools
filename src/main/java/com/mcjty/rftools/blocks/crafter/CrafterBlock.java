@@ -22,12 +22,6 @@ public class CrafterBlock extends GenericContainerBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
-        restoreBlockFromNBT(world, x, y, z, itemStack);
-    }
-
-    @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3)world.getTileEntity(x, y, z);
 
@@ -50,8 +44,6 @@ public class CrafterBlock extends GenericContainerBlock {
         CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3)world.getTileEntity(x, y, z);
 
         if (crafterBlockTileEntity != null) {
-            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
-            // we first clear out the crafting grid here.
             for (int i = 0 ; i < crafterBlockTileEntity.getSizeInventory() ; i++) {
                 crafterBlockTileEntity.setInventorySlotContents(i, null);
             }

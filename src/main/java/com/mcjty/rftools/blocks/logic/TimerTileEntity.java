@@ -77,6 +77,11 @@ public class TimerTileEntity extends GenericTileEntity {
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         delay = tagCompound.getInteger("delay");
     }
 
@@ -87,6 +92,11 @@ public class TimerTileEntity extends GenericTileEntity {
         tagCompound.setBoolean("rs", value == null ? false : value);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("delay", delay);
     }
 

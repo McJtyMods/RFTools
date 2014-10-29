@@ -207,13 +207,18 @@ public class SequencerTileEntity extends GenericTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        cycleBits = tagCompound.getLong("bits");
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
-        int m = tagCompound.getInteger("mode");
-        mode = SequencerMode.values()[m];
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        cycleBits = tagCompound.getLong("bits");
+        int m = tagCompound.getInteger("mode");
+        mode = SequencerMode.values()[m];
         delay = tagCompound.getInteger("delay");
         if (delay == 0) {
             delay = 1;
@@ -223,13 +228,18 @@ public class SequencerTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setLong("bits", cycleBits);
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
-        tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setLong("bits", cycleBits);
+        tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setInteger("delay", delay);
     }
 

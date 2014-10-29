@@ -200,6 +200,11 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
         redstoneMode = tagCompound.getByte("rsMode");
@@ -225,6 +230,11 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
         tagCompound.setByte("rsMode", (byte)redstoneMode);

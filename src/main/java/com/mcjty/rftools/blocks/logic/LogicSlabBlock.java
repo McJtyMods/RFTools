@@ -36,17 +36,6 @@ public abstract class LogicSlabBlock extends GenericBlock {
         return onBlockActivatedDefaultWrench(world, x, y, z, player);
     }
 
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        ForgeDirection dir = BlockTools.determineOrientationHoriz(x, y, z, entityLivingBase);
-        int meta = world.getBlockMetadata(x, y, z);
-        int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
-        meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
-        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
-
-        restoreBlockFromNBT(world, x, y, z, itemStack);
-    }
-
     /**
      * Returns the signal strength at one input of the block. Args: world, X, Y, Z, side
      */

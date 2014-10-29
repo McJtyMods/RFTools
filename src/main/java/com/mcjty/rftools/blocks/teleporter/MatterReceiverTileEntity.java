@@ -50,6 +50,20 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    /**
+     * This method is called after putting down a receiver that was earlier wrenched. We need to fix the data in
+     * the destination.
+     */
+    public void updateDestination() {
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestination destination = destinations.getDestination(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+        if (destination != null) {
+            destination.setName(name);
+            destinations.save(worldObj);
+        }
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     public boolean isPrivateAccess() {
         return privateAccess;
     }
@@ -108,6 +122,11 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         name = tagCompound.getString("tpName");
 
         privateAccess = tagCompound.getBoolean("private");
@@ -125,6 +144,11 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         if (name != null && !name.isEmpty()) {
             tagCompound.setString("tpName", name);
         }

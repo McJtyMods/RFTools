@@ -186,10 +186,15 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         monitorX = tagCompound.getInteger("monitorX");
         monitorY = tagCompound.getInteger("monitorY");
         monitorZ = tagCompound.getInteger("monitorZ");
+        inAlarm.setValue(tagCompound.getBoolean("inAlarm"));
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         rflevel.setValue(tagCompound.getInteger("rflevel"));
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
-        inAlarm.setValue(tagCompound.getBoolean("inAlarm"));
     }
 
     @Override
@@ -198,11 +203,16 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         tagCompound.setInteger("monitorX", monitorX);
         tagCompound.setInteger("monitorY", monitorY);
         tagCompound.setInteger("monitorZ", monitorZ);
+        Boolean value = inAlarm.getValue();
+        tagCompound.setBoolean("inAlarm", value == null ? false : value);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("rflevel", getRflevel());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
-        Boolean value = inAlarm.getValue();
-        tagCompound.setBoolean("inAlarm", value == null ? false : value);
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -29,8 +30,8 @@ public class MatterReceiverBlock extends GenericContainerBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        return onBlockActivatedDefaultWrench(world, x, y, z, player);
     }
 
     @Override
@@ -43,6 +44,17 @@ public class MatterReceiverBlock extends GenericContainerBlock {
         destinations.addDestination(new Coordinate(x, y, z), world.provider.dimensionId);
         destinations.save(world);
         return rc;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        // We don't want what GenericContainerBlock does.
+        // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
+        restoreBlockFromNBT(world, x, y, z, itemStack);
+        if (!world.isRemote) {
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x, y, z);
+            matterReceiverTileEntity.updateDestination();
+        }
     }
 
     @Override

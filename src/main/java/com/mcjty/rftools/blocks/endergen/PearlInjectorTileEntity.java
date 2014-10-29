@@ -88,6 +88,11 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
     }
 
@@ -103,6 +108,11 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("prevIn", prevIn);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
     }
 

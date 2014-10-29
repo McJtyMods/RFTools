@@ -33,7 +33,17 @@ public class PearlInjectorBlock extends GenericContainerBlock {
         }
 
         super.breakBlock(world, x, y, z, block, meta);
+    }
 
+    @Override
+    protected void breakWithWrench(World world, int x, int y, int z) {
+        PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity)world.getTileEntity(x, y, z);
+
+        if (pearlInjectorTileEntity != null) {
+            for (int i = 0 ; i < pearlInjectorTileEntity.getSizeInventory() ; i++) {
+                pearlInjectorTileEntity.setInventorySlotContents(i, null);
+            }
+        }
     }
 
     @Override

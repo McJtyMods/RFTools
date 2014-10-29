@@ -229,7 +229,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        radius.setValue(tagCompound.getInteger("radius"));
         scanning.setValue(tagCompound.getBoolean("scanning"));
         c1.readFromNBT(tagCompound, "c1");
         c2.readFromNBT(tagCompound, "c2");
@@ -238,14 +237,25 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        radius.setValue(tagCompound.getInteger("radius"));
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("radius", radius.getValue());
         tagCompound.setBoolean("scanning", scanning.getValue());
         c1.writeToNBT(tagCompound, "c1");
         c2.writeToNBT(tagCompound, "c2");
         cur.writeToNBT(tagCompound, "cur");
         inventories.writeToNBT(tagCompound, "inv");
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setInteger("radius", radius.getValue());
     }
 
     @Override

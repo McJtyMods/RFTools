@@ -95,6 +95,35 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        readRestorableFromNBT(tagCompound);
+    }
+
+    /**
+     * Override this method to recover all information that you want
+     * to recover from an ItemBlock in the player's inventory.
+     * @param tagCompound
+     */
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        writeRestorableToNBT(tagCompound);
+    }
+
+    /**
+     * Override this method to store all information that you want
+     * to store in an ItemBlock in the player's inventory (when the block
+     * is picked up with a wrench).
+     * @param tagCompound
+     */
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    }
+
+    @Override
     public boolean execute(String command, Map<String, Argument> args) {
         return false;
     }

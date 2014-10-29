@@ -76,10 +76,14 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         super.readFromNBT(tagCompound);
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
 
+        needpulse = tagCompound.getBoolean("needPulse");
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
         int m = tagCompound.getInteger("mode");
         mode = EnderMonitorMode.values()[m];
-
-        needpulse = tagCompound.getBoolean("needPulse");
     }
 
     @Override
@@ -87,8 +91,13 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
         super.writeToNBT(tagCompound);
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
-        tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setBoolean("needPulse", needpulse);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setInteger("mode", mode.ordinal());
     }
 
     @Override
