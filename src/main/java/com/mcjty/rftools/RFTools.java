@@ -1,13 +1,17 @@
 package com.mcjty.rftools;
 
-import com.mcjty.varia.Coordinate;
+import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -31,6 +35,14 @@ public class RFTools {
     private static int modGuiIndex = 0;
 
     public ClientInfo clientInfo = new ClientInfo();
+
+    public static CreativeTabs tabRfTools = new CreativeTabs("RfTools") {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public Item getTabIconItem() {
+            return ModItems.rfToolsManualItem;
+        }
+    };
 
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;

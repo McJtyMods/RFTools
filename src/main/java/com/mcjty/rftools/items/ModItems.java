@@ -5,7 +5,6 @@ import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.creativetab.CreativeTabs;
 
 public final class ModItems {
     public static NetworkMonitorItem networkMonitorItem;
@@ -15,19 +14,19 @@ public final class ModItems {
     public static final void init() {
         networkMonitorItem = new NetworkMonitorItem();
         networkMonitorItem.setUnlocalizedName("NetworkMonitor");
-        networkMonitorItem.setCreativeTab(CreativeTabs.tabMisc);
+        networkMonitorItem.setCreativeTab(RFTools.tabRfTools);
         networkMonitorItem.setTextureName(RFTools.MODID + ":networkMonitorItem");
         GameRegistry.registerItem(networkMonitorItem, "networkMonitorItem");
 
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
-        teleportProbeItem.setCreativeTab(CreativeTabs.tabMisc);
+        teleportProbeItem.setCreativeTab(RFTools.tabRfTools);
         teleportProbeItem.setTextureName(RFTools.MODID + ":teleportProbeItem");
         GameRegistry.registerItem(teleportProbeItem, "teleportProbeItem");
 
         rfToolsManualItem = new RFToolsManualItem();
         rfToolsManualItem.setUnlocalizedName("RFToolsManual");
-        rfToolsManualItem.setCreativeTab(CreativeTabs.tabMisc);
+        rfToolsManualItem.setCreativeTab(RFTools.tabRfTools);
         rfToolsManualItem.setTextureName(RFTools.MODID + ":rftoolsManual");
         GameRegistry.registerItem(rfToolsManualItem, "rfToolsManualItem");
     }
