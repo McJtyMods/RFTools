@@ -1,6 +1,7 @@
 {b}RFTools Manual
 
 Table of contents:
+{l:general}General Tips
 {l:netmon}RF Network Monitor Item
 {l:base}Base Ingredients
 {l:logic}Logic Gates
@@ -10,6 +11,17 @@ Table of contents:
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
 {l:power}Power Generator
+{-------------------------------------------------------------}
+{b}General Tips
+{n:general}
+All blocks in this mod (with a few exceptions like the Endergenic
+Generator and blocks for which orientation doesn't matter) can
+be rotated by using a wrench on them.
+
+All blocks in this mod can be picked up by using a wrench while
+sneaking. Most settings (like stored energy, possible inventory,
+recipes and so on) will be remembered and restored when the block
+is put back in the world.
 {-------------------------------------------------------------}
 {b}RF Network Monitor Item
 {n:netmon}
@@ -66,14 +78,14 @@ timeouts.
 
 What is special about this timer is that it restart when it itself
 receives a redstone pulse at its input. So given timely input pulses
-this block will never output a pulseitself. By using this feature this
+this block will never output a pulse itself. By using this feature this
 block can be used as a way to detect that a certain activity is overdue.
 {-------------------------------------------------------------}
 {b}Ender Monitor
 {n:endermon}
 {rb:enderMonitorBlock}
 The Ender Monitor only works in combination with the Endergenic
-Generator. It will send a pulse based on three diffferent conditions:
+Generator. It will send a pulse based on three different conditions:
 
     Lost Pearl: send a redstone pulse when a pearl is lost
     Pearl Fired: send a pulse when a pearl is fired
