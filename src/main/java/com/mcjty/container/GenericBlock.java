@@ -12,7 +12,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -27,9 +26,20 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     protected IIcon iconSide;
     protected final Class<? extends TileEntity> tileEntityClass;
 
+    // Set this to true in case horizontal rotation is used (2 bits rotation as opposed to 3).
+    protected boolean horizRotation = false;
+
     public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);
         this.tileEntityClass = tileEntityClass;
+    }
+
+    public boolean isHorizRotation() {
+        return horizRotation;
+    }
+
+    public void setHorizRotation(boolean horizRotation) {
+        this.horizRotation = horizRotation;
     }
 
     @Override
@@ -74,10 +84,10 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        return openGui(world, x, y, z, player);
+        return onBlockActivatedDefaultWrenchNoRemember(world, x, y, z, player);
     }
 
-    private boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
+    protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
         if (isBlockContainer) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (!tileEntityClass.isInstance(te)) {
@@ -87,15 +97,13 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
                 return true;
             }
             player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
-            return true;
 
         } else {
             if (world.isRemote) {
                 player.openGui(RFTools.instance, getGuiID(), player.worldObj, x, y, z);
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -121,6 +129,30 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         }
     }
 
+    /**
+     * In your onBlockActivated implementation you can use this method to get the default wrench usage (rotate/pick up without
+     * remembering).
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param player
+     * @return
+     */
+    protected boolean onBlockActivatedDefaultWrenchNoRemember(World world, int x, int y, int z, EntityPlayer player) {
+        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
+        if (wrenchUsed == WrenchUsage.NORMAL) {
+            rotateBlock(world, x, y, z);
+            return true;
+        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
+            breakWithoutRemember(world, x, y, z);
+            return true;
+        } else {
+            return openGui(world, x, y, z, player);
+        }
+    }
+
+
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
@@ -138,9 +170,15 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
      */
     protected void rotateBlock(World world, int x, int y, int z) {
         int meta = world.getBlockMetadata(x, y, z);
-        ForgeDirection dir = BlockTools.getOrientationHoriz(meta);
-        dir = dir.getRotation(ForgeDirection.UP);
-        world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
+        if (horizRotation) {
+            ForgeDirection dir = BlockTools.getOrientationHoriz(meta);
+            dir = dir.getRotation(ForgeDirection.UP);
+            world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
+        } else {
+            ForgeDirection dir = BlockTools.getOrientation(meta);
+            dir = dir.getRotation(ForgeDirection.UP);
+            world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
+        }
     }
 
     /**
@@ -167,6 +205,24 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
             NBTTagCompound tagCompound = new NBTTagCompound();
             te.writeToNBT(tagCompound);
             stack.setTagCompound(tagCompound);
+            breakWithWrench(world, x, y, z);
+            world.setBlockToAir(x, y, z);
+            world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
+        }
+    }
+
+    /**
+     * Break a block in the world, convert it to an entity. This version does
+     * not remember the settings.
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     */
+    protected void breakWithoutRemember(World world, int x, int y, int z) {
+        if (!world.isRemote) {
+            Block block = world.getBlock(x, y, z);
+            ItemStack stack = new ItemStack(block);
             breakWithWrench(world, x, y, z);
             world.setBlockToAir(x, y, z);
             world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));

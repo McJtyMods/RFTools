@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.container.GenericBlock;
-import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -28,6 +27,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
         super(material, tileEntityClass);
         setBlockName(name);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
+        setHorizRotation(true);
     }
 
 
