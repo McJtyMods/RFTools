@@ -5,9 +5,12 @@ import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
+import com.mcjty.rftools.blocks.monitor.RFMonitorItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
+import com.mcjty.rftools.blocks.relay.RelayItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
+import com.mcjty.rftools.blocks.storagemonitor.StorageScannerItemBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -44,7 +47,7 @@ public final class ModBlocks {
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
         monitorBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(monitorBlock, "rfMonitorBlock");
+        GameRegistry.registerBlock(monitorBlock, RFMonitorItemBlock.class, "rfMonitorBlock");
         GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
 
         crafterBlock1 = new CrafterBlock(Material.iron, "crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
@@ -62,12 +65,12 @@ public final class ModBlocks {
 
         relayBlock = new RelayBlock(Material.iron);
         relayBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(relayBlock, "relayBlock");
+        GameRegistry.registerBlock(relayBlock, RelayItemBlock.class, "relayBlock");
         GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
 
         storageScannerBlock = new StorageScannerBlock(Material.iron);
         storageScannerBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(storageScannerBlock, "storageScannerBlock");
+        GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
         GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
 
         matterTransmitterBlock = new MatterTransmitterBlock(Material.iron);
@@ -80,7 +83,7 @@ public final class ModBlocks {
         GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
         dialingDeviceBlock = new DialingDeviceBlock(Material.iron);
         dialingDeviceBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(dialingDeviceBlock, "dialingDeviceBlock");
+        GameRegistry.registerBlock(dialingDeviceBlock, DialingDeviceItemBlock.class, "dialingDeviceBlock");
         GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
         destinationAnalyzerBlock = new DestinationAnalyzerBlock(Material.iron);
         destinationAnalyzerBlock.setCreativeTab(CreativeTabs.tabMisc);
