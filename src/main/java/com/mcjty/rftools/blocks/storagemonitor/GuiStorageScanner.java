@@ -237,7 +237,7 @@ public class GuiStorageScanner extends GuiContainer {
 
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
                 panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(120));
+                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
                 panel.addChild(new Label(mc, this).setDynamic(true).setText(c.toString()));
                 storageList.addChild(panel);
             }

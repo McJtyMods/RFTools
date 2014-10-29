@@ -344,9 +344,9 @@ public class GuiDialingDevice extends GuiContainer {
             String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(65));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
-            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(60));
+            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(55));
             receiverList.addChild(panel);
         }
     }
@@ -382,7 +382,7 @@ public class GuiDialingDevice extends GuiContainer {
             TeleportDestination destination = transmitterInfo.getTeleportDestination();
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(120));
+            panel.addChild(new Label(mc, this).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
             panel.addChild(new ImageLabel(mc, this).setImage(iconDialOn, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
