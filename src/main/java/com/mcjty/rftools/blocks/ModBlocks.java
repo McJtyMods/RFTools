@@ -90,7 +90,7 @@ public final class ModBlocks {
 
         endergenicBlock = new EndergenicBlock(Material.iron);
         endergenicBlock.setCreativeTab(CreativeTabs.tabMisc);
-        GameRegistry.registerBlock(endergenicBlock, "endergenicBlock");
+        GameRegistry.registerBlock(endergenicBlock, EndergenicItemBlock.class, "endergenicBlock");
         GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
 
         pearlInjectorBlock = new PearlInjectorBlock(Material.iron);
