@@ -12,7 +12,7 @@ public class StorageScannerBlock extends GenericContainerBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return "machineStorageScanner";
     }
 

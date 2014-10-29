@@ -34,12 +34,6 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
         }
     }
 
-
-    @Override
-    public String getFrontIconName() {
-        return null;
-    }
-
     @Override
     public int getGuiID() {
         return RFTools.GUI_MATTER_TRANSMITTER;

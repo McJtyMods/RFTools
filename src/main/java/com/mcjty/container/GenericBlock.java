@@ -22,7 +22,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     protected IIcon iconInd;        // The identifying face of the block (front by default but can be different).
     protected IIcon iconSide;
-    private final Class<? extends TileEntity> tileEntityClass;
+    protected final Class<? extends TileEntity> tileEntityClass;
 
     public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);

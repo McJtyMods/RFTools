@@ -44,7 +44,7 @@ public class CrafterBlock extends GenericContainerBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return frontName;
     }
 

@@ -15,7 +15,7 @@ public class PearlInjectorBlock extends GenericContainerBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return "machinePearlInjector";
     }
 

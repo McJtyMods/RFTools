@@ -12,7 +12,7 @@ public class DialingDeviceBlock extends GenericContainerBlock {
     }
 
     @Override
-    public String getFrontIconName() {
+    public String getIdentifyingIconName() {
         return "machineDialingDevice";
     }
 
