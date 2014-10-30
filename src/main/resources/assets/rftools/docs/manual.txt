@@ -309,7 +309,7 @@ basic modes which are controlled by giving redstone pulses to this device:
     Holding: in this mode the device is holding a pearl
 {-------------------------------------------------------------}
 Charging mode is a 15-tick cycle. The most optimal time to capture a pearl
-is at tick 8 (starting with tick 1). RF will also be generated if an
+is at tick 10 (starting with tick 1). RF will also be generated if an
 endergenic pearl arrives at any other point in the charging cycle but the
 RF that can be generated will be a lot less.
 

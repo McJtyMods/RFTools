@@ -85,7 +85,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
-    private static int rfPerHit[] = new int[]{ 0, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 6400, 3200, 1600, 800, 400, 200, 100 };
+    private static int rfPerHit[] = new int[]{ 0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100 };
 
     // This value indicates the chance (with 0 being no chance and 100 being 100% chance) that an
     // endergenic pearl is lost while holding it.
@@ -361,7 +361,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             // Otherwise we get RF and this block goes into holding mode.
             int rf = rfPerHit[chargingMode];
             // Give a bonus for pearls that have been around a bit longer.
-            int a = age*10;
+            int a = age*5;
             if (a > 100) {
                 a = 100;
             }
