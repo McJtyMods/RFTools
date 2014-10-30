@@ -167,6 +167,25 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     }
 
     /**
+     * Check the redstone level reaching this block. Correctly checks for horizRotation mode.
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     */
+    protected void checkRedstone(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+//        int powered = world.getStrongestIndirectPower(x, y, z);
+        int powered = world.getBlockPowerInput(x, y, z);
+        if (horizRotation) {
+            meta = BlockTools.setRedstoneSignalIn(meta, powered > 0);
+        } else {
+            meta = BlockTools.setRedstoneSignal(meta, powered > 0);
+        }
+        world.setBlockMetadataWithNotify(x, y, z, meta, 2);
+    }
+
+    /**
      * Override this method if you want to get notified right before this block is
      * broken with a wrench (possibly to avoid spilling contents since it will be remembered).
      */
