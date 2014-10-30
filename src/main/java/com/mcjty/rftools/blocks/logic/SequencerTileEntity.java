@@ -250,12 +250,8 @@ public class SequencerTileEntity extends GenericTileEntity {
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            Integer m = args.get("mode").getInteger();
-            int mm = SequencerMode.MODE_LOOP1.ordinal();
-            if (m != null) {
-                mm = m;
-            }
-            setMode(SequencerMode.values()[mm]);
+            String m = args.get("mode").getString();
+            setMode(SequencerMode.getMode(m));
             return true;
         } else if (CMD_SETBIT.equals(command)) {
             setCycleBit(args.get("bit").getInteger(), args.get("choice").getBoolean());

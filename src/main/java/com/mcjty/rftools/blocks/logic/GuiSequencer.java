@@ -48,6 +48,46 @@ public class GuiSequencer extends GuiScreen {
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
+        initGuiGrid(toplevel);
+
+        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                fillGrid(false);
+            }
+        });
+        Button fillButton = new Button(mc, this).setText("Fill").setTooltips("Fill the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                fillGrid(true);
+            }
+        });
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(fillButton);
+        toplevel.addChild(buttonPanel);
+
+        initGuiMode();
+        Label label = new Label(mc, this).setText("Delay:");
+
+        speedField = new TextField(mc, this).addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                setDelay();
+            }
+        });
+        int delay = sequencerTileEntity.getDelay();
+        if (delay <= 0) {
+            delay = 1;
+        }
+        speedField.setText(String.valueOf(delay));
+
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(label).addChild(speedField);
+        toplevel.addChild(bottomPanel);
+
+        toplevel.setBounds(new Rectangle(k, l, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));
+        window = new Window(this, toplevel);
+    }
+
+    private void initGuiGrid(Panel toplevel) {
         for (int row = 0 ; row < 8 ; row++) {
             Panel rowPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(13);
             toplevel.addChild(rowPanel);
@@ -68,29 +108,10 @@ public class GuiSequencer extends GuiScreen {
                 rowPanel.addChild(choiceLabel);
             }
         }
+    }
 
-        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                fillGrid(false);
-            }
-        });
-        Button fillButton = new Button(mc, this).setText("Fill").setTooltips("Fill the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                fillGrid(true);
-            }
-        });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(fillButton);
-        toplevel.addChild(buttonPanel);
-
-        mode = new ChoiceLabel(mc, this).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeMode();
-                    }
-                }).setDesiredHeight(13).setDesiredWidth(55);
+    private void initGuiMode() {
+        mode = new ChoiceLabel(mc, this).setDesiredHeight(13).setDesiredWidth(55);
         for (SequencerMode m : SequencerMode.values()) {
             mode.addChoices(m.getDescription());
         }
@@ -101,25 +122,12 @@ public class GuiSequencer extends GuiScreen {
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP3.getDescription(), "Loop the cycle when redstone.", "signal is present");
         mode.setChoiceTooltip(SequencerMode.MODE_STEP.getDescription(), "Do one step in the cycle", "for every redstone pulse");
         mode.setChoice(sequencerTileEntity.getMode().getDescription());
-        Label label = new Label(mc, this).setText("Delay:");
-
-        speedField = new TextField(mc, this).addTextEvent(new TextEvent() {
+        mode.addChoiceEvent(new ChoiceEvent() {
             @Override
-            public void textChanged(Widget parent, String newText) {
-                setDelay();
+            public void choiceChanged(Widget parent, String newChoice) {
+                changeMode();
             }
         });
-        int delay = sequencerTileEntity.getDelay();
-        if (delay <= 0) {
-            delay = 1;
-        }
-        speedField.setText(String.valueOf(delay));
-
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(label).addChild(speedField);
-        toplevel.addChild(bottomPanel);
-
-        toplevel.setBounds(new Rectangle(k, l, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));
-        window = new Window(this, toplevel);
     }
 
     private void setDelay() {
@@ -158,11 +166,11 @@ public class GuiSequencer extends GuiScreen {
     }
 
     private void changeMode() {
-        Integer newMode = SequencerMode.modeToMode.get(mode.getCurrentChoice());
-        sequencerTileEntity.setMode(SequencerMode.values()[newMode]);
+        SequencerMode newMode = SequencerMode.getMode(mode.getCurrentChoice());
+        sequencerTileEntity.setMode(newMode);
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
                 SequencerTileEntity.CMD_MODE,
-                new Argument("mode", newMode)));
+                new Argument("mode", newMode.getDescription())));
     }
 
     @Override

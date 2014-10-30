@@ -42,20 +42,7 @@ public class GuiEnderMonitor extends GuiScreen {
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
         Label label = new Label(mc, this).setText("Mode:");
-        mode = new ChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeMode();
-            }
-        }).setDesiredHeight(13).setDesiredWidth(80);
-        for (EnderMonitorMode m : EnderMonitorMode.values()) {
-            mode.addChoices(m.getDescription());
-        }
-
-        mode.setChoiceTooltip(EnderMonitorMode.MODE_LOSTPEARL.getDescription(), "Send a redstone pulse when a", "pearl is lost");
-        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
-        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
-        mode.setChoice(enderMonitorTileEntity.getMode().getDescription());
+        initGuiMode();
 
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(mode);
         toplevel.addChild(bottomPanel);
@@ -64,17 +51,35 @@ public class GuiEnderMonitor extends GuiScreen {
         window = new Window(this, toplevel);
     }
 
+    private void initGuiMode() {
+        mode = new ChoiceLabel(mc, this).setDesiredHeight(13).setDesiredWidth(80);
+        for (EnderMonitorMode m : EnderMonitorMode.values()) {
+            mode.addChoices(m.getDescription());
+        }
+
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_LOSTPEARL.getDescription(), "Send a redstone pulse when a", "pearl is lost");
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
+        mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
+        mode.setChoice(enderMonitorTileEntity.getMode().getDescription());
+        mode.addChoiceEvent(new ChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, String newChoice) {
+                changeMode();
+            }
+        });
+    }
+
     @Override
     public boolean doesGuiPauseGame() {
         return false;
     }
 
     private void changeMode() {
-        Integer newMode = EnderMonitorMode.modeToMode.get(mode.getCurrentChoice());
-        enderMonitorTileEntity.setMode(EnderMonitorMode.values()[newMode]);
+        EnderMonitorMode newMode = EnderMonitorMode.getMode(mode.getCurrentChoice());
+        enderMonitorTileEntity.setMode(newMode);
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(enderMonitorTileEntity.xCoord, enderMonitorTileEntity.yCoord, enderMonitorTileEntity.zCoord,
                 EnderMonitorTileEntity.CMD_MODE,
-                new Argument("mode", newMode)));
+                new Argument("mode", newMode.getDescription())));
     }
 
 

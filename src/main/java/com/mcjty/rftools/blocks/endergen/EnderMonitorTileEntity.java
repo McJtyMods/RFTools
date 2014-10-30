@@ -107,12 +107,8 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            Integer m = args.get("mode").getInteger();
-            int mm = EnderMonitorMode.MODE_LOSTPEARL.ordinal();
-            if (m != null) {
-                mm = m;
-            }
-            setMode(EnderMonitorMode.values()[mm]);
+            String m = args.get("mode").getString();
+            setMode(EnderMonitorMode.getMode(m));
             return true;
         }
         return false;

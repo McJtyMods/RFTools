@@ -4,18 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EnderMonitorMode {
-    MODE_LOSTPEARL(0, "Lost Pearl"),
-    MODE_PEARLFIRED(1, "Pearl Fired"),
-    MODE_PEARLARRIVED(2, "Pearl Arrived"),
+    MODE_LOSTPEARL("Lost Pearl"),
+    MODE_PEARLFIRED("Pearl Fired"),
+    MODE_PEARLARRIVED("Pearl Arrived"),
     ;
 
-    public static final Map<String,Integer> modeToMode = new HashMap<String, Integer>();
+    private static final Map<String,EnderMonitorMode> modeToMode = new HashMap<String, EnderMonitorMode>();
 
-    private final int index;
     private final String description;
 
-    EnderMonitorMode(int index, String description) {
-        this.index = index;
+    EnderMonitorMode(String description) {
         this.description = description;
     }
 
@@ -23,11 +21,15 @@ public enum EnderMonitorMode {
         return description;
     }
 
-    static {
-        for (EnderMonitorMode mode : values()) {
-            modeToMode.put(mode.description, mode.index);
-        }
+    public static EnderMonitorMode getMode(String mode) {
+        return modeToMode.get(mode);
     }
 
+
+    static {
+        for (EnderMonitorMode mode : values()) {
+            modeToMode.put(mode.description, mode);
+        }
+    }
 
 }
