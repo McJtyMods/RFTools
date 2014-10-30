@@ -126,6 +126,8 @@ public class CommonProxy {
                     "The amount of particles to spawn whenever energy is generated (use 0 to disable)").getInt();
             EndergenicTileEntity.badParticleCount = cfg.get(CATEGORY_ENDERGENIC, "endergenicBadParticles", EndergenicTileEntity.badParticleCount,
                     "The amount of particles to spawn whenever a pearl is lost (use 0 to disable)").getInt();
+            EndergenicTileEntity.logEndergenic = cfg.get(CATEGORY_ENDERGENIC, "endergenicLogging", EndergenicTileEntity.logEndergenic,
+                    "If true dump a lot of logging information about the generators. Useful for debugging.").getBoolean();
 
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

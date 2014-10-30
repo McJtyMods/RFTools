@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,9 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     public static int goodParticleCount = 10;
     public static int badParticleCount = 10;
 
+    public static boolean logEndergenic = false;
+    private int tickCounter = 0;            // Only used for logging, counts server ticks.
+
     public EndergenicTileEntity() {
         super(5000000, 0, 20000);
     }
@@ -106,6 +110,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
+
+        tickCounter++;
 
         ticks--;
         if (ticks < 0) {
@@ -129,6 +135,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (chargingMode == CHARGE_HOLDING) {
             if (random.nextInt(100) <= chanceLost) {
                 // Pearl is lost.
+                log("Server Tick: discard pearl randomly");
                 discardPearl();
             }
         }
@@ -139,9 +146,11 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         prevIn = newvalue;
         if (pulse) {
             if (chargingMode == CHARGE_IDLE) {
+                log("Server Tick: pulse -> start charging");
                 startCharging();
                 return;
             } else if (chargingMode == CHARGE_HOLDING) {
+                log("Server Tick: pulse -> fire pearl");
                 firePearl();
                 return;
             }
@@ -155,10 +164,11 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
             int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
-//            System.out.println("hold pearl: rfExtracted = " + rfExtracted);
+            log("Server Tick: holding pearl, consume "+rfExtracted+" RF");
             rfLost += rfExtracted;
             if (rfExtracted < rfToHoldPearl) {
                 // Not enough energy. Pearl is lost.
+                log("Server Tick: insufficient energy to hold pearl");
                 discardPearl();
 
             }
@@ -169,7 +179,15 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         markDirty();
         chargingMode++;
         if (chargingMode >= 16) {
+            log("Server Tick: charging mode ends -> idle");
             chargingMode = CHARGE_IDLE;
+        }
+    }
+
+    private void log(String message) {
+        if (logEndergenic) {
+            String id = tickCounter + ": " + xCoord + "," + yCoord + "," + zCoord + ": ";
+            RFTools.instance.logger.log(Level.DEBUG, id + message);
         }
     }
 
@@ -252,6 +270,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         }
         List<EndergenicPearl> newlist = new ArrayList<EndergenicPearl>();
         for (EndergenicPearl pearl : pearls) {
+            log("Pearls: age=" + pearl.getAge() + ", ticks left=" + pearl.getTicksLeft());
             if (!pearl.handleTick(worldObj)) {
                 // Keep the pearl. It has not arrived yet.
                 newlist.add(pearl);
@@ -295,8 +314,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         getDestinationTE();
         if (destination == null) {
             // There is no destination so the pearl is simply lost.
+            log("Fire Pearl: pearl lost due to lack of destination");
             discardPearl();
         } else {
+            log("Fire Pearl: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
             chargingMode = CHARGE_IDLE;
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, currentAge+1));
@@ -311,8 +332,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         chargingMode = CHARGE_IDLE;
         if (destination == null) {
             // There is no destination so the injected pearl is simply lost.
+            log("Fire Pearl from injector: pearl lost due to lack of destination");
             discardPearl();
         } else {
+            log("Fire Pearl from injector: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, 0));
             fireMonitors(EnderMonitorMode.MODE_PEARLFIRED);
@@ -325,13 +348,15 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         fireMonitors(EnderMonitorMode.MODE_PEARLARRIVED);
         markDirty();
         if (chargingMode == CHARGE_HOLDING) {
+            log("Receive Pearl: pearl arrives but already holding -> both are lost");
             // If this block is already holding a pearl and it still has one then both pearls are
             // automatically lost.
             discardPearl();
         } else if (chargingMode == CHARGE_IDLE) {
+            log("Receive Pearl: pearl arrives but generator is idle -> pearl is lost");
             // If this block is idle and it is hit by a pearl then the pearl is lost and nothing
             // happens.
-            chargingMode = CHARGE_IDLE;
+            discardPearl();
         } else {
             // Otherwise we get RF and this block goes into holding mode.
             int rf = rfPerHit[chargingMode];
@@ -342,7 +367,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             }
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
             rfGained += rf;
-//            System.out.println("chargingMode = " + chargingMode + ", age = "+age + ", rf = " + rf);
+            log("Receive Pearl: pearl arrives at tick " + chargingMode + ", age=" + age + ", RF=" + rf);
             modifyEnergyStored(rf);
 
             spawnParticles("portal", goodParticleCount);
