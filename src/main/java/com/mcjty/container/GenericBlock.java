@@ -166,6 +166,11 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         }
     }
 
+    @Override
+    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+        return false;
+    }
+
     /**
      * Check the redstone level reaching this block. Correctly checks for horizRotation mode.
      * @param world
