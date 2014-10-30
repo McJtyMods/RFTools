@@ -155,6 +155,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
             int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
+//            System.out.println("hold pearl: rfExtracted = " + rfExtracted);
             rfLost += rfExtracted;
             if (rfExtracted < rfToHoldPearl) {
                 // Not enough energy. Pearl is lost.
@@ -333,7 +334,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             chargingMode = CHARGE_IDLE;
         } else {
             // Otherwise we get RF and this block goes into holding mode.
-            // @todo more energy for a pearl that has been around for a while
             int rf = rfPerHit[chargingMode];
             // Give a bonus for pearls that have been around a bit longer.
             int a = age*10;
@@ -342,6 +342,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             }
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
             rfGained += rf;
+//            System.out.println("chargingMode = " + chargingMode + ", age = "+age + ", rf = " + rf);
             modifyEnergyStored(rf);
 
             spawnParticles("portal", goodParticleCount);
