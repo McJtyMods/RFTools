@@ -79,8 +79,8 @@ public class EndergenicBlock extends GenericContainerBlock {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         int meta = world.getBlockMetadata(x, y, z);
-        boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
-        meta = BlockTools.setRedstoneSignal(meta, powered);
+        int powered = world.getBlockPowerInput(x, y, z);
+        meta = BlockTools.setRedstoneSignal(meta, powered > 0);
         world.setBlockMetadataWithNotify(x, y, z, meta, 2);
     }
 
