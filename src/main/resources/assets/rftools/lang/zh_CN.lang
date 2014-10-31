@@ -19,4 +19,6 @@ tile.pearlInjectorBlock.name=珍珠注射器
 tile.sequencerBlock.name=音序器
 tile.timerBlock.name=定时器
 tile.enderMonitorBlock.name=末影监视屏
+tile.shieldBlock.name=Shield Projector
+tile.invisibleShieldBlock.name=Invisible Shield Block
 itemGroup.RfTools=RF工具

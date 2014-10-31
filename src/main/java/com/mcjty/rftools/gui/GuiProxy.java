@@ -13,6 +13,9 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.GuiRelay;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
+import com.mcjty.rftools.blocks.shield.GuiShield;
+import com.mcjty.rftools.blocks.shield.ShieldContainer;
+import com.mcjty.rftools.blocks.shield.ShieldTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -37,6 +40,12 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof CrafterBlockTileEntity3) {
                 CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) te;
                 return new CrafterContainer(entityPlayer, crafterBlockTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_SHIELD) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof ShieldTileEntity) {
+                ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+                return new ShieldContainer(entityPlayer, shieldTileEntity);
             }
         } else if (guiid == RFTools.GUI_PEARL_INJECTOR) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -94,6 +103,13 @@ public class GuiProxy implements IGuiHandler {
                 RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
                 RFMonitorBlock monitorBlock = (RFMonitorBlock) block;
                 return new GuiRFMonitor(monitorBlock, monitorBlockTileEntity);
+            }
+        } else if (guiid == RFTools.GUI_SHIELD) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof ShieldTileEntity) {
+                ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+                ShieldContainer shieldContainer = new ShieldContainer(entityPlayer, shieldTileEntity);
+                return new GuiShield(shieldTileEntity, shieldContainer);
             }
         } else if (guiid == RFTools.GUI_CRAFTER) {
             TileEntity te = world.getTileEntity(x, y, z);

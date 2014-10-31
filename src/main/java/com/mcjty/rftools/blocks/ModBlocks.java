@@ -10,6 +10,10 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
+import com.mcjty.rftools.blocks.shield.InvisibleShieldBlock;
+import com.mcjty.rftools.blocks.shield.ShieldBlock;
+import com.mcjty.rftools.blocks.shield.ShieldItemBlock;
+import com.mcjty.rftools.blocks.shield.ShieldTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerItemBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -43,6 +47,9 @@ public final class ModBlocks {
 
     public static SequencerBlock sequencerBlock;
     public static TimerBlock timerBlock;
+
+    public static ShieldBlock shieldBlock;
+    public static InvisibleShieldBlock invisibleShieldBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -115,6 +122,15 @@ public final class ModBlocks {
         timerBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(timerBlock, TimerItemBlock.class, "timerBlock");
         GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
+
+        shieldBlock = new ShieldBlock(Material.iron);
+        shieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlock, ShieldItemBlock.class, "shieldBlock");
+        GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
+
+        invisibleShieldBlock = new InvisibleShieldBlock(Material.portal);
+        invisibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(RFTools.tabRfTools);

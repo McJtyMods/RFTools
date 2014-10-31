@@ -19,4 +19,6 @@ tile.pearlInjectorBlock.name=Pearl Injector
 tile.sequencerBlock.name=Sequencer
 tile.timerBlock.name=Timer
 tile.enderMonitorBlock.name=Ender Monitor
+tile.shieldBlock.name=Shield Projector
+tile.invisibleShieldBlock.name=Invisible Shield Block
 itemGroup.RfTools=RFTools
