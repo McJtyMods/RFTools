@@ -3,6 +3,7 @@ package com.mcjty.rftools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
+import com.mcjty.rftools.blocks.shield.ShieldTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity;
 import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
@@ -32,6 +33,7 @@ public class CommonProxy {
     public static final String CATEGORY_NETWORK_MONITOR = "NetworkMonitor";
     public static final String CATEGORY_TELEPORTER = "Teleporter";
     public static final String CATEGORY_ENDERGENIC = "Endergenic";
+    public static final String CATEGORY_SHIELD = "Shield";
 
     public void preInit(FMLPreInitializationEvent e) {
         loadConfiguration(e);
@@ -52,6 +54,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
             cfg.addCustomCategoryComment(CATEGORY_TELEPORTER, "Settings for the teleporter system");
             cfg.addCustomCategoryComment(CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
+            cfg.addCustomCategoryComment(CATEGORY_SHIELD, "Settings for the shield system");
 
             CrafterBlockTileEntity3.rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", CrafterBlockTileEntity3.rfPerOperation, "Amount of RF used per crafting operation").getInt();
             CrafterBlockTileEntity3.speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", CrafterBlockTileEntity3.speedOperations, "How many operations to do at once in fast mode").getInt();
@@ -129,6 +132,12 @@ public class CommonProxy {
             EndergenicTileEntity.logEndergenic = cfg.get(CATEGORY_ENDERGENIC, "endergenicLogging", EndergenicTileEntity.logEndergenic,
                     "If true dump a lot of logging information about the generators. Useful for debugging.").getBoolean();
 
+            ShieldTileEntity.MAXENERGY = cfg.get(CATEGORY_SHIELD, "shieldMaxRF", ShieldTileEntity.MAXENERGY,
+                    "Maximum RF storage that the shield block can hold").getInt();
+            ShieldTileEntity.RECEIVEPERTICK = cfg.get(CATEGORY_SHIELD, "shieldRFPerTick", ShieldTileEntity.RECEIVEPERTICK,
+                    "RF per tick that the shield block can receive").getInt();
+            ShieldTileEntity.maxShieldSize = cfg.get(CATEGORY_SHIELD, "shieldMaxSize", ShieldTileEntity.maxShieldSize,
+                    "Maximum size (in blocks) of a shield").getInt();
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

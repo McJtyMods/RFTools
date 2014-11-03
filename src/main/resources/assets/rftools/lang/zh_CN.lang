@@ -21,4 +21,6 @@ tile.timerBlock.name=定时器
 tile.enderMonitorBlock.name=末影监视屏
 tile.shieldBlock.name=Shield Projector
 tile.invisibleShieldBlock.name=Invisible Shield Block
+tile.visibleShieldBlock.name=Visible Shield Block
+tile.solidShieldBlock.name=Solid Shield Block
 itemGroup.RfTools=RF工具

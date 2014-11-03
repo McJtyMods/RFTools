@@ -27,8 +27,8 @@ public class ShieldContainerFactory  extends ContainerFactory {
 
     private void layoutBuffer() {
         // Input slots
-        int leftCol = 12;
-        int topRow = 97;
+        int leftCol = 31;
+        int topRow = 142;
         addSlotBox(SlotType.SLOT_INPUT, CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 1, 18, 1, 18);
     }
 

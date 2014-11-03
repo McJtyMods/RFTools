@@ -21,4 +21,6 @@ tile.timerBlock.name=Timer
 tile.enderMonitorBlock.name=Ender Monitor
 tile.shieldBlock.name=Shield Projector
 tile.invisibleShieldBlock.name=Invisible Shield Block
+tile.visibleShieldBlock.name=Visible Shield Block
+tile.solidShieldBlock.name=Solid Shield Block
 itemGroup.RfTools=RFTools

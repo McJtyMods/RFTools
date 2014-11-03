@@ -1,11 +1,16 @@
 package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.layout.PositionalLayout;
-import com.mcjty.gui.widgets.EnergyBar;
+import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Panel;
-import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.Argument;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -20,6 +25,7 @@ public class GuiShield extends GuiContainer {
 
     private Window window;
     private EnergyBar energyBar;
+    private ChoiceLabel visibilityOptions;
 
     private final ShieldTileEntity shieldTileEntity;
 
@@ -44,10 +50,50 @@ public class GuiShield extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
         energyBar.setValue(shieldTileEntity.getCurrentRF());
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
+        initVisibilityMode();
+
+        Button applyCamo = new Button(mc, this).setText("Apply").setLayoutHint(new PositionalLayout.PositionalHint(31, 161, 40, 16)).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                applyCamoToShield();
+            }
+        });
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+                addChild(visibilityOptions).addChild(applyCamo);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void initVisibilityMode() {
+        visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
+        for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
+            visibilityOptions.addChoices(m.getDescription());
+        }
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Use the texture from the supplied block");
+        visibilityOptions.setChoice(shieldTileEntity.getShieldRenderingMode().getDescription());
+        visibilityOptions.addChoiceEvent(new ChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, String newChoice) {
+                changeVisibilityMode();
+            }
+        });
+    }
+
+    private void changeVisibilityMode() {
+        ShieldRenderingMode newMode = ShieldRenderingMode.getMode(visibilityOptions.getCurrentChoice());
+        shieldTileEntity.setShieldRenderingMode(newMode);
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
+                ShieldTileEntity.CMD_SHIELDVISMODE,
+                new Argument("mode", newMode.getDescription())));
+    }
+
+    private void applyCamoToShield() {
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
+                ShieldTileEntity.CMD_APPLYCAMO));
     }
 
     @Override

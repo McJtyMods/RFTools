@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
@@ -37,8 +38,6 @@ public class ShieldBlock extends GenericContainerBlock {
 
     private IIcon shieldIcon;
 
-    public static int RENDERID_SHIELD;
-
     // Current rendering pass for our custom renderer.
     public static int currentPass;
 
@@ -61,17 +60,13 @@ public class ShieldBlock extends GenericContainerBlock {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         restoreBlockFromNBT(world, x, y, z, itemStack);
-
-        world.setBlock(x, y + 1, z, ModBlocks.invisibleShieldBlock);
-        world.setBlock(x, y + 2, z, ModBlocks.invisibleShieldBlock);
-        world.setBlock(x, y + 3, z, ModBlocks.invisibleShieldBlock);
     }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
         WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
         if (wrenchUsed == WrenchUsage.NORMAL) {
-            // Nothing? Surely not rotate.
+            composeDecomposeShield(world, x, y, z);
             return true;
         } else if (wrenchUsed == WrenchUsage.SNEAKING) {
             breakAndRemember(world, x, y, z);
@@ -81,18 +76,27 @@ public class ShieldBlock extends GenericContainerBlock {
         }
     }
 
+    private void composeDecomposeShield(World world, int x, int y, int z) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof ShieldTileEntity) {
+                ((ShieldTileEntity)te).composeDecomposeShield();
+            }
+        }
+    }
+
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         super.breakBlock(world, x, y, z, block, meta);
 
-        if (ModBlocks.invisibleShieldBlock.equals(world.getBlock(x, y+1, z))) {
-            world.setBlockToAir(x, y+1, z);
-        }
-        if (ModBlocks.invisibleShieldBlock.equals(world.getBlock(x, y+2, z))) {
-            world.setBlockToAir(x, y+2, z);
-        }
-        if (ModBlocks.invisibleShieldBlock.equals(world.getBlock(x, y+3, z))) {
-            world.setBlockToAir(x, y+3, z);
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof ShieldTileEntity) {
+                ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+                if (shieldTileEntity.isShieldComposed()) {
+                    shieldTileEntity.decomposeShield();
+                }
+            }
         }
     }
 
@@ -108,10 +112,10 @@ public class ShieldBlock extends GenericContainerBlock {
         return pass == 0 || pass == 1;
     }
 
-    @Override
-    public int getRenderType() {
-        return RENDERID_SHIELD;
-    }
+//    @Override
+//    public int getRenderType() {
+//        return RENDERID_SHIELD;
+//    }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {

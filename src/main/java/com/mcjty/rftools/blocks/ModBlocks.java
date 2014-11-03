@@ -10,10 +10,7 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
-import com.mcjty.rftools.blocks.shield.InvisibleShieldBlock;
-import com.mcjty.rftools.blocks.shield.ShieldBlock;
-import com.mcjty.rftools.blocks.shield.ShieldItemBlock;
-import com.mcjty.rftools.blocks.shield.ShieldTileEntity;
+import com.mcjty.rftools.blocks.shield.*;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerItemBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -50,6 +47,8 @@ public final class ModBlocks {
 
     public static ShieldBlock shieldBlock;
     public static InvisibleShieldBlock invisibleShieldBlock;
+    public static VisibleShieldBlock visibleShieldBlock;
+    public static SolidShieldBlock solidShieldBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -131,6 +130,13 @@ public final class ModBlocks {
         invisibleShieldBlock = new InvisibleShieldBlock(Material.portal);
         invisibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
+        visibleShieldBlock = new VisibleShieldBlock(Material.portal);
+        visibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(visibleShieldBlock, "visibleShieldBlock");
+        solidShieldBlock = new SolidShieldBlock(Material.portal);
+        solidShieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
+        GameRegistry.registerTileEntity(SolidShieldTileEntity.class, "SolidShieldTileEntity");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(RFTools.tabRfTools);
