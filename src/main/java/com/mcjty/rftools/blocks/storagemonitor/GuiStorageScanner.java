@@ -156,7 +156,7 @@ public class GuiStorageScanner extends GuiContainer {
         }
         SyncedValueList<InvBlockInfo> inventories = storageScannerTileEntity.getInventories();
         Coordinate c = inventories.get(index).getCoordinate();
-        RFTools.instance.clientInfo.hilightBlock(c, mc.theWorld.getTotalWorldTime()+20* StorageScannerTileEntity.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*StorageScannerTileEntity.hilightTime);
         RFTools.message(mc.thePlayer, "The inventory is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }

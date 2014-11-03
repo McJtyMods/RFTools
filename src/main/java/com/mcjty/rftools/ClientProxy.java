@@ -43,13 +43,14 @@ public class ClientProxy extends CommonProxy {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
-        long time = mc.theWorld.getTotalWorldTime();
+        long time = System.currentTimeMillis();
+
         if (time > RFTools.instance.clientInfo.getExpireHilight()) {
             RFTools.instance.clientInfo.hilightBlock(null, -1);
             return;
         }
 
-        if (((time >> 3) & 1) == 0) {
+        if (((time / 500) & 1) == 0) {
             return;
         }
 

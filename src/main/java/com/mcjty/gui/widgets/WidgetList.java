@@ -1,6 +1,7 @@
 package com.mcjty.gui.widgets;
 
-import com.mcjty.gui.*;
+import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.Scrollable;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.SelectionEvent;
 import net.minecraft.client.Minecraft;
@@ -102,8 +103,8 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             selected = newSelected;
             fireSelectionEvents(selected);
         }
-        long t = mc.theWorld.getTotalWorldTime();
-        if (prevTime != -1 && (t - prevTime) < 5) {
+        long t = System.currentTimeMillis();
+        if (prevTime != -1 && (t - prevTime) < 250) {
             fireDoubleClickEvent(selected);
         }
         prevTime = t;
