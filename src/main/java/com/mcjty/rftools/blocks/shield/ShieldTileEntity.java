@@ -102,7 +102,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         ShieldFilter filter1 = filters.get(selected);
         ShieldFilter filter2 = filters.get(selected+1);
         filters.set(selected, filter2);
-        filters.set(selected+1, filter1);
+        filters.set(selected + 1, filter1);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -199,6 +199,10 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return shieldActive;
     }
 
+    public int getShieldSize() {
+        return shieldBlocks.size();
+    }
+      
     public List<Coordinate> getShieldBlocks() {
         return shieldBlocks;
     }

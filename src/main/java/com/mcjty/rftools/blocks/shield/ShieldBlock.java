@@ -3,12 +3,14 @@ package com.mcjty.rftools.blocks.shield;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -75,11 +77,26 @@ public class ShieldBlock extends GenericContainerBlock {
     }
 
     @Override
+    protected void breakWithWrench(World world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof ShieldTileEntity) {
+            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+            shieldTileEntity.setInventorySlotContents(0, null);
+        }
+    }
+
+    @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        if (!world.isRemote) {
-            TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof ShieldTileEntity) {
-                ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof ShieldTileEntity) {
+            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+            BlockTools.emptyInventoryInWorld(world, x, y, z, block, shieldTileEntity);
+
+            if (shieldTileEntity.isShieldComposed()) {
+                BlockTools.spawnItemStack(world, x, y, z, new ItemStack(Blocks.glass, shieldTileEntity.getShieldSize()));
+            }
+
+            if (!world.isRemote) {
                 if (shieldTileEntity.isShieldComposed()) {
                     shieldTileEntity.decomposeShield();
                 }

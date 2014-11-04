@@ -101,33 +101,36 @@ public class BlockTools {
     public static void emptyInventoryInWorld(World world, int x, int y, int z, Block block, IInventory inventory) {
         for (int i = 0; i < inventory.getSizeInventory(); ++i) {
             ItemStack itemstack = inventory.getStackInSlot(i);
-
-            if (itemstack != null) {
-                float f = random.nextFloat() * 0.8F + 0.1F;
-                float f1 = random.nextFloat() * 0.8F + 0.1F;
-                EntityItem entityitem;
-
-                for (float f2 = random.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; world.spawnEntityInWorld(entityitem)) {
-                    int j = random.nextInt(21) + 10;
-
-                    if (j > itemstack.stackSize) {
-                        j = itemstack.stackSize;
-                    }
-
-                    itemstack.stackSize -= j;
-                    entityitem = new EntityItem(world, (x + f), (y + f1), (z + f2), new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
-                    float f3 = 0.05F;
-                    entityitem.motionX = ((float)random.nextGaussian() * f3);
-                    entityitem.motionY = ((float)random.nextGaussian() * f3 + 0.2F);
-                    entityitem.motionZ = ((float)random.nextGaussian() * f3);
-
-                    if (itemstack.hasTagCompound()) {
-                        entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
-                    }
-                }
-            }
+            spawnItemStack(world, x, y, z, itemstack);
         }
 
         world.func_147453_f(x, y, z, block);
+    }
+
+    public static void spawnItemStack(World world, int x, int y, int z, ItemStack itemstack) {
+        if (itemstack != null) {
+            float f = random.nextFloat() * 0.8F + 0.1F;
+            float f1 = random.nextFloat() * 0.8F + 0.1F;
+            EntityItem entityitem;
+
+            for (float f2 = random.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; world.spawnEntityInWorld(entityitem)) {
+                int j = random.nextInt(21) + 10;
+
+                if (j > itemstack.stackSize) {
+                    j = itemstack.stackSize;
+                }
+
+                itemstack.stackSize -= j;
+                entityitem = new EntityItem(world, (x + f), (y + f1), (z + f2), new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
+                float f3 = 0.05F;
+                entityitem.motionX = ((float)random.nextGaussian() * f3);
+                entityitem.motionY = ((float)random.nextGaussian() * f3 + 0.2F);
+                entityitem.motionZ = ((float)random.nextGaussian() * f3);
+
+                if (itemstack.hasTagCompound()) {
+                    entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+                }
+            }
+        }
     }
 }
