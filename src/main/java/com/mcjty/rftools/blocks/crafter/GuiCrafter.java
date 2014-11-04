@@ -13,6 +13,7 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
@@ -119,11 +120,11 @@ public class GuiCrafter extends GuiContainer {
                         changeRedstoneMode();
                     }
                 }).
-                addChoice("Ignored", "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
-                addChoice("Off", "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
-                addChoice("On", "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
+                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
+                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
+                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
-        redstoneMode.setCurrentChoice(crafterBlockTileEntity.getRedstoneMode());
+        redstoneMode.setCurrentChoice(crafterBlockTileEntity.getRedstoneMode().ordinal());
 
         speedMode = new ImageChoiceLabel(mc, this).
                 addChoiceEvent(new ChoiceEvent() {
@@ -148,7 +149,7 @@ public class GuiCrafter extends GuiContainer {
     }
 
     private void changeRedstoneMode() {
-        crafterBlockTileEntity.setRedstoneMode(redstoneMode.getCurrentChoice());
+        crafterBlockTileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
         sendChangeToServer();
     }
 
@@ -158,11 +159,11 @@ public class GuiCrafter extends GuiContainer {
     }
 
     private void sendChangeToServer() {
-        int rsMode = redstoneMode.getCurrentChoice();
+        RedstoneMode rsMode = RedstoneMode.values()[redstoneMode.getCurrentChoice()];
         int sMode = speedMode.getCurrentChoice();
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord,
                 CrafterBlockTileEntity3.CMD_MODE,
-                new Argument("rs", rsMode), new Argument("speed", sMode)));
+                new Argument("rs", rsMode.getDescription()), new Argument("speed", sMode)));
     }
 
     private void populateList() {

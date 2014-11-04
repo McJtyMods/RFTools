@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -18,9 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity implements ISidedInventory {
-    public static final int REDSTONE_IGNORED = 0;
-    public static final int REDSTONE_OFFREQUIRED = 1;
-    public static final int REDSTONE_ONREQUIRED = 2;
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
 
@@ -30,7 +28,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     private CraftingRecipe recipes[];
     private int supportedRecipes;
 
-    private int redstoneMode = REDSTONE_IGNORED;
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
 
     public static int MAXENERGY = 32000;
@@ -55,11 +53,11 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         return supportedRecipes;
     }
 
-    public int getRedstoneMode() {
+    public RedstoneMode getRedstoneMode() {
         return redstoneMode;
     }
 
-    public void setRedstoneMode(int redstoneMode) {
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
         this.redstoneMode = redstoneMode;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -207,7 +205,10 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
-        redstoneMode = tagCompound.getByte("rsMode");
+
+        int m = tagCompound.getInteger("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
+
         speedMode = tagCompound.getByte("speedMode");
     }
 
@@ -237,7 +238,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
-        tagCompound.setByte("rsMode", (byte)redstoneMode);
+        tagCompound.setByte("rsMode", (byte)redstoneMode.ordinal());
         tagCompound.setByte("speedMode", (byte)speedMode);
     }
 
@@ -268,12 +269,12 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     protected void checkStateServer() {
         super.checkStateServer();
 
-        if (redstoneMode != REDSTONE_IGNORED) {
+        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
             int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
             boolean rs = BlockTools.getRedstoneSignal(meta);
-            if (redstoneMode == REDSTONE_OFFREQUIRED && rs) {
+            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED && rs) {
                 return;
-            } else if (redstoneMode == REDSTONE_ONREQUIRED && !rs) {
+            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED && !rs) {
                 return;
             }
         }
@@ -389,7 +390,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            setRedstoneMode(args.get("rs").getInteger());
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
             setSpeedMode(args.get("speed").getInteger());
             return true;
         }
