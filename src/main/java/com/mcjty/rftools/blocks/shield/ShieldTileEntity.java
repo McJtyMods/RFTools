@@ -32,6 +32,14 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 1000;
 
+    // The amount of rf to use as a base per block in the shield.
+    public static int rfBase = 8;
+    // This amount is added for a camo block.
+    public static int rfCamo = 2;
+    // This amount is added for a shield block.
+    public static int rfShield = 2;
+
+
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 100;
 
@@ -44,6 +52,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     private boolean shieldComposed = false;
     // If true the shield is currently active.
     private boolean shieldActive = false;
+    // Timeout in case power is low. Here we wait a bit before trying again.
+    private int powerTimeout = 0;
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
@@ -102,7 +112,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     private Block calculateShieldBlock() {
-        if (!shieldActive) {
+        if (!shieldActive || powerTimeout > 0) {
             return Blocks.air;
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
@@ -124,6 +134,19 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return META_SOLID;
     }
 
+    private int calculateRfPerTick() {
+        if (!shieldActive) {
+            return 0;
+        }
+        int rf = rfBase;
+        if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
+            rf += rfShield;
+        } else if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode)) {
+            rf += rfCamo;
+        }
+        return rf;
+    }
+
     public boolean isShieldComposed() {
         return shieldComposed;
     }
@@ -140,6 +163,24 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     protected void checkStateServer() {
         super.checkStateServer();
 
+        if (powerTimeout > 0) {
+            powerTimeout--;
+            markDirty();
+            return;
+        }
+
+        boolean needsUpdate = false;
+
+        int rf = calculateRfPerTick();
+        if (rf > 0) {
+            if (getEnergyStored(ForgeDirection.DOWN) < rf) {
+                powerTimeout = 100;     // Wait 5 seconds before trying again.
+                needsUpdate = true;
+            } else {
+                extractEnergy(ForgeDirection.DOWN, rf, false);
+            }
+        }
+
         boolean newShieldActive = shieldActive;
 
         if (redstoneMode == RedstoneMode.REDSTONE_IGNORED) {
@@ -153,10 +194,12 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                 newShieldActive = rs;
             }
         }
-
-        if (shieldActive != newShieldActive) {
-            System.out.println("newShieldActive = " + newShieldActive);
+        if (newShieldActive != shieldActive) {
+            needsUpdate = true;
             shieldActive = newShieldActive;
+        }
+
+        if (needsUpdate) {
             updateShield();
             markDirty();
         }
@@ -253,6 +296,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         super.readFromNBT(tagCompound);
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
+        powerTimeout = tagCompound.getInteger("powerTimeout");
         shieldBlocks.readFromNBT(tagCompound, "coordinates");
     }
 
@@ -280,6 +324,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
+        tagCompound.setInteger("powerTimeout", powerTimeout);
         shieldBlocks.writeToNBT(tagCompound, "coordinates");
     }
 

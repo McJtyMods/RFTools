@@ -138,6 +138,12 @@ public class CommonProxy {
                     "RF per tick that the shield block can receive").getInt();
             ShieldTileEntity.maxShieldSize = cfg.get(CATEGORY_SHIELD, "shieldMaxSize", ShieldTileEntity.maxShieldSize,
                     "Maximum size (in blocks) of a shield").getInt();
+            ShieldTileEntity.rfBase = cfg.get(CATEGORY_SHIELD, "shieldRfBase", ShieldTileEntity.rfBase,
+                    "Base amount of RF/tick for every block in the shield (while active)").getInt();
+            ShieldTileEntity.rfCamo = cfg.get(CATEGORY_SHIELD, "shieldRfCamo", ShieldTileEntity.rfCamo,
+                    "RF/tick for every block added in case of camo mode").getInt();
+            ShieldTileEntity.rfShield = cfg.get(CATEGORY_SHIELD, "shieldRfShield", ShieldTileEntity.rfShield,
+                    "RF/tick for every block added in case of shield mode").getInt();
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {
