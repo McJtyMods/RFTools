@@ -76,8 +76,6 @@ public class ShieldBlock extends GenericContainerBlock {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        super.breakBlock(world, x, y, z, block, meta);
-
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof ShieldTileEntity) {
@@ -87,6 +85,8 @@ public class ShieldBlock extends GenericContainerBlock {
                 }
             }
         }
+
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override
