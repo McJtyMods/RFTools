@@ -34,6 +34,7 @@ public class AbstractShieldBlock extends Block {
 
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
+        System.out.println("world.isRemote = " + world.isRemote);
 //        if (entity instanceof EntityPlayer) {
 //            // No collision for players
 //            return;

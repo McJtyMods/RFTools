@@ -174,9 +174,6 @@ public class GuiMatterTransmitter extends GuiContainer {
     private void populatePlayers() {
         List<String> newPlayers = new ArrayList<String>(fromServer_allowedPlayers);
         Collections.sort(newPlayers);
-        if (newPlayers == null) {
-            return;
-        }
         if (newPlayers.equals(players)) {
             return;
         }

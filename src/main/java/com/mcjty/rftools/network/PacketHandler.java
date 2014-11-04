@@ -4,6 +4,8 @@ import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
 import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
+import com.mcjty.rftools.blocks.shield.PacketFiltersReady;
+import com.mcjty.rftools.blocks.shield.PacketGetFilters;
 import com.mcjty.rftools.blocks.storagemonitor.*;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
@@ -41,6 +43,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetAllReceivers.class, PacketGetAllReceivers.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketForceTeleport.class, PacketForceTeleport.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetPlayers.class, PacketGetPlayers.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetFilters.class, PacketGetFilters.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
@@ -52,5 +55,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketIntegerFromServer.class, PacketIntegerFromServer.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketAllReceiversReady.class, PacketAllReceiversReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketPlayersReady.class, PacketPlayersReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketFiltersReady.class, PacketFiltersReady.class, nextID(), Side.CLIENT);
     }
 }

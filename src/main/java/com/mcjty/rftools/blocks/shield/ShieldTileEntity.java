@@ -18,16 +18,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements IInventory {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
     public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_ADDFILTER = "addFilter";
+    public static final String CMD_DELFILTER = "delFilter";
+    public static final String CMD_UPFILTER = "upFilter";
+    public static final String CMD_DOWNFILTER = "downFilter";
+    public static final String CMD_GETFILTERS = "getFilters";
+    public static final String CLIENTCMD_GETFILTERS = "getFilters";
 
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 1000;
@@ -38,7 +41,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static int rfCamo = 2;
     // This amount is added for a shield block.
     public static int rfShield = 2;
-
 
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 100;
@@ -54,6 +56,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
     private int powerTimeout = 0;
+
+    // Filter list.
+    private final List<ShieldFilter> filters = new ArrayList<ShieldFilter>();
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
@@ -74,6 +79,41 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public ShieldTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
         registerSyncedObject(shieldBlocks);
+    }
+
+    public List<ShieldFilter> getFilters() {
+        return filters;
+    }
+
+    private void delFilter(int selected) {
+        filters.remove(selected);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    private void upFilter(int selected) {
+        ShieldFilter filter1 = filters.get(selected-1);
+        ShieldFilter filter2 = filters.get(selected);
+        filters.set(selected-1, filter2);
+        filters.set(selected, filter1);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    private void downFilter(int selected) {
+        ShieldFilter filter1 = filters.get(selected);
+        ShieldFilter filter2 = filters.get(selected+1);
+        filters.set(selected, filter2);
+        filters.set(selected+1, filter1);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    private void addFilter(int action, String type, String player) {
+        ShieldFilter filter = AbstractShieldFilter.createFilter(type);
+        filter.setAction(action);
+        if (filter instanceof PlayerFilter) {
+            ((PlayerFilter)filter).setName(player);
+        }
+        filters.add(filter);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public RedstoneMode getRedstoneMode() {
@@ -309,6 +349,19 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
         m = tagCompound.getInteger("rsMode");
         redstoneMode = RedstoneMode.values()[m];
+
+        readFiltersFromNBT(tagCompound);
+    }
+
+    private void readFiltersFromNBT(NBTTagCompound tagCompound) {
+        filters.clear();
+        NBTTagList filterList = tagCompound.getTagList("filters", Constants.NBT.TAG_COMPOUND);
+        if (filterList != null) {
+            for (int i = 0 ; i < filterList.tagCount() ; i++) {
+                NBTTagCompound compound = filterList.getCompoundTagAt(i);
+                filters.add(AbstractShieldFilter.createFilter(compound));
+            }
+        }
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -334,6 +387,18 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         writeBufferToNBT(tagCompound);
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+
+        writeFiltersToNBT(tagCompound);
+    }
+
+    private void writeFiltersToNBT(NBTTagCompound tagCompound) {
+        NBTTagList filterList = new NBTTagList();
+        for (ShieldFilter filter : filters) {
+            NBTTagCompound compound = new NBTTagCompound();
+            filter.writeToNBT(compound);
+            filterList.appendTag(compound);
+        }
+        tagCompound.setTag("filters", filterList);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -362,6 +427,24 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         } else if (CMD_APPLYCAMO.equals(command)) {
             updateShield();
             return true;
+        } else if (CMD_ADDFILTER.equals(command)) {
+            int action = args.get("action").getInteger();
+            String type = args.get("type").getString();
+            String player = args.get("player").getString();
+            addFilter(action, type, player);
+            return true;
+        } else if (CMD_DELFILTER.equals(command)) {
+            int selected = args.get("selected").getInteger();
+            delFilter(selected);
+            return true;
+        } else if (CMD_UPFILTER.equals(command)) {
+            int selected = args.get("selected").getInteger();
+            upFilter(selected);
+            return true;
+        } else if (CMD_DOWNFILTER.equals(command)) {
+            int selected = args.get("selected").getInteger();
+            downFilter(selected);
+            return true;
         } else if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
             setRedstoneMode(RedstoneMode.getMode(m));
@@ -370,6 +453,33 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
         return false;
     }
+
+    @Override
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETFILTERS.equals(command)) {
+            return getFilters();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETFILTERS.equals(command)) {
+            GuiShield.storeFiltersForClient(list);
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
     public int getSizeInventory() {
         return 1;

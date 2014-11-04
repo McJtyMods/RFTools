@@ -55,7 +55,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     @Override
     public void draw(Window window, int x, int y) {
         super.draw(window, x, y);
-        int xx = x + bounds.x;
+        int xx = x + bounds.x + 2;
         int yy = y + bounds.y;
         int top = 0;        // Margin@@@?
 //        drawBox(xx, yy, 0xffff0000);
