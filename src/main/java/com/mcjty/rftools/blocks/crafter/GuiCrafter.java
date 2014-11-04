@@ -66,41 +66,10 @@ public class GuiCrafter extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
         energyBar.setValue(crafterBlockTileEntity.getCurrentRF());
 
-        keepItem = new ChoiceLabel(mc, this).
-                addChoices("All", "Keep").
-                setTooltips("'Keep' will keep one", "item in every inventory", "slot").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        updateRecipe();
-                    }
-                }).
-                setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
-        internalRecipe = new ChoiceLabel(mc, this).
-                addChoices("Ext", "Int").
-                setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        updateRecipe();
-                    }
-                }).
-                setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
+        initKeepMode();
+        initInternalRecipe();
+        Slider listSlider = initRecipeList();
 
-        recipeList = new WidgetList(mc, this).
-                setFilledRectThickness(1).
-                addSelectionEvent(new DefaultSelectionEvent() {
-                    @Override
-                    public void select(Widget parent, int index) {
-                        selectRecipe();
-                    }
-                }).
-                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
-        populateList();
-
-        Slider listSlider = new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
         applyButton = new Button(mc, this).
                 setText("Apply").
                 setTooltips("Press to apply the", "recipe to the crafter").
@@ -113,6 +82,77 @@ public class GuiCrafter extends GuiContainer {
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
+        initRedstoneMode();
+        initSpeedMode();
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
+                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode);
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+
+        selectRecipe();
+        sendChangeToServer(-1, null, null, false, false);
+
+        window = new Window(this, toplevel);
+    }
+
+    private Slider initRecipeList() {
+        recipeList = new WidgetList(mc, this).
+                setFilledRectThickness(1).
+                addSelectionEvent(new DefaultSelectionEvent() {
+                    @Override
+                    public void select(Widget parent, int index) {
+                        selectRecipe();
+                    }
+                }).
+                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
+        populateList();
+
+        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
+    }
+
+    private void initInternalRecipe() {
+        internalRecipe = new ChoiceLabel(mc, this).
+                addChoices("Ext", "Int").
+                setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        updateRecipe();
+                    }
+                }).
+                setEnabled(false).
+                setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
+    }
+
+    private void initKeepMode() {
+        keepItem = new ChoiceLabel(mc, this).
+                addChoices("All", "Keep").
+                setTooltips("'Keep' will keep one", "item in every inventory", "slot").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        updateRecipe();
+                    }
+                }).
+                setEnabled(false).
+                setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
+    }
+
+    private void initSpeedMode() {
+        speedMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeSpeedMode();
+                    }
+                }).
+                addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
+                addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
+        speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
+        speedMode.setCurrentChoice(crafterBlockTileEntity.getSpeedMode());
+    }
+
+    private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -125,27 +165,6 @@ public class GuiCrafter extends GuiContainer {
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
         redstoneMode.setCurrentChoice(crafterBlockTileEntity.getRedstoneMode().ordinal());
-
-        speedMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeSpeedMode();
-                    }
-                }).
-                addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
-                addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
-        speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
-        speedMode.setCurrentChoice(crafterBlockTileEntity.getSpeedMode());
-
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode);
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
-
-        selectRecipe();
-        sendChangeToServer(-1, null, null, false, false);
-
-        window = new Window(this, toplevel);
     }
 
     private void changeRedstoneMode() {

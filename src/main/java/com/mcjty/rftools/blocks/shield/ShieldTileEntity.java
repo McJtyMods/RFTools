@@ -2,7 +2,9 @@ package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedValueList;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -25,6 +27,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
+    public static final String CMD_RSMODE = "rsMode";
 
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 1000;
@@ -32,11 +35,15 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 100;
 
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+
     public static final int META_INVISIBLE = 1;
     public static final int META_SOLID = 2;
 
     // If true the shield is currently made.
     private boolean shieldComposed = false;
+    // If true the shield is currently active.
+    private boolean shieldActive = false;
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
@@ -57,6 +64,15 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public ShieldTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
         registerSyncedObject(shieldBlocks);
+    }
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public ShieldRenderingMode getShieldRenderingMode() {
@@ -86,6 +102,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     private Block calculateShieldBlock() {
+        if (!shieldActive) {
+            return Blocks.air;
+        }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             return ModBlocks.invisibleShieldBlock;
         }
@@ -109,9 +128,41 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return shieldComposed;
     }
 
+    public boolean isShieldActive() {
+        return shieldActive;
+    }
+
     public List<Coordinate> getShieldBlocks() {
         return shieldBlocks;
     }
+
+    @Override
+    protected void checkStateServer() {
+        super.checkStateServer();
+
+        boolean newShieldActive = shieldActive;
+
+        if (redstoneMode == RedstoneMode.REDSTONE_IGNORED) {
+            newShieldActive = true;         // Always active in this mode.
+        } else {
+            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            boolean rs = BlockTools.getRedstoneSignal(meta);
+            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
+                newShieldActive = !rs;
+            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
+                newShieldActive = rs;
+            }
+        }
+
+        if (shieldActive != newShieldActive) {
+            System.out.println("newShieldActive = " + newShieldActive);
+            shieldActive = newShieldActive;
+            updateShield();
+            markDirty();
+        }
+    }
+
+
 
     public void composeDecomposeShield() {
         if (shieldComposed) {
@@ -142,10 +193,14 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         int meta = calculateShieldMeta();
         Block block = calculateShieldBlock();
         for (Coordinate c : shieldBlocks) {
-            worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
-            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (te instanceof SolidShieldTileEntity) {
-                ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+            if (Blocks.air.equals(block)) {
+                worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
+            } else {
+                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
+                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (te instanceof SolidShieldTileEntity) {
+                    ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+                }
             }
         }
         markDirty();
@@ -160,6 +215,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             }
         }
         shieldComposed = false;
+        shieldActive = false;
         shieldBlocks.clear();
         markDirty();
         notifyBlockUpdate();
@@ -196,6 +252,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         shieldComposed = tagCompound.getBoolean("composed");
+        shieldActive = tagCompound.getBoolean("active");
         shieldBlocks.readFromNBT(tagCompound, "coordinates");
     }
 
@@ -205,6 +262,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         readBufferFromNBT(tagCompound);
         int m = tagCompound.getInteger("visMode");
         shieldRenderingMode = ShieldRenderingMode.values()[m];
+
+        m = tagCompound.getInteger("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -219,6 +279,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("composed", shieldComposed);
+        tagCompound.setBoolean("active", shieldActive);
         shieldBlocks.writeToNBT(tagCompound, "coordinates");
     }
 
@@ -227,6 +288,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -255,7 +317,12 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         } else if (CMD_APPLYCAMO.equals(command)) {
             updateShield();
             return true;
+        } else if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
         }
+
         return false;
     }
     @Override

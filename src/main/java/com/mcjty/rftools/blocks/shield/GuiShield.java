@@ -8,6 +8,7 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
@@ -26,6 +27,7 @@ public class GuiShield extends GuiContainer {
     private Window window;
     private EnergyBar energyBar;
     private ChoiceLabel visibilityOptions;
+    private ImageChoiceLabel redstoneMode;
 
     private final ShieldTileEntity shieldTileEntity;
 
@@ -51,6 +53,7 @@ public class GuiShield extends GuiContainer {
         energyBar.setValue(shieldTileEntity.getCurrentRF());
 
         initVisibilityMode();
+        initRedstoneMode();
 
         Button applyCamo = new Button(mc, this).setText("Apply").setLayoutHint(new PositionalLayout.PositionalHint(31, 161, 40, 16)).addButtonEvent(new ButtonEvent() {
             @Override
@@ -60,10 +63,33 @@ public class GuiShield extends GuiContainer {
         });
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(visibilityOptions).addChild(applyCamo);
+                addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void initRedstoneMode() {
+        redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeRedstoneMode();
+                    }
+                }).
+                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
+                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
+                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
+        redstoneMode.setCurrentChoice(shieldTileEntity.getRedstoneMode().ordinal());
+    }
+
+    private void changeRedstoneMode() {
+        shieldTileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        RedstoneMode rsMode = RedstoneMode.values()[redstoneMode.getCurrentChoice()];
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
+                ShieldTileEntity.CMD_RSMODE,
+                new Argument("rs", rsMode.getDescription())));
     }
 
     private void initVisibilityMode() {

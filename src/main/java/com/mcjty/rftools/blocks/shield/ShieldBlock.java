@@ -36,12 +36,6 @@ import net.minecraft.world.World;
 
 public class ShieldBlock extends GenericContainerBlock {
 
-    private IIcon shieldIcon;
-
-    // Current rendering pass for our custom renderer.
-    public static int currentPass;
-
-
     public ShieldBlock(Material material) {
         super(material, ShieldTileEntity.class);
         setBlockName("shieldBlock");
@@ -50,11 +44,6 @@ public class ShieldBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_SHIELD;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
     }
 
     @Override
@@ -101,29 +90,12 @@ public class ShieldBlock extends GenericContainerBlock {
     }
 
     @Override
-    public boolean isOpaqueCube() {
-        return false;
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        checkRedstone(world, x, y, z);
     }
-
-    @Override
-    public boolean canRenderInPass(int pass) {
-        // Our renderer needs to work in both transparent as solid pass so we store the current pass here.
-        currentPass = pass;
-        return pass == 0 || pass == 1;
-    }
-
-//    @Override
-//    public int getRenderType() {
-//        return RENDERID_SHIELD;
-//    }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineShieldProjector");
-        shieldIcon = iconRegister.registerIcon(RFTools.MODID + ":" + "shieldtexture");
-    }
-
-    public IIcon getShieldIcon() {
-        return shieldIcon;
     }
 }
