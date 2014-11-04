@@ -1,5 +1,7 @@
 package com.mcjty.rftools.blocks.shield;
 
+import com.mcjty.rftools.blocks.shield.filters.AbstractShieldFilter;
+import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import com.mcjty.rftools.network.PacketListFromServer;
 import io.netty.buffer.ByteBuf;
 

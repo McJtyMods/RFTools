@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.shield;
+package com.mcjty.rftools.blocks.shield.filters;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;

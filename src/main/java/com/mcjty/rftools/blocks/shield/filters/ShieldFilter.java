@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.shield;
+package com.mcjty.rftools.blocks.shield.filters;
 
 import com.mcjty.rftools.network.ByteBufConverter;
 import net.minecraft.entity.Entity;

@@ -13,6 +13,8 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RedstoneMode;
+import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
+import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;

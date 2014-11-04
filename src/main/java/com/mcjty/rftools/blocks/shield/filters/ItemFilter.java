@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.shield;
+package com.mcjty.rftools.blocks.shield.filters;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
