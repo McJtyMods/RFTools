@@ -63,34 +63,11 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return shieldRenderingMode;
     }
 
-    private void applyCamo() {
-        int[] camoId = calculateCamoId();
-        Block block = calculateShieldBlock();
-        int meta = calculateShieldMeta();
-        for (Coordinate c : shieldBlocks) {
-            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (te instanceof SolidShieldTileEntity) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
-                ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
-            }
-        }
-    }
-
     public void setShieldRenderingMode(ShieldRenderingMode shieldRenderingMode) {
         this.shieldRenderingMode = shieldRenderingMode;
 
-        // Update the metadata for all the affected shield blocks.
         if (shieldComposed) {
-            int[] camoId = calculateCamoId();
-            int meta = calculateShieldMeta();
-            Block block = calculateShieldBlock();
-            for (Coordinate c : shieldBlocks) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
-                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof SolidShieldTileEntity) {
-                    ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
-                }
-            }
+            updateShield();
         }
 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -147,17 +124,30 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     public void composeShield() {
-        int[] camoId = calculateCamoId();
-        int meta = calculateShieldMeta();
-        Block block = calculateShieldBlock();
-
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findGlassBlocks(coordinateSet, xCoord, yCoord, zCoord, block, meta, camoId);
+        findGlassBlocks(coordinateSet, xCoord, yCoord, zCoord);
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
         }
         shieldComposed = true;
+        updateShield();
+    }
+
+    /**
+     * Update all shield blocks. Possibly creating the shield.
+     */
+    private void updateShield() {
+        int[] camoId = calculateCamoId();
+        int meta = calculateShieldMeta();
+        Block block = calculateShieldBlock();
+        for (Coordinate c : shieldBlocks) {
+            worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
+            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (te instanceof SolidShieldTileEntity) {
+                ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+            }
+        }
         markDirty();
         notifyBlockUpdate();
     }
@@ -175,7 +165,14 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         notifyBlockUpdate();
     }
 
-    private void findGlassBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, Block block, int meta, int[] camoId) {
+    /**
+     * Find all glass blocks recursively.
+     * @param coordinateSet
+     * @param x
+     * @param y
+     * @param z
+     */
+    private void findGlassBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
         if (coordinateSet.size() >= maxShieldSize) {
             return;
         }
@@ -188,12 +185,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                 if (!coordinateSet.contains(c)) {
                     if (Blocks.glass.equals(worldObj.getBlock(xx, yy, zz))) {
                         coordinateSet.add(c);
-                        worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
-                        TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                        if (te instanceof SolidShieldTileEntity) {
-                            ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
-                        }
-                        findGlassBlocks(coordinateSet, xx, yy, zz, block, meta, camoId);
+                        findGlassBlocks(coordinateSet, xx, yy, zz);
                     }
                 }
             }
@@ -261,7 +253,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             setShieldRenderingMode(ShieldRenderingMode.getMode(m));
             return true;
         } else if (CMD_APPLYCAMO.equals(command)) {
-            applyCamo();
+            updateShield();
             return true;
         }
         return false;

@@ -24,6 +24,7 @@ public class SolidShieldTileEntity extends TileEntity {
         this.camoId = camoId;
         this.meta = meta;
         block = Block.getBlockById(camoId);
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -44,6 +45,10 @@ public class SolidShieldTileEntity extends TileEntity {
         camoId = tagCompound.getInteger("camoId");
         meta = tagCompound.getInteger("camoMeta");
         block = Block.getBlockById(camoId);
+        if (worldObj != null && worldObj.isRemote) {
+            // For some reason this is needed to force rendering on the client when apply is pressed.
+            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        }
     }
 
     @Override
