@@ -106,13 +106,17 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    private void addFilter(int action, String type, String player) {
+    private void addFilter(int action, String type, String player, int selected) {
         ShieldFilter filter = AbstractShieldFilter.createFilter(type);
         filter.setAction(action);
         if (filter instanceof PlayerFilter) {
             ((PlayerFilter)filter).setName(player);
         }
-        filters.add(filter);
+        if (selected == -1) {
+            filters.add(filter);
+        } else {
+            filters.add(selected, filter);
+        }
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -431,7 +435,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             int action = args.get("action").getInteger();
             String type = args.get("type").getString();
             String player = args.get("player").getString();
-            addFilter(action, type, player);
+            int selected = args.get("selected").getInteger();
+            addFilter(action, type, player, selected);
             return true;
         } else if (CMD_DELFILTER.equals(command)) {
             int selected = args.get("selected").getInteger();

@@ -222,10 +222,12 @@ public class GuiShield extends GuiContainer {
         }
 
         String playerName = player.getText();
+        int selected = filterList.getSelected();
 
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
                 ShieldTileEntity.CMD_ADDFILTER,
-                new Argument("action", action), new Argument("type", type), new Argument("player", playerName)));
+                new Argument("action", action), new Argument("type", type), new Argument("player", playerName),
+                new Argument("selected", selected)));
         listDirty = 0;
     }
 
@@ -324,6 +326,11 @@ public class GuiShield extends GuiContainer {
         delFilter.setEnabled(sel != -1);
         upFilter.setEnabled(sel > 0);
         downFilter.setEnabled(sel < cnt-1 && sel != -1);
+        if (sel == -1) {
+            addFilter.setText("Add");
+        } else {
+            addFilter.setText("Insert");
+        }
         player.setEnabled("Player".equals(typeOptions.getCurrentChoice()));
     }
 
