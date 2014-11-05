@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -9,6 +10,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -16,7 +18,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class AbstractShieldBlock extends Block {
+public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     protected IIcon icon;
 
@@ -86,5 +88,11 @@ public class AbstractShieldBlock extends Block {
     @Override
     public IIcon getIcon(int side, int meta) {
         return icon;
+    }
+
+
+    @Override
+    public TileEntity createNewTileEntity(World world, int metadata) {
+        return new ShieldBlockTileEntity();
     }
 }

@@ -301,6 +301,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
      * Update all shield blocks. Possibly creating the shield.
      */
     private void updateShield() {
+        Coordinate thisCoordinate = new Coordinate(xCoord, yCoord, zCoord);
         int[] camoId = calculateCamoId();
         int meta = calculateShieldMeta();
         Block block = calculateShieldBlock();
@@ -310,8 +311,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             } else {
                 worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
                 TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof CamoBlockShieldTileEntity) {
-                    ((CamoBlockShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+                if (te instanceof ShieldBlockTileEntity) {
+                    ((ShieldBlockTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+                    ((ShieldBlockTileEntity)te).setShieldBlock(thisCoordinate);
                 }
             }
         }

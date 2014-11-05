@@ -137,7 +137,7 @@ public final class ModBlocks {
         solidShieldBlock = new SolidShieldBlock(Material.portal);
         solidShieldBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
-        GameRegistry.registerTileEntity(CamoBlockShieldTileEntity.class, "CamoBlockShieldTileEntity");
+        GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
         shieldTemplateBlock = new ShieldTemplateBlock(Material.glass);
         shieldTemplateBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
