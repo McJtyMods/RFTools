@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -16,7 +17,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
@@ -38,6 +41,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         return false;
     }
 
+//    @Override
+//    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+//        return null;
+//    }
+//
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
         int meta = world.getBlockMetadata(x, y, z);
@@ -57,9 +65,6 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 return;
             }
         }
-        if (entity instanceof EntityItem) {
-            System.out.println("com.mcjty.rftools.blocks.shield.AbstractShieldBlock.addCollisionBoxesToList");
-        }
         if ((meta & META_ITEMS) != 0) {
             if (entity instanceof EntityItem) {
                 super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
@@ -73,6 +78,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 return;
             }
         }
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+        super.onEntityCollidedWithBlock(world, x, y, z, entity);
     }
 
     @Override

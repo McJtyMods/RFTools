@@ -85,6 +85,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     private void delFilter(int selected) {
         filters.remove(selected);
+        updateShield();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -115,6 +116,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         } else {
             filters.add(selected, filter);
         }
+        updateShield();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
