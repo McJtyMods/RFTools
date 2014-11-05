@@ -5,6 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -16,29 +20,57 @@ public class AbstractShieldBlock extends Block {
 
     protected IIcon icon;
 
+    public static final int META_ITEMS = 1;             // If set then blocked for items
+    public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs
+    public static final int META_HOSTILE = 4;           // If set the blocked for hostile mobs
+    public static final int META_PLAYERS = 8;           // If set the blocked for (some) players
+
+
     public AbstractShieldBlock(Material material) {
         super(material);
         setBlockUnbreakable();
     }
 
-//    @Override
-//    public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 startVec, Vec3 endVec) {
-//        return null;
-//    }
-
-//    @Override
-//    public boolean isOpaqueCube() {
-//        return false;
-//    }
-//
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
-//        if (entity instanceof EntityPlayer) {
-//            // No collision for players
-//            return;
-//        }
-        super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+        int meta = world.getBlockMetadata(x, y, z);
+        if (meta == 0) {
+            // No collision for anything.
+            return;
+        }
+        if ((meta & META_HOSTILE) != 0) {
+            if (entity instanceof IMob) {
+                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                return;
+            }
+        }
+        if ((meta & META_PASSIVE) != 0) {
+            if (entity instanceof IAnimals && !(entity instanceof IMob)) {
+                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                return;
+            }
+        }
+        if (entity instanceof EntityItem) {
+            System.out.println("com.mcjty.rftools.blocks.shield.AbstractShieldBlock.addCollisionBoxesToList");
+        }
+        if ((meta & META_ITEMS) != 0) {
+            if (entity instanceof EntityItem) {
+                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                return;
+            }
+        }
+        if ((meta & META_PLAYERS) != 0) {
+            // @todo check TE for more detailed data.
+            if (entity instanceof EntityPlayer) {
+                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                return;
+            }
+        }
     }
 
     @Override

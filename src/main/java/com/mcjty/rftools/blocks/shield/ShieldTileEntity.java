@@ -5,9 +5,7 @@ import com.mcjty.entity.SyncedValueList;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.RedstoneMode;
-import com.mcjty.rftools.blocks.shield.filters.AbstractShieldFilter;
-import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
-import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
+import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -49,9 +47,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static int maxShieldSize = 100;
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
-
-    public static final int META_INVISIBLE = 1;
-    public static final int META_SOLID = 2;
 
     // If true the shield is currently made.
     private boolean shieldComposed = false;
@@ -187,13 +182,21 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     private int calculateShieldMeta() {
-        if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
-            return META_INVISIBLE;
+        int meta = 0;
+        for (ShieldFilter filter : filters) {
+            if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
+                if (ItemFilter.ITEM.equals(filter.getFilterName())) {
+                    meta |= AbstractShieldBlock.META_ITEMS;
+                } else if (AnimalFilter.ANIMAL.equals(filter.getFilterName())) {
+                    meta |= AbstractShieldBlock.META_PASSIVE;
+                } else if (HostileFilter.HOSTILE.equals(filter.getFilterName())) {
+                    meta |= AbstractShieldBlock.META_HOSTILE;
+                } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
+                    meta |= AbstractShieldBlock.META_PLAYERS;
+                }
+            }
         }
-        if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            return 0;
-        }
-        return META_SOLID;
+        return meta;
     }
 
     private int calculateRfPerTick() {

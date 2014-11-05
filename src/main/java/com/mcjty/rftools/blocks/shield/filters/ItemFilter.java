@@ -4,6 +4,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 
 public class ItemFilter extends AbstractShieldFilter {
+
+    public static final String ITEM = "item";
+
     @Override
     public boolean match(Entity entity) {
         return entity instanceof EntityItem;
@@ -11,6 +14,6 @@ public class ItemFilter extends AbstractShieldFilter {
 
     @Override
     public String getFilterName() {
-        return "item";
+        return ITEM;
     }
 }

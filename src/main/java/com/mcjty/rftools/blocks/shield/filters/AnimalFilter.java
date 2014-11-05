@@ -5,6 +5,9 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 
 public class AnimalFilter extends AbstractShieldFilter {
+
+    public static final String ANIMAL = "animal";
+
     @Override
     public boolean match(Entity entity) {
         return entity instanceof IAnimals && !(entity instanceof IMob);
@@ -12,6 +15,6 @@ public class AnimalFilter extends AbstractShieldFilter {
 
     @Override
     public String getFilterName() {
-        return "animal";
+        return ANIMAL;
     }
 }

@@ -13,8 +13,7 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RedstoneMode;
-import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
-import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
+import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
@@ -212,15 +211,15 @@ public class GuiShield extends GuiContainer {
         String filterName = typeOptions.getCurrentChoice();
         String type;
         if ("All".equals(filterName)) {
-            type = "default";
+            type = DefaultFilter.DEFAULT;
         } else if ("Passive".equals(filterName)) {
-            type = "animal";
+            type = AnimalFilter.ANIMAL;
         } else if ("Hostile".equals(filterName)) {
-            type = "hostile";
+            type = HostileFilter.HOSTILE;
         } else if ("Item".equals(filterName)) {
-            type = "item";
+            type = ItemFilter.ITEM;
         } else {
-            type = "player";
+            type = PlayerFilter.PLAYER;
         }
 
         String playerName = player.getText();

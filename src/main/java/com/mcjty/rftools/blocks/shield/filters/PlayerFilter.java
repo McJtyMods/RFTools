@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PlayerFilter extends AbstractShieldFilter {
+    public static final String PLAYER = "player";
     private String name = null;
 
     public PlayerFilter() {
@@ -16,7 +17,7 @@ public class PlayerFilter extends AbstractShieldFilter {
 
     @Override
     public String getFilterName() {
-        return "player";
+        return PLAYER;
     }
 
     public String getName() {
