@@ -49,6 +49,7 @@ public final class ModBlocks {
     public static InvisibleShieldBlock invisibleShieldBlock;
     public static VisibleShieldBlock visibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
+    public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static final void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -136,7 +137,10 @@ public final class ModBlocks {
         solidShieldBlock = new SolidShieldBlock(Material.portal);
         solidShieldBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
-        GameRegistry.registerTileEntity(SolidShieldTileEntity.class, "SolidShieldTileEntity");
+        GameRegistry.registerTileEntity(CamoBlockShieldTileEntity.class, "CamoBlockShieldTileEntity");
+        shieldTemplateBlock = new ShieldTemplateBlock(Material.glass);
+        shieldTemplateBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
 
         machineFrame = new MachineFrame(Material.iron);
         machineFrame.setCreativeTab(RFTools.tabRfTools);

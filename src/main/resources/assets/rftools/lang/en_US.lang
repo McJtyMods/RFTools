@@ -23,4 +23,5 @@ tile.shieldBlock.name=Shield Projector
 tile.invisibleShieldBlock.name=Invisible Shield Block
 tile.visibleShieldBlock.name=Visible Shield Block
 tile.solidShieldBlock.name=Solid Shield Block
+tile.shieldTemplateBlock.name=Shield Template
 itemGroup.RfTools=RFTools

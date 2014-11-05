@@ -16,26 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-/**
- * TODO: Shield configuration:
- *   Base cost: 10RF/tick
- *   - Visual appearances:
- *         - Invisible (0RF/tick extra cost)
- *         - Solid block (2RF/tick)
- *         - Shimmering Shield (4RF/tick)
- *   - Collision:
- *         - Pass through (0RF/tick)
- *         - Solid (2RF/tick)
- *         - Solid selective (3RF/tick)
- *         - Low Damage (10RF/tick)
- *         - Low Damage selective (11RF/tick)
- *         - High Damage (30RF/tick)
- *         - High Damage selective (31RF/tick)
- *   - Damage Burst:
- *         - Low: 500RF
- *         - High: 2000RF
- */
-
 public class ShieldBlock extends GenericContainerBlock {
 
     public ShieldBlock(Material material) {
@@ -91,10 +71,6 @@ public class ShieldBlock extends GenericContainerBlock {
         if (te instanceof ShieldTileEntity) {
             ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, shieldTileEntity);
-
-            if (shieldTileEntity.isShieldComposed()) {
-                BlockTools.spawnItemStack(world, x, y, z, new ItemStack(Blocks.glass, shieldTileEntity.getShieldSize()));
-            }
 
             if (!world.isRemote) {
                 if (shieldTileEntity.isShieldComposed()) {

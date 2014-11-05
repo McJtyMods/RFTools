@@ -10,6 +10,11 @@ public class InvisibleShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
     public int getRenderType() {
         return -1;              // Invisible
     }

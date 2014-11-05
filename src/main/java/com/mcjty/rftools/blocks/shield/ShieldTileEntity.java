@@ -146,11 +146,20 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    private Block calculateCamoBlock() {
+        ItemStack stack = stacks[0];
+        if (stack != null && stack.getItem() != null) {
+            return Block.getBlockFromItem(stack.getItem());
+        }
+        return null;
+    }
+
     private int[] calculateCamoId() {
         ItemStack stack = stacks[0];
         int camoId = -1;
         int meta = 0;
-        if (stack != null && stack.getItem() != null) {
+
+        if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
             Block block = Block.getBlockFromItem(stack.getItem());
             camoId = block.getIdFromBlock(block);
             meta = 0;       // @@@ @Todo not right! Mycelium instead of grass!
@@ -168,6 +177,12 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
             return ModBlocks.visibleShieldBlock;
         }
+
+        Block camoBlock = calculateCamoBlock();
+        if (camoBlock != null && (!camoBlock.isOpaqueCube() && camoBlock.getRenderBlockPass() == 1)) {
+            return ModBlocks.visibleShieldBlock;
+        }
+
         return ModBlocks.solidShieldBlock;
     }
 
@@ -260,17 +275,17 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public void composeDecomposeShield() {
         if (shieldComposed) {
-            // Shield is already composed. Break it into glass again.
+            // Shield is already composed. Break it into template blocks again.
             decomposeShield();
         } else {
-            // Shield is not composed. Find all nearby glass blocks and form a shield.
+            // Shield is not composed. Find all nearby template blocks and form a shield.
             composeShield();
         }
     }
 
     public void composeShield() {
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findGlassBlocks(coordinateSet, xCoord, yCoord, zCoord);
+        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord);
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
@@ -292,8 +307,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             } else {
                 worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
                 TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof SolidShieldTileEntity) {
-                    ((SolidShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
+                if (te instanceof CamoBlockShieldTileEntity) {
+                    ((CamoBlockShieldTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
                 }
             }
         }
@@ -304,8 +319,11 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public void decomposeShield() {
         for (Coordinate c : shieldBlocks) {
             Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
-            if (block instanceof AbstractShieldBlock) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), Blocks.glass, 0, 2);
+            if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
+                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ModBlocks.shieldTemplateBlock, 0, 2);
+            } else {
+                // No room, just spawn the block
+                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ModBlocks.shieldTemplateBlock));
             }
         }
         shieldComposed = false;
@@ -316,13 +334,13 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     /**
-     * Find all glass blocks recursively.
+     * Find all template blocks recursively.
      * @param coordinateSet
      * @param x
      * @param y
      * @param z
      */
-    private void findGlassBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
         if (coordinateSet.size() >= maxShieldSize) {
             return;
         }
@@ -333,9 +351,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             if (yy >= 0 && yy < worldObj.getHeight()) {
                 Coordinate c = new Coordinate(xx, yy, zz);
                 if (!coordinateSet.contains(c)) {
-                    if (Blocks.glass.equals(worldObj.getBlock(xx, yy, zz))) {
+                    if (ModBlocks.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
                         coordinateSet.add(c);
-                        findGlassBlocks(coordinateSet, xx, yy, zz);
+                        findTemplateBlocks(coordinateSet, xx, yy, zz);
                     }
                 }
             }

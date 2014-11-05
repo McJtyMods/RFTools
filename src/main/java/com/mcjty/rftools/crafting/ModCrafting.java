@@ -52,5 +52,6 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock), new Object[]{"gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
                 'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldTemplateBlock, 8), new Object[]{"www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass});
     }
 }

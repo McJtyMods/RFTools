@@ -7,7 +7,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-public class SolidShieldTileEntity extends TileEntity {
+public class CamoBlockShieldTileEntity extends TileEntity {
+
     private Block block;
     private int camoId = -1;
     private int meta = 0;
