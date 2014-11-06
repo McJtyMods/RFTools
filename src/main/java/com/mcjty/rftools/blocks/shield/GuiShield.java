@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.shield;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
@@ -29,6 +30,10 @@ import java.util.List;
 public class GuiShield extends GuiContainer {
     public static final int SHIELD_WIDTH = 256;
     public static final int SHIELD_HEIGHT = 224;
+
+    public static final String ACTION_PASS = "Pass";
+    public static final String ACTION_SOLID = "Solid";
+    public static final String ACTION_DAMAGE = "Damage";
 
     private Window window;
     private EnergyBar energyBar;
@@ -81,7 +86,12 @@ public class GuiShield extends GuiContainer {
         initRedstoneMode();
 
         filterList = new WidgetList(mc, this).
-                setFilledRectThickness(1).setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 140, 115));
+                setFilledRectThickness(1).setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 140, 115)).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                selectFilter();
+            }
+        });
         Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setLayoutHint(new PositionalLayout.PositionalHint(154, 12, 12, 115));
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
@@ -134,6 +144,41 @@ public class GuiShield extends GuiContainer {
         requestFilters();
     }
 
+    private void selectFilter() {
+        int selected = filterList.getSelected();
+        if (selected != -1) {
+            ShieldFilter shieldFilter = filters.get(selected);
+            switch (shieldFilter.getAction()) {
+                case ShieldFilter.ACTION_SOLID:
+                    actionOptions.setChoice(ACTION_SOLID);
+                    break;
+                case ShieldFilter.ACTION_PASS:
+                    actionOptions.setChoice(ACTION_PASS);
+                    break;
+                case ShieldFilter.ACTION_DAMAGE:
+                    actionOptions.setChoice(ACTION_DAMAGE);
+                    break;
+            }
+            String type = shieldFilter.getFilterName();
+            if (DefaultFilter.DEFAULT.equals(type)) {
+                typeOptions.setChoice("All");
+            } else if (AnimalFilter.ANIMAL.equals(type)) {
+                typeOptions.setChoice("Passive");
+            } else if (HostileFilter.HOSTILE.equals(type)) {
+                typeOptions.setChoice("Hostile");
+            } else if (PlayerFilter.PLAYER.equals(type)) {
+                typeOptions.setChoice("Player");
+            } else if (ItemFilter.ITEM.equals(type)) {
+                typeOptions.setChoice("Item");
+            }
+            if (shieldFilter instanceof PlayerFilter) {
+                player.setText(((PlayerFilter)shieldFilter).getName());
+            } else {
+                player.setText("");
+            }
+        }
+    }
+
     private void requestFilters() {
         PacketHandler.INSTANCE.sendToServer(new PacketGetFilters(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord));
     }
@@ -170,11 +215,11 @@ public class GuiShield extends GuiContainer {
             panel.addChild(new Label(mc, this).setText(n).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             String actionName;
             if (filter.getAction() == ShieldFilter.ACTION_PASS) {
-                actionName = "Pass";
+                actionName = ACTION_PASS;
             } else if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
-                actionName = "Solid";
+                actionName = ACTION_SOLID;
             } else {
-                actionName = "Damage";
+                actionName = ACTION_DAMAGE;
             }
             panel.addChild(new Label(mc, this).setText(actionName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
             filterList.addChild(panel);
@@ -200,9 +245,9 @@ public class GuiShield extends GuiContainer {
     private void addNewFilter() {
         String actionName = actionOptions.getCurrentChoice();
         int action;
-        if ("Pass".equals(actionName)) {
+        if (ACTION_PASS.equals(actionName)) {
             action = ShieldFilter.ACTION_PASS;
-        } else if ("Solid".equals(actionName)) {
+        } else if (ACTION_SOLID.equals(actionName)) {
             action = ShieldFilter.ACTION_SOLID;
         } else {
             action = ShieldFilter.ACTION_DAMAGE;
@@ -282,10 +327,10 @@ public class GuiShield extends GuiContainer {
 
     private void initActionOptions() {
         actionOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 12, 80, 14));
-        actionOptions.addChoices("Pass", "Solid", "Damage");
-        actionOptions.setChoiceTooltip("Pass", "Entity that matches this filter", "can pass through");
-        actionOptions.setChoiceTooltip("Solid", "Entity that matches this filter", "cannot pass");
-        actionOptions.setChoiceTooltip("Damage", "Entity that matches this filter", "gets damage");
+        actionOptions.addChoices(ACTION_PASS, ACTION_SOLID, ACTION_DAMAGE);
+        actionOptions.setChoiceTooltip(ACTION_PASS, "Entity that matches this filter", "can pass through");
+        actionOptions.setChoiceTooltip(ACTION_SOLID, "Entity that matches this filter", "cannot pass");
+        actionOptions.setChoiceTooltip(ACTION_DAMAGE, "Entity that matches this filter", "gets damage");
     }
 
     private void initTypeOptions() {
