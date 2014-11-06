@@ -1,6 +1,8 @@
 package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
+import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -72,12 +74,42 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
             }
         }
         if ((meta & META_PLAYERS) != 0) {
-            // @todo check TE for more detailed data.
             if (entity instanceof EntityPlayer) {
-                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                boolean blocked = checkPlayerCD(world, x, y, z, (EntityPlayer) entity);
+                if (blocked) {
+                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                }
                 return;
             }
         }
+    }
+
+    private boolean checkPlayerCD(World world, int x, int y, int z, EntityPlayer entity) {
+        boolean blocked = false;
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
+        Coordinate shieldBlock = shieldBlockTileEntity.getShieldBlock();
+        if (shieldBlock != null) {
+            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
+            if (shieldTileEntity != null) {
+                List<ShieldFilter> filters = shieldTileEntity.getFilters();
+                for (ShieldFilter filter : filters) {
+                    if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
+                        if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
+                            PlayerFilter playerFilter = (PlayerFilter) filter;
+                            String name = playerFilter.getName();
+                            if ((name == null || name.isEmpty())) {
+                                blocked = true;
+                                break;
+                            } else if (name.equals(entity.getDisplayName())) {
+                                blocked = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return blocked;
     }
 
     @Override
