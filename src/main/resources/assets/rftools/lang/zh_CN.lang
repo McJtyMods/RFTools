@@ -1,6 +1,7 @@
 item.NetworkMonitor.name=RF网络监视仪
-item.TeleportProbe.name=传送调试仪
+item.TeleportProbe.name=传输调试仪
 item.RFToolsManual.name=RF工具指南
+
 tile.crafterBlock1.name=自动合成器<1级>
 tile.crafterBlock2.name=自动合成器<2级>
 tile.crafterBlock3.name=自动合成器<3级>
@@ -31,4 +32,5 @@ tile.shieldBlockOpaquePass1NN.name=护盾方块 8
 tile.shieldBlockOpaquePass0NN.name=护盾方块 9
 tile.solidShieldBlock.name=护盾方块 10
 tile.shieldTemplateBlock.name=护盾模块
+
 itemGroup.RfTools=RF工具
