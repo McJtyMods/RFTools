@@ -65,8 +65,8 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 return;
             }
         }
-        if ((meta & META_ITEMS) != 0) {
-            if (entity instanceof EntityItem) {
+        if (entity instanceof EntityItem) {
+            if ((meta & META_ITEMS) != 0) {
                 super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
                 return;
             }
@@ -82,7 +82,13 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        super.onEntityCollidedWithBlock(world, x, y, z, entity);
+        if (entity instanceof EntityItem) {
+            int meta = world.getBlockMetadata(x, y, z);
+            if ((meta & META_ITEMS) == 0) {
+                // Items should be able to pass through. We just move the entity to below this block.
+                entity.setPosition(entity.posX, entity.posY-1, entity.posZ);
+            }
+        }
     }
 
     @Override
