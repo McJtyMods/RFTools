@@ -44,7 +44,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static int rfShield = 2;
 
     // Maximum size of a shield in blocks.
-    public static int maxShieldSize = 100;
+    public static int maxShieldSize = 256;
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
 
