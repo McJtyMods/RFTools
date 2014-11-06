@@ -40,6 +40,8 @@ public class TextPage extends AbstractWidget<TextPage> {
     private int craftU;
     private int craftV;
 
+    private int tabCounter = 0;
+
     public TextPage(Minecraft mc, Gui gui) {
         super(mc, gui);
     }
@@ -63,10 +65,15 @@ public class TextPage extends AbstractWidget<TextPage> {
         links.clear();
         if (!pages.isEmpty()) {
             int y = 3;
+            int tab = 0;
+
             for (Line line : page.lines) {
                 lines.add(line);
-                if (line.isLink()) {
-                    links.add(new Link(y, y+13, line.node));
+                if (line.isNexttab()) {
+                    y = 3;
+                    tab++;
+                } else if (line.isLink()) {
+                    links.add(new Link(tab, y, y+13, line.node));
                 }
                 y += line.height;
             }
@@ -143,18 +150,30 @@ public class TextPage extends AbstractWidget<TextPage> {
         if (enabled) {
             window.setTextFocus(this);
             for (Link link : links) {
-                if (link.y1 <= y && y <= link.y2) {
-                    Integer page = nodes.get(link.node);
-                    if (page != null) {
-                        pageIndex = page;
-                        showCurrentPage();
-                        return this;
+                if (tabCounter == 0) {
+                    if (link.y1 <= y && y <= link.y2) {
+                        if (gotoLink(link)) return this;
+                    }
+                } else {
+                    int t = x < getBounds().width / 2 ? 0 : 1;
+                    if (link.y1 <= y && y <= link.y2 && link.tab == t) {
+                        if (gotoLink(link)) return this;
                     }
                 }
             }
             return this;
         }
         return null;
+    }
+
+    private boolean gotoLink(Link link) {
+        Integer page = nodes.get(link.node);
+        if (page != null) {
+            pageIndex = page;
+            showCurrentPage();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -187,10 +206,17 @@ public class TextPage extends AbstractWidget<TextPage> {
     public void draw(Window window, int x, int y) {
         super.draw(window, x, y);
 
+        tabCounter = 0;
         y += 3;
+        int starty = y;
         int dx;
         for (Line line : lines) {
-            if (line.recipe != null) {
+            if (line.isNexttab()) {
+                y = starty;
+                x += getBounds().width /2;
+                tabCounter++;
+            }
+            else if (line.recipe != null) {
                 y += 4;
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // @TODO: need support for shapeless and better error checking
@@ -242,6 +268,7 @@ public class TextPage extends AbstractWidget<TextPage> {
         private boolean bold;
         private boolean islink;
         private boolean isnode;
+        private boolean nexttab;
         String node;
         String line;
         IRecipe recipe;
@@ -259,9 +286,14 @@ public class TextPage extends AbstractWidget<TextPage> {
             return isnode;
         }
 
+        public boolean isNexttab() {
+            return nexttab;
+        }
+
         Line(String line) {
             bold = false;
             islink = false;
+            nexttab = false;
             node = null;
             this.line = null;
             recipe = null;
@@ -270,6 +302,9 @@ public class TextPage extends AbstractWidget<TextPage> {
             if (line.startsWith("{b}")) {
                 bold = true;
                 this.line = line.substring(3);
+            } else if (line.startsWith("{/}")) {
+                nexttab = true;
+                height = 0;
             } else if (line.startsWith("{n:")) {
                 int end = line.indexOf('}');
                 if (end == -1) {
@@ -358,11 +393,13 @@ public class TextPage extends AbstractWidget<TextPage> {
     }
 
     public static class Link {
-        int y1;
-        int y2;
-        String node;
+        final int tab;
+        final int y1;
+        final int y2;
+        final String node;
 
-        public Link(int y1, int y2, String node) {
+        public Link(int tab, int y1, int y2, String node) {
+            this.tab = tab;
             this.y1 = y1;
             this.y2 = y2;
             this.node = node;

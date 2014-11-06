@@ -39,16 +39,6 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         setBlockUnbreakable();
     }
 
-//    @Override
-//    public boolean isOpaqueCube() {
-//        return false;
-//    }
-//
-//    @Override
-//    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-//        return null;
-//    }
-//
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
         int meta = world.getBlockMetadata(x, y, z);
@@ -121,7 +111,10 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 // Items should be able to pass through. We just move the entity to below this block.
                 entity.setPosition(entity.posX, entity.posY-1, entity.posZ);
             }
+            return;
         }
+
+        // Possibly check for damage.
     }
 
     @Override

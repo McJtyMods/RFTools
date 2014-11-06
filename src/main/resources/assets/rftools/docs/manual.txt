@@ -7,6 +7,10 @@ Table of contents:
 {l:logic}Logic Gates
 {l:rfmoni}RF Monitor
 {l:stomon}Storage Scanner
+{/}
+
+
+
 {l:crafte}Automatic Crafter
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
@@ -372,6 +376,8 @@ players, and items. You start by building the shape of your yield with
 connected Shield Template Blocks. Then you put a Shield Block next
 to one of these templates and you give it power.
 
+By default there is a maximum of 256 blocks in a single shield.
+
 To compose the shield you then need to right click the shield block with
 a wrench. The shield block will compose the shield in the specified shape.
 Wrenching the shield block again will turn the shield back into
@@ -396,5 +402,5 @@ entities. For every rule you have the following actions:
 
     Pass: entity can pass through
     Solid: entity is blocked
-    Damage: entity gets damage (not for items)
+    Damage: entity gets damage (not implemented yet!)
 {-------------------------------------------------------------}
