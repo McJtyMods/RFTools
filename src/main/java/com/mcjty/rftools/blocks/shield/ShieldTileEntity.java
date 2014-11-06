@@ -172,12 +172,40 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             return ModBlocks.invisibleShieldBlock;
         }
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            return ModBlocks.visibleShieldBlock;
+            return ModBlocks.shieldBlockNOpaquePass1;
         }
 
         Block camoBlock = calculateCamoBlock();
-        if (camoBlock != null && (!camoBlock.isOpaqueCube() && camoBlock.getRenderBlockPass() == 1)) {
-            return ModBlocks.visibleShieldBlock;
+        if (camoBlock != null) {
+            if (camoBlock.isOpaqueCube()) {
+                if (camoBlock.getRenderBlockPass() == 1) {
+                    if (camoBlock.renderAsNormalBlock()) {
+                        return ModBlocks.shieldBlockOpaquePass1;
+                    } else {
+                        return ModBlocks.shieldBlockOpaquePass1NN;
+                    }
+                } else {
+                    if (camoBlock.renderAsNormalBlock()) {
+                        return ModBlocks.shieldBlockOpaquePass0;
+                    } else {
+                        return ModBlocks.shieldBlockOpaquePass0NN;
+                    }
+                }
+            } else {
+                if (camoBlock.getRenderBlockPass() == 1) {
+                    if (camoBlock.renderAsNormalBlock()) {
+                        return ModBlocks.shieldBlockNOpaquePass1;
+                    } else {
+                        return ModBlocks.shieldBlockNOpaquePass1NN;
+                    }
+                } else {
+                    if (camoBlock.renderAsNormalBlock()) {
+                        return ModBlocks.shieldBlockNOpaquePass0;
+                    } else {
+                        return ModBlocks.shieldBlockNOpaquePass0NN;
+                    }
+                }
+            }
         }
 
         return ModBlocks.solidShieldBlock;

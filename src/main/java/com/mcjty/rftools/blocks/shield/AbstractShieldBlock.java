@@ -18,6 +18,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,11 +39,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         setBlockUnbreakable();
     }
 
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-
+//    @Override
+//    public boolean isOpaqueCube() {
+//        return false;
+//    }
+//
 //    @Override
 //    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 //        return null;
@@ -128,9 +129,42 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "shieldtexture");
     }
 
+    // Subclasses can call this to override the slightly more expensive version in this class.
+    protected boolean blockShouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        return super.shouldSideBeRendered(world, x, y, z, side);
+    }
+
+    @Override
+    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        int thisx = x - ForgeDirection.values()[side].offsetX;
+        int thisy = y - ForgeDirection.values()[side].offsetY;
+        int thisz = z - ForgeDirection.values()[side].offsetZ;
+
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(thisx, thisy, thisz);
+        if (shieldBlockTileEntity == null) {
+            return super.shouldSideBeRendered(world, x, y, z, side);
+        }
+        Block block = shieldBlockTileEntity.getBlock();
+        if (block == null) {
+            return super.shouldSideBeRendered(world, x, y, z, side);
+        } else {
+            return block.shouldSideBeRendered(world, x, y, z, side);
+        }
+    }
+
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        return icon;
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) blockAccess.getTileEntity(x, y, z);
+        if (shieldBlockTileEntity == null) {
+            return icon;
+        }
+
+        Block block = shieldBlockTileEntity.getBlock();
+        if (block == null) {
+            return icon;
+        } else {
+            return block.getIcon(blockAccess, x, y, z, side);
+        }
     }
 
     @Override

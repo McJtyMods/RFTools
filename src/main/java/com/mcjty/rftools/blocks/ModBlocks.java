@@ -47,7 +47,14 @@ public final class ModBlocks {
 
     public static ShieldBlock shieldBlock;
     public static InvisibleShieldBlock invisibleShieldBlock;
-    public static VisibleShieldBlock visibleShieldBlock;
+    public static ShieldBlockNOpaquePass1 shieldBlockNOpaquePass1;
+    public static ShieldBlockNOpaquePass0 shieldBlockNOpaquePass0;
+    public static ShieldBlockOpaquePass1 shieldBlockOpaquePass1;
+    public static ShieldBlockOpaquePass0 shieldBlockOpaquePass0;
+    public static ShieldBlockNOpaquePass1NN shieldBlockNOpaquePass1NN;
+    public static ShieldBlockNOpaquePass0NN shieldBlockNOpaquePass0NN;
+    public static ShieldBlockOpaquePass1NN shieldBlockOpaquePass1NN;
+    public static ShieldBlockOpaquePass0NN shieldBlockOpaquePass0NN;
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
@@ -57,6 +64,36 @@ public final class ModBlocks {
         GameRegistry.registerBlock(monitorBlock, RFMonitorItemBlock.class, "rfMonitorBlock");
         GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
 
+        initCrafterBlocks();
+
+        relayBlock = new RelayBlock(Material.iron);
+        relayBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(relayBlock, RelayItemBlock.class, "relayBlock");
+        GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
+
+        storageScannerBlock = new StorageScannerBlock(Material.iron);
+        storageScannerBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
+        GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
+
+        initTeleporterBlocks();
+        initEndergenicBlocks();
+        initLogicBlocks();
+        initShieldBlocks();
+        initBaseBlocks();
+    }
+
+    private static void initBaseBlocks() {
+        machineFrame = new MachineFrame(Material.iron);
+        machineFrame.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(machineFrame, "machineFrame");
+
+        machineBase = new MachineBase(Material.iron);
+        machineBase.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(machineBase, "machineBase");
+    }
+
+    private static void initCrafterBlocks() {
         crafterBlock1 = new CrafterBlock(Material.iron, "crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
         crafterBlock1.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(crafterBlock1, CrafterItemBlock.class, "crafterBlock1");
@@ -69,17 +106,82 @@ public final class ModBlocks {
         GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");
+    }
 
-        relayBlock = new RelayBlock(Material.iron);
-        relayBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(relayBlock, RelayItemBlock.class, "relayBlock");
-        GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
+    private static void initShieldBlocks() {
+        shieldBlock = new ShieldBlock(Material.iron);
+        shieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlock, ShieldItemBlock.class, "shieldBlock");
+        GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
 
-        storageScannerBlock = new StorageScannerBlock(Material.iron);
-        storageScannerBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
-        GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
+        invisibleShieldBlock = new InvisibleShieldBlock(Material.portal);
+        invisibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
 
+        shieldBlockNOpaquePass1 = new ShieldBlockNOpaquePass1(Material.portal);
+        shieldBlockNOpaquePass1.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockNOpaquePass1, "shieldBlockNOpaquePass1");
+        shieldBlockNOpaquePass0 = new ShieldBlockNOpaquePass0(Material.portal);
+        shieldBlockNOpaquePass0.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockNOpaquePass0, "shieldBlockNOpaquePass0");
+        shieldBlockOpaquePass1 = new ShieldBlockOpaquePass1(Material.portal);
+        shieldBlockOpaquePass1.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockOpaquePass1, "shieldBlockOpaquePass1");
+        shieldBlockOpaquePass0 = new ShieldBlockOpaquePass0(Material.portal);
+        shieldBlockOpaquePass0.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockOpaquePass0, "shieldBlockOpaquePass0");
+        shieldBlockNOpaquePass1NN = new ShieldBlockNOpaquePass1NN(Material.portal);
+        shieldBlockNOpaquePass1NN.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockNOpaquePass1NN, "shieldBlockNOpaquePass1NN");
+        shieldBlockNOpaquePass0NN = new ShieldBlockNOpaquePass0NN(Material.portal);
+        shieldBlockNOpaquePass0NN.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockNOpaquePass0NN, "shieldBlockNOpaquePass0NN");
+        shieldBlockOpaquePass1NN = new ShieldBlockOpaquePass1NN(Material.portal);
+        shieldBlockOpaquePass1NN.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockOpaquePass1NN, "shieldBlockOpaquePass1NN");
+        shieldBlockOpaquePass0NN = new ShieldBlockOpaquePass0NN(Material.portal);
+        shieldBlockOpaquePass0NN.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldBlockOpaquePass0NN, "shieldBlockOpaquePass0NN");
+
+        solidShieldBlock = new SolidShieldBlock(Material.portal);
+        solidShieldBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
+        GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
+        shieldTemplateBlock = new ShieldTemplateBlock(Material.glass);
+        shieldTemplateBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
+    }
+
+    private static void initLogicBlocks() {
+        enderMonitorBlock = new EnderMonitorBlock(Material.iron);
+        enderMonitorBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(enderMonitorBlock, EnderMonitorItemBlock.class, "enderMonitorBlock");
+        GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
+
+        sequencerBlock = new SequencerBlock(Material.iron);
+        sequencerBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(sequencerBlock, SequencerItemBlock.class, "sequencerBlock");
+        GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
+
+        timerBlock = new TimerBlock(Material.iron);
+        timerBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(timerBlock, TimerItemBlock.class, "timerBlock");
+        GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
+    }
+
+    private static void initEndergenicBlocks() {
+        endergenicBlock = new EndergenicBlock(Material.iron);
+        endergenicBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(endergenicBlock, EndergenicItemBlock.class, "endergenicBlock");
+        GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
+
+        pearlInjectorBlock = new PearlInjectorBlock(Material.iron);
+        pearlInjectorBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(pearlInjectorBlock, PearlInjectorItemBlock.class, "pearlInjectorBlock");
+        GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
+    }
+
+    private static void initTeleporterBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock(Material.iron);
         matterTransmitterBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(matterTransmitterBlock, "matterTransmitterBlock");
@@ -97,57 +199,5 @@ public final class ModBlocks {
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
         teleportBeamBlock = new TeleportBeamBlock(Material.portal);
         GameRegistry.registerBlock(teleportBeamBlock, "teleportBeamBlock");
-
-        endergenicBlock = new EndergenicBlock(Material.iron);
-        endergenicBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(endergenicBlock, EndergenicItemBlock.class, "endergenicBlock");
-        GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
-
-        pearlInjectorBlock = new PearlInjectorBlock(Material.iron);
-        pearlInjectorBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(pearlInjectorBlock, PearlInjectorItemBlock.class, "pearlInjectorBlock");
-        GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
-
-        enderMonitorBlock = new EnderMonitorBlock(Material.iron);
-        enderMonitorBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(enderMonitorBlock, EnderMonitorItemBlock.class, "enderMonitorBlock");
-        GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
-
-        sequencerBlock = new SequencerBlock(Material.iron);
-        sequencerBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(sequencerBlock, SequencerItemBlock.class, "sequencerBlock");
-        GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
-
-        timerBlock = new TimerBlock(Material.iron);
-        timerBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(timerBlock, TimerItemBlock.class, "timerBlock");
-        GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
-
-        shieldBlock = new ShieldBlock(Material.iron);
-        shieldBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(shieldBlock, ShieldItemBlock.class, "shieldBlock");
-        GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
-
-        invisibleShieldBlock = new InvisibleShieldBlock(Material.portal);
-        invisibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
-        visibleShieldBlock = new VisibleShieldBlock(Material.portal);
-        visibleShieldBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(visibleShieldBlock, "visibleShieldBlock");
-        solidShieldBlock = new SolidShieldBlock(Material.portal);
-        solidShieldBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
-        GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
-        shieldTemplateBlock = new ShieldTemplateBlock(Material.glass);
-        shieldTemplateBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
-
-        machineFrame = new MachineFrame(Material.iron);
-        machineFrame.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(machineFrame, "machineFrame");
-
-        machineBase = new MachineBase(Material.iron);
-        machineBase.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(machineBase, "machineBase");
     }
 }

@@ -28,7 +28,11 @@ public class ShieldBlockTileEntity extends TileEntity {
     public void setCamoBlock(int camoId, int meta) {
         this.camoId = camoId;
         this.meta = meta;
-        block = Block.getBlockById(camoId);
+        if (camoId == -1) {
+            block = null;
+        } else {
+            block = Block.getBlockById(camoId);
+        }
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -64,7 +68,11 @@ public class ShieldBlockTileEntity extends TileEntity {
         super.readFromNBT(tagCompound);
         camoId = tagCompound.getInteger("camoId");
         meta = tagCompound.getInteger("camoMeta");
-        block = Block.getBlockById(camoId);
+        if (camoId == -1) {
+            block = null;
+        } else {
+            block = Block.getBlockById(camoId);
+        }
 
         int sx = tagCompound.getInteger("shieldX");
         int sy = tagCompound.getInteger("shieldY");
