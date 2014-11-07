@@ -19,6 +19,7 @@ import com.mcjty.rftools.blocks.shield.ShieldTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
+import com.mcjty.rftools.items.devdelight.GuiDevelopersDelight;
 import com.mcjty.rftools.items.manual.GuiRFToolsManual;
 import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
@@ -31,7 +32,7 @@ import net.minecraft.world.World;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE ||
+        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_DEVELOPERS_DELIGHT ||
                 guiid == RFTools.GUI_MANUAL || guiid == RFTools.GUI_RF_MONITOR || guiid == RFTools.GUI_RELAY ||
                 guiid == RFTools.GUI_SEQUENCER || guiid == RFTools.GUI_TIMER || guiid == RFTools.GUI_ENDERMONITOR) {
             return null;
@@ -93,6 +94,8 @@ public class GuiProxy implements IGuiHandler {
             return new GuiNetworkMonitor();
         } else if (guiid == RFTools.GUI_TELEPORTPROBE) {
             return new GuiTeleportProbe();
+        } else if (guiid == RFTools.GUI_DEVELOPERS_DELIGHT) {
+            return new GuiDevelopersDelight();
         } else if (guiid == RFTools.GUI_MANUAL) {
             return new GuiRFToolsManual();
         } else if (guiid == RFTools.GUI_RF_MONITOR) {

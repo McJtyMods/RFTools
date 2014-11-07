@@ -61,6 +61,7 @@ public class RFTools {
     public static final int GUI_TIMER = modGuiIndex++;
     public static final int GUI_ENDERMONITOR = modGuiIndex++;
     public static final int GUI_SHIELD = modGuiIndex++;
+    public static final int GUI_DEVELOPERS_DELIGHT = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

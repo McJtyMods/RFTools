@@ -1,6 +1,8 @@
 item.NetworkMonitor.name=RF Network Monitor
 item.TeleportProbe.name=Teleporter Probe
 item.RFToolsManual.name=RFTools Manual
+item.DevelopersDelight.name=Developers Delight
+
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3
@@ -31,4 +33,5 @@ tile.shieldBlockOpaquePass1NN.name=Shield Block 8
 tile.shieldBlockOpaquePass0NN.name=Shield Block 9
 tile.solidShieldBlock.name=Shield Block 10
 tile.shieldTemplateBlock.name=Shield Template
+
 itemGroup.RfTools=RFTools
