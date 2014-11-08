@@ -451,6 +451,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         Coordinate c = teleportDestination.getCoordinate();
         RFTools.message(teleportingPlayer, "Whoosh!");
+        worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID+":teleport_whoosh", 1.0f, 1.0f);
+
         teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
         int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
         applyBadEffectIfNeeded(severity);
