@@ -33,19 +33,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static final String CMD_GETFILTERS = "getFilters";
     public static final String CLIENTCMD_GETFILTERS = "getFilters";
 
-    public static int MAXENERGY = 100000;
-    public static int RECEIVEPERTICK = 1000;
-
-    // The amount of rf to use as a base per block in the shield.
-    public static int rfBase = 8;
-    // This amount is added for a camo block.
-    public static int rfCamo = 2;
-    // This amount is added for a shield block.
-    public static int rfShield = 2;
-
-    // Maximum size of a shield in blocks.
-    public static int maxShieldSize = 256;
-
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
 
     // If true the shield is currently made.
@@ -75,7 +62,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     private ItemStack stacks[] = new ItemStack[ShieldContainerFactory.BUFFER_SIZE];
 
     public ShieldTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(ShieldConfiguration.MAXENERGY, ShieldConfiguration.RECEIVEPERTICK);
         registerSyncedObject(shieldBlocks);
     }
 
@@ -233,11 +220,11 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         if (!shieldActive) {
             return 0;
         }
-        int rf = rfBase;
+        int rf = ShieldConfiguration.rfBase;
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            rf += rfShield;
+            rf += ShieldConfiguration.rfShield;
         } else if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode)) {
-            rf += rfCamo;
+            rf += ShieldConfiguration.rfCamo;
         }
         return rf;
     }
@@ -376,7 +363,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
      * @param z
      */
     private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
-        if (coordinateSet.size() >= maxShieldSize) {
+        if (coordinateSet.size() >= ShieldConfiguration.maxShieldSize) {
             return;
         }
         for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {

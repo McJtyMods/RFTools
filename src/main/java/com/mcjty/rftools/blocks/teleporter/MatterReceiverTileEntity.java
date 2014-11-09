@@ -1,25 +1,18 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
 public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
-
-    public static int MAXENERGY = 100000;
-    public static int RECEIVEPERTICK = 500;
 
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_ADDPLAYER = "addPlayer";
@@ -31,7 +24,7 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     private Set<String> allowedPlayers = new HashSet<String>();
 
     public MatterReceiverTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(TeleportConfiguration.RECEIVER_MAXENERGY, TeleportConfiguration.RECEIVER_RECEIVEPERTICK);
     }
 
     public String getName() {
@@ -112,7 +105,7 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 
-        if (getEnergyStored(ForgeDirection.DOWN) < MatterTransmitterTileEntity.rfPerTeleportReceiver) {
+        if (getEnergyStored(ForgeDirection.DOWN) < TeleportConfiguration.rfPerTeleportReceiver) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK;
         }
 

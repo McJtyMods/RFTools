@@ -12,7 +12,7 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -183,7 +183,7 @@ public class GuiDialingDevice extends GuiContainer {
         }
         TransmitterInfo transmitterInfo = transmitters.get(index);
         Coordinate c = transmitterInfo.getCoordinate();
-        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*StorageScannerTileEntity.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
@@ -201,7 +201,7 @@ public class GuiDialingDevice extends GuiContainer {
             mc.getMinecraft().thePlayer.closeScreen();
             return;
         }
-        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*StorageScannerTileEntity.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
         RFTools.message(mc.thePlayer, "The receiver is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }

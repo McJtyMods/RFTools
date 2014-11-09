@@ -26,38 +26,12 @@ import java.util.*;
 
 public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity {
 
-    public static int MAXENERGY = 100000;
-    public static int RECEIVEPERTICK = 1000;
-
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_SETPRIVATE = "setAccess";
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
-
-    public static int horizontalDialerRange = 10;           // Horizontal range the dialing device can check for transmitters
-    public static int verticalDialerRange = 5;              // Vertical range the dialing device can check for transmitters
-
-    public static int rfPerDial = 1000;                     // RF Consumed by dialing device when making a new dial
-    public static int rfPerCheck = 5000;                    // RF Used to do a check on a receiver.
-    public static int rfDialedConnectionPerTick = 10;       // RF Consumed by transmitter when a dial is active and not doing anything else
-
-    // The following flags are used to calculate power usage for even starting a teleport. The rfStartTeleportBaseDim (cost of
-    // teleporting to another dimension) is also the cap of the local teleport which is calculated by doing
-    // rfStartTelelportBaseLocal + dist * rfStartTeleportDist
-    public static int rfStartTeleportBaseLocal = 5000;      // Base RF consumed by transmitter when starting a teleport in same dimension
-    public static int rfStartTeleportBaseDim = 100000;      // Base RF consumed by transmitter when starting a teleport to another dimension
-    public static int rfStartTeleportDist = 10;             // RF per distance unit when starting a teleport
-    public static int rfTeleportPerTick = 500;              // During the time the teleport is busy this RF is used per tick on the transmitter
-
-    public static int rfPerTeleportReceiver = 5000;         // On the receiver side we need this amount of power
-
-    // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
-    // the power usage above with regards to local/dimensional teleport.
-    public static int timeTeleportBaseLocal = 5;
-    public static int timeTeleportBaseDim = 100;
-    public static int timeTeleportDist = 10;                // Value in militicks (1000 == 1 tick)
 
     // Server side: current dialing destination
     private TeleportDestination teleportDestination = null;
@@ -79,7 +53,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private AxisAlignedBB beamBox = null;
 
     public MatterTransmitterTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(TeleportConfiguration.TRANSMITTER_MAXENERGY, TeleportConfiguration.TRANSMITTER_RECEIVEPERTICK);
     }
 
     public String getName() {
@@ -138,13 +112,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
      */
     public static int calculateRFCost(World world, Coordinate c1, TeleportDestination teleportDestination) {
         if (world.provider.dimensionId != teleportDestination.getDimension()) {
-            return rfStartTeleportBaseDim;
+            return TeleportConfiguration.rfStartTeleportBaseDim;
         } else {
             Coordinate c2 = teleportDestination.getCoordinate();
             double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int rf = rfStartTeleportBaseLocal + (int)(rfStartTeleportDist * dist);
-            if (rf > rfStartTeleportBaseDim) {
-                rf = rfStartTeleportBaseDim;
+            int rf = TeleportConfiguration.rfStartTeleportBaseLocal + (int)(TeleportConfiguration.rfStartTeleportDist * dist);
+            if (rf > TeleportConfiguration.rfStartTeleportBaseDim) {
+                rf = TeleportConfiguration.rfStartTeleportBaseDim;
             }
             return rf;
         }
@@ -159,13 +133,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
      */
     public static int calculateTime(World world, Coordinate c1, TeleportDestination teleportDestination) {
         if (world.provider.dimensionId != teleportDestination.getDimension()) {
-            return timeTeleportBaseDim;
+            return TeleportConfiguration.timeTeleportBaseDim;
         } else {
             Coordinate c2 = teleportDestination.getCoordinate();
             double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int time = timeTeleportBaseLocal + (int)(timeTeleportDist * dist / 1000);
-            if (time > timeTeleportBaseDim) {
-                time = timeTeleportBaseDim;
+            int time = TeleportConfiguration.timeTeleportBaseLocal + (int)(TeleportConfiguration.timeTeleportDist * dist / 1000);
+            if (time > TeleportConfiguration.timeTeleportBaseDim) {
+                time = TeleportConfiguration.timeTeleportBaseDim;
             }
             return time;
         }
@@ -353,13 +327,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         } else if (isPlayerOutsideBeam()) {
             // The player moved outside the beam. Interrupt the teleport.
             clearTeleport(80);
-        } else if (getEnergyStored(ForgeDirection.DOWN) < rfTeleportPerTick) {
+        } else if (getEnergyStored(ForgeDirection.DOWN) < TeleportConfiguration.rfTeleportPerTick) {
             // We don't have enough energy to handle this tick.
             handleEnergyShortage();
         } else {
             // We have enough energy so this is a good tick.
             markDirty();
-            extractEnergy(ForgeDirection.DOWN, rfTeleportPerTick, false);
+            extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfTeleportPerTick, false);
             goodTicks++;
 
             teleportTimer--;
@@ -451,7 +425,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         Coordinate c = teleportDestination.getCoordinate();
         RFTools.message(teleportingPlayer, "Whoosh!");
-        worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID+":teleport_whoosh", 1.0f, 1.0f);
+        if (TeleportConfiguration.teleportVolume >= 0.01) {
+            worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
+        }
 
         teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
         int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
@@ -496,8 +472,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, rfPerTeleportReceiver, false);
-        return 10 - (extracted * 10 / rfPerTeleportReceiver);
+        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfPerTeleportReceiver, false);
+        return 10 - (extracted * 10 / TeleportConfiguration.rfPerTeleportReceiver);
     }
 
     private boolean mustInterrupt() {

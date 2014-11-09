@@ -31,13 +31,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
 
-    public static int MAXENERGY = 32000;
-    public static int RECEIVEPERTICK = 80;
-    public static int rfPerOperation = 100;
-    public static int speedOperations = 5;
-
     public CrafterBlockTileEntity3() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
         setSupportedRecipes(8);
     }
 
@@ -281,7 +276,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
         int steps = 1;
         if (speedMode == SPEED_FAST) {
-            steps = speedOperations;
+            steps = CrafterConfiguration.speedOperations;
         }
 
         for (int i = 0 ; i < steps ; i++) {
@@ -290,7 +285,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     }
 
     private void craftOneCycle() {
-        if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+        if (getEnergyStored(ForgeDirection.DOWN) < CrafterConfiguration.rfPerOperation) {
             return;
         }
 
@@ -318,7 +313,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         }
 
         if (energyConsumed) {
-            extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+            extractEnergy(ForgeDirection.DOWN, CrafterConfiguration.rfPerOperation, false);
         } else {
             return;
         }

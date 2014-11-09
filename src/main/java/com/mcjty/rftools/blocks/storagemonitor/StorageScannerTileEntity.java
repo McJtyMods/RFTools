@@ -17,11 +17,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
-    public static int MAXENERGY = 100000;
-    public static int RECEIVEPERTICK = 500;
-    public static int rfPerOperation = 100;
-    public static int scansPerOperation = 10;
-    public static int hilightTime = 5;
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_STARTSCAN = "startScan";
@@ -49,7 +44,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     };
 
     public StorageScannerTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
         registerSyncedObject(scanning);
         registerSyncedObject(c1);
         registerSyncedObject(c2);
@@ -133,12 +128,12 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     protected void checkStateServer() {
         super.checkStateServer();
         if (scanning.getValue()) {
-            if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+            if (getEnergyStored(ForgeDirection.DOWN) < StorageScannerConfiguration.rfPerOperation) {
                 return;
             }
-            extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+            extractEnergy(ForgeDirection.DOWN, StorageScannerConfiguration.rfPerOperation, false);
 
-            for (int i = 0 ; i < scansPerOperation ; i++) {
+            for (int i = 0 ; i < StorageScannerConfiguration.scansPerOperation ; i++) {
                 Coordinate c = cur.getCoordinate();
                 checkInventoryStatus(c.getX(), c.getY(), c.getZ());
                 if (!advanceCurrent()) {
@@ -163,10 +158,10 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     public List<ItemStack> getInventoryForBlock(int cx, int cy, int cz) {
         showingItems = new ArrayList<ItemStack>();
 
-        if (getEnergyStored(ForgeDirection.DOWN) < rfPerOperation) {
+        if (getEnergyStored(ForgeDirection.DOWN) < StorageScannerConfiguration.rfPerOperation) {
             return showingItems;
         }
-        extractEnergy(ForgeDirection.DOWN, rfPerOperation, false);
+        extractEnergy(ForgeDirection.DOWN, StorageScannerConfiguration.rfPerOperation, false);
 
         TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
         if (tileEntity instanceof IInventory) {

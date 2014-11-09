@@ -12,7 +12,6 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
@@ -98,7 +97,7 @@ public class GuiNetworkMonitor extends GuiScreen {
             return;
         }
         Coordinate c = indexToCoordinate.get(index);
-        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*NetworkMonitorItem.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime);
         RFTools.message(mc.thePlayer, "The block is now hilighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }

@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class NetworkMonitorItem extends Item {
-    public static int hilightTime = 5;
 
     public NetworkMonitorItem() {
         setMaxStackSize(1);

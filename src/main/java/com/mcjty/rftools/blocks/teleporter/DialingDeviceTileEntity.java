@@ -18,9 +18,6 @@ import java.util.Map;
 
 public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
-    public static int MAXENERGY = 50000;
-    public static int RECEIVEPERTICK = 100;
-
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
@@ -41,7 +38,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_OK = 0;                            // All is ok
 
     public DialingDeviceTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(TeleportConfiguration.DIALER_MAXENERGY, TeleportConfiguration.DIALER_RECEIVEPERTICK);
     }
 
     /**
@@ -104,8 +101,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         int y = yCoord;
         int z = zCoord;
 
-        int hrange = MatterTransmitterTileEntity.horizontalDialerRange;
-        int vrange = MatterTransmitterTileEntity.verticalDialerRange;
+        int hrange = TeleportConfiguration.horizontalDialerRange;
+        int vrange = TeleportConfiguration.verticalDialerRange;
 
         List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
@@ -191,7 +188,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }
 
-        int cost = MatterTransmitterTileEntity.rfPerDial;
+        int cost = TeleportConfiguration.rfPerDial;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
@@ -215,7 +212,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
 
-        int cost = MatterTransmitterTileEntity.rfPerCheck;
+        int cost = TeleportConfiguration.rfPerCheck;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }

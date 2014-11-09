@@ -87,20 +87,6 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     // at that specific chargingMode.
     private static int rfPerHit[] = new int[]{ 0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100 };
 
-    // This value indicates the chance (with 0 being no chance and 100 being 100% chance) that an
-    // endergenic pearl is lost while holding it.
-    public static int chanceLost = 1;
-
-    // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
-    public static int rfToHoldPearl = 1000;
-
-    // This value indicates how much RF/tick this block can send out to neighbours
-    public static int rfOutput = 20000;
-
-    public static int goodParticleCount = 10;
-    public static int badParticleCount = 10;
-
-    public static boolean logEndergenic = false;
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
     public EndergenicTileEntity() {
@@ -133,7 +119,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         // First check if we're holding a pearl to see if the pearl will be lost.
         if (chargingMode == CHARGE_HOLDING) {
-            if (random.nextInt(100) <= chanceLost) {
+            if (random.nextInt(100) <= EndergenicConfiguration.chanceLost) {
                 // Pearl is lost.
                 log("Server Tick: discard pearl randomly");
                 discardPearl();
@@ -163,10 +149,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            int rfExtracted = extractEnergy(ForgeDirection.DOWN, rfToHoldPearl, false);
+            int rfExtracted = extractEnergy(ForgeDirection.DOWN, EndergenicConfiguration.rfToHoldPearl, false);
             log("Server Tick: holding pearl, consume "+rfExtracted+" RF");
             rfLost += rfExtracted;
-            if (rfExtracted < rfToHoldPearl) {
+            if (rfExtracted < EndergenicConfiguration.rfToHoldPearl) {
                 // Not enough energy. Pearl is lost.
                 log("Server Tick: insufficient energy to hold pearl");
                 discardPearl();
@@ -185,7 +171,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void log(String message) {
-        if (logEndergenic) {
+        if (EndergenicConfiguration.logEndergenic) {
             String id = tickCounter + ": " + xCoord + "," + yCoord + "," + zCoord + ": ";
             RFTools.instance.logger.log(Level.DEBUG, id + message);
         }
@@ -247,8 +233,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 ForgeDirection opposite = dir.getOpposite();
                 if (handler.canConnectEnergy(opposite)) {
                     int rfToGive;
-                    if (rfOutput <= energyStored) {
-                        rfToGive = rfOutput;
+                    if (EndergenicConfiguration.rfOutput <= energyStored) {
+                        rfToGive = EndergenicConfiguration.rfOutput;
                     } else {
                         rfToGive = energyStored;
                     }
@@ -282,7 +268,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void discardPearl() {
-        spawnParticles("smoke", badParticleCount);
+        spawnParticles("smoke", EndergenicConfiguration.badParticleCount);
         markDirty();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
@@ -370,7 +356,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             log("Receive Pearl: pearl arrives at tick " + chargingMode + ", age=" + age + ", RF=" + rf);
             modifyEnergyStored(rf);
 
-            spawnParticles("portal", goodParticleCount);
+            spawnParticles("portal", EndergenicConfiguration.goodParticleCount);
 
             chargingMode = CHARGE_HOLDING;
             currentAge = age;
