@@ -244,14 +244,20 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         return severity;
     }
 
-    private void applyBadEffectIfNeeded(int severity) {
+    private boolean applyBadEffectIfNeeded(int severity) {
         severity += calculateSeverity();
         if (severity > 10) {
             severity = 10;
         }
+        if (severity <= 0) {
+            return false;
+        }
+
+        if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
+            worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_error", TeleportConfiguration.teleportErrorVolume, 1.0f);
+        }
+
         switch (severity) {
-            case 0:
-                break;
             case 2:
                 teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
                 break;
@@ -292,6 +298,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 teleportingPlayer.attackEntityFrom(DamageSource.generic, 3.0f);
                 break;
         }
+        return true;
     }
 
 
@@ -425,13 +432,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         Coordinate c = teleportDestination.getCoordinate();
         RFTools.message(teleportingPlayer, "Whoosh!");
-        if (TeleportConfiguration.teleportVolume >= 0.01) {
-            worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
-        }
 
         teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
         int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
-        applyBadEffectIfNeeded(severity);
+        if (!applyBadEffectIfNeeded(severity)) {
+            if (TeleportConfiguration.teleportVolume >= 0.01) {
+                worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
+            }
+        }
         teleportingPlayer = null;
     }
 

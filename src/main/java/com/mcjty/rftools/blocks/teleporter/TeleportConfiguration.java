@@ -34,6 +34,7 @@ public class TeleportConfiguration {
 
     // Base volume for the teleporting sound (whoosh!)
     public static float teleportVolume = 1.0f;
+    public static float teleportErrorVolume = 1.0f;
 
     public static void init(Configuration cfg) {
         TRANSMITTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", TRANSMITTER_MAXENERGY,
@@ -84,5 +85,7 @@ public class TeleportConfiguration {
 
         teleportVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleport", teleportVolume,
                 "The volume for the teleporting sound (1.0 is default)").getDouble();
+        teleportErrorVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleportError", teleportErrorVolume,
+                "The volume for the error sound when teleportation fails (1.0 is default)").getDouble();
     }
 }

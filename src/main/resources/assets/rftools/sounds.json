@@ -1,3 +1,4 @@
 {
-    "teleport_whoosh" : {"category": "block", "sounds": ["teleport_whoosh"]}
+    "teleport_whoosh" : {"category": "block", "sounds": ["teleport_whoosh"]},
+    "teleport_error" : {"category": "block", "sounds": ["teleport_error"]}
 }
