@@ -233,7 +233,6 @@ public class GuiCrafter extends GuiContainer {
             return;
         }
 
-        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
         InventoryCrafting inv = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -307,10 +306,8 @@ public class GuiCrafter extends GuiContainer {
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
         if (matches == null) {
             return oldStack == null;
-        } else if (oldStack == null) {
-            return false;
         } else {
-            return matches.isItemEqual(oldStack);
+            return oldStack != null && matches.isItemEqual(oldStack);
         }
     }
 

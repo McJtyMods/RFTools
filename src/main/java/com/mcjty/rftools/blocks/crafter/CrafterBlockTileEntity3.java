@@ -314,8 +314,6 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
         if (energyConsumed) {
             extractEnergy(ForgeDirection.DOWN, CrafterConfiguration.rfPerOperation, false);
-        } else {
-            return;
         }
     }
 

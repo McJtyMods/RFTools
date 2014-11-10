@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiRFMonitor extends GuiScreen {
-    private RFMonitorBlock monitorBlock;
     private RFMonitorBlockTileEntity monitorBlockTileEntity;
 
     private Window window;
@@ -40,14 +39,7 @@ public class GuiRFMonitor extends GuiScreen {
     public static List<Coordinate> fromServer_clientAdjacentBlocks = null;
 
 
-    /** The X size of the window in pixels. */
-    private int xSize = 256;
-    /** The Y size of the window in pixels. */
-    private int ySize = 180;
-
-
-    public GuiRFMonitor(RFMonitorBlock monitorBlock, RFMonitorBlockTileEntity monitorBlockTileEntity) {
-        this.monitorBlock = monitorBlock;
+    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity) {
         this.monitorBlockTileEntity = monitorBlockTileEntity;
     }
 
@@ -59,8 +51,12 @@ public class GuiRFMonitor extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
+
+        int xSize = 256;
+        int ySize = 180;
+
+        int k = (this.width - xSize) / 2;
+        int l = (this.height - ySize) / 2;
 
         list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override

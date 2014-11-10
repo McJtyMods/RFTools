@@ -132,7 +132,7 @@ public class GuiSequencer extends GuiScreen {
 
     private void setDelay() {
         String d = speedField.getText();
-        int delay = 1;
+        int delay;
         try {
             delay = Integer.parseInt(d);
         } catch (NumberFormatException e) {

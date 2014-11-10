@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.shield;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.world.IBlockAccess;
 
 public class ShieldBlockNOpaquePass1 extends AbstractShieldBlock {
 

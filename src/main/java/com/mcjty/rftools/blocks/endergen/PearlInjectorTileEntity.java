@@ -73,13 +73,10 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
                 return;
             }
             int mode = endergen.getChargingMode();
-            if (mode == EndergenicTileEntity.CHARGE_HOLDING) {
-                // The endergenic is already holding a pearl. This one is lost.
-                return;
-            } else {
+            // If the endergenic is already holding a pearl then this one is lost.
+            if (mode != EndergenicTileEntity.CHARGE_HOLDING) {
                 // It can accept a pearl.
                 endergen.firePearlFromInjector();
-                return;
             }
         }
     }

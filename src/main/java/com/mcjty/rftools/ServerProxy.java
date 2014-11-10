@@ -4,9 +4,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-/**
- * Created by jorrit on 18/07/14.
- */
 public class ServerProxy extends CommonProxy {
 
     @Override

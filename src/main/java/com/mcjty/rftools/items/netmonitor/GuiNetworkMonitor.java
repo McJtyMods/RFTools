@@ -1,10 +1,10 @@
 package com.mcjty.rftools.items.netmonitor;
 
+import com.mcjty.gui.Window;
 import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.widgets.*;
-import com.mcjty.gui.Window;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.BlockInfo;
@@ -12,12 +12,14 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GuiNetworkMonitor extends GuiScreen {
     // A copy of the connected blocks we're currently showing
@@ -99,7 +101,7 @@ public class GuiNetworkMonitor extends GuiScreen {
         Coordinate c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime);
         RFTools.message(mc.thePlayer, "The block is now hilighted");
-        mc.getMinecraft().thePlayer.closeScreen();
+        Minecraft.getMinecraft().thePlayer.closeScreen();
     }
 
     private void refreshList() {
@@ -145,7 +147,7 @@ public class GuiNetworkMonitor extends GuiScreen {
             int color = getTextColor(blockInfo);
 
             int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
-            String displayName = blockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
+            String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 

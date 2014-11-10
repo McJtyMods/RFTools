@@ -9,7 +9,7 @@ public class PearlInjectorContainerFactory extends ContainerFactory {
     public static final int SLOT_BUFFER = 0;
     public static final int BUFFER_SIZE = (9*2);
     public static final int SLOT_PLAYERINV = SLOT_BUFFER + BUFFER_SIZE;
-    public static final int SLOT_PLAYERHOTBAR = SLOT_PLAYERINV + 3*9;
+//    public static final int SLOT_PLAYERHOTBAR = SLOT_PLAYERINV + 3*9;
 
     private static PearlInjectorContainerFactory instance = null;
 

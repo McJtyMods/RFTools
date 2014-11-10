@@ -46,8 +46,7 @@ public class BlockInfo {
             System.out.println("itemStacks.get(0).getDisplayName() = " + itemStacks.get(0).getDisplayName());
         }
 
-        String displayName = getReadableName(descriptiveObject, metadata);
-        return displayName;
+        return getReadableName(descriptiveObject, metadata);
     }
 
     public static String getReadableName(Object object, int metadata) {

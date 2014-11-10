@@ -5,12 +5,9 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class CrafterBlock extends GenericContainerBlock {
     private String frontName;

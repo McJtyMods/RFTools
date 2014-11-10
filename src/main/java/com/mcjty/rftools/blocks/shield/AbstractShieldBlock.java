@@ -20,9 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
@@ -70,7 +68,6 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 if (blocked) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
                 }
-                return;
             }
         }
     }
@@ -111,7 +108,6 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 // Items should be able to pass through. We just move the entity to below this block.
                 entity.setPosition(entity.posX, entity.posY-1, entity.posZ);
             }
-            return;
         }
 
         // Possibly check for damage.

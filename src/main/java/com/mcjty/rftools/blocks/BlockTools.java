@@ -92,7 +92,7 @@ public class BlockTools {
         return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
     }
 
-    public static ForgeDirection determineOrientationHoriz(int x, int y, int z, EntityLivingBase entityLivingBase) {
+    public static ForgeDirection determineOrientationHoriz(EntityLivingBase entityLivingBase) {
         int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
     }

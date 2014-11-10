@@ -104,8 +104,7 @@ public class GuiProxy implements IGuiHandler {
 
             if (block != null && block instanceof  RFMonitorBlock && te instanceof RFMonitorBlockTileEntity) {
                 RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
-                RFMonitorBlock monitorBlock = (RFMonitorBlock) block;
-                return new GuiRFMonitor(monitorBlock, monitorBlockTileEntity);
+                return new GuiRFMonitor(monitorBlockTileEntity);
             }
         } else if (guiid == RFTools.GUI_SHIELD) {
             TileEntity te = world.getTileEntity(x, y, z);
@@ -126,7 +125,7 @@ public class GuiProxy implements IGuiHandler {
             if (te instanceof PearlInjectorTileEntity) {
                 PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity) te;
                 PearlInjectorContainer pearlInjectorContainer = new PearlInjectorContainer(entityPlayer, pearlInjectorTileEntity);
-                return new GuiPearlInjector(pearlInjectorTileEntity, pearlInjectorContainer);
+                return new GuiPearlInjector(pearlInjectorContainer);
             }
         } else if (guiid == RFTools.GUI_STORAGE_SCANNER) {
             TileEntity te = world.getTileEntity(x, y, z);

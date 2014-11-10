@@ -7,9 +7,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This packet is used (typically by PacketRequestIntegerFromServer) to send back an integer to the client.
  */

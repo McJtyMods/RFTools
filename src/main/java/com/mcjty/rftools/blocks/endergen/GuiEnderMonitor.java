@@ -8,12 +8,10 @@ import com.mcjty.gui.widgets.ChoiceLabel;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.Widget;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -26,8 +24,6 @@ public class GuiEnderMonitor extends GuiScreen {
     private ChoiceLabel mode;
 
     private final EnderMonitorTileEntity enderMonitorTileEntity;
-
-    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity) {
         this.enderMonitorTileEntity = enderMonitorTileEntity;

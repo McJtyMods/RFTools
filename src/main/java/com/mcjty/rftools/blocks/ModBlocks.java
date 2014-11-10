@@ -58,7 +58,7 @@ public final class ModBlocks {
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
-    public static final void init() {
+    public static void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
         monitorBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(monitorBlock, RFMonitorItemBlock.class, "rfMonitorBlock");

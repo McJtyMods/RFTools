@@ -5,8 +5,6 @@ import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
 
     /**
      * Callback from the endergenic in case something happens.
-     * @param mode
+     * @param mode is the new mode to set
      */
     public void fireFromEndergenic(EnderMonitorMode mode) {
         if (this.mode != mode) {

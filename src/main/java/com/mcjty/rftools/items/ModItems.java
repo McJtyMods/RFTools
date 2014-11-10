@@ -13,7 +13,7 @@ public final class ModItems {
     public static RFToolsManualItem rfToolsManualItem;
     public static DevelopersDelightItem developersDelightItem;
 
-    public static final void init() {
+    public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
         networkMonitorItem.setUnlocalizedName("NetworkMonitor");
         networkMonitorItem.setCreativeTab(RFTools.tabRfTools);

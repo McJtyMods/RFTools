@@ -187,7 +187,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     /**
      * Something happens, we need to notify all ender monitors.
-     * @param mode
+     * @param mode is the new mode
      */
     private void fireMonitors(EnderMonitorMode mode) {
         boolean cleanup = false;
@@ -278,7 +278,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     /**
      * Get the current destination. This function checks first if that destination is
      * still valid and if not it is reset to null (i.e. the destination was removed).
-     * @return
+     * @return the destination TE or null if there is no valid one
      */
     private EndergenicTileEntity getDestinationTE() {
         if (destination == null) {
@@ -423,8 +423,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     /**
      * Calculate the distance in ticks between this endergenic generator and the given coordinate.
-     * @param destination
-     * @return
+     * @param destination is the coordinate of the new destination
+     * @return is the distance in ticks
      */
     public int calculateDistance(Coordinate destination) {
         double d = Vec3.createVectorHelper(destination.getX(), destination.getY(), destination.getZ()).distanceTo(

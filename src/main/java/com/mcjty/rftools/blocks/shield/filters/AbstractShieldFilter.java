@@ -48,7 +48,7 @@ public abstract class AbstractShieldFilter implements ShieldFilter {
     }
 
     public static ShieldFilter createFilter(String type) {
-        ShieldFilter filter = null;
+        ShieldFilter filter;
         // @todo: improve this if in a nicer manner
         if ("animal".equals(type)) {
             filter = new AnimalFilter();

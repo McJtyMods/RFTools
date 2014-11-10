@@ -8,12 +8,10 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.gui.widgets.Widget;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -27,8 +25,6 @@ public class GuiTimer extends GuiScreen {
     private TextField speedField;
 
     private final TimerTileEntity timerTileEntity;
-
-    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiTimer(TimerTileEntity timerTileEntity) {
         this.timerTileEntity = timerTileEntity;
@@ -64,7 +60,7 @@ public class GuiTimer extends GuiScreen {
 
     private void setDelay() {
         String d = speedField.getText();
-        int delay = 1;
+        int delay;
         try {
             delay = Integer.parseInt(d);
         } catch (NumberFormatException e) {

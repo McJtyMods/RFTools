@@ -145,7 +145,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
         if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
             Block block = Block.getBlockFromItem(stack.getItem());
-            camoId = block.getIdFromBlock(block);
+            camoId = Block.getIdFromBlock(block);
             meta = 0;       // @@@ @Todo not right! Mycelium instead of grass!
         }
         return new int[] { camoId, meta };
@@ -231,18 +231,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public boolean isShieldComposed() {
         return shieldComposed;
-    }
-
-    public boolean isShieldActive() {
-        return shieldActive;
-    }
-
-    public int getShieldSize() {
-        return shieldBlocks.size();
-    }
-      
-    public List<Coordinate> getShieldBlocks() {
-        return shieldBlocks;
     }
 
     @Override
@@ -357,10 +345,10 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     /**
      * Find all template blocks recursively.
-     * @param coordinateSet
-     * @param x
-     * @param y
-     * @param z
+     * @param coordinateSet the set with coordinates to update during the search
+     * @param x current block
+     * @param y current block
+     * @param z current block
      */
     private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
         if (coordinateSet.size() >= ShieldConfiguration.maxShieldSize) {
@@ -454,8 +442,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = ShieldContainerFactory.SLOT_BUFFER ; i < stacks.length ; i++) {
-            ItemStack stack = stacks[i];
+        for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);

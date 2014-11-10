@@ -11,7 +11,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public final class ModRenderers {
 
-    public static final void init() {
+    public static void init() {
         TeleportBeamBlock.RENDERID_BEAM = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(TeleportBeamBlock.RENDERID_BEAM, new BeamRenderer());
 

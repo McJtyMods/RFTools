@@ -108,12 +108,7 @@ public class SequencerTileEntity extends GenericTileEntity {
             return;
         }
 
-        boolean newout;
-        if (currentStep == -1) {
-            newout = false;
-        } else {
-            newout = getCycleBit(currentStep);
-        }
+        boolean newout = currentStep != -1 && getCycleBit(currentStep);
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
@@ -125,7 +120,7 @@ public class SequencerTileEntity extends GenericTileEntity {
 
     /**
      * Handle a cycle step.
-     * @param redstone
+     * @param redstone true if there is a redstone signal
      */
     private void handleCycle(boolean redstone) {
         switch (mode) {

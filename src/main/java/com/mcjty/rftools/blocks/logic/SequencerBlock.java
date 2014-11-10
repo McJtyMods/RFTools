@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.IIcon;
 
 public class SequencerBlock extends LogicSlabBlock {
 

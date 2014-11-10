@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.endergen;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

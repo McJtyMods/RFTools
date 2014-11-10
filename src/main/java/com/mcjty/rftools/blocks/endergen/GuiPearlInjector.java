@@ -17,13 +17,10 @@ public class GuiPearlInjector  extends GuiContainer {
 
     private Window window;
 
-    private final PearlInjectorTileEntity pearlInjectorTileEntity;
-
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/pearlinjector.png");
 
-    public GuiPearlInjector(PearlInjectorTileEntity pearlInjectorTileEntity, PearlInjectorContainer container) {
+    public GuiPearlInjector(PearlInjectorContainer container) {
         super(container);
-        this.pearlInjectorTileEntity = pearlInjectorTileEntity;
 
         xSize = PEARLINJECTOR_WIDTH;
         ySize = PEARLINJECTOR_HEIGHT;

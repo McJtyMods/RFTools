@@ -133,7 +133,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         if (horizRotation) {
-            ForgeDirection dir = BlockTools.determineOrientationHoriz(x, y, z, entityLivingBase);
+            ForgeDirection dir = BlockTools.determineOrientationHoriz(entityLivingBase);
             int meta = world.getBlockMetadata(x, y, z);
             int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
             meta = BlockTools.setRedstoneSignalIn(meta, power > 0);

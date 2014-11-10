@@ -12,8 +12,8 @@ public class CrafterContainerFactory extends ContainerFactory {
     public static final int BUFFER_SIZE = (13*2);
     public static final int SLOT_BUFFEROUT = SLOT_BUFFER + BUFFER_SIZE;
     public static final int BUFFEROUT_SIZE = 4;
-    public static final int SLOT_PLAYERINV = SLOT_BUFFEROUT + BUFFEROUT_SIZE;
-    public static final int SLOT_PLAYERHOTBAR = SLOT_PLAYERINV + 3*9;
+//    public static final int SLOT_PLAYERINV = SLOT_BUFFEROUT + BUFFEROUT_SIZE;
+//    public static final int SLOT_PLAYERHOTBAR = SLOT_PLAYERINV + 3*9;
 
     private static CrafterContainerFactory instance = null;
 
