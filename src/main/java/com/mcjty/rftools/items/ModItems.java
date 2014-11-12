@@ -2,6 +2,8 @@ package com.mcjty.rftools.items;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
+import com.mcjty.rftools.items.dimlets.DimletItems;
+import com.mcjty.rftools.items.dimlets.UnknownDimlet;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
@@ -12,6 +14,7 @@ public final class ModItems {
     public static TeleportProbeItem teleportProbeItem;
     public static RFToolsManualItem rfToolsManualItem;
     public static DevelopersDelightItem developersDelightItem;
+    public static UnknownDimlet unknownDimlet;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -37,5 +40,13 @@ public final class ModItems {
         developersDelightItem.setCreativeTab(RFTools.tabRfTools);
         developersDelightItem.setTextureName(RFTools.MODID + ":developersDelightItem");
         GameRegistry.registerItem(developersDelightItem, "developersDelightItem");
+
+        unknownDimlet = new UnknownDimlet();
+        unknownDimlet.setUnlocalizedName("UnknownDimlet");
+        unknownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
+        unknownDimlet.setTextureName(RFTools.MODID + ":unknownDimletItem");
+        GameRegistry.registerItem(unknownDimlet, "unknownDimlet");
+
+        DimletItems.init();
     }
 }

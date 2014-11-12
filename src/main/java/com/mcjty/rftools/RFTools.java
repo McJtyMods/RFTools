@@ -43,6 +43,13 @@ public class RFTools {
             return ModItems.rfToolsManualItem;
         }
     };
+    public static CreativeTabs tabRfToolsDimlets = new CreativeTabs("RfToolsDimlets") {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public Item getTabIconItem() {
+            return ModItems.unknownDimlet;
+        }
+    };
 
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
