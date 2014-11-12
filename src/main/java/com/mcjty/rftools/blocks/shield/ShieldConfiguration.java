@@ -12,6 +12,10 @@ public class ShieldConfiguration {
     public static int rfCamo = 2;
     // This amount is added for a shield block.
     public static int rfShield = 2;
+    // The amount of RF to use per entity for a single damage spike.
+    public static int rfDamage = 1000;
+    // The amount of damage to apply to a given entity.
+    public static float damage = 5.0f;
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 256;
 
@@ -28,5 +32,9 @@ public class ShieldConfiguration {
                 "RF/tick for every block added in case of camo mode").getInt();
         rfShield = cfg.get(CATEGORY_SHIELD, "shieldRfShield", rfShield,
                 "RF/tick for every block added in case of shield mode").getInt();
+        rfDamage = cfg.get(CATEGORY_SHIELD, "shieldRfDamage", rfDamage,
+                "The amount of RF to consume for a single spike of damage for one entity").getInt();
+        damage = (float) cfg.get(CATEGORY_SHIELD, "shieldDamage", damage,
+                "The amount of damage to do for a single spike on one entity").getDouble();
     }
 }

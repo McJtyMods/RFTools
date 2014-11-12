@@ -81,7 +81,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
             if (shieldTileEntity != null) {
                 List<ShieldFilter> filters = shieldTileEntity.getFilters();
                 for (ShieldFilter filter : filters) {
-                    if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
+                    if ((filter.getAction() & ShieldFilter.ACTION_SOLID) != 0) {
                         if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
                             PlayerFilter playerFilter = (PlayerFilter) filter;
                             String name = playerFilter.getName();

@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public interface ShieldFilter extends ByteBufConverter {
     public static final int ACTION_PASS = 0;            // Entities that match this filter can pass
     public static final int ACTION_SOLID = 1;           // Entities that match this filter are blocked
-    public static final int ACTION_DAMAGE = 2;          // Entities that match this filter get damage
+    public static final int ACTION_DAMAGE = 2;          // Entities that match this filter get damage (can be combined with solid)
 
     /// Return true if this entity matches the filter.
     boolean match(Entity entity);

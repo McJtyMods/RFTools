@@ -34,6 +34,7 @@ public class GuiShield extends GuiContainer {
     public static final String ACTION_PASS = "Pass";
     public static final String ACTION_SOLID = "Solid";
     public static final String ACTION_DAMAGE = "Damage";
+    public static final String ACTION_SOLIDDAMAGE = "SolDmg";
 
     private Window window;
     private EnergyBar energyBar;
@@ -148,16 +149,16 @@ public class GuiShield extends GuiContainer {
         int selected = filterList.getSelected();
         if (selected != -1) {
             ShieldFilter shieldFilter = filters.get(selected);
-            switch (shieldFilter.getAction()) {
-                case ShieldFilter.ACTION_SOLID:
-                    actionOptions.setChoice(ACTION_SOLID);
-                    break;
-                case ShieldFilter.ACTION_PASS:
-                    actionOptions.setChoice(ACTION_PASS);
-                    break;
-                case ShieldFilter.ACTION_DAMAGE:
-                    actionOptions.setChoice(ACTION_DAMAGE);
-                    break;
+            boolean solid = (shieldFilter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+            boolean damage = (shieldFilter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0;
+            if (solid && damage) {
+                actionOptions.setChoice(ACTION_SOLIDDAMAGE);
+            } else if (solid) {
+                actionOptions.setChoice(ACTION_SOLID);
+            } else if (damage) {
+                actionOptions.setChoice(ACTION_DAMAGE);
+            } else {
+                actionOptions.setChoice(ACTION_PASS);
             }
             String type = shieldFilter.getFilterName();
             if (DefaultFilter.DEFAULT.equals(type)) {
@@ -212,14 +213,18 @@ public class GuiShield extends GuiContainer {
                 n = filter.getFilterName();
             }
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(n).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setText(n).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(85));
             String actionName;
-            if (filter.getAction() == ShieldFilter.ACTION_PASS) {
-                actionName = ACTION_PASS;
-            } else if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
+            boolean solid = (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+            boolean damage = (filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0;
+            if (solid && damage) {
+                actionName = ACTION_SOLIDDAMAGE;
+            } else if (solid) {
                 actionName = ACTION_SOLID;
-            } else {
+            } else if (damage) {
                 actionName = ACTION_DAMAGE;
+            } else {
+                actionName = ACTION_PASS;
             }
             panel.addChild(new Label(mc, this).setText(actionName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
             filterList.addChild(panel);
@@ -249,6 +254,8 @@ public class GuiShield extends GuiContainer {
             action = ShieldFilter.ACTION_PASS;
         } else if (ACTION_SOLID.equals(actionName)) {
             action = ShieldFilter.ACTION_SOLID;
+        } else if (ACTION_SOLIDDAMAGE.equals(actionName)) {
+            action = ShieldFilter.ACTION_DAMAGE + ShieldFilter.ACTION_SOLID;
         } else {
             action = ShieldFilter.ACTION_DAMAGE;
         }
@@ -327,10 +334,11 @@ public class GuiShield extends GuiContainer {
 
     private void initActionOptions() {
         actionOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 12, 80, 14));
-        actionOptions.addChoices(ACTION_PASS, ACTION_SOLID, ACTION_DAMAGE);
+        actionOptions.addChoices(ACTION_PASS, ACTION_SOLID, ACTION_DAMAGE, ACTION_SOLIDDAMAGE);
         actionOptions.setChoiceTooltip(ACTION_PASS, "Entity that matches this filter", "can pass through");
         actionOptions.setChoiceTooltip(ACTION_SOLID, "Entity that matches this filter", "cannot pass");
-        actionOptions.setChoiceTooltip(ACTION_DAMAGE, "Entity that matches this filter", "gets damage");
+        actionOptions.setChoiceTooltip(ACTION_DAMAGE, "Entity that matches this filter", "can pass but gets damage");
+        actionOptions.setChoiceTooltip(ACTION_SOLIDDAMAGE, "Entity that matches this filter", "cannot pass and gets damage");
     }
 
     private void initTypeOptions() {

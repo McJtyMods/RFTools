@@ -9,6 +9,7 @@ import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -198,10 +200,28 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return ModBlocks.solidShieldBlock;
     }
 
+    private int calculateDamageBits() {
+        int bits = 0;
+        for (ShieldFilter filter : filters) {
+            if ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0) {
+                if (ItemFilter.ITEM.equals(filter.getFilterName())) {
+                    bits |= AbstractShieldBlock.META_ITEMS;
+                } else if (AnimalFilter.ANIMAL.equals(filter.getFilterName())) {
+                    bits |= AbstractShieldBlock.META_PASSIVE;
+                } else if (HostileFilter.HOSTILE.equals(filter.getFilterName())) {
+                    bits |= AbstractShieldBlock.META_HOSTILE;
+                } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
+                    bits |= AbstractShieldBlock.META_PLAYERS;
+                }
+            }
+        }
+        return bits;
+    }
+
     private int calculateShieldMeta() {
         int meta = 0;
         for (ShieldFilter filter : filters) {
-            if (filter.getAction() == ShieldFilter.ACTION_SOLID) {
+            if ((filter.getAction() & ShieldFilter.ACTION_SOLID) != 0) {
                 if (ItemFilter.ITEM.equals(filter.getFilterName())) {
                     meta |= AbstractShieldBlock.META_ITEMS;
                 } else if (AnimalFilter.ANIMAL.equals(filter.getFilterName())) {
@@ -231,6 +251,15 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public boolean isShieldComposed() {
         return shieldComposed;
+    }
+
+    public void applyDamageToEntity(Entity entity) {
+        if (getEnergyStored(ForgeDirection.DOWN) < ShieldConfiguration.rfDamage) {
+            // Not enough RF to do damage.
+            return;
+        }
+        extractEnergy(ForgeDirection.DOWN, ShieldConfiguration.rfDamage, false);
+        entity.attackEntityFrom(DamageSource.generic, ShieldConfiguration.damage);
     }
 
     @Override
@@ -310,6 +339,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         int[] camoId = calculateCamoId();
         int meta = calculateShieldMeta();
         Block block = calculateShieldBlock();
+        int damageBits = calculateDamageBits();
         for (Coordinate c : shieldBlocks) {
             if (Blocks.air.equals(block)) {
                 worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
@@ -319,6 +349,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                 if (te instanceof ShieldBlockTileEntity) {
                     ((ShieldBlockTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
                     ((ShieldBlockTileEntity)te).setShieldBlock(thisCoordinate);
+                    ((ShieldBlockTileEntity)te).setDamageBits(damageBits);
                 }
             }
         }
