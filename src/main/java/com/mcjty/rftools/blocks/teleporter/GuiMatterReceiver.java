@@ -58,7 +58,6 @@ public class GuiMatterReceiver extends GuiContainer {
     public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer<MatterReceiverTileEntity> container) {
         super(container);
         this.matterReceiverTileEntity = matterReceiverTileEntity;
-        matterReceiverTileEntity.setOldRF(-1);
         matterReceiverTileEntity.setCurrentRF(matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;
@@ -135,6 +134,7 @@ public class GuiMatterReceiver extends GuiContainer {
 
         listDirty = 0;
         requestPlayers();
+        matterReceiverTileEntity.requestRfFromServer();
     }
 
     private void setReceiverName(String text) {
@@ -243,6 +243,7 @@ public class GuiMatterReceiver extends GuiContainer {
         window.draw();
         int currentRF = matterReceiverTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        matterReceiverTileEntity.requestRfFromServer();
     }
 
     private void enableButtons() {

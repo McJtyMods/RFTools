@@ -66,7 +66,6 @@ public class GuiShield extends GuiContainer {
     public GuiShield(ShieldTileEntity shieldTileEntity, ShieldContainer container) {
         super(container);
         this.shieldTileEntity = shieldTileEntity;
-        shieldTileEntity.setOldRF(-1);
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SHIELD_WIDTH;
@@ -143,6 +142,7 @@ public class GuiShield extends GuiContainer {
 
         listDirty = 0;
         requestFilters();
+        shieldTileEntity.requestRfFromServer();
     }
 
     private void selectFilter() {
@@ -396,6 +396,7 @@ public class GuiShield extends GuiContainer {
         window.draw();
         int currentRF = shieldTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        shieldTileEntity.requestRfFromServer();
     }
 
     @Override

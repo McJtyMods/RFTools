@@ -41,7 +41,6 @@ public class GuiEndergenic extends GuiContainer {
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer<EndergenicTileEntity> container) {
         super(container);
         this.endergenicTileEntity = endergenicTileEntity;
-        endergenicTileEntity.setOldRF(-1);
         endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(ForgeDirection.DOWN));
     }
 
@@ -79,6 +78,7 @@ public class GuiEndergenic extends GuiContainer {
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(k, l, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new com.mcjty.gui.Window(this, toplevel);
+        endergenicTileEntity.requestRfFromServer();
     }
 
     @Override
@@ -114,6 +114,7 @@ public class GuiEndergenic extends GuiContainer {
         window.draw();
         int currentRF = endergenicTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        endergenicTileEntity.requestRfFromServer();
 
         checkStats();
 

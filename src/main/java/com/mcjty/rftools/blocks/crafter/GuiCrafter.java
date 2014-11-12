@@ -51,7 +51,6 @@ public class GuiCrafter extends GuiContainer {
     public GuiCrafter(CrafterBlockTileEntity3 crafterBlockTileEntity, CrafterContainer container) {
         super(container);
         this.crafterBlockTileEntity = crafterBlockTileEntity;
-        crafterBlockTileEntity.setOldRF(-1);
         crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CRAFTER_WIDTH;
@@ -93,6 +92,7 @@ public class GuiCrafter extends GuiContainer {
         sendChangeToServer(-1, null, null, false, false);
 
         window = new Window(this, toplevel);
+        crafterBlockTileEntity.requestRfFromServer();
     }
 
     private Slider initRecipeList() {
@@ -340,6 +340,7 @@ public class GuiCrafter extends GuiContainer {
         window.draw();
         int currentRF = crafterBlockTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        crafterBlockTileEntity.requestRfFromServer();
     }
 
     @Override

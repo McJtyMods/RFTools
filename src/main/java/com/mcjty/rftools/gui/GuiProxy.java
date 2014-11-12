@@ -57,32 +57,27 @@ public class GuiProxy implements IGuiHandler {
         } else if (guiid == RFTools.GUI_STORAGE_SCANNER) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof StorageScannerTileEntity) {
-                StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
-                return new EmptyContainer<StorageScannerTileEntity>(entityPlayer, storageScannerTileEntity);
+                return new EmptyContainer<StorageScannerTileEntity>(entityPlayer);
             }
         } else if (guiid == RFTools.GUI_MATTER_TRANSMITTER) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof MatterTransmitterTileEntity) {
-                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-                return new EmptyContainer<MatterTransmitterTileEntity>(entityPlayer, matterTransmitterTileEntity);
+                return new EmptyContainer<MatterTransmitterTileEntity>(entityPlayer);
             }
         } else if (guiid == RFTools.GUI_MATTER_RECEIVER) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof MatterReceiverTileEntity) {
-                MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-                return new EmptyContainer<MatterReceiverTileEntity>(entityPlayer, matterReceiverTileEntity);
+                return new EmptyContainer<MatterReceiverTileEntity>(entityPlayer);
             }
         } else if (guiid == RFTools.GUI_ENDERGENIC) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof EndergenicTileEntity) {
-                EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
-                return new EmptyContainer<EndergenicTileEntity>(entityPlayer, endergenicTileEntity);
+                return new EmptyContainer<EndergenicTileEntity>(entityPlayer);
             }
         } else if (guiid == RFTools.GUI_DIALING_DEVICE) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof DialingDeviceTileEntity) {
-                DialingDeviceTileEntity dialingDeviceTileEntity = (DialingDeviceTileEntity) te;
-                return new EmptyContainer<DialingDeviceTileEntity>(entityPlayer, dialingDeviceTileEntity);
+                return new EmptyContainer<DialingDeviceTileEntity>(entityPlayer);
             }
         }
         return null;
@@ -131,7 +126,7 @@ public class GuiProxy implements IGuiHandler {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof StorageScannerTileEntity) {
                 StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;
-                EmptyContainer<StorageScannerTileEntity> storageScannerContainer = new EmptyContainer<StorageScannerTileEntity>(entityPlayer, storageScannerTileEntity);
+                EmptyContainer<StorageScannerTileEntity> storageScannerContainer = new EmptyContainer<StorageScannerTileEntity>(entityPlayer);
                 return new GuiStorageScanner(storageScannerTileEntity, storageScannerContainer);
             }
         } else if (guiid == RFTools.GUI_MATTER_TRANSMITTER) {
@@ -139,7 +134,7 @@ public class GuiProxy implements IGuiHandler {
 
             if (te instanceof MatterTransmitterTileEntity) {
                 MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-                EmptyContainer<MatterTransmitterTileEntity> matterTransmitterContainer = new EmptyContainer<MatterTransmitterTileEntity>(entityPlayer, matterTransmitterTileEntity);
+                EmptyContainer<MatterTransmitterTileEntity> matterTransmitterContainer = new EmptyContainer<MatterTransmitterTileEntity>(entityPlayer);
                 return new GuiMatterTransmitter(matterTransmitterTileEntity, matterTransmitterContainer);
             }
         } else if (guiid == RFTools.GUI_MATTER_RECEIVER) {
@@ -147,7 +142,7 @@ public class GuiProxy implements IGuiHandler {
 
             if (te instanceof MatterReceiverTileEntity) {
                 MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-                EmptyContainer<MatterReceiverTileEntity> matterReceiverContainer = new EmptyContainer<MatterReceiverTileEntity>(entityPlayer, matterReceiverTileEntity);
+                EmptyContainer<MatterReceiverTileEntity> matterReceiverContainer = new EmptyContainer<MatterReceiverTileEntity>(entityPlayer);
                 return new GuiMatterReceiver(matterReceiverTileEntity, matterReceiverContainer);
             }
         } else if (guiid == RFTools.GUI_ENDERGENIC) {
@@ -156,7 +151,7 @@ public class GuiProxy implements IGuiHandler {
 
             if (block != null && block instanceof EndergenicBlock && te instanceof EndergenicTileEntity) {
                 EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
-                EmptyContainer<EndergenicTileEntity> endergenicContainer = new EmptyContainer<EndergenicTileEntity>(entityPlayer, endergenicTileEntity);
+                EmptyContainer<EndergenicTileEntity> endergenicContainer = new EmptyContainer<EndergenicTileEntity>(entityPlayer);
                 return new GuiEndergenic(endergenicTileEntity, endergenicContainer);
             }
         } else if (guiid == RFTools.GUI_RELAY) {
@@ -196,7 +191,7 @@ public class GuiProxy implements IGuiHandler {
 
             if (te instanceof DialingDeviceTileEntity) {
                 DialingDeviceTileEntity dialingDeviceTileEntity = (DialingDeviceTileEntity) te;
-                EmptyContainer<DialingDeviceTileEntity> dialingDeviceContainer = new EmptyContainer<DialingDeviceTileEntity>(entityPlayer, dialingDeviceTileEntity);
+                EmptyContainer<DialingDeviceTileEntity> dialingDeviceContainer = new EmptyContainer<DialingDeviceTileEntity>(entityPlayer);
                 return new GuiDialingDevice(dialingDeviceTileEntity, dialingDeviceContainer);
             }
         }

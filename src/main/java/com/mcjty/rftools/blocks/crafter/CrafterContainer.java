@@ -1,14 +1,14 @@
 package com.mcjty.rftools.blocks.crafter;
 
-import com.mcjty.container.GenericEnergyHandlerContainer;
+import com.mcjty.container.GenericContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class CrafterContainer extends GenericEnergyHandlerContainer {
+public class CrafterContainer extends GenericContainer {
 
     public CrafterContainer(EntityPlayer player, CrafterBlockTileEntity3 containerInventory) {
-        super(CrafterContainerFactory.getInstance(), player, containerInventory);
+        super(CrafterContainerFactory.getInstance(), player);
         addInventory(CrafterContainerFactory.CONTAINER_INVENTORY, containerInventory);
         addInventory(CrafterContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

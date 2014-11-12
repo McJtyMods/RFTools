@@ -54,7 +54,6 @@ public class GuiStorageScanner extends GuiContainer {
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer<StorageScannerTileEntity> storageScannerContainer) {
         super(storageScannerContainer);
         this.storageScannerTileEntity = storageScannerTileEntity;
-        storageScannerTileEntity.setOldRF(-1);
         storageScannerTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = STORAGE_MONITOR_WIDTH;
@@ -142,6 +141,8 @@ public class GuiStorageScanner extends GuiContainer {
         window = new Window(this, toplevel);
 
         Keyboard.enableRepeatEvents(true);
+
+        storageScannerTileEntity.requestRfFromServer();
     }
 
     @Override
@@ -272,6 +273,7 @@ public class GuiStorageScanner extends GuiContainer {
         window.draw();
         int currentRF = storageScannerTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        storageScannerTileEntity.requestRfFromServer();
     }
 
     private void updateScanButton() {

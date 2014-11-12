@@ -58,7 +58,6 @@ public class GuiMatterTransmitter extends GuiContainer {
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer<MatterTransmitterTileEntity> container) {
         super(container);
         this.transmitterTileEntity = transmitterTileEntity;
-        transmitterTileEntity.setOldRF(-1);
         transmitterTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;
@@ -135,6 +134,7 @@ public class GuiMatterTransmitter extends GuiContainer {
 
         listDirty = 0;
         requestPlayers();
+        transmitterTileEntity.requestRfFromServer();
     }
 
     private void setTransmitterName(String text) {
@@ -238,6 +238,7 @@ public class GuiMatterTransmitter extends GuiContainer {
         window.draw();
         int currentRF = transmitterTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        transmitterTileEntity.requestRfFromServer();
     }
 
     private void enableButtons() {

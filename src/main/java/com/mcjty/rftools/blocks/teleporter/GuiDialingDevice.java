@@ -68,7 +68,6 @@ public class GuiDialingDevice extends GuiContainer {
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer<DialingDeviceTileEntity> container) {
         super(container);
         this.dialingDeviceTileEntity = dialingDeviceTileEntity;
-        dialingDeviceTileEntity.setOldRF(-1);
         dialingDeviceTileEntity.setCurrentRF(dialingDeviceTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = DIALER_WIDTH;
@@ -170,6 +169,7 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
+        dialingDeviceTileEntity.requestRfFromServer();
     }
 
     private void clearSelectedStatus() {
@@ -438,6 +438,7 @@ public class GuiDialingDevice extends GuiContainer {
         window.draw();
         int currentRF = dialingDeviceTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        dialingDeviceTileEntity.requestRfFromServer();
     }
 
     private void requestListsIfNeeded() {
