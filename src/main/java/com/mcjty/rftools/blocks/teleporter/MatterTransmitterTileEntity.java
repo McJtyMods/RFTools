@@ -425,6 +425,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private void performTeleport() {
+        // First check if the destination is still valid.
+        if (!TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination)) {
+            applyBadEffectIfNeeded(10);
+            RFTools.warn(teleportingPlayer, "Missing destination!");
+            clearTeleport(200);
+            return;
+        }
+
         int currentId = teleportingPlayer.worldObj.provider.dimensionId;
         if (currentId != teleportDestination.getDimension()) {
             MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());

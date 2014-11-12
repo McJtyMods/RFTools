@@ -46,6 +46,16 @@ public class TeleportDestinations extends WorldSavedData {
         return destinations.values();
     }
 
+    /**
+     * Check if the teleport destination is still valid.
+     * @param destionation
+     * @return
+     */
+    public boolean isDestinationValid(TeleportDestination destination) {
+        TeleportDestinationKey key = new TeleportDestinationKey(destination.getCoordinate(), destination.getDimension());
+        return destinations.containsKey(key);
+    }
+
     public void addDestination(Coordinate coordinate, int dimension) {
         TeleportDestinationKey key = new TeleportDestinationKey(coordinate, dimension);
         if (!destinations.containsKey(key)) {
