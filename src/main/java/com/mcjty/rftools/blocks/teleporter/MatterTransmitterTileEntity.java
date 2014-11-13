@@ -350,6 +350,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
     }
 
+    // Server side only
     private boolean checkReceiverStatus() {
         World w = DimensionManager.getProvider(teleportDestination.getDimension()).worldObj;
         Coordinate c = teleportDestination.getCoordinate();

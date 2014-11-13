@@ -1,6 +1,6 @@
 package com.mcjty.rftools.items.teleportprobe;
 
-import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
+import com.mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -27,7 +27,7 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
     public PacketAllReceiversReady onMessage(PacketGetAllReceivers message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
-        List<TeleportDestination> destinationList = new ArrayList<TeleportDestination> (destinations.getValidDestinations());
+        List<TeleportDestinationClientInfo> destinationList = new ArrayList<TeleportDestinationClientInfo> (destinations.getValidDestinations());
         return new PacketAllReceiversReady(destinationList);
     }
 

@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -42,8 +43,17 @@ public class TeleportDestinations extends WorldSavedData {
         return instance;
     }
 
-    public Collection<TeleportDestination> getValidDestinations() {
-        return destinations.values();
+
+    // Server side only
+    public Collection<TeleportDestinationClientInfo> getValidDestinations() {
+        List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
+        for (TeleportDestination destination : destinations.values()) {
+            TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
+            String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+            destinationClientInfo.setDimensionName(dimName);
+            result.add(destinationClientInfo);
+        }
+        return result;
     }
 
     /**

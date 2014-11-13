@@ -4,7 +4,7 @@ import com.mcjty.rftools.network.PacketRequestListFromServer;
 
 import java.util.List;
 
-public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDestination, PacketGetReceivers, PacketReceiversReady> {
+public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDestinationClientInfo, PacketGetReceivers, PacketReceiversReady> {
 
     public PacketGetReceivers() {
     }
@@ -14,7 +14,7 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
     }
 
     @Override
-    protected PacketReceiversReady createMessageToClient(int x, int y, int z, List<TeleportDestination> result) {
+    protected PacketReceiversReady createMessageToClient(int x, int y, int z, List<TeleportDestinationClientInfo> result) {
         return new PacketReceiversReady(x, y, z, DialingDeviceTileEntity.CLIENTCMD_GETRECEIVERS, result);
     }
 }

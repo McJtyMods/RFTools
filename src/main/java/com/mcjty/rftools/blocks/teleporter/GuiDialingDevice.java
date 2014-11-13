@@ -20,7 +20,6 @@ import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -53,11 +52,11 @@ public class GuiDialingDevice extends GuiContainer {
 
     public static int fromServer_receiverStatus = -1;
     public static int fromServer_dialResult = -1;
-    public static List<TeleportDestination> fromServer_receivers = null;
+    public static List<TeleportDestinationClientInfo> fromServer_receivers = null;
     public static List<TransmitterInfo> fromServer_transmitters = null;
 
     // A copy of the receivers we're currently showing.
-    private List<TeleportDestination> receivers = null;
+    private List<TeleportDestinationClientInfo> receivers = null;
 
     // A copy of the transmitters we're currently showing.
     private List<TransmitterInfo> transmitters = null;
@@ -89,34 +88,8 @@ public class GuiDialingDevice extends GuiContainer {
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
 
-        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(76).addSelectionEvent(new DefaultSelectionEvent() {
-            @Override
-            public void select(Widget parent, int index) {
-                clearSelectedStatus();
-                selectReceiverFromTransmitter();
-            }
-
-            @Override
-            public void doubleClick(Widget parent, int index) {
-                hilightSelectedTransmitter(index);
-            }
-        });
-        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(transmitterList);
-        Panel transmitterPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(transmitterList).addChild(transmitterSlider);
-
-        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
-            @Override
-            public void select(Widget parent, int index) {
-                clearSelectedStatus();
-            }
-
-            @Override
-            public void doubleClick(Widget parent, int index) {
-                hilightSelectedReceiver(index);
-            }
-        });
-        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(receiverList);
-        Panel receiverPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(receiverList).addChild(receiverSlider);
+        Panel transmitterPanel = setupTransmitterPanel();
+        Panel receiverPanel = setupReceiverPanel();
 
         dialButton = new Button(mc, this).setText("Dial").setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver").
                 setDesiredHeight(14).
@@ -170,6 +143,39 @@ public class GuiDialingDevice extends GuiContainer {
         requestReceivers();
         requestTransmitters();
         dialingDeviceTileEntity.requestRfFromServer();
+    }
+
+    private Panel setupReceiverPanel() {
+        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                clearSelectedStatus();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedReceiver(index);
+            }
+        });
+        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(receiverList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(receiverList).addChild(receiverSlider);
+    }
+
+    private Panel setupTransmitterPanel() {
+        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(76).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                clearSelectedStatus();
+                selectReceiverFromTransmitter();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedTransmitter(index);
+            }
+        });
+        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(transmitterList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(transmitterList).addChild(transmitterSlider);
     }
 
     private void clearSelectedStatus() {
@@ -327,7 +333,7 @@ public class GuiDialingDevice extends GuiContainer {
     }
 
     private void populateReceivers() {
-        List<TeleportDestination> newReceivers = fromServer_receivers;
+        List<TeleportDestinationClientInfo> newReceivers = fromServer_receivers;
         if (newReceivers == null) {
             return;
         }
@@ -335,13 +341,13 @@ public class GuiDialingDevice extends GuiContainer {
             return;
         }
 
-        receivers = new ArrayList<TeleportDestination>(newReceivers);
+        receivers = new ArrayList<TeleportDestinationClientInfo>(newReceivers);
         receiverList.removeChildren();
 
-        for (TeleportDestination destination : receivers) {
+        for (TeleportDestinationClientInfo destination : receivers) {
             Coordinate coordinate = destination.getCoordinate();
 
-            String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+            String dimName = destination.getDimensionName();
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(65));

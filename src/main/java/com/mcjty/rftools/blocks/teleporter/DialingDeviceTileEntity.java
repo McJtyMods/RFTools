@@ -91,9 +91,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         super.writeToNBT(tagCompound);
     }
 
-    public List<TeleportDestination> searchReceivers() {
+    public List<TeleportDestinationClientInfo> searchReceivers() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<TeleportDestination>(destinations.getValidDestinations());
+        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
     }
 
     public List<TransmitterInfo> searchTransmitters() {
@@ -157,6 +157,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return true;
     }
 
+    // Server side only
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
         World transWorld = DimensionManager.getProvider(transDim).worldObj;
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
@@ -203,6 +204,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return DialingDeviceTileEntity.DIAL_OK;
     }
 
+    // Server side only
     private int checkStatus(Coordinate c, int dim) {
         World w = DimensionManager.getProvider(dim).worldObj;
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
@@ -264,7 +266,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         }
         if (CLIENTCMD_GETRECEIVERS.equals(command)) {
-            GuiDialingDevice.fromServer_receivers = new ArrayList<TeleportDestination>(list);
+            GuiDialingDevice.fromServer_receivers = new ArrayList<TeleportDestinationClientInfo>(list);
             return true;
         } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
             GuiDialingDevice.fromServer_transmitters = new ArrayList<TransmitterInfo>(list);

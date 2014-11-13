@@ -7,7 +7,7 @@ import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.*;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
+import com.mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.gui.GuiScreen;
@@ -27,8 +27,8 @@ public class GuiTeleportProbe extends GuiScreen {
     private Window window;
     private WidgetList list;
 
-    private static List<TeleportDestination> serverDestinationList = null;
-    private static List<TeleportDestination> destinationList = null;
+    private static List<TeleportDestinationClientInfo> serverDestinationList = null;
+    private static List<TeleportDestinationClientInfo> destinationList = null;
 
     private int listDirty;
 
@@ -66,13 +66,13 @@ public class GuiTeleportProbe extends GuiScreen {
     }
 
     private void teleport(int index) {
-        TeleportDestination destination = destinationList.get(index);
+        TeleportDestinationClientInfo destination = destinationList.get(index);
         Coordinate c = destination.getCoordinate();
         PacketHandler.INSTANCE.sendToServer(new PacketForceTeleport(c.getX(), c.getY(), c.getZ(), destination.getDimension()));
     }
 
-    public static void setReceivers(List<TeleportDestination> destinationList) {
-        serverDestinationList = new ArrayList<TeleportDestination>(destinationList);
+    public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {
+        serverDestinationList = new ArrayList<TeleportDestinationClientInfo>(destinationList);
     }
 
     private void requestReceiversFromServer() {
@@ -87,11 +87,11 @@ public class GuiTeleportProbe extends GuiScreen {
             return;
         }
 
-        destinationList = new ArrayList<TeleportDestination>(serverDestinationList);
+        destinationList = new ArrayList<TeleportDestinationClientInfo>(serverDestinationList);
 
         list.removeChildren();
 
-        for (TeleportDestination destination : destinationList) {
+        for (TeleportDestinationClientInfo destination : destinationList) {
             Coordinate coordinate = destination.getCoordinate();
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
