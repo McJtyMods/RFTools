@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -9,9 +10,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
-public class MatterReceiverItemBlock extends ItemBlock {
+public class MatterTransmitterItemBlock extends ItemBlock {
 
-    public MatterReceiverItemBlock(Block block) {
+    public MatterTransmitterItemBlock(Block block) {
         super(block);
     }
 
@@ -24,6 +25,10 @@ public class MatterReceiverItemBlock extends ItemBlock {
             list.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
             String name = tagCompound.getString("tpName");
             list.add(EnumChatFormatting.GREEN + "Name: " + name);
+            Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
+            if (c != null && c.getY() >= 0) {
+                list.add(EnumChatFormatting.YELLOW + "[DIALED]");
+            }
         }
     }
 }

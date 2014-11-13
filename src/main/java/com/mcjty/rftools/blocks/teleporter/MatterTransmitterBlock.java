@@ -43,9 +43,12 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
         restoreBlockFromNBT(world, x, y, z, itemStack);
+
+        // Restore the transmitter beam if needed.
         if (!world.isRemote) {
-            if (!DialingDeviceTileEntity.makeBeam(new Coordinate(x, y, z), world, 1, 4, 2)) {
-                // @todo what to do here?
+            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) world.getTileEntity(x, y, z);
+            if (matterTransmitterTileEntity.getTeleportDestination() != null && matterTransmitterTileEntity.getTeleportDestination().isValid()) {
+                DialingDeviceTileEntity.makeBeam(new Coordinate(x, y, z), world, 1, 4, 2);
             }
         }
     }

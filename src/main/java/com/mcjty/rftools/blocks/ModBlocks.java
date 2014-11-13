@@ -184,16 +184,19 @@ public final class ModBlocks {
     private static void initTeleporterBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock(Material.iron);
         matterTransmitterBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(matterTransmitterBlock, "matterTransmitterBlock");
+        GameRegistry.registerBlock(matterTransmitterBlock, MatterTransmitterItemBlock.class, "matterTransmitterBlock");
         GameRegistry.registerTileEntity(MatterTransmitterTileEntity.class, "MatterTransmitterTileEntity");
+
         matterReceiverBlock = new MatterReceiverBlock(Material.iron);
         matterReceiverBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(matterReceiverBlock, MatterReceiverItemBlock.class, "matterReceiverBlock");
         GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
+
         dialingDeviceBlock = new DialingDeviceBlock(Material.iron);
         dialingDeviceBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(dialingDeviceBlock, DialingDeviceItemBlock.class, "dialingDeviceBlock");
         GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
+
         destinationAnalyzerBlock = new DestinationAnalyzerBlock(Material.iron);
         destinationAnalyzerBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
