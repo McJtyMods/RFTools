@@ -137,7 +137,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
 
-    private boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
+    // Make a beam on top of a given coordinate.
+    public static boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
             Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
             if ((!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) && !ModBlocks.teleportBeamBlock.equals(b)) {

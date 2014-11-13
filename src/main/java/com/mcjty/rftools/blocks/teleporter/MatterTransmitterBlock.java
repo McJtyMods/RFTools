@@ -43,6 +43,11 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
         restoreBlockFromNBT(world, x, y, z, itemStack);
+        if (!world.isRemote) {
+            if (!DialingDeviceTileEntity.makeBeam(new Coordinate(x, y, z), world, 1, 4, 2)) {
+                // @todo what to do here?
+            }
+        }
     }
 
     @Override
