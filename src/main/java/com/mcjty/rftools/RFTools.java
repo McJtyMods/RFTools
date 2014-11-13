@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -15,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -81,6 +83,7 @@ public class RFTools {
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         logger = e.getModLog();
+        MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
     }
     /**

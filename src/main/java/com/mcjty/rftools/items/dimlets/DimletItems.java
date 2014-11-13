@@ -1,14 +1,18 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.item.Item;
+import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraftforge.common.ChestGenHooks;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DimletItems {
-    public static final Map<String,Item> dimletItems = new HashMap<String, Item>();
+    public static final Map<String,KnownDimlet> dimlets = new HashMap<String, KnownDimlet>();
+    public static final List<KnownDimlet> orderedDimlets = new ArrayList<KnownDimlet>();
+
+    private static final float RARITY_MULTIPLIER = .5f;
 
     public static void init() {
         /*
@@ -39,34 +43,80 @@ public class DimletItems {
          *      - Liquid Lava
          */
 
-        initItem("terrainVoidDimlet", "terrainVoidDimletItem");
-        initItem("terrainFlatDimlet", "terrainFlatDimletItem");
-        initItem("terrainOverworldDimlet", "terrainOverworldDimletItem");
-        initItem("terrainAmplifiedDimlet", "terrainAmplifiedDimletItem");
-        initItem("biomePlainsDimlet", "biomePlainsDimletItem");
-        initItem("structuresMineshaftDimlet", "structuresMineshaftDimletItem");
-        initItem("structuresDungeonDimlet", "structuresDungeonDimletItem");
-        initItem("structuresVillagesDimlet", "structuresVillagesDimletItem");
-        initItem("foliageFlowersDimlet", "foliageFlowersDimletItem");
-        initItem("foliageOakDimlet", "foliageOakDimletItem");
-        initItem("materialDirtDimlet", "materialDirtDimletItem");
-        initItem("materialOresDimlet", "materialOresDimletItem");
-        initItem("materialStoneDimlet", "materialStoneDimletItem");
-        initItem("skyNormalDimlet", "skyNormalDimletItem");
-        initItem("timeDayDimlet", "timeDayDimletItem");
-        initItem("timeDayNightDimlet", "timeDayNightDimletItem");
-        initItem("timeNightDimlet", "timeNightDimletItem");
-        initItem("liquidWaterDimlet", "liquidWaterDimletItem");
-        initItem("liquidLavaDimlet", "liquidLavaDimletItem");
-        initItem("mobsStandardDimlet", "mobsStandardDimletItem");
+        // Roughly ordered by relative rarity.
+        initItem("terrainVoidDimlet", "terrainVoidDimletItem", 0.1f);
+        initItem("terrainFlatDimlet", "terrainFlatDimletItem", 0.1f);
+        initItem("terrainOverworldDimlet", "terrainOverworldDimletItem", 0.1f);
+        initItem("terrainAmplifiedDimlet", "terrainAmplifiedDimletItem", 0.1f);
+        initItem("biomePlainsDimlet", "biomePlainsDimletItem", 0.1f);
+        initItem("foliageFlowersDimlet", "foliageFlowersDimletItem", 0.1f);
+        initItem("foliageOakDimlet", "foliageOakDimletItem", 0.1f);
+        initItem("materialDirtDimlet", "materialDirtDimletItem", 0.1f);
+        initItem("materialStoneDimlet", "materialStoneDimletItem", 0.1f);
+        initItem("skyNormalDimlet", "skyNormalDimletItem", 0.1f);
+        initItem("timeDayNightDimlet", "timeDayNightDimletItem", 0.1f);
+        initItem("timeNightDimlet", "timeNightDimletItem", 0.1f);
+        initItem("liquidWaterDimlet", "liquidWaterDimletItem", 0.1f);
+        initItem("timeDayDimlet", "timeDayDimletItem", 0.06f);
+        initItem("liquidLavaDimlet", "liquidLavaDimletItem", 0.05f);
+        initItem("mobsStandardDimlet", "mobsStandardDimletItem", 0.04f);
+        initItem("materialOresDimlet", "materialOresDimletItem", 0.03f);
+        initItem("structuresMineshaftDimlet", "structuresMineshaftDimletItem", 0.03f);
+        initItem("structuresDungeonDimlet", "structuresDungeonDimletItem", 0.03f);
+        initItem("structuresVillagesDimlet", "structuresVillagesDimletItem", 0.03f);
+
+        setupChestLoot();
     }
 
-    private static void initItem(String itemName, String materialName) {
-        Item item = new KnownDimlet();
+    private static void setupChestLoot() {
+        setupChestLoot(ChestGenHooks.DUNGEON_CHEST);
+        setupChestLoot(ChestGenHooks.MINESHAFT_CORRIDOR);
+        setupChestLoot(ChestGenHooks.PYRAMID_DESERT_CHEST);
+        setupChestLoot(ChestGenHooks.PYRAMID_JUNGLE_CHEST);
+        setupChestLoot(ChestGenHooks.STRONGHOLD_CORRIDOR);
+        setupChestLoot(ChestGenHooks.VILLAGE_BLACKSMITH);
+    }
+
+    private static void setupChestLoot(String category) {
+        ChestGenHooks chest = ChestGenHooks.getInfo(category);
+        chest.addItem(new WeightedRandomChestContent(ModItems.unknownDimlet, 0, 1, 3, 50));
+    }
+
+    private static void initItem(String itemName, String materialName, float rarity) {
+        KnownDimlet item = new KnownDimlet();
         item.setUnlocalizedName(itemName);
         item.setCreativeTab(RFTools.tabRfToolsDimlets);
         item.setTextureName(RFTools.MODID + ":" + materialName);
+        item.setRarity(rarity * RARITY_MULTIPLIER);
         GameRegistry.registerItem(item, itemName);
-        dimletItems.put(itemName, item);
+        dimlets.put(itemName, item);
+        orderedDimlets.add(item);
+    }
+
+    /**
+     * This main function tests rarity distribution of the dimlets.
+     * @param args
+     */
+    public static void main(String[] args) {
+        init();
+        Map<String,Integer> counter = new HashMap<String, Integer>();
+        for (KnownDimlet dimlet : orderedDimlets) {
+            counter.put(dimlet.getUnlocalizedName(), 0);
+        }
+        int total = 1000000;
+        Random random = new Random();
+        for (int i = 0 ; i < total ; i++) {
+            for (KnownDimlet dimlet : orderedDimlets) {
+                if (random.nextFloat() < dimlet.getRarity()) {
+                    counter.put(dimlet.getUnlocalizedName(), counter.get(dimlet.getUnlocalizedName())+1);
+                    break;
+                }
+            }
+        }
+        for (KnownDimlet dimlet : orderedDimlets) {
+            int count = counter.get(dimlet.getUnlocalizedName());
+            float percentage = count * 100.0f / total;
+            System.out.println("ME: " + dimlet.getUnlocalizedName() + ", " + percentage);
+        }
     }
 }
