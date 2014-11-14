@@ -3,6 +3,9 @@ item.TeleportProbe.name=Teleporter Probe
 item.RFToolsManual.name=RFTools Manual
 item.DevelopersDelight.name=Developers Delight
 item.UnknownDimlet.name=Unknown Dimlet
+item.EmptyDimensionTab.name=Empty Dimension Tab
+item.RealizedDimensionTab.name=Realized Dimension Tab
+
 item.terrainVoidDimlet.name=Void Terrain Dimlet
 item.terrainFlatDimlet.name=Flat Terrain Dimlet
 item.terrainOverworldDimlet.name=Overworld Terrain Dimlet
@@ -54,6 +57,10 @@ tile.shieldBlockOpaquePass1NN.name=Shield Block 8
 tile.shieldBlockOpaquePass0NN.name=Shield Block 9
 tile.solidShieldBlock.name=Shield Block 10
 tile.shieldTemplateBlock.name=Shield Template
+tile.dimletResearcherBlock.name=Dimlet Researcher
+tile.dimensionEnscriberBlock.name=Dimension Enscriber
+tile.dimensionBuilderBlock.name=Dimension Builder
+tile.dimensionChestBlock.name=Dimension Chest
 
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools Dimlets

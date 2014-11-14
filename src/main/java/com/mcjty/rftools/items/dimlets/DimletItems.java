@@ -86,7 +86,7 @@ public class DimletItems {
         KnownDimlet item = new KnownDimlet();
         item.setUnlocalizedName(itemName);
         item.setCreativeTab(RFTools.tabRfToolsDimlets);
-        item.setTextureName(RFTools.MODID + ":" + materialName);
+        item.setTextureName(RFTools.MODID + ":dimlets/" + materialName);
         item.setRarity(rarity * RARITY_MULTIPLIER);
         GameRegistry.registerItem(item, itemName);
         dimlets.put(itemName, item);

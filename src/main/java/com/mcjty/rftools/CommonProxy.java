@@ -2,6 +2,7 @@ package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterConfiguration;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import com.mcjty.rftools.blocks.shield.ShieldConfiguration;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
@@ -43,6 +44,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(TeleportConfiguration.CATEGORY_TELEPORTER, "Settings for the teleporter system");
             cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
+            cfg.addCustomCategoryComment(DimletConfiguration.CATEGORY_DIMLETS, "Settings for the dimlet/dimension system");
 
             NetworkMonitorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);
@@ -50,7 +52,7 @@ public class CommonProxy {
             TeleportConfiguration.init(cfg);
             EndergenicConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
-
+            DimletConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

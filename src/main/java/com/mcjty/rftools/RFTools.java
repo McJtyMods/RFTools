@@ -71,6 +71,10 @@ public class RFTools {
     public static final int GUI_ENDERMONITOR = modGuiIndex++;
     public static final int GUI_SHIELD = modGuiIndex++;
     public static final int GUI_DEVELOPERS_DELIGHT = modGuiIndex++;
+    public static final int GUI_DIMLET_RESEARCHER = modGuiIndex++;
+    public static final int GUI_DIMENSION_ENSCRIBER = modGuiIndex++;
+    public static final int GUI_DIMENSION_BUILDER = modGuiIndex++;
+    public static final int GUI_DIMENSION_CHEST = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

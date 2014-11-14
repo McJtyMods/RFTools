@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.crafter.*;
+import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
@@ -58,6 +59,11 @@ public final class ModBlocks {
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
+    public static DimletResearcherBlock dimletResearcherBlock;
+    public static DimensionEnscriberBlock dimensionEnscriberBlock;
+    public static DimensionBuilderBlock dimensionBuilderBlock;
+    public static DimensionChestBlock dimensionChestBlock;
+
     public static void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
         monitorBlock.setCreativeTab(RFTools.tabRfTools);
@@ -76,6 +82,7 @@ public final class ModBlocks {
         GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
         GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
 
+        initDimletBlocks();
         initTeleporterBlocks();
         initEndergenicBlocks();
         initLogicBlocks();
@@ -91,6 +98,28 @@ public final class ModBlocks {
         machineBase = new MachineBase(Material.iron);
         machineBase.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(machineBase, "machineBase");
+    }
+
+    private static void initDimletBlocks() {
+        dimletResearcherBlock = new DimletResearcherBlock(Material.iron);
+        dimletResearcherBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(dimletResearcherBlock, DimletResearcherItemBlock.class, "dimletResearcherBlock");
+        GameRegistry.registerTileEntity(DimletResearcherTileEntity.class, "DimletResearcherTileEntity");
+
+        dimensionEnscriberBlock = new DimensionEnscriberBlock(Material.iron);
+        dimensionEnscriberBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(dimensionEnscriberBlock, DimensionEnscriberItemBlock.class, "dimensionEnscriberBlock");
+        GameRegistry.registerTileEntity(DimensionEnscriberTileEntity.class, "DimensionEnscriberTileEntity");
+
+        dimensionBuilderBlock = new DimensionBuilderBlock(Material.iron);
+        dimensionBuilderBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(dimensionBuilderBlock, DimensionBuilderItemBlock.class, "dimensionBuilderBlock");
+        GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
+
+        dimensionChestBlock = new DimensionChestBlock(Material.iron);
+        dimensionChestBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(dimensionChestBlock, DimensionChestItemBlock.class, "dimensionChestBlock");
+        GameRegistry.registerTileEntity(DimensionChestTileEntity.class, "DimensionChestTileEntity");
     }
 
     private static void initCrafterBlocks() {
