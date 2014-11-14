@@ -1,11 +1,15 @@
 package com.mcjty.rftools.blocks.relay;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,6 +27,12 @@ public class RelayBlock extends GenericBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_RELAY;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        RelayTileEntity relayTileEntity = (RelayTileEntity) tileEntity;
+        return new GuiRelay(relayTileEntity, new EmptyContainer(entityPlayer));
     }
 
     @Override

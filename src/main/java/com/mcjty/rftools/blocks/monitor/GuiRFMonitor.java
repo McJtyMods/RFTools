@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.monitor;
 
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
@@ -14,17 +15,13 @@ import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Mouse;
+import net.minecraft.inventory.Container;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiRFMonitor extends GuiScreen {
-    private RFMonitorBlockTileEntity monitorBlockTileEntity;
-
-    private Window window;
+public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> {
     private WidgetList list;
     private ChoiceLabel alarmModeChoiceLabel;
     private ScrollableLabel alarmLabel;
@@ -39,13 +36,8 @@ public class GuiRFMonitor extends GuiScreen {
     public static List<Coordinate> fromServer_clientAdjacentBlocks = null;
 
 
-    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity) {
-        this.monitorBlockTileEntity = monitorBlockTileEntity;
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
+    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
+        super(monitorBlockTileEntity, container);
     }
 
     @Override
@@ -78,10 +70,10 @@ public class GuiRFMonitor extends GuiScreen {
                         changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice));
                     }
                 });
-        alarmModeChoiceLabel.setChoice(monitorBlockTileEntity.getAlarmMode().getDescription());
+        alarmModeChoiceLabel.setChoice(tileEntity.getAlarmMode().getDescription());
 
         alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
-                setRealValue(monitorBlockTileEntity.getAlarmLevel()).
+                setRealValue(tileEntity.getAlarmLevel()).
                 addValueEvent(new ValueEvent() {
                     @Override
                     public void valueChanged(Widget parent, int newValue) {
@@ -100,19 +92,19 @@ public class GuiRFMonitor extends GuiScreen {
         window = new Window(this, toplevel);
 
         fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>();
-        requestAdjacentBlocksFromServer();
+        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void changeAlarmMode(RFMonitorMode mode) {
         int alarmLevel = alarmLabel.getRealValue();
-        monitorBlockTileEntity.setAlarm(mode, alarmLevel);
-        sendChangeToServer(mode, alarmLevel);
+        tileEntity.setAlarm(mode, alarmLevel);
+        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, alarmLevel));
     }
 
     private void changeAlarmValue(int newValue) {
         RFMonitorMode mode = RFMonitorMode.getModeFromDescription(alarmModeChoiceLabel.getCurrentChoice());
-        monitorBlockTileEntity.setAlarm(mode, newValue);
-        sendChangeToServer(mode, newValue);
+        tileEntity.setAlarm(mode, newValue);
+        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, newValue));
     }
 
     private void refreshList() {
@@ -121,24 +113,12 @@ public class GuiRFMonitor extends GuiScreen {
     private void setSelectedBlock(int index) {
         if (index != -1) {
             Coordinate c = adjacentBlocks.get(index);
-            monitorBlockTileEntity.setMonitor(c);
-            sendChangeToServer(c);
+            tileEntity.setMonitor(c);
+            PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, c));
         } else {
-            monitorBlockTileEntity.setInvalid();
-            sendChangeToServer(Coordinate.INVALID);
+            tileEntity.setInvalid();
+            PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, Coordinate.INVALID));
         }
-    }
-
-    private void sendChangeToServer(Coordinate c) {
-        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, c));
-    }
-
-    private void sendChangeToServer(RFMonitorMode mode, int level) {
-        PacketHandler.INSTANCE.sendToServer(new PacketRFMonitor(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord, mode, level));
-    }
-
-    private void requestAdjacentBlocksFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(monitorBlockTileEntity.xCoord, monitorBlockTileEntity.yCoord, monitorBlockTileEntity.zCoord));
     }
 
     private void populateList() {
@@ -169,9 +149,9 @@ public class GuiRFMonitor extends GuiScreen {
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()).setColor(color));
             list.addChild(panel);
 
-            if (coordinate.getX() == monitorBlockTileEntity.getMonitorX() &&
-                    coordinate.getY() == monitorBlockTileEntity.getMonitorY() &&
-                    coordinate.getZ() == monitorBlockTileEntity.getMonitorZ()) {
+            if (coordinate.getX() == tileEntity.getMonitorX() &&
+                    coordinate.getY() == tileEntity.getMonitorY() &&
+                    coordinate.getZ() == tileEntity.getMonitorZ()) {
                 sel = index;
             }
             index++;
@@ -181,27 +161,7 @@ public class GuiRFMonitor extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
-
+    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         listDirty--;
         if (listDirty <= 0) {
             populateList();
@@ -209,17 +169,5 @@ public class GuiRFMonitor extends GuiScreen {
         }
 
         window.draw();
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x, y, mc.fontRenderer);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
     }
 }

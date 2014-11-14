@@ -1,10 +1,13 @@
 package com.mcjty.rftools.blocks.monitor;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -30,6 +33,12 @@ public class RFMonitorBlock extends GenericBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_RF_MONITOR;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
+        return new GuiRFMonitor(monitorBlockTileEntity, new EmptyContainer(entityPlayer));
     }
 
     @Override

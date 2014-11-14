@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.endergen;
 
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -11,22 +12,19 @@ import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Container;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 
-public class GuiEnderMonitor extends GuiScreen {
+public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity> {
     public static final int MONITOR_WIDTH = 140;
     public static final int MONITOR_HEIGHT = 30;
 
-    private Window window;
     private ChoiceLabel mode;
 
-    private final EnderMonitorTileEntity enderMonitorTileEntity;
-
-    public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity) {
-        this.enderMonitorTileEntity = enderMonitorTileEntity;
+    public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity, Container container) {
+        super(enderMonitorTileEntity, container);
     }
 
     @Override
@@ -56,7 +54,7 @@ public class GuiEnderMonitor extends GuiScreen {
         mode.setChoiceTooltip(EnderMonitorMode.MODE_LOSTPEARL.getDescription(), "Send a redstone pulse when a", "pearl is lost");
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
-        mode.setChoice(enderMonitorTileEntity.getMode().getDescription());
+        mode.setChoice(tileEntity.getMode().getDescription());
         mode.addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
@@ -65,42 +63,14 @@ public class GuiEnderMonitor extends GuiScreen {
         });
     }
 
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
-
     private void changeMode() {
         EnderMonitorMode newMode = EnderMonitorMode.getMode(mode.getCurrentChoice());
-        enderMonitorTileEntity.setMode(newMode);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(enderMonitorTileEntity.xCoord, enderMonitorTileEntity.yCoord, enderMonitorTileEntity.zCoord,
-                EnderMonitorTileEntity.CMD_MODE,
-                new Argument("mode", newMode.getDescription())));
-    }
-
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
+        tileEntity.setMode(newMode);
+        sendServerCommand(EnderMonitorTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
     }
 
     @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
-
+    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
         java.util.List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
@@ -109,11 +79,4 @@ public class GuiEnderMonitor extends GuiScreen {
             drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.shield;
 
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
@@ -17,17 +18,14 @@ import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketServerCommand;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiShield extends GuiContainer {
+public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     public static final int SHIELD_WIDTH = 256;
     public static final int SHIELD_HEIGHT = 224;
 
@@ -36,7 +34,6 @@ public class GuiShield extends GuiContainer {
     public static final String ACTION_DAMAGE = "Damage";
     public static final String ACTION_SOLIDDAMAGE = "SolDmg";
 
-    private Window window;
     private EnergyBar energyBar;
     private ChoiceLabel visibilityOptions;
     private ChoiceLabel actionOptions;
@@ -48,8 +45,6 @@ public class GuiShield extends GuiContainer {
     private Button delFilter;
     private Button upFilter;
     private Button downFilter;
-
-    private final ShieldTileEntity shieldTileEntity;
 
     // A copy of the filterList we're currently showing.
     private List<ShieldFilter> filters = null;
@@ -64,8 +59,7 @@ public class GuiShield extends GuiContainer {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiShield(ShieldTileEntity shieldTileEntity, ShieldContainer container) {
-        super(container);
-        this.shieldTileEntity = shieldTileEntity;
+        super(shieldTileEntity, container);
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SHIELD_WIDTH;
@@ -76,9 +70,9 @@ public class GuiShield extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = shieldTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
-        energyBar.setValue(shieldTileEntity.getCurrentRF());
+        energyBar.setValue(tileEntity.getCurrentRF());
 
         initVisibilityMode();
         initActionOptions();
@@ -142,7 +136,7 @@ public class GuiShield extends GuiContainer {
 
         listDirty = 0;
         requestFilters();
-        shieldTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private void selectFilter() {
@@ -181,7 +175,7 @@ public class GuiShield extends GuiContainer {
     }
 
     private void requestFilters() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetFilters(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetFilters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void requestListsIfNeeded() {
@@ -232,18 +226,12 @@ public class GuiShield extends GuiContainer {
     }
 
     private void moveFilterUp() {
-        int selected = filterList.getSelected();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_UPFILTER,
-                new Argument("selected", selected)));
+        sendServerCommand(ShieldTileEntity.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
     private void moveFilterDown() {
-        int selected = filterList.getSelected();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_DOWNFILTER,
-                new Argument("selected", selected)));
+        sendServerCommand(ShieldTileEntity.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
@@ -277,18 +265,15 @@ public class GuiShield extends GuiContainer {
         String playerName = player.getText();
         int selected = filterList.getSelected();
 
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_ADDFILTER,
+        sendServerCommand(ShieldTileEntity.CMD_ADDFILTER,
                 new Argument("action", action), new Argument("type", type), new Argument("player", playerName),
-                new Argument("selected", selected)));
+                new Argument("selected", selected));
         listDirty = 0;
     }
 
     private void removeSelectedFilter() {
-        int selected = filterList.getSelected();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_DELFILTER,
-                new Argument("selected", selected)));
+        sendServerCommand(ShieldTileEntity.CMD_DELFILTER,
+                new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
@@ -304,15 +289,12 @@ public class GuiShield extends GuiContainer {
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
-        redstoneMode.setCurrentChoice(shieldTileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
     private void changeRedstoneMode() {
-        shieldTileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
-        RedstoneMode rsMode = RedstoneMode.values()[redstoneMode.getCurrentChoice()];
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_RSMODE,
-                new Argument("rs", rsMode.getDescription())));
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        sendServerCommand(ShieldTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
     }
 
     private void initVisibilityMode() {
@@ -323,7 +305,7 @@ public class GuiShield extends GuiContainer {
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Use the texture from the supplied block");
-        visibilityOptions.setChoice(shieldTileEntity.getShieldRenderingMode().getDescription());
+        visibilityOptions.setChoice(tileEntity.getShieldRenderingMode().getDescription());
         visibilityOptions.addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
@@ -353,25 +335,13 @@ public class GuiShield extends GuiContainer {
 
     private void changeVisibilityMode() {
         ShieldRenderingMode newMode = ShieldRenderingMode.getMode(visibilityOptions.getCurrentChoice());
-        shieldTileEntity.setShieldRenderingMode(newMode);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_SHIELDVISMODE,
-                new Argument("mode", newMode.getDescription())));
+        tileEntity.setShieldRenderingMode(newMode);
+        sendServerCommand(ShieldTileEntity.CMD_SHIELDVISMODE,
+                new Argument("mode", newMode.getDescription()));
     }
 
     private void applyCamoToShield() {
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(shieldTileEntity.xCoord, shieldTileEntity.yCoord, shieldTileEntity.zCoord,
-                ShieldTileEntity.CMD_APPLYCAMO));
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
-        }
+        sendServerCommand(ShieldTileEntity.CMD_APPLYCAMO);
     }
 
     private void enableButtons() {
@@ -394,32 +364,8 @@ public class GuiShield extends GuiContainer {
         populateFilters();
         enableButtons();
         window.draw();
-        int currentRF = shieldTileEntity.getCurrentRF();
+        int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        shieldTileEntity.requestRfFromServer();
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
+        tileEntity.requestRfFromServer();
     }
 }

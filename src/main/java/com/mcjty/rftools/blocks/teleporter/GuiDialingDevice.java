@@ -1,7 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.EmptyContainer;
-import com.mcjty.gui.Window;
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -17,25 +17,21 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiDialingDevice extends GuiContainer {
+public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntity> {
 
     public static final int DIALER_WIDTH = 256;
     public static final int DIALER_HEIGHT = 224;
 
     private static final ResourceLocation iconDialOn = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
-
-    private Window window;
 
     private EnergyBar energyBar;
     private WidgetList transmitterList;
@@ -44,7 +40,6 @@ public class GuiDialingDevice extends GuiContainer {
     private Button interruptButton;
     private Button statusButton;
     private Label statusLabel;
-    private final DialingDeviceTileEntity dialingDeviceTileEntity;
 
     private boolean analyzerAvailable = false;
     private boolean lastDialedTransmitter = false;
@@ -64,18 +59,12 @@ public class GuiDialingDevice extends GuiContainer {
     private int listDirty = 0;
 
 
-    public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer<DialingDeviceTileEntity> container) {
-        super(container);
-        this.dialingDeviceTileEntity = dialingDeviceTileEntity;
+    public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
+        super(dialingDeviceTileEntity, container);
         dialingDeviceTileEntity.setCurrentRF(dialingDeviceTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = DIALER_WIDTH;
         ySize = DIALER_HEIGHT;
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
     }
 
     @Override
@@ -84,9 +73,9 @@ public class GuiDialingDevice extends GuiContainer {
         int k = (this.width - DIALER_WIDTH) / 2;
         int l = (this.height - DIALER_HEIGHT) / 2;
 
-        int maxEnergyStored = dialingDeviceTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
-        energyBar.setValue(dialingDeviceTileEntity.getCurrentRF());
+        energyBar.setValue(tileEntity.getCurrentRF());
 
         Panel transmitterPanel = setupTransmitterPanel();
         Panel receiverPanel = setupReceiverPanel();
@@ -108,7 +97,7 @@ public class GuiDialingDevice extends GuiContainer {
                     }
                 });
 
-        analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord);
+        analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
         statusButton = new Button(mc, this).setText("Check").
                 setDesiredHeight(14).
                 setEnabled(analyzerAvailable).
@@ -142,7 +131,7 @@ public class GuiDialingDevice extends GuiContainer {
 
         requestReceivers();
         requestTransmitters();
-        dialingDeviceTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private Panel setupReceiverPanel() {
@@ -229,7 +218,7 @@ public class GuiDialingDevice extends GuiContainer {
         }
         TeleportDestination destination = receivers.get(receiverSelected);
         Coordinate c = destination.getCoordinate();
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord,
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
                 DialingDeviceTileEntity.CLIENTCMD_STATUS, new Argument("c", c), new Argument("dim", destination.getDimension())));
 
@@ -298,7 +287,7 @@ public class GuiDialingDevice extends GuiContainer {
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         TeleportDestination destination = receivers.get(receiverSelected);
 
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
@@ -314,7 +303,7 @@ public class GuiDialingDevice extends GuiContainer {
             return; // Shouldn't happen. Just to be sure.
         }
         TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
@@ -325,11 +314,11 @@ public class GuiDialingDevice extends GuiContainer {
     }
 
     private void requestReceivers() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetReceivers(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void requestTransmitters() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetTransmitters(dialingDeviceTileEntity.xCoord, dialingDeviceTileEntity.yCoord, dialingDeviceTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetTransmitters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void populateReceivers() {
@@ -397,34 +386,6 @@ public class GuiDialingDevice extends GuiContainer {
 
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        java.util.List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x - guiLeft, y - guiTop, mc.fontRenderer);
-        }
-    }
-
-    @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         requestListsIfNeeded();
 
@@ -442,9 +403,9 @@ public class GuiDialingDevice extends GuiContainer {
         enableButtons();
 
         window.draw();
-        int currentRF = dialingDeviceTileEntity.getCurrentRF();
+        int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        dialingDeviceTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private void requestListsIfNeeded() {
@@ -484,13 +445,6 @@ public class GuiDialingDevice extends GuiContainer {
             statusButton.setEnabled(analyzerAvailable);
         } else {
             statusButton.setEnabled(false);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        if (!window.keyTyped(typedChar, keyCode)) {
-            super.keyTyped(typedChar, keyCode);
         }
     }
 }

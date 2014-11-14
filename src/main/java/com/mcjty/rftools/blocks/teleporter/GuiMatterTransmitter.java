@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.container.EmptyContainer;
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
@@ -15,23 +16,19 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketServerCommand;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class GuiMatterTransmitter extends GuiContainer {
+public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterTileEntity> {
     public static final int MATTER_WIDTH = 200;
     public static final int MATTER_HEIGHT = 180;
     public static final String ACCESS_PRIVATE = "Private";
     public static final String ACCESS_PUBLIC = "Public";
 
-    private Window window;
     private EnergyBar energyBar;
     private ChoiceLabel privateSetting;
     private WidgetList allowedPlayers;
@@ -43,8 +40,6 @@ public class GuiMatterTransmitter extends GuiContainer {
     private List<String> players = null;
     private int listDirty = 0;
 
-    private final MatterTransmitterTileEntity transmitterTileEntity;
-
     private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
     public static void storeAllowedPlayersForClient(List<PlayerName> players) {
         Set<String> p = new HashSet<String>();
@@ -55,9 +50,8 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
 
-    public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer<MatterTransmitterTileEntity> container) {
-        super(container);
-        this.transmitterTileEntity = transmitterTileEntity;
+    public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
+        super(transmitterTileEntity, container);
         transmitterTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;
@@ -75,9 +69,9 @@ public class GuiMatterTransmitter extends GuiContainer {
         int k = (this.width - MATTER_WIDTH) / 2;
         int l = (this.height - MATTER_HEIGHT) / 2;
 
-        int maxEnergyStored = transmitterTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
-        energyBar.setValue(transmitterTileEntity.getCurrentRF());
+        energyBar.setValue(tileEntity.getCurrentRF());
 
         TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this transmitter", "in the dialer").addTextEvent(new TextEvent() {
             @Override
@@ -85,7 +79,7 @@ public class GuiMatterTransmitter extends GuiContainer {
                 setTransmitterName(newText);
             }
         });
-        textField.setText(transmitterTileEntity.getName());
+        textField.setText(tileEntity.getName());
         Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
         privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(13).setDesiredWidth(60).
@@ -97,7 +91,7 @@ public class GuiMatterTransmitter extends GuiContainer {
                     changeAccessMode(newChoice);
                 }
             });
-        if (transmitterTileEntity.isPrivateAccess()) {
+        if (tileEntity.isPrivateAccess()) {
             privateSetting.setChoice(ACCESS_PRIVATE);
         } else {
             privateSetting.setChoice(ACCESS_PUBLIC);
@@ -134,41 +128,30 @@ public class GuiMatterTransmitter extends GuiContainer {
 
         listDirty = 0;
         requestPlayers();
-        transmitterTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private void setTransmitterName(String text) {
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
-                MatterTransmitterTileEntity.CMD_SETNAME,
-                new Argument("name", text)));
+        sendServerCommand(MatterTransmitterTileEntity.CMD_SETNAME, new Argument("name", text));
     }
 
     private void changeAccessMode(String newAccess) {
-        boolean isPrivate = ACCESS_PRIVATE.equals(newAccess);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
-                MatterTransmitterTileEntity.CMD_SETPRIVATE,
-                new Argument("private", isPrivate)));
+        sendServerCommand(MatterTransmitterTileEntity.CMD_SETPRIVATE, new Argument("private", ACCESS_PRIVATE.equals(newAccess)));
     }
 
     private void addPlayer() {
-        String name = nameField.getText();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
-                MatterTransmitterTileEntity.CMD_ADDPLAYER,
-                new Argument("player", name)));
+        sendServerCommand(MatterTransmitterTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
         listDirty = 0;
     }
 
     private void delPlayer() {
-        int selected = allowedPlayers.getSelected();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord,
-                MatterTransmitterTileEntity.CMD_DELPLAYER,
-                new Argument("player", players.get(selected))));
+        sendServerCommand(MatterTransmitterTileEntity.CMD_DELPLAYER, new Argument("player", players.get(allowedPlayers.getSelected())));
         listDirty = 0;
     }
 
 
     private void requestPlayers() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetPlayers(transmitterTileEntity.xCoord, transmitterTileEntity.yCoord, transmitterTileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetPlayers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void populatePlayers() {
@@ -186,41 +169,6 @@ public class GuiMatterTransmitter extends GuiContainer {
     }
 
 
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        Keyboard.enableRepeatEvents(false);
-    }
-
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x - guiLeft, y - guiTop, mc.fontRenderer);
-        }
-    }
-
     private void requestListsIfNeeded() {
         listDirty--;
         if (listDirty <= 0) {
@@ -236,9 +184,9 @@ public class GuiMatterTransmitter extends GuiContainer {
         enableButtons();
 
         window.draw();
-        int currentRF = transmitterTileEntity.getCurrentRF();
+        int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        transmitterTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private void enableButtons() {
@@ -250,12 +198,5 @@ public class GuiMatterTransmitter extends GuiContainer {
         delButton.setEnabled(isPrivate && (isPlayerSelected != -1));
         String name = nameField.getText();
         addButton.setEnabled(isPrivate && name != null && !name.isEmpty());
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        if (!window.keyTyped(typedChar, keyCode)) {
-            super.keyTyped(typedChar, keyCode);
-        }
     }
 }

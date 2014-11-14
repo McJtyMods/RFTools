@@ -8,10 +8,12 @@ import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -260,6 +262,20 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
      * @return
      */
     public abstract int getGuiID();
+
+    /**
+     * Return a server side container for opening the GUI.
+     */
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new EmptyContainer(entityPlayer);
+    }
+
+    /**
+     * Return a client side gui for this block.
+     */
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return null;
+    }
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {

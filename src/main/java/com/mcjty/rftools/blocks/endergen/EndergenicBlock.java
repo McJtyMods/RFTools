@@ -1,15 +1,18 @@
 package com.mcjty.rftools.blocks.endergen;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -28,6 +31,13 @@ public class EndergenicBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_ENDERGENIC;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) tileEntity;
+        EmptyContainer endergenicContainer = new EmptyContainer(entityPlayer);
+        return new GuiEndergenic(endergenicTileEntity, endergenicContainer);
     }
 
     @Override

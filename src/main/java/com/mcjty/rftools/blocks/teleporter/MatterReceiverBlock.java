@@ -1,14 +1,17 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -27,6 +30,13 @@ public class MatterReceiverBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_MATTER_RECEIVER;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+        EmptyContainer matterReceiverContainer = new EmptyContainer(entityPlayer);
+        return new GuiMatterReceiver(matterReceiverTileEntity, matterReceiverContainer);
     }
 
     @Override

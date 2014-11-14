@@ -6,9 +6,11 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -23,6 +25,18 @@ public class ShieldBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_SHIELD;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        ShieldTileEntity shieldTileEntity = (ShieldTileEntity) tileEntity;
+        ShieldContainer shieldContainer = new ShieldContainer(entityPlayer, shieldTileEntity);
+        return new GuiShield(shieldTileEntity, shieldContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new ShieldContainer(entityPlayer, (ShieldTileEntity) tileEntity);
     }
 
     @Override

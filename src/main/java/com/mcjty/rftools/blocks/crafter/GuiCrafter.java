@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
@@ -16,8 +17,6 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketServerCommand;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -25,16 +24,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.List;
 
-public class GuiCrafter extends GuiContainer {
+public class GuiCrafter extends GenericGuiContainer<CrafterBlockTileEntity3> {
     public static final int CRAFTER_WIDTH = 256;
     public static final int CRAFTER_HEIGHT = 224;
 
-    private Window window;
     private EnergyBar energyBar;
     private WidgetList recipeList;
     private ChoiceLabel keepItem;
@@ -43,14 +39,11 @@ public class GuiCrafter extends GuiContainer {
     private ImageChoiceLabel redstoneMode;
     private ImageChoiceLabel speedMode;
 
-    private final CrafterBlockTileEntity3 crafterBlockTileEntity;
-
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiCrafter(CrafterBlockTileEntity3 crafterBlockTileEntity, CrafterContainer container) {
-        super(container);
-        this.crafterBlockTileEntity = crafterBlockTileEntity;
+        super(crafterBlockTileEntity, container);
         crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CRAFTER_WIDTH;
@@ -61,9 +54,9 @@ public class GuiCrafter extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = crafterBlockTileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
-        energyBar.setValue(crafterBlockTileEntity.getCurrentRF());
+        energyBar.setValue(tileEntity.getCurrentRF());
 
         initKeepMode();
         initInternalRecipe();
@@ -92,7 +85,7 @@ public class GuiCrafter extends GuiContainer {
         sendChangeToServer(-1, null, null, false, false);
 
         window = new Window(this, toplevel);
-        crafterBlockTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
 
     private Slider initRecipeList() {
@@ -149,7 +142,7 @@ public class GuiCrafter extends GuiContainer {
                 addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
                 addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
         speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
-        speedMode.setCurrentChoice(crafterBlockTileEntity.getSpeedMode());
+        speedMode.setCurrentChoice(tileEntity.getSpeedMode());
     }
 
     private void initRedstoneMode() {
@@ -164,31 +157,29 @@ public class GuiCrafter extends GuiContainer {
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
-        redstoneMode.setCurrentChoice(crafterBlockTileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
     private void changeRedstoneMode() {
-        crafterBlockTileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
         sendChangeToServer();
     }
 
     private void changeSpeedMode() {
-        crafterBlockTileEntity.setSpeedMode(speedMode.getCurrentChoice());
+        tileEntity.setSpeedMode(speedMode.getCurrentChoice());
         sendChangeToServer();
     }
 
     private void sendChangeToServer() {
-        RedstoneMode rsMode = RedstoneMode.values()[redstoneMode.getCurrentChoice()];
-        int sMode = speedMode.getCurrentChoice();
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord,
-                CrafterBlockTileEntity3.CMD_MODE,
-                new Argument("rs", rsMode.getDescription()), new Argument("speed", sMode)));
+        sendServerCommand(CrafterBlockTileEntity3.CMD_MODE,
+                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()),
+                new Argument("speed", speedMode.getCurrentChoice()));
     }
 
     private void populateList() {
         recipeList.removeChildren();
-        for (int i = 0 ; i < crafterBlockTileEntity.getSupportedRecipes() ; i++) {
-            CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(i);
+        for (int i = 0 ; i < tileEntity.getSupportedRecipes() ; i++) {
+            CraftingRecipe recipe = tileEntity.getRecipe(i);
             ItemStack stack = recipe.getResult();
             addRecipeLine(stack);
         }
@@ -214,7 +205,7 @@ public class GuiCrafter extends GuiContainer {
             applyButton.setEnabled(false);
             return;
         }
-        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
         InventoryCrafting inv = craftingRecipe.getInventory();
         for (int i = 0 ; i < 9 ; i++) {
             inventorySlots.getSlot(i).putStack(inv.getStackInSlot(i));
@@ -261,7 +252,7 @@ public class GuiCrafter extends GuiContainer {
             return;
         }
 
-        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
         InventoryCrafting inv = craftingRecipe.getInventory();
 
         for (int i = 0 ; i < 9 ; i++) {
@@ -295,7 +286,7 @@ public class GuiCrafter extends GuiContainer {
         if (selected == -1) {
             return;
         }
-        CraftingRecipe craftingRecipe = crafterBlockTileEntity.getRecipe(selected);
+        CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
         boolean keepOne = "Keep".equals(keepItem.getCurrentChoice());
         boolean craftInternal = "Int".equals(internalRecipe.getCurrentChoice());
         craftingRecipe.setKeepOne(keepOne);
@@ -312,7 +303,7 @@ public class GuiCrafter extends GuiContainer {
     }
 
     private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
-        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(crafterBlockTileEntity.xCoord, crafterBlockTileEntity.yCoord, crafterBlockTileEntity.zCoord, index, inv,
+        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, index, inv,
                 result, keepOne, craftInternal));
     }
 
@@ -326,45 +317,10 @@ public class GuiCrafter extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int i, int i2) {
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
-        }
-    }
-
-    @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
-        int currentRF = crafterBlockTileEntity.getCurrentRF();
+        int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        crafterBlockTileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer();
     }
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
 }

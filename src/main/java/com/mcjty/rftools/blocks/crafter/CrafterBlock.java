@@ -5,7 +5,9 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -65,5 +67,17 @@ public class CrafterBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_CRAFTER;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) tileEntity;
+        CrafterContainer crafterContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
+        return new GuiCrafter(crafterBlockTileEntity, crafterContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new CrafterContainer(entityPlayer, (CrafterBlockTileEntity3) tileEntity);
     }
 }

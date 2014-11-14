@@ -5,6 +5,10 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class PearlInjectorBlock extends GenericContainerBlock {
@@ -22,6 +26,18 @@ public class PearlInjectorBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_PEARL_INJECTOR;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity) tileEntity;
+        PearlInjectorContainer pearlInjectorContainer = new PearlInjectorContainer(entityPlayer, pearlInjectorTileEntity);
+        return new GuiPearlInjector(pearlInjectorTileEntity, pearlInjectorContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new PearlInjectorContainer(entityPlayer, (PearlInjectorTileEntity) tileEntity);
     }
 
     @Override

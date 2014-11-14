@@ -1,12 +1,15 @@
 package com.mcjty.rftools.blocks.endergen;
 
+import com.mcjty.container.EmptyContainer;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.logic.LogicSlabBlock;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -21,6 +24,12 @@ public class EnderMonitorBlock extends LogicSlabBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_ENDERMONITOR;
+    }
+
+    @Override
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) tileEntity;
+        return new GuiEnderMonitor(enderMonitorTileEntity, new EmptyContainer(entityPlayer));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.logic;
 
+import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
@@ -13,31 +14,25 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
-import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketServerCommand;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiSequencer extends GuiScreen {
+public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     public static final int SEQUENCER_WIDTH = 160;
     public static final int SEQUENCER_HEIGHT = 184;
 
-    private Window window;
     private List<ImageChoiceLabel> bits = new ArrayList<ImageChoiceLabel>();
     private ChoiceLabel mode;
     private TextField speedField;
 
-    private final SequencerTileEntity sequencerTileEntity;
-
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiSequencer(SequencerTileEntity sequencerTileEntity) {
-        this.sequencerTileEntity = sequencerTileEntity;
+    public GuiSequencer(SequencerTileEntity sequencerTileEntity, Container container) {
+        super(sequencerTileEntity, container);
     }
 
     @Override
@@ -74,7 +69,7 @@ public class GuiSequencer extends GuiScreen {
                 setDelay();
             }
         });
-        int delay = sequencerTileEntity.getDelay();
+        int delay = tileEntity.getDelay();
         if (delay <= 0) {
             delay = 1;
         }
@@ -103,7 +98,7 @@ public class GuiSequencer extends GuiScreen {
                         setDesiredHeight(12).
                         addChoice("0", "Disabled", iconGuiElements, 160, 0).
                         addChoice("1", "Enabled", iconGuiElements, 176, 0);
-                choiceLabel.setCurrentChoice(sequencerTileEntity.getCycleBit(bit) ? 1 : 0);
+                choiceLabel.setCurrentChoice(tileEntity.getCycleBit(bit) ? 1 : 0);
                 bits.add(choiceLabel);
                 rowPanel.addChild(choiceLabel);
             }
@@ -121,7 +116,7 @@ public class GuiSequencer extends GuiScreen {
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP2.getDescription(), "Loop the cycle all the time.", "Restart on redstone pulse");
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP3.getDescription(), "Loop the cycle when redstone.", "signal is present");
         mode.setChoiceTooltip(SequencerMode.MODE_STEP.getDescription(), "Do one step in the cycle", "for every redstone pulse");
-        mode.setChoice(sequencerTileEntity.getMode().getDescription());
+        mode.setChoice(tileEntity.getMode().getDescription());
         mode.addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
@@ -138,81 +133,37 @@ public class GuiSequencer extends GuiScreen {
         } catch (NumberFormatException e) {
             delay = 1;
         }
-        sequencerTileEntity.setDelay(delay);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
-                SequencerTileEntity.CMD_SETDELAY,
-                new Argument("delay", delay)));
+        tileEntity.setDelay(delay);
+        sendServerCommand(SequencerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
     }
 
     private void fillGrid(boolean value) {
         for (int bit = 0 ; bit < 64 ; bit++) {
             bits.get(bit).setCurrentChoice(value ? 1 : 0);
         }
-        sequencerTileEntity.setCycleBits(0, 63, value);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
-                SequencerTileEntity.CMD_SETBITS,
+        tileEntity.setCycleBits(0, 63, value);
+        sendServerCommand(SequencerTileEntity.CMD_SETBITS,
                 new Argument("start", 0),
                 new Argument("stop", 63),
-                new Argument("choice", value)));
+                new Argument("choice", value));
     }
 
     private void changeBit(int bit, String choice) {
         boolean newChoice = "1".equals(choice);
-        sequencerTileEntity.setCycleBit(bit, newChoice);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
-                SequencerTileEntity.CMD_SETBIT,
+        tileEntity.setCycleBit(bit, newChoice);
+        sendServerCommand(SequencerTileEntity.CMD_SETBIT,
                 new Argument("bit", bit),
-                new Argument("choice", newChoice)));
+                new Argument("choice", newChoice));
     }
 
     private void changeMode() {
         SequencerMode newMode = SequencerMode.getMode(mode.getCurrentChoice());
-        sequencerTileEntity.setMode(newMode);
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(sequencerTileEntity.xCoord, sequencerTileEntity.yCoord, sequencerTileEntity.zCoord,
-                SequencerTileEntity.CMD_MODE,
-                new Argument("mode", newMode.getDescription())));
+        tileEntity.setMode(newMode);
+        sendServerCommand(SequencerTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
-
+    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         window.draw();
-        java.util.List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x, y, mc.fontRenderer);
-        }
     }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
 }
