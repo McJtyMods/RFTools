@@ -2,9 +2,9 @@ package com.mcjty.rftools.items.dimlets;
 
 import net.minecraft.item.Item;
 
-public class EmptyDimentionTab extends Item {
+public class EmptyDimensionTab extends Item {
 
-    public EmptyDimentionTab() {
+    public EmptyDimensionTab() {
         setMaxStackSize(16);
     }
 }
