@@ -13,7 +13,7 @@ public class DimensionBuilderBlock extends GenericContainerBlock {
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_DIMENSION_BUILDER;
+        return -1;
     }
 
     @Override

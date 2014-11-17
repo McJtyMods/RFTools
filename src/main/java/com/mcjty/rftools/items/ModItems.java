@@ -2,10 +2,7 @@ package com.mcjty.rftools.items;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
-import com.mcjty.rftools.items.dimlets.DimletItems;
-import com.mcjty.rftools.items.dimlets.EmptyDimensionTab;
-import com.mcjty.rftools.items.dimlets.RealizedDimensionTab;
-import com.mcjty.rftools.items.dimlets.UnknownDimlet;
+import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
@@ -17,6 +14,7 @@ public final class ModItems {
     public static RFToolsManualItem rfToolsManualItem;
     public static DevelopersDelightItem developersDelightItem;
     public static UnknownDimlet unknownDimlet;
+    public static KnownDimlet knownDimlet;
     public static EmptyDimensionTab emptyDimensionTab;
     public static RealizedDimensionTab realizedDimensionTab;
 

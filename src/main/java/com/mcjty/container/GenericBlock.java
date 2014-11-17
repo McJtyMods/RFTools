@@ -91,19 +91,21 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     }
 
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
-        if (isBlockContainer) {
-            TileEntity te = world.getTileEntity(x, y, z);
-            if (!tileEntityClass.isInstance(te)) {
-                return true;
-            }
-            if (world.isRemote) {
-                return true;
-            }
-            player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
+        if (getGuiID() != -1) {
+            if (isBlockContainer) {
+                TileEntity te = world.getTileEntity(x, y, z);
+                if (!tileEntityClass.isInstance(te)) {
+                    return true;
+                }
+                if (world.isRemote) {
+                    return true;
+                }
+                player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
 
-        } else {
-            if (world.isRemote) {
-                player.openGui(RFTools.instance, getGuiID(), player.worldObj, x, y, z);
+            } else {
+                if (world.isRemote) {
+                    player.openGui(RFTools.instance, getGuiID(), player.worldObj, x, y, z);
+                }
             }
         }
         return true;
