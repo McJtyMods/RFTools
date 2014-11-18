@@ -4,6 +4,9 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
@@ -30,7 +33,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int getSizeInventory() {
-        return 2;
+        return stacks.length;
     }
 
     @Override
@@ -104,5 +107,48 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        readBufferFromNBT(tagCompound);
+    }
+
+    private void readBufferFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+        }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        writeBufferToNBT(tagCompound);
+    }
+
+    private void writeBufferToNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = new NBTTagList();
+        for (int i = 0 ; i < stacks.length ; i++) {
+            ItemStack stack = stacks[i];
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            if (stack != null) {
+                stack.writeToNBT(nbtTagCompound);
+            }
+            bufferTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("Items", bufferTagList);
     }
 }

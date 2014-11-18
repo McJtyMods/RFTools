@@ -1,7 +1,10 @@
 package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.ContainerFactory;
+import com.mcjty.container.SlotDefinition;
 import com.mcjty.container.SlotType;
+import com.mcjty.rftools.items.ModItems;
+import net.minecraft.item.ItemStack;
 
 public class DimletResearcherContainerFactory extends ContainerFactory {
     public static final String CONTAINER_INVENTORY = "container";
@@ -19,29 +22,19 @@ public class DimletResearcherContainerFactory extends ContainerFactory {
     }
 
     public DimletResearcherContainerFactory() {
-        layoutCraftingGrid();
         layoutBuffer();
-        layoutPlayerInventorySlots(85, 142);
+        layoutPlayerInventorySlots(10, 70);
     }
 
     private void layoutBuffer() {
         // Input slots
-        int leftCol = 12;
-        int topRow = 97;
-        addSlotBox(SlotType.SLOT_INPUT, CONTAINER_INVENTORY, SLOT_DIMLETINPUT, leftCol, topRow, 1, 18, 1, 18);
+        int leftCol = 64;
+        int topRow = 24;
+        addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.unknownDimlet)), CONTAINER_INVENTORY, SLOT_DIMLETINPUT, leftCol, topRow, 1, 18, 1, 18);
 
         // Output slots
-        leftCol = 31;
-        topRow = 142;
-        addSlotBox(SlotType.SLOT_OUTPUT, CONTAINER_INVENTORY, SLOT_DIMLETOUTPUT, leftCol, topRow, 1, 18, 1, 18);
+        leftCol = 118;
+        topRow = 24;
+        addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_DIMLETOUTPUT, leftCol, topRow, 1, 18, 1, 18);
     }
-
-    private void layoutCraftingGrid() {
-        int leftCol = 193;
-        int topRow = 7;
-        addSlotBox(SlotType.SLOT_GHOST, CONTAINER_INVENTORY, SLOT_DIMLETINPUT, leftCol, topRow, 3, 18, 3, 18);
-        addSlot(SlotType.SLOT_GHOSTOUT, CONTAINER_INVENTORY, SLOT_DIMLETOUTPUT, leftCol, 65);
-    }
-
-
 }

@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.container.ContainerFactory;
+import com.mcjty.container.SlotDefinition;
 import com.mcjty.container.SlotType;
 
 public class ShieldContainerFactory  extends ContainerFactory {
@@ -29,7 +30,7 @@ public class ShieldContainerFactory  extends ContainerFactory {
         // Input slots
         int leftCol = 31;
         int topRow = 142;
-        addSlotBox(SlotType.SLOT_INPUT, CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 1, 18, 1, 18);
+        addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 1, 18, 1, 18);
     }
 
 }

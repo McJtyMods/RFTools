@@ -3,8 +3,8 @@ package com.mcjty.container;
 import java.util.*;
 
 public class ContainerFactory {
-    private Map<Integer,SlotType> indexToType = new HashMap<Integer, SlotType>();
-    private Map<SlotType,SlotRanges> slotRangesMap = new HashMap<SlotType,SlotRanges>();
+    private Map<Integer,SlotDefinition> indexToType = new HashMap<Integer, SlotDefinition>();
+    private Map<SlotDefinition,SlotRanges> slotRangesMap = new HashMap<SlotDefinition,SlotRanges>();
     private List<SlotFactory> slots = new ArrayList<SlotFactory>();
 
     public static final String CONTAINER_PLAYER = "player";
@@ -47,7 +47,7 @@ public class ContainerFactory {
         return s;
     }
 
-    public Map<SlotType, SlotRanges> getSlotRangesMap() {
+    public Map<SlotDefinition, SlotRanges> getSlotRangesMap() {
         return slotRangesMap;
     }
 
@@ -76,11 +76,11 @@ public class ContainerFactory {
      * @return
      */
     public SlotType getSlotType(int index) {
-        SlotType slotType = indexToType.get(index);
-        if (slotType == null) {
+        SlotDefinition slotDefinition = indexToType.get(index);
+        if (slotDefinition == null) {
             return SlotType.SLOT_UNKNOWN;
         }
-        return slotType;
+        return slotDefinition.getType();
     }
 
     public boolean isOutputSlot(int index) {
@@ -104,39 +104,39 @@ public class ContainerFactory {
     }
 
     public boolean isEnderpearlSlot(int index) {
-        return getSlotType(index) == SlotType.SLOT_ENDERPEARL;
+        return getSlotType(index) == SlotType.SLOT_SPECIFICITEM;
     }
 
     public boolean isPlayerHotbarSlot(int index) {
         return getSlotType(index) == SlotType.SLOT_PLAYERHOTBAR;
     }
 
-    public void addSlot(SlotType slotType, String inventoryName, int index, int x, int y) {
-        SlotFactory slotFactory = new SlotFactory(slotType, inventoryName, index, x, y);
+    public void addSlot(SlotDefinition slotDefinition, String inventoryName, int index, int x, int y) {
+        SlotFactory slotFactory = new SlotFactory(slotDefinition, inventoryName, index, x, y);
         int slotIndex = slots.size();
         slots.add(slotFactory);
 
-        SlotRanges slotRanges = slotRangesMap.get(slotType);
+        SlotRanges slotRanges = slotRangesMap.get(slotDefinition);
         if (slotRanges == null) {
-            slotRanges = new SlotRanges(slotType);
-            slotRangesMap.put(slotType, slotRanges);
+            slotRanges = new SlotRanges(slotDefinition);
+            slotRangesMap.put(slotDefinition, slotRanges);
         }
         slotRanges.addSingle(slotIndex);
-        indexToType.put(slotIndex, slotType);
+        indexToType.put(slotIndex, slotDefinition);
     }
 
-    public int addSlotRange(SlotType slotType, String inventoryName, int index, int x, int y, int amount, int dx) {
+    public int addSlotRange(SlotDefinition slotDefinition, String inventoryName, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {
-            addSlot(slotType, inventoryName, index, x, y);
+            addSlot(slotDefinition, inventoryName, index, x, y);
             x += dx;
             index++;
         }
         return index;
     }
 
-    public int addSlotBox(SlotType slotType, String inventoryName, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
+    public int addSlotBox(SlotDefinition slotDefinition, String inventoryName, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0 ; j < verAmount ; j++) {
-            index = addSlotRange(slotType, inventoryName, index, x, y, horAmount, dx);
+            index = addSlotRange(slotDefinition, inventoryName, index, x, y, horAmount, dx);
             y += dy;
         }
         return index;
@@ -144,11 +144,11 @@ public class ContainerFactory {
 
     protected void layoutPlayerInventorySlots(int leftCol, int topRow) {
         // Player inventory
-        addSlotBox(SlotType.SLOT_PLAYERINV, CONTAINER_PLAYER, 9, leftCol, topRow, 9, 18, 3, 18);
+        addSlotBox(new SlotDefinition(SlotType.SLOT_PLAYERINV), CONTAINER_PLAYER, 9, leftCol, topRow, 9, 18, 3, 18);
 
         // Hotbar
         topRow += 58;
-        addSlotRange(SlotType.SLOT_PLAYERHOTBAR, CONTAINER_PLAYER, 0, leftCol, topRow, 9, 18);
+        addSlotRange(new SlotDefinition(SlotType.SLOT_PLAYERHOTBAR), CONTAINER_PLAYER, 0, leftCol, topRow, 9, 18);
 
     }
 

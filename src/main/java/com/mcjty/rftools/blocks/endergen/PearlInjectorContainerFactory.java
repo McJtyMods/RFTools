@@ -1,7 +1,10 @@
 package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.container.ContainerFactory;
+import com.mcjty.container.SlotDefinition;
 import com.mcjty.container.SlotType;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 public class PearlInjectorContainerFactory extends ContainerFactory {
     public static final String CONTAINER_INVENTORY = "container";
@@ -29,7 +32,7 @@ public class PearlInjectorContainerFactory extends ContainerFactory {
         // Input slots
         int leftCol = 10;
         int topRow = 25;
-        addSlotBox(SlotType.SLOT_ENDERPEARL, CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 9, 18, 2, 18);
+        addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ender_pearl)), CONTAINER_INVENTORY, SLOT_BUFFER, leftCol, topRow, 9, 18, 2, 18);
     }
 
 }

@@ -1,23 +1,27 @@
 package com.mcjty.container;
 
 public class SlotFactory {
-    private final SlotType slotType;
+    private final SlotDefinition slotDefinition;
     private final int index;
     private final int x;
     private final int y;
 
     private final String inventoryName;
 
-    public SlotFactory(SlotType slotType, String inventoryName, int index, int x, int y) {
+    public SlotFactory(SlotDefinition slotDefinition, String inventoryName, int index, int x, int y) {
         this.inventoryName = inventoryName;
-        this.slotType = slotType;
+        this.slotDefinition = slotDefinition;
         this.index = index;
         this.x = x;
         this.y = y;
     }
 
+    public SlotDefinition getSlotDefinition() {
+        return slotDefinition;
+    }
+
     public SlotType getSlotType() {
-        return slotType;
+        return slotDefinition.getType();
     }
 
     public int getIndex() {

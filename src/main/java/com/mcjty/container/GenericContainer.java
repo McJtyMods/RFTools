@@ -2,7 +2,6 @@ package com.mcjty.container;
 
 import com.google.common.collect.Range;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -49,11 +48,12 @@ public class GenericContainer extends Container {
                 slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else if (slotFactory.getSlotType() == SlotType.SLOT_GHOSTOUT) {
                 slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-            } else if (slotFactory.getSlotType() == SlotType.SLOT_ENDERPEARL) {
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_SPECIFICITEM) {
+                final ItemStack itemStack = slotFactory.getSlotDefinition().getItemStack();
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                     @Override
                     public boolean isItemValid(ItemStack stack) {
-                        return Items.ender_pearl.equals(stack.getItem());
+                        return itemStack.isItemEqual(stack);
                     }
                 };
             } else {
@@ -64,11 +64,29 @@ public class GenericContainer extends Container {
     }
 
     private boolean mergeItemStacks(ItemStack itemStack, SlotType slotType, boolean reverse) {
-        SlotRanges ranges = factory.getSlotRangesMap().get(slotType);
+        if (slotType == SlotType.SLOT_SPECIFICITEM) {
+            for (SlotDefinition definition : factory.getSlotRangesMap().keySet()) {
+                if (slotType.equals(definition.getType())) {
+                    if (mergeItemStacks(itemStack, definition, reverse)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return mergeItemStacks(itemStack, new SlotDefinition(slotType), reverse);
+        }
+    }
+
+    private boolean mergeItemStacks(ItemStack itemStack, SlotDefinition slotDefinition, boolean reverse) {
+        SlotRanges ranges = factory.getSlotRangesMap().get(slotDefinition);
         if (ranges == null) {
             return false;
         }
-        if (itemStack.getItem() != null && slotType == SlotType.SLOT_ENDERPEARL && !Items.ender_pearl.equals(itemStack.getItem())) {
+
+        SlotType slotType = slotDefinition.getType();
+
+        if (itemStack.getItem() != null && slotType == SlotType.SLOT_SPECIFICITEM && !slotDefinition.getItemStack().isItemEqual(itemStack)) {
             return false;
         }
         for (Range<Integer> r : ranges.asRanges()) {
@@ -100,7 +118,7 @@ public class GenericContainer extends Container {
                 return null; // @@@ Right?
             } else if (factory.isPlayerInventorySlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
-                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_ENDERPEARL, false)) {
+                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
                         if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
                             return null;
                         }

@@ -10,14 +10,14 @@ import java.util.Set;
  * A collection of ranges of a given slot type.
  */
 public class SlotRanges {
-    private SlotType slotType;
+    private SlotDefinition slotType;
     private TreeRangeSet<Integer> treeRangeSet = TreeRangeSet.create();
 
-    public SlotRanges(SlotType slotType) {
+    public SlotRanges(SlotDefinition slotType) {
         this.slotType = slotType;
     }
 
-    public SlotType getSlotType() {
+    public SlotDefinition getSlotDefinition() {
         return slotType;
     }
 
