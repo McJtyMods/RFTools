@@ -1,7 +1,6 @@
 package com.mcjty.container;
 
 import buildcraft.api.tools.IToolWrench;
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.item.IToolHammer;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
@@ -28,7 +27,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GenericBlock extends Block implements ITileEntityProvider, IWailaBlock {
@@ -320,10 +318,9 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
 
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        TileEntity tileentity = accessor.getTileEntity();
-        if (tileentity instanceof IEnergyHandler) {
-            IEnergyHandler handler = (IEnergyHandler) tileentity;
-            int energy = handler.getEnergyStored(ForgeDirection.DOWN);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null && tagCompound.hasKey("Energy")) {
+            int energy = tagCompound.getInteger("Energy");
             currenttip.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
         }
         return currenttip;
