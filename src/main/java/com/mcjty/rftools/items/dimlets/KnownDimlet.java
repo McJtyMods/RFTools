@@ -8,7 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,14 @@ import java.util.Map;
 public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
 
-    private final List<DimletEntry> entries = new ArrayList<DimletEntry>();
+    private static final Map<DimletType,Integer> idsPerType = new HashMap<DimletType, Integer>();
+    private static final Map<Integer,DimletEntry> entries = new HashMap<Integer, DimletEntry>();
+
+    static {
+        for (DimletType type : DimletType.values()) {
+            idsPerType.put(type, type.getIdOffset());
+        }
+    }
 
     public KnownDimlet() {
         setMaxStackSize(16);
@@ -24,8 +30,10 @@ public class KnownDimlet extends Item {
         setMaxDamage(0);
     }
 
-    public void registerBiomeDimlet(String name) {
-        entries.add(new DimletEntry(DimletType.DIMLET_BIOME, name));
+    public static void registerDimlet(DimletType type, String name) {
+        int id = idsPerType.get(type);
+        idsPerType.put(type, id+1);
+        entries.put(id, new DimletEntry(type, name));
     }
 
     @Override
@@ -38,14 +46,16 @@ public class KnownDimlet extends Item {
 
     @Override
     public IIcon getIconFromDamage(int damage) {
-        DimletType type = DimletType.values()[damage];
+        DimletEntry entry = entries.get(damage);
+        DimletType type = entry.getType();
         return icons.get(type);
     }
 
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
-        DimletType type = DimletType.values()[itemStack.getItemDamage()];
-        return type.getName() + " Dimlet";
+        DimletEntry entry = entries.get(itemStack.getItemDamage());
+        DimletType type = entry.getType();
+        return type.getName() + " " + entry.getName() + " Dimlet";
     }
 
     @Override
@@ -55,8 +65,8 @@ public class KnownDimlet extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (DimletType type : DimletType.values()) {
-            list.add(new ItemStack(ModItems.knownDimlet, 1, type.ordinal()));
+        for (Map.Entry<Integer,DimletEntry> me : entries.entrySet()) {
+            list.add(new ItemStack(ModItems.knownDimlet, 1, me.getKey()));
         }
     }
 

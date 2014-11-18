@@ -60,7 +60,5 @@ public final class ModItems {
         realizedDimensionTab.setCreativeTab(RFTools.tabRfTools);
         realizedDimensionTab.setTextureName(RFTools.MODID + ":realizedDimensionTabItem");
         GameRegistry.registerItem(realizedDimensionTab, "realizedDimensionTab");
-
-        DimletItems.init();
     }
 }

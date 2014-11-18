@@ -10,6 +10,7 @@ import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletItems;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
 import com.mcjty.rftools.network.PacketHandler;
@@ -69,7 +70,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
-
+        DimletItems.init();
     }
 
 }

@@ -3,9 +3,16 @@ package com.mcjty.rftools.items.dimlets;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.*;
 
@@ -13,18 +20,44 @@ public class DimletItems {
     public static final Map<String,KnownDimlet> dimlets = new HashMap<String, KnownDimlet>();
     public static final List<KnownDimlet> orderedDimlets = new ArrayList<KnownDimlet>();
 
-    private static final float RARITY_MULTIPLIER = .5f;
-
     public static void init() {
-        initBiomeItems(BiomeManager.getBiomes(BiomeManager.BiomeType.COOL));
-        initBiomeItems(BiomeManager.getBiomes(BiomeManager.BiomeType.DESERT));
-        initBiomeItems(BiomeManager.getBiomes(BiomeManager.BiomeType.ICY));
-        initBiomeItems(BiomeManager.getBiomes(BiomeManager.BiomeType.WARM));
+
+        initBiomeItems();
+
+        initMaterialItem(Blocks.diamond_block);
+        initMaterialItem(Blocks.gold_block);
+        initMaterialItem(Blocks.gold_ore);
+
+        initFoliageItem();
+
+        initLiquidItems();
+
+        initMobItem(EntityZombie.class, "Zombie");
+        initMobItem(EntitySkeleton.class, "Skeleton");
+
+        initSkyItem("Clear");
+        initSkyItem("Bright");
+
+        initStructureItem("Village");
+        initStructureItem("Stronghold");
+        initStructureItem("Dungeon");
+        initStructureItem("Fortress");
+
+        initTerrainItem("Flat");
+        initTerrainItem("Void");
+        initTerrainItem("Amplified");
+        initTerrainItem("Normal");
+        initTerrainItem("Cave World");
+        initTerrainItem("Island");
+        initTerrainItem("Spheres");
+
+        initTimeItem("Day");
+        initTimeItem("Night");
+        initTerrainItem("Day/Night");
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
         ModItems.knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
-//        knownDimlet.setTextureName(RFTools.MODID + ":unknownDimletItem");
         GameRegistry.registerItem(ModItems.knownDimlet, "knownDimlet");
 
         setupChestLoot();
@@ -44,11 +77,62 @@ public class DimletItems {
         chest.addItem(new WeightedRandomChestContent(ModItems.unknownDimlet, 0, 1, 3, 50));
     }
 
+    private static void initBiomeItems() {
+        Map<String,BiomeManager.BiomeEntry> biomes = new HashMap<String, BiomeManager.BiomeEntry>();
+        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.COOL));
+        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.DESERT));
+        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.ICY));
+        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.WARM));
 
-    private static void initBiomeItems(Collection<BiomeManager.BiomeEntry> biomes) {
-        for (BiomeManager.BiomeEntry entry : biomes) {
-            String name = entry.biome.getBiomeClass().getName();
+    }
+
+    private static void addBiomes(Map<String,BiomeManager.BiomeEntry> biomes, Collection<BiomeManager.BiomeEntry> list) {
+        if (list == null) {
+            return;
         }
+        for (BiomeManager.BiomeEntry entry : list) {
+            if (!biomes.containsKey(entry.biome.biomeName)) {
+                biomes.put(entry.biome.biomeName, entry);
+            }
+        }
+        for (String name : biomes.keySet()) {
+            KnownDimlet.registerDimlet(DimletType.DIMLET_BIOME, name);
+        }
+    }
+
+    private static void initMaterialItem(Block block) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_MATERIAL, block.getLocalizedName());
+    }
+
+    private static void initFoliageItem() {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_FOLIAGE, "Oak");
+    }
+
+    private static void initLiquidItems() {
+        Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
+        for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
+            KnownDimlet.registerDimlet(DimletType.DIMLET_LIQUID, me.getKey());
+        }
+    }
+
+    private static void initMobItem(Class <? extends EntityLiving> entity, String name) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_MOBS, name);
+    }
+
+    private static void initSkyItem(String name) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_SKY, name);
+    }
+
+    private static void initStructureItem(String name) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_STRUCTURES, name);
+    }
+
+    private static void initTerrainItem(String name) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_TERRAIN, name);
+    }
+
+    private static void initTimeItem(String name) {
+        KnownDimlet.registerDimlet(DimletType.DIMLET_TIME, name);
     }
 
     /**
