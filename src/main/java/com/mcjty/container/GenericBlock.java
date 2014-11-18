@@ -314,9 +314,8 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
 
     @Override
     public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        List<String> list = new ArrayList<String>();
-        list.add(EnumChatFormatting.WHITE + itemStack.getDisplayName());
-        return list;
+        currenttip.add(EnumChatFormatting.WHITE + itemStack.getDisplayName());
+        return currenttip;
     }
 
     @Override
@@ -324,13 +323,10 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
         TileEntity tileentity = accessor.getTileEntity();
         if (tileentity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileentity;
-            List<String> list = new ArrayList<String>();
             int energy = handler.getEnergyStored(ForgeDirection.DOWN);
-            list.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
-            return list;
-        } else {
-            return currenttip;
+            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
         }
+        return currenttip;
     }
 
     @Override
