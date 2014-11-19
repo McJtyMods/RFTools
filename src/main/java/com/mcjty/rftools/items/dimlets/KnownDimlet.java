@@ -8,15 +8,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
+    private static Random random = new Random();
 
     private static final Map<DimletType,Integer> idsPerType = new HashMap<DimletType, Integer>();
     private static final Map<Integer,DimletEntry> entries = new HashMap<Integer, DimletEntry>();
+    private static final List<Integer> ids = new ArrayList<Integer>();
 
     static {
         for (DimletType type : DimletType.values()) {
@@ -34,6 +34,12 @@ public class KnownDimlet extends Item {
         int id = idsPerType.get(type);
         idsPerType.put(type, id+1);
         entries.put(id, new DimletEntry(type, name));
+        ids.add(id);
+    }
+
+    public static int getRandomDimlet() {
+        int idx = random.nextInt(ids.size());
+        return ids.get(idx);
     }
 
     @Override

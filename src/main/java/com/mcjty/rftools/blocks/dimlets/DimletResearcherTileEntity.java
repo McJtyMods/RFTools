@@ -2,20 +2,104 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.KnownDimlet;
+import com.mcjty.rftools.network.Argument;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Map;
 
 public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
+    public static final String CMD_GETRESEARCHING = "getResearching";
+    public static final String CLIENTCMD_GETRESEARCHING = "getResearching";
+
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletResearcherContainerFactory.getInstance(), 2);
+
+    private int researching = 0;
+
+    public int getResearching() {
+        return researching;
+    }
 
     public DimletResearcherTileEntity() {
         super(DimletConfiguration.RESEARCHER_MAXENERGY, DimletConfiguration.RESEARCHER_RECEIVEPERTICK);
     }
+
+    @Override
+    protected void checkStateServer() {
+        if (researching > 0) {
+            researching--;
+            if (researching == 0) {
+                int id = KnownDimlet.getRandomDimlet();
+                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 1, 2);
+            }
+            markDirty();
+        } else {
+            ItemStack inputStack = inventoryHelper.getStacks()[0];
+            ItemStack outputStack = inventoryHelper.getStacks()[1];
+            if (inputStack != null && inputStack.getItem() == ModItems.unknownDimlet && outputStack == null) {
+                startResearching();
+            }
+        }
+    }
+
+    private void startResearching() {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        if (rf < DimletConfiguration.rfResearchOperation) {
+            // Not enough energy.
+            return;
+        }
+        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfResearchOperation, false);
+
+        inventoryHelper.getStacks()[0].splitStack(1);
+        if (inventoryHelper.getStacks()[0].stackSize == 0) {
+            inventoryHelper.getStacks()[0] = null;
+        }
+        researching = 16;
+        markDirty();
+    }
+
+    // Request the researching amount from the server. This has to be called on the client side.
+    public void requestResearchingFromServer() {
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+                CMD_GETRESEARCHING,
+                CLIENTCMD_GETRESEARCHING));
+    }
+
+    @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+        Integer rc = super.executeWithResultInteger(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETRESEARCHING.equals(command)) {
+            return researching;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, Integer result) {
+        boolean rc = super.execute(command, result);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETRESEARCHING.equals(command)) {
+            researching = result;
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
@@ -69,7 +153,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int getInventoryStackLimit() {
-        return 1;
+        return 16;
     }
 
     @Override
@@ -101,6 +185,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
+        researching = tagCompound.getInteger("researching");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -120,6 +205,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        tagCompound.setInteger("researching", researching);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {

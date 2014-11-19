@@ -17,9 +17,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import java.util.*;
 
 public class DimletItems {
-    public static final Map<String,KnownDimlet> dimlets = new HashMap<String, KnownDimlet>();
-    public static final List<KnownDimlet> orderedDimlets = new ArrayList<KnownDimlet>();
-
     public static void init() {
 
         initBiomeItems();
@@ -71,6 +68,7 @@ public class DimletItems {
         setupChestLoot(ChestGenHooks.STRONGHOLD_CORRIDOR);
         setupChestLoot(ChestGenHooks.VILLAGE_BLACKSMITH);
     }
+
 
     private static void setupChestLoot(String category) {
         ChestGenHooks chest = ChestGenHooks.getInfo(category);

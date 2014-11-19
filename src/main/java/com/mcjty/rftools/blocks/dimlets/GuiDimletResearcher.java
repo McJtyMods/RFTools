@@ -4,6 +4,7 @@ import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.EnergyBar;
+import com.mcjty.gui.widgets.ImageLabel;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
@@ -17,8 +18,10 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
     public static final int RESEARCHER_HEIGHT = 152;
 
     private EnergyBar energyBar;
+    private ImageLabel arrow;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimletresearcher.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimletResearcher(DimletResearcherTileEntity pearlInjectorTileEntity, DimletResearcherContainer container) {
         super(pearlInjectorTileEntity, container);
@@ -36,19 +39,32 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar);
+        arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
+        arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(arrow);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
+        tileEntity.requestResearchingFromServer();
     }
 
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        int researching = tileEntity.getResearching();
+        if (researching > 0) {
+            arrow.setImage(iconGuiElements, 144, 0);
+        } else {
+            arrow.setImage(iconGuiElements, 192, 0);
+        }
+
         window.draw();
-        int currentRF = tileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
+
+        energyBar.setValue(tileEntity.getCurrentRF());
+
         tileEntity.requestRfFromServer();
+        tileEntity.requestResearchingFromServer();
     }
 }
