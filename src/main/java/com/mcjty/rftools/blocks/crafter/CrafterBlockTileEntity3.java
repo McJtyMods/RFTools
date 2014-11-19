@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.container.InventoryHelper;
-import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.RedstoneMode;
@@ -330,7 +329,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             start = CrafterContainerFactory.SLOT_BUFFEROUT;
             stop = CrafterContainerFactory.SLOT_BUFFEROUT + CrafterContainerFactory.BUFFEROUT_SIZE;
         }
-        return InventoryTools.mergeItemStack(this, result, start, stop);
+        return InventoryHelper.mergeItemStack(this, result, start, stop);
     }
 
     @Override
