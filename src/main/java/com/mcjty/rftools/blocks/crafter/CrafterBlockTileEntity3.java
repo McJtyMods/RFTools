@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
+import com.mcjty.container.InventoryHelper;
 import com.mcjty.container.InventoryTools;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
@@ -24,7 +25,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     public static final String CMD_MODE = "mode";
 
-    private ItemStack stacks[] = new ItemStack[10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainerFactory.getInstance(),
+            10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE);
     private CraftingRecipe recipes[];
     private int supportedRecipes;
 
@@ -72,41 +74,17 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     @Override
     public int getSizeInventory() {
-        return stacks.length;
+        return inventoryHelper.getStacks().length;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return inventoryHelper.getStacks()[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (CrafterContainerFactory.getInstance().isGhostSlot(index) || CrafterContainerFactory.getInstance().isGhostOutputSlot(index)) {
-            ItemStack old = stacks[index];
-            stacks[index] = null;
-            if (old == null) {
-                return null;
-            }
-            old.stackSize = 0;
-            return old;
-        } else {
-            if (stacks[index] != null) {
-                if (stacks[index].stackSize <= amount) {
-                    ItemStack old = stacks[index];
-                    stacks[index] = null;
-                    markDirty();
-                    return old;
-                }
-                ItemStack its = stacks[index].splitStack(amount);
-                if (stacks[index].stackSize == 0) {
-                    stacks[index] = null;
-                }
-                markDirty();
-                return its;
-            }
-            return null;
-        }
+        return inventoryHelper.decrStackSize(index, amount);
     }
 
     @Override
@@ -116,28 +94,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (CrafterContainerFactory.getInstance().isGhostSlot(index)) {
-            if (stack != null) {
-                stacks[index] = stack.copy();
-                if (index < 9) {
-                    stacks[index].stackSize = 1;
-                }
-            } else {
-                stacks[index] = null;
-            }
-        } else if (CrafterContainerFactory.getInstance().isGhostOutputSlot(index)) {
-            if (stack != null) {
-                stacks[index] = stack.copy();
-            } else {
-                stacks[index] = null;
-            }
-        } else {
-            stacks[index] = stack;
-            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-                stack.stackSize = getInventoryStackLimit();
-            }
-            markDirty();
-        }
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
     @Override
@@ -211,7 +168,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i+CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i+CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -239,8 +196,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = CrafterContainerFactory.SLOT_BUFFER ; i < stacks.length ; i++) {
-            ItemStack stack = stacks[i];
+        for (int i = CrafterContainerFactory.SLOT_BUFFER ; i < inventoryHelper.getStacks().length ; i++) {
+            ItemStack stack = inventoryHelper.getStacks()[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -322,7 +279,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
             for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
-                ItemStack input = stacks[CrafterContainerFactory.SLOT_BUFFER + j];
+                ItemStack input = inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j];
                 if (input != null && input.stackSize > keep) {
                     if (OreDictionary.itemMatches(stack, input, false)) {
                         int ss = count;
@@ -345,7 +302,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
             for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
-                ItemStack input = stacks[CrafterContainerFactory.SLOT_BUFFER + j];
+                ItemStack input = inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j];
                 if (input != null && input.stackSize > keep) {
                     if (OreDictionary.itemMatches(stack, input, false)) {
                         int ss = count;
@@ -355,7 +312,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
                         count -= ss;
                         input.splitStack(ss);        // This consumes the items
                         if (input.stackSize == 0) {
-                            stacks[CrafterContainerFactory.SLOT_BUFFER + j] = null;
+                            inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j] = null;
                         }
                     }
                 }

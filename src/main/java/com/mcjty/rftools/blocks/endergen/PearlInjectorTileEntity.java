@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.endergen;
 
+import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements IInventory {
 
-    private ItemStack stacks[] = new ItemStack[PearlInjectorContainerFactory.BUFFER_SIZE];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, PearlInjectorContainerFactory.getInstance(), PearlInjectorContainerFactory.BUFFER_SIZE);
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -55,8 +56,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     }
 
     private boolean takePearl() {
-        for (int i = 0 ; i < stacks.length ; i++) {
-            ItemStack stack = stacks[i];
+        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
+            ItemStack stack = inventoryHelper.getStacks()[i];
             if (stack != null && Items.ender_pearl.equals(stack.getItem()) && stack.stackSize > 0) {
                 decrStackSize(i, 1);
                 return true;
@@ -97,7 +98,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i+PearlInjectorContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i+PearlInjectorContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -115,7 +116,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (ItemStack stack : stacks) {
+        for (ItemStack stack : inventoryHelper.getStacks()) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -128,31 +129,17 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     @Override
     public int getSizeInventory() {
-        return stacks.length;
+        return inventoryHelper.getStacks().length;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return inventoryHelper.getStacks()[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = null;
-                markDirty();
-                return old;
-            }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
-            }
-            markDirty();
-            return its;
-        }
-        return null;
+        return inventoryHelper.decrStackSize(index, amount);
     }
 
     @Override
@@ -162,11 +149,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        stacks[index] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-            stack.stackSize = getInventoryStackLimit();
-        }
-        markDirty();
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
     @Override

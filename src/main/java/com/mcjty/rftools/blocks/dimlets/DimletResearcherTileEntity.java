@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.dimlets;
 
+import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -10,7 +11,7 @@ import net.minecraftforge.common.util.Constants;
 
 public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
-    private ItemStack stacks[] = new ItemStack[2];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletResearcherContainerFactory.getInstance(), 2);
 
     public DimletResearcherTileEntity() {
         super(DimletConfiguration.RESEARCHER_MAXENERGY, DimletConfiguration.RESEARCHER_RECEIVEPERTICK);
@@ -33,31 +34,17 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int getSizeInventory() {
-        return stacks.length;
+        return inventoryHelper.getStacks().length;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return inventoryHelper.getStacks()[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = null;
-                markDirty();
-                return old;
-            }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
-            }
-            markDirty();
-            return its;
-        }
-        return null;
+        return inventoryHelper.decrStackSize(index, amount);
     }
 
     @Override
@@ -67,11 +54,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        stacks[index] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-            stack.stackSize = getInventoryStackLimit();
-        }
-        markDirty();
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
     @Override
@@ -124,7 +107,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -141,8 +124,8 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < stacks.length ; i++) {
-            ItemStack stack = stacks[i];
+        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
+            ItemStack stack = inventoryHelper.getStacks()[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
