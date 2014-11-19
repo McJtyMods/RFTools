@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -88,6 +89,7 @@ public class RFTools {
         logger = e.getModLog();
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
+        FMLInterModComms.sendMessage("Waila", "register", "com.mcjty.rftools.apideps.WailaCompatibility.load");
     }
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.
