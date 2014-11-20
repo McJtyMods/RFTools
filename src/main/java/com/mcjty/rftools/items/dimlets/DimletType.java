@@ -1,24 +1,33 @@
 package com.mcjty.rftools.items.dimlets;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum DimletType {
-    DIMLET_BIOME("biomeDimlet", "Biome", 0),
-    DIMLET_FOLIAGE("foliageDimlet", "Foliage", 1000),
-    DIMLET_LIQUID("liquidDimlet", "Liquid", 2000),
-    DIMLET_MATERIAL("materialDimlet", "Material", 3000),
-    DIMLET_MOBS("mobsDimlet", "Mob", 4000),
-    DIMLET_SKY("skyDimlet", "Sky", 5000),
-    DIMLET_STRUCTURES("structuresDimlet", "Structure", 6000),
-    DIMLET_TERRAIN("terrainDimlet", "Terrain", 7000),
-    DIMLET_TIME("timeDimlet", "Time", 8000);
+    DIMLET_BIOME("biomeDimlet", "Biome"),
+    DIMLET_FOLIAGE("foliageDimlet", "Foliage"),
+    DIMLET_LIQUID("liquidDimlet", "Liquid"),
+    DIMLET_MATERIAL("materialDimlet", "Material"),
+    DIMLET_MOBS("mobsDimlet", "Mob"),
+    DIMLET_SKY("skyDimlet", "Sky"),
+    DIMLET_STRUCTURES("structuresDimlet", "Structure"),
+    DIMLET_TERRAIN("terrainDimlet", "Terrain"),
+    DIMLET_TIME("timeDimlet", "Time");
 
     private final String textureName;
     private final String name;
-    private final int idOffset;
 
-    DimletType(String textureName, String name, int idOffset) {
+    private static final Map<String,DimletType> typeByName = new HashMap<String, DimletType>();
+
+    static {
+        for (DimletType type : values()) {
+            typeByName.put(type.getName(), type);
+        }
+    }
+
+    DimletType(String textureName, String name) {
         this.textureName = textureName;
         this.name = name;
-        this.idOffset = idOffset;
     }
 
     public String getName() {
@@ -29,7 +38,8 @@ public enum DimletType {
         return textureName;
     }
 
-    public int getIdOffset() {
-        return idOffset;
+    public static DimletType getTypeByName(String name) {
+        return typeByName.get(name);
     }
+
 }

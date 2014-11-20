@@ -11,6 +11,7 @@ import com.mcjty.rftools.crafting.ModCrafting;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletItems;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
 import com.mcjty.rftools.network.PacketHandler;
@@ -23,10 +24,20 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
+import java.io.File;
+
 public class CommonProxy {
 
+    private Configuration mainConfig;
+    private Configuration dimletConfig;
+
     public void preInit(FMLPreInitializationEvent e) {
-        loadConfiguration(e);
+        File modConfigDir = e.getModConfigurationDirectory();
+        mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
+        dimletConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "dimlets.cfg"));
+
+        readMainConfig();
+        readDimletConfig();
 
         PacketHandler.registerMessages();
 
@@ -35,8 +46,25 @@ public class CommonProxy {
         ModCrafting.init();
     }
 
-    private void loadConfiguration(FMLPreInitializationEvent e) {
-        Configuration cfg = new Configuration(e.getSuggestedConfigurationFile());
+    private void readDimletConfig() {
+        Configuration cfg = dimletConfig;
+        try {
+            cfg.load();
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Rarity distribution per type of dimlet");
+            KnownDimletConfiguration.initKnownDimlets(cfg);
+            KnownDimletConfiguration.initTypeRarity(cfg);
+        } catch (Exception e1) {
+            FMLLog.log(Level.ERROR, e1, "Problem loading dimlet config file!");
+        } finally {
+            if (cfg.hasChanged()) {
+                cfg.save();
+            }
+        }
+    }
+
+    private void readMainConfig() {
+        Configuration cfg = mainConfig;
         try {
             cfg.load();
             cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the automatic crafter machine");
@@ -71,6 +99,16 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent e) {
         DimletItems.init();
+        KnownDimletConfiguration.registerDimlets(dimletConfig);
+
+        if (mainConfig.hasChanged()) {
+            mainConfig.save();
+        }
+        if (dimletConfig.hasChanged()) {
+            dimletConfig.save();
+        }
+        mainConfig = null;
+        dimletConfig = null;
     }
 
 }

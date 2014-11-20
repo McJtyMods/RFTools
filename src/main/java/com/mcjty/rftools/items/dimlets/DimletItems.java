@@ -94,43 +94,43 @@ public class DimletItems {
             }
         }
         for (String name : biomes.keySet()) {
-            KnownDimlet.registerDimlet(DimletType.DIMLET_BIOME, name);
+            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name);
         }
     }
 
     private static void initMaterialItem(Block block) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_MATERIAL, block.getLocalizedName());
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, block.getLocalizedName());
     }
 
     private static void initFoliageItem() {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_FOLIAGE, "Oak");
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_FOLIAGE, "Oak");
     }
 
     private static void initLiquidItems() {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
-            KnownDimlet.registerDimlet(DimletType.DIMLET_LIQUID, me.getKey());
+            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_LIQUID, me.getKey());
         }
     }
 
     private static void initMobItem(Class <? extends EntityLiving> entity, String name) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_MOBS, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MOBS, name);
     }
 
     private static void initSkyItem(String name) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_SKY, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name);
     }
 
     private static void initStructureItem(String name) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_STRUCTURES, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURES, name);
     }
 
     private static void initTerrainItem(String name) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_TERRAIN, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name);
     }
 
     private static void initTimeItem(String name) {
-        KnownDimlet.registerDimlet(DimletType.DIMLET_TIME, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name);
     }
 
     /**

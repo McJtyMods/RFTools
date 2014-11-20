@@ -14,32 +14,15 @@ public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
     private static Random random = new Random();
 
-    private static final Map<DimletType,Integer> idsPerType = new HashMap<DimletType, Integer>();
-    private static final Map<Integer,DimletEntry> entries = new HashMap<Integer, DimletEntry>();
-    private static final List<Integer> ids = new ArrayList<Integer>();
-
-    static {
-        for (DimletType type : DimletType.values()) {
-            idsPerType.put(type, type.getIdOffset());
-        }
-    }
-
     public KnownDimlet() {
         setMaxStackSize(16);
         setHasSubtypes(true);
         setMaxDamage(0);
     }
 
-    public static void registerDimlet(DimletType type, String name) {
-        int id = idsPerType.get(type);
-        idsPerType.put(type, id+1);
-        entries.put(id, new DimletEntry(type, name));
-        ids.add(id);
-    }
-
     public static int getRandomDimlet() {
-        int idx = random.nextInt(ids.size());
-        return ids.get(idx);
+        int idx = random.nextInt(KnownDimletConfiguration.dimletIds.size());
+        return KnownDimletConfiguration.dimletIds.get(idx);
     }
 
     @Override
@@ -52,14 +35,14 @@ public class KnownDimlet extends Item {
 
     @Override
     public IIcon getIconFromDamage(int damage) {
-        DimletEntry entry = entries.get(damage);
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(damage);
         DimletType type = entry.getType();
         return icons.get(type);
     }
 
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
-        DimletEntry entry = entries.get(itemStack.getItemDamage());
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage());
         DimletType type = entry.getType();
         return type.getName() + " " + entry.getName() + " Dimlet";
     }
@@ -71,26 +54,9 @@ public class KnownDimlet extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (Map.Entry<Integer,DimletEntry> me : entries.entrySet()) {
+        for (Map.Entry<Integer,DimletEntry> me : KnownDimletConfiguration.idToDimlet.entrySet()) {
             list.add(new ItemStack(ModItems.knownDimlet, 1, me.getKey()));
         }
     }
 
-    public static class DimletEntry {
-        private final DimletType type;
-        private final String name;
-
-        public DimletEntry(DimletType type, String name) {
-            this.type = type;
-            this.name = name;
-        }
-
-        public DimletType getType() {
-            return type;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 }
