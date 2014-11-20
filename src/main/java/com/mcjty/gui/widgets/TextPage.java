@@ -337,6 +337,10 @@ public class TextPage extends AbstractWidget<TextPage> {
                     if (recipe == null) {
                         // Error,
                         this.line = line;
+                    } else if (!(recipe instanceof ShapedRecipes)) {
+                        recipe = null;
+                        // Error,
+                        this.line = line;
                     } else {
                         height = 18*3+8;
                     }
@@ -368,7 +372,7 @@ public class TextPage extends AbstractWidget<TextPage> {
         }
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
         for (IRecipe recipe : recipes) {
-            if (recipe != null) {
+            if (recipe instanceof ShapedRecipes) {
                 ItemStack recipeOutput = recipe.getRecipeOutput();
                 if (recipeOutput != null && recipeOutput.isItemEqual(item)) {
                     return recipe;
