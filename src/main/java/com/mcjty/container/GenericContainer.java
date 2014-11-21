@@ -53,7 +53,7 @@ public class GenericContainer extends Container {
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                     @Override
                     public boolean isItemValid(ItemStack stack) {
-                        return itemStack.isItemEqual(stack);
+                        return itemStack.getItem() == stack.getItem();
                     }
                 };
             } else {
@@ -86,7 +86,7 @@ public class GenericContainer extends Container {
 
         SlotType slotType = slotDefinition.getType();
 
-        if (itemStack.getItem() != null && slotType == SlotType.SLOT_SPECIFICITEM && !slotDefinition.getItemStack().isItemEqual(itemStack)) {
+        if (itemStack.getItem() != null && slotType == SlotType.SLOT_SPECIFICITEM && (slotDefinition.getItemStack().getItem() != itemStack.getItem())) {
             return false;
         }
         for (Range<Integer> r : ranges.asRanges()) {
@@ -109,7 +109,7 @@ public class GenericContainer extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (factory.isOutputSlot(index) || factory.isInputSlot(index) || factory.isEnderpearlSlot(index)) {
+            if (factory.isOutputSlot(index) || factory.isInputSlot(index) || factory.isSpecificItemSlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, true)) {
                     return null;
                 }
