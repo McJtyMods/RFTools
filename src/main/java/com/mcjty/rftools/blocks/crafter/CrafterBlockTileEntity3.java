@@ -24,8 +24,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     public static final String CMD_MODE = "mode";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainerFactory.getInstance(),
-            10 + CrafterContainerFactory.BUFFER_SIZE + CrafterContainerFactory.BUFFEROUT_SIZE);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
+            10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
     private CraftingRecipe recipes[];
     private int supportedRecipes;
 
@@ -133,17 +133,17 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return CrafterContainerFactory.getInstance().getAccessibleSlots();
+        return CrafterContainer.factory.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return CrafterContainerFactory.getInstance().isInputSlot(index);
+        return CrafterContainer.factory.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return CrafterContainerFactory.getInstance().isOutputSlot(index);
+        return CrafterContainer.factory.isOutputSlot(index);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i+CrafterContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i+CrafterContainer.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -195,7 +195,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = CrafterContainerFactory.SLOT_BUFFER ; i < inventoryHelper.getStacks().length ; i++) {
+        for (int i = CrafterContainer.SLOT_BUFFER ; i < inventoryHelper.getStacks().length ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
@@ -277,8 +277,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
-            for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
-                ItemStack input = inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j];
+            for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
+                ItemStack input = inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j];
                 if (input != null && input.stackSize > keep) {
                     if (OreDictionary.itemMatches(stack, input, false)) {
                         int ss = count;
@@ -300,8 +300,8 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
-            for (int j = 0 ; j < CrafterContainerFactory.BUFFER_SIZE ; j++) {
-                ItemStack input = inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j];
+            for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
+                ItemStack input = inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j];
                 if (input != null && input.stackSize > keep) {
                     if (OreDictionary.itemMatches(stack, input, false)) {
                         int ss = count;
@@ -311,7 +311,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
                         count -= ss;
                         input.splitStack(ss);        // This consumes the items
                         if (input.stackSize == 0) {
-                            inventoryHelper.getStacks()[CrafterContainerFactory.SLOT_BUFFER + j] = null;
+                            inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j] = null;
                         }
                     }
                 }
@@ -323,11 +323,11 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         int start;
         int stop;
         if (internal) {
-            start = CrafterContainerFactory.SLOT_BUFFER;
-            stop = CrafterContainerFactory.SLOT_BUFFER + CrafterContainerFactory.BUFFER_SIZE;
+            start = CrafterContainer.SLOT_BUFFER;
+            stop = CrafterContainer.SLOT_BUFFER + CrafterContainer.BUFFER_SIZE;
         } else {
-            start = CrafterContainerFactory.SLOT_BUFFEROUT;
-            stop = CrafterContainerFactory.SLOT_BUFFEROUT + CrafterContainerFactory.BUFFEROUT_SIZE;
+            start = CrafterContainer.SLOT_BUFFEROUT;
+            stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
         return InventoryHelper.mergeItemStack(this, result, start, stop);
     }

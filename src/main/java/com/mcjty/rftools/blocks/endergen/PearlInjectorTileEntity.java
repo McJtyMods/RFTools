@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements IInventory {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, PearlInjectorContainerFactory.getInstance(), PearlInjectorContainerFactory.BUFFER_SIZE);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, PearlInjectorContainer.factory, PearlInjectorContainer.BUFFER_SIZE);
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -98,7 +98,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i+PearlInjectorContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i+PearlInjectorContainer.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 

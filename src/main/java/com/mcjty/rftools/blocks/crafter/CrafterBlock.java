@@ -27,7 +27,7 @@ public class CrafterBlock extends GenericContainerBlock {
         if (crafterBlockTileEntity != null) {
             // To avoid the ghost items being dropped in the world (which would give easy item duplication)
             // we first clear out the crafting grid here.
-            for (int i = CrafterContainerFactory.SLOT_CRAFTINPUT ; i <= CrafterContainerFactory.SLOT_CRAFTOUTPUT ; i++) {
+            for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i <= CrafterContainer.SLOT_CRAFTOUTPUT ; i++) {
                 crafterBlockTileEntity.setInventorySlotContents(i, null);
             }
 

@@ -61,7 +61,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         }
     };
 
-    private ItemStack stacks[] = new ItemStack[ShieldContainerFactory.BUFFER_SIZE];
+    private ItemStack stacks[] = new ItemStack[ShieldContainer.BUFFER_SIZE];
 
     public ShieldTileEntity() {
         super(ShieldConfiguration.MAXENERGY, ShieldConfiguration.RECEIVEPERTICK);
@@ -438,7 +438,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i+ShieldContainerFactory.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            stacks[i+ShieldContainer.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 

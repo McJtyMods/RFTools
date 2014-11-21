@@ -22,7 +22,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     public static final String CMD_GETRESEARCHING = "getResearching";
     public static final String CLIENTCMD_GETRESEARCHING = "getResearching";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletResearcherContainerFactory.getInstance(), 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletResearcherContainer.factory, 2);
 
     private int researching = 0;
 
@@ -103,17 +103,17 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return DimletResearcherContainerFactory.getInstance().getAccessibleSlots();
+        return DimletResearcherContainer.factory.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainerFactory.getInstance().isInputSlot(index);
+        return DimletResearcherContainer.factory.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainerFactory.getInstance().isOutputSlot(index);
+        return DimletResearcherContainer.factory.isOutputSlot(index);
     }
 
     @Override

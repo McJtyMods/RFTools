@@ -14,6 +14,14 @@ public class ContainerFactory {
     protected int[] accessibleInputSlots;
     protected int[] accessibleOutputSlots;
 
+    public ContainerFactory() {
+        setup();
+    }
+
+    protected void setup() {
+
+    }
+
     protected void setupAccessibleSlots() {
         if (slotsSetup) {
             return;
