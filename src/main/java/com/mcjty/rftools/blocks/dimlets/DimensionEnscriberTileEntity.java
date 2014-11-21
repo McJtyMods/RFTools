@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Map;
+
 public class DimensionEnscriberTileEntity extends GenericTileEntity implements ISidedInventory {
+
+    public static final String CMD_STORE = "store";
+    public static final String CMD_EXTRACT = "extract";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionEnscriberContainer.factory, DimensionEnscriberContainer.SIZE_DIMLETS+1);
 
@@ -129,5 +135,19 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag("Items", bufferTagList);
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_STORE.equals(command)) {
+            return true;
+        } else if (CMD_EXTRACT.equals(command)) {
+            return true;
+        }
+        return false;
     }
 }
