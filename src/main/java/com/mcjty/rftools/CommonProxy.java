@@ -50,8 +50,10 @@ public class CommonProxy {
         Configuration cfg = dimletConfig;
         try {
             cfg.load();
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Rarity distribution per type of dimlet");
+            KnownDimletConfiguration.initGeneralConfig(cfg);
             KnownDimletConfiguration.initKnownDimlets(cfg);
             KnownDimletConfiguration.initTypeRarity(cfg);
         } catch (Exception e1) {

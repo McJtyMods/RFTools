@@ -1,11 +1,10 @@
 package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraftforge.common.DimensionManager;
 
 public class GenericDimension {
-
-    private static final int GENERIC_DIMENSION_ID = 15;
 
     public GenericDimension() {
         DimensionManager.registerProviderType(getDimensionID(), GenericWorldProvider.class, true);
@@ -14,6 +13,6 @@ public class GenericDimension {
     }
 
     public static int getDimensionID() {
-        return GENERIC_DIMENSION_ID;
+        return KnownDimletConfiguration.firstDimensionId;
     }
 }

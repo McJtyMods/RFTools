@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
@@ -146,8 +147,8 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     }
 
     private void storeDimlets() {
-        Map<DimletType, List<Integer>> dimletsByType = getDimletTypeListMap();
-        ItemStack realizedTab = createRealizedTab(dimletsByType);
+        DimensionDescriptor descriptor = convertToDimensionDescriptor();
+        ItemStack realizedTab = createRealizedTab(descriptor);
         inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = realizedTab;
 
         markDirty();
@@ -159,31 +160,19 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
      * @param dimletsByType
      * @return
      */
-    private ItemStack createRealizedTab(Map<DimletType, List<Integer>> dimletsByType) {
+    private ItemStack createRealizedTab(DimensionDescriptor descriptor) {
         ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
         NBTTagCompound tagCompound = new NBTTagCompound();
-
-        for (Map.Entry<DimletType,List<Integer>> me : dimletsByType.entrySet()) {
-            Collections.sort(me.getValue());
-
-            int[] arr = new int[me.getValue().size()];
-            for (int i = 0 ; i < me.getValue().size() ; i++) {
-                arr[i] = me.getValue().get(i);
-            }
-            NBTTagIntArray tagList = new NBTTagIntArray(arr);
-
-            tagCompound.setTag(me.getKey().getName(), tagList);
-        }
-
+        descriptor.writeToNBT(tagCompound);
         realizedTab.setTagCompound(tagCompound);
         return realizedTab;
     }
 
     /**
-     * Convert the dimlets in the inventory to a map of id's per type.
+     * Convert the dimlets in the inventory to a dimension descriptor.
      * @return
      */
-    private Map<DimletType, List<Integer>> getDimletTypeListMap() {
+    private DimensionDescriptor convertToDimensionDescriptor() {
         Map<DimletType,List<Integer>> dimletsByType = new HashMap<DimletType, List<Integer>>();
         for (DimletType type : DimletType.values()) {
             dimletsByType.put(type, new ArrayList<Integer>());
@@ -198,7 +187,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }
-        return dimletsByType;
+        return new DimensionDescriptor(dimletsByType);
     }
 
     private void extractDimlets() {

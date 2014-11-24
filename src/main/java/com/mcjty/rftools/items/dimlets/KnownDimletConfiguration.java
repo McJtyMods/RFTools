@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 public class KnownDimletConfiguration {
     public static final String CATEGORY_KNOWNDIMLETS = "KnownDimlets";
     public static final String CATEGORY_TYPERARIRTY = "TypeRarity";
+    public static final String CATEGORY_GENERAL = "General";
+
+    public static int firstDimensionId = 2;
 
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
     public static final Map<DimletEntry,Integer> dimletToID = new HashMap<DimletEntry, Integer>();
@@ -21,6 +24,11 @@ public class KnownDimletConfiguration {
 
     private static final Pattern PATTERN = Pattern.compile(".");
     private static int lastId = 0;
+
+    public static void initGeneralConfig(Configuration cfg) {
+        firstDimensionId = cfg.get(CATEGORY_GENERAL, "firstDimensionId", firstDimensionId,
+                "The first dimension ID to use for RFTools dimensions").getInt();
+    }
 
     public static void initKnownDimlets(Configuration cfg) {
         ConfigCategory configCategory = cfg.getCategory(CATEGORY_KNOWNDIMLETS);
