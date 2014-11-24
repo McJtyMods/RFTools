@@ -150,7 +150,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
             int rfExtracted = extractEnergy(ForgeDirection.DOWN, EndergenicConfiguration.rfToHoldPearl, false);
-            log("Server Tick: holding pearl, consume "+rfExtracted+" RF");
+            log("Server Tick: holding pearl, consume "+rfExtracted+" RF (to hold " + EndergenicConfiguration.rfToHoldPearl+")");
             rfLost += rfExtracted;
             if (rfExtracted < EndergenicConfiguration.rfToHoldPearl) {
                 // Not enough energy. Pearl is lost.
@@ -173,7 +173,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     private void log(String message) {
         if (EndergenicConfiguration.logEndergenic) {
             String id = tickCounter + ": " + xCoord + "," + yCoord + "," + zCoord + ": ";
-            RFTools.instance.logger.log(Level.DEBUG, id + message);
+            RFTools.instance.logger.log(Level.INFO, id + message);
         }
     }
 
@@ -221,13 +221,17 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     private void handleSendingEnergy() {
         int energyStored = getEnergyStored(ForgeDirection.DOWN);
-        if (energyStored <= 0) {
+        if (energyStored <= EndergenicConfiguration.keepRfInBuffer) {
             return;
         }
+        energyStored -= EndergenicConfiguration.keepRfInBuffer;
 
         for (int i = 0 ; i < 6 ; i++) {
             ForgeDirection dir = ForgeDirection.getOrientation(i);
-            TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+            int x = xCoord + dir.offsetX;
+            int y = yCoord + dir.offsetY;
+            int z = zCoord + dir.offsetZ;
+            TileEntity te = worldObj.getTileEntity(x, y, z);
             if (te instanceof IEnergyHandler) {
                 IEnergyHandler handler = (IEnergyHandler) te;
                 ForgeDirection opposite = dir.getOpposite();
