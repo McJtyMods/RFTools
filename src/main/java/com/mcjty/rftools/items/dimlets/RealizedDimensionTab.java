@@ -25,9 +25,11 @@ public class RealizedDimensionTab extends Item {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             for (DimletType type : DimletType.values()) {
-                NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
-                if (tagIntArray != null) {
-                    list.add(EnumChatFormatting.GREEN + type.getName() + " " + tagIntArray.func_150302_c().length + " dimlets");
+                if (tagCompound.hasKey(type.getName())) {
+                    NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
+                    if (tagIntArray != null) {
+                        list.add(EnumChatFormatting.GREEN + type.getName() + " " + tagIntArray.func_150302_c().length + " dimlets");
+                    }
                 }
             }
         }

@@ -6,7 +6,6 @@ import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import com.mcjty.rftools.items.dimlets.RealizedDimensionTab;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -144,21 +143,20 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     }
 
     private void storeDimlets() {
-        Map<DimletType,List<Integer>> dimletsByType = new HashMap<DimletType, List<Integer>>();
-        for (DimletType type : DimletType.values()) {
-            dimletsByType.put(type, new ArrayList<Integer>());
-        }
+        Map<DimletType, List<Integer>> dimletsByType = getDimletTypeListMap();
+        ItemStack realizedTab = createRealizedTab(dimletsByType);
+        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = realizedTab;
 
-        for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
-            if (stack != null && stack.stackSize > 0) {
-                int dimletId = stack.getItemDamage();
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(dimletId);
-                dimletsByType.get(entry.getType()).add(dimletId);
-            }
-            inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
-        }
+        markDirty();
+    }
 
+    /**
+     * Create a realized dimension tab by taking a map of ids per type and storing
+     * that in the NBT of the realized dimension tab.
+     * @param dimletsByType
+     * @return
+     */
+    private ItemStack createRealizedTab(Map<DimletType, List<Integer>> dimletsByType) {
         ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
         NBTTagCompound tagCompound = new NBTTagCompound();
 
@@ -175,8 +173,50 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         }
 
         realizedTab.setTagCompound(tagCompound);
-        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = realizedTab;
+        return realizedTab;
+    }
 
+    /**
+     * Convert the dimlets in the inventory to a map of id's per type.
+     * @return
+     */
+    private Map<DimletType, List<Integer>> getDimletTypeListMap() {
+        Map<DimletType,List<Integer>> dimletsByType = new HashMap<DimletType, List<Integer>>();
+        for (DimletType type : DimletType.values()) {
+            dimletsByType.put(type, new ArrayList<Integer>());
+        }
+
+        for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
+            ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
+            if (stack != null && stack.stackSize > 0) {
+                int dimletId = stack.getItemDamage();
+                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(dimletId);
+                dimletsByType.get(entry.getType()).add(dimletId);
+            }
+            inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
+        }
+        return dimletsByType;
+    }
+
+    private void extractDimlets() {
+        ItemStack realizedTab = inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB];
+        NBTTagCompound tagCompound = realizedTab.getTagCompound();
+        if (tagCompound != null) {
+            int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
+            for (DimletType type : DimletType.values()) {
+                if (tagCompound.hasKey(type.getName())) {
+                    NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
+                    if (tagIntArray != null) {
+                        int[] dimlets = tagIntArray.func_150302_c();
+                        for (int id : dimlets) {
+                            inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
+                        }
+                    }
+                }
+            }
+        }
+
+        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = new ItemStack(ModItems.emptyDimensionTab);
         markDirty();
     }
 
@@ -190,6 +230,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             storeDimlets();
             return true;
         } else if (CMD_EXTRACT.equals(command)) {
+            extractDimlets();
             return true;
         }
         return false;
