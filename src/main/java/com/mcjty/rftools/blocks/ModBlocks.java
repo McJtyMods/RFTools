@@ -62,7 +62,6 @@ public final class ModBlocks {
     public static DimletResearcherBlock dimletResearcherBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
-    public static DimensionChestBlock dimensionChestBlock;
 
     public static void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -115,11 +114,6 @@ public final class ModBlocks {
         dimensionBuilderBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(dimensionBuilderBlock, DimensionBuilderItemBlock.class, "dimensionBuilderBlock");
         GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
-
-        dimensionChestBlock = new DimensionChestBlock(Material.iron);
-        dimensionChestBlock.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(dimensionChestBlock, DimensionChestItemBlock.class, "dimensionChestBlock");
-        GameRegistry.registerTileEntity(DimensionChestTileEntity.class, "DimensionChestTileEntity");
     }
 
     private static void initCrafterBlocks() {

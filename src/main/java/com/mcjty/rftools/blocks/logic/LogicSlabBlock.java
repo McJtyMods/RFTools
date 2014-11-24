@@ -84,7 +84,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
     *   1: EAST
     *   2: SOUTH
     *   3: WEST
-*/
+    */
 
     @Override
     public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {

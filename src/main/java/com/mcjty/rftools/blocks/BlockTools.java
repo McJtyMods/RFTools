@@ -23,6 +23,7 @@ public class BlockTools {
     public static final int MASK_ORIENTATION_HORIZONTAL = 0x3;          // Only two bits for orientation
     public static final int MASK_REDSTONE_IN = 0x8;                     // Redstone in
     public static final int MASK_REDSTONE_OUT = 0x4;                    // Redstone out
+    public static final int MASK_STATE = 0xc;                           // If redstone is not used: state
 
     public static ForgeDirection getOrientation(int metadata) {
         return ForgeDirection.getOrientation(metadata & MASK_ORIENTATION);
@@ -74,6 +75,14 @@ public class BlockTools {
         } else {
             return metadata & ~MASK_REDSTONE_OUT;
         }
+    }
+
+    public static int setState(int metadata, int value) {
+        return (metadata & ~MASK_STATE) | (value << 2);
+    }
+
+    public static int getState(int metadata) {
+        return (metadata & MASK_STATE) >> 2;
     }
 
     public static ForgeDirection determineOrientation(int x, int y, int z, EntityLivingBase entityLivingBase) {

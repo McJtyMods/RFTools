@@ -39,6 +39,12 @@ public class RealizedDimensionTab extends Item {
                     }
                 }
             }
+            Integer pct = tagCompound.getInteger("pct");
+            if (pct == 100) {
+                list.add(EnumChatFormatting.BLUE + "Dimension ready!");
+            } else {
+                list.add(EnumChatFormatting.BLUE + "Dimension progress: " + pct + "%");
+            }
         }
     }
 }
