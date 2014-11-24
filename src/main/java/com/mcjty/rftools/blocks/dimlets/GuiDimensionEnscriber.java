@@ -47,7 +47,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                         extractDimlets();
                     }
                 }
-        );
+        ).setTooltips("Extract the dimlets out of", "a realized dimension tab");
         storeButton = new Button(mc, this).setText("Store").setLayoutHint(new PositionalLayout.PositionalHint(13, 182, 60, 16)).addButtonEvent(
                 new ButtonEvent() {
                     @Override
@@ -55,7 +55,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                         storeDimlets();
                     }
                 }
-        );
+        ).setTooltips("Store dimlets in a", "empty dimension tab");
         nameField = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
