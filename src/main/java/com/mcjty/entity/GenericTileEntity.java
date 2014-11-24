@@ -4,6 +4,7 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.ClientCommandHandler;
 import com.mcjty.rftools.network.CommandHandler;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -80,6 +81,10 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     @Override
     public boolean canUpdate() {
         return true;
+    }
+
+    // Called when a slot is changed.
+    public void onSlotChanged(int index, ItemStack stack) {
     }
 
     @Override

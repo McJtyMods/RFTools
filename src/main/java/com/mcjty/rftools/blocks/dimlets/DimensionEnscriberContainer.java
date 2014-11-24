@@ -30,9 +30,4 @@ public class DimensionEnscriberContainer extends GenericContainer {
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }
-
-    @Override
-    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
-        return super.slotClick(index, button, mode, player);
-    }
 }

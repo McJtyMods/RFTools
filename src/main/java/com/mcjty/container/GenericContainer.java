@@ -57,7 +57,7 @@ public class GenericContainer extends Container {
                     }
                 };
             } else {
-                slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+                slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             }
             addSlotToContainer(slot);
         }

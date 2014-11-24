@@ -21,6 +21,9 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     public static final String CMD_STORE = "store";
     public static final String CMD_EXTRACT = "extract";
+    public static final String CMD_SETNAME = "setName";
+
+    private boolean tabSlotHasChanged = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionEnscriberContainer.factory, DimensionEnscriberContainer.SIZE_DIMLETS+1);
 
@@ -220,6 +223,32 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         markDirty();
     }
 
+    private void setName(String name) {
+        ItemStack realizedTab = inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB];
+        if (realizedTab != null) {
+            NBTTagCompound tagCompound = realizedTab.getTagCompound();
+            if (tagCompound == null) {
+                tagCompound = new NBTTagCompound();
+                realizedTab.setTagCompound(tagCompound);
+            }
+            tagCompound.setString("name", name);
+            markDirty();
+        }
+    }
+
+    @Override
+    public void onSlotChanged(int index, ItemStack stack) {
+        if (worldObj.isRemote && index == DimensionEnscriberContainer.SLOT_TAB) {
+            tabSlotHasChanged = true;
+        }
+    }
+
+    public boolean hasTabSlotChangedAndClear() {
+        boolean rc = tabSlotHasChanged;
+        tabSlotHasChanged = false;
+        return rc;
+    }
+
     @Override
     public boolean execute(String command, Map<String, Argument> args) {
         boolean rc = super.execute(command, args);
@@ -228,9 +257,13 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         }
         if (CMD_STORE.equals(command)) {
             storeDimlets();
+            setName(args.get("name").getString());
             return true;
         } else if (CMD_EXTRACT.equals(command)) {
             extractDimlets();
+            return true;
+        } else if (CMD_SETNAME.equals(command)) {
+            setName(args.get("name").getString());
             return true;
         }
         return false;
