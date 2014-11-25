@@ -4,9 +4,9 @@ import net.minecraftforge.common.config.Configuration;
 
 public class EndergenicConfiguration {
     public static final String CATEGORY_ENDERGENIC = "Endergenic";
-    // This value indicates the chance (with 0 being no chance and 100 being 100% chance) that an
+    // This value indicates the chance (with 0 being no chance and 1000 being 100% chance) that an
     // endergenic pearl is lost while holding it.
-    public static int chanceLost = 1;
+    public static int chanceLost = 5;
     // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
     public static int rfToHoldPearl = 500;
     // This value indicates how much RF will be kept in the internal buffer (not given to conduits and machines next to it) as
@@ -19,7 +19,7 @@ public class EndergenicConfiguration {
 
     public static void init(Configuration cfg) {
         chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", chanceLost,
-                "The chance (in percent) that an endergenic pearl is lost while trying to hold it").getInt();
+                "The chance (in 1/10 percent, so 1000 = 100%) that an endergenic pearl is lost while trying to hold it").getInt();
         rfToHoldPearl = cfg.get(CATEGORY_ENDERGENIC, "endergenicRfHolding", rfToHoldPearl,
                 "The amount of RF that is consumed every tick to hold the endergenic pearl").getInt();
         keepRfInBuffer = cfg.get(CATEGORY_ENDERGENIC, "endergenicKeepRf", keepRfInBuffer,

@@ -116,7 +116,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         // First check if we're holding a pearl to see if the pearl will be lost.
         if (chargingMode == CHARGE_HOLDING) {
-            if (random.nextInt(100) <= EndergenicConfiguration.chanceLost) {
+            if (random.nextInt(1000) <= EndergenicConfiguration.chanceLost) {
                 // Pearl is lost.
                 log("Server Tick: discard pearl randomly");
                 discardPearl();
