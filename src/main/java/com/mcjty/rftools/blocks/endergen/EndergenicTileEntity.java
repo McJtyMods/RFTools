@@ -8,13 +8,11 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -176,10 +174,12 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     public void addMonitor(Coordinate c) {
         monitors.add(c);
+        markDirty();
     }
 
     public void removeMonitor(Coordinate c) {
         monitors.remove(c);
+        markDirty();
     }
 
     /**
@@ -208,12 +208,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 }
             }
             monitors = newMonitors;
+            markDirty();
         }
-    }
-
-    @Override
-    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z) {
-        return super.shouldRefresh(oldBlock, newBlock, oldMeta, newMeta, world, x, y, z);
     }
 
     private void handleSendingEnergy() {
