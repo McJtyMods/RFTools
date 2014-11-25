@@ -148,14 +148,15 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            int rfExtracted = extractEnergy(ForgeDirection.DOWN, EndergenicConfiguration.rfToHoldPearl, false);
-            log("Server Tick: holding pearl, consume "+rfExtracted+" RF (to hold " + EndergenicConfiguration.rfToHoldPearl+")");
-            rfLost += rfExtracted;
-            if (rfExtracted < EndergenicConfiguration.rfToHoldPearl) {
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            if (rf < EndergenicConfiguration.rfToHoldPearl) {
                 // Not enough energy. Pearl is lost.
-                log("Server Tick: insufficient energy to hold pearl");
+                log("Server Tick: insufficient energy to hold pearl (" + rf + " vs " + EndergenicConfiguration.rfToHoldPearl + ")");
                 discardPearl();
-
+            } else {
+                int rfExtracted = extractEnergy(ForgeDirection.DOWN, EndergenicConfiguration.rfToHoldPearl, false);
+                log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
+                rfLost += rfExtracted;
             }
             return;
         }
