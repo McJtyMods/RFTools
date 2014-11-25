@@ -5,6 +5,8 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -34,6 +36,7 @@ public class EndergenicBlock extends GenericContainerBlock {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) tileEntity;
         EmptyContainer endergenicContainer = new EmptyContainer(entityPlayer);

@@ -4,6 +4,8 @@ import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -30,6 +32,7 @@ public class RelayBlock extends GenericBlock {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         RelayTileEntity relayTileEntity = (RelayTileEntity) tileEntity;
         return new GuiRelay(relayTileEntity, new EmptyContainer(entityPlayer));

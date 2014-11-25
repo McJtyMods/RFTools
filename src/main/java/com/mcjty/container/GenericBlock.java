@@ -5,6 +5,8 @@ import cofh.api.item.IToolHammer;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -275,6 +277,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     /**
      * Return a client side gui for this block.
      */
+    @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return null;
     }

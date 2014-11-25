@@ -3,6 +3,8 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -70,6 +72,7 @@ public class CrafterBlock extends GenericContainerBlock {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) tileEntity;
         CrafterContainer crafterContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
