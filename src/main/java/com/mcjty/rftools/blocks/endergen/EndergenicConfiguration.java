@@ -11,12 +11,11 @@ public class EndergenicConfiguration {
     public static int rfToHoldPearl = 1000;
     // This value indicates how much RF will be kept in the internal buffer (not given to conduits and machines next to it) as
     // a reserve to be able to hold pearls.
-    public static int keepRfInBuffer = 10000;
+    public static int keepRfInBuffer = 2000;
     // This value indicates how much RF/tick this block can send out to neighbours
     public static int rfOutput = 20000;
     public static int goodParticleCount = 10;
     public static int badParticleCount = 10;
-    public static boolean logEndergenic = false;
 
     public static void init(Configuration cfg) {
         chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", chanceLost,
@@ -31,7 +30,5 @@ public class EndergenicConfiguration {
                 "The amount of particles to spawn whenever energy is generated (use 0 to disable)").getInt();
         badParticleCount = cfg.get(CATEGORY_ENDERGENIC, "endergenicBadParticles", badParticleCount,
                 "The amount of particles to spawn whenever a pearl is lost (use 0 to disable)").getInt();
-        logEndergenic = cfg.get(CATEGORY_ENDERGENIC, "endergenicLogging", logEndergenic,
-                "If true dump a lot of logging information about the generators. Useful for debugging.").getBoolean();
     }
 }

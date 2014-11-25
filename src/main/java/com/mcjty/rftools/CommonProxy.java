@@ -69,6 +69,7 @@ public class CommonProxy {
         Configuration cfg = mainConfig;
         try {
             cfg.load();
+            cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
             cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the automatic crafter machine");
             cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
             cfg.addCustomCategoryComment(NetworkMonitorConfiguration.CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
@@ -77,6 +78,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
             cfg.addCustomCategoryComment(DimletConfiguration.CATEGORY_DIMLETS, "Settings for the dimlet/dimension system");
 
+            GeneralConfiguration.init(cfg);
             NetworkMonitorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);
             StorageScannerConfiguration.init(cfg);

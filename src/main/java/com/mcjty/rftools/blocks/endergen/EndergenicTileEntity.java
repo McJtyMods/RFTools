@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,10 +170,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void log(String message) {
-        if (EndergenicConfiguration.logEndergenic) {
-            String id = tickCounter + ": " + xCoord + "," + yCoord + "," + zCoord + ": ";
-            RFTools.instance.logger.log(Level.INFO, id + message);
-        }
+        RFTools.log(worldObj, this, message);
     }
 
     public void addMonitor(Coordinate c) {

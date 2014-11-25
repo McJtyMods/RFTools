@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,6 +59,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
+            RFTools.log(worldObj, this, "Ender Monitor output to " + newout);
             notifyBlockUpdate();
         }
     }

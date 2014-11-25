@@ -14,9 +14,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = RFTools.MODID, version = RFTools.VERSION)
 public class RFTools {
     public static final String MODID = "rftools";
-    public static final String VERSION = "0.0";
+    public static final String VERSION = "1.31";
 
     @SidedProxy(clientSide="com.mcjty.rftools.ClientProxy", serverSide="com.mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
@@ -79,6 +81,19 @@ public class RFTools {
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);
+    }
+
+    public static long prevTicks = -1;
+    public static void log(World world, TileEntity te, String message) {
+        if (GeneralConfiguration.doLogging) {
+            long ticks = world.getTotalWorldTime();
+            if (ticks != prevTicks) {
+                prevTicks = ticks;
+                instance.logger.log(Level.INFO, "=== Time " + ticks + " ===");
+            }
+            String id = te.xCoord + "," + te.yCoord + "," + te.zCoord + ": ";
+            instance.logger.log(Level.INFO, id + message);
+        }
     }
 
     /**
