@@ -8,7 +8,7 @@ public class EndergenicConfiguration {
     // endergenic pearl is lost while holding it.
     public static int chanceLost = 1;
     // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
-    public static int rfToHoldPearl = 1000;
+    public static int rfToHoldPearl = 500;
     // This value indicates how much RF will be kept in the internal buffer (not given to conduits and machines next to it) as
     // a reserve to be able to hold pearls.
     public static int keepRfInBuffer = 2000;
