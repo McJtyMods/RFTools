@@ -18,8 +18,6 @@ public class KnownDimletConfiguration {
     public static final String CATEGORY_TYPETICKCOST = "TypeTickCost";
     public static final String CATEGORY_GENERAL = "General";
 
-    public static int firstDimensionId = 2;
-
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
     public static final Map<DimletEntry,Integer> dimletToID = new HashMap<DimletEntry, Integer>();
     public static final List<Integer> dimletIds = new ArrayList<Integer>();
@@ -37,8 +35,6 @@ public class KnownDimletConfiguration {
     private static int lastId = 0;
 
     public static void initGeneralConfig(Configuration cfg) {
-        firstDimensionId = cfg.get(CATEGORY_GENERAL, "firstDimensionId", firstDimensionId,
-                "The first dimension ID to use for RFTools dimensions").getInt();
         baseDimensionCreationCost = cfg.get(CATEGORY_GENERAL, "baseDimensionCreationCost", baseDimensionCreationCost,
                 "The base cost (in RF/tick) for creating a dimension").getInt();
         baseDimensionMaintenanceCost = cfg.get(CATEGORY_GENERAL, "baseDimensionMaintenanceCost", baseDimensionMaintenanceCost,

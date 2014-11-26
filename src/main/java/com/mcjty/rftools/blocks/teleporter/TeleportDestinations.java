@@ -66,11 +66,13 @@ public class TeleportDestinations extends WorldSavedData {
         return destinations.containsKey(key);
     }
 
-    public void addDestination(Coordinate coordinate, int dimension) {
+    public TeleportDestination addDestination(Coordinate coordinate, int dimension) {
         TeleportDestinationKey key = new TeleportDestinationKey(coordinate, dimension);
         if (!destinations.containsKey(key)) {
-            destinations.put(key, new TeleportDestination(coordinate, dimension));
+            TeleportDestination teleportDestination = new TeleportDestination(coordinate, dimension);
+            destinations.put(key, teleportDestination);
         }
+        return destinations.get(key);
     }
 
     public void removeDestination(Coordinate coordinate, int dimension) {

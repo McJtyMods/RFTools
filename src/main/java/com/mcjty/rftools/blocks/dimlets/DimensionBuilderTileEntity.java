@@ -3,6 +3,8 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -73,6 +75,12 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
             extractEnergy(ForgeDirection.DOWN, createCost, false);
             ticksLeft--;
             tagCompound.setInteger("ticksLeft", ticksLeft);
+            if (ticksLeft <= 0) {
+                RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
+                DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
+                String name = tagCompound.getString("name");
+                manager.createNewDimension(worldObj, descriptor, name);
+            }
         }
         return ticksLeft;
     }
