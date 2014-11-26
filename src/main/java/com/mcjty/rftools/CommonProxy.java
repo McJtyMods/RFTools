@@ -53,9 +53,15 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Rarity distribution per type of dimlet");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "The base amount of time needed to create a dimension per type of dimlet in it");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "The base amount of RF needed to create a dimension per type of dimlet in it");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "The base amount of RF needed to maintain a dimension per type of dimlet in it");
             KnownDimletConfiguration.initGeneralConfig(cfg);
             KnownDimletConfiguration.initKnownDimlets(cfg);
             KnownDimletConfiguration.initTypeRarity(cfg);
+            KnownDimletConfiguration.initTypeRfCreateCost(cfg);
+            KnownDimletConfiguration.initTypeRfMaintainCost(cfg);
+            KnownDimletConfiguration.initTypeTickCost(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading dimlet config file!");
         } finally {

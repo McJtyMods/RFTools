@@ -6,10 +6,16 @@ package com.mcjty.rftools.items.dimlets;
 public class DimletEntry {
     private final DimletType type;
     private final String name;
+    private final int rfCreateCost;     // Overrides the type default. If -1 then use default.
+    private final int rfMaintainCost;   // Overrides the type default. If -1 then use default.
+    private final int tickCost;         // Overrides the type default. If -1 then use default.
 
-    public DimletEntry(DimletType type, String name) {
+    public DimletEntry(DimletType type, String name, int rfCreateCost, int rfMaintainCost, int tickCost) {
         this.type = type;
         this.name = name;
+        this.rfCreateCost = rfCreateCost;
+        this.rfMaintainCost = rfMaintainCost;
+        this.tickCost = tickCost;
     }
 
     public DimletType getType() {
@@ -18,6 +24,18 @@ public class DimletEntry {
 
     public String getName() {
         return name;
+    }
+
+    public int getRfCreateCost() {
+        return rfCreateCost;
+    }
+
+    public int getRfMaintainCost() {
+        return rfMaintainCost;
+    }
+
+    public int getTickCost() {
+        return tickCost;
     }
 
     @Override

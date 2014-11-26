@@ -42,8 +42,16 @@ public class RealizedDimensionTab extends Item {
             Integer pct = tagCompound.getInteger("pct");
             if (pct == 100) {
                 list.add(EnumChatFormatting.BLUE + "Dimension ready!");
+                int maintainCost = tagCompound.getInteger("rfMaintainCost");
+                list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
             } else {
+                int createCost = tagCompound.getInteger("rfCreateCost");
+                int maintainCost = tagCompound.getInteger("rfMaintainCost");
+                int tickCost = tagCompound.getInteger("tickCost");
                 list.add(EnumChatFormatting.BLUE + "Dimension progress: " + pct + "%");
+                list.add(EnumChatFormatting.YELLOW + "    Creation cost: " + createCost + " RF/tick");
+                list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                list.add(EnumChatFormatting.YELLOW + "    Tick cost: " + tickCost + " ticks");
             }
         }
     }

@@ -3,7 +3,6 @@ package com.mcjty.rftools.items.dimlets;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
@@ -21,9 +20,10 @@ public class DimletItems {
 
         initBiomeItems();
 
-        initMaterialItem(Blocks.diamond_block);
-        initMaterialItem(Blocks.gold_block);
-        initMaterialItem(Blocks.gold_ore);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, Blocks.diamond_block.getLocalizedName(), 2000, 2000, 1000);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, Blocks.diamond_ore.getLocalizedName(), 1700, 1700, 800);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, Blocks.gold_block.getLocalizedName(), 1000, 1000, 500);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, Blocks.gold_ore.getLocalizedName(), 800, 800, 400);
 
         initFoliageItem();
 
@@ -94,43 +94,39 @@ public class DimletItems {
             }
         }
         for (String name : biomes.keySet()) {
-            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name);
+            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name, -1, -1, -1);
         }
     }
 
-    private static void initMaterialItem(Block block) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MATERIAL, block.getLocalizedName());
-    }
-
     private static void initFoliageItem() {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_FOLIAGE, "Oak");
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_FOLIAGE, "Oak", -1, -1, -1);
     }
 
     private static void initLiquidItems() {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
-            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_LIQUID, me.getKey());
+            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_LIQUID, me.getKey(), -1, -1, -1);
         }
     }
 
     private static void initMobItem(Class <? extends EntityLiving> entity, String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MOBS, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MOBS, name, -1, -1, -1);
     }
 
     private static void initSkyItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name, -1, -1, -1);
     }
 
     private static void initStructureItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURES, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURES, name, -1, -1, -1);
     }
 
     private static void initTerrainItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name, -1, -1, -1);
     }
 
     private static void initTimeItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name);
+        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name, -1, -1, -1);
     }
 
     /**

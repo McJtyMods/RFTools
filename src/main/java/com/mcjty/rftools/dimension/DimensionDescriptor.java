@@ -1,6 +1,8 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 
@@ -11,6 +13,9 @@ import java.util.*;
  */
 public class DimensionDescriptor {
     private final Map<DimletType, List<Integer>> attributeMap;
+    private final int rfCreateCost;
+    private final int rfMaintainCost;
+    private final int tickCost;
 
     public DimensionDescriptor(Map<DimletType, List<Integer>> input) {
         attributeMap = new HashMap<DimletType, List<Integer>>();
@@ -19,6 +24,9 @@ public class DimensionDescriptor {
             Collections.sort(ids);
             attributeMap.put(me.getKey(), ids);
         }
+        rfCreateCost = calculateCreationRfCost();
+        rfMaintainCost = calculateMaintenanceRfCost();
+        tickCost = calculateTickCost();
     }
 
     public DimensionDescriptor(NBTTagCompound tagCompound) {
@@ -39,6 +47,21 @@ public class DimensionDescriptor {
             }
             attributeMap.put(type, ids);
         }
+        rfCreateCost = calculateCreationRfCost();
+        rfMaintainCost = calculateMaintenanceRfCost();
+        tickCost = calculateTickCost();
+    }
+
+    public int getRfCreateCost() {
+        return rfCreateCost;
+    }
+
+    public int getRfMaintainCost() {
+        return rfMaintainCost;
+    }
+
+    public int getTickCost() {
+        return tickCost;
     }
 
     public List<Integer> getDimletsByType(DimletType type) {
@@ -55,6 +78,63 @@ public class DimensionDescriptor {
 
             tagCompound.setTag(me.getKey().getName(), tagList);
         }
+        tagCompound.setInteger("rfCreateCost", rfCreateCost);
+        tagCompound.setInteger("rfMaintainCost", rfMaintainCost);
+        tagCompound.setInteger("tickCost", tickCost);
 
+    }
+
+    private int calculateCreationRfCost() {
+        int rf = KnownDimletConfiguration.baseDimensionCreationCost;
+        for (DimletType type : attributeMap.keySet()) {
+            List<Integer> ids = attributeMap.get(type);
+            for (Integer id : ids) {
+                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+                if (entry != null) {
+                    int cost = entry.getRfCreateCost();
+                    if (cost == -1) {
+                        cost = KnownDimletConfiguration.typeRfCreateCost.get(type);
+                    }
+                    rf += cost;
+                }
+            }
+        }
+        return rf;
+    }
+
+    private int calculateMaintenanceRfCost() {
+        int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
+        for (DimletType type : attributeMap.keySet()) {
+            List<Integer> ids = attributeMap.get(type);
+            for (Integer id : ids) {
+                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+                if (entry != null) {
+                    int cost = entry.getRfMaintainCost();
+                    if (cost == -1) {
+                        cost = KnownDimletConfiguration.typeRfMaintainCost.get(type);
+                    }
+                    rf += cost;
+                }
+            }
+        }
+        return rf;
+    }
+
+    private int calculateTickCost() {
+        int ticks = KnownDimletConfiguration.baseDimensionTickCost;
+        for (DimletType type : attributeMap.keySet()) {
+            List<Integer> ids = attributeMap.get(type);
+            for (Integer id : ids) {
+                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+                if (entry != null) {
+                    int cost = entry.getTickCost();
+                    if (cost == -1) {
+                        cost = KnownDimletConfiguration.typeTickCost.get(type);
+                    }
+                    ticks += cost;
+                }
+            }
+        }
+        return ticks;
     }
 }
