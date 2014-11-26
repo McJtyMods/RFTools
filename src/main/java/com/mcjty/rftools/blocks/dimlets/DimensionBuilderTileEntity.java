@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -47,8 +48,13 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         int ticksLeft = tagCompound.getInteger("ticksLeft");
         int tickCost = tagCompound.getInteger("tickCost");
         if (ticksLeft > 0) {
-            ticksLeft--;
-            tagCompound.setInteger("ticksLeft", ticksLeft);
+            int createCost = tagCompound.getInteger("rfCreateCost");
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            if (rf >= createCost) {
+                extractEnergy(ForgeDirection.DOWN, createCost, false);
+                ticksLeft--;
+                tagCompound.setInteger("ticksLeft", ticksLeft);
+            }
         }
 
         setState(ticksLeft, tickCost);
