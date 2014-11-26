@@ -138,4 +138,21 @@ public class DimensionDescriptor {
         }
         return ticks;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DimensionDescriptor that = (DimensionDescriptor) o;
+
+        if (!attributeMap.equals(that.attributeMap)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return attributeMap.hashCode();
+    }
 }

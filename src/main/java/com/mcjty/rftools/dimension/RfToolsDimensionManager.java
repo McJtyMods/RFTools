@@ -9,13 +9,14 @@ import net.minecraftforge.common.util.Constants;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DimensionManager extends WorldSavedData {
+public class RfToolsDimensionManager extends WorldSavedData {
     public static final String DIMMANAGER_NAME = "DimensionManager";
-    private static DimensionManager instance = null;
+    private static RfToolsDimensionManager instance = null;
 
     private final Map<Integer, DimensionDescriptor> dimensions = new HashMap<Integer, DimensionDescriptor>();
+    private final Map<DimensionDescriptor, Integer> dimensionToID = new HashMap<DimensionDescriptor, Integer>();
 
-    public DimensionManager(String identifier) {
+    public RfToolsDimensionManager(String identifier) {
         super(identifier);
     }
 
@@ -23,31 +24,40 @@ public class DimensionManager extends WorldSavedData {
         instance = null;
     }
 
-    public static DimensionManager getDimensionManager(World world) {
+    public static RfToolsDimensionManager getDimensionManager(World world) {
         if (world.isRemote) {
             return null;
         }
         if (instance != null) {
             return instance;
         }
-        instance = (DimensionManager) world.mapStorage.loadData(DimensionManager.class, DIMMANAGER_NAME);
+        instance = (RfToolsDimensionManager) world.mapStorage.loadData(RfToolsDimensionManager.class, DIMMANAGER_NAME);
         if (instance == null) {
-            instance = new DimensionManager(DIMMANAGER_NAME);
+            instance = new RfToolsDimensionManager(DIMMANAGER_NAME);
         }
         return instance;
     }
 
+    public DimensionDescriptor getDimensionDescriptor(int id) {
+        return dimensions.get(id);
+    }
+
+    public Integer getDimensionID(DimensionDescriptor descriptor) {
+        return dimensionToID.get(descriptor);
+    }
 
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         dimensions.clear();
+        dimensionToID.clear();
         NBTTagList lst = tagCompound.getTagList("dimensions", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
             int id = tc.getInteger("id");
             DimensionDescriptor descriptor = new DimensionDescriptor(tc);
             dimensions.put(id, descriptor);
+            dimensionToID.put(descriptor, id);
         }
     }
 

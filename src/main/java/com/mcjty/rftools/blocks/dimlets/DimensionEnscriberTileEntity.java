@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
@@ -164,6 +165,15 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
         NBTTagCompound tagCompound = new NBTTagCompound();
         descriptor.writeToNBT(tagCompound);
+
+        // Check if the dimension already exists and if so set the progress to 100%.
+        RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        Integer id = manager.getDimensionID(descriptor);
+        if (id != null) {
+            // The dimension was already created.
+            tagCompound.setInteger("ticksLeft", 0);
+        }
+
         realizedTab.setTagCompound(tagCompound);
         return realizedTab;
     }
