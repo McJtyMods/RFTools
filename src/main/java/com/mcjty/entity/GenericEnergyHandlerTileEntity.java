@@ -17,7 +17,7 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
 
     private EnergyStorage storage;
 
-    private int currentRF = 0;
+    private static int currentRF = 0;
 
     private int requestRfDelay = 3;
 
@@ -84,12 +84,12 @@ public class GenericEnergyHandlerTileEntity extends GenericTileEntity implements
         storage.writeToNBT(tagCompound);
     }
 
-    public int getCurrentRF() {
+    public static int getCurrentRF() {
         return currentRF;
     }
 
-    public void setCurrentRF(int currentRF) {
-        this.currentRF = currentRF;
+    public static void setCurrentRF(int currentRF) {
+        GenericEnergyHandlerTileEntity.currentRF = currentRF;
     }
 
     // Request the RF from the server. This has to be called on the client side.
