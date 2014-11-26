@@ -48,16 +48,33 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         int ticksLeft = tagCompound.getInteger("ticksLeft");
         int tickCost = tagCompound.getInteger("tickCost");
         if (ticksLeft > 0) {
-            int createCost = tagCompound.getInteger("rfCreateCost");
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rf >= createCost) {
-                extractEnergy(ForgeDirection.DOWN, createCost, false);
-                ticksLeft--;
-                tagCompound.setInteger("ticksLeft", ticksLeft);
-            }
+            ticksLeft = createDimensionTick(tagCompound, ticksLeft);
+        } else {
+            maintainDimensionTick(tagCompound);
         }
 
         setState(ticksLeft, tickCost);
+    }
+
+    private void maintainDimensionTick(NBTTagCompound tagCompound) {
+        int maintainCost = tagCompound.getInteger("rfMaintainCost");
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        if (rf >= maintainCost) {
+            extractEnergy(ForgeDirection.DOWN, maintainCost, false);
+        } else {
+            // @todo shut down dimension.
+        }
+    }
+
+    private int createDimensionTick(NBTTagCompound tagCompound, int ticksLeft) {
+        int createCost = tagCompound.getInteger("rfCreateCost");
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        if (rf >= createCost) {
+            extractEnergy(ForgeDirection.DOWN, createCost, false);
+            ticksLeft--;
+            tagCompound.setInteger("ticksLeft", ticksLeft);
+        }
+        return ticksLeft;
     }
 
     private void setState(int ticksLeft, int tickCost) {
