@@ -39,8 +39,8 @@ public class RealizedDimensionTab extends Item {
                     }
                 }
             }
-            Integer pct = tagCompound.getInteger("pct");
-            if (pct == 100) {
+            Integer ticksLeft = tagCompound.getInteger("ticksLeft");
+            if (ticksLeft == 0) {
                 list.add(EnumChatFormatting.BLUE + "Dimension ready!");
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");
                 list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
@@ -48,7 +48,8 @@ public class RealizedDimensionTab extends Item {
                 int createCost = tagCompound.getInteger("rfCreateCost");
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");
                 int tickCost = tagCompound.getInteger("tickCost");
-                list.add(EnumChatFormatting.BLUE + "Dimension progress: " + pct + "%");
+                int percentage = (tickCost - ticksLeft) * 100 / tickCost;
+                list.add(EnumChatFormatting.BLUE + "Dimension progress: " + percentage + "%");
                 list.add(EnumChatFormatting.YELLOW + "    Creation cost: " + createCost + " RF/tick");
                 list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
                 list.add(EnumChatFormatting.YELLOW + "    Tick cost: " + tickCost + " ticks");

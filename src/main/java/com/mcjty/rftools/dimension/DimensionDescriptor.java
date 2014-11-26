@@ -81,6 +81,7 @@ public class DimensionDescriptor {
         tagCompound.setInteger("rfCreateCost", rfCreateCost);
         tagCompound.setInteger("rfMaintainCost", rfMaintainCost);
         tagCompound.setInteger("tickCost", tickCost);
+        tagCompound.setInteger("ticksLeft", tickCost);
 
     }
 

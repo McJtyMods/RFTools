@@ -39,27 +39,28 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
-            setState(0);
+            setState(-1, 0);
             return;
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        int pct = tagCompound.getInteger("pct");
-        if (pct < 100) {
-            pct++;
-            tagCompound.setInteger("pct", pct);
+        int ticksLeft = tagCompound.getInteger("ticksLeft");
+        int tickCost = tagCompound.getInteger("tickCost");
+        if (ticksLeft > 0) {
+            ticksLeft--;
+            tagCompound.setInteger("ticksLeft", ticksLeft);
         }
 
-        setState(pct);
+        setState(ticksLeft, tickCost);
     }
 
-    private void setState(int pct) {
+    private void setState(int ticksLeft, int tickCost) {
         int state = 0;
-        if (pct == 100) {
+        if (ticksLeft == 0) {
             state = 0;
-        } else if (pct == 0) {
+        } else if (ticksLeft == -1) {
             state = 1;
-        } else if (((pct >> 2) & 1) == 0) {
+        } else if (((ticksLeft >> 2) & 1) == 0) {
             state = 2;
         } else {
             state = 3;
@@ -165,7 +166,9 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                 return 0;
             } else {
                 NBTTagCompound tagCompound = itemStack.getTagCompound();
-                return tagCompound.getInteger("pct");
+                int ticksLeft = tagCompound.getInteger("ticksLeft");
+                int tickCost = tagCompound.getInteger("tickCost");
+                return (tickCost - ticksLeft) * 100 / tickCost;
             }
         }
         return null;
