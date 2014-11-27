@@ -9,6 +9,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
@@ -36,8 +37,9 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
     }
 
     private void addDimensions(List<TeleportDestinationClientInfo> destinationList) {
-        Integer[] ids = DimensionManager.getStaticDimensionIDs();
-        for (Integer id : ids) {
+        WorldServer[] worlds = DimensionManager.getWorlds();
+        for (WorldServer world : worlds) {
+            int id = world.provider.dimensionId;
             TeleportDestination destination = new TeleportDestination(new Coordinate(0, 70, 0), id);
             destination.setName("Dimension: " + id);
             TeleportDestinationClientInfo teleportDestinationClientInfo = new TeleportDestinationClientInfo(destination);
