@@ -28,17 +28,9 @@ public class RealizedDimensionTab extends Item {
             if (name != null) {
                 list.add(EnumChatFormatting.BLUE + "Name: " + name);
             }
-            for (DimletType type : DimletType.values()) {
-                if (tagCompound.hasKey(type.getName())) {
-                    NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
-                    if (tagIntArray != null) {
-                        int length = tagIntArray.func_150302_c().length;
-                        if (length > 0) {
-                            list.add(EnumChatFormatting.GREEN + type.getName() + " " + length + " dimlets");
-                        }
-                    }
-                }
-            }
+            String descriptionString = tagCompound.getString("descriptionString");
+            constructDescriptionHelp(list, descriptionString);
+
             Integer ticksLeft = tagCompound.getInteger("ticksLeft");
             if (ticksLeft == 0) {
                 list.add(EnumChatFormatting.BLUE + "Dimension ready!");
@@ -54,6 +46,27 @@ public class RealizedDimensionTab extends Item {
                 list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
                 list.add(EnumChatFormatting.YELLOW + "    Tick cost: " + tickCost + " ticks");
             }
+        }
+    }
+
+    private void constructDescriptionHelp(List list, String descriptionString) {
+        String[] opcodes = descriptionString.split(",");
+        DimletType prevType = null;
+        int cnt = 0;
+        for (String oc : opcodes) {
+            DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
+            if (type == prevType) {
+                cnt++;
+            } else {
+                if (prevType != null) {
+                    list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+                }
+                prevType = type;
+                cnt = 1;
+            }
+        }
+        if (prevType != null && cnt != 0) {
+            list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
         }
     }
 }

@@ -12,44 +12,38 @@ import java.util.*;
  * A unique descriptor of a dimension.
  */
 public class DimensionDescriptor {
-    private final Map<DimletType, List<Integer>> attributeMap;
+    private final String descriptionString;
     private final int rfCreateCost;
     private final int rfMaintainCost;
     private final int tickCost;
 
     public DimensionDescriptor(Map<DimletType, List<Integer>> input) {
-        attributeMap = new HashMap<DimletType, List<Integer>>();
-        for (Map.Entry<DimletType,List<Integer>> me : input.entrySet()) {
-            List<Integer> ids = new ArrayList<Integer>(me.getValue());
-            Collections.sort(ids);
-            attributeMap.put(me.getKey(), ids);
+        StringBuilder s = new StringBuilder();
+
+        for (DimletType type : DimletType.values()) {
+            List<Integer> ids = input.get(type);
+            if (ids != null) {
+                Collections.sort(ids);
+                for (Integer id : ids) {
+                    if (s.length() > 0) {
+                        s.append(',');
+                    }
+                    s.append(type.getOpcode()).append(id);
+                }
+            }
         }
-        rfCreateCost = calculateCreationRfCost();
-        rfMaintainCost = calculateMaintenanceRfCost();
-        tickCost = calculateTickCost();
+        descriptionString = s.toString();
+
+        rfCreateCost = calculateCreationRfCost(input);
+        rfMaintainCost = calculateMaintenanceRfCost(input);
+        tickCost = calculateTickCost(input);
     }
 
     public DimensionDescriptor(NBTTagCompound tagCompound) {
-        attributeMap = new HashMap<DimletType, List<Integer>>();
-        for (DimletType type : DimletType.values()) {
-            int[] dimlets = null;
-            if (tagCompound.hasKey(type.getName())) {
-                NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
-                if (tagIntArray != null) {
-                    dimlets = tagIntArray.func_150302_c();
-                }
-            }
-            List<Integer> ids = new ArrayList<Integer>();
-            if (dimlets != null) {
-                for (int id : dimlets) {
-                    ids.add(id);
-                }
-            }
-            attributeMap.put(type, ids);
-        }
-        rfCreateCost = calculateCreationRfCost();
-        rfMaintainCost = calculateMaintenanceRfCost();
-        tickCost = calculateTickCost();
+        descriptionString = tagCompound.getString("descriptionString");
+        rfCreateCost = tagCompound.getInteger("rfCreateCost");
+        rfMaintainCost = tagCompound.getInteger("rfMaintainCost");
+        tickCost = tagCompound.getInteger("tickCost");
     }
 
     public int getRfCreateCost() {
@@ -64,31 +58,18 @@ public class DimensionDescriptor {
         return tickCost;
     }
 
-    public List<Integer> getDimletsByType(DimletType type) {
-        return attributeMap.get(type);
-    }
-
     public void writeToNBT(NBTTagCompound tagCompound) {
-        for (Map.Entry<DimletType,List<Integer>> me : attributeMap.entrySet()) {
-            int[] arr = new int[me.getValue().size()];
-            for (int i = 0 ; i < me.getValue().size() ; i++) {
-                arr[i] = me.getValue().get(i);
-            }
-            NBTTagIntArray tagList = new NBTTagIntArray(arr);
-
-            tagCompound.setTag(me.getKey().getName(), tagList);
-        }
+        tagCompound.setString("descriptionString", descriptionString);
         tagCompound.setInteger("rfCreateCost", rfCreateCost);
         tagCompound.setInteger("rfMaintainCost", rfMaintainCost);
         tagCompound.setInteger("tickCost", tickCost);
         tagCompound.setInteger("ticksLeft", tickCost);
-
     }
 
-    private int calculateCreationRfCost() {
+    private int calculateCreationRfCost(Map<DimletType, List<Integer>> input) {
         int rf = KnownDimletConfiguration.baseDimensionCreationCost;
-        for (DimletType type : attributeMap.keySet()) {
-            List<Integer> ids = attributeMap.get(type);
+        for (DimletType type : input.keySet()) {
+            List<Integer> ids = input.get(type);
             for (Integer id : ids) {
                 DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
                 if (entry != null) {
@@ -103,10 +84,10 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int calculateMaintenanceRfCost() {
+    private int calculateMaintenanceRfCost(Map<DimletType, List<Integer>> input) {
         int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
-        for (DimletType type : attributeMap.keySet()) {
-            List<Integer> ids = attributeMap.get(type);
+        for (DimletType type : input.keySet()) {
+            List<Integer> ids = input.get(type);
             for (Integer id : ids) {
                 DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
                 if (entry != null) {
@@ -121,10 +102,10 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int calculateTickCost() {
+    private int calculateTickCost(Map<DimletType, List<Integer>> input) {
         int ticks = KnownDimletConfiguration.baseDimensionTickCost;
-        for (DimletType type : attributeMap.keySet()) {
-            List<Integer> ids = attributeMap.get(type);
+        for (DimletType type : input.keySet()) {
+            List<Integer> ids = input.get(type);
             for (Integer id : ids) {
                 DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
                 if (entry != null) {
@@ -146,13 +127,13 @@ public class DimensionDescriptor {
 
         DimensionDescriptor that = (DimensionDescriptor) o;
 
-        if (!attributeMap.equals(that.attributeMap)) return false;
+        if (!descriptionString.equals(that.descriptionString)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return attributeMap.hashCode();
+        return descriptionString.hashCode();
     }
 }

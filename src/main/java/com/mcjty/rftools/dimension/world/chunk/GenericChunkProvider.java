@@ -30,7 +30,7 @@ public class GenericChunkProvider implements IChunkProvider {
     }
 
     @Override
-    public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_) {
+    public void populate(IChunkProvider chunkProvider, int p_73153_2_, int p_73153_3_) {
 
     }
 
