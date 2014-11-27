@@ -1,4 +1,4 @@
-package com.mcjty.rftools.dimension.world.chunk;
+package com.mcjty.rftools.dimension.world;
 
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;

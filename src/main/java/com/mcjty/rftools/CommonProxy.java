@@ -8,6 +8,7 @@ import com.mcjty.rftools.blocks.shield.ShieldConfiguration;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.crafting.ModCrafting;
+import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletItems;
@@ -44,6 +45,7 @@ public class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModCrafting.init();
+        ModDimensions.init();
     }
 
     private void readDimletConfig() {

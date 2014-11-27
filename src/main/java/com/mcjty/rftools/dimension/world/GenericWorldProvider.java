@@ -1,8 +1,6 @@
 package com.mcjty.rftools.dimension.world;
 
-import com.mcjty.rftools.dimension.world.chunk.GenericChunkProvider;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.DimensionManager;
 
 public class GenericWorldProvider extends WorldProvider {
@@ -32,8 +30,8 @@ public class GenericWorldProvider extends WorldProvider {
         return false;
     }
 
-    @Override
-    public IChunkProvider createChunkGenerator() {
-        return new GenericChunkProvider(worldObj, worldObj.getSeed());
-    }
+//    @Override
+//    public IChunkProvider createChunkGenerator() {
+//        return new GenericChunkProvider(worldObj, worldObj.getSeed());
+//    }
 }

@@ -1,14 +1,11 @@
 package com.mcjty.rftools.dimension;
 
-import com.mcjty.rftools.blocks.ModBlocks;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
-import com.mcjty.varia.Coordinate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldManager;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -65,16 +62,8 @@ public class RfToolsDimensionManager extends WorldSavedData {
         DimensionManager.registerDimension(id, id);
         System.out.println("id = " + id + " for " + name);
 
-        World newWorld = WorldProvider.getProviderForDimension(id).worldObj;
-        System.out.println("newWorld = " + newWorld);
-        World newWorld2 = DimensionManager.getWorld(id);
-        System.out.println("newWorld2 = " + newWorld2);
-        newWorld2.setBlock(0, 70, 0, ModBlocks.matterReceiverBlock, 0, 2);
-
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        TeleportDestination destination = destinations.addDestination(new Coordinate(0, 70, 0), id);
-        destination.setName(name);
-        destinations.save(world);
+        dimensions.put(id, descriptor);
+        dimensionToID.put(descriptor, id);
 
         save(world);
     }
