@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -205,16 +206,11 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         NBTTagCompound tagCompound = realizedTab.getTagCompound();
         if (tagCompound != null) {
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
-            for (DimletType type : DimletType.values()) {
-                if (tagCompound.hasKey(type.getName())) {
-                    NBTTagIntArray tagIntArray = (NBTTagIntArray) tagCompound.getTag(type.getName());
-                    if (tagIntArray != null) {
-                        int[] dimlets = tagIntArray.func_150302_c();
-                        for (int id : dimlets) {
-                            inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
-                        }
-                    }
-                }
+            String descriptionString = tagCompound.getString("descriptionString");
+            String[] opcodes = descriptionString.split(",");
+            for (String oc : opcodes) {
+                Integer id = Integer.parseInt(oc.substring(1));
+                inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
             }
         }
 
