@@ -1,14 +1,12 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.commands.CommandRftDim;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
@@ -102,7 +100,6 @@ public class RFTools {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-//        logger = e.getModLog();
         logger = LogManager.getLogger();
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
@@ -114,6 +111,11 @@ public class RFTools {
     @EventHandler
     public void init(FMLInitializationEvent e) {
         this.proxy.init(e);
+    }
+
+    @EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandRftDim());
     }
 
     /**
