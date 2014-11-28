@@ -24,7 +24,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             TeleportDestination destination = destinations.addDestination(new Coordinate(0, 70, 0), world.provider.dimensionId);
-            destination.setName("testtest");
+            destination.setName(world.provider.getDimensionName());
             destinations.save(world);
         }
     }

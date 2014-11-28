@@ -2,6 +2,8 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -12,9 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
@@ -93,7 +93,31 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     public List<TeleportDestinationClientInfo> searchReceivers() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
+
+        // Contains all destination we already added to the list. This is to prevent duplicates.
+        Set<TeleportDestination> duplicateChecker = new HashSet<TeleportDestination>();
+
+        ArrayList<TeleportDestinationClientInfo> list = new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
+        for (TeleportDestinationClientInfo c : list) {
+            duplicateChecker.add(new TeleportDestination(c.getCoordinate(), c.getDimension()));
+        }
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
+        for (Map.Entry<Integer,DimensionDescriptor> me : dimensions.entrySet()) {
+            Integer id = me.getKey();
+            TeleportDestination c = new TeleportDestination(new Coordinate(0, 70, 0), id);
+            if (!duplicateChecker.contains(c)) {
+                duplicateChecker.add(c);
+                TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(c);
+                World w = DimensionManager.getWorld(id);
+                if (w != null) {
+                    destinationClientInfo.setDimensionName(DimensionManager.getProvider(id).getDimensionName());
+                }
+                list.add(destinationClientInfo);
+            }
+        }
+        return list;
     }
 
     public List<TransmitterInfo> searchTransmitters() {

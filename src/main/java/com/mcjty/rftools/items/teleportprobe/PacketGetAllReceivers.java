@@ -48,6 +48,8 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
             TeleportDestination destination = new TeleportDestination(new Coordinate(0, 70, 0), id);
             destination.setName("Dimension: " + id);
             TeleportDestinationClientInfo teleportDestinationClientInfo = new TeleportDestinationClientInfo(destination);
+            String dimName = world.provider.getDimensionName();
+            teleportDestinationClientInfo.setDimensionName(dimName);
             destinationList.add(teleportDestinationClientInfo);
         }
     }

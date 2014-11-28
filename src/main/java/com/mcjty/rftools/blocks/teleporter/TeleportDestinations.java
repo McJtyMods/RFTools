@@ -50,13 +50,11 @@ public class TeleportDestinations extends WorldSavedData {
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
             World world = DimensionManager.getWorld(destination.getDimension());
-            // The following test should always succeed but in some rare situations it may occur that a destination
-            // is registered in a dimension that no longer exists.
             if (world != null) {
                 String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
                 destinationClientInfo.setDimensionName(dimName);
-                result.add(destinationClientInfo);
             }
+            result.add(destinationClientInfo);
         }
         return result;
     }

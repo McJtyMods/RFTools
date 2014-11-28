@@ -22,8 +22,8 @@ public class CmdListDimensions implements RfToolsCommand {
         WorldServer[] worlds = DimensionManager.getWorlds();
         for (WorldServer world : worlds) {
             int id = world.provider.dimensionId;
-            World w = DimensionManager.getWorld(id);
-            sender.addChatMessage(new ChatComponentText("    id:" + id + ", " + w));
+            String dimName = world.provider.getDimensionName();
+            sender.addChatMessage(new ChatComponentText("    id:" + id + ", " + dimName));
         }
     }
 }
