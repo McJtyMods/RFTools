@@ -7,7 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
-public class CmdTeleport implements RfToolsCommand {
+public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
         return "<dimension> <x> <y> <z>";
@@ -43,16 +43,5 @@ public class CmdTeleport implements RfToolsCommand {
             player.setPositionAndUpdate(x, y, z);
         }
 
-    }
-
-    private int fetchInt(ICommandSender sender, String[] args, int index) {
-        int dim;
-        try {
-            dim = Integer.parseInt(args[index]);
-        } catch (NumberFormatException e) {
-            dim = 0;
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Dimension parameter is not a valid number!"));
-        }
-        return dim;
     }
 }

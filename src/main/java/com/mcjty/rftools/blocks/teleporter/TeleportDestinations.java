@@ -52,6 +52,9 @@ public class TeleportDestinations extends WorldSavedData {
             World world = DimensionManager.getWorld(destination.getDimension());
             if (world != null) {
                 String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+                if (dimName == null || dimName.trim().isEmpty()) {
+                    dimName = "Id " + destination.getDimension();
+                }
                 destinationClientInfo.setDimensionName(dimName);
             }
             result.add(destinationClientInfo);

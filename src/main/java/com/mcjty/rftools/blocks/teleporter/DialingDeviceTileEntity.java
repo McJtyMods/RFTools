@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
@@ -97,7 +98,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         // Contains all destination we already added to the list. This is to prevent duplicates.
         Set<TeleportDestination> duplicateChecker = new HashSet<TeleportDestination>();
 
-        ArrayList<TeleportDestinationClientInfo> list = new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
+        List<TeleportDestinationClientInfo> list = new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
         for (TeleportDestinationClientInfo c : list) {
             duplicateChecker.add(new TeleportDestination(c.getCoordinate(), c.getDimension()));
         }
@@ -111,9 +112,17 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
                 duplicateChecker.add(c);
                 TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(c);
                 World w = DimensionManager.getWorld(id);
+                String dimName = null;
                 if (w != null) {
-                    destinationClientInfo.setDimensionName(DimensionManager.getProvider(id).getDimensionName());
+                    dimName = DimensionManager.getProvider(id).getDimensionName();
+                } else {
+                    DimensionInformation info = dimensionManager.getDimensionInformation(id);
+                    dimName = info.getName();
                 }
+                if (dimName == null || dimName.trim().isEmpty()) {
+                    dimName = "Id " + id;
+                }
+                destinationClientInfo.setDimensionName(dimName);
                 list.add(destinationClientInfo);
             }
         }
@@ -231,7 +240,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Server side only
     private int checkStatus(Coordinate c, int dim) {
-        World w = DimensionManager.getProvider(dim).worldObj;
+        World w = DimensionManager.createProviderFor(dim).worldObj;
+//        World w = DimensionManager.getProvider(dim).worldObj;
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;

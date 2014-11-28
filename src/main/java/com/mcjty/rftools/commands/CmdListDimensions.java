@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
-public class CmdListDimensions implements RfToolsCommand {
+public class CmdListDimensions extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
         return "";

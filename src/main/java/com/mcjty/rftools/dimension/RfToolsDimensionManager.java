@@ -20,6 +20,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     private final Map<Integer, DimensionDescriptor> dimensions = new HashMap<Integer, DimensionDescriptor>();
     private final Map<DimensionDescriptor, Integer> dimensionToID = new HashMap<DimensionDescriptor, Integer>();
+    private final Map<Integer, DimensionInformation> dimensionInformation = new HashMap<Integer, DimensionInformation>();
 
     public RfToolsDimensionManager(String identifier) {
         super(identifier);
@@ -40,11 +41,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     public void registerDimensions() {
         RFTools.log("Registering RFTools dimensions");
-        System.out.println("com.mcjty.rftools.dimension.RfToolsDimensionManager.registerDimensions");
         for (Map.Entry<Integer, DimensionDescriptor> me : dimensions.entrySet()) {
             int id = me.getKey();
-            RFTools.log("    Dimension: "+id);
-            System.out.println("id = " + id);
+            RFTools.log("    Dimension: " + id);
             DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
             DimensionManager.registerDimension(id, id);
         }
@@ -72,6 +71,17 @@ public class RfToolsDimensionManager extends WorldSavedData {
         return dimensionToID.get(descriptor);
     }
 
+    public DimensionInformation getDimensionInformation(int id) {
+        return dimensionInformation.get(id);
+    }
+
+    public void removeDimension(int id) {
+        DimensionDescriptor descriptor = dimensions.get(id);
+        dimensions.remove(id);
+        dimensionToID.remove(descriptor);
+        dimensionInformation.remove(id);
+    }
+
     public void createNewDimension(World world, DimensionDescriptor descriptor, String name) {
         int id = DimensionManager.getNextFreeDimId();
         DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
@@ -81,6 +91,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
 
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor);
+        dimensionInformation.put(id, dimensionInfo);
+
         save(world);
     }
 
@@ -88,6 +101,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void readFromNBT(NBTTagCompound tagCompound) {
         dimensions.clear();
         dimensionToID.clear();
+        dimensionInformation.clear();
         NBTTagList lst = tagCompound.getTagList("dimensions", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
@@ -95,6 +109,10 @@ public class RfToolsDimensionManager extends WorldSavedData {
             DimensionDescriptor descriptor = new DimensionDescriptor(tc);
             dimensions.put(id, descriptor);
             dimensionToID.put(descriptor, id);
+
+            String name = tc.getString("name");
+            DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor);
+            dimensionInformation.put(id, dimensionInfo);
         }
     }
 
@@ -103,7 +121,10 @@ public class RfToolsDimensionManager extends WorldSavedData {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer,DimensionDescriptor> me : dimensions.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setInteger("id", me.getKey());
+            Integer id = me.getKey();
+            tc.setInteger("id", id);
+            DimensionInformation dimensionInfo = dimensionInformation.get(id);
+            tc.setString("name", dimensionInfo.getName());
             me.getValue().writeToNBT(tc);
             lst.appendTag(tc);
         }

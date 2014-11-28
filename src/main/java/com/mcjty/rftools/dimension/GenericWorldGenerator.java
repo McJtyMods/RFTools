@@ -24,7 +24,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             TeleportDestination destination = destinations.addDestination(new Coordinate(0, 70, 0), world.provider.dimensionId);
-            destination.setName(world.provider.getDimensionName());
+            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+            DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
+            destination.setName(information.getName());
             destinations.save(world);
         }
     }

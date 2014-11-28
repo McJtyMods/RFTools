@@ -337,6 +337,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             Coordinate coordinate = destination.getCoordinate();
 
             String dimName = destination.getDimensionName();
+            if (dimName == null || dimName.trim().isEmpty()) {
+                dimName = "Id " + destination.getDimension();
+            }
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(65));

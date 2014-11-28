@@ -15,6 +15,7 @@ public class CommandRftDim implements ICommand {
 
     public CommandRftDim() {
         registerCommand(new CmdListDimensions());
+        registerCommand(new CmdDelDimension());
         registerCommand(new CmdTeleport());
         registerCommand(new CmdHelp());
     }

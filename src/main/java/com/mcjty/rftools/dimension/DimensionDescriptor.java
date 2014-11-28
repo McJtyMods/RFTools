@@ -46,6 +46,10 @@ public class DimensionDescriptor {
         tickCost = tagCompound.getInteger("tickCost");
     }
 
+    public String getDescriptionString() {
+        return descriptionString;
+    }
+
     public int getRfCreateCost() {
         return rfCreateCost;
     }
