@@ -29,7 +29,7 @@ public class TeleportConfiguration {
     // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
     // the power usage above with regards to local/dimensional teleport.
     public static int timeTeleportBaseLocal = 5;
-    public static int timeTeleportBaseDim = 100;
+    public static int timeTeleportBaseDim = 50;
     public static int timeTeleportDist = 10;                // Value in militicks (1000 == 1 tick)
 
     // Base volume for the teleporting sound (whoosh!)
