@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.commands.CommandRftDim;
+import com.mcjty.rftools.commands.CommandRftTp;
 import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
@@ -121,6 +122,7 @@ public class RFTools {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftDim());
+        event.registerServerCommand(new CommandRftTp());
     }
 
     @EventHandler

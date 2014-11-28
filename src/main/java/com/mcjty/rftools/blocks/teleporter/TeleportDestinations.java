@@ -1,8 +1,11 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
@@ -27,6 +30,28 @@ public class TeleportDestinations extends WorldSavedData {
 
     public static void clearInstance() {
         instance = null;
+    }
+
+    public void cleanupInvalid(World world) {
+        Set<TeleportDestinationKey> keys = new HashSet<TeleportDestinationKey>(destinations.keySet());
+        for (TeleportDestinationKey key : keys) {
+            World transWorld = RfToolsDimensionManager.getDimensionManager(world).getWorldForDimension(key.getDimension());
+            boolean removed = false;
+            if (transWorld == null) {
+                RFTools.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");
+                removed = true;
+            } else {
+                Coordinate c = key.getCoordinate();
+                TileEntity te = transWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (!(te instanceof MatterReceiverTileEntity)) {
+                    RFTools.log("Receiver at " + c + " on dimension " + key.getDimension() + " removed because there is no receiver there!");
+                    removed = true;
+                }
+            }
+            if (removed) {
+                destinations.remove(key);
+            }
+        }
     }
 
     public static TeleportDestinations getDestinations(World world) {
