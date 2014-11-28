@@ -93,11 +93,13 @@ public class GuiTeleportProbe extends GuiScreen {
 
         for (TeleportDestinationClientInfo destination : destinationList) {
             Coordinate coordinate = destination.getCoordinate();
+            int dim = destination.getDimension();
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
             panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(destination.getName()).setDesiredWidth(100));
             panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText("Id " + dim).setDesiredWidth(75));
             list.addChild(panel);
         }
     }

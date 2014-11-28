@@ -5,6 +5,7 @@ import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
@@ -20,7 +21,15 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 return; // Not one of RFTools dimensions
             }
             System.out.println("com.mcjty.rftools.dimension.GenericWorldGenerator.generate");
-            world.setBlock(0, 70, 0, ModBlocks.matterReceiverBlock, 0, 2);
+            for (int x = -3 ; x <= 3 ; x++) {
+                for (int z = -3 ; z <= 3 ; z++) {
+                    if (x == 0 && z == 0) {
+                        world.setBlock(x, 70, z, ModBlocks.matterReceiverBlock, 0, 2);
+                    } else {
+                        world.setBlock(x, 70, z, Blocks.stone, 0, 2);
+                    }
+                }
+            }
 
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             TeleportDestination destination = destinations.addDestination(new Coordinate(0, 70, 0), world.provider.dimensionId);

@@ -93,13 +93,20 @@ public class GenericChunkProvider implements IChunkProvider {
         this.worldObj = world;
         this.mapFeaturesEnabled = features;
         this.worldType = world.getWorldInfo().getTerrainType();
-        this.rand = new Random(seed);
-        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
-        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 4);
-        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
-        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
+        this.rand = new Random((seed + 516) * 314);
+//        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
+//        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
+//        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
+//        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 4);
+//        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
+//        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
+        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 18);
+        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 8);
+        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 16);
+        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 8);
+        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 12);
+        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 18);
+
         this.mobSpawnerNoise = new NoiseGeneratorOctaves(this.rand, 8);
         this.field_147434_q = new double[825];
         this.parabolicField = new float[25];
