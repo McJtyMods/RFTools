@@ -240,8 +240,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Server side only
     private int checkStatus(Coordinate c, int dim) {
-        World w = DimensionManager.createProviderFor(dim).worldObj;
-//        World w = DimensionManager.getProvider(dim).worldObj;
+//        World w = DimensionManager.createProviderFor(dim).worldObj;
+        World w = DimensionManager.getProvider(dim).worldObj;
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
