@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.commands.CommandRftDim;
+import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
 import cpw.mods.fml.common.Mod;
@@ -94,6 +95,10 @@ public class RFTools {
         }
     }
 
+    public static void log(String message) {
+        instance.logger.log(Level.INFO, message);
+    }
+
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
      * register them with the GameRegistry.
@@ -116,6 +121,12 @@ public class RFTools {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftDim());
+    }
+
+    @EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        System.out.println("-----------------------------------------------------");
+        ModDimensions.initDimensions();
     }
 
     /**

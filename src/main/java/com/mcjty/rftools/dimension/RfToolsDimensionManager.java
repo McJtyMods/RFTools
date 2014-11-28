@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +34,21 @@ public class RfToolsDimensionManager extends WorldSavedData {
         markDirty();
     }
 
+    public Map<Integer, DimensionDescriptor> getDimensions() {
+        return dimensions;
+    }
+
+    public void registerDimensions() {
+        RFTools.log("Registering RFTools dimensions");
+        System.out.println("com.mcjty.rftools.dimension.RfToolsDimensionManager.registerDimensions");
+        for (Map.Entry<Integer, DimensionDescriptor> me : dimensions.entrySet()) {
+            int id = me.getKey();
+            RFTools.log("    Dimension: "+id);
+            System.out.println("id = " + id);
+            DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
+            DimensionManager.registerDimension(id, id);
+        }
+    }
 
     public static RfToolsDimensionManager getDimensionManager(World world) {
         if (world.isRemote) {

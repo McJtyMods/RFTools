@@ -3,17 +3,21 @@ package com.mcjty.rftools.items.teleportprobe;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGetAllReceivers, PacketAllReceiversReady> {
     @Override
@@ -33,6 +37,7 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
         TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
         List<TeleportDestinationClientInfo> destinationList = new ArrayList<TeleportDestinationClientInfo> (destinations.getValidDestinations());
         addDimensions(destinationList);
+        addRfToolsDimensions(player.worldObj, destinationList);
         return new PacketAllReceiversReady(destinationList);
     }
 
@@ -47,4 +52,14 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
         }
     }
 
+    private void addRfToolsDimensions(World world, List<TeleportDestinationClientInfo> destinationList) {
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        for (Map.Entry<Integer,DimensionDescriptor> me : dimensionManager.getDimensions().entrySet()) {
+            int id = me.getKey();
+            TeleportDestination destination = new TeleportDestination(new Coordinate(0, 70, 0), id);
+            destination.setName("RfTools Dim: " + id);
+            TeleportDestinationClientInfo teleportDestinationClientInfo = new TeleportDestinationClientInfo(destination);
+            destinationList.add(teleportDestinationClientInfo);
+        }
+    }
 }
