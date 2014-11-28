@@ -5,9 +5,11 @@ import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldManager;
 import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
@@ -73,6 +75,20 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     public DimensionInformation getDimensionInformation(int id) {
         return dimensionInformation.get(id);
+    }
+
+    /**
+     * Get a world for a dimension, possibly loading it from the configuration manager.
+     * @param id
+     * @return
+     */
+    public World getWorldForDimension(int id) {
+        World w = DimensionManager.getWorld(id);
+        if (w == null) {
+            WorldServer worldServer = MinecraftServer.getServer().getConfigurationManager().getServerInstance().worldServerForDimension(id);
+            w = worldServer;
+        }
+        return w;
     }
 
     public void removeDimension(int id) {

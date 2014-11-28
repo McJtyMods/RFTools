@@ -8,10 +8,13 @@ import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -193,7 +196,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Server side only
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
-        World transWorld = DimensionManager.getProvider(transDim).worldObj;
+        World transWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(transDim);
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
 
         if (!transmitterTileEntity.checkAccess(player)) {
@@ -213,7 +216,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         Coordinate c = teleportDestination.getCoordinate();
-        World recWorld = DimensionManager.getProvider(teleportDestination.getDimension()).worldObj;
+        World recWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(teleportDestination.getDimension());
         TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
@@ -240,8 +243,11 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Server side only
     private int checkStatus(Coordinate c, int dim) {
-//        World w = DimensionManager.createProviderFor(dim).worldObj;
-        World w = DimensionManager.getProvider(dim).worldObj;
+        World w = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(dim);
+        if (w == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;

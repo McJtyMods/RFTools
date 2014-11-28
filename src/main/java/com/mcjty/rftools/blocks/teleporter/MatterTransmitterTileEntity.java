@@ -352,7 +352,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     // Server side only
     private boolean checkReceiverStatus() {
-        World w = DimensionManager.getProvider(teleportDestination.getDimension()).worldObj;
+        World w = DimensionManager.getWorld(teleportDestination.getDimension());
+        // Note, this will not work if the dimension is not loaded! Too expensive to load it here. We assume it is ok then.
+        if (w == null) {
+            return true;
+        }
         Coordinate c = teleportDestination.getCoordinate();
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
