@@ -247,6 +247,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             setStatusError("Invalid destination!");
             return;
         }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK) != 0) {
+            setStatusError("Invalid source!");
+            return;
+        }
         if ((dialResult & DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK) != 0) {
             setStatusError("Receiver blocked!");
             return;

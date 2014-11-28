@@ -39,6 +39,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_TRANSMITTER_NOACCESS = 0x20;       // No access to transmitter
     public static final int DIAL_RECEIVER_NOACCESS = 0x40;          // No access to receiver
     public static final int DIAL_INTERRUPTED = 0x80;                // The dial was interrupted
+    public static final int DIAL_INVALID_SOURCE_MASK = 0x100;       // The source is somehow invalid
     public static final int DIAL_OK = 0;                            // All is ok
 
     public DialingDeviceTileEntity() {
@@ -197,6 +198,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     // Server side only
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
         World transWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(transDim);
+        if (transWorld == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
+        }
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
 
         if (!transmitterTileEntity.checkAccess(player)) {
@@ -217,6 +221,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
         Coordinate c = teleportDestination.getCoordinate();
         World recWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(teleportDestination.getDimension());
+        if (recWorld == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
         TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
