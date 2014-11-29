@@ -8,7 +8,9 @@ import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -18,7 +20,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
@@ -27,6 +32,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
+    public static final String CMD_DAMAGEMODE = "damageMode";
     public static final String CMD_RSMODE = "rsMode";
     public static final String CMD_ADDFILTER = "addFilter";
     public static final String CMD_DELFILTER = "delFilter";
@@ -36,6 +42,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public static final String CLIENTCMD_GETFILTERS = "getFilters";
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+    private DamageTypeMode damageMode = DamageTypeMode.DAMAGETYPE_GENERIC;
 
     // If true the shield is currently made.
     private boolean shieldComposed = false;
@@ -119,6 +126,17 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
         this.redstoneMode = redstoneMode;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    public DamageTypeMode getDamageMode() {
+        return damageMode;
+    }
+
+    public void setDamageMode(DamageTypeMode damageMode) {
+        this.damageMode = damageMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     public ShieldRenderingMode getShieldRenderingMode() {
@@ -257,12 +275,23 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     }
 
     public void applyDamageToEntity(Entity entity) {
-        if (getEnergyStored(ForgeDirection.DOWN) < ShieldConfiguration.rfDamage) {
+        DamageSource source;
+        int rf;
+        if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
+            rf = ShieldConfiguration.rfDamage;
+            source = DamageSource.generic;
+        } else {
+            rf = ShieldConfiguration.rfDamagePlayer;
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            source = DamageSource.causePlayerDamage(fakePlayer);
+        }
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough RF to do damage.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, ShieldConfiguration.rfDamage, false);
-        entity.attackEntityFrom(DamageSource.generic, ShieldConfiguration.damage);
+        extractEnergy(ForgeDirection.DOWN, rf, false);
+        entity.attackEntityFrom(source, ShieldConfiguration.damage);
     }
 
     @Override
@@ -420,8 +449,11 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         int m = tagCompound.getInteger("visMode");
         shieldRenderingMode = ShieldRenderingMode.values()[m];
 
-        m = tagCompound.getInteger("rsMode");
+        m = tagCompound.getByte("rsMode");
         redstoneMode = RedstoneMode.values()[m];
+
+        m = tagCompound.getByte("damageMode");
+        damageMode = DamageTypeMode.values()[m];
 
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
@@ -462,6 +494,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         writeBufferToNBT(tagCompound);
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+        tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
 
@@ -526,6 +559,10 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         } else if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
             setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        } else if (CMD_DAMAGEMODE.equals(command)) {
+            String m = args.get("mode").getString();
+            setDamageMode(DamageTypeMode.getMode(m));
             return true;
         }
 

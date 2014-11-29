@@ -14,6 +14,8 @@ public class ShieldConfiguration {
     public static int rfShield = 2;
     // The amount of RF to use per entity for a single damage spike.
     public static int rfDamage = 1000;
+    // The amount of RF to use per entity for a single damage spike (used when simulating player style damage).
+    public static int rfDamagePlayer = 2000;
     // The amount of damage to apply to a given entity.
     public static float damage = 5.0f;
     // Maximum size of a shield in blocks.
@@ -34,6 +36,8 @@ public class ShieldConfiguration {
                 "RF/tick for every block added in case of shield mode").getInt();
         rfDamage = cfg.get(CATEGORY_SHIELD, "shieldRfDamage", rfDamage,
                 "The amount of RF to consume for a single spike of damage for one entity").getInt();
+        rfDamagePlayer = cfg.get(CATEGORY_SHIELD, "shieldRfDamagePlayer", rfDamagePlayer,
+                "The amount of RF to consume for a single spike of damage for one entity (used in case of player-type damage)").getInt();
         damage = (float) cfg.get(CATEGORY_SHIELD, "shieldDamage", damage,
                 "The amount of damage to do for a single spike on one entity").getDouble();
     }

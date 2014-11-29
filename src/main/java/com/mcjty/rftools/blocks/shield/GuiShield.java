@@ -36,10 +36,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     public static final String ACTION_DAMAGE = "Damage";
     public static final String ACTION_SOLIDDAMAGE = "SolDmg";
 
+    public static final String DAMAGETYPE_GENERIC = DamageTypeMode.DAMAGETYPE_GENERIC.getDescription();
+    public static final String DAMAGETYPE_PLAYER = DamageTypeMode.DAMAGETYPE_PLAYER.getDescription();
+
     private EnergyBar energyBar;
     private ChoiceLabel visibilityOptions;
     private ChoiceLabel actionOptions;
     private ChoiceLabel typeOptions;
+    private ChoiceLabel damageType;
     private ImageChoiceLabel redstoneMode;
     private WidgetList filterList;
     private TextField player;
@@ -80,6 +84,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
         initActionOptions();
         initTypeOptions();
         initRedstoneMode();
+        initDamageType();
 
         filterList = new WidgetList(mc, this).
                 setFilledRectThickness(1).setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 140, 115)).addSelectionEvent(new DefaultSelectionEvent() {
@@ -131,7 +136,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterList).addChild(filterSlider).addChild(actionOptions).
-                addChild(typeOptions).addChild(player).addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter);
+                addChild(typeOptions).addChild(player).addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter).addChild(damageType);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -333,6 +338,26 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
         typeOptions.setChoiceTooltip("Hostile", "Matches hostile mobs");
         typeOptions.setChoiceTooltip("Item", "Matches items");
         typeOptions.setChoiceTooltip("Player", "Matches players", "(optionaly named)");
+    }
+
+    private void initDamageType() {
+        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 100, 80, 14));
+        damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
+        damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
+        damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");
+        damageType.addChoiceEvent(new ChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, String newChoice) {
+                changeDamageType();
+            }
+        });
+        damageType.setChoice(tileEntity.getDamageMode().getDescription());
+    }
+
+    private void changeDamageType() {
+        tileEntity.setDamageMode(DamageTypeMode.getMode(damageType.getCurrentChoice()));
+        sendServerCommand(ShieldTileEntity.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
+
     }
 
     private void changeVisibilityMode() {
