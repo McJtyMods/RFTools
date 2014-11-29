@@ -383,9 +383,9 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     private void enableButtons() {
         int sel = filterList.getSelected();
         int cnt = filterList.getMaximum();
-        delFilter.setEnabled(sel != -1);
-        upFilter.setEnabled(sel > 0);
-        downFilter.setEnabled(sel < cnt-1 && sel != -1);
+        delFilter.setEnabled(sel != -1 && cnt > 0);
+        upFilter.setEnabled(sel > 0 && cnt > 0);
+        downFilter.setEnabled(sel < cnt-1 && sel != -1 && cnt > 0);
         if (sel == -1) {
             addFilter.setText("Add");
         } else {
