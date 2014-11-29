@@ -402,5 +402,12 @@ entities. For every rule you have the following actions:
 
     Pass: entity can pass through
     Solid: entity is blocked
-    Damage: entity gets damage (not implemented yet!)
+    Damage: entity gets damage
+    SolDmg: entity is blocked and gets damage
+{-------------------------------------------------------------}
+You can also set the type of damage. By default the damage
+will be 'generic' but you can also set it to 'player'. This
+will consume more energy but you will get XP orbs as well
+as loot that you normally only get when a mob is killed
+by the player.
 {-------------------------------------------------------------}
