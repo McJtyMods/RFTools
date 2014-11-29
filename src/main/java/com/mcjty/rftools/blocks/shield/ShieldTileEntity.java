@@ -44,6 +44,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     // Timeout in case power is low. Here we wait a bit before trying again.
     private int powerTimeout = 0;
 
+    // Render pass for the camo block.
+    private int camoRenderPass = 0;
+
     // Filter list.
     private final List<ShieldFilter> filters = new ArrayList<ShieldFilter>();
 
@@ -167,7 +170,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         Block camoBlock = calculateCamoBlock();
         if (camoBlock != null) {
             if (camoBlock.isOpaqueCube()) {
-                if (camoBlock.getRenderBlockPass() == 1) {
+                if (camoRenderPass == 1) {
                     if (camoBlock.renderAsNormalBlock()) {
                         return ModBlocks.shieldBlockOpaquePass1;
                     } else {
@@ -181,7 +184,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                     }
                 }
             } else {
-                if (camoBlock.getRenderBlockPass() == 1) {
+                if (camoRenderPass == 1) {
                     if (camoBlock.renderAsNormalBlock()) {
                         return ModBlocks.shieldBlockNOpaquePass1;
                     } else {
@@ -420,6 +423,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         m = tagCompound.getInteger("rsMode");
         redstoneMode = RedstoneMode.values()[m];
 
+        camoRenderPass = tagCompound.getInteger("camoRenderPass");
+
         readFiltersFromNBT(tagCompound);
     }
 
@@ -458,6 +463,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
 
+        tagCompound.setInteger("camoRenderPass", camoRenderPass);
+
         writeFiltersToNBT(tagCompound);
     }
 
@@ -494,6 +501,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             setShieldRenderingMode(ShieldRenderingMode.getMode(m));
             return true;
         } else if (CMD_APPLYCAMO.equals(command)) {
+            camoRenderPass = args.get("pass").getInteger();
             updateShield();
             return true;
         } else if (CMD_ADDFILTER.equals(command)) {

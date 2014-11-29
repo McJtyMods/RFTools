@@ -18,6 +18,8 @@ import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -341,7 +343,16 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     }
 
     private void applyCamoToShield() {
-        sendServerCommand(ShieldTileEntity.CMD_APPLYCAMO);
+        ItemStack stack = tileEntity.getStackInSlot(0);
+
+        int pass = 0;
+        if (stack != null) {
+            Block block = Block.getBlockFromItem(stack.getItem());
+            if (block != null) {
+                pass = block.getRenderBlockPass();
+            }
+        }
+        sendServerCommand(ShieldTileEntity.CMD_APPLYCAMO, new Argument("pass", pass));
     }
 
     private void enableButtons() {
