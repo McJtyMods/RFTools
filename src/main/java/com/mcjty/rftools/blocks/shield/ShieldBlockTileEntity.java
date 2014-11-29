@@ -81,7 +81,7 @@ public class ShieldBlockTileEntity extends TileEntity {
         }
         damageTimer = 10;
         if (beamBox == null) {
-            beamBox = AxisAlignedBB.getBoundingBox(xCoord - .2, yCoord - .2, zCoord - .2, xCoord + 1.2, yCoord + 1.2, zCoord + 1.2);
+            beamBox = AxisAlignedBB.getBoundingBox(xCoord - .4, yCoord - .4, zCoord - .4, xCoord + 1.4, yCoord + 1.4, zCoord + 1.4);
         }
 
         if (shieldBlock != null) {
