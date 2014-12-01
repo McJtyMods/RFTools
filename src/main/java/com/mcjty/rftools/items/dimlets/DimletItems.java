@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.TerrainType;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.EntityLiving;
@@ -40,17 +41,17 @@ public class DimletItems {
         initStructureItem("Dungeon");
         initStructureItem("Fortress");
 
-        initTerrainItem("Flat");
-        initTerrainItem("Void");
-        initTerrainItem("Amplified");
-        initTerrainItem("Normal");
-        initTerrainItem("Cave World");
-        initTerrainItem("Island");
-        initTerrainItem("Spheres");
+        initTerrainItem("Flat", TerrainType.TERRAIN_FLAT);
+        initTerrainItem("Void", TerrainType.TERRAIN_VOID);
+        initTerrainItem("Amplified", TerrainType.TERRAIN_AMPLIFIED);
+        initTerrainItem("Normal", TerrainType.TERRAIN_NORMAL);
+        initTerrainItem("Cave World", TerrainType.TERRAIN_CAVES);
+        initTerrainItem("Island", TerrainType.TERRAIN_ISLAND);
+        initTerrainItem("Spheres", TerrainType.TERRAIN_SPHERES);
 
         initTimeItem("Day");
         initTimeItem("Night");
-        initTerrainItem("Day/Night");
+        initTimeItem("Day/Night");
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
@@ -121,38 +122,12 @@ public class DimletItems {
         KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURES, name, -1, -1, -1);
     }
 
-    private static void initTerrainItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name, -1, -1, -1);
+    private static void initTerrainItem(String name, TerrainType terrainType) {
+        int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name, -1, -1, -1);
+        KnownDimletConfiguration.idToTerrainType.put(id, terrainType);
     }
 
     private static void initTimeItem(String name) {
         KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name, -1, -1, -1);
-    }
-
-    /**
-     * This main function tests rarity distribution of the dimlets.
-     * @param args
-     */
-    public static void main(String[] args) {
-//        init();
-//        Map<String,Integer> counter = new HashMap<String, Integer>();
-//        for (KnownDimlet dimlet : orderedDimlets) {
-//            counter.put(dimlet.getUnlocalizedName(), 0);
-//        }
-//        int total = 1000000;
-//        Random random = new Random();
-//        for (int i = 0 ; i < total ; i++) {
-//            for (KnownDimlet dimlet : orderedDimlets) {
-//                if (random.nextFloat() < dimlet.getRarity()) {
-//                    counter.put(dimlet.getUnlocalizedName(), counter.get(dimlet.getUnlocalizedName())+1);
-//                    break;
-//                }
-//            }
-//        }
-//        for (KnownDimlet dimlet : orderedDimlets) {
-//            int count = counter.get(dimlet.getUnlocalizedName());
-//            float percentage = count * 100.0f / total;
-//            System.out.println("ME: " + dimlet.getUnlocalizedName() + ", " + percentage);
-//        }
     }
 }

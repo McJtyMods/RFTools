@@ -46,6 +46,20 @@ public class DimensionDescriptor {
         tickCost = tagCompound.getInteger("tickCost");
     }
 
+    public Map<DimletType,List<Integer>> getDimlets() {
+        Map<DimletType,List<Integer>> result = new HashMap<DimletType, List<Integer>>();
+        for (DimletType type : DimletType.values()) {
+            result.put(type, new ArrayList<Integer>());
+        }
+        String[] opcodes = descriptionString.split(",");
+        for (String oc : opcodes) {
+            DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
+            Integer id = Integer.parseInt(oc.substring(1));
+            result.get(type).add(id);
+        }
+        return result;
+    }
+
     public String getDescriptionString() {
         return descriptionString;
     }

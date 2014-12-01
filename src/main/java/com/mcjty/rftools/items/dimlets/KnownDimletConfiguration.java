@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.dimlets;
 
+import com.mcjty.rftools.dimension.TerrainType;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -26,6 +27,8 @@ public class KnownDimletConfiguration {
     public static final Map<DimletType,Integer> typeRfCreateCost = new HashMap<DimletType, Integer>();
     public static final Map<DimletType,Integer> typeRfMaintainCost = new HashMap<DimletType, Integer>();
     public static final Map<DimletType,Integer> typeTickCost = new HashMap<DimletType, Integer>();
+
+    public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
 
     public static int baseDimensionCreationCost = 1000;
     public static int baseDimensionMaintenanceCost = 10;
@@ -143,13 +146,14 @@ public class KnownDimletConfiguration {
         typeTickCost.put(type, cfg.get(CATEGORY_TYPETICKCOST, "ticks." + type.getName(), cost).getInt());
     }
 
-    private static void registerDimletEntry(int id, DimletEntry dimletEntry) {
+    private static int registerDimletEntry(int id, DimletEntry dimletEntry) {
         idToDimlet.put(id, dimletEntry);
         dimletToID.put(dimletEntry, id);
         dimletIds.add(id);
         if (id > lastId) {
             lastId = id;
         }
+        return id;
     }
 
     public static void registerDimlets(Configuration cfg) {
@@ -170,13 +174,13 @@ public class KnownDimletConfiguration {
         }
     }
 
-    public static void registerDimlet(DimletType type, String name, int rfCreateCost, int rfMaintainCost, int tickCost) {
+    public static int registerDimlet(DimletType type, String name, int rfCreateCost, int rfMaintainCost, int tickCost) {
         DimletEntry entry = new DimletEntry(type, name, rfCreateCost, rfMaintainCost, tickCost);
         if (dimletToID.containsKey(entry)) {
             // This known dimlet is already 'known'.
-            return;
+            return dimletToID.get(entry);
         }
 
-        registerDimletEntry(lastId + 1, entry);
+        return registerDimletEntry(lastId + 1, entry);
     }
 }

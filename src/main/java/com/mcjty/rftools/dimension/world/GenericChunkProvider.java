@@ -1,5 +1,9 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.TerrainType;
+import com.mcjty.rftools.dimension.world.terrain.*;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -26,7 +30,9 @@ import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
@@ -48,11 +54,24 @@ public class GenericChunkProvider implements IChunkProvider {
     public NoiseGeneratorOctaves mobSpawnerNoise;
 
     private World worldObj;
+    private DimensionInformation dimensionInformation;
+
+    private static Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
+
+    static {
+        terrainGeneratorMap.put(TerrainType.TERRAIN_VOID, new VoidTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_FLAT, new FlatTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_NORMAL, new NormalTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_AMPLIFIED, new AmplifiedTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_CAVES, new CavesTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_ISLAND, new IslandTerrainGenerator());
+        terrainGeneratorMap.put(TerrainType.TERRAIN_SPHERES, new SpheresTerrainGenerator());
+    }
 
     // Are map structures going to be generated (e.g. strongholds)
     private final boolean mapFeaturesEnabled;
     private WorldType worldType;
-    private final double[] field_147434_q;
+    public final double[] field_147434_q;                   // @todo better name once we figure out what this actually is
     private final float[] parabolicField;
     private double[] stoneNoise = new double[256];
     private MapGenBase caveGenerator = new MapGenCaves();
@@ -91,6 +110,9 @@ public class GenericChunkProvider implements IChunkProvider {
 
     public GenericChunkProvider(World world, long seed, boolean features) {
         this.worldObj = world;
+
+        dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
+
         this.mapFeaturesEnabled = features;
         this.worldType = world.getWorldInfo().getTerrainType();
         this.rand = new Random((seed + 516) * 314);
@@ -129,97 +151,12 @@ public class GenericChunkProvider implements IChunkProvider {
         this.mobSpawnerNoise = (NoiseGeneratorOctaves) noiseGens[6];
     }
 
-    public void generateFlat(int chunkX, int chunkZ, Block[] aBlock) {
-        byte waterLevel = 63;
+    public void generateTerrain(int chunkX, int chunkZ, Block[] aBlock) {
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
         this.func_147423_a(chunkX * 4, 0, chunkZ * 4);
-
-        for (int x4 = 0; x4 < 4; ++x4) {
-            for (int z4 = 0; z4 < 4; ++z4) {
-                for (int height = 0; height < 256; ++height) {
-                    for (int x = 0; x < 4; ++x) {
-                        int index = ((x + (x4 * 4)) << 12) | ((0 + (z4 * 4)) << 8) | height;
-                        short maxheight = 256;
-                        index -= maxheight;
-
-                        for (int z = 0; z < 4; ++z) {
-                            if (height < waterLevel) {
-                                aBlock[index += maxheight] = Blocks.stone;
-                            } else {
-                                aBlock[index += maxheight] = null;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        terrainGeneratorMap.get(dimensionInformation.getTerrainType()).generate(this, chunkX, chunkZ, aBlock);
     }
 
-    public void generateStoneBase(int chunkX, int chunkZ, Block[] aBlock) {
-        byte waterLevel = 63;
-        this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
-        this.func_147423_a(chunkX * 4, 0, chunkZ * 4);
-
-        for (int x4 = 0; x4 < 4; ++x4) {
-            int l = x4 * 5;
-            int i1 = (x4 + 1) * 5;
-
-            for (int z4 = 0; z4 < 4; ++z4) {
-                int k1 = (l + z4) * 33;
-                int l1 = (l + z4 + 1) * 33;
-                int i2 = (i1 + z4) * 33;
-                int j2 = (i1 + z4 + 1) * 33;
-
-                for (int height32 = 0; height32 < 32; ++height32) {
-                    double d0 = 0.125D;
-                    double d1 = this.field_147434_q[k1 + height32];
-                    double d2 = this.field_147434_q[l1 + height32];
-                    double d3 = this.field_147434_q[i2 + height32];
-                    double d4 = this.field_147434_q[j2 + height32];
-                    double d5 = (this.field_147434_q[k1 + height32 + 1] - d1) * d0;
-                    double d6 = (this.field_147434_q[l1 + height32 + 1] - d2) * d0;
-                    double d7 = (this.field_147434_q[i2 + height32 + 1] - d3) * d0;
-                    double d8 = (this.field_147434_q[j2 + height32 + 1] - d4) * d0;
-
-                    for (int h = 0; h < 8; ++h) {
-                        double d9 = 0.25D;
-                        double d10 = d1;
-                        double d11 = d2;
-                        double d12 = (d3 - d1) * d9;
-                        double d13 = (d4 - d2) * d9;
-
-                        for (int x = 0; x < 4; ++x) {
-                            int height = (height32 * 8) + h;
-                            int index = ((x + (x4 * 4)) << 12) | ((0 + (z4 * 4)) << 8) | height;
-                            short maxheight = 256;
-                            index -= maxheight;
-                            double d14 = 0.25D;
-                            double d16 = (d11 - d10) * d14;
-                            double d15 = d10 - d16;
-
-                            for (int z = 0; z < 4; ++z) {
-                                if ((d15 += d16) > 0.0D) {
-                                    aBlock[index += maxheight] = Blocks.stone;
-                                } else if (height < waterLevel) {
-                                    aBlock[index += maxheight] = Blocks.water;
-                                } else {
-                                    aBlock[index += maxheight] = null;
-                                }
-                            }
-
-                            d10 += d12;
-                            d11 += d13;
-                        }
-
-                        d1 += d5;
-                        d2 += d6;
-                        d3 += d7;
-                        d4 += d8;
-                    }
-                }
-            }
-        }
-    }
 
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases) {
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, aBlock, abyte, biomeGenBases, this.worldObj);
@@ -255,8 +192,7 @@ public class GenericChunkProvider implements IChunkProvider {
         Block[] ablock = new Block[65536];
         byte[] abyte = new byte[65536];
 
-//        this.generateStoneBase(chunkX, chunkZ, ablock);
-        this.generateFlat(chunkX, chunkZ, ablock);
+        this.generateTerrain(chunkX, chunkZ, ablock);
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
 //        this.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
