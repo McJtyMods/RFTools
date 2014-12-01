@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.FeatureType;
 import com.mcjty.rftools.dimension.TerrainType;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -48,6 +49,10 @@ public class DimletItems {
         initTerrainItem("Cave World", TerrainType.TERRAIN_CAVES);
         initTerrainItem("Island", TerrainType.TERRAIN_ISLAND);
         initTerrainItem("Spheres", TerrainType.TERRAIN_SPHERES);
+
+        initFeatureItem("None", FeatureType.FEATURE_NONE);
+        initFeatureItem("Caves", FeatureType.FEATURE_CAVES);
+        initFeatureItem("Ravines", FeatureType.FEATURE_RAVINES);
 
         initTimeItem("Day");
         initTimeItem("Night");
@@ -125,6 +130,11 @@ public class DimletItems {
     private static void initTerrainItem(String name, TerrainType terrainType) {
         int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name, -1, -1, -1);
         KnownDimletConfiguration.idToTerrainType.put(id, terrainType);
+    }
+
+    private static void initFeatureItem(String name, FeatureType featureType) {
+        int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_FEATURE, name, -1, -1, -1);
+        KnownDimletConfiguration.idToFeatureType.put(id, featureType);
     }
 
     private static void initTimeItem(String name) {

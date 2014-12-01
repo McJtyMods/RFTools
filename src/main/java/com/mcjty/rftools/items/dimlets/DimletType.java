@@ -12,6 +12,7 @@ public enum DimletType {
     DIMLET_SKY("skyDimlet", "Sky", "s"),
     DIMLET_STRUCTURES("structuresDimlet", "Structure", "S"),
     DIMLET_TERRAIN("terrainDimlet", "Terrain", "T"),
+    DIMLET_FEATURE("featureDimlet", "Feature", "f"),
     DIMLET_TIME("timeDimlet", "Time", "t");
 
     private final String textureName;

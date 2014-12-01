@@ -4,15 +4,14 @@ import com.mcjty.rftools.items.dimlets.DimletItems;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class DimensionInformation {
     private final DimensionDescriptor descriptor;
     private final String name;
 
     private TerrainType terrainType;
+    private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
 
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
@@ -21,6 +20,7 @@ public class DimensionInformation {
         Map<DimletType,List<Integer>> dimlets = descriptor.getDimlets();
         Random random = getRandom(dimlets);
         calculateTerrainType(dimlets, random);
+        calculateFeatureType(dimlets, random);
     }
 
     private Random getRandom(Map<DimletType, List<Integer>> dimlets) {
@@ -45,6 +45,20 @@ public class DimensionInformation {
         }
     }
 
+    private void calculateFeatureType(Map<DimletType,List<Integer>> dimlets, Random random) {
+        List<Integer> list = dimlets.get(DimletType.DIMLET_FEATURE);
+        if (list.isEmpty()) {
+            FeatureType type = FeatureType.values()[random.nextInt(FeatureType.values().length)];
+            if (type != FeatureType.FEATURE_NONE) {
+                featureTypes.add(type);
+            }
+        } else {
+            for (Integer id : list) {
+                featureTypes.add(KnownDimletConfiguration.idToFeatureType.get(id));
+            }
+        }
+    }
+
     public DimensionDescriptor getDescriptor() {
         return descriptor;
     }
@@ -55,5 +69,9 @@ public class DimensionInformation {
 
     public TerrainType getTerrainType() {
         return terrainType;
+    }
+
+    public boolean hasFeatureType(FeatureType type) {
+        return featureTypes.contains(type);
     }
 }

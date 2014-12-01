@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.FeatureType;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.TerrainType;
 import com.mcjty.rftools.dimension.world.terrain.*;
@@ -195,10 +196,14 @@ public class GenericChunkProvider implements IChunkProvider {
         this.generateTerrain(chunkX, chunkZ, ablock);
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
-//        this.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
-//        this.caveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//        this.ravineGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//
+        this.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CAVES)) {
+            this.caveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_RAVINES)) {
+            this.ravineGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+
 //        if (this.mapFeaturesEnabled) {
 //            this.mineshaftGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
 //            this.villageGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);

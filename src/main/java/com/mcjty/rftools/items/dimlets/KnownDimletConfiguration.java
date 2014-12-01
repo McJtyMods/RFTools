@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.dimlets;
 
+import com.mcjty.rftools.dimension.FeatureType;
 import com.mcjty.rftools.dimension.TerrainType;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -29,6 +30,7 @@ public class KnownDimletConfiguration {
     public static final Map<DimletType,Integer> typeTickCost = new HashMap<DimletType, Integer>();
 
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
+    public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
 
     public static int baseDimensionCreationCost = 1000;
     public static int baseDimensionMaintenanceCost = 10;
@@ -89,6 +91,7 @@ public class KnownDimletConfiguration {
         initRarity(cfg, DimletType.DIMLET_SKY, 1);
         initRarity(cfg, DimletType.DIMLET_STRUCTURES, 1);
         initRarity(cfg, DimletType.DIMLET_TERRAIN, 1);
+        initRarity(cfg, DimletType.DIMLET_FEATURE, 1);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -106,6 +109,7 @@ public class KnownDimletConfiguration {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_SKY, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_STRUCTURES, 600);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
     }
 
     private static void initTypeRfCreateCost(Configuration cfg, DimletType type, int cost) {
@@ -123,6 +127,7 @@ public class KnownDimletConfiguration {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_SKY, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_STRUCTURES, 100);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
     }
 
     private static void initTypeRfMaintainCost(Configuration cfg, DimletType type, int cost) {
@@ -140,6 +145,7 @@ public class KnownDimletConfiguration {
         initTypeTickCost(cfg, DimletType.DIMLET_SKY, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_STRUCTURES, 900);
         initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
+        initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
     }
 
     private static void initTypeTickCost(Configuration cfg, DimletType type, int cost) {
