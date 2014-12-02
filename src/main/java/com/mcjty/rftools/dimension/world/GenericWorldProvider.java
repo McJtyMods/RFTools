@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world;
 
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.DimensionManager;
@@ -9,8 +10,8 @@ public class GenericWorldProvider extends WorldProvider {
 
     @Override
     public void registerWorldChunkManager() {
-//        worldChunkMgr = new GenericWorldChunkManager(worldObj.getSeed(), terrainType);
-        worldChunkMgr = new WorldChunkManager(worldObj);
+        worldChunkMgr = new GenericWorldChunkManager(worldObj.getSeed(), terrainType, worldObj);
+//        worldChunkMgr = new WorldChunkManager(worldObj);
         hasNoSky = false;
     }
 

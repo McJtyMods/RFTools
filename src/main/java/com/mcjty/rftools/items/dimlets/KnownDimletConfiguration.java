@@ -33,6 +33,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
+    public static final Map<Integer,String> idToBiome = new HashMap<Integer, String>();
 
     public static int baseDimensionCreationCost = 1000;
     public static int baseDimensionMaintenanceCost = 10;

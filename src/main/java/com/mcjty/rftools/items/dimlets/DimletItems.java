@@ -104,7 +104,8 @@ public class DimletItems {
             }
         }
         for (String name : biomes.keySet()) {
-            KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name, -1, -1, -1);
+            int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name, -1, -1, -1);
+            KnownDimletConfiguration.idToBiome.put(id, name);
         }
     }
 

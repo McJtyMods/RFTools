@@ -1,10 +1,12 @@
 package com.mcjty.rftools.dimension;
 
+import com.google.common.collect.ImmutableList;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import net.minecraftforge.common.BiomeManager;
 
 import java.util.*;
 
@@ -15,6 +17,7 @@ public class DimensionInformation {
     private TerrainType terrainType;
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
+    private List<BiomeManager.BiomeEntry> biomes = new ArrayList<BiomeManager.BiomeEntry>();
 
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
@@ -25,6 +28,7 @@ public class DimensionInformation {
         calculateTerrainType(dimlets, random);
         calculateFeatureType(dimlets, random);
         calculateStructureType(dimlets, random);
+        calculateBiomes(dimlets, random);
     }
 
     private Random getRandom(Map<DimletType, List<Integer>> dimlets) {
@@ -79,6 +83,34 @@ public class DimensionInformation {
         }
     }
 
+    private BiomeManager.BiomeEntry findBiomeEntry(String name, BiomeManager.BiomeType type) {
+        ImmutableList<BiomeManager.BiomeEntry> biomeList = BiomeManager.getBiomes(type);
+        if (biomeList == null) {
+            return null;
+        }
+        for (BiomeManager.BiomeEntry entry : biomeList) {
+            if (name.equals(entry.biome.biomeName)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    private void calculateBiomes(Map<DimletType,List<Integer>> dimlets, Random random) {
+        List<Integer> list = dimlets.get(DimletType.DIMLET_BIOME);
+        // @@@ TODO: distinguish between random overworld biome, random nether biome, random biome and specific biomes
+        for (Integer id : list) {
+            String biomeName = KnownDimletConfiguration.idToBiome.get(id);
+            BiomeManager.BiomeEntry entry = findBiomeEntry(biomeName, BiomeManager.BiomeType.COOL);
+            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.WARM);
+            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.DESERT);
+            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.ICY);
+            if (entry != null) {
+                biomes.add(entry);
+            }
+        }
+    }
+
 
     public DimensionDescriptor getDescriptor() {
         return descriptor;
@@ -98,5 +130,9 @@ public class DimensionInformation {
 
     public boolean hasStructureType(StructureType type) {
         return structureTypes.contains(type);
+    }
+
+    public List<BiomeManager.BiomeEntry> getBiomes() {
+        return biomes;
     }
 }
