@@ -10,7 +10,7 @@ public enum DimletType {
     DIMLET_MATERIAL("materialDimlet", "Material", "m"),
     DIMLET_MOBS("mobsDimlet", "Mob", "M"),
     DIMLET_SKY("skyDimlet", "Sky", "s"),
-    DIMLET_STRUCTURES("structuresDimlet", "Structure", "S"),
+    DIMLET_STRUCTURE("structuresDimlet", "Structure", "S"),
     DIMLET_TERRAIN("terrainDimlet", "Terrain", "T"),
     DIMLET_FEATURE("featureDimlet", "Feature", "f"),
     DIMLET_TIME("timeDimlet", "Time", "t");

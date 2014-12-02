@@ -1,8 +1,9 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.dimension.FeatureType;
-import com.mcjty.rftools.dimension.TerrainType;
+import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.dimension.world.types.StructureType;
+import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.EntityLiving;
@@ -37,10 +38,13 @@ public class DimletItems {
         initSkyItem("Clear");
         initSkyItem("Bright");
 
-        initStructureItem("Village");
-        initStructureItem("Stronghold");
-        initStructureItem("Dungeon");
-        initStructureItem("Fortress");
+        initStructureItem("None", StructureType.STRUCTURE_NONE);
+        initStructureItem("Village", StructureType.STRUCTURE_VILLAGE);
+        initStructureItem("Stronghold", StructureType.STRUCTURE_STRONGHOLD);
+        initStructureItem("Dungeon", StructureType.STRUCTURE_DUNGEON);
+        initStructureItem("Fortress", StructureType.STRUCTURE_FORTRESS);
+        initStructureItem("Mineshaft", StructureType.STRUCTURE_MINESHAFT);
+        initStructureItem("Scattered", StructureType.STRUCTURE_SCATTERED);
 
         initTerrainItem("Flat", TerrainType.TERRAIN_FLAT);
         initTerrainItem("Void", TerrainType.TERRAIN_VOID);
@@ -123,8 +127,9 @@ public class DimletItems {
         KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name, -1, -1, -1);
     }
 
-    private static void initStructureItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURES, name, -1, -1, -1);
+    private static void initStructureItem(String name, StructureType structureType) {
+        int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURE, name, -1, -1, -1);
+        KnownDimletConfiguration.idToStructureType.put(id, structureType);
     }
 
     private static void initTerrainItem(String name, TerrainType terrainType) {

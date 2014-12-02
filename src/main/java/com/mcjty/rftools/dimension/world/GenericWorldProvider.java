@@ -35,6 +35,6 @@ public class GenericWorldProvider extends WorldProvider {
 
     @Override
     public IChunkProvider createChunkGenerator() {
-        return new GenericChunkProvider(worldObj, worldObj.getSeed(), false);
+        return new GenericChunkProvider(worldObj, worldObj.getSeed());
     }
 }

@@ -1,4 +1,4 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.world.types;
 
 public enum FeatureType {
     FEATURE_NONE,

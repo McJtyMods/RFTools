@@ -1,9 +1,10 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.FeatureType;
+import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
-import com.mcjty.rftools.dimension.TerrainType;
+import com.mcjty.rftools.dimension.world.types.StructureType;
+import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.dimension.world.terrain.*;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
@@ -22,10 +23,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.*;
 import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.feature.WorldGenLakes;
-import net.minecraft.world.gen.structure.MapGenMineshaft;
-import net.minecraft.world.gen.structure.MapGenScatteredFeature;
-import net.minecraft.world.gen.structure.MapGenStronghold;
-import net.minecraft.world.gen.structure.MapGenVillage;
+import net.minecraft.world.gen.structure.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -57,7 +55,7 @@ public class GenericChunkProvider implements IChunkProvider {
     private World worldObj;
     private DimensionInformation dimensionInformation;
 
-    private static Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
+    private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
 
     static {
         terrainGeneratorMap.put(TerrainType.TERRAIN_VOID, new VoidTerrainGenerator());
@@ -70,7 +68,6 @@ public class GenericChunkProvider implements IChunkProvider {
     }
 
     // Are map structures going to be generated (e.g. strongholds)
-    private final boolean mapFeaturesEnabled;
     private WorldType worldType;
     public final double[] field_147434_q;                   // @todo better name once we figure out what this actually is
     private final float[] parabolicField;
@@ -85,6 +82,9 @@ public class GenericChunkProvider implements IChunkProvider {
 
     // Holds Mineshaft Generator
     private MapGenMineshaft mineshaftGenerator = new MapGenMineshaft();
+
+    // For nether fortresses
+    public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
 
     private MapGenScatteredFeature scatteredFeatureGenerator = new MapGenScatteredFeature();
 
@@ -107,28 +107,22 @@ public class GenericChunkProvider implements IChunkProvider {
         mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
         scatteredFeatureGenerator = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
         ravineGenerator = TerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
+        genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
     }
 
-    public GenericChunkProvider(World world, long seed, boolean features) {
+    public GenericChunkProvider(World world, long seed) {
         this.worldObj = world;
 
         dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
 
-        this.mapFeaturesEnabled = features;
         this.worldType = world.getWorldInfo().getTerrainType();
         this.rand = new Random((seed + 516) * 314);
-//        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
-//        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
-//        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
-//        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 4);
-//        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
-//        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 18);
-        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 8);
-        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 8);
-        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 12);
-        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 18);
+        this.noiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
+        this.noiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
+        this.noiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
+        this.noiseGen4 = new NoiseGeneratorPerlin(this.rand, 4);
+        this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
+        this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
 
         this.mobSpawnerNoise = new NoiseGeneratorOctaves(this.rand, 8);
         this.field_147434_q = new double[825];
@@ -162,7 +156,9 @@ public class GenericChunkProvider implements IChunkProvider {
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases) {
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, aBlock, abyte, biomeGenBases, this.worldObj);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.DENY) return;
+        if (event.getResult() == Event.Result.DENY) {
+            return;
+        }
 
         double d0 = 0.03125D;
         this.stoneNoise = this.noiseGen4.func_151599_a(this.stoneNoise, (chunkX * 16), (chunkZ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
@@ -204,12 +200,21 @@ public class GenericChunkProvider implements IChunkProvider {
             this.ravineGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }
 
-//        if (this.mapFeaturesEnabled) {
-//            this.mineshaftGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//            this.villageGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//            this.strongholdGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
-//        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_MINESHAFT)) {
+            this.mineshaftGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_VILLAGE)) {
+            this.villageGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_STRONGHOLD)) {
+            this.strongholdGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_FORTRESS)) {
+            this.genNetherBridge.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
+            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
 
         Chunk chunk = new Chunk(this.worldObj, ablock, abyte, chunkX, chunkZ);
         byte[] abyte1 = chunk.getBiomeArray();
@@ -353,10 +358,19 @@ public class GenericChunkProvider implements IChunkProvider {
 
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(chunkProvider, worldObj, rand, chunkX, chunkZ, flag));
 
-        if (this.mapFeaturesEnabled) {
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_MINESHAFT)) {
             this.mineshaftGenerator.generateStructuresInChunk(this.worldObj, this.rand, chunkX, chunkZ);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_VILLAGE)) {
             flag = this.villageGenerator.generateStructuresInChunk(this.worldObj, this.rand, chunkX, chunkZ);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_STRONGHOLD)) {
             this.strongholdGenerator.generateStructuresInChunk(this.worldObj, this.rand, chunkX, chunkZ);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_FORTRESS)) {
+            this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.rand, chunkX, chunkZ);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
             this.scatteredFeatureGenerator.generateStructuresInChunk(this.worldObj, this.rand, chunkX, chunkZ);
         }
 
@@ -383,12 +397,15 @@ public class GenericChunkProvider implements IChunkProvider {
             }
         }
 
-        boolean doGen = TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, DUNGEON);
-        for (k1 = 0; doGen && k1 < 8; ++k1) {
-            l1 = x + this.rand.nextInt(16) + 8;
-            i2 = this.rand.nextInt(256);
-            int j2 = z + this.rand.nextInt(16) + 8;
-            (new WorldGenDungeons()).generate(this.worldObj, this.rand, l1, i2, j2);
+        boolean doGen = false;
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_DUNGEON)) {
+            doGen = TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, DUNGEON);
+            for (k1 = 0; doGen && k1 < 8; ++k1) {
+                l1 = x + this.rand.nextInt(16) + 8;
+                i2 = this.rand.nextInt(256);
+                int j2 = z + this.rand.nextInt(16) + 8;
+                (new WorldGenDungeons()).generate(this.worldObj, this.rand, l1, i2, j2);
+            }
         }
 
         biomegenbase.decorate(this.worldObj, this.rand, x, z);
@@ -465,12 +482,27 @@ public class GenericChunkProvider implements IChunkProvider {
     @Override
     public List getPossibleCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x, z);
-        return creatureType == EnumCreatureType.monster && this.scatteredFeatureGenerator.func_143030_a(x, y, z) ? this.scatteredFeatureGenerator.getScatteredFeatureSpawnList() : biomegenbase.getSpawnableList(creatureType);
+        if (creatureType == EnumCreatureType.monster) {
+            if (this.scatteredFeatureGenerator.func_143030_a(x, y, z)) {
+                return this.scatteredFeatureGenerator.getScatteredFeatureSpawnList();
+            }
+
+            if (this.genNetherBridge.hasStructureAt(x, y, z)) {
+                return this.genNetherBridge.getSpawnList();
+            }
+
+            if (this.genNetherBridge.func_142038_b(x, y, z) && this.worldObj.getBlock(x, y - 1, z) == Blocks.nether_brick) {
+                return this.genNetherBridge.getSpawnList();
+            }
+        }
+
+        return biomegenbase.getSpawnableList(creatureType);
+
     }
 
     @Override
-    public ChunkPosition func_147416_a(World world, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_) {
-        return "Stronghold".equals(p_147416_2_) && this.strongholdGenerator != null ? this.strongholdGenerator.func_151545_a(world, p_147416_3_, p_147416_4_, p_147416_5_) : null;
+    public ChunkPosition func_147416_a(World world, String name, int x, int y, int z) {
+        return "Stronghold".equals(name) && this.strongholdGenerator != null ? this.strongholdGenerator.func_151545_a(world, x, y, z) : null;
     }
 
     @Override
@@ -479,12 +511,21 @@ public class GenericChunkProvider implements IChunkProvider {
     }
 
     @Override
-    public void recreateStructures(int p_82695_1_, int p_82695_2_) {
-        if (this.mapFeaturesEnabled) {
-            this.mineshaftGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.villageGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.strongholdGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
+    public void recreateStructures(int chunkX, int chunkZ) {
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_MINESHAFT)) {
+            this.mineshaftGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, null);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_VILLAGE)) {
+            this.villageGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, null);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_STRONGHOLD)) {
+            this.strongholdGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, null);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_FORTRESS)) {
+            this.genNetherBridge.func_151539_a(this, this.worldObj, chunkX, chunkZ, null);
+        }
+        if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
+            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, null);
         }
     }
 }
