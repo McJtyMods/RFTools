@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.dimlets;
 
+import com.mcjty.rftools.dimension.DimensionStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,8 +26,9 @@ public class RealizedDimensionTab extends Item {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             String name = tagCompound.getString("name");
+            int id = 0;
             if (name != null) {
-                int id = tagCompound.getInteger("id");
+                id = tagCompound.getInteger("id");
                 if (id == 0) {
                     list.add(EnumChatFormatting.BLUE + "Name: " + name);
                 } else {
@@ -41,6 +43,11 @@ public class RealizedDimensionTab extends Item {
                 list.add(EnumChatFormatting.BLUE + "Dimension ready!");
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");
                 list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                if (id != 0) {
+                    DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
+                    int power = storage.getEnergyLevel(id);
+                    list.add(EnumChatFormatting.YELLOW + "    Current power: " + power + " RF");
+                }
             } else {
                 int createCost = tagCompound.getInteger("rfCreateCost");
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");

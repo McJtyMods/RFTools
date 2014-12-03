@@ -9,6 +9,7 @@ import com.mcjty.rftools.blocks.shield.PacketGetFilters;
 import com.mcjty.rftools.blocks.storagemonitor.*;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.dimension.PacketSyncDimensionInfo;
+import com.mcjty.rftools.dimension.PacketSyncDimensionStorage;
 import com.mcjty.rftools.items.devdelight.PacketDelightingInfoReady;
 import com.mcjty.rftools.items.devdelight.PacketGetDelightingInfo;
 import com.mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
@@ -62,5 +63,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketFiltersReady.class, PacketFiltersReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketDelightingInfoReady.class, PacketDelightingInfoReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSyncDimensionInfo.class, PacketSyncDimensionInfo.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketSyncDimensionStorage.class, PacketSyncDimensionStorage.class, nextID(), Side.CLIENT);
     }
 }

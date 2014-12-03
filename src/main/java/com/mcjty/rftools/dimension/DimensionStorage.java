@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -28,12 +29,20 @@ public class DimensionStorage extends WorldSavedData {
     public void save(World world) {
         world.mapStorage.setData(DIMSTORAGE_NAME, this);
         markDirty();
+
+        if (!world.isRemote) {
+            // Sync to client.
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionStorage(energy));
+        }
+
+    }
+
+    public void syncFromServer(Map<Integer, Integer> energy) {
+        this.energy.clear();
+        this.energy.putAll(energy);
     }
 
     public static DimensionStorage getDimensionStorage(World world) {
-        if (world.isRemote) {
-            return null;
-        }
         if (instance != null) {
             return instance;
         }
