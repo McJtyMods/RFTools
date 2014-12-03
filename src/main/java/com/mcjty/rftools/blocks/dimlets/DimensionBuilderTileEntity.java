@@ -4,6 +4,7 @@ import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
@@ -59,12 +60,19 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     }
 
     private void maintainDimensionTick(NBTTagCompound tagCompound) {
-        int maintainCost = tagCompound.getInteger("rfMaintainCost");
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf >= maintainCost) {
-            extractEnergy(ForgeDirection.DOWN, maintainCost, false);
-        } else {
-            // @todo shut down dimension.
+        int id = tagCompound.getInteger("id");
+
+        if (id != 0) {
+            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            int energy = dimensionStorage.getEnergyLevel(id);
+            int maxEnergy = DimensionStorage.MAX_DIMENSION_POWER - energy;      // Max energy the dimension can still get.
+            if (rf > maxEnergy) {
+                rf = maxEnergy;
+            }
+            extractEnergy(ForgeDirection.DOWN, rf, false);
+            dimensionStorage.setEnergyLevel(id, energy + rf);
+            dimensionStorage.save(worldObj);
         }
     }
 
@@ -79,7 +87,8 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                 RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
                 DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
                 String name = tagCompound.getString("name");
-                manager.createNewDimension(worldObj, descriptor, name);
+                int id = manager.createNewDimension(worldObj, descriptor, name);
+                tagCompound.setInteger("id", id);
             }
         }
         return ticksLeft;
@@ -179,7 +188,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     }
 
     // Request the building percentage from the server. This has to be called on the client side.
-    public void requiestBuildingPercentage() {
+    public void requestBuildingPercentage() {
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETBUILDING,
                 CLIENTCMD_GETBUILDING));

@@ -8,6 +8,7 @@ import com.mcjty.rftools.blocks.shield.ShieldConfiguration;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.crafting.ModCrafting;
+import com.mcjty.rftools.dimension.DimensionTickEvent;
 import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
@@ -16,6 +17,7 @@ import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
 import com.mcjty.rftools.network.PacketHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -107,6 +109,7 @@ public class CommonProxy {
         ModEntities.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
+        FMLCommonHandler.instance().bus().register(new DimensionTickEvent());
     }
 
     public void postInit(FMLPostInitializationEvent e) {

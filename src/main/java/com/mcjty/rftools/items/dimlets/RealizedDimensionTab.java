@@ -26,7 +26,12 @@ public class RealizedDimensionTab extends Item {
         if (tagCompound != null) {
             String name = tagCompound.getString("name");
             if (name != null) {
-                list.add(EnumChatFormatting.BLUE + "Name: " + name);
+                int id = tagCompound.getInteger("id");
+                if (id == 0) {
+                    list.add(EnumChatFormatting.BLUE + "Name: " + name);
+                } else {
+                    list.add(EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")");
+                }
             }
             String descriptionString = tagCompound.getString("descriptionString");
             constructDescriptionHelp(list, descriptionString);

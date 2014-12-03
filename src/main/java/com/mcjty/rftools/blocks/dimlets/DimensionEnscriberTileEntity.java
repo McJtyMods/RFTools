@@ -173,6 +173,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         if (id != null) {
             // The dimension was already created.
             tagCompound.setInteger("ticksLeft", 0);
+            tagCompound.setInteger("id", id);
         }
 
         realizedTab.setTagCompound(tagCompound);

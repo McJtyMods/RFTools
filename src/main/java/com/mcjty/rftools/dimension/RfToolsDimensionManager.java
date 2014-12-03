@@ -113,7 +113,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensionInformation.remove(id);
     }
 
-    public void createNewDimension(World world, DimensionDescriptor descriptor, String name) {
+    public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
         int id = DimensionManager.getNextFreeDimId();
         DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
         DimensionManager.registerDimension(id, id);
@@ -126,6 +126,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensionInformation.put(id, dimensionInfo);
 
         save(world);
+        return id;
     }
 
     @Override

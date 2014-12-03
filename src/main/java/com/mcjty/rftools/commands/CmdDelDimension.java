@@ -1,5 +1,6 @@
 package com.mcjty.rftools.commands;
 
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +30,7 @@ public class CmdDelDimension extends AbstractRfToolsCommand {
 
         int dim = fetchInt(sender, args, 1);
         EntityPlayer player = (EntityPlayer) sender;
+
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
         if (dimensionManager.getDimensionDescriptor(dim) == null) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
@@ -37,6 +39,10 @@ public class CmdDelDimension extends AbstractRfToolsCommand {
 
         dimensionManager.removeDimension(dim);
         dimensionManager.save(player.worldObj);
+
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(player.worldObj);
+        dimensionStorage.removeDimension(dim);
+        dimensionStorage.save(player.worldObj);
 
         sender.addChatMessage(new ChatComponentText("Dimension deleted."));
     }

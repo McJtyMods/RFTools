@@ -2,6 +2,7 @@ package com.mcjty.rftools.commands;
 
 import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
@@ -32,11 +33,13 @@ public class CmdListDimensions extends AbstractRfToolsCommand {
         }
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(sender.getEntityWorld());
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(sender.getEntityWorld());
         for (Map.Entry<Integer,DimensionDescriptor> me : dimensionManager.getDimensions().entrySet()) {
             int id = me.getKey();
             DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
             String dimName = dimensionInformation.getName();
-            sender.addChatMessage(new ChatComponentText("    RfTools: id:" + id + ", " + dimName));
+            int energy = dimensionStorage.getEnergyLevel(id);
+            sender.addChatMessage(new ChatComponentText("    RfTools: id:" + id + ", " + dimName + " (power " + energy + ")"));
         }
     }
 }

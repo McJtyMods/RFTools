@@ -21,6 +21,8 @@ public class DimensionInformation {
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
 
+    private int energyLevel;
+
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
         this.descriptor = descriptor;
@@ -31,6 +33,8 @@ public class DimensionInformation {
         calculateFeatureType(dimlets, random);
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
+
+        energyLevel = 0;
     }
 
     public void toBytes(ByteBuf buf) {
@@ -51,6 +55,8 @@ public class DimensionInformation {
         for (BiomeGenBase entry : biomes) {
             buf.writeInt(entry.biomeID);
         }
+
+        buf.writeInt(energyLevel);
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -73,8 +79,17 @@ public class DimensionInformation {
         for (int i = 0 ; i < size ; i++) {
             biomes.add(BiomeGenBase.getBiome(buf.readInt()));
         }
+
+        energyLevel = buf.readInt();
     }
 
+    public int getEnergyLevel() {
+        return energyLevel;
+    }
+
+    public void setEnergyLevel(int energyLevel) {
+        this.energyLevel = energyLevel;
+    }
 
     private Random getRandom(Map<DimletType, List<Integer>> dimlets) {
         int seed = 1;

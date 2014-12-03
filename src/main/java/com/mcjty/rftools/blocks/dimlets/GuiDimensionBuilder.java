@@ -49,7 +49,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
-        tileEntity.requiestBuildingPercentage();
+        tileEntity.requestBuildingPercentage();
     }
 
 
@@ -66,6 +66,6 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
         energyBar.setValue(tileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer();
-        tileEntity.requiestBuildingPercentage();
+        tileEntity.requestBuildingPercentage();
     }
 }

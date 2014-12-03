@@ -16,7 +16,7 @@ public class GenericWorldProvider extends WorldProvider {
         System.out.println("worldObj = " + worldObj); System.out.flush();
         System.out.println("worldObj.provider = " + worldObj.provider); System.out.flush();
         DimensionInformation dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(worldObj.provider.dimensionId);
-        if (!dimensionInformation.getBiomes().isEmpty()) {
+        if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
             worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, terrainType);
         } else {
 //        worldChunkMgr = new GenericWorldChunkManager(worldObj.getSeed(), terrainType, worldObj);

@@ -127,9 +127,10 @@ public class RFTools {
 
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
-        System.out.println("-----------------------------------------------------");
         ModDimensions.initDimensions();
     }
+
+
 
     /**
      * Handle interaction with other mods, complete your setup based on this.
