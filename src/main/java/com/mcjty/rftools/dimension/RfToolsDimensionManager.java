@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,6 +25,15 @@ public class RfToolsDimensionManager extends WorldSavedData {
     private final Map<DimensionDescriptor, Integer> dimensionToID = new HashMap<DimensionDescriptor, Integer>();
     private final Map<Integer, DimensionInformation> dimensionInformation = new HashMap<Integer, DimensionInformation>();
 
+    public void syncFromServer(Map<Integer, DimensionDescriptor> dimensions, Map<DimensionDescriptor, Integer> dimensionToID, Map<Integer, DimensionInformation> dimensionInformation) {
+        this.dimensions.clear();
+        this.dimensions.putAll(dimensions);
+        this.dimensionToID.clear();
+        this.dimensionToID.putAll(dimensionToID);
+        this.dimensionInformation.clear();
+        this.dimensionInformation.putAll(dimensionInformation);
+    }
+
     public RfToolsDimensionManager(String identifier) {
         super(identifier);
     }
@@ -35,6 +45,11 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void save(World world) {
         world.mapStorage.setData(DIMMANAGER_NAME, this);
         markDirty();
+
+        if (!world.isRemote) {
+            // Sync to client.
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionToID, dimensionInformation));
+        }
     }
 
     public Map<Integer, DimensionDescriptor> getDimensions() {
@@ -52,9 +67,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
     }
 
     public static RfToolsDimensionManager getDimensionManager(World world) {
-        if (world.isRemote) {
-            return null;
-        }
+//        if (world.isRemote) {
+//            return null;
+//        }
         if (instance != null) {
             return instance;
         }

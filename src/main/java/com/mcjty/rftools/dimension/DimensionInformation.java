@@ -6,6 +6,8 @@ import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
 
 import java.util.*;
@@ -14,10 +16,10 @@ public class DimensionInformation {
     private final DimensionDescriptor descriptor;
     private final String name;
 
-    private TerrainType terrainType;
+    private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
-    private List<BiomeManager.BiomeEntry> biomes = new ArrayList<BiomeManager.BiomeEntry>();
+    private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
 
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
@@ -30,6 +32,49 @@ public class DimensionInformation {
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
     }
+
+    public void toBytes(ByteBuf buf) {
+        if (terrainType == null) {
+            buf.writeInt(TerrainType.TERRAIN_VOID.ordinal());
+        } else {
+            buf.writeInt(terrainType.ordinal());
+        }
+        buf.writeInt(featureTypes.size());
+        for (FeatureType type : featureTypes) {
+            buf.writeInt(type.ordinal());
+        }
+        buf.writeInt(structureTypes.size());
+        for (StructureType type : structureTypes) {
+            buf.writeInt(type.ordinal());
+        }
+        buf.writeInt(biomes.size());
+        for (BiomeGenBase entry : biomes) {
+            buf.writeInt(entry.biomeID);
+        }
+    }
+
+    public void fromBytes(ByteBuf buf) {
+        terrainType = TerrainType.values()[buf.readInt()];
+
+        int size = buf.readInt();
+        featureTypes.clear();
+        for (int i = 0 ; i < size ; i++) {
+            featureTypes.add(FeatureType.values()[buf.readInt()]);
+        }
+
+        structureTypes.clear();
+        size = buf.readInt();
+        for (int i = 0 ; i < size ; i++) {
+            structureTypes.add(StructureType.values()[buf.readInt()]);
+        }
+
+        biomes.clear();
+        size = buf.readInt();
+        for (int i = 0 ; i < size ; i++) {
+            biomes.add(BiomeGenBase.getBiome(buf.readInt()));
+        }
+    }
+
 
     private Random getRandom(Map<DimletType, List<Integer>> dimlets) {
         int seed = 1;
@@ -106,7 +151,7 @@ public class DimensionInformation {
             entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.DESERT);
             entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.ICY);
             if (entry != null) {
-                biomes.add(entry);
+                biomes.add(entry.biome);
             }
         }
     }
@@ -132,7 +177,7 @@ public class DimensionInformation {
         return structureTypes.contains(type);
     }
 
-    public List<BiomeManager.BiomeEntry> getBiomes() {
+    public List<BiomeGenBase> getBiomes() {
         return biomes;
     }
 }
