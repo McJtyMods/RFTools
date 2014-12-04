@@ -28,7 +28,7 @@ public class DimensionMonitorItem extends Item {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
             int id = player.worldObj.provider.dimensionId;
             RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
@@ -46,9 +46,9 @@ public class DimensionMonitorItem extends Item {
 
                 RFTools.message(player, EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")" + EnumChatFormatting.YELLOW + "    Power: " + power + " RF");
             }
-            return true;
+            return stack;
         }
-        return true;
+        return stack;
     }
 
     @Override
