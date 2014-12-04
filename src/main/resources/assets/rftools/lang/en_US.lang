@@ -6,6 +6,7 @@ item.UnknownDimlet.name=Unknown Dimlet
 item.KnownDimlet.name=Known Dimlet
 item.EmptyDimensionTab.name=Empty Dimension Tab
 item.RealizedDimensionTab.name=Realized Dimension Tab
+item.DimensionMonitor.name=Dimension Monitor
 
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2

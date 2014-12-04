@@ -2,6 +2,7 @@ package com.mcjty.rftools.items;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
+import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -17,6 +18,7 @@ public final class ModItems {
     public static KnownDimlet knownDimlet;
     public static EmptyDimensionTab emptyDimensionTab;
     public static RealizedDimensionTab realizedDimensionTab;
+    public static DimensionMonitorItem dimensionMonitorItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -60,5 +62,11 @@ public final class ModItems {
         realizedDimensionTab.setCreativeTab(RFTools.tabRfTools);
         realizedDimensionTab.setTextureName(RFTools.MODID + ":realizedDimensionTabItem");
         GameRegistry.registerItem(realizedDimensionTab, "realizedDimensionTab");
+
+        dimensionMonitorItem = new DimensionMonitorItem();
+        dimensionMonitorItem.setUnlocalizedName("DimensionMonitor");
+        dimensionMonitorItem.setCreativeTab(RFTools.tabRfTools);
+        dimensionMonitorItem.setTextureName(RFTools.MODID + ":dimensionMonitorItem");
+        GameRegistry.registerItem(dimensionMonitorItem, "dimensionMonitorItem");
     }
 }

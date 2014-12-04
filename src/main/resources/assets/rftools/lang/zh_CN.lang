@@ -6,6 +6,7 @@ item.UnknownDimlet.name=未知的世界信息卡
 item.KnownDimlet.name=世界信息卡
 item.EmptyDimensionTab.name=空白世界构建模板
 item.RealizedDimensionTab.name=刻录世界构建模板
+item.DimensionMonitor.name=Dimension Monitor
 
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>
