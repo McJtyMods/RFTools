@@ -23,12 +23,18 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 return; // Not one of RFTools dimensions
             }
             System.out.println("com.mcjty.rftools.dimension.GenericWorldGenerator.generate");
+
+            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+            DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
+
             for (int x = -3 ; x <= 3 ; x++) {
                 for (int z = -3 ; z <= 3 ; z++) {
                     if (x == 0 && z == 0) {
                         world.setBlock(x, 70, z, ModBlocks.matterReceiverBlock, 0, 2);
                         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x, 70, z);
                         matterReceiverTileEntity.modifyEnergyStored(TeleportConfiguration.RECEIVER_MAXENERGY);
+                        matterReceiverTileEntity.setName(information.getName());
+                        matterReceiverTileEntity.markDirty();
                     } else {
                         world.setBlock(x, 70, z, Blocks.stone, 0, 2);
                     }
@@ -37,8 +43,6 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             TeleportDestination destination = destinations.addDestination(new Coordinate(0, 70, 0), world.provider.dimensionId);
-            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
-            DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
             destination.setName(information.getName());
             destinations.save(world);
         }
