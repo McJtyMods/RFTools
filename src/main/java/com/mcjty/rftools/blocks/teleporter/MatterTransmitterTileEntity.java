@@ -18,6 +18,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -311,10 +312,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             checkReceiverStatusCounter--;
             if (checkReceiverStatusCounter <= 0) {
                 checkReceiverStatusCounter = 20;
-                if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, xCoord, yCoord, zCoord) && !checkReceiverStatus()) {
-                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, 1, 2);
+                if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, xCoord, yCoord, zCoord)) {
+                    int meta = checkReceiverStatus();
+                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, meta, 2);
                 } else {
-                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, 0, 2);
+                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, TeleportBeamBlock.META_OK, 2);
                 }
             }
         }
@@ -351,22 +353,37 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     // Server side only
-    private boolean checkReceiverStatus() {
+    private int checkReceiverStatus() {
         World w = DimensionManager.getWorld(teleportDestination.getDimension());
-        // Note, this will not work if the dimension is not loaded! Too expensive to load it here. We assume it is ok then.
+        // By default we will not check if the dimension is not loaded. Can be changed in config.
         if (w == null) {
-            return true;
+            if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
+                return TeleportBeamBlock.META_UNKNOWN;
+            } else {
+                w = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
+                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
+            }
         }
         Coordinate c = teleportDestination.getCoordinate();
+
+        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        if (!exists) {
+            if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
+                return TeleportBeamBlock.META_UNKNOWN;
+            } else {
+                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadChunk;
+            }
+        }
+
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return false;
+            return TeleportBeamBlock.META_WARN;
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
 
         int status = matterReceiverTileEntity.checkStatus();
-        return status == DialingDeviceTileEntity.DIAL_OK;
+        return (status == DialingDeviceTileEntity.DIAL_OK) ? TeleportBeamBlock.META_OK : TeleportBeamBlock.META_WARN;
     }
 
     private void clearTeleport(int cooldown) {

@@ -36,6 +36,10 @@ public class TeleportConfiguration {
     public static float teleportVolume = 1.0f;
     public static float teleportErrorVolume = 1.0f;
 
+    // Set these flags if you want the matter transmitter to more aggressively check for receiver quality. Possibly with some performance penalty.
+    public static int matterTransmitterLoadChunk = -1;
+    public static int matterTransmitterLoadWorld = -1;
+
     public static void init(Configuration cfg) {
         TRANSMITTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", TRANSMITTER_MAXENERGY,
                 "Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'").getInt();
@@ -87,5 +91,10 @@ public class TeleportConfiguration {
                 "The volume for the teleporting sound (1.0 is default)").getDouble();
         teleportErrorVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleportError", teleportErrorVolume,
                 "The volume for the error sound when teleportation fails (1.0 is default)").getDouble();
+
+        matterTransmitterLoadChunk = cfg.get(CATEGORY_TELEPORTER, "checkUnloadedChunk", matterTransmitterLoadChunk,
+                "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the chunk is not loaded (-1 to disable this check completely)").getInt();
+        matterTransmitterLoadWorld = cfg.get(CATEGORY_TELEPORTER, "checkUnloadedWorld", matterTransmitterLoadWorld,
+                "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the world is not loaded (-1 to disable this check completely)").getInt();
     }
 }

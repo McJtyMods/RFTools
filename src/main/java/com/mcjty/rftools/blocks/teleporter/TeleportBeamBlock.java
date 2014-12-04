@@ -16,8 +16,13 @@ public class TeleportBeamBlock extends Block {
 
     public static int RENDERID_BEAM;
 
+    public static final int META_OK = 0;
+    public static final int META_WARN = 1;
+    public static final int META_UNKNOWN = 2;
+
     private IIcon icon;
     private IIcon iconWarn;
+    private IIcon iconUnknown;
     private IIcon iconTransparent;
 
     public TeleportBeamBlock(Material material) {
@@ -46,6 +51,7 @@ public class TeleportBeamBlock extends Block {
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporter");
         iconWarn = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporterWarn");
+        iconUnknown = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporterUnknown");
         iconTransparent = iconRegister.registerIcon(RFTools.MODID + ":" + "transparent");
     }
 
@@ -65,10 +71,7 @@ public class TeleportBeamBlock extends Block {
             return iconTransparent;
         }
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        if ((meta & 1) != 0) {
-            return iconWarn;
-        }
-        return icon;
+        return getStatusIcon(meta);
     }
 
     @Override
@@ -76,10 +79,17 @@ public class TeleportBeamBlock extends Block {
         if (side == ForgeDirection.DOWN.ordinal() || side == ForgeDirection.UP.ordinal()) {
             return iconTransparent;
         }
-        if ((meta & 1) != 0) {
+        return getStatusIcon(meta);
+    }
+
+    private IIcon getStatusIcon(int meta) {
+        if (meta == META_OK) {
+            return icon;
+        } else if (meta == META_WARN) {
             return iconWarn;
+        } else {
+            return iconUnknown;
         }
-        return icon;
     }
 
 }
