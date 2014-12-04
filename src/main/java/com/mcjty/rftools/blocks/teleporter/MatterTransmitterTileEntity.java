@@ -2,6 +2,8 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.entity.Entity;
@@ -448,7 +450,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     private void performTeleport() {
         // First check if the destination is still valid.
-        if (!TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination)) {
+        if (!isDestinationStillValid()) {
             applyBadEffectIfNeeded(10);
             RFTools.warn(teleportingPlayer, "Missing destination!");
             clearTeleport(200);
@@ -471,6 +473,23 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             }
         }
         teleportingPlayer = null;
+    }
+
+    private boolean isDestinationStillValid() {
+        boolean destinationValid = TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination);
+        if (destinationValid) {
+            return true;
+        }
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
+        if (dimensions.containsKey(teleportDestination.getDimension())) {
+            if (new Coordinate(0, 70, 0).equals(teleportDestination.getCoordinate())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void handleEnergyShortage() {

@@ -67,7 +67,7 @@ public class DimensionTickEvent {
                     player.attackEntityFrom(DamageSource.generic, 0.1f);
                     player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 20));
                     player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
-                    player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), 20));
                 }
             }
         } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 20)) {

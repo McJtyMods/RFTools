@@ -96,7 +96,26 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         super.writeToNBT(tagCompound);
     }
 
-    public List<TeleportDestinationClientInfo> searchReceivers() {
+    private TeleportDestination findDestination(Coordinate coordinate, int dimension, boolean[] rftoolsDimension) {
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
+        if (teleportDestination != null) {
+            rftoolsDimension[0] = false;
+            return teleportDestination;
+        }
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
+        if (dimensions.containsKey(dimension)) {
+            if (new Coordinate(0, 70, 0).equals(coordinate)) {
+                rftoolsDimension[0] = true;
+                return new TeleportDestination(coordinate, dimension);
+            }
+        }
+        return null;
+    }
+
+    private List<TeleportDestinationClientInfo> searchReceivers() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
 
         // Contains all destination we already added to the list. This is to prevent duplicates.
@@ -213,8 +232,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
 
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
+        boolean rftoolsDimension[] = new boolean[] { false };
+        TeleportDestination teleportDestination = findDestination(coordinate, dimension, rftoolsDimension);
         if (teleportDestination == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
@@ -222,15 +241,22 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         Coordinate c = teleportDestination.getCoordinate();
         World recWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(teleportDestination.getDimension());
         if (recWorld == null) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+            recWorld = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
+            if (recWorld == null) {
+                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+            }
         }
+
         TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-        }
-        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-        if (!matterReceiverTileEntity.checkAccess(player)) {
-            return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
+        if (!rftoolsDimension[0]) {
+            // Only do this if not an rftools dimension.
+            if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+            }
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+            if (!matterReceiverTileEntity.checkAccess(player)) {
+                return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
+            }
         }
 
         int cost = TeleportConfiguration.rfPerDial;
