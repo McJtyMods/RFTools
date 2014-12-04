@@ -1,6 +1,8 @@
 package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
+import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.varia.Coordinate;
@@ -25,6 +27,8 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 for (int z = -3 ; z <= 3 ; z++) {
                     if (x == 0 && z == 0) {
                         world.setBlock(x, 70, z, ModBlocks.matterReceiverBlock, 0, 2);
+                        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x, 70, z);
+                        matterReceiverTileEntity.modifyEnergyStored(TeleportConfiguration.RECEIVER_MAXENERGY);
                     } else {
                         world.setBlock(x, 70, z, Blocks.stone, 0, 2);
                     }

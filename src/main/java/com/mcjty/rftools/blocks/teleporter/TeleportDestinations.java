@@ -42,7 +42,12 @@ public class TeleportDestinations extends WorldSavedData {
                 removed = true;
             } else {
                 Coordinate c = key.getCoordinate();
-                TileEntity te = transWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+                TileEntity te;
+                try {
+                    te = transWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+                } catch (Exception e) {
+                    te = null;
+                }
                 if (!(te instanceof MatterReceiverTileEntity)) {
                     RFTools.log("Receiver at " + c + " on dimension " + key.getDimension() + " removed because there is no receiver there!");
                     removed = true;

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -34,9 +35,9 @@ public class DimensionDescriptor {
         }
         descriptionString = s.toString();
 
-        rfCreateCost = calculateCreationRfCost(input);
-        rfMaintainCost = calculateMaintenanceRfCost(input);
         tickCost = calculateTickCost(input);
+        rfCreateCost = calculateCreationRfCost(input, tickCost);
+        rfMaintainCost = calculateMaintenanceRfCost(input);
     }
 
     public DimensionDescriptor(NBTTagCompound tagCompound) {
@@ -84,7 +85,7 @@ public class DimensionDescriptor {
         tagCompound.setInteger("ticksLeft", tickCost);
     }
 
-    private int calculateCreationRfCost(Map<DimletType, List<Integer>> input) {
+    private int calculateCreationRfCost(Map<DimletType, List<Integer>> input, int tickCost) {
         int rf = KnownDimletConfiguration.baseDimensionCreationCost;
         for (DimletType type : input.keySet()) {
             List<Integer> ids = input.get(type);
@@ -99,6 +100,10 @@ public class DimensionDescriptor {
                 }
             }
         }
+
+        // Compensate createCost for the cost to fill the matter receiver at the destination end.
+        rf += TeleportConfiguration.RECEIVER_MAXENERGY / tickCost;
+
         return rf;
     }
 

@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
