@@ -29,11 +29,6 @@ public class DimensionStorage extends WorldSavedData {
         markDirty();
     }
 
-    public void syncFromServer(Map<Integer, Integer> energy) {
-        this.energy.clear();
-        this.energy.putAll(energy);
-    }
-
     public static DimensionStorage getDimensionStorage(World world) {
         if (instance != null) {
             return instance;
