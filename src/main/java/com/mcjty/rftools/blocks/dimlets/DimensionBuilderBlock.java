@@ -85,6 +85,29 @@ public class DimensionBuilderBlock extends GenericContainerBlock {
     }
 
     @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+        int state = BlockTools.getState(meta);
+        if (state == 0) {
+            return 10;
+        } else {
+            return getLightValue();
+        }
+    }
+
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z) {
+//        int meta = world.getBlockMetadata(x, y, z);
+//        int state = BlockTools.getState(meta);
+//        if (state == 0) {
+//            return 13;
+//        } else {
+//            return super.getMixedBrightnessForBlock(world, x, y, z);
+//        }
+//    }
+
+    @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientationHoriz(meta);
