@@ -11,6 +11,7 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.fluids.Fluid;
@@ -86,26 +87,13 @@ public class DimletItems {
     }
 
     private static void initBiomeItems() {
-        Map<String,BiomeManager.BiomeEntry> biomes = new HashMap<String, BiomeManager.BiomeEntry>();
-        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.COOL));
-        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.DESERT));
-        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.ICY));
-        addBiomes(biomes, BiomeManager.getBiomes(BiomeManager.BiomeType.WARM));
-
-    }
-
-    private static void addBiomes(Map<String,BiomeManager.BiomeEntry> biomes, Collection<BiomeManager.BiomeEntry> list) {
-        if (list == null) {
-            return;
-        }
-        for (BiomeManager.BiomeEntry entry : list) {
-            if (!biomes.containsKey(entry.biome.biomeName)) {
-                biomes.put(entry.biome.biomeName, entry);
+        BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
+        for (BiomeGenBase biome : biomeGenArray) {
+            if (biome != null) {
+                String name = biome.biomeName;
+                int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name, -1, -1, -1);
+                KnownDimletConfiguration.idToBiome.put(id, name);
             }
-        }
-        for (String name : biomes.keySet()) {
-            int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_BIOME, name, -1, -1, -1);
-            KnownDimletConfiguration.idToBiome.put(id, name);
         }
     }
 
