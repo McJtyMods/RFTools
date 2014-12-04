@@ -66,7 +66,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
             int rf = getEnergyStored(ForgeDirection.DOWN);
             int energy = dimensionStorage.getEnergyLevel(id);
-            int maxEnergy = DimensionStorage.MAX_DIMENSION_POWER - energy;      // Max energy the dimension can still get.
+            int maxEnergy = DimletConfiguration.MAX_DIMENSION_POWER - energy;      // Max energy the dimension can still get.
             if (rf > maxEnergy) {
                 rf = maxEnergy;
             }

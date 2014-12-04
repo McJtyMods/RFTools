@@ -14,8 +14,6 @@ public class DimensionStorage extends WorldSavedData {
     public static final String DIMSTORAGE_NAME = "RFToolsDimensionStorage";
     private static DimensionStorage instance = null;
 
-    public static final int MAX_DIMENSION_POWER = 10000000;
-
     private final Map<Integer,Integer> energy = new HashMap<Integer, Integer>();
 
     public static void clearInstance() {

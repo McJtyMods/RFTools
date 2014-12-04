@@ -9,6 +9,8 @@ public class DimletConfiguration {
     public static int rfResearchOperation = 100;
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 20000;
+    public static int MAX_DIMENSION_POWER = 10000000;
+
 
     public static void init(Configuration cfg) {
         RESEARCHER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletResearcherMaxRF", RESEARCHER_MAXENERGY,
@@ -21,6 +23,8 @@ public class DimletConfiguration {
                 "Maximum RF storage that the dimension builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimensionBuilderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the the dimension builder can receive").getInt();
+        MAX_DIMENSION_POWER = cfg.get(CATEGORY_DIMLETS, "dimensionPower", MAX_DIMENSION_POWER,
+                "The internal RF buffer for every dimension").getInt();
     }
 
 }

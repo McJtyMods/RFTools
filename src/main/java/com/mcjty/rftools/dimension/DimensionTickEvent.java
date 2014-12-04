@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,7 +59,7 @@ public class DimensionTickEvent {
                     player.attackEntityFrom(DamageSource.generic, 1000.0f);
                 }
             }
-        } else if (power < (DimensionStorage.MAX_DIMENSION_POWER / 30)) {
+        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 30)) {
             // We are VERY low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
@@ -69,7 +70,7 @@ public class DimensionTickEvent {
                     player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 20));
                 }
             }
-        } else if (power < (DimensionStorage.MAX_DIMENSION_POWER / 20)) {
+        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 20)) {
             // We are low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
@@ -78,7 +79,7 @@ public class DimensionTickEvent {
                     player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
                 }
             }
-        } else if (power < (DimensionStorage.MAX_DIMENSION_POWER / 10)) {
+        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 10)) {
             // We are low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
