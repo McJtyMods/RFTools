@@ -1,6 +1,8 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.dimension.DimensionStorage;
+import com.mcjty.rftools.dimension.PacketGetDimensionEnergy;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RealizedDimensionTab extends Item {
+    private static long lastTime = 0;
 
     public RealizedDimensionTab() {
         setMaxStackSize(1);
@@ -44,6 +47,11 @@ public class RealizedDimensionTab extends Item {
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");
                 list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
                 if (id != 0) {
+                    if (System.currentTimeMillis() - lastTime > 500) {
+                        lastTime = System.currentTimeMillis();
+                        PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
+                    }
+
                     DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
                     int power = storage.getEnergyLevel(id);
                     list.add(EnumChatFormatting.YELLOW + "    Current power: " + power + " RF");

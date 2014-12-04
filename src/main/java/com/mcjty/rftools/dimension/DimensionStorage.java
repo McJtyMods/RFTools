@@ -27,12 +27,6 @@ public class DimensionStorage extends WorldSavedData {
     public void save(World world) {
         world.mapStorage.setData(DIMSTORAGE_NAME, this);
         markDirty();
-
-        if (!world.isRemote) {
-            // Sync to client.
-            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionStorage(energy));
-        }
-
     }
 
     public void syncFromServer(Map<Integer, Integer> energy) {
