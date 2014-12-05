@@ -4,6 +4,7 @@ import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.apideps.BuildCraftChecker;
 import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -70,7 +71,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         if (itemStack != null) {
             Item item = itemStack.getItem();
             if (item != null) {
-                if (item instanceof IToolWrench) {
+                if (BuildCraftChecker.isBuildcraftWrench(item)) {
                     IToolWrench wrench = (IToolWrench) item;
                     wrench.wrenchUsed(player, x, y, z);
                     wrenchUsed = WrenchUsage.NORMAL;
