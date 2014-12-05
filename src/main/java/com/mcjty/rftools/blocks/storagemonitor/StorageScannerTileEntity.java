@@ -4,7 +4,6 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.entity.SyncedCoordinate;
 import com.mcjty.entity.SyncedValue;
 import com.mcjty.entity.SyncedValueList;
-import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -14,7 +13,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
 
@@ -182,8 +184,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             IInventory inventory = (IInventory) tileEntity;
             if (inventory.getSizeInventory() > 0) {
                 Block block = worldObj.getBlock(cx, cy, cz);
-                System.out.print("Block: " + BlockInfo.getReadableName(block, worldObj.getBlockMetadata(cx, cy, cz)));
-                System.out.println(", invsize:" + inventory.getSizeInventory());
                 inventories.add(new InvBlockInfo(new Coordinate(cx, cy, cz), inventory.getSizeInventory()));
                 notifyBlockUpdate();                }
         }
