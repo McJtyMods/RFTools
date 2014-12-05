@@ -188,8 +188,16 @@ public class DimensionInformation {
         return featureTypes.contains(type);
     }
 
+    public Set<FeatureType> getFeatureTypes() {
+        return featureTypes;
+    }
+
     public boolean hasStructureType(StructureType type) {
         return structureTypes.contains(type);
+    }
+
+    public Set<StructureType> getStructureTypes() {
+        return structureTypes;
     }
 
     public List<BiomeGenBase> getBiomes() {
