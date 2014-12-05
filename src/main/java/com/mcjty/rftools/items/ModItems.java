@@ -19,6 +19,7 @@ public final class ModItems {
     public static EmptyDimensionTab emptyDimensionTab;
     public static RealizedDimensionTab realizedDimensionTab;
     public static DimensionMonitorItem dimensionMonitorItem;
+    public static DimensionalShard dimensionalShard;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -68,5 +69,11 @@ public final class ModItems {
         dimensionMonitorItem.setCreativeTab(RFTools.tabRfTools);
         dimensionMonitorItem.setTextureName(RFTools.MODID + ":dimensionMonitorItem");
         GameRegistry.registerItem(dimensionMonitorItem, "dimensionMonitorItem");
+
+        dimensionalShard = new DimensionalShard();
+        dimensionalShard.setUnlocalizedName("DimensionalShard");
+        dimensionalShard.setCreativeTab(RFTools.tabRfTools);
+        dimensionalShard.setTextureName(RFTools.MODID + ":dimensionalShardItem");
+        GameRegistry.registerItem(dimensionalShard, "dimensionalShardItem");
     }
 }

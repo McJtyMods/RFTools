@@ -7,6 +7,7 @@ item.KnownDimlet.name=世界信息卡
 item.EmptyDimensionTab.name=空白世界构建模板
 item.RealizedDimensionTab.name=刻录世界构建模板
 item.DimensionMonitor.name=Dimension Monitor
+item.DimensionalShard.name=Dimensional Shard
 
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>
@@ -42,6 +43,7 @@ tile.dimletResearcherBlock.name=信息卡研究器
 tile.dimensionEnscriberBlock.name=信息卡刻录器
 tile.dimensionBuilderBlock.name=世界构建器
 tile.dimensionChestBlock.name=次元箱子
+tile.dimensionalShardBlock.name=Dimensional Shard Ore
 
 itemGroup.RfTools=RF工具
 itemGroup.RfToolsDimlets=RF工具|信息卡

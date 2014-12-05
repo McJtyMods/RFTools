@@ -36,6 +36,7 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
+import com.mcjty.rftools.blocks.shards.DimensionalShardBlock;
 import com.mcjty.rftools.blocks.shield.InvisibleShieldBlock;
 import com.mcjty.rftools.blocks.shield.ShieldBlock;
 import com.mcjty.rftools.blocks.shield.ShieldBlockNOpaquePass0;
@@ -111,6 +112,7 @@ public final class ModBlocks {
     public static DimletResearcherBlock dimletResearcherBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
+    public static DimensionalShardBlock dimensionalShardBlock;
 
     public static void init() {
         monitorBlock = new RFMonitorBlock(Material.iron);
@@ -163,6 +165,10 @@ public final class ModBlocks {
         dimensionBuilderBlock.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(dimensionBuilderBlock, DimensionBuilderItemBlock.class, "dimensionBuilderBlock");
         GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
+
+        dimensionalShardBlock = new DimensionalShardBlock();
+        dimensionalShardBlock.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(dimensionalShardBlock, "dimensionalShardBlock");
     }
 
     private static void initCrafterBlocks() {

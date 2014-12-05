@@ -7,6 +7,7 @@ item.KnownDimlet.name=Known Dimlet
 item.EmptyDimensionTab.name=Empty Dimension Tab
 item.RealizedDimensionTab.name=Realized Dimension Tab
 item.DimensionMonitor.name=Dimension Monitor
+item.DimensionalShard.name=Dimensional Shard
 
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
@@ -42,6 +43,7 @@ tile.dimletResearcherBlock.name=Dimlet Researcher
 tile.dimensionEnscriberBlock.name=Dimension Enscriber
 tile.dimensionBuilderBlock.name=Dimension Builder
 tile.dimensionChestBlock.name=Dimension Chest
+tile.dimensionalShardBlock.name=Dimensional Shard Ore
 
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools Dimlets
