@@ -96,11 +96,10 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         super.writeToNBT(tagCompound);
     }
 
-    private TeleportDestination findDestination(Coordinate coordinate, int dimension, boolean[] rftoolsDimension) {
+    private TeleportDestination findDestination(Coordinate coordinate, int dimension) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
         TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
         if (teleportDestination != null) {
-            rftoolsDimension[0] = false;
             return teleportDestination;
         }
 
@@ -108,11 +107,26 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
         if (dimensions.containsKey(dimension)) {
             if (new Coordinate(0, 70, 0).equals(coordinate)) {
-                rftoolsDimension[0] = true;
                 return new TeleportDestination(coordinate, dimension);
             }
         }
         return null;
+    }
+
+    /**
+     * return true if the given destination is a dimension destination (destination for
+     * a dimension where the matter receiver hasn't been able to be generated yet).
+     * @param destination
+     * @return
+     */
+    private boolean isDimensionDestination(TeleportDestination destination) {
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
+        if (dimensions.containsKey(destination.getDimension())) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            return !destinations.isDestinationValid(destination);
+        }
+        return false;
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers() {
@@ -232,8 +246,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
 
-        boolean rftoolsDimension[] = new boolean[] { false };
-        TeleportDestination teleportDestination = findDestination(coordinate, dimension, rftoolsDimension);
+        TeleportDestination teleportDestination = findDestination(coordinate, dimension);
         if (teleportDestination == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
@@ -247,9 +260,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             }
         }
 
-        TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!rftoolsDimension[0]) {
+        if (!isDimensionDestination(teleportDestination)) {
             // Only do this if not an rftools dimension.
+            TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
             if (!(tileEntity instanceof MatterReceiverTileEntity)) {
                 return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
             }
@@ -276,25 +289,31 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Server side only
     private int checkStatus(Coordinate c, int dim) {
-        World w = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(dim);
-        if (w == null) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-        }
-
-        TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-        }
-
-        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-
         int cost = TeleportConfiguration.rfPerCheck;
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
         extractEnergy(ForgeDirection.DOWN, cost, false);
 
-        return matterReceiverTileEntity.checkStatus();
+        World w = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(dim);
+        if (w == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+
+        if (isDimensionDestination(new TeleportDestination(c, dim))) {
+            // This is a dimension destination. That means a destination where the matter receiver
+            // hasn't been realized yet. We can't check the status but we assume it is ok.
+            return DialingDeviceTileEntity.DIAL_OK;
+        } else {
+            TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+            }
+
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+
+            return matterReceiverTileEntity.checkStatus();
+        }
     }
 
     @Override
