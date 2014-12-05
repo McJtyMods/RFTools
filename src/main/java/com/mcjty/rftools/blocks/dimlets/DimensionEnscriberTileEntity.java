@@ -208,10 +208,12 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         if (tagCompound != null) {
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
             String descriptionString = tagCompound.getString("descriptionString");
-            String[] opcodes = descriptionString.split(",");
-            for (String oc : opcodes) {
-                Integer id = Integer.parseInt(oc.substring(1));
-                inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
+            if (!descriptionString.trim().isEmpty()) {
+                String[] opcodes = descriptionString.split(",");
+                for (String oc : opcodes) {
+                    Integer id = Integer.parseInt(oc.substring(1));
+                    inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
+                }
             }
         }
 
