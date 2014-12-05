@@ -10,6 +10,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
@@ -39,7 +41,7 @@ public class DimletItems {
         initSkyItem("Clear");
         initSkyItem("Bright");
 
-        initStructureItem("None", StructureType.STRUCTURE_NONE);
+        int idStructureNone = initStructureItem("None", StructureType.STRUCTURE_NONE);
         initStructureItem("Village", StructureType.STRUCTURE_VILLAGE);
         initStructureItem("Stronghold", StructureType.STRUCTURE_STRONGHOLD);
         initStructureItem("Dungeon", StructureType.STRUCTURE_DUNGEON);
@@ -47,15 +49,15 @@ public class DimletItems {
         initStructureItem("Mineshaft", StructureType.STRUCTURE_MINESHAFT);
         initStructureItem("Scattered", StructureType.STRUCTURE_SCATTERED);
 
+        int idTerrainVoid = initTerrainItem("Void", TerrainType.TERRAIN_VOID);
         initTerrainItem("Flat", TerrainType.TERRAIN_FLAT);
-        initTerrainItem("Void", TerrainType.TERRAIN_VOID);
         initTerrainItem("Amplified", TerrainType.TERRAIN_AMPLIFIED);
         initTerrainItem("Normal", TerrainType.TERRAIN_NORMAL);
         initTerrainItem("Cave World", TerrainType.TERRAIN_CAVES);
         initTerrainItem("Island", TerrainType.TERRAIN_ISLAND);
         initTerrainItem("Spheres", TerrainType.TERRAIN_SPHERES);
 
-        initFeatureItem("None", FeatureType.FEATURE_NONE);
+        int idFeatureNone = initFeatureItem("None", FeatureType.FEATURE_NONE);
         initFeatureItem("Caves", FeatureType.FEATURE_CAVES);
         initFeatureItem("Ravines", FeatureType.FEATURE_RAVINES);
 
@@ -67,6 +69,10 @@ public class DimletItems {
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
         ModItems.knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
         GameRegistry.registerItem(ModItems.knownDimlet, "knownDimlet");
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper } );
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper } );
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper } );
 
         setupChestLoot();
     }
@@ -108,30 +114,33 @@ public class DimletItems {
         }
     }
 
-    private static void initMobItem(Class <? extends EntityLiving> entity, String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MOBS, name, -1, -1, -1);
+    private static int initMobItem(Class <? extends EntityLiving> entity, String name) {
+        return KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_MOBS, name, -1, -1, -1);
     }
 
-    private static void initSkyItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name, -1, -1, -1);
+    private static int initSkyItem(String name) {
+        return KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_SKY, name, -1, -1, -1);
     }
 
-    private static void initStructureItem(String name, StructureType structureType) {
+    private static int initStructureItem(String name, StructureType structureType) {
         int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_STRUCTURE, name, -1, -1, -1);
         KnownDimletConfiguration.idToStructureType.put(id, structureType);
+        return id;
     }
 
-    private static void initTerrainItem(String name, TerrainType terrainType) {
+    private static int initTerrainItem(String name, TerrainType terrainType) {
         int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TERRAIN, name, -1, -1, -1);
         KnownDimletConfiguration.idToTerrainType.put(id, terrainType);
+        return id;
     }
 
-    private static void initFeatureItem(String name, FeatureType featureType) {
+    private static int initFeatureItem(String name, FeatureType featureType) {
         int id = KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_FEATURE, name, -1, -1, -1);
         KnownDimletConfiguration.idToFeatureType.put(id, featureType);
+        return id;
     }
 
-    private static void initTimeItem(String name) {
-        KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name, -1, -1, -1);
+    private static int initTimeItem(String name) {
+        return KnownDimletConfiguration.registerDimlet(DimletType.DIMLET_TIME, name, -1, -1, -1);
     }
 }

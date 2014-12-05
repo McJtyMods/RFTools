@@ -2,6 +2,7 @@ package com.mcjty.rftools.crafting;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -55,5 +56,16 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldTemplateBlock, 8), new Object[]{"www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass});
 
         GameRegistry.addSmelting(ModBlocks.dimensionalShardBlock, new ItemStack(ModItems.dimensionalShard, 4), 1.0f);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletResearcherBlock), new Object[]{"rur", "cMc", "iii", 'r', Items.redstone, 'u', ModItems.unknownDimlet, 'c', Items.comparator,
+                'M', ModBlocks.machineFrame, 'i', Items.iron_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionEnscriberBlock), new Object[]{"rpr", "bMb", "iii", 'r', Items.redstone, 'p', Items.paper, 'b', inkSac,
+                'M', ModBlocks.machineFrame, 'i', Items.iron_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionBuilderBlock), new Object[] {"oEo", "DMD", "ggg", 'o', Items.ender_pearl, 'E',  Items.emerald, 'D', Items.diamond,
+                'M', ModBlocks.machineFrame, 'g', Items.gold_ingot});
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), new Object[] { "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone });
+        GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), new Object[] { " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator});
+
+        // Recipes for known dimlets are added in DimletItems.
     }
 }
