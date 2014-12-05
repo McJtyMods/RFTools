@@ -1,12 +1,11 @@
 package com.mcjty.rftools.blocks.shield;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 
 public class SolidShieldBlock extends AbstractShieldBlock {
 
-    public SolidShieldBlock(Material material) {
-        super(material);
+    public SolidShieldBlock() {
+        super();
         setBlockName("solidShieldBlock");
     }
 

@@ -11,8 +11,9 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TimerBlock extends LogicSlabBlock {
 
-    public TimerBlock(Material material) {
-        super(material, "timerBlock", TimerTileEntity.class);
+    public TimerBlock() {
+        super(Material.iron, "timerBlock", TimerTileEntity.class);
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

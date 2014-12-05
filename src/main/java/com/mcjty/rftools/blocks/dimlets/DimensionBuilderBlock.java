@@ -23,10 +23,11 @@ public class DimensionBuilderBlock extends GenericContainerBlock {
     private IIcon iconFront_busy1;
     private IIcon iconFront_busy2;
 
-    public DimensionBuilderBlock(Material material) {
-        super(material, DimensionBuilderTileEntity.class);
+    public DimensionBuilderBlock() {
+        super(Material.iron, DimensionBuilderTileEntity.class);
         setBlockName("dimensionBuilderBlock");
         setHorizRotation(true);
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

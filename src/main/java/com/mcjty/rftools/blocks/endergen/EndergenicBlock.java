@@ -25,9 +25,10 @@ public class EndergenicBlock extends GenericContainerBlock {
     private IIcon icon;
     private IIcon iconUp;
 
-    public EndergenicBlock(Material material) {
-        super(material, EndergenicTileEntity.class);
+    public EndergenicBlock() {
+        super(Material.iron, EndergenicTileEntity.class);
         setBlockName("endergenicBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

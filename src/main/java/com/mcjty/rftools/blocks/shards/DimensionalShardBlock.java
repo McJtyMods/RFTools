@@ -21,6 +21,7 @@ public class DimensionalShardBlock extends Block {
         setHardness(3.0f);
         setResistance(5.0f);
         setBlockName("dimensionalShardBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

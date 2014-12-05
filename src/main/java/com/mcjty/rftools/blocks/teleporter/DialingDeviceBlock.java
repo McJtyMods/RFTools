@@ -12,9 +12,10 @@ import net.minecraft.tileentity.TileEntity;
 
 public class DialingDeviceBlock extends GenericContainerBlock {
 
-    public DialingDeviceBlock(Material material) {
-        super(material, DialingDeviceTileEntity.class);
+    public DialingDeviceBlock() {
+        super(Material.iron, DialingDeviceTileEntity.class);
         setBlockName("dialingDeviceBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

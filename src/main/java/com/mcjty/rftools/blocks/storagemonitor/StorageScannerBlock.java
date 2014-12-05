@@ -12,9 +12,10 @@ import net.minecraft.tileentity.TileEntity;
 
 public class StorageScannerBlock extends GenericContainerBlock {
 
-    public StorageScannerBlock(Material material) {
-        super(material, StorageScannerTileEntity.class);
+    public StorageScannerBlock() {
+        super(Material.iron, StorageScannerTileEntity.class);
         setBlockName("storageScannerBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

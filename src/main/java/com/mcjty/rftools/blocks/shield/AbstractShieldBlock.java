@@ -32,9 +32,10 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
     public static final int META_PLAYERS = 8;           // If set the blocked for (some) players
 
 
-    public AbstractShieldBlock(Material material) {
-        super(material);
+    public AbstractShieldBlock() {
+        super(Material.portal);
         setBlockUnbreakable();
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

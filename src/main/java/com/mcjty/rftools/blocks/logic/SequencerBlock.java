@@ -11,8 +11,9 @@ import net.minecraft.tileentity.TileEntity;
 
 public class SequencerBlock extends LogicSlabBlock {
 
-    public SequencerBlock(Material material) {
-        super(material, "sequencerBlock", SequencerTileEntity.class);
+    public SequencerBlock() {
+        super(Material.iron, "sequencerBlock", SequencerTileEntity.class);
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

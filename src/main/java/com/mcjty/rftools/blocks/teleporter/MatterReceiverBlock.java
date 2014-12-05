@@ -24,9 +24,10 @@ public class MatterReceiverBlock extends GenericContainerBlock {
     private IIcon iconSide;
     private IIcon iconTop;
 
-    public MatterReceiverBlock(Material material) {
-        super(material, MatterReceiverTileEntity.class);
+    public MatterReceiverBlock() {
+        super(Material.iron, MatterReceiverTileEntity.class);
         setBlockName("matterReceiverBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

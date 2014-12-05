@@ -15,9 +15,10 @@ import net.minecraft.world.World;
 
 public class DimensionEnscriberBlock extends GenericContainerBlock {
 
-    public DimensionEnscriberBlock(Material material) {
-        super(material, DimensionEnscriberTileEntity.class);
+    public DimensionEnscriberBlock() {
+        super(Material.iron, DimensionEnscriberTileEntity.class);
         setBlockName("dimensionEnscriberBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

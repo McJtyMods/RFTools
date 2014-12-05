@@ -19,8 +19,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnderMonitorBlock extends LogicSlabBlock {
 
-    public EnderMonitorBlock(Material material) {
-        super(material, "enderMonitorBlock", EnderMonitorTileEntity.class);
+    public EnderMonitorBlock() {
+        super(Material.iron, "enderMonitorBlock", EnderMonitorTileEntity.class);
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

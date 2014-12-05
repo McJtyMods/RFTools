@@ -25,8 +25,8 @@ public class TeleportBeamBlock extends Block {
     private IIcon iconUnknown;
     private IIcon iconTransparent;
 
-    public TeleportBeamBlock(Material material) {
-        super(material);
+    public TeleportBeamBlock() {
+        super(Material.portal);
         setBlockName("teleportBeamBlock");
         setBlockUnbreakable();
     }

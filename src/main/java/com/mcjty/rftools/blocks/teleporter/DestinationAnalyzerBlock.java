@@ -17,9 +17,10 @@ public class DestinationAnalyzerBlock extends Block {
     private IIcon iconFront;
     private IIcon iconSide;
 
-    public DestinationAnalyzerBlock(Material material) {
-        super(material);
+    public DestinationAnalyzerBlock() {
+        super(Material.iron);
         setBlockName("destinationAnalyzerBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

@@ -16,9 +16,10 @@ import net.minecraft.world.World;
 
 public class DimletResearcherBlock extends GenericContainerBlock {
 
-    public DimletResearcherBlock(Material material) {
-        super(material, DimletResearcherTileEntity.class);
+    public DimletResearcherBlock() {
+        super(Material.iron, DimletResearcherTileEntity.class);
         setBlockName("dimletResearcherBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

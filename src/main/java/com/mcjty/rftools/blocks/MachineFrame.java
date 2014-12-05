@@ -6,10 +6,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 public class MachineFrame extends Block {
-    public MachineFrame(Material material) {
-        super(material);
+    public MachineFrame() {
+        super(Material.iron);
         setBlockName("machineFrame");
         setBlockTextureName(RFTools.MODID + ":" + "machineSide");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

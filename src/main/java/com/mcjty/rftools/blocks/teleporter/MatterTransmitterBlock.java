@@ -26,9 +26,10 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
 
     private IIcon iconTop;
 
-    public MatterTransmitterBlock(Material material) {
-        super(material, MatterTransmitterTileEntity.class);
+    public MatterTransmitterBlock() {
+        super(Material.iron, MatterTransmitterTileEntity.class);
         setBlockName("matterTransmitterBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

@@ -16,10 +16,11 @@ import net.minecraft.world.World;
 public class CrafterBlock extends GenericContainerBlock {
     private String frontName;
 
-    public CrafterBlock(Material material, String blockName, String frontName, Class<? extends TileEntity> tileEntityClass) {
-        super(material, tileEntityClass);
+    public CrafterBlock(String blockName, String frontName, Class<? extends TileEntity> tileEntityClass) {
+        super(Material.iron, tileEntityClass);
         setBlockName(blockName);
         this.frontName = frontName;
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

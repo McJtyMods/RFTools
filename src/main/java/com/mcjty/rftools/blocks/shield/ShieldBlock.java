@@ -19,9 +19,10 @@ import net.minecraft.world.World;
 
 public class ShieldBlock extends GenericContainerBlock {
 
-    public ShieldBlock(Material material) {
-        super(material, ShieldTileEntity.class);
+    public ShieldBlock() {
+        super(Material.iron, ShieldTileEntity.class);
         setBlockName("shieldBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

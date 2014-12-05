@@ -15,9 +15,10 @@ import net.minecraft.world.World;
 
 public class PearlInjectorBlock extends GenericContainerBlock {
 
-    public PearlInjectorBlock(Material material) {
-        super(material, PearlInjectorTileEntity.class);
+    public PearlInjectorBlock() {
+        super(Material.iron, PearlInjectorTileEntity.class);
         setBlockName("pearlInjectorBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

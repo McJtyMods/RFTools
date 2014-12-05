@@ -11,9 +11,10 @@ public class ShieldTemplateBlock extends Block {
 
     private IIcon icon;
 
-    public ShieldTemplateBlock(Material material) {
-        super(material);
+    public ShieldTemplateBlock() {
+        super(Material.glass);
         setBlockName("shieldTemplateBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override

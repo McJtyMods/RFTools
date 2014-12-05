@@ -1,14 +1,13 @@
 package com.mcjty.rftools.blocks.shield;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class InvisibleShieldBlock extends AbstractShieldBlock {
 
-    public InvisibleShieldBlock(Material material) {
-        super(material);
+    public InvisibleShieldBlock() {
+        super();
         setBlockName("invisibleShieldBlock");
     }
 

@@ -1,11 +1,9 @@
 package com.mcjty.rftools.blocks.shield;
 
-import net.minecraft.block.material.Material;
-
 public class ShieldBlockOpaquePass1 extends AbstractShieldBlock {
 
-    public ShieldBlockOpaquePass1(Material material) {
-        super(material);
+    public ShieldBlockOpaquePass1() {
+        super();
         setBlockName("shieldBlockOpaquePass1");
     }
 

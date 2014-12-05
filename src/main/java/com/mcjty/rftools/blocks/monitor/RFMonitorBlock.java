@@ -22,9 +22,10 @@ public class RFMonitorBlock extends GenericBlock {
     private IIcon iconFront3;
     private IIcon iconFront4;
 
-    public RFMonitorBlock(Material material) {
-        super(material, RFMonitorBlockTileEntity.class);
+    public RFMonitorBlock() {
+        super(Material.iron, RFMonitorBlockTileEntity.class);
         setBlockName("rfMonitorBlock");
+        setCreativeTab(RFTools.tabRfTools);
     }
 
     @Override
