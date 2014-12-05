@@ -1,7 +1,10 @@
 package com.mcjty.rftools.items.dimlets;
 
+import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.PacketGetDimensionEnergy;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collections;
@@ -21,6 +25,20 @@ public class RealizedDimensionTab extends Item {
 
     public RealizedDimensionTab() {
         setMaxStackSize(1);
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!world.isRemote) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            String descriptionString = tagCompound.getString("descriptionString");
+            if (player.isSneaking()) {
+                RFTools.message(player, EnumChatFormatting.RED + "Description: " + descriptionString);
+                System.out.println("Description:  = " + descriptionString);
+            }
+            return stack;
+        }
+        return stack;
     }
 
     @Override

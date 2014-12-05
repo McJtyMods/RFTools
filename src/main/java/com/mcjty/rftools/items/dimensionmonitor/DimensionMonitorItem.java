@@ -45,6 +45,10 @@ public class DimensionMonitorItem extends Item {
                 int power = storage != null ? storage.getEnergyLevel(id) : 0;
 
                 RFTools.message(player, EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")" + EnumChatFormatting.YELLOW + "    Power: " + power + " RF");
+                if (player.isSneaking()) {
+                    RFTools.message(player, EnumChatFormatting.RED + "Description: " + dimensionInformation.getDescriptor().getDescriptionString());
+                    System.out.println("Description:  = " + dimensionInformation.getDescriptor().getDescriptionString());
+                }
             }
             return stack;
         }
