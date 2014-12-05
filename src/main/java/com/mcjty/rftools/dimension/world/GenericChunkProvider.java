@@ -483,16 +483,20 @@ public class GenericChunkProvider implements IChunkProvider {
     public List getPossibleCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x, z);
         if (creatureType == EnumCreatureType.monster) {
-            if (this.scatteredFeatureGenerator.func_143030_a(x, y, z)) {
-                return this.scatteredFeatureGenerator.getScatteredFeatureSpawnList();
+            if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
+                if (this.scatteredFeatureGenerator.func_143030_a(x, y, z)) {
+                    return this.scatteredFeatureGenerator.getScatteredFeatureSpawnList();
+                }
             }
 
-            if (this.genNetherBridge.hasStructureAt(x, y, z)) {
-                return this.genNetherBridge.getSpawnList();
-            }
+            if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_FORTRESS)) {
+                if (this.genNetherBridge.hasStructureAt(x, y, z)) {
+                    return this.genNetherBridge.getSpawnList();
+                }
 
-            if (this.genNetherBridge.func_142038_b(x, y, z) && this.worldObj.getBlock(x, y - 1, z) == Blocks.nether_brick) {
-                return this.genNetherBridge.getSpawnList();
+                if (this.genNetherBridge.func_142038_b(x, y, z) && this.worldObj.getBlock(x, y - 1, z) == Blocks.nether_brick) {
+                    return this.genNetherBridge.getSpawnList();
+                }
             }
         }
 
