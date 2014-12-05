@@ -1,6 +1,5 @@
 package com.mcjty.container;
 
-import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
@@ -72,8 +71,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
             Item item = itemStack.getItem();
             if (item != null) {
                 if (BuildCraftChecker.isBuildcraftWrench(item)) {
-                    IToolWrench wrench = (IToolWrench) item;
-                    wrench.wrenchUsed(player, x, y, z);
+                    BuildCraftChecker.useBuildcraftWrench(item, player, x, y, z);
                     wrenchUsed = WrenchUsage.NORMAL;
                 } else if (item instanceof IToolHammer) {
                     IToolHammer hammer = (IToolHammer) item;
