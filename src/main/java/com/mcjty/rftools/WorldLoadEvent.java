@@ -20,4 +20,12 @@ public class WorldLoadEvent {
             DimensionStorage.clearInstance();
         }
     }
+
+    @SubscribeEvent
+    public void unloadEvent(WorldEvent.Unload evt) {
+        if (evt.world.isRemote) {
+            return;
+        }
+        RfToolsDimensionManager.unregisterDimensions();
+    }
 }

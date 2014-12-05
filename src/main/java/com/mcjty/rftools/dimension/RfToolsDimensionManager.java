@@ -42,6 +42,21 @@ public class RfToolsDimensionManager extends WorldSavedData {
         instance = null;
     }
 
+    public static void unregisterDimensions() {
+        if (instance != null) {
+            RFTools.log("Cleaning up RFTools dimensions");
+            for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
+                int id = me.getKey();
+                RFTools.log("    Dimension: " + id);
+                DimensionManager.unregisterDimension(id);
+                DimensionManager.unregisterProviderType(id);
+            }
+            instance.getDimensions().clear();
+            instance.dimensionToID.clear();
+            instance.dimensionInformation.clear();
+        }
+    }
+
     public void save(World world) {
         world.mapStorage.setData(DIMMANAGER_NAME, this);
         markDirty();
