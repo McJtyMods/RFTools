@@ -117,7 +117,8 @@ public class DimensionInformation {
         List<Integer> list = dimlets.get(DimletType.DIMLET_FEATURE);
         if (list.isEmpty()) {
             for (FeatureType type : FeatureType.values()) {
-                if (random.nextBoolean()) {
+                // @Todo make this chance configurable?
+                if (random.nextFloat() < .4f) {
                     featureTypes.add(type);
                 }
             }
@@ -132,7 +133,8 @@ public class DimensionInformation {
         List<Integer> list = dimlets.get(DimletType.DIMLET_STRUCTURE);
         if (list.isEmpty()) {
             for (StructureType type : StructureType.values()) {
-                if (random.nextBoolean()) {
+                // @Todo make this chance configurable?
+                if (random.nextFloat() < .2f) {
                     structureTypes.add(type);
                 }
             }
