@@ -1,13 +1,9 @@
 package com.mcjty.rftools.dimension;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,10 +12,10 @@ import java.util.Map;
 /**
  * Sync RfToolsDimensionManager data from server to client.
  */
-public class PacketSyncDimensionInfo implements IMessage ,IMessageHandler<PacketSyncDimensionInfo, IMessage> {
-    private Map<Integer, DimensionDescriptor> dimensions;
-    private Map<DimensionDescriptor, Integer> dimensionToID;
-    private Map<Integer, DimensionInformation> dimensionInformation;
+public class PacketSyncDimensionInfo implements IMessage {
+    Map<Integer, DimensionDescriptor> dimensions;
+    Map<DimensionDescriptor, Integer> dimensionToID;
+    Map<Integer, DimensionInformation> dimensionInformation;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -86,18 +82,6 @@ public class PacketSyncDimensionInfo implements IMessage ,IMessageHandler<Packet
         this.dimensions = new HashMap<Integer, DimensionDescriptor>(dimensions);
         this.dimensionToID = new HashMap<DimensionDescriptor, Integer>(dimensionToID);
         this.dimensionInformation = new HashMap<Integer, DimensionInformation>(dimensionInformation);
-    }
-
-    @Override
-    public IMessage onMessage(PacketSyncDimensionInfo message, MessageContext ctx) {
-        World world = Minecraft.getMinecraft().theWorld;
-        System.out.println("SYNC DIMENSION STUFF: world.isRemote = " + world.isRemote);
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
-
-        dimensionManager.syncFromServer(message.dimensions, message.dimensionToID, message.dimensionInformation);
-        dimensionManager.save(world);
-
-        return null;
     }
 
 }
