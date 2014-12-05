@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = RFTools.MODID, version = RFTools.VERSION)
 public class RFTools {
     public static final String MODID = "rftools";
-    public static final String VERSION = "2.00beta1";
+    public static final String VERSION = "2.00beta2";
 
     @SidedProxy(clientSide="com.mcjty.rftools.ClientProxy", serverSide="com.mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
