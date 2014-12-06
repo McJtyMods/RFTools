@@ -13,16 +13,13 @@ public class BuildCraftChecker {
             if (Loader.isModLoaded("BuildCraft|Core")) {
                 buildcraftPresent = 1;
             } else {
-                buildcraftPresent = -11;
+                buildcraftPresent = -1;
             }
         }
         return buildcraftPresent > 0;
     }
 
     public static boolean isBuildcraftWrench(Item item) {
-        if (!isBuildcraftPresent()) {
-            return false;
-        }
         return item instanceof IToolWrench;
     }
 

@@ -70,7 +70,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         if (itemStack != null) {
             Item item = itemStack.getItem();
             if (item != null) {
-                if (BuildCraftChecker.isBuildcraftWrench(item)) {
+                if (BuildCraftChecker.isBuildcraftPresent() && BuildCraftChecker.isBuildcraftWrench(item)) {
                     BuildCraftChecker.useBuildcraftWrench(item, player, x, y, z);
                     wrenchUsed = WrenchUsage.NORMAL;
                 } else if (item instanceof IToolHammer) {
