@@ -3,7 +3,7 @@ package com.mcjty.container;
 import cofh.api.item.IToolHammer;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.apideps.BuildCraftChecker;
+import com.mcjty.rftools.apideps.WrenchChecker;
 import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -70,13 +70,15 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         if (itemStack != null) {
             Item item = itemStack.getItem();
             if (item != null) {
-                if (BuildCraftChecker.isBuildcraftPresent() && BuildCraftChecker.isBuildcraftWrench(item)) {
-                    BuildCraftChecker.useBuildcraftWrench(item, player, x, y, z);
-                    wrenchUsed = WrenchUsage.NORMAL;
-                } else if (item instanceof IToolHammer) {
+                if (item instanceof IToolHammer) {
                     IToolHammer hammer = (IToolHammer) item;
                     hammer.toolUsed(itemStack, player, x, y, z);
                     wrenchUsed = WrenchUsage.NORMAL;
+                } else if (WrenchChecker.isAWrench(item)) {
+                    wrenchUsed = WrenchUsage.NORMAL;
+//                } else if (BuildCraftChecker.isBuildcraftPresent() && BuildCraftChecker.isBuildcraftWrench(item)) {
+//                    BuildCraftChecker.useBuildcraftWrench(item, player, x, y, z);
+//                    wrenchUsed = WrenchUsage.NORMAL;
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.apideps.WrenchChecker;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
@@ -124,6 +125,7 @@ public class CommonProxy {
         }
         mainConfig = null;
         dimletConfig = null;
+        WrenchChecker.init();
     }
 
 }
