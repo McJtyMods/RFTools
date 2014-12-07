@@ -26,6 +26,9 @@ public class WorldLoadEvent {
         if (evt.world.isRemote) {
             return;
         }
-        RfToolsDimensionManager.unregisterDimensions();
+        int d = evt.world.provider.dimensionId;
+        if (d == 0) {
+            RfToolsDimensionManager.unregisterDimensions();
+        }
     }
 }
