@@ -1,11 +1,13 @@
 package com.mcjty.rftools.commands;
 
+import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.WorldServer;
 
 public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
@@ -38,9 +40,12 @@ public class CmdTeleport extends AbstractRfToolsCommand {
 
             int currentId = player.worldObj.provider.dimensionId;
             if (currentId != dim) {
-                MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, dim);
+                WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(dim);
+                MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, dim,
+                        new RfToolsTeleporter(worldServerForDimension, x, y, z));
+            } else {
+                player.setPositionAndUpdate(x, y, z);
             }
-            player.setPositionAndUpdate(x, y, z);
         }
 
     }

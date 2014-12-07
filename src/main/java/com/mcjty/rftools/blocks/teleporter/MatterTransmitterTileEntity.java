@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -457,15 +458,19 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             return;
         }
 
+        Coordinate c = teleportDestination.getCoordinate();
+
         int currentId = teleportingPlayer.worldObj.provider.dimensionId;
         if (currentId != teleportDestination.getDimension()) {
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension());
+            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension(),
+                    new RfToolsTeleporter(worldServerForDimension, c.getX(), c.getY()+1, c.getZ()));
+        } else {
+            teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
         }
 
-        Coordinate c = teleportDestination.getCoordinate();
         RFTools.message(teleportingPlayer, "Whoosh!");
 
-        teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
         int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
         if (!applyBadEffectIfNeeded(severity)) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {

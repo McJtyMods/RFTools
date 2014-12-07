@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.teleportprobe;
 
+import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -7,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 
 public class PacketForceTeleport implements IMessage, IMessageHandler<PacketForceTeleport, IMessage> {
     private int x;
@@ -46,10 +48,12 @@ public class PacketForceTeleport implements IMessage, IMessageHandler<PacketForc
 
         int currentId = player.worldObj.provider.dimensionId;
         if (currentId != message.dim) {
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, message.dim);
+            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(message.dim);
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, message.dim,
+                    new RfToolsTeleporter(worldServerForDimension, message.x, message.y+1, message.z));
+        } else {
+            player.setPositionAndUpdate(message.x, message.y + 1, message.z);
         }
-
-        player.setPositionAndUpdate(message.x, message.y+1, message.z);
         return null;
     }
 
