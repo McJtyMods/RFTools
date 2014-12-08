@@ -45,7 +45,7 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
         } else {
             ItemStack inputStack = inventoryHelper.getStacks()[0];
             ItemStack outputStack = inventoryHelper.getStacks()[1];
-            if (inputStack != null && inputStack.getItem() == ModItems.unknownDimlet && isInfusable(outputStack)) {
+            if (inputStack != null && inputStack.getItem() == ModItems.dimensionalShard && isInfusable(outputStack)) {
                 startInfusing();
             }
         }
@@ -91,6 +91,7 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
         }
         int infused = tagCompound.getInteger("infused");
         tagCompound.setInteger("infused", infused+1);
+        stack.setTagCompound(tagCompound);
     }
 
     private void startInfusing() {

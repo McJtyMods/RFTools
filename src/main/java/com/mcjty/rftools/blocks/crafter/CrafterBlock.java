@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.crafter;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -10,10 +11,17 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
-public class CrafterBlock extends GenericContainerBlock {
+import java.util.List;
+
+public class CrafterBlock extends GenericContainerBlock implements Infusable {
     private String frontName;
 
     public CrafterBlock(String blockName, String frontName, Class<? extends TileEntity> tileEntityClass) {
@@ -22,6 +30,33 @@ public class CrafterBlock extends GenericContainerBlock {
         this.frontName = frontName;
         setCreativeTab(RFTools.tabRfTools);
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
+            list.add(EnumChatFormatting.GREEN + "Contents: " + bufferTagList.tagCount() + " stacks");
+
+            int rc = 0;
+            for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
+                NBTTagCompound tagRecipe = recipeTagList.getCompoundTagAt(i);
+                NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
+                if (resultCompound != null) {
+                    ItemStack stack = ItemStack.loadItemStackFromNBT(resultCompound);
+                    if (stack != null) {
+                        rc++;
+                    }
+                }
+            }
+
+            list.add(EnumChatFormatting.GREEN + "Recipes: " + rc + " recipes");
+        }
+    }
+
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {

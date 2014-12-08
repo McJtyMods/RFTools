@@ -1,9 +1,11 @@
 package com.mcjty.entity;
 
+import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.ClientCommandHandler;
 import com.mcjty.rftools.network.CommandHandler;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -19,6 +21,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
 
     private List<SyncedObject> syncedObjects = new ArrayList<SyncedObject>();
     private Coordinate coordinate;
+    private int infused = 0;
 
     public void setInvalid() {
         for (SyncedObject value : syncedObjects) {
@@ -99,6 +102,10 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         readFromNBT(packet.func_148857_g());
     }
 
+    public int getInfused() {
+        return infused;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -111,6 +118,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
      * @param tagCompound
      */
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        infused = tagCompound.getInteger("infused");
     }
 
     @Override
@@ -126,6 +134,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
      * @param tagCompound
      */
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setInteger("infused", infused);
     }
 
     @Override

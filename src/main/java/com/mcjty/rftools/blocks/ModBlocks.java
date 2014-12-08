@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks;
 
+import com.mcjty.container.GenericItemBlock;
 import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
@@ -127,11 +128,11 @@ public final class ModBlocks {
 
     private static void initCrafterBlocks() {
         crafterBlock1 = new CrafterBlock("crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
-        GameRegistry.registerBlock(crafterBlock1, CrafterItemBlock.class, "crafterBlock1");
+        GameRegistry.registerBlock(crafterBlock1, GenericItemBlock.class, "crafterBlock1");
         crafterBlock2 = new CrafterBlock("crafterBlock2", "machineCrafter2", CrafterBlockTileEntity2.class);
-        GameRegistry.registerBlock(crafterBlock2, CrafterItemBlock.class, "crafterBlock2");
+        GameRegistry.registerBlock(crafterBlock2, GenericItemBlock.class, "crafterBlock2");
         crafterBlock3 = new CrafterBlock("crafterBlock3", "machineCrafter3", CrafterBlockTileEntity3.class);
-        GameRegistry.registerBlock(crafterBlock3, CrafterItemBlock.class, "crafterBlock3");
+        GameRegistry.registerBlock(crafterBlock3, GenericItemBlock.class, "crafterBlock3");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");

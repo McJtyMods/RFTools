@@ -5,6 +5,8 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.apideps.WrenchChecker;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -20,10 +22,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.List;
 
 public abstract class GenericBlock extends Block implements ITileEntityProvider {
 
@@ -45,6 +50,22 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     public void setHorizRotation(boolean horizRotation) {
         this.horizRotation = horizRotation;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            if (tagCompound.hasKey("Energy")) {
+                int energy = tagCompound.getInteger("Energy");
+                list.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
+            }
+            if (this instanceof Infusable) {
+                int infused = tagCompound.getInteger("infused");
+                int pct = infused * 100 / DimletConfiguration.maxInfuse;
+                list.add(EnumChatFormatting.GREEN + "Infused: " + pct + "%");
+            }
+        }
     }
 
     @Override
