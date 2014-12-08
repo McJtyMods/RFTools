@@ -13,7 +13,6 @@ import com.mcjty.rftools.dimension.DimensionTickEvent;
 import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.dimlets.DimletItems;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
@@ -62,7 +61,6 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "The base amount of RF needed to create a dimension per type of dimlet in it");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "The base amount of RF needed to maintain a dimension per type of dimlet in it");
             KnownDimletConfiguration.initGeneralConfig(cfg);
-            KnownDimletConfiguration.initKnownDimlets(cfg);
             KnownDimletConfiguration.initTypeRarity(cfg);
             KnownDimletConfiguration.initTypeRfCreateCost(cfg);
             KnownDimletConfiguration.initTypeRfMaintainCost(cfg);
@@ -114,8 +112,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
-        DimletItems.init();
-        KnownDimletConfiguration.registerDimlets(dimletConfig);
+        KnownDimletConfiguration.init(dimletConfig);
 
         if (mainConfig.hasChanged()) {
             mainConfig.save();

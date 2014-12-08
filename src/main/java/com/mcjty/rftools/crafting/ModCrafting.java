@@ -2,7 +2,6 @@ package com.mcjty.rftools.crafting;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.dimlets.DimletItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

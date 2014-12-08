@@ -195,7 +195,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             if (stack != null && stack.stackSize > 0) {
                 int dimletId = stack.getItemDamage();
                 DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(dimletId);
-                dimletsByType.get(entry.getType()).add(dimletId);
+                dimletsByType.get(entry.getKey().getType()).add(dimletId);
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }

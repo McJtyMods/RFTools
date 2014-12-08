@@ -28,7 +28,7 @@ public class GuiRFToolsManual extends GuiScreen {
     private Button prevButton;
     private Button nextButton;
 
-    private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "docs/manual.txt");
+    private static final ResourceLocation manualText = new ResourceLocation(RFTools.MODID, "text/manual.txt");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual() {

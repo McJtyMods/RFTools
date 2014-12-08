@@ -4,26 +4,21 @@ package com.mcjty.rftools.items.dimlets;
 * Created by jorrit on 20/11/14.
 */
 public class DimletEntry {
-    private final DimletType type;
-    private final String name;
+    private final DimletKey key;
     private final int rfCreateCost;     // Overrides the type default. If -1 then use default.
     private final int rfMaintainCost;   // Overrides the type default. If -1 then use default.
     private final int tickCost;         // Overrides the type default. If -1 then use default.
 
-    public DimletEntry(DimletType type, String name, int rfCreateCost, int rfMaintainCost, int tickCost) {
-        this.type = type;
-        this.name = name;
+    public DimletEntry(DimletKey key, int rfCreateCost, int rfMaintainCost, int tickCost) {
+        this.key = key;
         this.rfCreateCost = rfCreateCost;
         this.rfMaintainCost = rfMaintainCost;
         this.tickCost = tickCost;
     }
 
-    public DimletType getType() {
-        return type;
-    }
 
-    public String getName() {
-        return name;
+    public DimletKey getKey() {
+        return key;
     }
 
     public int getRfCreateCost() {
@@ -45,16 +40,20 @@ public class DimletEntry {
 
         DimletEntry that = (DimletEntry) o;
 
-        if (!name.equals(that.name)) return false;
-        if (type != that.type) return false;
+        if (rfCreateCost != that.rfCreateCost) return false;
+        if (rfMaintainCost != that.rfMaintainCost) return false;
+        if (tickCost != that.tickCost) return false;
+        if (!key.equals(that.key)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = type.hashCode();
-        result = 31 * result + name.hashCode();
+        int result = key.hashCode();
+        result = 31 * result + rfCreateCost;
+        result = 31 * result + rfMaintainCost;
+        result = 31 * result + tickCost;
         return result;
     }
 }
