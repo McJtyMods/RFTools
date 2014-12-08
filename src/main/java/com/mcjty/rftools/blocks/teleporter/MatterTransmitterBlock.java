@@ -42,8 +42,6 @@ public class MatterTransmitterBlock extends GenericContainerBlock {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            int energy = tagCompound.getInteger("Energy");
-            list.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
             String name = tagCompound.getString("tpName");
             list.add(EnumChatFormatting.GREEN + "Name: " + name);
             Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
