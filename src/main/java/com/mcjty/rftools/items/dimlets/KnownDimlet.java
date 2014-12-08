@@ -12,17 +12,11 @@ import java.util.*;
 
 public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
-    private static Random random = new Random();
 
     public KnownDimlet() {
         setMaxStackSize(16);
         setHasSubtypes(true);
         setMaxDamage(0);
-    }
-
-    public static int getRandomDimlet() {
-        int idx = random.nextInt(KnownDimletConfiguration.dimletIds.size());
-        return KnownDimletConfiguration.dimletIds.get(idx);
     }
 
     @Override

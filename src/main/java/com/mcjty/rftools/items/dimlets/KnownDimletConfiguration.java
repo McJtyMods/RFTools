@@ -49,6 +49,7 @@ public class KnownDimletConfiguration {
     // Map the id of a dimlet to a display name.
     public static final Map<Integer,String> idToDisplayName = new HashMap<Integer, String>();
 
+    // Used for randomly generating dimlets.
     public static final List<Integer> dimletIds = new ArrayList<Integer>();
 
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
@@ -66,6 +67,7 @@ public class KnownDimletConfiguration {
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfMaintain = new HashMap<DimletKey, Integer>();
     private static final Map<DimletKey,Integer> dimletBuiltinTickCost = new HashMap<DimletKey, Integer>();
+    private static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
 
     public static int baseDimensionCreationCost = 1000;
     public static int baseDimensionMaintenanceCost = 10;
@@ -84,16 +86,16 @@ public class KnownDimletConfiguration {
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, 3);
-        initRarity(cfg, DimletType.DIMLET_TIME, 1);
-        initRarity(cfg, DimletType.DIMLET_FOLIAGE, 2);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, 1);
-        initRarity(cfg, DimletType.DIMLET_MATERIAL, 2);
-        initRarity(cfg, DimletType.DIMLET_MOBS, 1);
-        initRarity(cfg, DimletType.DIMLET_SKY, 1);
-        initRarity(cfg, DimletType.DIMLET_STRUCTURE, 1);
-        initRarity(cfg, DimletType.DIMLET_TERRAIN, 1);
-        initRarity(cfg, DimletType.DIMLET_FEATURE, 1);
+        initRarity(cfg, DimletType.DIMLET_BIOME, 5);
+        initRarity(cfg, DimletType.DIMLET_TIME, 0);
+        initRarity(cfg, DimletType.DIMLET_FOLIAGE, 0);
+        initRarity(cfg, DimletType.DIMLET_LIQUID, 5);
+        initRarity(cfg, DimletType.DIMLET_MATERIAL, 0);
+        initRarity(cfg, DimletType.DIMLET_MOBS, 0);
+        initRarity(cfg, DimletType.DIMLET_SKY, 0);
+        initRarity(cfg, DimletType.DIMLET_STRUCTURE, 10);
+        initRarity(cfg, DimletType.DIMLET_TERRAIN, 0);
+        initRarity(cfg, DimletType.DIMLET_FEATURE, 0);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -180,8 +182,9 @@ public class KnownDimletConfiguration {
         int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, dimletBuiltinRfCreate, typeRfCreateCost);
         int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, dimletBuiltinRfMaintain, typeRfMaintainCost);
         int tickCost = checkCostConfig(cfg, "ticks.", key, dimletBuiltinTickCost, typeTickCost);
+        int rarity = checkCostConfig(cfg, "rarity.", key, dimletBuiltinRarity, typeRarity);
 
-        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost);
+        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity);
         registerDimletEntry(id, entry);
 
         return id;
@@ -259,7 +262,7 @@ public class KnownDimletConfiguration {
 
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper } );
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper } );
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper } );
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper});
 
         setupChestLoot();
     }
@@ -314,6 +317,7 @@ public class KnownDimletConfiguration {
             Integer rfcreate = array.get(2).getAsInt();
             Integer rfmaintain = array.get(3).getAsInt();
             Integer tickCost = array.get(4).getAsInt();
+            Integer rarity = array.get(5).getAsInt();
             DimletType type = DimletType.getTypeByName(typeName);
             if (type == null) {
                 RFTools.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
@@ -323,6 +327,7 @@ public class KnownDimletConfiguration {
             dimletBuiltinRfCreate.put(key, rfcreate);
             dimletBuiltinRfMaintain.put(key, rfmaintain);
             dimletBuiltinTickCost.put(key, tickCost);
+            dimletBuiltinRarity.put(key, rarity);
         }
     }
 
@@ -405,4 +410,38 @@ public class KnownDimletConfiguration {
         return id;
     }
 
+    private static Random random = new Random();
+
+    public static int getRandomDimlet() {
+        int luck = random.nextInt(100);
+
+        while (true) {
+            int idx = random.nextInt(dimletIds.size());
+            Integer id = dimletIds.get(idx);
+            DimletEntry entry = idToDimlet.get(id);
+            if (entry.getRarity() <= luck) {
+                return id;
+            }
+        }
+    }
+
+    public static void dumpRarityDistribution() {
+        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
+
+        for (Integer id : dimletIds) {
+            counter.put(id, 0);
+        }
+
+        final int total = 10000000;
+        for (int i = 0 ; i < total ; i++) {
+            int id = getRandomDimlet();
+            counter.put(id, counter.get(id)+1);
+        }
+
+        for (Integer id : dimletIds) {
+            int count = counter.get(id);
+            float percentage = count * 100.0f / total;
+            RFTools.log("Id:"+id + ", name:"+idToDisplayName.get(id)+", count:"+ count + ", "+percentage+"%");
+        }
+    }
 }

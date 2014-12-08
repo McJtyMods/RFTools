@@ -2,11 +2,11 @@
     "blacklist": [
     ],
     "dimlets": [
-        [ "Material", "tile.blockDiamond", 2000, 2000, 1000 ],
-        [ "Material", "tile.blockGold", 1000, 1000, 500 ],
-        [ "Material", "tile.oreDiamond", 1700, 1700, 800 ],
-        [ "Material", "tile.oreGold", 800, 800, 400 ],
-        [ "Liquid", "pyrotheum", 2000, 2000, 1000 ],
-        [ "Liquid", "redstone", 2000, 2000, 1000 ]
+        [ "Material", "tile.blockDiamond", 2000, 2000, 1000, 90 ],
+        [ "Material", "tile.blockGold", 1000, 1000, 500, 80 ],
+        [ "Material", "tile.oreDiamond", 1700, 1700, 800, 80 ],
+        [ "Material", "tile.oreGold", 800, 800, 400, 70 ],
+        [ "Liquid", "pyrotheum", 2000, 2000, 1000, 90 ],
+        [ "Liquid", "redstone", 2000, 2000, 1000, 90 ]
     ]
 }
