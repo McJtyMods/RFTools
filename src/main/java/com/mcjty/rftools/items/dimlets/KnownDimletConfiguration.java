@@ -365,9 +365,11 @@ public class KnownDimletConfiguration {
     private static void initLiquidItems(Configuration cfg) {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
-            int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
-            String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
-            idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
+            if (me.getValue().canBePlacedInWorld()) {
+                int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
+                String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
+                idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
+            }
         }
     }
 
