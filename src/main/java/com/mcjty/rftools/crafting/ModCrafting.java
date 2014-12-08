@@ -67,6 +67,6 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), new Object[] { "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone });
         GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), new Object[] { " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator});
 
-        // Recipes for known dimlets are added in DimletItems.
+        // Recipes for known dimlets are added in KnownDimletConfiguration.
     }
 }

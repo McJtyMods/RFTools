@@ -243,7 +243,7 @@ public class KnownDimletConfiguration {
         initStructureItem(cfg, "Scattered", StructureType.STRUCTURE_SCATTERED);
 
         int idTerrainVoid = initTerrainItem(cfg, "Void", TerrainType.TERRAIN_VOID);
-        initTerrainItem(cfg, "Flat", TerrainType.TERRAIN_FLAT);
+        int idTerrainFlat = initTerrainItem(cfg, "Flat", TerrainType.TERRAIN_FLAT);
         initTerrainItem(cfg, "Amplified", TerrainType.TERRAIN_AMPLIFIED);
         initTerrainItem(cfg, "Normal", TerrainType.TERRAIN_NORMAL);
         initTerrainItem(cfg, "Cave World", TerrainType.TERRAIN_CAVES);
@@ -263,12 +263,16 @@ public class KnownDimletConfiguration {
         ModItems.knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
         GameRegistry.registerItem(ModItems.knownDimlet, "knownDimlet");
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), new Object[] { "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper });
+
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper } );
         craftableDimlets.add(idFeatureNone);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper});
         craftableDimlets.add(idStructureNone);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper});
         craftableDimlets.add(idTerrainVoid);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate});
+        craftableDimlets.add(idTerrainFlat);
 
         setupChestLoot();
     }

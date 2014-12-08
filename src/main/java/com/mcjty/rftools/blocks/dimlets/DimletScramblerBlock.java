@@ -17,7 +17,7 @@ public class DimletScramblerBlock extends GenericContainerBlock {
 
     public DimletScramblerBlock() {
         super(Material.iron, DimletScramblerTileEntity.class);
-        setBlockName("DimletScramblerBlock");
+        setBlockName("dimletScramblerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }
 

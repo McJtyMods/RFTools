@@ -15,6 +15,7 @@ public final class ModItems {
     public static RFToolsManualItem rfToolsManualItem;
     public static DevelopersDelightItem developersDelightItem;
     public static UnknownDimlet unknownDimlet;
+    public static DimletTemplate dimletTemplate;
     public static KnownDimlet knownDimlet;
     public static EmptyDimensionTab emptyDimensionTab;
     public static RealizedDimensionTab realizedDimensionTab;
@@ -51,6 +52,12 @@ public final class ModItems {
         unknownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
         unknownDimlet.setTextureName(RFTools.MODID + ":unknownDimletItem");
         GameRegistry.registerItem(unknownDimlet, "unknownDimlet");
+
+        dimletTemplate = new DimletTemplate();
+        dimletTemplate.setUnlocalizedName("DimletTemplate");
+        dimletTemplate.setCreativeTab(RFTools.tabRfToolsDimlets);
+        dimletTemplate.setTextureName(RFTools.MODID + ":dimletTemplateItem");
+        GameRegistry.registerItem(dimletTemplate, "dimletTemplate");
 
         emptyDimensionTab = new EmptyDimensionTab();
         emptyDimensionTab.setUnlocalizedName("EmptyDimensionTab");
