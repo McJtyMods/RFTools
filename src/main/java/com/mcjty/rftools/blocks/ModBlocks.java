@@ -5,19 +5,15 @@ import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
-import com.mcjty.rftools.blocks.infuser.MachineInfuserItemBlock;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
 import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
-import com.mcjty.rftools.blocks.monitor.RFMonitorItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
-import com.mcjty.rftools.blocks.relay.RelayItemBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
 import com.mcjty.rftools.blocks.shards.DimensionalShardBlock;
 import com.mcjty.rftools.blocks.shield.*;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
-import com.mcjty.rftools.blocks.storagemonitor.StorageScannerItemBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -72,21 +68,21 @@ public final class ModBlocks {
 
     public static void init() {
         monitorBlock = new RFMonitorBlock();
-        GameRegistry.registerBlock(monitorBlock, RFMonitorItemBlock.class, "rfMonitorBlock");
+        GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
         GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
 
         initCrafterBlocks();
 
         relayBlock = new RelayBlock();
-        GameRegistry.registerBlock(relayBlock, RelayItemBlock.class, "relayBlock");
+        GameRegistry.registerBlock(relayBlock, GenericItemBlock.class, "relayBlock");
         GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
 
         storageScannerBlock = new StorageScannerBlock();
-        GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
+        GameRegistry.registerBlock(storageScannerBlock, GenericItemBlock.class, "storageScannerBlock");
         GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
 
         machineInfuserBlock = new MachineInfuserBlock();
-        GameRegistry.registerBlock(machineInfuserBlock, MachineInfuserItemBlock.class, "machineInfuserBlock");
+        GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
 
         initDimletBlocks();
@@ -107,19 +103,19 @@ public final class ModBlocks {
 
     private static void initDimletBlocks() {
         dimletResearcherBlock = new DimletResearcherBlock();
-        GameRegistry.registerBlock(dimletResearcherBlock, DimletResearcherItemBlock.class, "dimletResearcherBlock");
+        GameRegistry.registerBlock(dimletResearcherBlock, GenericItemBlock.class, "dimletResearcherBlock");
         GameRegistry.registerTileEntity(DimletResearcherTileEntity.class, "DimletResearcherTileEntity");
 
         dimletScramblerBlock = new DimletScramblerBlock();
-        GameRegistry.registerBlock(dimletScramblerBlock, DimletScramblerItemBlock.class, "dimletScramblerBlock");
+        GameRegistry.registerBlock(dimletScramblerBlock, GenericItemBlock.class, "dimletScramblerBlock");
         GameRegistry.registerTileEntity(DimletScramblerTileEntity.class, "DimletScramblerTileEntity");
 
         dimensionEnscriberBlock = new DimensionEnscriberBlock();
-        GameRegistry.registerBlock(dimensionEnscriberBlock, DimensionEnscriberItemBlock.class, "dimensionEnscriberBlock");
+        GameRegistry.registerBlock(dimensionEnscriberBlock, GenericItemBlock.class, "dimensionEnscriberBlock");
         GameRegistry.registerTileEntity(DimensionEnscriberTileEntity.class, "DimensionEnscriberTileEntity");
 
         dimensionBuilderBlock = new DimensionBuilderBlock();
-        GameRegistry.registerBlock(dimensionBuilderBlock, DimensionBuilderItemBlock.class, "dimensionBuilderBlock");
+        GameRegistry.registerBlock(dimensionBuilderBlock, GenericItemBlock.class, "dimensionBuilderBlock");
         GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
 
         dimensionalShardBlock = new DimensionalShardBlock();
@@ -140,7 +136,7 @@ public final class ModBlocks {
 
     private static void initShieldBlocks() {
         shieldBlock = new ShieldBlock();
-        GameRegistry.registerBlock(shieldBlock, ShieldItemBlock.class, "shieldBlock");
+        GameRegistry.registerBlock(shieldBlock, GenericItemBlock.class, "shieldBlock");
         GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
 
         invisibleShieldBlock = new InvisibleShieldBlock();
@@ -172,39 +168,39 @@ public final class ModBlocks {
 
     private static void initLogicBlocks() {
         enderMonitorBlock = new EnderMonitorBlock();
-        GameRegistry.registerBlock(enderMonitorBlock, EnderMonitorItemBlock.class, "enderMonitorBlock");
+        GameRegistry.registerBlock(enderMonitorBlock, GenericItemBlock.class, "enderMonitorBlock");
         GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
 
         sequencerBlock = new SequencerBlock();
-        GameRegistry.registerBlock(sequencerBlock, SequencerItemBlock.class, "sequencerBlock");
+        GameRegistry.registerBlock(sequencerBlock, GenericItemBlock.class, "sequencerBlock");
         GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
 
         timerBlock = new TimerBlock();
-        GameRegistry.registerBlock(timerBlock, TimerItemBlock.class, "timerBlock");
+        GameRegistry.registerBlock(timerBlock, GenericItemBlock.class, "timerBlock");
         GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
     }
 
     private static void initEndergenicBlocks() {
         endergenicBlock = new EndergenicBlock();
-        GameRegistry.registerBlock(endergenicBlock, EndergenicItemBlock.class, "endergenicBlock");
+        GameRegistry.registerBlock(endergenicBlock, GenericItemBlock.class, "endergenicBlock");
         GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
 
         pearlInjectorBlock = new PearlInjectorBlock();
-        GameRegistry.registerBlock(pearlInjectorBlock, PearlInjectorItemBlock.class, "pearlInjectorBlock");
+        GameRegistry.registerBlock(pearlInjectorBlock, GenericItemBlock.class, "pearlInjectorBlock");
         GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
     }
 
     private static void initTeleporterBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock();
-        GameRegistry.registerBlock(matterTransmitterBlock, MatterTransmitterItemBlock.class, "matterTransmitterBlock");
+        GameRegistry.registerBlock(matterTransmitterBlock, GenericItemBlock.class, "matterTransmitterBlock");
         GameRegistry.registerTileEntity(MatterTransmitterTileEntity.class, "MatterTransmitterTileEntity");
 
         matterReceiverBlock = new MatterReceiverBlock();
-        GameRegistry.registerBlock(matterReceiverBlock, MatterReceiverItemBlock.class, "matterReceiverBlock");
+        GameRegistry.registerBlock(matterReceiverBlock, GenericItemBlock.class, "matterReceiverBlock");
         GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
 
         dialingDeviceBlock = new DialingDeviceBlock();
-        GameRegistry.registerBlock(dialingDeviceBlock, DialingDeviceItemBlock.class, "dialingDeviceBlock");
+        GameRegistry.registerBlock(dialingDeviceBlock, GenericItemBlock.class, "dialingDeviceBlock");
         GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
 
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();

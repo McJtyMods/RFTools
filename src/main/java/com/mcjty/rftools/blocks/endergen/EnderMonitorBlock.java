@@ -13,9 +13,13 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.List;
 
 public class EnderMonitorBlock extends LogicSlabBlock {
 
@@ -34,6 +38,18 @@ public class EnderMonitorBlock extends LogicSlabBlock {
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) tileEntity;
         return new GuiEnderMonitor(enderMonitorTileEntity, new EmptyContainer(entityPlayer));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            int mode = tagCompound.getInteger("mode");
+            String smode = EnderMonitorMode.values()[mode].getDescription();
+            list.add(EnumChatFormatting.GREEN + "Mode: " + smode);
+        }
     }
 
     @Override

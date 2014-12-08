@@ -13,11 +13,15 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.List;
 
 public class MatterReceiverBlock extends GenericContainerBlock {
 
@@ -28,6 +32,19 @@ public class MatterReceiverBlock extends GenericContainerBlock {
         super(Material.iron, MatterReceiverTileEntity.class);
         setBlockName("matterReceiverBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            int energy = tagCompound.getInteger("Energy");
+            list.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
+            String name = tagCompound.getString("tpName");
+            list.add(EnumChatFormatting.GREEN + "Name: " + name);
+        }
     }
 
     @Override
