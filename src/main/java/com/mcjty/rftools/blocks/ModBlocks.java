@@ -3,6 +3,9 @@ package com.mcjty.rftools.blocks;
 import com.mcjty.rftools.blocks.crafter.*;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
+import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
+import com.mcjty.rftools.blocks.infuser.MachineInfuserItemBlock;
+import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
 import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
@@ -58,6 +61,8 @@ public final class ModBlocks {
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
+    public static MachineInfuserBlock machineInfuserBlock;
+
     public static DimletResearcherBlock dimletResearcherBlock;
     public static DimletScramblerBlock dimletScramblerBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
@@ -78,6 +83,10 @@ public final class ModBlocks {
         storageScannerBlock = new StorageScannerBlock();
         GameRegistry.registerBlock(storageScannerBlock, StorageScannerItemBlock.class, "storageScannerBlock");
         GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
+
+        machineInfuserBlock = new MachineInfuserBlock();
+        GameRegistry.registerBlock(machineInfuserBlock, MachineInfuserItemBlock.class, "machineInfuserBlock");
+        GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
 
         initDimletBlocks();
         initTeleporterBlocks();

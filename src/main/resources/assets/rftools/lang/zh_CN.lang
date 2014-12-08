@@ -46,6 +46,7 @@ tile.dimensionEnscriberBlock.name=信息卡刻录器
 tile.dimensionBuilderBlock.name=世界构建器
 tile.dimensionChestBlock.name=次元箱子
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
+tile.machineInfuserBlock.name=Machine Infuser
 
 itemGroup.RfTools=RF工具
 itemGroup.RfToolsDimlets=RF工具|信息卡
