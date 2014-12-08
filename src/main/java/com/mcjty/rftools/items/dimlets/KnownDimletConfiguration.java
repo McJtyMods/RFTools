@@ -52,6 +52,9 @@ public class KnownDimletConfiguration {
     // Used for randomly generating dimlets.
     public static final List<Integer> dimletIds = new ArrayList<Integer>();
 
+    // All craftable dimlets.
+    public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
+
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
     public static final Map<DimletType,Integer> typeRfCreateCost = new HashMap<DimletType, Integer>();
     public static final Map<DimletType,Integer> typeRfMaintainCost = new HashMap<DimletType, Integer>();
@@ -261,8 +264,11 @@ public class KnownDimletConfiguration {
         GameRegistry.registerItem(ModItems.knownDimlet, "knownDimlet");
 
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper } );
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), new Object[] { " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper } );
+        craftableDimlets.add(idFeatureNone);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper});
+        craftableDimlets.add(idStructureNone);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper});
+        craftableDimlets.add(idTerrainVoid);
 
         setupChestLoot();
     }
@@ -414,8 +420,11 @@ public class KnownDimletConfiguration {
 
     private static Random random = new Random();
 
-    public static int getRandomDimlet() {
-        int luck = random.nextInt(100);
+    public static int getRandomDimlet(int bonus) {
+        int luck = random.nextInt(100) + bonus;
+        if (luck >= 100) {
+            luck = 99;
+        }
 
         while (true) {
             int idx = random.nextInt(dimletIds.size());
@@ -436,7 +445,7 @@ public class KnownDimletConfiguration {
 
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = getRandomDimlet();
+            int id = getRandomDimlet(0);
             counter.put(id, counter.get(id)+1);
         }
 

@@ -59,6 +59,7 @@ public final class ModBlocks {
     public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static DimletResearcherBlock dimletResearcherBlock;
+    public static DimletScramblerBlock dimletScramblerBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
     public static DimensionalShardBlock dimensionalShardBlock;
@@ -98,6 +99,10 @@ public final class ModBlocks {
         dimletResearcherBlock = new DimletResearcherBlock();
         GameRegistry.registerBlock(dimletResearcherBlock, DimletResearcherItemBlock.class, "dimletResearcherBlock");
         GameRegistry.registerTileEntity(DimletResearcherTileEntity.class, "DimletResearcherTileEntity");
+
+        dimletScramblerBlock = new DimletScramblerBlock();
+        GameRegistry.registerBlock(dimletScramblerBlock, DimletScramblerItemBlock.class, "dimletScramblerBlock");
+        GameRegistry.registerTileEntity(DimletScramblerTileEntity.class, "DimletScramblerTileEntity");
 
         dimensionEnscriberBlock = new DimensionEnscriberBlock();
         GameRegistry.registerBlock(dimensionEnscriberBlock, DimensionEnscriberItemBlock.class, "dimensionEnscriberBlock");

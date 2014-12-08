@@ -57,6 +57,8 @@ public final class ModCrafting {
         GameRegistry.addSmelting(ModBlocks.dimensionalShardBlock, new ItemStack(ModItems.dimensionalShard, 4), 1.0f);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletResearcherBlock), new Object[]{"rur", "cMc", "iii", 'r', Items.redstone, 'u', ModItems.unknownDimlet, 'c', Items.comparator,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot});
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletScramblerBlock), new Object[]{"uru", "cMc", "iii", 'r', Items.redstone, 'u', ModItems.unknownDimlet, 'c', Items.repeater,
+                'M', ModBlocks.machineFrame, 'i', Items.iron_ingot});
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionEnscriberBlock), new Object[]{"rpr", "bMb", "iii", 'r', Items.redstone, 'p', Items.paper, 'b', inkSac,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot});
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionBuilderBlock), new Object[] {"oEo", "DMD", "ggg", 'o', Items.ender_pearl, 'E',  Items.emerald, 'D', Items.diamond,

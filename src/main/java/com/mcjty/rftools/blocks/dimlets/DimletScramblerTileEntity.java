@@ -17,62 +17,101 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
-public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
-    public static final String CMD_GETRESEARCHING = "getResearching";
-    public static final String CLIENTCMD_GETRESEARCHING = "getResearching";
+    public static final String CMD_GETSCRAMBLING = "getScrambling";
+    public static final String CLIENTCMD_GETSCRAMBLING = "getScrambling";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletResearcherContainer.factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletScramblerContainer.factory, 4);
 
-    private int researching = 0;
+    private int scrambling = 0;
+    private int bonus = 0;
 
-    public int getResearching() {
-        return researching;
+    public int getScrambling() {
+        return scrambling;
     }
 
-    public DimletResearcherTileEntity() {
-        super(DimletConfiguration.RESEARCHER_MAXENERGY, DimletConfiguration.RESEARCHER_RECEIVEPERTICK);
+    public DimletScramblerTileEntity() {
+        super(DimletConfiguration.SCRAMBLER_MAXENERGY, DimletConfiguration.SCRAMBLER_RECEIVEPERTICK);
     }
 
     @Override
     protected void checkStateServer() {
-        if (researching > 0) {
-            researching--;
-            if (researching == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet(0);
-                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 1, 2);
+        if (scrambling > 0) {
+            scrambling--;
+            if (scrambling == 0) {
+                int id = KnownDimletConfiguration.getRandomDimlet(bonus);
+                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4);
             }
             markDirty();
         } else {
-            ItemStack inputStack = inventoryHelper.getStacks()[0];
-            ItemStack outputStack = inventoryHelper.getStacks()[1];
-            if (inputStack != null && inputStack.getItem() == ModItems.unknownDimlet && outputStack == null) {
-                startResearching();
+            ItemStack input1 = inventoryHelper.getStacks()[0];
+            ItemStack input2 = inventoryHelper.getStacks()[1];
+            ItemStack input3 = inventoryHelper.getStacks()[2];
+            ItemStack outputStack = inventoryHelper.getStacks()[3];
+            if (isValidInput(input1, input2, input3) && outputStack == null) {
+                startScrambling();
             }
         }
     }
 
-    private void startResearching() {
+    private boolean isValidInput(ItemStack input1, ItemStack input2, ItemStack input3) {
+        if (input1 == null || input2 == null || input3 == null) {
+            return false;
+        }
+        if (input1.getItem() != ModItems.knownDimlet || input2.getItem() != ModItems.knownDimlet || input3.getItem() != ModItems.knownDimlet) {
+            return false;
+        }
+        int id1 = input1.getItemDamage();
+        int id2 = input2.getItemDamage();
+        int id3 = input3.getItemDamage();
+        int cntCraftable = (KnownDimletConfiguration.craftableDimlets.contains(id1) ? 1 : 0) +
+                (KnownDimletConfiguration.craftableDimlets.contains(id2) ? 1 : 0) +
+                (KnownDimletConfiguration.craftableDimlets.contains(id3) ? 1 : 0);
+        return cntCraftable <= 1;       // Only allow at most one craftable dimlet.
+    }
+
+    private void startScrambling() {
         int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf < DimletConfiguration.rfResearchOperation) {
+        if (rf < DimletConfiguration.rfScrambleOperation) {
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfResearchOperation, false);
+        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfScrambleOperation, false);
 
-        inventoryHelper.getStacks()[0].splitStack(1);
-        if (inventoryHelper.getStacks()[0].stackSize == 0) {
-            inventoryHelper.getStacks()[0] = null;
+        ItemStack[] input = inventoryHelper.getStacks();
+
+        int id1 = input[0].getItemDamage();
+        int id2 = input[1].getItemDamage();
+        int id3 = input[2].getItemDamage();
+
+        input[0].splitStack(1);
+        if (input[0].stackSize == 0) {
+            input[0] = null;
         }
-        researching = 16;
+        input[1].splitStack(1);
+        if (input[1].stackSize == 0) {
+            input[1] = null;
+        }
+        input[2].splitStack(1);
+        if (input[2].stackSize == 0) {
+            input[2] = null;
+        }
+
+        int rarity1 = KnownDimletConfiguration.idToDimlet.get(id1).getRarity();
+        int rarity2 = KnownDimletConfiguration.idToDimlet.get(id2).getRarity();
+        int rarity3 = KnownDimletConfiguration.idToDimlet.get(id3).getRarity();
+        bonus = (rarity1 + rarity2 + rarity3) / 3;
+
+        scrambling = 64;
         markDirty();
     }
 
-    // Request the researching amount from the server. This has to be called on the client side.
-    public void requestResearchingFromServer() {
+    // Request the scrambling amount from the server. This has to be called on the client side.
+    public void requestScramblingFromServer() {
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
-                CMD_GETRESEARCHING,
-                CLIENTCMD_GETRESEARCHING));
+                CMD_GETSCRAMBLING,
+                CLIENTCMD_GETSCRAMBLING));
     }
 
     @Override
@@ -81,8 +120,8 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
         if (rc != null) {
             return rc;
         }
-        if (CMD_GETRESEARCHING.equals(command)) {
-            return researching;
+        if (CMD_GETSCRAMBLING.equals(command)) {
+            return scrambling;
         }
         return null;
     }
@@ -93,8 +132,8 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_GETRESEARCHING.equals(command)) {
-            researching = result;
+        if (CLIENTCMD_GETSCRAMBLING.equals(command)) {
+            scrambling = result;
             return true;
         }
         return false;
@@ -103,17 +142,17 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return DimletResearcherContainer.factory.getAccessibleSlots();
+        return DimletScramblerContainer.factory.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainer.factory.isInputSlot(index);
+        return DimletScramblerContainer.factory.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainer.factory.isOutputSlot(index);
+        return DimletScramblerContainer.factory.isOutputSlot(index);
     }
 
     @Override
@@ -143,7 +182,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public String getInventoryName() {
-        return "Researcher Inventory";
+        return "Scrambler Inventory";
     }
 
     @Override
@@ -153,7 +192,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int getInventoryStackLimit() {
-        return 16;
+        return 1;
     }
 
     @Override
@@ -185,7 +224,8 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        researching = tagCompound.getInteger("researching");
+        scrambling = tagCompound.getInteger("scrambling");
+        bonus = tagCompound.getInteger("bonus");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -205,7 +245,8 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setInteger("researching", researching);
+        tagCompound.setInteger("scrambling", scrambling);
+        tagCompound.setInteger("bonus", bonus);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {

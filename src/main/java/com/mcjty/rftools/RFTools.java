@@ -78,6 +78,7 @@ public class RFTools {
     public static final int GUI_DIMLET_RESEARCHER = modGuiIndex++;
     public static final int GUI_DIMENSION_ENSCRIBER = modGuiIndex++;
     public static final int GUI_DIMENSION_BUILDER = modGuiIndex++;
+    public static final int GUI_DIMLET_SCRAMBLER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);
