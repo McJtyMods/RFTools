@@ -68,6 +68,10 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
             return null;
         }
 
+        if (stack.stackSize != 1) {
+            return null;
+        }
+
         Item item = stack.getItem();
         if (!(item instanceof ItemBlock)) {
             return null;
