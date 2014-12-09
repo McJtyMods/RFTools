@@ -23,7 +23,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,12 +37,12 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class KnownDimletConfiguration {
-    public static final String CATEGORY_KNOWNDIMLETS = "KnownDimlets";
-    public static final String CATEGORY_TYPERARIRTY = "TypeRarity";
-    public static final String CATEGORY_TYPERFCREATECOST = "TypeRfCreateCost";
-    public static final String CATEGORY_TYPERFMAINTAINCOST = "TypeRfMaintainCost";
-    public static final String CATEGORY_TYPETICKCOST = "TypeTickCost";
-    public static final String CATEGORY_GENERAL = "General";
+    public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";
+    public static final String CATEGORY_TYPERARIRTY = "typerarity";
+    public static final String CATEGORY_TYPERFCREATECOST = "typerfcreatecost";
+    public static final String CATEGORY_TYPERFMAINTAINCOST = "typerfmaintaincost";
+    public static final String CATEGORY_TYPETICKCOST = "typetickcost";
+    public static final String CATEGORY_GENERAL = "general";
 
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
@@ -165,16 +167,21 @@ public class KnownDimletConfiguration {
         dimletIds.add(id);
     }
 
-    private static int registerDimlet(Configuration cfg, DimletKey key) {
+    private static int registerDimlet(Configuration cfg, Map<DimletKey,Integer> idsInConfig, DimletKey key) {
         String k = "dimlet." + key.getType().getName() + "." + key.getName();
         int id = -1;
         if (dimletBlackList.contains(key)) {
             // Blacklisted! But it is possibly overridden by the user in the config.
             id = cfg.get(CATEGORY_KNOWNDIMLETS, k, -1).getInt();
         } else {
-            id = cfg.get(CATEGORY_KNOWNDIMLETS, k, lastId + 1).getInt();
-            if (id > lastId) {
-                lastId = id;
+            if (idsInConfig.containsKey(key)) {
+                // This dimlet was already registered before. We use the id that was defined in the config.
+                id = idsInConfig.get(key);
+            } else {
+                id = cfg.get(CATEGORY_KNOWNDIMLETS, k, lastId + 1).getInt();
+                if (id > lastId) {
+                    lastId = id;
+                }
             }
         }
 
@@ -217,46 +224,48 @@ public class KnownDimletConfiguration {
     public static void init(Configuration cfg) {
         readBuiltinConfig();
 
-        initBiomeItems(cfg);
+        Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
 
-        initMaterialItem(cfg, Blocks.diamond_block);
-        initMaterialItem(cfg, Blocks.diamond_ore);
-        initMaterialItem(cfg, Blocks.gold_block);
-        initMaterialItem(cfg, Blocks.gold_ore);
+        initBiomeItems(cfg, idsInConfig);
 
-        initFoliageItem(cfg);
+        initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.gold_ore);
 
-        initLiquidItems(cfg);
+        initFoliageItem(cfg, idsInConfig);
 
-        initMobItem(cfg, EntityZombie.class, "Zombie");
-        initMobItem(cfg, EntitySkeleton.class, "Skeleton");
+        initLiquidItems(cfg, idsInConfig);
 
-        initSkyItem(cfg, "Clear");
-        initSkyItem(cfg, "Bright");
+        initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie");
+        initMobItem(cfg, idsInConfig, EntitySkeleton.class, "Skeleton");
 
-        int idStructureNone = initStructureItem(cfg, "None", StructureType.STRUCTURE_NONE);
-        initStructureItem(cfg, "Village", StructureType.STRUCTURE_VILLAGE);
-        initStructureItem(cfg, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
-        initStructureItem(cfg, "Dungeon", StructureType.STRUCTURE_DUNGEON);
-        initStructureItem(cfg, "Fortress", StructureType.STRUCTURE_FORTRESS);
-        initStructureItem(cfg, "Mineshaft", StructureType.STRUCTURE_MINESHAFT);
-        initStructureItem(cfg, "Scattered", StructureType.STRUCTURE_SCATTERED);
+        initSkyItem(cfg, idsInConfig, "Clear");
+        initSkyItem(cfg, idsInConfig, "Bright");
 
-        int idTerrainVoid = initTerrainItem(cfg, "Void", TerrainType.TERRAIN_VOID);
-        int idTerrainFlat = initTerrainItem(cfg, "Flat", TerrainType.TERRAIN_FLAT);
-        initTerrainItem(cfg, "Amplified", TerrainType.TERRAIN_AMPLIFIED);
-        initTerrainItem(cfg, "Normal", TerrainType.TERRAIN_NORMAL);
-        initTerrainItem(cfg, "Cave World", TerrainType.TERRAIN_CAVES);
-        initTerrainItem(cfg, "Island", TerrainType.TERRAIN_ISLAND);
-        initTerrainItem(cfg, "Spheres", TerrainType.TERRAIN_SPHERES);
+        int idStructureNone = initStructureItem(cfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
+        initStructureItem(cfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
+        initStructureItem(cfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
+        initStructureItem(cfg, idsInConfig, "Dungeon", StructureType.STRUCTURE_DUNGEON);
+        initStructureItem(cfg, idsInConfig, "Fortress", StructureType.STRUCTURE_FORTRESS);
+        initStructureItem(cfg, idsInConfig, "Mineshaft", StructureType.STRUCTURE_MINESHAFT);
+        initStructureItem(cfg, idsInConfig, "Scattered", StructureType.STRUCTURE_SCATTERED);
 
-        int idFeatureNone = initFeatureItem(cfg, "None", FeatureType.FEATURE_NONE);
-        initFeatureItem(cfg, "Caves", FeatureType.FEATURE_CAVES);
-        initFeatureItem(cfg, "Ravines", FeatureType.FEATURE_RAVINES);
+        int idTerrainVoid = initTerrainItem(cfg, idsInConfig, "Void", TerrainType.TERRAIN_VOID);
+        int idTerrainFlat = initTerrainItem(cfg, idsInConfig, "Flat", TerrainType.TERRAIN_FLAT);
+        initTerrainItem(cfg, idsInConfig, "Amplified", TerrainType.TERRAIN_AMPLIFIED);
+        initTerrainItem(cfg, idsInConfig, "Normal", TerrainType.TERRAIN_NORMAL);
+        initTerrainItem(cfg, idsInConfig, "Cave World", TerrainType.TERRAIN_CAVES);
+        initTerrainItem(cfg, idsInConfig, "Island", TerrainType.TERRAIN_ISLAND);
+        initTerrainItem(cfg, idsInConfig, "Spheres", TerrainType.TERRAIN_SPHERES);
 
-        initTimeItem(cfg, "Day");
-        initTimeItem(cfg, "Night");
-        initTimeItem(cfg, "Day/Night");
+        int idFeatureNone = initFeatureItem(cfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
+        initFeatureItem(cfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
+        initFeatureItem(cfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
+
+        initTimeItem(cfg, idsInConfig, "Day");
+        initTimeItem(cfg, idsInConfig, "Night");
+        initTimeItem(cfg, idsInConfig, "Day/Night");
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
@@ -277,8 +286,37 @@ public class KnownDimletConfiguration {
         setupChestLoot();
     }
 
-    private static void initMaterialItem(Configuration cfg, Block block) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
+    /**
+     * Get all dimlets which are currently already registered in the config file.
+     * @param cfg
+     * @return
+     */
+    private static Map<DimletKey, Integer> getDimletsFromConfig(Configuration cfg) {
+        Map<DimletKey, Integer> idsInConfig;
+        idsInConfig = new HashMap<DimletKey, Integer>();
+
+        ConfigCategory category = cfg.getCategory(CATEGORY_KNOWNDIMLETS);
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("dimlet.")) {
+                int indexDotAfterType = key.indexOf('.', 7);
+                String typeName = key.substring(7, indexDotAfterType);
+                DimletType type = DimletType.getTypeByName(typeName);
+                String name = key.substring(indexDotAfterType+1);
+                Integer id = entry.getValue().getInt();
+                if (id != -1) {
+                    if (id > lastId) {
+                        lastId = id;
+                    }
+                    idsInConfig.put(new DimletKey(type, name), id);
+                }
+            }
+        }
+        return idsInConfig;
+    }
+
+    private static void initMaterialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Block block) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
         ItemStack stack = new ItemStack(block);
         idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
     }
@@ -355,69 +393,69 @@ public class KnownDimletConfiguration {
         chest.addItem(new WeightedRandomChestContent(ModItems.unknownDimlet, 0, 1, 3, 50));
     }
 
-    private static void initBiomeItems(Configuration cfg) {
+    private static void initBiomeItems(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
         BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
                 String name = biome.biomeName;
-                int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_BIOME, name));
+                int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
                 idToBiome.put(id, name);
                 idToDisplayName.put(id, DimletType.DIMLET_BIOME.getName() + " " + name + " Dimlet");
             }
         }
     }
 
-    private static void initFoliageItem(Configuration cfg) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_FOLIAGE, "Oak"));
+    private static void initFoliageItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_FOLIAGE, "Oak"));
         idToDisplayName.put(id, "Foliage Oak Dimlet");
     }
 
-    private static void initLiquidItems(Configuration cfg) {
+    private static void initLiquidItems(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
             if (me.getValue().canBePlacedInWorld()) {
-                int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
+                int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                 String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
                 idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
             }
         }
     }
 
-    private static int initMobItem(Configuration cfg, Class <? extends EntityLiving> entity, String name) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_MOBS, name));
+    private static int initMobItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
         idToDisplayName.put(id, DimletType.DIMLET_MOBS.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    private static int initSkyItem(Configuration cfg, String name) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_SKY, name));
+    private static int initSkyItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
         idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    private static int initStructureItem(Configuration cfg, String name, StructureType structureType) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
+    private static int initStructureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, StructureType structureType) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
         idToStructureType.put(id, structureType);
         idToDisplayName.put(id, DimletType.DIMLET_STRUCTURE.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    private static int initTerrainItem(Configuration cfg, String name, TerrainType terrainType) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_TERRAIN, name));
+    private static int initTerrainItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, TerrainType terrainType) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TERRAIN, name));
         idToTerrainType.put(id, terrainType);
         idToDisplayName.put(id, DimletType.DIMLET_TERRAIN.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    private static int initFeatureItem(Configuration cfg, String name, FeatureType featureType) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_FEATURE, name));
+    private static int initFeatureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, FeatureType featureType) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_FEATURE, name));
         idToFeatureType.put(id, featureType);
         idToDisplayName.put(id, DimletType.DIMLET_FEATURE.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    private static int initTimeItem(Configuration cfg, String name) {
-        int id = registerDimlet(cfg, new DimletKey(DimletType.DIMLET_TIME, name));
+    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
         idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         return id;
     }

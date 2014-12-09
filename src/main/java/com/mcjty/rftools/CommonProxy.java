@@ -112,6 +112,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
+        dimletConfig.load();
         KnownDimletConfiguration.init(dimletConfig);
 
         if (mainConfig.hasChanged()) {
