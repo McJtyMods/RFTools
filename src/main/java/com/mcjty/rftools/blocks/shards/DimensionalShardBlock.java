@@ -5,10 +5,13 @@ import com.mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.Random;
 
@@ -27,6 +30,15 @@ public class DimensionalShardBlock extends Block {
     @Override
     public int getLightValue() {
         return 6;
+    }
+
+    @Override
+    public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int meta) {
+        if (world.isRemote) {
+            for (int i = 0 ; i < 10 ; i++) {
+                world.spawnParticle("fireworksSpark", x + 0.5f, y + 0.5f, z + 0.5f, rand.nextGaussian()/3.0f, rand.nextGaussian()/3.0f, rand.nextGaussian()/3.0f);
+            }
+        }
     }
 
     @Override
