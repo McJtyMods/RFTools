@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.shield;
 import net.minecraftforge.common.config.Configuration;
 
 public class ShieldConfiguration {
-    public static final String CATEGORY_SHIELD = "Shield";
+    public static final String CATEGORY_SHIELD = "shield";
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 1000;
     // The amount of rf to use as a base per block in the shield.

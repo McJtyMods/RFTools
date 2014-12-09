@@ -3,7 +3,7 @@ package com.mcjty.rftools.items.netmonitor;
 import net.minecraftforge.common.config.Configuration;
 
 public class NetworkMonitorConfiguration {
-    public static final String CATEGORY_NETWORK_MONITOR = "NetworkMonitor";
+    public static final String CATEGORY_NETWORK_MONITOR = "networkmonitor";
     public static int hilightTime = 5;
 
     public static void init(Configuration cfg) {

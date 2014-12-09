@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import net.minecraftforge.common.config.Configuration;
 
 public class DimletConfiguration {
-    public static final String CATEGORY_DIMLETS = "Dimlets";
+    public static final String CATEGORY_DIMLETS = "dimlets";
     public static int RESEARCHER_MAXENERGY = 32000;
     public static int RESEARCHER_RECEIVEPERTICK = 80;
     public static int rfResearchOperation = 100;

@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.storagemonitor;
 import net.minecraftforge.common.config.Configuration;
 
 public class StorageScannerConfiguration {
-    public static final String CATEGORY_STORAGE_MONITOR = "StorageMonitor";
+    public static final String CATEGORY_STORAGE_MONITOR = "storagemonitor";
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;

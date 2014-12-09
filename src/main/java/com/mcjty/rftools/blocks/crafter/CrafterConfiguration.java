@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.crafter;
 import net.minecraftforge.common.config.Configuration;
 
 public class CrafterConfiguration {
-    public static final String CATEGORY_CRAFTER = "Crafter";
+    public static final String CATEGORY_CRAFTER = "crafter";
     public static int MAXENERGY = 32000;
     public static int RECEIVEPERTICK = 80;
     public static int rfPerOperation = 100;

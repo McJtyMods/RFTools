@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import net.minecraftforge.common.config.Configuration;
 
 public class TeleportConfiguration {
-    public static final String CATEGORY_TELEPORTER = "Teleporter";
+    public static final String CATEGORY_TELEPORTER = "teleporter";
 
     public static int TRANSMITTER_MAXENERGY = 200000;
     public static int TRANSMITTER_RECEIVEPERTICK = 1000;

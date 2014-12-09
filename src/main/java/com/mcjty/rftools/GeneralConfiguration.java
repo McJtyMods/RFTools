@@ -3,7 +3,7 @@ package com.mcjty.rftools;
 import net.minecraftforge.common.config.Configuration;
 
 public class GeneralConfiguration {
-    public static final String CATEGORY_GENERAL = "General";
+    public static final String CATEGORY_GENERAL = "general";
 
     public static boolean doLogging = false;
 

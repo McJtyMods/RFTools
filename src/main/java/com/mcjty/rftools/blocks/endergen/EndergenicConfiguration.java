@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.endergen;
 import net.minecraftforge.common.config.Configuration;
 
 public class EndergenicConfiguration {
-    public static final String CATEGORY_ENDERGENIC = "Endergenic";
+    public static final String CATEGORY_ENDERGENIC = "endergenic";
     // This value indicates the chance (with 0 being no chance and 1000 being 100% chance) that an
     // endergenic pearl is lost while holding it.
     public static int chanceLost = 5;
