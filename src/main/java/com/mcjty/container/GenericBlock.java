@@ -9,6 +9,8 @@ import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -53,6 +55,21 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     }
 
     @SideOnly(Side.CLIENT)
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        Block block = accessor.getBlock();
+        if (block instanceof Infusable) {
+            NBTTagCompound tagCompound = accessor.getNBTData();
+            if (tagCompound != null) {
+                int infused = tagCompound.getInteger("infused");
+                int pct = infused * 100 / DimletConfiguration.maxInfuse;
+                currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
+            }
+        }
+        return currenttip;
+    }
+
+
+    @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -63,7 +80,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
             if (this instanceof Infusable) {
                 int infused = tagCompound.getInteger("infused");
                 int pct = infused * 100 / DimletConfiguration.maxInfuse;
-                list.add(EnumChatFormatting.GREEN + "Infused: " + pct + "%");
+                list.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
         }
     }

@@ -5,9 +5,8 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
@@ -35,11 +34,10 @@ public class WailaCompatibility implements IWailaDataProvider {
 
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null && tagCompound.hasKey("Energy")) {
-//            int energy = tagCompound.getInteger("Energy");
-//            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + energy + " rf");
-//        }
+        Block block = accessor.getBlock();
+        if (block instanceof GenericBlock) {
+            return ((GenericBlock) block).getWailaBody(itemStack, currenttip, accessor, config);
+        }
         return currenttip;
     }
 
