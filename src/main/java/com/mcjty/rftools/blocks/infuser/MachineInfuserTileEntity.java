@@ -18,16 +18,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
-//    public static final String CMD_GETRESEARCHING = "getResearching";
-//    public static final String CLIENTCMD_GETRESEARCHING = "getResearching";
-
     private InventoryHelper inventoryHelper = new InventoryHelper(this, MachineInfuserContainer.factory, 2);
 
     private int infusing = 0;
-
-    public int getInfusing() {
-        return infusing;
-    }
 
     public MachineInfuserTileEntity() {
         super(DimletConfiguration.INFUSER_MAXENERGY, DimletConfiguration.INFUSER_RECEIVEPERTICK);
@@ -99,12 +92,14 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
     }
 
     private void startInfusing() {
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf < DimletConfiguration.rfInfuseOperation) {
+        int rf = DimletConfiguration.rfInfuseOperation;
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfInfuseOperation, false);
+        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         inventoryHelper.getStacks()[0].splitStack(1);
         if (inventoryHelper.getStacks()[0].stackSize == 0) {
@@ -114,39 +109,6 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
         markDirty();
     }
 
-//    // Request the researching amount from the server. This has to be called on the client side.
-//    public void requestResearchingFromServer() {
-//        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
-//                CMD_GETRESEARCHING,
-//                CLIENTCMD_GETRESEARCHING));
-//    }
-//
-//    @Override
-//    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
-//        Integer rc = super.executeWithResultInteger(command, args);
-//        if (rc != null) {
-//            return rc;
-//        }
-//        if (CMD_GETRESEARCHING.equals(command)) {
-//            return researching;
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public boolean execute(String command, Integer result) {
-//        boolean rc = super.execute(command, result);
-//        if (rc) {
-//            return true;
-//        }
-//        if (CLIENTCMD_GETRESEARCHING.equals(command)) {
-//            researching = result;
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         return MachineInfuserContainer.factory.getAccessibleSlots();

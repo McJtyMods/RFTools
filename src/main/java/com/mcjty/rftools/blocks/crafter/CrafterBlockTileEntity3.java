@@ -241,7 +241,11 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
     }
 
     private void craftOneCycle() {
-        if (getEnergyStored(ForgeDirection.DOWN) < CrafterConfiguration.rfPerOperation) {
+        // 0%: rf -> rf
+        // 100%: rf -> rf / 2
+        int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             return;
         }
 
@@ -269,7 +273,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         }
 
         if (energyConsumed) {
-            extractEnergy(ForgeDirection.DOWN, CrafterConfiguration.rfPerOperation, false);
+            extractEnergy(ForgeDirection.DOWN, rf, false);
         }
     }
 

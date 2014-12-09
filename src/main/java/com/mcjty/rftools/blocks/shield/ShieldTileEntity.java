@@ -286,12 +286,18 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
 
+        rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough RF to do damage.
             return;
         }
         extractEnergy(ForgeDirection.DOWN, rf, false);
-        entity.attackEntityFrom(source, ShieldConfiguration.damage);
+
+        float damage = ShieldConfiguration.damage;
+        damage = damage * (1.0f + getInfusedFactor() / 2.0f);
+
+        entity.attackEntityFrom(source, damage);
     }
 
     @Override
@@ -307,6 +313,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         boolean needsUpdate = false;
 
         int rf = calculateRfPerTick();
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
         if (rf > 0) {
             if (getEnergyStored(ForgeDirection.DOWN) < rf) {
                 powerTimeout = 100;     // Wait 5 seconds before trying again.

@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.blocks.endergen.GuiPearlInjector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,7 +15,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class DimletResearcherBlock extends GenericContainerBlock {
+public class DimletResearcherBlock extends GenericContainerBlock implements Infusable {
 
     public DimletResearcherBlock() {
         super(Material.iron, DimletResearcherTileEntity.class);

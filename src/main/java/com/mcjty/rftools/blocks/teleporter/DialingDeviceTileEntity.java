@@ -273,6 +273,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         int cost = TeleportConfiguration.rfPerDial;
+        cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
+
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
@@ -290,6 +292,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     // Server side only
     private int checkStatus(Coordinate c, int dim) {
         int cost = TeleportConfiguration.rfPerCheck;
+        cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
+
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }

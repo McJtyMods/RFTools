@@ -339,18 +339,23 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         } else if (isPlayerOutsideBeam()) {
             // The player moved outside the beam. Interrupt the teleport.
             clearTeleport(80);
-        } else if (getEnergyStored(ForgeDirection.DOWN) < TeleportConfiguration.rfTeleportPerTick) {
-            // We don't have enough energy to handle this tick.
-            handleEnergyShortage();
         } else {
-            // We have enough energy so this is a good tick.
-            markDirty();
-            extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfTeleportPerTick, false);
-            goodTicks++;
+            int rf = TeleportConfiguration.rfTeleportPerTick;
+            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
 
-            teleportTimer--;
-            if (teleportTimer <= 0) {
-                performTeleport();
+            if (getEnergyStored(ForgeDirection.DOWN) < rf) {
+                // We don't have enough energy to handle this tick.
+                handleEnergyShortage();
+            } else {
+                // We have enough energy so this is a good tick.
+                markDirty();
+                extractEnergy(ForgeDirection.DOWN, rf, false);
+                goodTicks++;
+
+                teleportTimer--;
+                if (teleportTimer <= 0) {
+                    performTeleport();
+                }
             }
         }
     }
@@ -534,8 +539,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfPerTeleportReceiver, false);
-        return 10 - (extracted * 10 / TeleportConfiguration.rfPerTeleportReceiver);
+        int rf = TeleportConfiguration.rfPerTeleportReceiver;
+        rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
+
+        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, rf, false);
+        return 10 - (extracted * 10 / rf);
     }
 
     private boolean mustInterrupt() {
@@ -559,6 +567,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (teleportDestination != null) {
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
             int cost = calculateRFCost(worldObj, cthis, teleportDestination);
+            cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
+
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
                 RFTools.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
@@ -569,6 +579,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
             teleportTimer = calculateTime(worldObj, cthis, teleportDestination);
+            teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
+
             totalTicks = teleportTimer;
             goodTicks = 0;
             badTicks = 0;

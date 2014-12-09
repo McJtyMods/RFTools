@@ -30,10 +30,10 @@ public class CmdTeleport extends AbstractRfToolsCommand {
             return;
         }
 
-        int dim = fetchInt(sender, args, 1);
-        int x = fetchInt(sender, args, 2);
-        int y = fetchInt(sender, args, 3);
-        int z = fetchInt(sender, args, 4);
+        int dim = fetchInt(sender, args, 1, 0);
+        int x = fetchInt(sender, args, 2, 0);
+        int y = fetchInt(sender, args, 3, 100);
+        int z = fetchInt(sender, args, 4, 0);
 
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;

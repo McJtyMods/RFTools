@@ -146,13 +146,16 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rf < EndergenicConfiguration.rfToHoldPearl) {
+            int rf = EndergenicConfiguration.rfToHoldPearl;
+            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+
+            int rfStored = getEnergyStored(ForgeDirection.DOWN);
+            if (rfStored < rf) {
                 // Not enough energy. Pearl is lost.
-                log("Server Tick: insufficient energy to hold pearl (" + rf + " vs " + EndergenicConfiguration.rfToHoldPearl + ")");
+                log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
                 discardPearl();
             } else {
-                int rfExtracted = extractEnergy(ForgeDirection.DOWN, EndergenicConfiguration.rfToHoldPearl, false);
+                int rfExtracted = extractEnergy(ForgeDirection.DOWN, rf, false);
                 log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
                 rfLost += rfExtracted;
             }
@@ -343,6 +346,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else {
             // Otherwise we get RF and this block goes into holding mode.
             int rf = rfPerHit[chargingMode];
+            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+
             // Give a bonus for pearls that have been around a bit longer.
             int a = age*5;
             if (a > 100) {

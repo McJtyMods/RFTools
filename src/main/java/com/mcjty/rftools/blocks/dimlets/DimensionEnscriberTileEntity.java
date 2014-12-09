@@ -159,7 +159,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     /**
      * Create a realized dimension tab by taking a map of ids per type and storing
      * that in the NBT of the realized dimension tab.
-     * @param dimletsByType
+     * @param descriptor
      * @return
      */
     private ItemStack createRealizedTab(DimensionDescriptor descriptor) {

@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -19,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
+import java.util.Random;
 
 public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
@@ -77,12 +77,22 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         }
     }
 
+    private static Random random = new Random();
+
     private int createDimensionTick(NBTTagCompound tagCompound, int ticksLeft) {
         int createCost = tagCompound.getInteger("rfCreateCost");
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf >= createCost) {
+        createCost = (int) (createCost * (2.0f - getInfusedFactor()) / 2.0f);
+
+        if (getEnergyStored(ForgeDirection.DOWN) >= createCost) {
             extractEnergy(ForgeDirection.DOWN, createCost, false);
             ticksLeft--;
+            if (random.nextFloat() < getInfusedFactor()) {
+                // Randomly reduce another tick if the device is infused.
+                ticksLeft--;
+                if (ticksLeft < 0) {
+                    ticksLeft = 0;
+                }
+            }
             tagCompound.setInteger("ticksLeft", ticksLeft);
             if (ticksLeft <= 0) {
                 RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);

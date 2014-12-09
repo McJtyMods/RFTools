@@ -25,6 +25,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletScramblerContainer.factory, 4);
 
     private int scrambling = 0;
+    private int tries = 1;
     private int bonus = 0;
 
     public int getScrambling() {
@@ -40,7 +41,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         if (scrambling > 0) {
             scrambling--;
             if (scrambling == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet(bonus);
+                int id = KnownDimletConfiguration.getRandomDimlet(tries, bonus);
                 InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4);
             }
             markDirty();
@@ -72,12 +73,14 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private void startScrambling() {
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf < DimletConfiguration.rfScrambleOperation) {
+        int rf = DimletConfiguration.rfScrambleOperation;
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfScrambleOperation, false);
+        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         ItemStack[] input = inventoryHelper.getStacks();
 
@@ -102,6 +105,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         int rarity2 = KnownDimletConfiguration.idToDimlet.get(id2).getRarity();
         int rarity3 = KnownDimletConfiguration.idToDimlet.get(id3).getRarity();
         bonus = (rarity1 + rarity2 + rarity3) / 3;
+        tries = 1 + (int) (getInfusedFactor() * 3.0);
 
         scrambling = 64;
         markDirty();
@@ -225,6 +229,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         scrambling = tagCompound.getInteger("scrambling");
+        tries = tagCompound.getInteger("tries");
         bonus = tagCompound.getInteger("bonus");
     }
 
@@ -247,6 +252,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         writeBufferToNBT(tagCompound);
         tagCompound.setInteger("scrambling", scrambling);
         tagCompound.setInteger("bonus", bonus);
+        tagCompound.setInteger("tries", tries);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {

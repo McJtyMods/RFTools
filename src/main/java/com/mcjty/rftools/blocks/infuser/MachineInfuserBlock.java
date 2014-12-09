@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.infuser;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -13,7 +14,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class MachineInfuserBlock extends GenericContainerBlock {
+public class MachineInfuserBlock extends GenericContainerBlock implements Infusable {
 
     public MachineInfuserBlock() {
         super(Material.iron, MachineInfuserTileEntity.class);

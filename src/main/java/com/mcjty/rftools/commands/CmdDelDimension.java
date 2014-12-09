@@ -28,7 +28,7 @@ public class CmdDelDimension extends AbstractRfToolsCommand {
             return;
         }
 
-        int dim = fetchInt(sender, args, 1);
+        int dim = fetchInt(sender, args, 1, 0);
         EntityPlayer player = (EntityPlayer) sender;
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);

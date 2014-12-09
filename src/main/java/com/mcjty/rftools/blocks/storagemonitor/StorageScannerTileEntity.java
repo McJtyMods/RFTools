@@ -130,12 +130,19 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
     protected void checkStateServer() {
         super.checkStateServer();
         if (scanning.getValue()) {
-            if (getEnergyStored(ForgeDirection.DOWN) < StorageScannerConfiguration.rfPerOperation) {
+            int rf = StorageScannerConfiguration.rfPerOperation;
+            rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
+            if (getEnergyStored(ForgeDirection.DOWN) < rf) {
                 return;
             }
-            extractEnergy(ForgeDirection.DOWN, StorageScannerConfiguration.rfPerOperation, false);
+            extractEnergy(ForgeDirection.DOWN, rf, false);
 
-            for (int i = 0 ; i < StorageScannerConfiguration.scansPerOperation ; i++) {
+            int scans = StorageScannerConfiguration.scansPerOperation;
+
+            scans = scans * (int) (getInfusedFactor() + 1.01f);
+
+            for (int i = 0 ; i < scans; i++) {
                 Coordinate c = cur.getCoordinate();
                 checkInventoryStatus(c.getX(), c.getY(), c.getZ());
                 if (!advanceCurrent()) {

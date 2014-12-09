@@ -89,16 +89,16 @@ public class KnownDimletConfiguration {
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, 5);
+        initRarity(cfg, DimletType.DIMLET_BIOME, 0);
         initRarity(cfg, DimletType.DIMLET_TIME, 0);
         initRarity(cfg, DimletType.DIMLET_FOLIAGE, 0);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, 5);
-        initRarity(cfg, DimletType.DIMLET_MATERIAL, 0);
-        initRarity(cfg, DimletType.DIMLET_MOBS, 0);
+        initRarity(cfg, DimletType.DIMLET_LIQUID, 0);
+        initRarity(cfg, DimletType.DIMLET_MATERIAL, 1);
+        initRarity(cfg, DimletType.DIMLET_MOBS, 10);
         initRarity(cfg, DimletType.DIMLET_SKY, 0);
         initRarity(cfg, DimletType.DIMLET_STRUCTURE, 10);
-        initRarity(cfg, DimletType.DIMLET_TERRAIN, 0);
-        initRarity(cfg, DimletType.DIMLET_FEATURE, 0);
+        initRarity(cfg, DimletType.DIMLET_TERRAIN, 1);
+        initRarity(cfg, DimletType.DIMLET_FEATURE, 1);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -424,7 +424,10 @@ public class KnownDimletConfiguration {
 
     private static Random random = new Random();
 
-    public static int getRandomDimlet(int bonus) {
+    // The tries parameter is the amount of times to try again if you get a dimlet of rarity 0.
+    // The bonus parameter is added to luck and increases the chance of getting higher rarity
+    // dimlets.
+    public static int getRandomDimlet(int tries, int bonus) {
         int luck = random.nextInt(100) + bonus;
         if (luck >= 100) {
             luck = 99;
@@ -434,13 +437,15 @@ public class KnownDimletConfiguration {
             int idx = random.nextInt(dimletIds.size());
             Integer id = dimletIds.get(idx);
             DimletEntry entry = idToDimlet.get(id);
-            if (entry.getRarity() <= luck) {
+            if (entry.getRarity() == 0 && tries > 1) {
+                tries--;
+            } else if (entry.getRarity() <= luck) {
                 return id;
             }
         }
     }
 
-    public static void dumpRarityDistribution() {
+    public static void dumpRarityDistribution(int tries, int bonus) {
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
 
         for (Integer id : dimletIds) {
@@ -449,10 +454,11 @@ public class KnownDimletConfiguration {
 
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = getRandomDimlet(0);
+            int id = getRandomDimlet(tries, bonus);
             counter.put(id, counter.get(id)+1);
         }
 
+        RFTools.log("#### Dumping with tries=" + tries +" and bonus=" + bonus);
         for (Integer id : dimletIds) {
             int count = counter.get(id);
             float percentage = count * 100.0f / total;

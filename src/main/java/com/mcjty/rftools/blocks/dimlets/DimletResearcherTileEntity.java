@@ -39,7 +39,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
         if (researching > 0) {
             researching--;
             if (researching == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet(0);
+                int id = KnownDimletConfiguration.getRandomDimlet(1, 0);
                 InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 1, 2);
             }
             markDirty();
@@ -53,12 +53,14 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
     }
 
     private void startResearching() {
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        if (rf < DimletConfiguration.rfResearchOperation) {
+        int rf = DimletConfiguration.rfResearchOperation;
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, DimletConfiguration.rfResearchOperation, false);
+        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         inventoryHelper.getStacks()[0].splitStack(1);
         if (inventoryHelper.getStacks()[0].stackSize == 0) {

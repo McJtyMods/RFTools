@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.render.ModRenderers;
 import com.mcjty.varia.Coordinate;
@@ -26,7 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
 
-public class MatterTransmitterBlock extends GenericContainerBlock {
+public class MatterTransmitterBlock extends GenericContainerBlock implements Infusable {
 
     private IIcon iconTop;
 
