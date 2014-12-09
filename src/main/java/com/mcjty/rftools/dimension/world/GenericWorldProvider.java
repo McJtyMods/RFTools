@@ -10,17 +10,20 @@ import net.minecraftforge.common.DimensionManager;
 
 public class GenericWorldProvider extends WorldProvider {
 
+    private long calculateSeed(long seed, int dim) {
+        return dim * 13 + seed;
+    }
+
     @Override
     public void registerWorldChunkManager() {
-        System.out.println("worldObj.isRemote = " + worldObj.isRemote);
-        System.out.println("worldObj = " + worldObj); System.out.flush();
-        System.out.println("worldObj.provider = " + worldObj.provider); System.out.flush();
-        DimensionInformation dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(worldObj.provider.dimensionId);
+        int dim = worldObj.provider.dimensionId;
+        long seed = calculateSeed(worldObj.getSeed(), dim);
+
+        DimensionInformation dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
         if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
-            worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, terrainType);
+            worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
         } else {
-//        worldChunkMgr = new GenericWorldChunkManager(worldObj.getSeed(), terrainType, worldObj);
-            worldChunkMgr = new WorldChunkManager(worldObj);
+            worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
         }
         hasNoSky = false;
     }
@@ -46,6 +49,8 @@ public class GenericWorldProvider extends WorldProvider {
 
     @Override
     public IChunkProvider createChunkGenerator() {
-        return new GenericChunkProvider(worldObj, worldObj.getSeed());
+        int dim = worldObj.provider.dimensionId;
+        long seed = calculateSeed(worldObj.getSeed(), dim);
+        return new GenericChunkProvider(worldObj, seed);
     }
 }

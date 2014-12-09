@@ -16,8 +16,8 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
     private BiomeGenBase biomeGenBase;
     private final DimensionInformation dimensionInformation;
 
-    public SingleBiomeWorldChunkManager(World world, WorldType worldType) {
-        super(world.getSeed(), worldType);
+    public SingleBiomeWorldChunkManager(World world, long seed, WorldType worldType) {
+        super(seed, worldType);
         dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
         biomeGenBase = dimensionInformation.getBiomes().get(0);
     }
