@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
@@ -27,7 +28,6 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-        System.out.println("GENERATE: world.provider.dimensionId = " + world.provider.dimensionId + ", chunkX:"+chunkX + ", chunkZ:"+chunkZ);
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
         if (manager.getDimensionDescriptor(world.provider.dimensionId) == null) {
             return; // Not one of RFTools dimensions
@@ -38,9 +38,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
-        } else if (Math.abs(chunkX) > 2 && Math.abs(chunkZ) > 2) {
+        } else if (Math.abs(chunkX) > 6 && Math.abs(chunkZ) > 6) {
             // Not too close to starting platform we possibly generate dungeons.
-            if (random.nextInt(20) == 0) {
+            if (random.nextInt(DimletConfiguration.dungeonChance) == 0) {
                 int midx = chunkX * 16 + 8;
                 int midz = chunkZ * 16 + 8;
                 int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz-3, 8, 60);
@@ -150,6 +150,18 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 }
             }
         }
+
+        // Clear the space before the door.
+        for (int x = midx-3 ; x <= midx+3 ; x++) {
+            for (int y = starty+1 ; y <= starty + 3 ; y++) {
+                world.setBlockToAir(x, y, midz-4);
+            }
+        }
+
+        // Small platform before the door
+        world.setBlock(midx-1, starty, midz-4, Blocks.double_stone_slab, 0, 2);
+        world.setBlock(midx, starty, midz-4, Blocks.double_stone_slab, 0, 2);
+        world.setBlock(midx+1, starty, midz-4, Blocks.double_stone_slab, 0, 2);
 
         world.setBlock(midx, starty+1, midz-3, Blocks.iron_door, 1, 2);
         world.setBlock(midx, starty+2, midz-3, Blocks.iron_door, 8, 2);

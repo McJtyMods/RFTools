@@ -17,6 +17,7 @@ public class DimletConfiguration {
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
     public static int maxInfuse = 256;
+    public static int dungeonChance = 150;
 
 
     public static void init(Configuration cfg) {
@@ -50,6 +51,9 @@ public class DimletConfiguration {
 
         maxInfuse = cfg.get(CATEGORY_DIMLETS, "maxInfuse", maxInfuse,
                 "The maximum amount of dimensional shards that can be infused in a single machine").getInt();
+
+        dungeonChance = cfg.get(CATEGORY_DIMLETS, "dungeonChance", dungeonChance,
+                "The chance for a dungeon to spawn in a chunk. Higher numbers mean less chance (1 in 'dungeonChance' chance)").getInt();
     }
 
 }

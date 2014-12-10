@@ -94,7 +94,7 @@ public class TeleportDestinations extends WorldSavedData {
 
     /**
      * Check if the teleport destination is still valid.
-     * @param destionation
+     * @param destination
      * @return
      */
     public boolean isDestinationValid(TeleportDestination destination) {
