@@ -101,6 +101,7 @@ public class KnownDimletConfiguration {
         initRarity(cfg, DimletType.DIMLET_STRUCTURE, 10);
         initRarity(cfg, DimletType.DIMLET_TERRAIN, 1);
         initRarity(cfg, DimletType.DIMLET_FEATURE, 1);
+        initRarity(cfg, DimletType.DIMLET_DIGIT, 0);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -119,6 +120,7 @@ public class KnownDimletConfiguration {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_STRUCTURE, 600);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
     }
 
     private static void initTypeRfCreateCost(Configuration cfg, DimletType type, int cost) {
@@ -137,6 +139,7 @@ public class KnownDimletConfiguration {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_STRUCTURE, 100);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
     }
 
     private static void initTypeRfMaintainCost(Configuration cfg, DimletType type, int cost) {
@@ -155,6 +158,7 @@ public class KnownDimletConfiguration {
         initTypeTickCost(cfg, DimletType.DIMLET_STRUCTURE, 900);
         initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
+        initTypeTickCost(cfg, DimletType.DIMLET_DIGIT, 0);
     }
 
     private static void initTypeTickCost(Configuration cfg, DimletType type, int cost) {
@@ -227,6 +231,10 @@ public class KnownDimletConfiguration {
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
 
         initBiomeItems(cfg, idsInConfig);
+
+        for (int i = 0 ; i <= 9 ; i++) {
+            initDigitItem(cfg, idsInConfig, i);
+        }
 
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
@@ -313,6 +321,11 @@ public class KnownDimletConfiguration {
             }
         }
         return idsInConfig;
+    }
+
+    private static void initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, ""+digit));
+        idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
     }
 
     private static void initMaterialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Block block) {
