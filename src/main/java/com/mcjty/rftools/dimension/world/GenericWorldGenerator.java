@@ -27,7 +27,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-        System.out.println("GENERATE: world.provider.dimensionId = " + world.provider.dimensionId);
+        System.out.println("GENERATE: world.provider.dimensionId = " + world.provider.dimensionId + ", chunkX:"+chunkX + ", chunkZ:"+chunkZ);
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
         if (manager.getDimensionDescriptor(world.provider.dimensionId) == null) {
             return; // Not one of RFTools dimensions

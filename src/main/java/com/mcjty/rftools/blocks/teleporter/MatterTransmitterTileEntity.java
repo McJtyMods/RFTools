@@ -486,20 +486,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private boolean isDestinationStillValid() {
-        boolean destinationValid = TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination);
-        if (destinationValid) {
-            return true;
-        }
-
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
-        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
-        if (dimensions.containsKey(teleportDestination.getDimension())) {
-            if (new Coordinate(0, 70, 0).equals(teleportDestination.getCoordinate())) {
-                return true;
-            }
-        }
-
-        return false;
+        return TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination);
     }
 
     private void handleEnergyShortage() {

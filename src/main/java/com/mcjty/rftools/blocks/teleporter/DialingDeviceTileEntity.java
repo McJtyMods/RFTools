@@ -3,23 +3,20 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
-import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
@@ -99,96 +96,13 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
 
     private TeleportDestination findDestination(Coordinate coordinate, int dimension) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination teleportDestination = destinations.getDestination(coordinate, dimension);
-        if (teleportDestination != null) {
-            return teleportDestination;
-        }
-
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
-        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
-        if (dimensions.containsKey(dimension)) {
-            if (new Coordinate(0, 70, 0).equals(coordinate)) {
-                return new TeleportDestination(coordinate, dimension);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * return true if the given destination is a dimension destination (destination for
-     * a dimension where the matter receiver hasn't been able to be generated yet).
-     * @param destination
-     * @return
-     */
-    private boolean isDimensionDestination(TeleportDestination destination) {
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
-        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
-        if (dimensions.containsKey(destination.getDimension())) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            return !destinations.isDestinationValid(destination);
-        }
-        return false;
+        return destinations.getDestination(coordinate, dimension);
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers() {
-        // First check all dimensions and possibly force the generation of chunk 0 to get the
-        // matter receiver there.
-
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
-        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
-        for (Map.Entry<Integer,DimensionDescriptor> me : dimensions.entrySet()) {
-            System.out.println("Try to load dimension: me.getKey() = " + me.getKey());
-            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(me.getKey());
-            ChunkProviderServer providerServer = worldServerForDimension.theChunkProviderServer;
-            if (!providerServer.chunkExists(0, 0)) {
-                providerServer.loadChunk(0, 0);
-                worldServerForDimension.getBlock(8, 70, 8);
-                providerServer.unloadChunksIfNotNearSpawn(0, 0);
-            }
-        }
-
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-
-        List<TeleportDestinationClientInfo> list = new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
-        return list;
+        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
     }
-
-//    private List<TeleportDestinationClientInfo> searchReceivers() {
-//        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-//
-//        // Contains all destination we already added to the list. This is to prevent duplicates.
-//        Set<TeleportDestination> duplicateChecker = new HashSet<TeleportDestination>();
-//
-//        List<TeleportDestinationClientInfo> list = new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
-//        for (TeleportDestinationClientInfo c : list) {
-//            duplicateChecker.add(new TeleportDestination(c.getCoordinate(), c.getDimension()));
-//        }
-//
-//        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
-//        Map<Integer,DimensionDescriptor> dimensions = dimensionManager.getDimensions();
-//        for (Map.Entry<Integer,DimensionDescriptor> me : dimensions.entrySet()) {
-//            Integer id = me.getKey();
-//            TeleportDestination c = new TeleportDestination(new Coordinate(0, 70, 0), id);
-//            if (!duplicateChecker.contains(c)) {
-//                duplicateChecker.add(c);
-//                TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(c);
-//                World w = DimensionManager.getWorld(id);
-//                String dimName = null;
-//                if (w != null) {
-//                    dimName = DimensionManager.getProvider(id).getDimensionName();
-//                } else {
-//                    DimensionInformation info = dimensionManager.getDimensionInformation(id);
-//                    dimName = info.getName();
-//                }
-//                if (dimName == null || dimName.trim().isEmpty()) {
-//                    dimName = "Id " + id;
-//                }
-//                destinationClientInfo.setDimensionName(dimName);
-//                list.add(destinationClientInfo);
-//            }
-//        }
-//        return list;
-//    }
 
     public List<TransmitterInfo> searchTransmitters() {
         int x = xCoord;
@@ -284,16 +198,14 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             }
         }
 
-        if (!isDimensionDestination(teleportDestination)) {
-            // Only do this if not an rftools dimension.
-            TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-            }
-            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-            if (!matterReceiverTileEntity.checkAccess(player)) {
-                return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
-            }
+        // Only do this if not an rftools dimension.
+        TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+        if (!matterReceiverTileEntity.checkAccess(player)) {
+            return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }
 
         int cost = TeleportConfiguration.rfPerDial;
@@ -328,20 +240,14 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
-        if (isDimensionDestination(new TeleportDestination(c, dim))) {
-            // This is a dimension destination. That means a destination where the matter receiver
-            // hasn't been realized yet. We can't check the status but we assume it is ok.
-            return DialingDeviceTileEntity.DIAL_OK;
-        } else {
-            TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-            }
-
-            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-
-            return matterReceiverTileEntity.checkStatus();
+        TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
+
+        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+
+        return matterReceiverTileEntity.checkStatus();
     }
 
     @Override

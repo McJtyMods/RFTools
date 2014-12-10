@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
@@ -140,6 +141,17 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensionInformation.put(id, dimensionInfo);
 
         save(world);
+
+        // Make sure world generation kicks in for at least one chunk so that our matter receiver
+        // is generated and registered.
+        WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(id);
+        ChunkProviderServer providerServer = worldServerForDimension.theChunkProviderServer;
+        if (!providerServer.chunkExists(0, 0)) {
+            providerServer.loadChunk(0, 0);
+            providerServer.populate(providerServer, 0, 0);
+            providerServer.unloadChunksIfNotNearSpawn(0, 0);
+        }
+
         return id;
     }
 
