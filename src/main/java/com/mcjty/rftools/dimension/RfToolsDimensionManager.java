@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -158,6 +159,8 @@ public class RfToolsDimensionManager extends WorldSavedData {
             String name = tc.getString("name");
             DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor);
             dimensionInformation.put(id, dimensionInfo);
+
+            dimensionInfo.setSpawnPoint(Coordinate.readFromNBT(tc, "spawnPoint"));
         }
     }
 
@@ -166,11 +169,17 @@ public class RfToolsDimensionManager extends WorldSavedData {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer,DimensionDescriptor> me : dimensions.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
+
             Integer id = me.getKey();
             tc.setInteger("id", id);
             DimensionInformation dimensionInfo = dimensionInformation.get(id);
             tc.setString("name", dimensionInfo.getName());
             me.getValue().writeToNBT(tc);
+            Coordinate spawnPoint = dimensionInfo.getSpawnPoint();
+            if (spawnPoint != null) {
+                Coordinate.writeToNBT(tc, "spawnPoint", spawnPoint);
+            }
+
             lst.appendTag(tc);
         }
         tagCompound.setTag("dimensions", lst);

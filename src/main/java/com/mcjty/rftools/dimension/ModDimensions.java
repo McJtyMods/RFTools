@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.dimension.world.GenericWorldGenerator;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;

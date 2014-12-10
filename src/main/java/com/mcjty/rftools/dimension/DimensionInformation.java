@@ -6,6 +6,7 @@ import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
@@ -15,6 +16,8 @@ import java.util.*;
 public class DimensionInformation {
     private final DimensionDescriptor descriptor;
     private final String name;
+
+    private Coordinate spawnPoint = null;
 
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
@@ -89,6 +92,14 @@ public class DimensionInformation {
 
     public void setEnergyLevel(int energyLevel) {
         this.energyLevel = energyLevel;
+    }
+
+    public Coordinate getSpawnPoint() {
+        return spawnPoint;
+    }
+
+    public void setSpawnPoint(Coordinate spawnPoint) {
+        this.spawnPoint = spawnPoint;
     }
 
     private Random getRandom(Map<DimletType, List<Integer>> dimlets) {

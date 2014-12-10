@@ -38,7 +38,7 @@ public class DimensionTickEvent {
                     if (power < 0) {
                         power = 0;
                     }
-                    System.out.println("Consume energy for dimension, id=" + id + ", power=" + power);
+//                    System.out.println("Consume energy for dimension, id=" + id + ", power=" + power);
 
                     handleLowPower(id, power);
 
