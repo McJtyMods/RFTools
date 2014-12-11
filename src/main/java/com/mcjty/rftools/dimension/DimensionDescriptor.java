@@ -24,7 +24,10 @@ public class DimensionDescriptor {
         for (DimletType type : DimletType.values()) {
             List<Integer> ids = input.get(type);
             if (ids != null) {
-                Collections.sort(ids);
+                // Do not sort the digit dimlets.
+                if (!type.equals(DimletType.DIMLET_DIGIT)) {
+                    Collections.sort(ids);
+                }
                 for (Integer id : ids) {
                     if (s.length() > 0) {
                         s.append(',');
