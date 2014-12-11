@@ -48,7 +48,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 int starty3 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz+3, 8, 60);
                 int starty4 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz+3, 8, 60);
                 int starty = (starty1+starty2+starty3+starty4) / 4;
-                if (starty != -1) {
+                if (starty > 1 && starty < world.getHeight()-20) {
                     generateDungeon(world, random, midx, starty, midz);
                 }
             }
@@ -99,6 +99,18 @@ public class GenericWorldGenerator implements IWorldGenerator {
     }
 
     private void generateDungeon(World world, Random random, int midx, int starty, int midz) {
+        boolean do_small_antenna = random.nextInt(4) == 0;
+        boolean do_extra_feature = random.nextInt(4) == 0;
+
+        int color = random.nextInt(3);
+        if (color == 0) {
+            color = 3;
+        } else if (color == 1) {
+            color = 9;
+        } else {
+            color = 11;
+        }
+
         // Spawn the building
         for (int x = midx - 3 ; x  <= midx + 3 ; x++) {
             for (int z = midz - 3 ; z  <= midz + 3 ;z ++) {
@@ -106,23 +118,24 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 boolean xside = x == midx-3 || x == midx+3;
                 boolean zside = z == midz-3 || z == midz+3;
                 boolean antenna = (x == midx-2 && z == midz-2);
+                boolean small_antenna = do_small_antenna && (x == midx+2 && z == midz+2);
                 world.setBlock(x, starty, z, Blocks.double_stone_slab, 0, 2);
                 if (corner) {
                     world.setBlock(x, starty + 1, z, Blocks.quartz_block, 0, 2);
                     world.setBlock(x, starty + 2, z, Blocks.quartz_block, 0, 2);
                     world.setBlock(x, starty + 3, z, Blocks.quartz_block, 0, 2);
                 } else if (xside) {
-                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, 3, 2);
+                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, color, 2);
                     if (z >= midz-1 && z <= midz+1) {
                         world.setBlock(x, starty+2, z, Blocks.glass_pane, 0, 2);
                     } else {
-                        world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, 3, 2);
+                        world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, color, 2);
                     }
-                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, 3, 2);
+                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, color, 2);
                 } else if (zside) {
-                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, 3, 2);
-                    world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, 3, 2);
-                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, 3, 2);
+                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, color, 2);
+                    world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, color, 2);
+                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, color, 2);
                 } else {
                     world.setBlockToAir(x, starty+1, z);
                     world.setBlockToAir(x, starty+2, z);
@@ -134,6 +147,12 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     world.setBlock(x, starty+6, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+7, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+8, z, Blocks.glowstone, 0, 2);
+                } else if (small_antenna) {
+                    world.setBlock(x, starty+4, z, Blocks.double_stone_slab, 0, 2);
+                    world.setBlock(x, starty+5, z, Blocks.iron_bars, 0, 2);
+                    world.setBlockToAir(x, starty+6, z);
+                    world.setBlockToAir(x, starty+7, z);
+                    world.setBlockToAir(x, starty+8, z);
                 } else {
                     world.setBlock(x, starty+4, z, Blocks.stone_slab, 0, 2);
                     world.setBlockToAir(x, starty+5, z);
@@ -143,12 +162,23 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 }
 
                 // Spawn stone under the building for as long as it is air.
-                int yy = starty-1;
-                while (yy > 0 && world.isAirBlock(x, yy, z)) {
-                    world.setBlock(x, yy, z, Blocks.stone, 0, 2);
-                    yy--;
-                }
+                WorldGenerationTools.fillEmptyWithStone(world, x, starty-1, z);
             }
+        }
+
+        if (do_extra_feature) {
+            if (!WorldGenerationTools.isSolid(world, midx+4, starty, midz-3)) {
+                world.setBlock(midx+4, starty, midz-3, Blocks.iron_bars, 0, 2);
+            }
+            world.setBlock(midx+4, starty+1, midz-3, Blocks.iron_bars, 0, 2);
+            world.setBlock(midx+4, starty+2, midz-3, Blocks.iron_bars, 0, 2);
+            if (!WorldGenerationTools.isSolid(world, midx+5, starty, midz-3)) {
+                world.setBlock(midx+5, starty, midz-3, Blocks.stained_hardened_clay, color, 2);
+            }
+            world.setBlock(midx+5, starty+1, midz-3, Blocks.stained_hardened_clay, color, 2);
+            world.setBlock(midx+5, starty+2, midz-3, Blocks.stained_hardened_clay, color, 2);
+            WorldGenerationTools.fillEmptyWithStone(world, midx + 4, starty - 1, midz - 3);
+            WorldGenerationTools.fillEmptyWithStone(world, midx+5, starty-1, midz-3);
         }
 
         // Clear the space before the door.
