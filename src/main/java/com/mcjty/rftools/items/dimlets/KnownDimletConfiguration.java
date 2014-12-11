@@ -10,9 +10,6 @@ import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
@@ -372,10 +369,8 @@ public class KnownDimletConfiguration {
      * Read the built-in blacklist and default configuration for dimlets.
      */
     private static void readBuiltinConfig() {
-        IResourceManager resourceManager = Minecraft.getMinecraft().getResourceManager();
         try {
-            IResource iresource = resourceManager.getResource(builtinConfigLocation);
-            InputStream inputstream = iresource.getInputStream();
+            InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/dimlets.json");
             BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(br);
