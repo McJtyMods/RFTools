@@ -65,7 +65,7 @@ public class DimensionTickEvent {
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
                     player.attackEntityFrom(DamageSource.generic, 0.1f);
-                    player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
                     player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
                     player.addPotionEffect(new PotionEffect(Potion.poison.getId(), 20));
                 }
@@ -75,7 +75,7 @@ public class DimensionTickEvent {
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
                     player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
                 }
             }
@@ -84,7 +84,7 @@ public class DimensionTickEvent {
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
                 }
             }
         }
