@@ -30,6 +30,10 @@ public class KnownDimlet extends Item {
     @Override
     public IIcon getIconFromDamage(int damage) {
         DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(damage);
+        if (entry == null) {
+            // Safety. Should not occur.
+            return null;
+        }
         DimletType type = entry.getKey().getType();
         return icons.get(type);
     }
@@ -37,9 +41,6 @@ public class KnownDimlet extends Item {
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
         return KnownDimletConfiguration.idToDisplayName.get(itemStack.getItemDamage());
-//        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage());
-//        DimletType type = entry.getKey().getType();
-//        return type.getName() + " " + entry.getKey().getName() + " Dimlet";
     }
 
     @Override
