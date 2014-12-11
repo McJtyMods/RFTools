@@ -13,16 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.Constants;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class RealizedDimensionTab extends Item {
     private static long lastTime = 0;
@@ -45,6 +40,10 @@ public class RealizedDimensionTab extends Item {
                 RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
                 DimensionInformation information = dimensionManager.getDimensionInformation(id);
                 if (information != null) {
+                    String digits = information.getDigitString();
+                    if (!digits.isEmpty()) {
+                        logDebug(player, "    Digits: " + digits);
+                    }
                     TerrainType terrainType = information.getTerrainType();
                     logDebug(player, "    Terrain: " + terrainType.toString());
                     for (BiomeGenBase biome : information.getBiomes()) {
@@ -77,6 +76,7 @@ public class RealizedDimensionTab extends Item {
                     list.add(EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")");
                 }
             }
+
             String descriptionString = tagCompound.getString("descriptionString");
             constructDescriptionHelp(list, descriptionString);
 
@@ -110,22 +110,33 @@ public class RealizedDimensionTab extends Item {
 
     private void constructDescriptionHelp(List list, String descriptionString) {
         String[] opcodes = descriptionString.split(",");
+        String digitString = "";
         DimletType prevType = null;
         int cnt = 0;
         for (String oc : opcodes) {
             DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
+            if (type == DimletType.DIMLET_DIGIT) {
+                digitString += KnownDimletConfiguration.idToDigit.get(Integer.parseInt(oc.substring(1)));
+            }
             if (type == prevType) {
                 cnt++;
             } else {
                 if (prevType != null) {
-                    list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+                    if (prevType != DimletType.DIMLET_DIGIT) {
+                        list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+                    }
                 }
                 prevType = type;
                 cnt = 1;
             }
         }
         if (prevType != null && cnt != 0) {
-            list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+            if (prevType != DimletType.DIMLET_DIGIT) {
+                list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+            }
+        }
+        if (!digitString.isEmpty()) {
+            list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
         }
     }
 }

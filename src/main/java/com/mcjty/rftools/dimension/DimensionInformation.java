@@ -23,8 +23,7 @@ public class DimensionInformation {
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
-
-    private int energyLevel;
+    private String digitString = "";
 
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
@@ -36,8 +35,7 @@ public class DimensionInformation {
         calculateFeatureType(dimlets, random);
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
-
-        energyLevel = 0;
+        calculateDigitString(dimlets);
     }
 
     public void toBytes(ByteBuf buf) {
@@ -58,8 +56,8 @@ public class DimensionInformation {
         for (BiomeGenBase entry : biomes) {
             buf.writeInt(entry.biomeID);
         }
-
-        buf.writeInt(energyLevel);
+        buf.writeInt(digitString.length());
+        buf.writeBytes(digitString.getBytes());
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -82,16 +80,9 @@ public class DimensionInformation {
         for (int i = 0 ; i < size ; i++) {
             biomes.add(BiomeGenBase.getBiome(buf.readInt()));
         }
-
-        energyLevel = buf.readInt();
-    }
-
-    public int getEnergyLevel() {
-        return energyLevel;
-    }
-
-    public void setEnergyLevel(int energyLevel) {
-        this.energyLevel = energyLevel;
+        byte[] dst = new byte[buf.readInt()];
+        buf.readBytes(dst);
+        digitString = new String(dst);
     }
 
     public Coordinate getSpawnPoint() {
@@ -110,6 +101,14 @@ public class DimensionInformation {
             }
         }
         return new Random(seed);
+    }
+
+    private void calculateDigitString(Map<DimletType,List<Integer>> dimlets) {
+        List<Integer> list = dimlets.get(DimletType.DIMLET_DIGIT);
+        digitString = "";
+        for (Integer id : list) {
+            digitString += KnownDimletConfiguration.idToDigit.get(id);
+        }
     }
 
     private void calculateTerrainType(Map<DimletType,List<Integer>> dimlets, Random random) {
@@ -215,5 +214,9 @@ public class DimensionInformation {
 
     public List<BiomeGenBase> getBiomes() {
         return biomes;
+    }
+
+    public String getDigitString() {
+        return digitString;
     }
 }
