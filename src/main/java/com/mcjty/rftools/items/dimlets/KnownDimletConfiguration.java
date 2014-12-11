@@ -18,6 +18,7 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandomChestContent;
@@ -232,9 +233,16 @@ public class KnownDimletConfiguration {
 
         initBiomeItems(cfg, idsInConfig);
 
-        for (int i = 0 ; i <= 9 ; i++) {
-            initDigitItem(cfg, idsInConfig, i);
-        }
+        int idDigit0 = initDigitItem(cfg, idsInConfig, 0);
+        int idDigit1 = initDigitItem(cfg, idsInConfig, 1);
+        int idDigit2 = initDigitItem(cfg, idsInConfig, 2);
+        int idDigit3 = initDigitItem(cfg, idsInConfig, 3);
+        int idDigit4 = initDigitItem(cfg, idsInConfig, 4);
+        int idDigit5 = initDigitItem(cfg, idsInConfig, 5);
+        int idDigit6 = initDigitItem(cfg, idsInConfig, 6);
+        int idDigit7 = initDigitItem(cfg, idsInConfig, 7);
+        int idDigit8 = initDigitItem(cfg, idsInConfig, 8);
+        int idDigit9 = initDigitItem(cfg, idsInConfig, 9);
 
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
@@ -291,6 +299,29 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), new Object[]{" r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate});
         craftableDimlets.add(idTerrainFlat);
 
+        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), new Object[]{" r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), new Object[]{"   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idDigit9)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit1), new Object[]{"   ", " 0 ", "   ", '0', new ItemStack(ModItems.knownDimlet, 1, idDigit0)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit2), new Object[]{"   ", " 1 ", "   ", '1', new ItemStack(ModItems.knownDimlet, 1, idDigit1)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit3), new Object[]{"   ", " 2 ", "   ", '2', new ItemStack(ModItems.knownDimlet, 1, idDigit2)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit4), new Object[]{"   ", " 3 ", "   ", '3', new ItemStack(ModItems.knownDimlet, 1, idDigit3)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit5), new Object[]{"   ", " 4 ", "   ", '4', new ItemStack(ModItems.knownDimlet, 1, idDigit4)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit6), new Object[]{"   ", " 5 ", "   ", '5', new ItemStack(ModItems.knownDimlet, 1, idDigit5)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit7), new Object[]{"   ", " 6 ", "   ", '6', new ItemStack(ModItems.knownDimlet, 1, idDigit6)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit8), new Object[]{"   ", " 7 ", "   ", '7', new ItemStack(ModItems.knownDimlet, 1, idDigit7)});
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit9), new Object[]{"   ", " 8 ", "   ", '8', new ItemStack(ModItems.knownDimlet, 1, idDigit8)});
+        craftableDimlets.add(idDigit0);
+        craftableDimlets.add(idDigit1);
+        craftableDimlets.add(idDigit2);
+        craftableDimlets.add(idDigit3);
+        craftableDimlets.add(idDigit4);
+        craftableDimlets.add(idDigit5);
+        craftableDimlets.add(idDigit6);
+        craftableDimlets.add(idDigit7);
+        craftableDimlets.add(idDigit8);
+        craftableDimlets.add(idDigit9);
+
         setupChestLoot();
     }
 
@@ -323,9 +354,10 @@ public class KnownDimletConfiguration {
         return idsInConfig;
     }
 
-    private static void initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
+    private static int initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, ""+digit));
         idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
+        return id;
     }
 
     private static void initMaterialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Block block) {
