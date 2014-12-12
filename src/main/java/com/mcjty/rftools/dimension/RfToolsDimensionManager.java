@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketRegisterDimensions;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -76,9 +77,14 @@ public class RfToolsDimensionManager extends WorldSavedData {
         for (Map.Entry<Integer, DimensionDescriptor> me : dimensions.entrySet()) {
             int id = me.getKey();
             RFTools.log("    Dimension: " + id);
-            DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
-            DimensionManager.registerDimension(id, id);
+            registerDimensionToServerAndClient(id);
         }
+    }
+
+    private void registerDimensionToServerAndClient(int id) {
+        DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
+        DimensionManager.registerDimension(id, id);
+        PacketHandler.INSTANCE.sendToAll(new PacketRegisterDimensions(id));
     }
 
     public static RfToolsDimensionManager getDimensionManager(World world) {
@@ -130,8 +136,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
         int id = DimensionManager.getNextFreeDimId();
-        DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
-        DimensionManager.registerDimension(id, id);
+        registerDimensionToServerAndClient(id);
         System.out.println("id = " + id + " for " + name);
 
         dimensions.put(id, descriptor);

@@ -108,6 +108,7 @@ public class CommonProxy {
         ModEntities.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
+        FMLCommonHandler.instance().bus().register(new PlayerLoginEvent());
         FMLCommonHandler.instance().bus().register(new DimensionTickEvent());
     }
 
