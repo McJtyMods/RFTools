@@ -5,10 +5,13 @@ import com.mcjty.rftools.commands.CommandRftTp;
 import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
+import com.mcjty.rftools.network.DimensionSyncChannelHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,6 +27,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.EnumMap;
+
 @Mod(modid = RFTools.MODID, version = RFTools.VERSION)
 public class RFTools {
     public static final String MODID = "rftools";
@@ -36,6 +41,8 @@ public class RFTools {
     public static RFTools instance;
 
     public Logger logger;
+
+    public static EnumMap<Side, FMLEmbeddedChannel> channels;
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
@@ -119,6 +126,8 @@ public class RFTools {
     @EventHandler
     public void init(FMLInitializationEvent e) {
         this.proxy.init(e);
+
+        channels = NetworkRegistry.INSTANCE.newChannel("RFToolsChannel", DimensionSyncChannelHandler.instance);
     }
 
     @EventHandler
@@ -131,8 +140,6 @@ public class RFTools {
     public void serverStarted(FMLServerStartedEvent event) {
         ModDimensions.initDimensions();
     }
-
-
 
     /**
      * Handle interaction with other mods, complete your setup based on this.
