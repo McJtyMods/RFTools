@@ -53,4 +53,9 @@ public class GenericWorldProvider extends WorldProvider {
         long seed = calculateSeed(worldObj.getSeed(), dim);
         return new GenericChunkProvider(worldObj, seed);
     }
+
+    @Override
+    public BiomeGenBase getBiomeGenForCoords(int x, int z) {
+        return super.getBiomeGenForCoords(x, z);
+    }
 }

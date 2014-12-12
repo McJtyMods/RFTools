@@ -123,6 +123,15 @@ public class GenericChunkProvider implements IChunkProvider {
         BaseTerrainGenerator terrainGenerator = terrainGeneratorMap.get(dimensionInformation.getTerrainType());
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
+
+        // @@@ Clumsy?
+        if (!dimensionInformation.getTerrainType().supportsLakes()) {
+            for (BiomeGenBase biome : biomesForGeneration) {
+                biome.theBiomeDecorator.generateLakes = false;
+            }
+        }
+
+
         terrainGenerator.generate(chunkX, chunkZ, ablock);
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
         terrainGenerator.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
@@ -207,21 +216,23 @@ public class GenericChunkProvider implements IChunkProvider {
         int i2;
 
 
-        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
-                && TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAKE)) {
-            k1 = x + this.rand.nextInt(16) + 8;
-            l1 = this.rand.nextInt(256);
-            i2 = z + this.rand.nextInt(16) + 8;
-            (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
-        }
+        if (dimensionInformation.getTerrainType().supportsLakes()) {
+            if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
+                    && TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAKE)) {
+                k1 = x + this.rand.nextInt(16) + 8;
+                l1 = this.rand.nextInt(256);
+                i2 = z + this.rand.nextInt(16) + 8;
+                (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
+            }
 
-        if (TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAVA) && !flag && this.rand.nextInt(8) == 0) {
-            k1 = x + this.rand.nextInt(16) + 8;
-            l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
-            i2 = z + this.rand.nextInt(16) + 8;
+            if (TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAVA) && !flag && this.rand.nextInt(8) == 0) {
+                k1 = x + this.rand.nextInt(16) + 8;
+                l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
+                i2 = z + this.rand.nextInt(16) + 8;
 
-            if (l1 < 63 || this.rand.nextInt(10) == 0) {
-                (new WorldGenLakes(Blocks.lava)).generate(this.worldObj, this.rand, k1, l1, i2);
+                if (l1 < 63 || this.rand.nextInt(10) == 0) {
+                    (new WorldGenLakes(Blocks.lava)).generate(this.worldObj, this.rand, k1, l1, i2);
+                }
             }
         }
 
