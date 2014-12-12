@@ -1,12 +1,12 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
-import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
-public class FlatTerrainGenerator implements BaseTerrainGenerator {
+public class FlatTerrainGenerator extends NormalTerrainGenerator {
+
     @Override
-    public void generate(GenericChunkProvider provider, int chunkX, int chunkZ, Block[] aBlock) {
+    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
         byte waterLevel = 63;
         for (int x4 = 0; x4 < 4; ++x4) {
             for (int z4 = 0; z4 < 4; ++z4) {
