@@ -31,18 +31,20 @@ public class DimensionTickEvent {
 
                 for (Map.Entry<Integer, DimensionDescriptor> entry : dimensionManager.getDimensions().entrySet()) {
                     Integer id = entry.getKey();
+                    // Only drain power if the dimension is loaded (a player is there or a chunkloader)
+                    if (DimensionManager.getWorld(id) != null) {
+                        int cost = entry.getValue().getRfMaintainCost();
+                        int power = dimensionStorage.getEnergyLevel(id);
+                        power -= cost * 20;
+                        if (power < 0) {
+                            power = 0;
+                        }
+//                                            System.out.println("Consume energy for dimension, id=" + id + ", power=" + power);
 
-                    int cost = entry.getValue().getRfMaintainCost();
-                    int power = dimensionStorage.getEnergyLevel(id);
-                    power -= cost * 20;
-                    if (power < 0) {
-                        power = 0;
+                        handleLowPower(id, power);
+
+                        dimensionStorage.setEnergyLevel(id, power);
                     }
-//                    System.out.println("Consume energy for dimension, id=" + id + ", power=" + power);
-
-                    handleLowPower(id, power);
-
-                    dimensionStorage.setEnergyLevel(id, power);
                 }
 
                 dimensionStorage.save(entityWorld);
