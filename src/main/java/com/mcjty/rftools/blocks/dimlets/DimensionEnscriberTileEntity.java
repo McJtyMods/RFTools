@@ -6,7 +6,6 @@ import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
-import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +16,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -183,21 +181,18 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
      * Convert the dimlets in the inventory to a dimension descriptor.
      */
     private DimensionDescriptor convertToDimensionDescriptor() {
-        Map<DimletType,List<Integer>> dimletsByType = new HashMap<DimletType, List<Integer>>();
-        for (DimletType type : DimletType.values()) {
-            dimletsByType.put(type, new ArrayList<Integer>());
-        }
+        List<DimensionDescriptor.DimletDescriptor> descriptors = new ArrayList<DimensionDescriptor.DimletDescriptor>();
 
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
                 int dimletId = stack.getItemDamage();
                 DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(dimletId);
-                dimletsByType.get(entry.getKey().getType()).add(dimletId);
+                descriptors.add(new DimensionDescriptor.DimletDescriptor(entry.getKey().getType(), dimletId));
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }
-        return new DimensionDescriptor(dimletsByType);
+        return new DimensionDescriptor(descriptors);
     }
 
     private void extractDimlets() {
