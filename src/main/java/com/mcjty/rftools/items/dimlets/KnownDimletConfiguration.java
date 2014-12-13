@@ -246,6 +246,10 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.dirt);
+        initMaterialItem(cfg, idsInConfig, Blocks.sandstone);
+        initMaterialItem(cfg, idsInConfig, Blocks.end_stone);
+        initMaterialItem(cfg, idsInConfig, Blocks.netherrack);
 
         initFoliageItem(cfg, idsInConfig);
 
