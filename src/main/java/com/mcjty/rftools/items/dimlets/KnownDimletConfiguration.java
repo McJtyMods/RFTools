@@ -271,11 +271,11 @@ public class KnownDimletConfiguration {
         initTerrainItem(cfg, idsInConfig, "Normal", TerrainType.TERRAIN_NORMAL);
         initTerrainItem(cfg, idsInConfig, "Cave World", TerrainType.TERRAIN_CAVES);
         initTerrainItem(cfg, idsInConfig, "Island", TerrainType.TERRAIN_ISLAND);
-        initTerrainItem(cfg, idsInConfig, "Spheres", TerrainType.TERRAIN_SPHERES);
 
         int idFeatureNone = initFeatureItem(cfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
         initFeatureItem(cfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
         initFeatureItem(cfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
+        initFeatureItem(cfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
 
         initTimeItem(cfg, idsInConfig, "Day");
         initTimeItem(cfg, idsInConfig, "Night");
