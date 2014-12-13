@@ -13,12 +13,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DimensionEnscriberTileEntity extends GenericTileEntity implements ISidedInventory {
 
@@ -159,8 +160,6 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     /**
      * Create a realized dimension tab by taking a map of ids per type and storing
      * that in the NBT of the realized dimension tab.
-     * @param descriptor
-     * @return
      */
     private ItemStack createRealizedTab(DimensionDescriptor descriptor) {
         ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
@@ -182,7 +181,6 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     /**
      * Convert the dimlets in the inventory to a dimension descriptor.
-     * @return
      */
     private DimensionDescriptor convertToDimensionDescriptor() {
         Map<DimletType,List<Integer>> dimletsByType = new HashMap<DimletType, List<Integer>>();
@@ -208,12 +206,8 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         if (tagCompound != null) {
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
             String descriptionString = tagCompound.getString("descriptionString");
-            if (!descriptionString.trim().isEmpty()) {
-                String[] opcodes = descriptionString.split(",");
-                for (String oc : opcodes) {
-                    Integer id = Integer.parseInt(oc.substring(1));
-                    inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, id);
-                }
+            for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
+                inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, descriptor.getId());
             }
         }
 

@@ -5,7 +5,6 @@ import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 
 import java.util.*;
 
@@ -43,6 +42,20 @@ public class DimensionDescriptor {
         rfMaintainCost = calculateMaintenanceRfCost(input);
     }
 
+    public static List<DimletDescriptor> parseDescriptionString(String descriptionString) {
+        List<DimletDescriptor> result = new ArrayList<DimletDescriptor>();
+        if (!descriptionString.isEmpty()) {
+            String[] opcodes = descriptionString.split(",");
+            for (String oc : opcodes) {
+                DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
+                Integer id = Integer.parseInt(oc.substring(1));
+                result.add(new DimletDescriptor(type, id));
+            }
+        }
+        return result;
+    }
+
+
     public DimensionDescriptor(NBTTagCompound tagCompound) {
         descriptionString = tagCompound.getString("descriptionString");
         rfCreateCost = tagCompound.getInteger("rfCreateCost");
@@ -50,18 +63,20 @@ public class DimensionDescriptor {
         tickCost = tagCompound.getInteger("tickCost");
     }
 
-    public Map<DimletType,List<Integer>> getDimlets() {
+    public static Map<DimletType,List<Integer>> getDimlets(String descriptionString) {
         Map<DimletType,List<Integer>> result = new HashMap<DimletType, List<Integer>>();
         for (DimletType type : DimletType.values()) {
             result.put(type, new ArrayList<Integer>());
         }
-        String[] opcodes = descriptionString.split(",");
-        for (String oc : opcodes) {
-            DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
-            Integer id = Integer.parseInt(oc.substring(1));
-            result.get(type).add(id);
+        for (DimletDescriptor descriptor : parseDescriptionString(descriptionString)) {
+            result.get(descriptor.getType()).add(descriptor.getId());
+
         }
         return result;
+    }
+
+    public Map<DimletType,List<Integer>> getDimlets() {
+        return getDimlets(descriptionString);
     }
 
     public String getDescriptionString() {
@@ -161,5 +176,23 @@ public class DimensionDescriptor {
     @Override
     public int hashCode() {
         return descriptionString.hashCode();
+    }
+
+    public static class DimletDescriptor {
+        private final DimletType type;
+        private final Integer id;
+
+        public DimletDescriptor(DimletType type, Integer id) {
+            this.type = type;
+            this.id = id;
+        }
+
+        public DimletType getType() {
+            return type;
+        }
+
+        public Integer getId() {
+            return id;
+        }
     }
 }

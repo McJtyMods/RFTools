@@ -1,10 +1,7 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.DimensionStorage;
-import com.mcjty.rftools.dimension.PacketGetDimensionEnergy;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.*;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
@@ -109,14 +106,14 @@ public class RealizedDimensionTab extends Item {
     }
 
     private void constructDescriptionHelp(List list, String descriptionString) {
-        String[] opcodes = descriptionString.split(",");
         String digitString = "";
         DimletType prevType = null;
         int cnt = 0;
-        for (String oc : opcodes) {
-            DimletType type = DimletType.getTypeByOpcode(oc.substring(0, 1));
+        for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
+            DimletType type = descriptor.getType();
+            int id = descriptor.getId();
             if (type == DimletType.DIMLET_DIGIT) {
-                digitString += KnownDimletConfiguration.idToDigit.get(Integer.parseInt(oc.substring(1)));
+                digitString += KnownDimletConfiguration.idToDigit.get(id);
             }
             if (type == prevType) {
                 cnt++;
