@@ -43,9 +43,9 @@ public class DimensionDescriptor {
 
         descriptionString = s.toString();
 
-        tickCost = calculateTickCost(dimlets);
-        rfCreateCost = calculateCreationRfCost(dimlets, tickCost);
-        rfMaintainCost = calculateMaintenanceRfCost(dimlets);
+        tickCost = calculateTickCost(descriptors);
+        rfCreateCost = calculateCreationRfCost(descriptors, tickCost);
+        rfMaintainCost = calculateMaintenanceRfCost(descriptors);
     }
 
     private void constructDescriptionString(StringBuilder s, Map<DimletType, List<Integer>> dimlets, Map<DimletType, List<DimletDescriptor>> modifiers, List<DimletDescriptor> currentModifiers) {
@@ -209,19 +209,16 @@ public class DimensionDescriptor {
         tagCompound.setInteger("ticksLeft", tickCost);
     }
 
-    private int calculateCreationRfCost(Map<DimletType, List<Integer>> input, int tickCost) {
+    private int calculateCreationRfCost(List<DimletDescriptor> descriptors, int tickCost) {
         int rf = KnownDimletConfiguration.baseDimensionCreationCost;
-        for (DimletType type : input.keySet()) {
-            List<Integer> ids = input.get(type);
-            for (Integer id : ids) {
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
-                if (entry != null) {
-                    int cost = entry.getRfCreateCost();
-                    if (cost == -1) {
-                        cost = KnownDimletConfiguration.typeRfCreateCost.get(type);
-                    }
-                    rf += cost;
+        for (DimletDescriptor descriptor : descriptors) {
+            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
+            if (entry != null) {
+                int cost = entry.getRfCreateCost();
+                if (cost == -1) {
+                    cost = KnownDimletConfiguration.typeRfCreateCost.get(descriptor.getType());
                 }
+                rf += cost;
             }
         }
 
@@ -231,37 +228,31 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int calculateMaintenanceRfCost(Map<DimletType, List<Integer>> input) {
+    private int calculateMaintenanceRfCost(List<DimletDescriptor> descriptors) {
         int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
-        for (DimletType type : input.keySet()) {
-            List<Integer> ids = input.get(type);
-            for (Integer id : ids) {
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
-                if (entry != null) {
-                    int cost = entry.getRfMaintainCost();
-                    if (cost == -1) {
-                        cost = KnownDimletConfiguration.typeRfMaintainCost.get(type);
-                    }
-                    rf += cost;
+        for (DimletDescriptor descriptor : descriptors) {
+            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
+            if (entry != null) {
+                int cost = entry.getRfMaintainCost();
+                if (cost == -1) {
+                    cost = KnownDimletConfiguration.typeRfMaintainCost.get(descriptor.getType());
                 }
+                rf += cost;
             }
         }
         return rf;
     }
 
-    private int calculateTickCost(Map<DimletType, List<Integer>> input) {
+    private int calculateTickCost(List<DimletDescriptor> descriptors) {
         int ticks = KnownDimletConfiguration.baseDimensionTickCost;
-        for (DimletType type : input.keySet()) {
-            List<Integer> ids = input.get(type);
-            for (Integer id : ids) {
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
-                if (entry != null) {
-                    int cost = entry.getTickCost();
-                    if (cost == -1) {
-                        cost = KnownDimletConfiguration.typeTickCost.get(type);
-                    }
-                    ticks += cost;
+        for (DimletDescriptor descriptor : descriptors) {
+            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
+            if (entry != null) {
+                int cost = entry.getTickCost();
+                if (cost == -1) {
+                    cost = KnownDimletConfiguration.typeTickCost.get(descriptor.getType());
                 }
+                ticks += cost;
             }
         }
         return ticks;
