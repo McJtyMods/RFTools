@@ -65,6 +65,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
     public static final Map<Integer,String> idToBiome = new HashMap<Integer, String>();
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
+    public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
 
     private static final ResourceLocation builtinConfigLocation = new ResourceLocation(RFTools.MODID, "text/dimlets.json");
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
@@ -367,6 +368,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
         ItemStack stack = new ItemStack(block);
         idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
+        idToBlock.put(id, block);
     }
 
     /**

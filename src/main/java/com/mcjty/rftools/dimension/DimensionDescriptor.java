@@ -159,6 +159,28 @@ public class DimensionDescriptor {
         return result;
     }
 
+
+    /**
+     * Get a list of all modifier dimlets that modify the given baseType.
+     */
+    public List<DimletDescriptor> getModifierDimlets(DimletType baseType) {
+        List<DimletDescriptor> result = new ArrayList<DimletDescriptor>();
+        if (!descriptionString.isEmpty()) {
+            String[] opcodes = descriptionString.split(",");
+            for (String oc : opcodes) {
+                if (oc.startsWith("#")) {
+                    // First comes '#', then type which is being modifed and then the type of the actual dimlet.
+                    DimletType typeToModify = DimletType.getTypeByOpcode(oc.substring(1, 2));
+                    if (baseType.equals(typeToModify)) {
+                        DimletType type = DimletType.getTypeByOpcode(oc.substring(2, 3));
+                        result.add(new DimletDescriptor(type, Integer.parseInt(oc.substring(3))));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     public Map<DimletType,List<Integer>> getDimlets() {
         return getDimlets(descriptionString);
     }

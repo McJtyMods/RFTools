@@ -200,6 +200,8 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
     @Override
     public void generate(int chunkX, int chunkZ, Block[] aBlock) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+
         byte b0 = 2;
         int k = b0 + 1;
         byte b1 = 33;
@@ -238,7 +240,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                                 Block block = null;
 
                                 if (d15 > 0.0D) {
-                                    block = Blocks.stone;
+                                    block = baseBlock;
                                 }
 
                                 aBlock[index] = block;

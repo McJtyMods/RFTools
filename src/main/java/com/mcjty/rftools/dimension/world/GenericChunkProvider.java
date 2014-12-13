@@ -40,7 +40,7 @@ public class GenericChunkProvider implements IChunkProvider {
     public Random rand;
 
     private World worldObj;
-    private DimensionInformation dimensionInformation;
+    public DimensionInformation dimensionInformation;
 
     private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
 

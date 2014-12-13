@@ -7,6 +7,8 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
 
     @Override
     public void generate(int chunkX, int chunkZ, Block[] aBlock) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+
         byte waterLevel = 63;
         for (int x4 = 0; x4 < 4; ++x4) {
             for (int z4 = 0; z4 < 4; ++z4) {
@@ -18,7 +20,7 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
 
                         for (int z = 0; z < 4; ++z) {
                             if (height < waterLevel) {
-                                aBlock[index += maxheight] = Blocks.stone;
+                                aBlock[index += maxheight] = baseBlock;
                             } else {
                                 aBlock[index += maxheight] = null;
                             }
