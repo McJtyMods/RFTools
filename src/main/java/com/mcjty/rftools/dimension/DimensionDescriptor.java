@@ -100,15 +100,14 @@ public class DimensionDescriptor {
             } else {
                 if (!currentModifiers.isEmpty()) {
                     // Check if we collected modifiers that fit with this type.
-                    List<DimletDescriptor> newModifiers = new ArrayList<DimletDescriptor>();
-                    for (DimletDescriptor modifier : currentModifiers) {
+                    List<DimletDescriptor> copy = new ArrayList<DimletDescriptor>(currentModifiers);
+                    // Iterate over a copy so that we can delete from original list.
+                    for (DimletDescriptor modifier : copy) {
                         if (type.isModifiedBy(modifier.getType())) {
                             add(modifiers, type, modifier);
-                        } else {
-                            newModifiers.add(modifier);
+                            currentModifiers.remove(modifier);
                         }
                     }
-                    currentModifiers = newModifiers;
                 }
                 add(dimlets, type, id);
             }
