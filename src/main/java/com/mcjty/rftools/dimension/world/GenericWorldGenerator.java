@@ -47,7 +47,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
             generateSpawnPlatform(world);
         } else if (Math.abs(chunkX) > 6 && Math.abs(chunkZ) > 6) {
             // Not too close to starting platform we possibly generate dungeons.
-            if (random.nextInt(DimletConfiguration.dungeonChance) == 0) {
+            if (random.nextInt(DimletConfiguration.dungeonChance) == 1) {
                 int midx = chunkX * 16 + 8;
                 int midz = chunkZ * 16 + 8;
                 int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz-3, 8, 60);

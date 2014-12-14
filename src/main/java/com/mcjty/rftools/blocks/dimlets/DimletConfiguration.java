@@ -17,7 +17,7 @@ public class DimletConfiguration {
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
     public static int maxInfuse = 256;
-    public static int dungeonChance = 150;
+    public static int dungeonChance = 300;
 
 
     public static void init(Configuration cfg) {
