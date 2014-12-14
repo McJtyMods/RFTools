@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
@@ -128,6 +129,7 @@ public class KnownDimletConfiguration {
 
         rfCreateModifierMultiplier.clear();
         initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
         initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
     }
 
@@ -155,6 +157,7 @@ public class KnownDimletConfiguration {
 
         rfMaintainModifierMultiplier.clear();
         initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 20);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
         initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 20);
     }
 
@@ -182,6 +185,7 @@ public class KnownDimletConfiguration {
 
         tickCostModifierMultiplier.clear();
         initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 2);
+        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
         initTickCostModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 2);
     }
 
@@ -285,6 +289,7 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, idsInConfig, Blocks.sandstone);
         initMaterialItem(cfg, idsInConfig, Blocks.end_stone);
         initMaterialItem(cfg, idsInConfig, Blocks.netherrack);
+        initMaterialItem(cfg, idsInConfig, ModBlocks.dimensionalShardBlock);
 
         initFoliageItem(cfg, idsInConfig);
 
@@ -315,6 +320,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
         initFeatureItem(cfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
         initFeatureItem(cfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
+        initFeatureItem(cfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
 
         initTimeItem(cfg, idsInConfig, "Day");
         initTimeItem(cfg, idsInConfig, "Night");

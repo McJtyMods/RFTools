@@ -11,7 +11,7 @@ public enum DimletType {
     DIMLET_SKY("skyDimlet", "Sky", "s", false, null),
     DIMLET_STRUCTURE("structuresDimlet", "Structure", "S", false, null),
     DIMLET_TERRAIN("terrainDimlet", "Terrain", "T", false, new DimletType[] { DIMLET_MATERIAL, DIMLET_LIQUID }),
-    DIMLET_FEATURE("featureDimlet", "Feature", "f", false, null),
+    DIMLET_FEATURE("featureDimlet", "Feature", "f", false, new DimletType[] { DIMLET_MATERIAL }),
     DIMLET_TIME("timeDimlet", "Time", "t", false, null),
     DIMLET_DIGIT("digitDimlet", "Digit", "d", false, null);
 

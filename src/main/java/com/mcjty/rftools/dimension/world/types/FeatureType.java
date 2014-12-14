@@ -4,5 +4,6 @@ public enum FeatureType {
     FEATURE_NONE,
     FEATURE_CAVES,
     FEATURE_RAVINES,
-    FEATURE_SPHERES
+    FEATURE_SPHERES,
+    FEATURE_OREGEN
 }

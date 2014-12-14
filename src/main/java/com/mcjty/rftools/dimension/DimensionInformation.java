@@ -25,6 +25,8 @@ public class DimensionInformation {
     private Block baseBlockForTerrain = null;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
+    private Block[] extraOregen = new Block[] {};
+
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
     private String digitString = "";
@@ -39,7 +41,9 @@ public class DimensionInformation {
         List<DimensionDescriptor.DimletDescriptor> modifiersForTerrain = descriptor.getModifierDimlets(DimletType.DIMLET_TERRAIN);
         calculateTerrainType(dimlets, modifiersForTerrain, random);
 
-        calculateFeatureType(dimlets, random);
+        List<DimensionDescriptor.DimletDescriptor> modifiersForFeature = descriptor.getModifierDimlets(DimletType.DIMLET_FEATURE);
+        calculateFeatureType(dimlets, modifiersForFeature, random);
+
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
         calculateDigitString(dimlets);
@@ -130,19 +134,21 @@ public class DimensionInformation {
         }
 
         // @todo If no modifiers are specified we should also randomize based on rarity.
-        baseBlockForTerrain = Blocks.stone;
+        List<Block> blocks = new ArrayList<Block>();
         for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
-            List<Block> blocks = new ArrayList<Block>();
             if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
                 Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
                 blocks.add(block);
             }
-            baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
         }
-
+        if (!blocks.isEmpty()) {
+            baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
+        } else {
+            baseBlockForTerrain = Blocks.stone;
+        }
     }
 
-    private void calculateFeatureType(Map<DimletType,List<Integer>> dimlets, Random random) {
+    private void calculateFeatureType(Map<DimletType,List<Integer>> dimlets, List<DimensionDescriptor.DimletDescriptor> modifiers, Random random) {
         List<Integer> list = dimlets.get(DimletType.DIMLET_FEATURE);
         if (list.isEmpty()) {
             for (FeatureType type : FeatureType.values()) {
@@ -156,6 +162,16 @@ public class DimensionInformation {
                 featureTypes.add(KnownDimletConfiguration.idToFeatureType.get(id));
             }
         }
+
+        // @todo If no modifiers are specified we should also randomize based on rarity.
+        List<Block> blocks = new ArrayList<Block>();
+        for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
+            if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
+                Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
+                blocks.add(block);
+            }
+        }
+        extraOregen = blocks.toArray(new Block[blocks.size()]);
     }
 
     private void calculateStructureType(Map<DimletType,List<Integer>> dimlets, Random random) {
@@ -241,5 +257,9 @@ public class DimensionInformation {
 
     public String getDigitString() {
         return digitString;
+    }
+
+    public Block[] getExtraOregen() {
+        return extraOregen;
     }
 }
