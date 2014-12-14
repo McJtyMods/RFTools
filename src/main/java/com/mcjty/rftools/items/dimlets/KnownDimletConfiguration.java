@@ -17,7 +17,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
@@ -128,8 +127,8 @@ public class KnownDimletConfiguration {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
 
         rfCreateModifierMultiplier.clear();
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 5);
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 5);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
     }
 
     private static void initRfCreateModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
@@ -155,8 +154,8 @@ public class KnownDimletConfiguration {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
 
         rfMaintainModifierMultiplier.clear();
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 20);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 20);
     }
 
     private static void initRfMaintainModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
@@ -276,6 +275,12 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.iron_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.iron_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.lapis_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.lapis_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.redstone_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.redstone_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.dirt);
         initMaterialItem(cfg, idsInConfig, Blocks.sandstone);
         initMaterialItem(cfg, idsInConfig, Blocks.end_stone);
