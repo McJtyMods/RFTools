@@ -5,6 +5,7 @@ import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -43,9 +44,9 @@ public class DimensionDescriptor {
 
         descriptionString = s.toString();
 
-        tickCost = calculateTickCost(descriptors);
-        rfCreateCost = calculateCreationRfCost(descriptors, tickCost);
-        rfMaintainCost = calculateMaintenanceRfCost(descriptors);
+        tickCost = calculateTickCost(dimlets, modifiers);
+        rfCreateCost = calculateCreationRfCost(dimlets, modifiers, currentModifiers, tickCost);
+        rfMaintainCost = calculateMaintenanceRfCost(dimlets, modifiers);
     }
 
     private void constructDescriptionString(StringBuilder s, Map<DimletType, List<Integer>> dimlets, Map<DimletType, List<DimletDescriptor>> modifiers, List<DimletDescriptor> currentModifiers) {
@@ -209,17 +210,44 @@ public class DimensionDescriptor {
         tagCompound.setInteger("ticksLeft", tickCost);
     }
 
-    private int calculateCreationRfCost(List<DimletDescriptor> descriptors, int tickCost) {
-        int rf = KnownDimletConfiguration.baseDimensionCreationCost;
-        for (DimletDescriptor descriptor : descriptors) {
-            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
-            if (entry != null) {
-                int cost = entry.getRfCreateCost();
-                if (cost == -1) {
-                    cost = KnownDimletConfiguration.typeRfCreateCost.get(descriptor.getType());
-                }
-                rf += cost;
+    private int getModifierMultiplier(Map<Pair<DimletType,DimletType>,Integer> modifierMap, DimletType type1, DimletType type2) {
+        Integer multiplier = modifierMap.get(Pair.of(type1, type2));
+        if (multiplier == null) {
+            return 1;
+        }
+        return multiplier;
+    }
+
+    private int getCreationCost(DimletType type, int id) {
+        int cost = 0;
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        if (entry != null) {
+            cost = entry.getRfCreateCost();
+            if (cost == -1) {
+                cost = KnownDimletConfiguration.typeRfCreateCost.get(type);
             }
+        }
+        return cost;
+    }
+
+    private int calculateCreationRfCost(Map<DimletType, List<Integer>> dimlets, Map<DimletType, List<DimletDescriptor>> modifiers, List<DimletDescriptor> unusedModifiers, int tickCost) {
+        int rf = KnownDimletConfiguration.baseDimensionCreationCost;
+
+        for (Map.Entry<DimletType, List<Integer>> dimlet : dimlets.entrySet()) {
+            for (Integer id : dimlet.getValue()) {
+                rf += getCreationCost(dimlet.getKey(), id);
+            }
+            List<DimletDescriptor> list = modifiers.get(dimlet.getKey());
+            if (list != null) {
+                for (DimletDescriptor modifier : list) {
+                    int mult = getModifierMultiplier(KnownDimletConfiguration.rfCreateModifierMultiplier, modifier.getType(), dimlet.getKey());
+                    rf += getCreationCost(modifier.getType(), modifier.getId()) * mult;
+                }
+            }
+        }
+
+        for (DimletDescriptor modifier : unusedModifiers) {
+            rf += getCreationCost(modifier.getType(), modifier.getId());
         }
 
         // Compensate createCost for the cost to fill the matter receiver at the destination end.
@@ -228,33 +256,65 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int calculateMaintenanceRfCost(List<DimletDescriptor> descriptors) {
-        int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
-        for (DimletDescriptor descriptor : descriptors) {
-            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
-            if (entry != null) {
-                int cost = entry.getRfMaintainCost();
-                if (cost == -1) {
-                    cost = KnownDimletConfiguration.typeRfMaintainCost.get(descriptor.getType());
-                }
-                rf += cost;
+    private int getMaintenanceCost(DimletType type, int id) {
+        int cost = 0;
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        if (entry != null) {
+            cost = entry.getRfMaintainCost();
+            if (cost == -1) {
+                cost = KnownDimletConfiguration.typeRfMaintainCost.get(type);
             }
         }
+        return cost;
+    }
+
+    private int calculateMaintenanceRfCost(Map<DimletType, List<Integer>> dimlets, Map<DimletType, List<DimletDescriptor>> modifiers) {
+        int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
+
+        for (Map.Entry<DimletType, List<Integer>> dimlet : dimlets.entrySet()) {
+            for (Integer id : dimlet.getValue()) {
+                rf += getMaintenanceCost(dimlet.getKey(), id);
+            }
+            List<DimletDescriptor> list = modifiers.get(dimlet.getKey());
+            if (list != null) {
+                for (DimletDescriptor modifier : list) {
+                    int mult = getModifierMultiplier(KnownDimletConfiguration.rfMaintainModifierMultiplier, modifier.getType(), dimlet.getKey());
+                    rf += getMaintenanceCost(modifier.getType(), modifier.getId()) * mult;
+                }
+            }
+        }
+
         return rf;
     }
 
-    private int calculateTickCost(List<DimletDescriptor> descriptors) {
-        int ticks = KnownDimletConfiguration.baseDimensionTickCost;
-        for (DimletDescriptor descriptor : descriptors) {
-            DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(descriptor.getId());
-            if (entry != null) {
-                int cost = entry.getTickCost();
-                if (cost == -1) {
-                    cost = KnownDimletConfiguration.typeTickCost.get(descriptor.getType());
-                }
-                ticks += cost;
+    private int getTickCost(DimletType type, int id) {
+        int cost = 0;
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        if (entry != null) {
+            cost = entry.getTickCost();
+            if (cost == -1) {
+                cost = KnownDimletConfiguration.typeTickCost.get(type);
             }
         }
+        return cost;
+    }
+
+    private int calculateTickCost(Map<DimletType, List<Integer>> dimlets, Map<DimletType, List<DimletDescriptor>> modifiers) {
+        int ticks = KnownDimletConfiguration.baseDimensionTickCost;
+
+        for (Map.Entry<DimletType, List<Integer>> dimlet : dimlets.entrySet()) {
+            for (Integer id : dimlet.getValue()) {
+                ticks += getTickCost(dimlet.getKey(), id);
+            }
+            List<DimletDescriptor> list = modifiers.get(dimlet.getKey());
+            if (list != null) {
+                for (DimletDescriptor modifier : list) {
+                    int mult = getModifierMultiplier(KnownDimletConfiguration.tickCostModifierMultiplier, modifier.getType(), dimlet.getKey());
+                    ticks += getTickCost(modifier.getType(), modifier.getId()) * mult;
+                }
+            }
+        }
+
         return ticks;
     }
 

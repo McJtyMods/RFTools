@@ -5,12 +5,12 @@ import java.util.*;
 public enum DimletType {
     DIMLET_BIOME("biomeDimlet", "Biome", "B", false, null),
     DIMLET_FOLIAGE("foliageDimlet", "Foliage", "F", false, null),
-    DIMLET_LIQUID("liquidDimlet", "Liquid", "L", false, null),
+    DIMLET_LIQUID("liquidDimlet", "Liquid", "L", true, null),
     DIMLET_MATERIAL("materialDimlet", "Material", "m", true, null),
     DIMLET_MOBS("mobsDimlet", "Mob", "M", false, null),
     DIMLET_SKY("skyDimlet", "Sky", "s", false, null),
     DIMLET_STRUCTURE("structuresDimlet", "Structure", "S", false, null),
-    DIMLET_TERRAIN("terrainDimlet", "Terrain", "T", false, new DimletType[] { DIMLET_MATERIAL }),
+    DIMLET_TERRAIN("terrainDimlet", "Terrain", "T", false, new DimletType[] { DIMLET_MATERIAL, DIMLET_LIQUID }),
     DIMLET_FEATURE("featureDimlet", "Feature", "f", false, null),
     DIMLET_TIME("timeDimlet", "Time", "t", false, null),
     DIMLET_DIGIT("digitDimlet", "Digit", "d", false, null);
@@ -38,9 +38,7 @@ public enum DimletType {
         this.isModifier = isModifier;
         this.modifierTypes = new HashSet<DimletType>();
         if (modifierTypes != null) {
-            for (DimletType type : modifierTypes) {
-                this.modifierTypes.add(type);
-            }
+            Collections.addAll(this.modifierTypes, modifierTypes);
         }
     }
 
@@ -66,10 +64,6 @@ public enum DimletType {
 
     public boolean isModifier() {
         return isModifier;
-    }
-
-    public Set<DimletType> getModifierTypes() {
-        return modifierTypes;
     }
 
     /**

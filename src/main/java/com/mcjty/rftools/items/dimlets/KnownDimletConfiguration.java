@@ -27,6 +27,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,6 +61,11 @@ public class KnownDimletConfiguration {
     public static final Map<DimletType,Integer> typeRfMaintainCost = new HashMap<DimletType, Integer>();
     public static final Map<DimletType,Integer> typeTickCost = new HashMap<DimletType, Integer>();
 
+    // First element in the pair is the modifier type. Second element is the type that is being modified.
+    public static final Map<Pair<DimletType,DimletType>,Integer> rfCreateModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
+    public static final Map<Pair<DimletType,DimletType>,Integer> rfMaintainModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
+    public static final Map<Pair<DimletType,DimletType>,Integer> tickCostModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
+
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
@@ -67,7 +73,6 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
     public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
 
-    private static final ResourceLocation builtinConfigLocation = new ResourceLocation(RFTools.MODID, "text/dimlets.json");
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfMaintain = new HashMap<DimletKey, Integer>();
@@ -121,6 +126,14 @@ public class KnownDimletConfiguration {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
+
+        rfCreateModifierMultiplier.clear();
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 5);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 5);
+    }
+
+    private static void initRfCreateModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
+        rfCreateModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPERFCREATECOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
     }
 
     private static void initTypeRfCreateCost(Configuration cfg, DimletType type, int cost) {
@@ -140,6 +153,14 @@ public class KnownDimletConfiguration {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
+
+        rfMaintainModifierMultiplier.clear();
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
+    }
+
+    private static void initRfMaintainModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
+        rfMaintainModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPERFMAINTAINCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
     }
 
     private static void initTypeRfMaintainCost(Configuration cfg, DimletType type, int cost) {
@@ -159,6 +180,14 @@ public class KnownDimletConfiguration {
         initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_DIGIT, 0);
+
+        tickCostModifierMultiplier.clear();
+        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 2);
+        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 2);
+    }
+
+    private static void initTickCostModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
+        tickCostModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPETICKCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
     }
 
     private static void initTypeTickCost(Configuration cfg, DimletType type, int cost) {
