@@ -9,6 +9,8 @@ import com.mcjty.rftools.render.ModRenderers;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -50,6 +52,22 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
                 list.add(EnumChatFormatting.YELLOW + "[DIALED]");
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            String name = tagCompound.getString("tpName");
+            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name);
+            Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
+            if (c != null && c.getY() >= 0) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[DIALED]");
+            }
+        }
+        return currenttip;
     }
 
     @Override
