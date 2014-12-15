@@ -215,22 +215,36 @@ public class GenericChunkProvider implements IChunkProvider {
         int i2;
 
 
-        if (dimensionInformation.getTerrainType().supportsLakes()) {
-            if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
-                    && TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAKE)) {
-                k1 = x + this.rand.nextInt(16) + 8;
-                l1 = this.rand.nextInt(256);
-                i2 = z + this.rand.nextInt(16) + 8;
-                (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
-            }
+        if (dimensionInformation.getTerrainType().supportsLakes() && dimensionInformation.hasFeatureType(FeatureType.FEATURE_LAKES)) {
+            if (dimensionInformation.getFluidsForLakes().length == 0) {
+                // No specific liquid dimlets specified: we generate default lakes (water and lava were appropriate).
+                if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
+                        && TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAKE)) {
+                    k1 = x + this.rand.nextInt(16) + 8;
+                    l1 = this.rand.nextInt(256);
+                    i2 = z + this.rand.nextInt(16) + 8;
+                    (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
+                }
 
-            if (TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAVA) && !flag && this.rand.nextInt(8) == 0) {
-                k1 = x + this.rand.nextInt(16) + 8;
-                l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
-                i2 = z + this.rand.nextInt(16) + 8;
+                if (TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAVA) && !flag && this.rand.nextInt(8) == 0) {
+                    k1 = x + this.rand.nextInt(16) + 8;
+                    l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
+                    i2 = z + this.rand.nextInt(16) + 8;
 
-                if (l1 < 63 || this.rand.nextInt(10) == 0) {
-                    (new WorldGenLakes(Blocks.lava)).generate(this.worldObj, this.rand, k1, l1, i2);
+                    if (l1 < 63 || this.rand.nextInt(10) == 0) {
+                        (new WorldGenLakes(Blocks.lava)).generate(this.worldObj, this.rand, k1, l1, i2);
+                    }
+                }
+            } else {
+                // Generate lakes for the specified biomes.
+                for (Block liquid : dimensionInformation.getFluidsForLakes()) {
+                    if (!flag && this.rand.nextInt(4) == 0
+                            && TerrainGen.populate(chunkProvider, worldObj, rand, chunkX, chunkZ, flag, LAKE)) {
+                        k1 = x + this.rand.nextInt(16) + 8;
+                        l1 = this.rand.nextInt(256);
+                        i2 = z + this.rand.nextInt(16) + 8;
+                        (new WorldGenLakes(liquid)).generate(this.worldObj, this.rand, k1, l1, i2);
+                    }
                 }
             }
         }

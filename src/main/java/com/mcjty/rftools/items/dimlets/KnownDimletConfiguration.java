@@ -83,6 +83,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,String> idToBiome = new HashMap<Integer, String>();
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
     public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
+    public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
@@ -332,6 +333,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
         initFeatureItem(cfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
         initFeatureItem(cfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
+        initFeatureItem(cfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
 
         initTimeItem(cfg, idsInConfig, "Day");
         initTimeItem(cfg, idsInConfig, "Night");
@@ -531,6 +533,7 @@ public class KnownDimletConfiguration {
             if (me.getValue().canBePlacedInWorld()) {
                 int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                 String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
+                idToFluid.put(id, me.getValue().getBlock());
                 idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
             }
         }

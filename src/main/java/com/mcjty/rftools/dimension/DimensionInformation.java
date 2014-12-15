@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.fluids.Fluid;
 
 import java.util.*;
 
@@ -23,9 +24,11 @@ public class DimensionInformation {
 
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Block baseBlockForTerrain = null;
+    private Block fluidForTerrain = null;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
+    private Block[] fluidsForLakes = new Block[] {};
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
@@ -135,16 +138,26 @@ public class DimensionInformation {
 
         // @todo If no modifiers are specified we should also randomize based on rarity.
         List<Block> blocks = new ArrayList<Block>();
+        List<Block> fluids = new ArrayList<Block>();
         for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
             if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
                 Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
                 blocks.add(block);
+            } else if (modifier.getType() == DimletType.DIMLET_LIQUID) {
+                Block fluid = KnownDimletConfiguration.idToFluid.get(modifier.getId());
+                fluids.add(fluid);
             }
         }
         if (!blocks.isEmpty()) {
             baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
         } else {
             baseBlockForTerrain = Blocks.stone;
+        }
+
+        if (!fluids.isEmpty()) {
+            fluidForTerrain = fluids.get(random.nextInt(fluids.size()));
+        } else {
+            fluidForTerrain = Blocks.water;
         }
     }
 
@@ -165,13 +178,19 @@ public class DimensionInformation {
 
         // @todo If no modifiers are specified we should also randomize based on rarity.
         List<Block> blocks = new ArrayList<Block>();
+        List<Block> fluids = new ArrayList<Block>();
         for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
             if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
                 Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
                 blocks.add(block);
+            } else if (modifier.getType() == DimletType.DIMLET_LIQUID) {
+                Block fluid = KnownDimletConfiguration.idToFluid.get(modifier.getId());
+                fluids.add(fluid);
             }
         }
         extraOregen = blocks.toArray(new Block[blocks.size()]);
+        // If no fluids are specified we have default fluid generation. Otherwise only what is specified here.
+        fluidsForLakes = fluids.toArray(new Block[fluids.size()]);
     }
 
     private void calculateStructureType(Map<DimletType,List<Integer>> dimlets, Random random) {
@@ -231,10 +250,6 @@ public class DimensionInformation {
         return terrainType;
     }
 
-    public Block getBaseBlockForTerrain() {
-        return baseBlockForTerrain;
-    }
-
     public boolean hasFeatureType(FeatureType type) {
         return featureTypes.contains(type);
     }
@@ -259,7 +274,19 @@ public class DimensionInformation {
         return digitString;
     }
 
+    public Block getBaseBlockForTerrain() {
+        return baseBlockForTerrain;
+    }
+
     public Block[] getExtraOregen() {
         return extraOregen;
+    }
+
+    public Block getFluidForTerrain() {
+        return fluidForTerrain;
+    }
+
+    public Block[] getFluidsForLakes() {
+        return fluidsForLakes;
     }
 }

@@ -186,6 +186,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
     @Override
     public void generate(int chunkX, int chunkZ, Block[] aBlock) {
         Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+        Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
         func_147423_a( chunkX * 4, 0, chunkZ * 4);
 
@@ -231,7 +232,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                                 if ((d15 += d16) > 0.0D) {
                                     aBlock[index += maxheight] = baseBlock;
                                 } else if (height < waterLevel) {
-                                    aBlock[index += maxheight] = Blocks.water;
+                                    aBlock[index += maxheight] = baseLiquid;
                                 } else {
                                     aBlock[index += maxheight] = null;
                                 }

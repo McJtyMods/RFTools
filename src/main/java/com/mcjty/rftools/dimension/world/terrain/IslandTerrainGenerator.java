@@ -283,6 +283,8 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     }
 
     public final void genBiomeTerrain(BiomeGenBase biomegenbase, Block[] blocks, byte[] abyte, int x, int z, double noise) {
+        Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
+
         boolean flag = true;
         Block block = biomegenbase.topBlock;
         byte b0 = (byte)(biomegenbase.field_150604_aj & 255);
@@ -319,7 +321,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                                     block = Blocks.ice;
                                     b0 = 0;
                                 } else {
-                                    block = Blocks.water;
+                                    block = baseLiquid;
                                     b0 = 0;
                                 }
                             }
