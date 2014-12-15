@@ -23,16 +23,9 @@ public class RfToolsTeleporter extends Teleporter {
 
     @Override
     public void placeInPortal(Entity pEntity, double p2, double p3, double p4, float p5) {
-        int i = (int) p2;
-        int j = (int) p3;
-        int k = (int) p4;
-
-
         this.worldServerInstance.getBlock((int) this.x, (int) this.y, (int) this.z);   //dummy load to maybe gen chunk
-
 
         pEntity.setPosition(this.x, this.y, this.z);
     }
-
 
 }

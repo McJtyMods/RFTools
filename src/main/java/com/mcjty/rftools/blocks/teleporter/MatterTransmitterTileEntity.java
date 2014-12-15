@@ -469,9 +469,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (currentId != teleportDestination.getDimension()) {
             WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
             MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension(),
-                    new RfToolsTeleporter(worldServerForDimension, c.getX(), c.getY()+1, c.getZ()));
+                    new RfToolsTeleporter(worldServerForDimension, c.getX()+0.5, c.getY()+1, c.getZ()+0.5));
         } else {
-            teleportingPlayer.setPositionAndUpdate(c.getX(), c.getY()+1, c.getZ());
+            teleportingPlayer.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
 
         RFTools.message(teleportingPlayer, "Whoosh!");
