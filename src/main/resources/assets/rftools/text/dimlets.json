@@ -5,10 +5,21 @@
         [ "Material", "tile.blockDiamond", 100000, 50000, 1000, 5 ],
         [ "Material", "tile.blockGold", 50000, 25000, 500, 5 ],
         [ "Material", "tile.blockIron", 20000, 10000, 300, 4 ],
+        [ "Material", "tile.blockLapis", 20000, 10000, 300, 4 ],
+        [ "Material", "tile.blockRedstone", 20000, 10000, 300, 4 ],
         [ "Material", "tile.oreDiamond", 50000, 25000, 800, 5 ],
         [ "Material", "tile.oreGold", 25000, 12000, 400, 4 ],
         [ "Material", "tile.oreIron", 10000, 5000, 800, 3 ],
+        [ "Material", "tile.oreLapis", 10000, 5000, 800, 3 ],
+        [ "Material", "tile.oreRedstone", 10000, 5000, 800, 3 ],
+        [ "Material", "tile.dimensionalShardBlock", 20000, 12000, 500, 4 ],
         [ "Liquid", "pyrotheum", 50000, 30000, 1000, 5 ],
-        [ "Liquid", "redstone", 50000, 30000, 1000, 5 ]
+        [ "Liquid", "redstone", 50000, 30000, 1000, 5 ],
+        [ "Liquid", "cryotheum", 50000, 30000, 1000, 5 ],
+        [ "Liquid", "ender", 50000, 30000, 1000, 5 ],
+        [ "Liquid", "mana", 25000, 15000, 500, 5 ],
+        [ "Liquid", "coal", 25000, 15000, 500, 5 ],
+        [ "Liquid", "steam", 25000, 15000, 500, 4 ],
+        [ "Liquid", "rocket_fuel", 20000, 10000, 300, 4 ]
     ]
 }
