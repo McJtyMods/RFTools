@@ -289,6 +289,10 @@ public class KnownDimletConfiguration {
         int idDigit8 = initDigitItem(cfg, idsInConfig, 8);
         int idDigit9 = initDigitItem(cfg, idsInConfig, 9);
 
+        int idMaterialNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
+        idToDisplayName.put(idMaterialNone, DimletType.DIMLET_MATERIAL.getName() + " None Dimlet");
+        idToBlock.put(idMaterialNone, null);
+
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
@@ -306,6 +310,10 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, idsInConfig, ModBlocks.dimensionalShardBlock);
 
         initFoliageItem(cfg, idsInConfig);
+
+        int idLiquidNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
+        idToFluid.put(idLiquidNone, null);
+        idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
 
         initLiquidItems(cfg, idsInConfig);
 
@@ -357,6 +365,11 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idTerrainFlat);
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idMaterialNone);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idLiquidNone);
+
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), "   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idDigit9));
@@ -402,9 +415,15 @@ public class KnownDimletConfiguration {
         for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
             if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
-                randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                // Don't add the 'null' material.
+                if (idToBlock.containsKey(entry.getKey())) {
+                    randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
-                randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                // Don't add the 'null' fluid.
+                if (idToFluid.containsKey(entry.getKey())) {
+                    randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
             }
         }
     }

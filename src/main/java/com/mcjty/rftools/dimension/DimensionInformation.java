@@ -141,6 +141,9 @@ public class DimensionInformation {
 
         if (!blocks.isEmpty()) {
             baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
+            if (baseBlockForTerrain == null) {
+                baseBlockForTerrain = Blocks.stone;     // This is the default in case None was specified.
+            }
         } else {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
             if (random.nextFloat() < 0.6f) {
@@ -152,6 +155,9 @@ public class DimensionInformation {
 
         if (!fluids.isEmpty()) {
             fluidForTerrain = fluids.get(random.nextInt(fluids.size()));
+            if (fluidForTerrain == null) {
+                fluidForTerrain = Blocks.water;         // This is the default.
+            }
         } else {
             if (random.nextFloat() < 0.6f) {
                 fluidForTerrain = Blocks.water;
@@ -197,6 +203,8 @@ public class DimensionInformation {
             while (random.nextFloat() < 0.2f) {
                 blocks.add(KnownDimletConfiguration.getRandomMaterialBlock());
             }
+        } else if (blocks.size() == 1 && blocks.get(0) == null) {
+            blocks.clear();
         }
         extraOregen = blocks.toArray(new Block[blocks.size()]);
 
@@ -205,6 +213,8 @@ public class DimensionInformation {
             while (random.nextFloat() < 0.2f) {
                 fluids.add(KnownDimletConfiguration.getRandomFluidBlock());
             }
+        } else if (fluids.size() == 1 && fluids.get(0) == null) {
+            fluids.clear();
         }
         fluidsForLakes = fluids.toArray(new Block[fluids.size()]);
     }
