@@ -63,7 +63,7 @@ public class DimensionDescriptor {
                     Collections.sort(mods, new Comparator<DimletDescriptor>() {
                         @Override
                         public int compare(DimletDescriptor o1, DimletDescriptor o2) {
-                            return Integer.compare(o1.getId(), o2.getId());
+                            return o1.getId().compareTo(o2.getId());
                         }
                     });
                     for (DimletDescriptor descriptor : mods) {
