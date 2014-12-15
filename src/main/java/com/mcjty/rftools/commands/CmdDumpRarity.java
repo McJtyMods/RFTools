@@ -6,7 +6,7 @@ import net.minecraft.command.ICommandSender;
 public class CmdDumpRarity extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
-        return "[<tries> [<bonus>]]";
+        return "[<bonus>]";
     }
 
     @Override
@@ -16,9 +16,8 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        int tries = fetchInt(sender, args, 1, 1);
-        int bonus = fetchInt(sender, args, 2, 0);
+        float bonus = fetchFloat(sender, args, 1, 0.0f);
 
-        KnownDimletConfiguration.dumpRarityDistribution(tries, bonus);
+        KnownDimletConfiguration.dumpRarityDistribution(bonus);
     }
 }

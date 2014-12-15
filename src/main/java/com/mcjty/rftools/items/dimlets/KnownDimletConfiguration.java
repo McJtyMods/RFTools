@@ -9,6 +9,7 @@ import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -37,11 +38,21 @@ import java.util.*;
 
 public class KnownDimletConfiguration {
     public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";
+    public static final String CATEGORY_RARITY = "rarity";
     public static final String CATEGORY_TYPERARIRTY = "typerarity";
     public static final String CATEGORY_TYPERFCREATECOST = "typerfcreatecost";
     public static final String CATEGORY_TYPERFMAINTAINCOST = "typerfmaintaincost";
     public static final String CATEGORY_TYPETICKCOST = "typetickcost";
     public static final String CATEGORY_GENERAL = "general";
+
+    // All dimlet ids in a weighted random selector based on rarity.
+    public static WeightedRandomSelector<Integer,Integer> randomDimlets;
+    public static final int RARITY_0 = 0;
+    public static final int RARITY_1 = 1;
+    public static final int RARITY_2 = 2;
+    public static final int RARITY_3 = 3;
+    public static final int RARITY_4 = 4;
+    public static final int RARITY_5 = 5;
 
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
@@ -96,17 +107,17 @@ public class KnownDimletConfiguration {
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, 0);
-        initRarity(cfg, DimletType.DIMLET_TIME, 0);
-        initRarity(cfg, DimletType.DIMLET_FOLIAGE, 0);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, 0);
-        initRarity(cfg, DimletType.DIMLET_MATERIAL, 1);
-        initRarity(cfg, DimletType.DIMLET_MOBS, 10);
-        initRarity(cfg, DimletType.DIMLET_SKY, 0);
-        initRarity(cfg, DimletType.DIMLET_STRUCTURE, 10);
-        initRarity(cfg, DimletType.DIMLET_TERRAIN, 1);
-        initRarity(cfg, DimletType.DIMLET_FEATURE, 1);
-        initRarity(cfg, DimletType.DIMLET_DIGIT, 0);
+        initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_TIME, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_1);
+        initRarity(cfg, DimletType.DIMLET_MATERIAL, RARITY_1);
+        initRarity(cfg, DimletType.DIMLET_MOBS, RARITY_2);
+        initRarity(cfg, DimletType.DIMLET_SKY, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_STRUCTURE, RARITY_3);
+        initRarity(cfg, DimletType.DIMLET_TERRAIN, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_FEATURE, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_DIGIT, RARITY_0);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -365,7 +376,23 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idDigit8);
         craftableDimlets.add(idDigit9);
 
+        setupWeightedRandomList(cfg);
         setupChestLoot();
+    }
+
+    private static void setupWeightedRandomList(Configuration cfg) {
+        randomDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        randomDimlets.addRarity(RARITY_0, (float)cfg.get(CATEGORY_RARITY, "level0", 250.0f).getDouble());
+        randomDimlets.addRarity(RARITY_1, (float)cfg.get(CATEGORY_RARITY, "level1", 150.0f).getDouble());
+        randomDimlets.addRarity(RARITY_2, (float)cfg.get(CATEGORY_RARITY, "level2", 90.0f).getDouble());
+        randomDimlets.addRarity(RARITY_3, (float)cfg.get(CATEGORY_RARITY, "level3", 40.0f).getDouble());
+        randomDimlets.addRarity(RARITY_4, (float)cfg.get(CATEGORY_RARITY, "level4", 20.0f).getDouble());
+        randomDimlets.addRarity(RARITY_5, (float)cfg.get(CATEGORY_RARITY, "level5", 1.0f).getDouble());
+
+        for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
+            randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+        }
+
     }
 
     /**
@@ -550,29 +577,24 @@ public class KnownDimletConfiguration {
 
     private static Random random = new Random();
 
-    // The tries parameter is the amount of times to try again if you get a dimlet of rarity 0.
-    // The bonus parameter is added to luck and increases the chance of getting higher rarity
-    // dimlets.
-    public static int getRandomDimlet(int tries, int bonus) {
-        int luck = random.nextInt(100) + bonus;
-        if (luck >= 100) {
-            luck = 99;
-        }
-
-        while (true) {
-            int idx = random.nextInt(dimletIds.size());
-            Integer id = dimletIds.get(idx);
-            DimletEntry entry = idToDimlet.get(id);
-            if (entry.getRarity() == 0 && tries > 1) {
-                tries--;
-            } else if (entry.getRarity() <= luck) {
-                return id;
-            }
-        }
+    // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
+    public static int getRandomDimlet(float bonus) {
+        return randomDimlets.select(randomDimlets.createDistribution(bonus));
     }
 
-    public static void dumpRarityDistribution(int tries, int bonus) {
+    // Get a random dimlet with no bonus.
+    public static int getRandomDimlet() {
+        return randomDimlets.select();
+    }
+
+    // Get a random dimlet with the given distribution.
+    public static int getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution) {
+        return randomDimlets.select(distribution);
+    }
+
+    public static void dumpRarityDistribution(float bonus) {
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
+        WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
 
         for (Integer id : dimletIds) {
             counter.put(id, 0);
@@ -580,15 +602,15 @@ public class KnownDimletConfiguration {
 
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = getRandomDimlet(tries, bonus);
+            int id = randomDimlets.select(distribution);
             counter.put(id, counter.get(id)+1);
         }
 
-        RFTools.log("#### Dumping with tries=" + tries +" and bonus=" + bonus);
+        RFTools.log("#### Dumping with bonus=" + bonus);
         for (Integer id : dimletIds) {
             int count = counter.get(id);
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ", name:"+idToDisplayName.get(id)+", count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 }

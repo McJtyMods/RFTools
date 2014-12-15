@@ -6,15 +6,28 @@ import net.minecraft.util.EnumChatFormatting;
 
 public abstract class AbstractRfToolsCommand implements RfToolsCommand {
     protected int fetchInt(ICommandSender sender, String[] args, int index, int defaultValue) {
-        int dim;
+        int value;
         try {
-            dim = Integer.parseInt(args[index]);
+            value = Integer.parseInt(args[index]);
         } catch (NumberFormatException e) {
-            dim = 0;
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Dimension parameter is not a valid number!"));
+            value = 0;
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Parameter is not a valid integer!"));
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
-        return dim;
+        return value;
+    }
+
+    protected float fetchFloat(ICommandSender sender, String[] args, int index, float defaultValue) {
+        float value;
+        try {
+            value = Float.parseFloat(args[index]);
+        } catch (NumberFormatException e) {
+            value = 0.0f;
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Parameter is not a valid real number!"));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return defaultValue;
+        }
+        return value;
     }
 }

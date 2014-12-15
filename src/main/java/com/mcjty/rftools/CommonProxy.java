@@ -54,6 +54,7 @@ public class CommonProxy {
         Configuration cfg = dimletConfig;
         try {
             cfg.load();
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RARITY, "General rarity distribution for dimlet selection");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Default rarity per type of dimlet. 0 is very common, 100 is non-existant");
