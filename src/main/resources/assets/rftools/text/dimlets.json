@@ -1,5 +1,6 @@
 {
     "blacklist": [
+        [ "Liquid", "glowstone" ]
     ],
     "dimlets": [
         [ "Material", "tile.blockDiamond", 100000, 50000, 1000, 5 ],
@@ -13,10 +14,10 @@
         [ "Material", "tile.oreLapis", 10000, 5000, 800, 3 ],
         [ "Material", "tile.oreRedstone", 10000, 5000, 800, 3 ],
         [ "Material", "tile.dimensionalShardBlock", 20000, 12000, 500, 4 ],
-        [ "Liquid", "pyrotheum", 50000, 30000, 1000, 5 ],
-        [ "Liquid", "redstone", 50000, 30000, 1000, 5 ],
-        [ "Liquid", "cryotheum", 50000, 30000, 1000, 5 ],
-        [ "Liquid", "ender", 50000, 30000, 1000, 5 ],
+        [ "Liquid", "pyrotheum", 40000, 20000, 800, 5 ],
+        [ "Liquid", "redstone", 40000, 20000, 800, 5 ],
+        [ "Liquid", "cryotheum", 40000, 20000, 800, 5 ],
+        [ "Liquid", "ender", 40000, 20000, 1000, 5 ],
         [ "Liquid", "mana", 25000, 15000, 500, 5 ],
         [ "Liquid", "coal", 25000, 15000, 500, 5 ],
         [ "Liquid", "steam", 25000, 15000, 500, 4 ],
