@@ -607,8 +607,15 @@ public class KnownDimletConfiguration {
         }
 
         RFTools.log("#### Dumping with bonus=" + bonus);
-        for (Integer id : dimletIds) {
-            int count = counter.get(id);
+        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
+        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
+            sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
+        }
+        Collections.sort(sortedCounters);
+
+        for (Pair<Integer, Integer> entry : sortedCounters) {
+            int count = entry.getKey();
+            int id = entry.getValue();
             float percentage = count * 100.0f / total;
             RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
