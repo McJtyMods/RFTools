@@ -53,6 +53,8 @@ public class KnownDimletConfiguration {
     public static final int RARITY_3 = 3;
     public static final int RARITY_4 = 4;
     public static final int RARITY_5 = 5;
+    public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
+    public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
 
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
@@ -80,7 +82,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
-    public static final Map<Integer,String> idToBiome = new HashMap<Integer, String>();
+    public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
     public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
@@ -383,24 +385,50 @@ public class KnownDimletConfiguration {
     }
 
     private static void setupWeightedRandomList(Configuration cfg) {
+        float rarity0 = (float) cfg.get(CATEGORY_RARITY, "level0", 250.0f).getDouble();
+        float rarity1 = (float) cfg.get(CATEGORY_RARITY, "level1", 150.0f).getDouble();
+        float rarity2 = (float) cfg.get(CATEGORY_RARITY, "level2", 90.0f).getDouble();
+        float rarity3 = (float) cfg.get(CATEGORY_RARITY, "level3", 40.0f).getDouble();
+        float rarity4 = (float) cfg.get(CATEGORY_RARITY, "level4", 20.0f).getDouble();
+        float rarity5 = (float) cfg.get(CATEGORY_RARITY, "level5", 1.0f).getDouble();
+
         randomDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
-        randomDimlets.addRarity(RARITY_0, (float)cfg.get(CATEGORY_RARITY, "level0", 250.0f).getDouble());
-        randomDimlets.addRarity(RARITY_1, (float)cfg.get(CATEGORY_RARITY, "level1", 150.0f).getDouble());
-        randomDimlets.addRarity(RARITY_2, (float)cfg.get(CATEGORY_RARITY, "level2", 90.0f).getDouble());
-        randomDimlets.addRarity(RARITY_3, (float)cfg.get(CATEGORY_RARITY, "level3", 40.0f).getDouble());
-        randomDimlets.addRarity(RARITY_4, (float)cfg.get(CATEGORY_RARITY, "level4", 20.0f).getDouble());
-        randomDimlets.addRarity(RARITY_5, (float)cfg.get(CATEGORY_RARITY, "level5", 1.0f).getDouble());
+        setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
 
         for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+            if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
+                randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
+                randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+            }
         }
+    }
 
+
+    public static Block getRandomFluidBlock() {
+        return idToFluid.get(randomLiquidDimlets.select());
+    }
+
+    public static Block getRandomMaterialBlock() {
+        return idToBlock.get(randomMaterialDimlets.select());
+    }
+
+    private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {
+        randomDimlets.addRarity(RARITY_0, rarity0);
+        randomDimlets.addRarity(RARITY_1, rarity1);
+        randomDimlets.addRarity(RARITY_2, rarity2);
+        randomDimlets.addRarity(RARITY_3, rarity3);
+        randomDimlets.addRarity(RARITY_4, rarity4);
+        randomDimlets.addRarity(RARITY_5, rarity5);
     }
 
     /**
      * Get all dimlets which are currently already registered in the config file.
-     * @param cfg
-     * @return
      */
     private static Map<DimletKey, Integer> getDimletsFromConfig(Configuration cfg) {
         Map<DimletKey, Integer> idsInConfig;
@@ -516,7 +544,7 @@ public class KnownDimletConfiguration {
             if (biome != null) {
                 String name = biome.biomeName;
                 int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
-                idToBiome.put(id, name);
+                idToBiome.put(id, biome);
                 idToDisplayName.put(id, DimletType.DIMLET_BIOME.getName() + " " + name + " Dimlet");
             }
         }
@@ -577,8 +605,6 @@ public class KnownDimletConfiguration {
         idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         return id;
     }
-
-    private static Random random = new Random();
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
     public static int getRandomDimlet(float bonus) {

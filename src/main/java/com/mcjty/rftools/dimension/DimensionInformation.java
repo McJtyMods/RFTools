@@ -12,7 +12,6 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
-import net.minecraftforge.fluids.Fluid;
 
 import java.util.*;
 
@@ -136,9 +135,33 @@ public class DimensionInformation {
             terrainType = KnownDimletConfiguration.idToTerrainType.get(list.get(random.nextInt(list.size())));
         }
 
-        // @todo If no modifiers are specified we should also randomize based on rarity.
         List<Block> blocks = new ArrayList<Block>();
         List<Block> fluids = new ArrayList<Block>();
+        getMaterialAndFluidModifiers(modifiers, blocks, fluids);
+
+        if (!blocks.isEmpty()) {
+            baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
+        } else {
+            // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
+            if (random.nextFloat() < 0.6f) {
+                baseBlockForTerrain = Blocks.stone;
+            } else {
+                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock();
+            }
+        }
+
+        if (!fluids.isEmpty()) {
+            fluidForTerrain = fluids.get(random.nextInt(fluids.size()));
+        } else {
+            if (random.nextFloat() < 0.6f) {
+                fluidForTerrain = Blocks.water;
+            } else {
+                fluidForTerrain = KnownDimletConfiguration.getRandomFluidBlock();
+            }
+        }
+    }
+
+    private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<Block> blocks, List<Block> fluids) {
         for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
             if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
                 Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
@@ -147,17 +170,6 @@ public class DimensionInformation {
                 Block fluid = KnownDimletConfiguration.idToFluid.get(modifier.getId());
                 fluids.add(fluid);
             }
-        }
-        if (!blocks.isEmpty()) {
-            baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
-        } else {
-            baseBlockForTerrain = Blocks.stone;
-        }
-
-        if (!fluids.isEmpty()) {
-            fluidForTerrain = fluids.get(random.nextInt(fluids.size()));
-        } else {
-            fluidForTerrain = Blocks.water;
         }
     }
 
@@ -176,22 +188,27 @@ public class DimensionInformation {
             }
         }
 
-        // @todo If no modifiers are specified we should also randomize based on rarity.
         List<Block> blocks = new ArrayList<Block>();
         List<Block> fluids = new ArrayList<Block>();
-        for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
-            if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
-                Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
-                blocks.add(block);
-            } else if (modifier.getType() == DimletType.DIMLET_LIQUID) {
-                Block fluid = KnownDimletConfiguration.idToFluid.get(modifier.getId());
-                fluids.add(fluid);
+        getMaterialAndFluidModifiers(modifiers, blocks, fluids);
+
+        // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
+        if (blocks.isEmpty()) {
+            while (random.nextFloat() < 0.2f) {
+                blocks.add(KnownDimletConfiguration.getRandomMaterialBlock());
             }
         }
         extraOregen = blocks.toArray(new Block[blocks.size()]);
-        // If no fluids are specified we have default fluid generation. Otherwise only what is specified here.
+
+        // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
+        if (fluids.isEmpty()) {
+            while (random.nextFloat() < 0.2f) {
+                fluids.add(KnownDimletConfiguration.getRandomFluidBlock());
+            }
+        }
         fluidsForLakes = fluids.toArray(new Block[fluids.size()]);
     }
+
 
     private void calculateStructureType(Map<DimletType,List<Integer>> dimlets, Random random) {
         List<Integer> list = dimlets.get(DimletType.DIMLET_STRUCTURE);
@@ -226,14 +243,7 @@ public class DimensionInformation {
         List<Integer> list = dimlets.get(DimletType.DIMLET_BIOME);
         // @@@ TODO: distinguish between random overworld biome, random nether biome, random biome and specific biomes
         for (Integer id : list) {
-            String biomeName = KnownDimletConfiguration.idToBiome.get(id);
-            BiomeManager.BiomeEntry entry = findBiomeEntry(biomeName, BiomeManager.BiomeType.COOL);
-            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.WARM);
-            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.DESERT);
-            entry = entry != null ? entry : findBiomeEntry(biomeName, BiomeManager.BiomeType.ICY);
-            if (entry != null) {
-                biomes.add(entry.biome);
-            }
+            biomes.add(KnownDimletConfiguration.idToBiome.get(id));
         }
     }
 
