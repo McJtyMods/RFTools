@@ -23,35 +23,17 @@ public class RealizedDimensionTab extends Item {
         setMaxStackSize(1);
     }
 
-    private void logDebug(EntityPlayer player, String message) {
-        RFTools.message(player, EnumChatFormatting.YELLOW + message);
-    }
-
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if ((!world.isRemote) && player.isSneaking()) {
             NBTTagCompound tagCompound = stack.getTagCompound();
-            logDebug(player, tagCompound.getString("descriptionString"));
+            RFTools.message(player, tagCompound.getString("descriptionString"));
             int id = tagCompound.getInteger("id");
             if (id != 0) {
                 RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
                 DimensionInformation information = dimensionManager.getDimensionInformation(id);
                 if (information != null) {
-                    String digits = information.getDigitString();
-                    if (!digits.isEmpty()) {
-                        logDebug(player, "    Digits: " + digits);
-                    }
-                    TerrainType terrainType = information.getTerrainType();
-                    logDebug(player, "    Terrain: " + terrainType.toString());
-                    for (BiomeGenBase biome : information.getBiomes()) {
-                        logDebug(player, "    Biome: " + biome.biomeName);
-                    }
-                    for (FeatureType featureType : information.getFeatureTypes()) {
-                        logDebug(player, "    Feature: " + featureType.toString());
-                    }
-                    for (StructureType structureType : information.getStructureTypes()) {
-                        logDebug(player, "    Structure: " + structureType.toString());
-                    }
+                    information.dump(player);
                 }
             }
         }

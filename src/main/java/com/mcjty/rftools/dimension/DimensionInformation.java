@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension;
 
 import com.google.common.collect.ImmutableList;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
@@ -9,9 +10,13 @@ import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
@@ -49,6 +54,36 @@ public class DimensionInformation {
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
         calculateDigitString(dimlets);
+    }
+
+    private void logDebug(EntityPlayer player, String message) {
+        RFTools.message(player, EnumChatFormatting.YELLOW + message);
+    }
+
+    public void dump(EntityPlayer player) {
+        String digits = getDigitString();
+        if (!digits.isEmpty()) {
+            logDebug(player, "    Digits: " + digits);
+        }
+        TerrainType terrainType = getTerrainType();
+        logDebug(player, "    Terrain: " + terrainType.toString());
+        logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain).getDisplayName());
+        logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
+        for (BiomeGenBase biome : getBiomes()) {
+            logDebug(player, "    Biome: " + biome.biomeName);
+        }
+        for (FeatureType featureType : getFeatureTypes()) {
+            logDebug(player, "    Feature: " + featureType.toString());
+            for (Block block : extraOregen) {
+                logDebug(player, "        Extra ore: " + new ItemStack(block).getDisplayName());
+            }
+            for (Block block : fluidsForLakes) {
+                logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());
+            }
+        }
+        for (StructureType structureType : getStructureTypes()) {
+            logDebug(player, "    Structure: " + structureType.toString());
+        }
     }
 
     public void toBytes(ByteBuf buf) {
