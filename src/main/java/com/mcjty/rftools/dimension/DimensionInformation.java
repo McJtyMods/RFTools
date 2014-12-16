@@ -298,19 +298,6 @@ public class DimensionInformation {
         }
     }
 
-    private BiomeManager.BiomeEntry findBiomeEntry(String name, BiomeManager.BiomeType type) {
-        ImmutableList<BiomeManager.BiomeEntry> biomeList = BiomeManager.getBiomes(type);
-        if (biomeList == null) {
-            return null;
-        }
-        for (BiomeManager.BiomeEntry entry : biomeList) {
-            if (name.equals(entry.biome.biomeName)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
     private void calculateBiomes(Map<DimletType,List<Integer>> dimlets, Random random) {
         List<Integer> list = dimlets.get(DimletType.DIMLET_BIOME);
         // @@@ TODO: distinguish between random overworld biome, random nether biome, random biome and specific biomes
