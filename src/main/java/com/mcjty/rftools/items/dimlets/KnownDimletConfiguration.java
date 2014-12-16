@@ -295,18 +295,27 @@ public class KnownDimletConfiguration {
 
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.emerald_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.emerald_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.quartz_block);
+        initMaterialItem(cfg, idsInConfig, Blocks.quartz_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
         initMaterialItem(cfg, idsInConfig, Blocks.gold_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.iron_block);
         initMaterialItem(cfg, idsInConfig, Blocks.iron_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.coal_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.lapis_block);
         initMaterialItem(cfg, idsInConfig, Blocks.lapis_ore);
+        initMaterialItem(cfg, idsInConfig, Blocks.coal_block);
         initMaterialItem(cfg, idsInConfig, Blocks.redstone_block);
         initMaterialItem(cfg, idsInConfig, Blocks.redstone_ore);
         initMaterialItem(cfg, idsInConfig, Blocks.dirt);
         initMaterialItem(cfg, idsInConfig, Blocks.sandstone);
         initMaterialItem(cfg, idsInConfig, Blocks.end_stone);
         initMaterialItem(cfg, idsInConfig, Blocks.netherrack);
+        initMaterialItem(cfg, idsInConfig, Blocks.cobblestone);
+        initMaterialItem(cfg, idsInConfig, Blocks.obsidian);
+        initMaterialItem(cfg, idsInConfig, Blocks.soul_sand);
         initMaterialItem(cfg, idsInConfig, ModBlocks.dimensionalShardBlock);
 
         initFoliageItem(cfg, idsInConfig);
