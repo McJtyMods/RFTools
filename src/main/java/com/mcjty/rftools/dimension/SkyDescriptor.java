@@ -1,5 +1,7 @@
 package com.mcjty.rftools.dimension;
 
+import io.netty.buffer.ByteBuf;
+
 public class SkyDescriptor {
     private final Float sunBrightnessFactor;
     private final Float starBrightnessFactor;
@@ -7,6 +9,21 @@ public class SkyDescriptor {
     private SkyDescriptor(Builder builder) {
         sunBrightnessFactor = builder.sunBrightnessFactor;
         starBrightnessFactor = builder.starBrightnessFactor;
+    }
+
+    public void toBytes(ByteBuf buf) {
+        if (sunBrightnessFactor == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeFloat(sunBrightnessFactor);
+        }
+        if (starBrightnessFactor == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeFloat(starBrightnessFactor);
+        }
     }
 
     public float getSunBrightnessFactor() {
@@ -20,6 +37,20 @@ public class SkyDescriptor {
     public static class Builder {
         private Float sunBrightnessFactor = null;
         private Float starBrightnessFactor = null;
+
+        public Builder fromBytes(ByteBuf buf) {
+            if (buf.readBoolean()) {
+                sunBrightnessFactor = buf.readFloat();
+            } else {
+                sunBrightnessFactor = null;
+            }
+            if (buf.readBoolean()) {
+                starBrightnessFactor = buf.readFloat();
+            } else {
+                starBrightnessFactor = null;
+            }
+            return this;
+        }
 
         public Builder combine(SkyDescriptor descriptor) {
             if (descriptor.starBrightnessFactor != null) {

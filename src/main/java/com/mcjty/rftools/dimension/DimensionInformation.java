@@ -110,19 +110,19 @@ public class DimensionInformation {
         buf.writeInt(digitString.length());
         buf.writeBytes(digitString.getBytes());
 
+        buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
+        buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
 
+        buf.writeInt(extraOregen.length);
+        for (Block block : extraOregen) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        }
+        buf.writeInt(fluidsForLakes.length);
+        for (Block block : fluidsForLakes) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        }
 
-
-        //@todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@#################################
-/*
-    private Block[] extraOregen = new Block[] {};
-    private Block[] fluidsForLakes = new Block[] {};
-    private Block baseBlockForTerrain = null;
-    private Block fluidForTerrain = null;
-    private SkyDescriptor skyDescriptor;
-
-
- */
+        skyDescriptor.toBytes(buf);
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -148,6 +148,25 @@ public class DimensionInformation {
         byte[] dst = new byte[buf.readInt()];
         buf.readBytes(dst);
         digitString = new String(dst);
+
+        baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        fluidForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+
+        size = buf.readInt();
+        List<Block> blocks = new ArrayList<Block>();
+        for (int i = 0 ; i < size ; i++) {
+            blocks.add((Block) Block.blockRegistry.getObjectById(buf.readInt()));
+        }
+        extraOregen = blocks.toArray(new Block[blocks.size()]);
+
+        size = buf.readInt();
+        blocks = new ArrayList<Block>();
+        for (int i = 0 ; i < size ; i++) {
+            blocks.add((Block) Block.blockRegistry.getObjectById(buf.readInt()));
+        }
+        fluidsForLakes = blocks.toArray(new Block[blocks.size()]);
+
+        skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
     }
 
     public Coordinate getSpawnPoint() {
