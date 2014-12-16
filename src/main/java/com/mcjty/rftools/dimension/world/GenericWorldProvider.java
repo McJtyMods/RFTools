@@ -65,8 +65,9 @@ public class GenericWorldProvider extends WorldProvider {
     }
 
     @Override
-    public float getSunBrightnessFactor(float par1) {
-        return super.getSunBrightnessFactor(par1) * dimensionInformation.getSkyDescriptor().getSunBrightnessFactor();
+    @SideOnly(Side.CLIENT)
+    public float getSunBrightness(float par1) {
+        return super.getSunBrightness(par1) * dimensionInformation.getSkyDescriptor().getSunBrightnessFactor();
     }
 
     @Override
