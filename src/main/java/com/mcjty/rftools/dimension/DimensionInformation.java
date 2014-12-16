@@ -38,6 +38,8 @@ public class DimensionInformation {
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
     private String digitString = "";
 
+    private SkyDescriptor skyDescriptor;
+
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
         this.name = name;
         this.descriptor = descriptor;
@@ -54,6 +56,8 @@ public class DimensionInformation {
         calculateStructureType(dimlets, random);
         calculateBiomes(dimlets, random);
         calculateDigitString(dimlets);
+
+        calculateSky(dimlets, random);
     }
 
     private void logDebug(EntityPlayer player, String message) {
@@ -84,6 +88,8 @@ public class DimensionInformation {
         for (StructureType structureType : getStructureTypes()) {
             logDebug(player, "    Structure: " + structureType.toString());
         }
+        logDebug(player, "    Sun brightness: " + skyDescriptor.getSunBrightnessFactor());
+        logDebug(player, "    Star brightness: " + skyDescriptor.getStarBrightnessFactor());
     }
 
     public void toBytes(ByteBuf buf) {
@@ -106,6 +112,8 @@ public class DimensionInformation {
         }
         buf.writeInt(digitString.length());
         buf.writeBytes(digitString.getBytes());
+
+        //@todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@#################################
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -157,6 +165,25 @@ public class DimensionInformation {
         for (Integer id : list) {
             digitString += KnownDimletConfiguration.idToDigit.get(id);
         }
+    }
+
+    private void calculateSky(Map<DimletType,List<Integer>> dimlets, Random random) {
+        List<Integer> list = dimlets.get(DimletType.DIMLET_SKY);
+        if (random.nextFloat() < 0.5f && list.isEmpty()) {
+            // If nothing was specified then there is random chance we get random sky stuff.
+            list = new ArrayList<Integer>();        // Make a new list to not override the one from the map.
+            List<Integer> skyIds = new ArrayList<Integer>(KnownDimletConfiguration.idToSkyDescriptor.keySet());
+            for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
+                int id = skyIds.get(random.nextInt(skyIds.size()));
+                list.add(id);
+            }
+        }
+
+        SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
+        for (int id : list) {
+            builder.combine(KnownDimletConfiguration.idToSkyDescriptor.get(id));
+        }
+        skyDescriptor = builder.build();
     }
 
     private void calculateTerrainType(Map<DimletType,List<Integer>> dimlets, List<DimensionDescriptor.DimletDescriptor> modifiers, Random random) {
@@ -343,5 +370,9 @@ public class DimensionInformation {
 
     public Block[] getFluidsForLakes() {
         return fluidsForLakes;
+    }
+
+    public SkyDescriptor getSkyDescriptor() {
+        return skyDescriptor;
     }
 }

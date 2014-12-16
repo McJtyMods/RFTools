@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.dimension.SkyDescriptor;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
@@ -86,6 +87,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
     public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
+    public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
@@ -329,8 +331,12 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie");
         initMobItem(cfg, idsInConfig, EntitySkeleton.class, "Skeleton");
 
-        initSkyItem(cfg, idsInConfig, "Clear");
-        initSkyItem(cfg, idsInConfig, "Bright");
+        initSkyItem(cfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
+        initSkyItem(cfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
+        initSkyItem(cfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).build());
+        initSkyItem(cfg, idsInConfig, "Normal Night", new SkyDescriptor.Builder().starBrightnessFactor(1.0f).build());
+        initSkyItem(cfg, idsInConfig, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build());
+        initSkyItem(cfg, idsInConfig, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build());
 
         int idStructureNone = initStructureItem(cfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
@@ -601,8 +607,9 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initSkyItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name) {
+    private static int initSkyItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SkyDescriptor skyDescriptor) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
+        idToSkyDescriptor.put(id, skyDescriptor);
         idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
         return id;
     }
