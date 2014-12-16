@@ -341,7 +341,7 @@ public class DimensionInformation {
         if (featureTypes.contains(FeatureType.FEATURE_TENDRILS) || featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
             List<Block> blocks = new ArrayList<Block>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_OREGEN), blocks, fluids);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_TENDRILS), blocks, fluids);
 
             if (!blocks.isEmpty()) {
                 baseFeatureBlock = blocks.get(random.nextInt(blocks.size()));
