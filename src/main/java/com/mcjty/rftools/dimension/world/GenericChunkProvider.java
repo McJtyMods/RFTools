@@ -55,7 +55,10 @@ public class GenericChunkProvider implements IChunkProvider {
 
     // Are map structures going to be generated (e.g. strongholds)
     public WorldType worldType;
+
     private MapGenBase caveGenerator = new MapGenCaves();
+
+    private MapGenBase tendrilGenerator = new MapGenTendrils();
 
     // Holds Stronghold Generator
     private MapGenStronghold strongholdGenerator = new MapGenStronghold();
@@ -81,6 +84,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
     {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
+        tendrilGenerator = TerrainGen.getModdedMapGen(tendrilGenerator, CAVE);
         strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
         villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
         mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
@@ -142,6 +146,9 @@ public class GenericChunkProvider implements IChunkProvider {
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
         terrainGenerator.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
 
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_TENDRILS)) {
+            this.tendrilGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CAVES)) {
             this.caveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }

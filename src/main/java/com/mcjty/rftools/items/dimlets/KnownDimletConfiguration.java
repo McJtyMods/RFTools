@@ -365,6 +365,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
         initFeatureItem(cfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
         initFeatureItem(cfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
+        initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
 
         initTimeItem(cfg, idsInConfig, "Day");
         initTimeItem(cfg, idsInConfig, "Night");

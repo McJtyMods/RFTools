@@ -7,7 +7,10 @@ import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A unique descriptor of a dimension.
@@ -53,19 +56,9 @@ public class DimensionDescriptor {
         for (DimletType type : DimletType.values()) {
             List<Integer> ids = dimlets.get(type);
             if (ids != null) {
-                // Do not sort the digit dimlets.
-                if (!type.equals(DimletType.DIMLET_DIGIT)) {
-                    Collections.sort(ids);
-                }
                 // First the modifiers for this type:
                 List<DimletDescriptor> mods = modifiers.get(type);
                 if (mods != null) {
-                    Collections.sort(mods, new Comparator<DimletDescriptor>() {
-                        @Override
-                        public int compare(DimletDescriptor o1, DimletDescriptor o2) {
-                            return o1.getId().compareTo(o2.getId());
-                        }
-                    });
                     for (DimletDescriptor descriptor : mods) {
                         if (s.length() > 0) {
                             s.append(',');

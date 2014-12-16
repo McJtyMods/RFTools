@@ -26,6 +26,7 @@ public class DimensionInformation {
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Block baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
+    private Block baseFeatureBlock = null;      // Block used for some of the features like tendrils or spheres. @todo
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
@@ -69,6 +70,7 @@ public class DimensionInformation {
         TerrainType terrainType = getTerrainType();
         logDebug(player, "    Terrain: " + terrainType.toString());
         logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain).getDisplayName());
+        logDebug(player, "        Base feature block: " + new ItemStack(baseFeatureBlock).getDisplayName());
         logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
         for (BiomeGenBase biome : getBiomes()) {
             logDebug(player, "    Biome: " + biome.biomeName);
@@ -111,6 +113,7 @@ public class DimensionInformation {
         buf.writeBytes(digitString.getBytes());
 
         buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
+        buf.writeInt(Block.blockRegistry.getIDForObject(baseFeatureBlock));
         buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
 
         buf.writeInt(extraOregen.length);
@@ -150,6 +153,7 @@ public class DimensionInformation {
         digitString = new String(dst);
 
         baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        baseFeatureBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
 
         size = buf.readInt();
@@ -287,6 +291,10 @@ public class DimensionInformation {
         List<Block> blocks = new ArrayList<Block>();
         List<Block> fluids = new ArrayList<Block>();
         getMaterialAndFluidModifiers(modifiers, blocks, fluids);
+
+        // Material modifiers are consumed in the order that the corresponding features use them.
+        // @todo!
+
 
         // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
         if (blocks.isEmpty()) {
