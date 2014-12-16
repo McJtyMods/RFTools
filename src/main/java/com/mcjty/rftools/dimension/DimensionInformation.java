@@ -74,12 +74,12 @@ public class DimensionInformation {
         }
         for (FeatureType featureType : getFeatureTypes()) {
             logDebug(player, "    Feature: " + featureType.toString());
-            for (Block block : extraOregen) {
-                logDebug(player, "        Extra ore: " + new ItemStack(block).getDisplayName());
-            }
-            for (Block block : fluidsForLakes) {
-                logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());
-            }
+        }
+        for (Block block : extraOregen) {
+            logDebug(player, "        Extra ore: " + new ItemStack(block).getDisplayName());
+        }
+        for (Block block : fluidsForLakes) {
+            logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());
         }
         for (StructureType structureType : getStructureTypes()) {
             logDebug(player, "    Structure: " + structureType.toString());

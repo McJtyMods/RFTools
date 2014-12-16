@@ -6,12 +6,27 @@ import net.minecraft.world.World;
 
 public class WorldGenerationTools {
 
-    public static int findSuitableEmptySpot(World world, int x, int z, int minheight, int tries) {
+    public static int findSuitableEmptySpot(World world, int x, int z) {
         int y = world.getTopSolidOrLiquidBlock(x, z);
         if (y == -1) {
             return -1;
         }
-        return y-1;
+
+        y--;            // y should now be at a solid block.
+
+        for (int i = 0 ; i <= 20 ; i++) {
+            Block block = world.getBlock(x, y+1, z);
+            if (block.getMaterial().isLiquid()) {
+                y++;
+                if (y > world.getHeight()-10) {
+                    return -1;
+                }
+            } else {
+                break;
+            }
+        }
+
+        return y;
     }
 
     // Return true if this block is solid.

@@ -416,12 +416,12 @@ public class KnownDimletConfiguration {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
             if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
                 // Don't add the 'null' material.
-                if (idToBlock.containsKey(entry.getKey())) {
+                if (idToBlock.get(entry.getKey()) != null) {
                     randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
                 // Don't add the 'null' fluid.
-                if (idToFluid.containsKey(entry.getKey())) {
+                if (idToFluid.get(entry.getKey()) != null) {
                     randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             }

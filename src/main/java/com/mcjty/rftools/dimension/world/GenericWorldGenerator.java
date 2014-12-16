@@ -51,10 +51,10 @@ public class GenericWorldGenerator implements IWorldGenerator {
             if (random.nextInt(DimletConfiguration.dungeonChance) == 1) {
                 int midx = chunkX * 16 + 8;
                 int midz = chunkZ * 16 + 8;
-                int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz-3, 8, 60);
-                int starty2 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz-3, 8, 60);
-                int starty3 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz+3, 8, 60);
-                int starty4 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz+3, 8, 60);
+                int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz-3);
+                int starty2 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz-3);
+                int starty3 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz+3);
+                int starty4 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz+3);
                 int starty = (starty1+starty2+starty3+starty4) / 4;
                 if (starty > 1 && starty < world.getHeight()-20) {
                     generateDungeon(world, random, midx, starty, midz);
@@ -69,7 +69,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         int midx = 8;
         int midz = 8;
-        int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz, 3, 60);
+        int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
         if (starty == -1) {
             // No suitable spot. We will carve something out.
             starty = 63;
