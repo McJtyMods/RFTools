@@ -58,7 +58,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
     private MapGenBase caveGenerator = new MapGenCaves();
 
-    private MapGenBase tendrilGenerator = new MapGenTendrils();
+    private MapGenBase tendrilGenerator = new MapGenTendrils(this);
 
     // Holds Stronghold Generator
     private MapGenStronghold strongholdGenerator = new MapGenStronghold();

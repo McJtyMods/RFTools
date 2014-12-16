@@ -9,12 +9,19 @@ import net.minecraft.world.gen.MapGenBase;
 import java.util.Random;
 
 public class MapGenTendrils extends MapGenBase {
+    private final GenericChunkProvider provider;
+
+    public MapGenTendrils(GenericChunkProvider provider) {
+        this.provider = provider;
+    }
 
     protected void func_151542_a(long p_151542_1_, int p_151542_3_, int p_151542_4_, Block[] p_151542_5_, double p_151542_6_, double p_151542_8_, double p_151542_10_) {
         this.func_151541_a(p_151542_1_, p_151542_3_, p_151542_4_, p_151542_5_, p_151542_6_, p_151542_8_, p_151542_10_, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
     protected void func_151541_a(long p_151541_1_, int p_151541_3_, int p_151541_4_, Block[] data, double p_151541_6_, double p_151541_8_, double p_151541_10_, float p_151541_12_, float p_151541_13_, float p_151541_14_, int p_151541_15_, int p_151541_16_, double p_151541_17_) {
+        Block baseBlock = provider.dimensionInformation.getBaseFeatureBlock();
+
         double d4 = (p_151541_3_ * 16 + 8);
         double d5 = (p_151541_4_ * 16 + 8);
         float f3 = 0.0F;
@@ -123,7 +130,7 @@ public class MapGenTendrils extends MapGenBase {
                                         Block block  = data[k3];
 
                                         if (block == Blocks.air || block == null) {
-                                            data[k3] = Blocks.stone;
+                                            data[k3] = baseBlock;
                                         }
                                     }
 
