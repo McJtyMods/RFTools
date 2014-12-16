@@ -40,7 +40,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         if (scrambling > 0) {
             scrambling--;
             if (scrambling == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet(bonus);
+                int id = KnownDimletConfiguration.getRandomDimlet(bonus, worldObj.rand);
                 InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4);
             }
             markDirty();

@@ -39,7 +39,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
         if (researching > 0) {
             researching--;
             if (researching == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet();
+                int id = KnownDimletConfiguration.getRandomDimlet(worldObj.rand);
                 InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 1, 2);
             }
             markDirty();

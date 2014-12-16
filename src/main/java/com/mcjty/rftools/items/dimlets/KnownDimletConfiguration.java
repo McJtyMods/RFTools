@@ -420,11 +420,11 @@ public class KnownDimletConfiguration {
         float rarity4 = (float) cfg.get(CATEGORY_RARITY, "level4", 20.0f).getDouble();
         float rarity5 = (float) cfg.get(CATEGORY_RARITY, "level5", 1.0f).getDouble();
 
-        randomDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        randomDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-        randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-        randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>(new Random());
+        randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
 
         for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
@@ -443,13 +443,12 @@ public class KnownDimletConfiguration {
         }
     }
 
-
-    public static Block getRandomFluidBlock() {
-        return idToFluid.get(randomLiquidDimlets.select());
+    public static Block getRandomFluidBlock(Random random) {
+        return idToFluid.get(randomLiquidDimlets.select(random));
     }
 
-    public static Block getRandomMaterialBlock() {
-        return idToBlock.get(randomMaterialDimlets.select());
+    public static Block getRandomMaterialBlock(Random random) {
+        return idToBlock.get(randomMaterialDimlets.select(random));
     }
 
     private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {
@@ -489,7 +488,7 @@ public class KnownDimletConfiguration {
     }
 
     private static int initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, ""+digit));
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
         idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
         idToDigit.put(id, ""+digit);
         return id;
@@ -642,21 +641,22 @@ public class KnownDimletConfiguration {
     }
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
-    public static int getRandomDimlet(float bonus) {
-        return randomDimlets.select(randomDimlets.createDistribution(bonus));
+    public static int getRandomDimlet(float bonus, Random random) {
+        return randomDimlets.select(randomDimlets.createDistribution(bonus), random);
     }
 
     // Get a random dimlet with no bonus.
-    public static int getRandomDimlet() {
-        return randomDimlets.select();
+    public static int getRandomDimlet(Random random) {
+        return randomDimlets.select(random);
     }
 
     // Get a random dimlet with the given distribution.
-    public static int getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution) {
-        return randomDimlets.select(distribution);
+    public static int getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution, Random random) {
+        return randomDimlets.select(distribution, random);
     }
 
     public static void dumpRarityDistribution(float bonus) {
+        Random random = new Random();
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
         WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
 
@@ -666,7 +666,7 @@ public class KnownDimletConfiguration {
 
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = randomDimlets.select(distribution);
+            int id = randomDimlets.select(distribution, random);
             counter.put(id, counter.get(id)+1);
         }
 

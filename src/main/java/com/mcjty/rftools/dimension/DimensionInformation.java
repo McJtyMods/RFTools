@@ -220,7 +220,7 @@ public class DimensionInformation {
             if (random.nextFloat() < 0.6f) {
                 baseBlockForTerrain = Blocks.stone;
             } else {
-                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock();
+                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock(random);
             }
         }
 
@@ -233,7 +233,7 @@ public class DimensionInformation {
             if (random.nextFloat() < 0.6f) {
                 fluidForTerrain = Blocks.water;
             } else {
-                fluidForTerrain = KnownDimletConfiguration.getRandomFluidBlock();
+                fluidForTerrain = KnownDimletConfiguration.getRandomFluidBlock(random);
             }
         }
     }
@@ -272,7 +272,7 @@ public class DimensionInformation {
         // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
         if (blocks.isEmpty()) {
             while (random.nextFloat() < 0.2f) {
-                blocks.add(KnownDimletConfiguration.getRandomMaterialBlock());
+                blocks.add(KnownDimletConfiguration.getRandomMaterialBlock(random));
             }
         } else if (blocks.size() == 1 && blocks.get(0) == null) {
             blocks.clear();
@@ -282,7 +282,7 @@ public class DimensionInformation {
         // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
         if (fluids.isEmpty()) {
             while (random.nextFloat() < 0.2f) {
-                fluids.add(KnownDimletConfiguration.getRandomFluidBlock());
+                fluids.add(KnownDimletConfiguration.getRandomFluidBlock(random));
             }
         } else if (fluids.size() == 1 && fluids.get(0) == null) {
             fluids.clear();

@@ -216,16 +216,16 @@ public class GenericWorldGenerator implements IWorldGenerator {
         }
         WeightedRandomSelector.Distribution<Integer> goodDistribution = KnownDimletConfiguration.randomDimlets.createDistribution(0.01f);
         for (int i = 0 ; i < random.nextInt(2)+1 ; i++) {
-            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(goodDistribution)));
+            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(goodDistribution, random)));
         }
 
         WeightedRandomSelector.Distribution<Integer> bestDistribution = KnownDimletConfiguration.randomDimlets.createDistribution(0.15f);
         EntityItemFrame frame1 = spawnItemFrame(world, midx - 1, starty + 2, midz + 2);
-        frame1.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution)));
+        frame1.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution, random)));
         EntityItemFrame frame2 = spawnItemFrame(world, midx, starty + 2, midz + 2);
-        frame2.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution)));
+        frame2.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution, random)));
         EntityItemFrame frame3 = spawnItemFrame(world, midx + 1, starty + 2, midz + 2);
-        frame3.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution)));
+        frame3.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, KnownDimletConfiguration.getRandomDimlet(bestDistribution, random)));
     }
 
     private EntityItemFrame spawnItemFrame(World world, int x, int y, int z) {

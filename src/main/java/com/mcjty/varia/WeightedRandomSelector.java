@@ -6,7 +6,6 @@ import java.util.*;
  * A class that can return random items based on rarity.
  */
 public class WeightedRandomSelector<K,E> {
-    private final Random random;
     private boolean dirty = true;
 
     // A map associating every key with the chance that items of this key should be selected.
@@ -19,8 +18,7 @@ public class WeightedRandomSelector<K,E> {
     // All items for every key.
     private final Map<K,List<E>> items = new HashMap<K, List<E>>();
 
-    public WeightedRandomSelector(Random random) {
-        this.random = random;
+    public WeightedRandomSelector() {
     }
 
     /**
@@ -81,7 +79,7 @@ public class WeightedRandomSelector<K,E> {
     /**
      * Return a random element given a distribution.
      */
-    public E select(Distribution<K> distribution) {
+    public E select(Distribution<K> distribution, Random random) {
         distribute();
         float r = random.nextFloat() * distribution.getTotalChance() - 0.0001f;  // Subtract with small value to ensure we actually get there.
         K key = null;
@@ -99,8 +97,8 @@ public class WeightedRandomSelector<K,E> {
     /**
      * Return a random element.
      */
-    public E select() {
-        return select(defaultDistribution);
+    public E select(Random random) {
+        return select(defaultDistribution, random);
     }
 
     public static class Distribution<K> {
