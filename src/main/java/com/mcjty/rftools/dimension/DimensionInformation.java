@@ -1,6 +1,5 @@
 package com.mcjty.rftools.dimension;
 
-import com.google.common.collect.ImmutableList;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
@@ -15,8 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.BiomeManager;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
@@ -113,7 +110,19 @@ public class DimensionInformation {
         buf.writeInt(digitString.length());
         buf.writeBytes(digitString.getBytes());
 
+
+
+
         //@todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@#################################
+/*
+    private Block[] extraOregen = new Block[] {};
+    private Block[] fluidsForLakes = new Block[] {};
+    private Block baseBlockForTerrain = null;
+    private Block fluidForTerrain = null;
+    private SkyDescriptor skyDescriptor;
+
+
+ */
     }
 
     public void fromBytes(ByteBuf buf) {
