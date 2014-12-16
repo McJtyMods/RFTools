@@ -6,23 +6,32 @@ public class SkyDescriptor {
     private final Float sunBrightnessFactor;
     private final Float starBrightnessFactor;
 
+    private final Float skyColorFactorR;
+    private final Float skyColorFactorG;
+    private final Float skyColorFactorB;
+
     private SkyDescriptor(Builder builder) {
         sunBrightnessFactor = builder.sunBrightnessFactor;
         starBrightnessFactor = builder.starBrightnessFactor;
+        skyColorFactorR = builder.skyColorFactorR;
+        skyColorFactorG = builder.skyColorFactorG;
+        skyColorFactorB = builder.skyColorFactorB;
     }
 
     public void toBytes(ByteBuf buf) {
-        if (sunBrightnessFactor == null) {
+        writeFloat(buf, sunBrightnessFactor);
+        writeFloat(buf, starBrightnessFactor);
+        writeFloat(buf, skyColorFactorR);
+        writeFloat(buf, skyColorFactorG);
+        writeFloat(buf, skyColorFactorB);
+    }
+
+    private void writeFloat(ByteBuf buf, Float value) {
+        if (value == null) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeFloat(sunBrightnessFactor);
-        }
-        if (starBrightnessFactor == null) {
-            buf.writeBoolean(false);
-        } else {
-            buf.writeBoolean(true);
-            buf.writeFloat(starBrightnessFactor);
+            buf.writeFloat(value);
         }
     }
 
@@ -34,22 +43,40 @@ public class SkyDescriptor {
         return starBrightnessFactor == null ? 1.0f : starBrightnessFactor;
     }
 
+    public float getSkyColorFactorR() {
+        return skyColorFactorR == null ? 1.0f : skyColorFactorR;
+    }
+
+    public float getSkyColorFactorG() {
+        return skyColorFactorG == null ? 1.0f : skyColorFactorG;
+    }
+
+    public float getSkyColorFactorB() {
+        return skyColorFactorB == null ? 1.0f : skyColorFactorB;
+    }
+
     public static class Builder {
         private Float sunBrightnessFactor = null;
         private Float starBrightnessFactor = null;
+        private Float skyColorFactorR = null;
+        private Float skyColorFactorG = null;
+        private Float skyColorFactorB = null;
 
         public Builder fromBytes(ByteBuf buf) {
-            if (buf.readBoolean()) {
-                sunBrightnessFactor = buf.readFloat();
-            } else {
-                sunBrightnessFactor = null;
-            }
-            if (buf.readBoolean()) {
-                starBrightnessFactor = buf.readFloat();
-            } else {
-                starBrightnessFactor = null;
-            }
+            sunBrightnessFactor = readFloat(buf);
+            starBrightnessFactor = readFloat(buf);
+            skyColorFactorR = readFloat(buf);
+            skyColorFactorG = readFloat(buf);
+            skyColorFactorB = readFloat(buf);
             return this;
+        }
+
+        private Float readFloat(ByteBuf buf) {
+            if (buf.readBoolean()) {
+                return buf.readFloat();
+            } else {
+                return null;
+            }
         }
 
         public Builder combine(SkyDescriptor descriptor) {
@@ -58,6 +85,27 @@ public class SkyDescriptor {
             }
             if (descriptor.sunBrightnessFactor != null) {
                 sunBrightnessFactor(descriptor.getSunBrightnessFactor());
+            }
+            if (descriptor.skyColorFactorR != null) {
+                if (this.skyColorFactorR == null) {
+                    this.skyColorFactorR = descriptor.skyColorFactorR;
+                } else {
+                    this.skyColorFactorR *= descriptor.skyColorFactorR;
+                }
+            }
+            if (descriptor.skyColorFactorG != null) {
+                if (this.skyColorFactorG == null) {
+                    this.skyColorFactorG = descriptor.skyColorFactorG;
+                } else {
+                    this.skyColorFactorG *= descriptor.skyColorFactorG;
+                }
+            }
+            if (descriptor.skyColorFactorB != null) {
+                if (this.skyColorFactorB == null) {
+                    this.skyColorFactorB = descriptor.skyColorFactorB;
+                } else {
+                    this.skyColorFactorB *= descriptor.skyColorFactorB;
+                }
             }
             return this;
         }
@@ -69,6 +117,13 @@ public class SkyDescriptor {
 
         public Builder starBrightnessFactor(float f) {
             this.starBrightnessFactor = f;
+            return this;
+        }
+
+        public Builder skyColorFactor(float r, float g, float b) {
+            this.skyColorFactorR = r;
+            this.skyColorFactorG = g;
+            this.skyColorFactorB = b;
             return this;
         }
 

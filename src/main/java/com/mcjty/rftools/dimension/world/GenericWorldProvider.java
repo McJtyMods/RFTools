@@ -5,6 +5,8 @@ import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.SkyDescriptor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
@@ -62,6 +64,16 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public BiomeGenBase getBiomeGenForCoords(int x, int z) {
         return super.getBiomeGenForCoords(x, z);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks) {
+        float r = dimensionInformation.getSkyDescriptor().getSkyColorFactorR();
+        float g = dimensionInformation.getSkyDescriptor().getSkyColorFactorG();
+        float b = dimensionInformation.getSkyDescriptor().getSkyColorFactorB();
+        Vec3 skyColor = super.getSkyColor(cameraEntity, partialTicks);
+        return Vec3.createVectorHelper(skyColor.xCoord * r, skyColor.yCoord * g, skyColor.zCoord * b);
     }
 
     @Override
