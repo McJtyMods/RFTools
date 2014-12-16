@@ -34,13 +34,13 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
      * Returns an array of biomes for the location input.
      */
     @Override
-    public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] p_76937_1_, int p_76937_2_, int p_76937_3_, int p_76937_4_, int p_76937_5_) {
-        if (p_76937_1_ == null || p_76937_1_.length < p_76937_4_ * p_76937_5_) {
-            p_76937_1_ = new BiomeGenBase[p_76937_4_ * p_76937_5_];
+    public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] biomeArray, int p_76937_2_, int p_76937_3_, int sizex, int sizez) {
+        if (biomeArray == null || biomeArray.length < sizex * sizez) {
+            biomeArray = new BiomeGenBase[sizex * sizez];
         }
 
-        Arrays.fill(p_76937_1_, 0, p_76937_4_ * p_76937_5_, this.biomeGenBase);
-        return p_76937_1_;
+        Arrays.fill(biomeArray, 0, sizex * sizez, this.biomeGenBase);
+        return biomeArray;
     }
 
     /**

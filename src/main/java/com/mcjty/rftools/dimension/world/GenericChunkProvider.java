@@ -123,7 +123,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
 
-        // @@@ Clumsy?
+        // @todo: is this right? Are we not overwriting standard biome information?
         if (!dimensionInformation.getTerrainType().supportsLakes()) {
             for (BiomeGenBase biome : biomesForGeneration) {
                 biome.theBiomeDecorator.generateLakes = false;
