@@ -95,6 +95,13 @@ public class GenericChunkProvider implements IChunkProvider {
         dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
 
         this.worldType = world.getWorldInfo().getTerrainType();
+
+        if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_AMPLIFIED) {
+            worldType = WorldType.AMPLIFIED;
+        } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_FLAT) {
+            worldType = WorldType.FLAT;
+        }
+
         this.rand = new Random((seed + 516) * 314);
 
         terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);
