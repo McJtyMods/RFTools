@@ -16,13 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 public class DimensionTickEvent {
-    private int counter = 20;
+    private static final int MAXTICKS = 10;
+    private int counter = MAXTICKS;
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent evt) {
         counter--;
         if (counter <= 0) {
-            counter = 20;
+            counter = MAXTICKS;
             World entityWorld = MinecraftServer.getServer().getEntityWorld();
             RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(entityWorld);
 
@@ -35,11 +36,10 @@ public class DimensionTickEvent {
                     if (DimensionManager.getWorld(id) != null) {
                         int cost = entry.getValue().getRfMaintainCost();
                         int power = dimensionStorage.getEnergyLevel(id);
-                        power -= cost * 20;
+                        power -= cost * MAXTICKS;
                         if (power < 0) {
                             power = 0;
                         }
-//                                            System.out.println("Consume energy for dimension, id=" + id + ", power=" + power);
 
                         handleLowPower(id, power);
 

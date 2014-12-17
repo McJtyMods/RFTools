@@ -12,7 +12,7 @@ public class DimletConfiguration {
     public static int rfScrambleOperation = 100;
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
-    public static int MAX_DIMENSION_POWER = 10000000;
+    public static int MAX_DIMENSION_POWER = 40000000;
     public static int INFUSER_MAXENERGY = 60000;
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
