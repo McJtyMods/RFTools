@@ -108,7 +108,11 @@ public class RealizedDimensionTab extends Item {
                     }
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {
-                    list.add(EnumChatFormatting.GREEN + type.getName() + " " + ids.size() + " dimlets");
+                    if (ids.size() == 1) {
+                        list.add(EnumChatFormatting.GREEN + type.getName() + " 1 dimlet");
+                    } else {
+                        list.add(EnumChatFormatting.GREEN + type.getName() + " " + ids.size() + " dimlets");
+                    }
                 }
             }
         }
