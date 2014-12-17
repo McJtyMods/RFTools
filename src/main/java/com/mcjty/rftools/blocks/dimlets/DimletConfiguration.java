@@ -13,6 +13,7 @@ public class DimletConfiguration {
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
     public static int MAX_DIMENSION_POWER = 40000000;
+    public static int DIMPOWER_WARN0 = 6000000;     // This is only used for darkness calculations.
     public static int DIMPOWER_WARN1 = 4000000;
     public static int DIMPOWER_WARN2 = 2000000;
     public static int DIMPOWER_WARN3 = 1000000;
@@ -44,6 +45,8 @@ public class DimletConfiguration {
                 "RF per tick that the the dimension builder can receive").getInt();
         MAX_DIMENSION_POWER = cfg.get(CATEGORY_DIMLETS, "dimensionPower", MAX_DIMENSION_POWER,
                 "The internal RF buffer for every dimension").getInt();
+        DIMPOWER_WARN0 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn0", DIMPOWER_WARN0,
+                "The zero level at which power warning signs are starting to happen. This is only used for lighting level. No other debuffs occur at this level.").getInt();
         DIMPOWER_WARN1 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn1", DIMPOWER_WARN1,
                 "The first level at which power warning signs are starting to happen").getInt();
         DIMPOWER_WARN2 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn2", DIMPOWER_WARN2,

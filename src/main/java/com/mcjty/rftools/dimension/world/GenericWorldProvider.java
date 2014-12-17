@@ -1,8 +1,8 @@
 package com.mcjty.rftools.dimension.world;
 
-import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
-import com.mcjty.rftools.dimension.SkyDescriptor;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
@@ -15,6 +15,7 @@ import net.minecraftforge.common.DimensionManager;
 
 public class GenericWorldProvider extends WorldProvider {
     private DimensionInformation dimensionInformation;
+    private DimensionStorage storage;
 
     private long calculateSeed(long seed, int dim) {
         return dim * 13 + seed;
@@ -26,6 +27,7 @@ public class GenericWorldProvider extends WorldProvider {
         long seed = calculateSeed(worldObj.getSeed(), dim);
 
         dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
+        storage = DimensionStorage.getDimensionStorage(worldObj);
 
         if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
             worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
@@ -66,20 +68,48 @@ public class GenericWorldProvider extends WorldProvider {
         return super.getBiomeGenForCoords(x, z);
     }
 
+    private static long lastTime = 0;
+
     @Override
     @SideOnly(Side.CLIENT)
     public Vec3 getSkyColor(Entity cameraEntity, float partialTicks) {
-        float r = dimensionInformation.getSkyDescriptor().getSkyColorFactorR();
-        float g = dimensionInformation.getSkyDescriptor().getSkyColorFactorG();
-        float b = dimensionInformation.getSkyDescriptor().getSkyColorFactorB();
+        int dim = worldObj.provider.dimensionId;
+        if (System.currentTimeMillis() - lastTime > 1000) {
+            lastTime = System.currentTimeMillis();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
+        }
+
+        float factor = calculatePowerBlackout(dim);
+
+        float r = dimensionInformation.getSkyDescriptor().getSkyColorFactorR() * factor;
+        float g = dimensionInformation.getSkyDescriptor().getSkyColorFactorG() * factor;
+        float b = dimensionInformation.getSkyDescriptor().getSkyColorFactorB() * factor;
+
         Vec3 skyColor = super.getSkyColor(cameraEntity, partialTicks);
         return Vec3.createVectorHelper(skyColor.xCoord * r, skyColor.yCoord * g, skyColor.zCoord * b);
+    }
+
+    private float calculatePowerBlackout(int dim) {
+        float factor = 1.0f;
+        int power = storage.getEnergyLevel(dim);
+        if (power < DimletConfiguration.DIMPOWER_WARN3) {
+            factor = ((float) power) / DimletConfiguration.DIMPOWER_WARN3 * 0.2f;
+        } else  if (power < DimletConfiguration.DIMPOWER_WARN2) {
+            factor = (power - DimletConfiguration.DIMPOWER_WARN3) / (DimletConfiguration.DIMPOWER_WARN2 - DimletConfiguration.DIMPOWER_WARN3) * 0.3f + 0.2f;
+        } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
+            factor = (power - DimletConfiguration.DIMPOWER_WARN2) / (DimletConfiguration.DIMPOWER_WARN1 - DimletConfiguration.DIMPOWER_WARN2) * 0.3f + 0.5f;
+        } else if (power < DimletConfiguration.DIMPOWER_WARN0) {
+            factor = (power - DimletConfiguration.DIMPOWER_WARN1) / (DimletConfiguration.DIMPOWER_WARN0 - DimletConfiguration.DIMPOWER_WARN1) * 0.2f + 0.8f;
+        }
+        return factor;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public float getSunBrightness(float par1) {
-        return super.getSunBrightness(par1) * dimensionInformation.getSkyDescriptor().getSunBrightnessFactor();
+        int dim = worldObj.provider.dimensionId;
+        float factor = calculatePowerBlackout(dim);
+        return super.getSunBrightness(par1) * dimensionInformation.getSkyDescriptor().getSunBrightnessFactor() * factor;
     }
 
     @Override
