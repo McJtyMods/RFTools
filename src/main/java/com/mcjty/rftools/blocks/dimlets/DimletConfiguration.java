@@ -13,6 +13,9 @@ public class DimletConfiguration {
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
     public static int MAX_DIMENSION_POWER = 40000000;
+    public static int DIMPOWER_WARN1 = 4000000;
+    public static int DIMPOWER_WARN2 = 2000000;
+    public static int DIMPOWER_WARN3 = 1000000;
     public static int INFUSER_MAXENERGY = 60000;
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
@@ -41,6 +44,12 @@ public class DimletConfiguration {
                 "RF per tick that the the dimension builder can receive").getInt();
         MAX_DIMENSION_POWER = cfg.get(CATEGORY_DIMLETS, "dimensionPower", MAX_DIMENSION_POWER,
                 "The internal RF buffer for every dimension").getInt();
+        DIMPOWER_WARN1 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn1", DIMPOWER_WARN1,
+                "The first level at which power warning signs are starting to happen").getInt();
+        DIMPOWER_WARN2 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn2", DIMPOWER_WARN2,
+                "The second level at which power warning signs are starting to become worse").getInt();
+        DIMPOWER_WARN3 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn3", DIMPOWER_WARN3,
+                "The third level at which power warning signs are starting to be very bad").getInt();
 
         INFUSER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "machineInfuserMaxRF", INFUSER_MAXENERGY,
                 "Maximum RF storage that the machine infuser can hold").getInt();

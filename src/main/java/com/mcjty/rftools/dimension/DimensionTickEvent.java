@@ -61,7 +61,7 @@ public class DimensionTickEvent {
                     player.attackEntityFrom(DamageSource.generic, 1000.0f);
                 }
             }
-        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 30)) {
+        } else if (power < DimletConfiguration.DIMPOWER_WARN3) {
             // We are VERY low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
@@ -72,7 +72,7 @@ public class DimensionTickEvent {
                     player.addPotionEffect(new PotionEffect(Potion.poison.getId(), 20));
                 }
             }
-        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 20)) {
+        } else if (power < DimletConfiguration.DIMPOWER_WARN2) {
             // We are low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
@@ -81,7 +81,7 @@ public class DimensionTickEvent {
                     player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
                 }
             }
-        } else if (power < (DimletConfiguration.MAX_DIMENSION_POWER / 10)) {
+        } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
             // We are low on power. Start bad effects.
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
