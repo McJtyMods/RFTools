@@ -295,6 +295,9 @@ public class DimensionDescriptor {
 
         if (rfGain > 0) {
             rf = rf - (rf * rfGain / 100);
+            if (rf < 10) {
+                rf = 10;        // Never consume less then 10 RF/tick
+            }
         }
 
         return rf;
