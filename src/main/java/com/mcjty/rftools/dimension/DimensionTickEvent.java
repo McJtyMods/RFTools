@@ -1,9 +1,11 @@
 package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -12,8 +14,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class DimensionTickEvent {
     private static final int MAXTICKS = 10;
@@ -57,8 +61,25 @@ public class DimensionTickEvent {
             // We ran out of power!
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
-                for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.attackEntityFrom(DamageSource.generic, 1000.0f);
+                List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
+                if (DimletConfiguration.dimensionDifficulty >= 1) {
+                    for (EntityPlayer player : players) {
+                        player.attackEntityFrom(DamageSource.generic, 1000.0f);
+                    }
+                } else {
+                    Random random = new Random();
+                    for (EntityPlayer player : players) {
+                        WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(0);
+                        int x = random.nextInt(2000) - 1000;
+                        int z = random.nextInt(2000) - 1000;
+                        int y = worldServerForDimension.getTopSolidOrLiquidBlock(x, z);
+                        if (y == -1) {
+                            y = 63;
+                        }
+
+                        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, 0,
+                                new RfToolsTeleporter(worldServerForDimension, x, y, z));
+                    }
                 }
             }
         } else if (power < DimletConfiguration.DIMPOWER_WARN3) {

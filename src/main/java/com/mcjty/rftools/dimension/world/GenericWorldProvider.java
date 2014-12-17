@@ -18,7 +18,7 @@ public class GenericWorldProvider extends WorldProvider {
     private DimensionStorage storage;
 
     private long calculateSeed(long seed, int dim) {
-        return dim * 13 + seed;
+        return dim * 13L + seed;
     }
 
     @Override
@@ -95,11 +95,11 @@ public class GenericWorldProvider extends WorldProvider {
         if (power < DimletConfiguration.DIMPOWER_WARN3) {
             factor = ((float) power) / DimletConfiguration.DIMPOWER_WARN3 * 0.2f;
         } else  if (power < DimletConfiguration.DIMPOWER_WARN2) {
-            factor = (power - DimletConfiguration.DIMPOWER_WARN3) / (DimletConfiguration.DIMPOWER_WARN2 - DimletConfiguration.DIMPOWER_WARN3) * 0.3f + 0.2f;
+            factor = (float) (power - DimletConfiguration.DIMPOWER_WARN3) / (DimletConfiguration.DIMPOWER_WARN2 - DimletConfiguration.DIMPOWER_WARN3) * 0.3f + 0.2f;
         } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
-            factor = (power - DimletConfiguration.DIMPOWER_WARN2) / (DimletConfiguration.DIMPOWER_WARN1 - DimletConfiguration.DIMPOWER_WARN2) * 0.3f + 0.5f;
+            factor = (float) (power - DimletConfiguration.DIMPOWER_WARN2) / (DimletConfiguration.DIMPOWER_WARN1 - DimletConfiguration.DIMPOWER_WARN2) * 0.3f + 0.5f;
         } else if (power < DimletConfiguration.DIMPOWER_WARN0) {
-            factor = (power - DimletConfiguration.DIMPOWER_WARN1) / (DimletConfiguration.DIMPOWER_WARN0 - DimletConfiguration.DIMPOWER_WARN1) * 0.2f + 0.8f;
+            factor = (float) (power - DimletConfiguration.DIMPOWER_WARN1) / (DimletConfiguration.DIMPOWER_WARN0 - DimletConfiguration.DIMPOWER_WARN1) * 0.2f + 0.8f;
         }
         return factor;
     }
