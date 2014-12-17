@@ -50,9 +50,9 @@ public class PacketForceTeleport implements IMessage, IMessageHandler<PacketForc
         if (currentId != message.dim) {
             WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(message.dim);
             MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, message.dim,
-                    new RfToolsTeleporter(worldServerForDimension, message.x, message.y+1, message.z));
+                    new RfToolsTeleporter(worldServerForDimension, message.x+.5, message.y+1, message.z+.5));
         } else {
-            player.setPositionAndUpdate(message.x, message.y + 1, message.z);
+            player.setPositionAndUpdate(message.x+.5, message.y + 1, message.z+.5);
         }
         return null;
     }
