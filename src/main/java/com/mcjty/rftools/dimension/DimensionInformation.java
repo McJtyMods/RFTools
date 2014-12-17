@@ -339,10 +339,18 @@ public class DimensionInformation {
             extraOregen = new Block[0];
         }
 
-        if (featureTypes.contains(FeatureType.FEATURE_TENDRILS) || featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
+        FeatureType featureType = null;
+        if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
+            featureType = FeatureType.FEATURE_TENDRILS;
+        } else if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
+            featureType = FeatureType.FEATURE_CANYONS;
+        } else if (featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
+            featureType = FeatureType.FEATURE_SPHERES;
+        }
+        if (featureType != null) {
             List<Block> blocks = new ArrayList<Block>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_TENDRILS), blocks, fluids);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
 
             if (!blocks.isEmpty()) {
                 baseFeatureBlock = blocks.get(random.nextInt(blocks.size()));
