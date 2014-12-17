@@ -58,8 +58,10 @@ public class GenericChunkProvider implements IChunkProvider {
 
     private MapGenBase caveGenerator = new MapGenCaves();
 
+    // RFTools specific features.
     private MapGenBase tendrilGenerator = new MapGenTendrils(this);
     private MapGenBase canyonGenerator = new MapGenCanyons(this);
+//    private MapGenBase sphereGenerator = new MapGenSpheres(this);
 
     // Holds Stronghold Generator
     private MapGenStronghold strongholdGenerator = new MapGenStronghold();
@@ -87,6 +89,7 @@ public class GenericChunkProvider implements IChunkProvider {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
         tendrilGenerator = TerrainGen.getModdedMapGen(tendrilGenerator, CAVE);
         canyonGenerator = TerrainGen.getModdedMapGen(canyonGenerator, RAVINE);
+//        sphereGenerator = TerrainGen.getModdedMapGen(sphereGenerator, RAVINE);
         strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
         villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
         mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
@@ -154,6 +157,9 @@ public class GenericChunkProvider implements IChunkProvider {
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CANYONS)) {
             this.canyonGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }
+//        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_SPHERES)) {
+//            this.sphereGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+//        }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CAVES)) {
             this.caveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }
