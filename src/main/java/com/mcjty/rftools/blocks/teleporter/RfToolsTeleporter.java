@@ -26,7 +26,9 @@ public class RfToolsTeleporter extends Teleporter {
         this.worldServerInstance.getBlock((int) this.x, (int) this.y, (int) this.z);   //dummy load to maybe gen chunk
 
         pEntity.setPosition(this.x, this.y, this.z);
-//        pEntity.setVelocity();
+        pEntity.motionX = 0.0f;
+        pEntity.motionY = 0.0f;
+        pEntity.motionZ = 0.0f;
     }
 
 }
