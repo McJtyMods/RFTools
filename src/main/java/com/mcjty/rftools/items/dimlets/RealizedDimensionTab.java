@@ -14,7 +14,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
-import java.util.List;
+import java.util.*;
 
 public class RealizedDimensionTab extends Item {
     private static long lastTime = 0;
@@ -88,34 +88,29 @@ public class RealizedDimensionTab extends Item {
     }
 
     private void constructDescriptionHelp(List list, String descriptionString) {
-        String digitString = "";
-        DimletType prevType = null;
-        int cnt = 0;
+        Map<DimletType,List<Integer>> dimletTypeListMap = new HashMap<DimletType, List<Integer>>();
         for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
             DimletType type = descriptor.getType();
-            int id = descriptor.getId();
-            if (type == DimletType.DIMLET_DIGIT) {
-                digitString += KnownDimletConfiguration.idToDigit.get(id);
+            if (!dimletTypeListMap.containsKey(type)) {
+                dimletTypeListMap.put(type, new ArrayList<Integer>());
             }
-            if (type == prevType) {
-                cnt++;
-            } else {
-                if (prevType != null) {
-                    if (prevType != DimletType.DIMLET_DIGIT) {
-                        list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
+            dimletTypeListMap.get(descriptor.getType()).add(descriptor.getId());
+        }
+
+        for (Map.Entry<DimletType, List<Integer>> entry : dimletTypeListMap.entrySet()) {
+            DimletType type = entry.getKey();
+            List<Integer> ids = entry.getValue();
+            if (ids != null && !ids.isEmpty()) {
+                if (type == DimletType.DIMLET_DIGIT) {
+                    String digitString = "";
+                    for (int id : ids) {
+                        digitString += KnownDimletConfiguration.idToDigit.get(id);
                     }
+                    list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
+                } else {
+                    list.add(EnumChatFormatting.GREEN + type.getName() + " " + ids.size() + " dimlets");
                 }
-                prevType = type;
-                cnt = 1;
             }
-        }
-        if (prevType != null && cnt != 0) {
-            if (prevType != DimletType.DIMLET_DIGIT) {
-                list.add(EnumChatFormatting.GREEN + prevType.getName() + " " + cnt + " dimlets");
-            }
-        }
-        if (!digitString.isEmpty()) {
-            list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
         }
     }
 }
