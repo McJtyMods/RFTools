@@ -8,10 +8,10 @@ import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
 
-public class MapGenTendrils extends MapGenBase {
+public class MapGenSpheres extends MapGenBase {
     private final GenericChunkProvider provider;
 
-    public MapGenTendrils(GenericChunkProvider provider) {
+    public MapGenSpheres(GenericChunkProvider provider) {
         this.provider = provider;
     }
 
@@ -20,7 +20,7 @@ public class MapGenTendrils extends MapGenBase {
     }
 
     protected void func_151541_a(long p_151541_1_, int p_151541_3_, int p_151541_4_, Block[] data, double p_151541_6_, double p_151541_8_, double p_151541_10_, float p_151541_12_, float p_151541_13_, float p_151541_14_, int p_151541_15_, int p_151541_16_, double p_151541_17_) {
-        Block baseBlock = provider.dimensionInformation.getTendrilBlock();
+        Block baseBlock = provider.dimensionInformation.getSphereBlock();
 
         double d4 = (p_151541_3_ * 16 + 8);
         double d5 = (p_151541_4_ * 16 + 8);

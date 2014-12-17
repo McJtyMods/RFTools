@@ -27,7 +27,9 @@ public class DimensionInformation {
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Block baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
-    private Block baseFeatureBlock = null;      // Block used for some of the features like tendrils or spheres
+    private Block tendrilBlock = null;
+    private Block canyonBlock = null;
+    private Block sphereBlock = null;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
@@ -70,7 +72,15 @@ public class DimensionInformation {
         TerrainType terrainType = getTerrainType();
         logDebug(player, "    Terrain: " + terrainType.toString());
         logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain).getDisplayName());
-        logDebug(player, "        Base feature block: " + new ItemStack(baseFeatureBlock).getDisplayName());
+        if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
+            logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock).getDisplayName());
+        }
+        if (featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
+            logDebug(player, "        Sphere block: " + new ItemStack(sphereBlock).getDisplayName());
+        }
+        if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
+            logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock).getDisplayName());
+        }
         logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
         for (BiomeGenBase biome : getBiomes()) {
             logDebug(player, "    Biome: " + biome.biomeName);
@@ -113,7 +123,9 @@ public class DimensionInformation {
         buf.writeBytes(digitString.getBytes());
 
         buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
-        buf.writeInt(Block.blockRegistry.getIDForObject(baseFeatureBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock));
         buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
 
         buf.writeInt(extraOregen.length);
@@ -153,7 +165,9 @@ public class DimensionInformation {
         digitString = new String(dst);
 
         baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        baseFeatureBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        tendrilBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        sphereBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        canyonBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
 
         size = buf.readInt();
@@ -339,36 +353,35 @@ public class DimensionInformation {
             extraOregen = new Block[0];
         }
 
-        FeatureType featureType = null;
-        if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
-            featureType = FeatureType.FEATURE_TENDRILS;
-        } else if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
-            featureType = FeatureType.FEATURE_CANYONS;
-        } else if (featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
-            featureType = FeatureType.FEATURE_SPHERES;
-        }
-        if (featureType != null) {
+        tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS);
+        sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_SPHERES);
+        canyonBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS);
+    }
+
+    private Block getFeatureBlock(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
+        Block block = Blocks.stone;
+        if (featureTypes.contains(featureType)) {
             List<Block> blocks = new ArrayList<Block>();
             List<Block> fluids = new ArrayList<Block>();
             getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
 
             if (!blocks.isEmpty()) {
-                baseFeatureBlock = blocks.get(random.nextInt(blocks.size()));
-                if (baseFeatureBlock == null) {
-                    baseFeatureBlock = Blocks.stone;     // This is the default in case None was specified.
+                block = blocks.get(random.nextInt(blocks.size()));
+                if (block == null) {
+                    block = Blocks.stone;     // This is the default in case None was specified.
                 }
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < 0.6f) {
-                    baseFeatureBlock = Blocks.stone;
+                    block = Blocks.stone;
                 } else {
-                    baseFeatureBlock = KnownDimletConfiguration.getRandomMaterialBlock(random, true);
+                    block = KnownDimletConfiguration.getRandomMaterialBlock(random, true);
                 }
             }
         } else {
-             baseFeatureBlock = Blocks.stone;
+            block = Blocks.stone;
         }
-
+        return block;
     }
 
 
@@ -438,8 +451,16 @@ public class DimensionInformation {
         return baseBlockForTerrain;
     }
 
-    public Block getBaseFeatureBlock() {
-        return baseFeatureBlock;
+    public Block getTendrilBlock() {
+        return tendrilBlock;
+    }
+
+    public Block getCanyonBlock() {
+        return canyonBlock;
+    }
+
+    public Block getSphereBlock() {
+        return sphereBlock;
     }
 
     public Block[] getExtraOregen() {
