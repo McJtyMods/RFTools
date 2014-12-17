@@ -84,14 +84,14 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     matterReceiverTileEntity.setName(information.getName());
                     matterReceiverTileEntity.markDirty();
                 } else {
-                    world.setBlock(x+midx, starty, z+midz, Blocks.hardened_clay, 3, 2);
+                    world.setBlock(x+midx, starty, z+midz, Blocks.stained_hardened_clay, 3, 2);
                 }
                 for (int y = 1 ; y <= 3 ; y++) {
                     world.setBlockToAir(x+midx, starty+y, z+midz);
                 }
                 // Check the top layer. If it is something other then air we will replace it with clay as well.
                 if (!world.isAirBlock(x+midx, starty+4, z+midz)) {
-                    world.setBlock(x+midx, starty+4, z+midz, Blocks.hardened_clay, 3, 2);
+                    world.setBlock(x+midx, starty+4, z+midz, Blocks.stained_hardened_clay, 3, 2);
                 }
             }
         }
