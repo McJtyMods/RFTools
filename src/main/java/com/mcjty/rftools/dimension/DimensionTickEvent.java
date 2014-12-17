@@ -67,9 +67,9 @@ public class DimensionTickEvent {
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
                     player.attackEntityFrom(DamageSource.generic, 0.1f);
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
-                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
-                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
+                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), MAXTICKS));
+                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), MAXTICKS));
                 }
             }
         } else if (power < DimletConfiguration.DIMPOWER_WARN2) {
@@ -77,8 +77,8 @@ public class DimensionTickEvent {
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
-                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
+                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), MAXTICKS));
                 }
             }
         } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
@@ -86,7 +86,7 @@ public class DimensionTickEvent {
             WorldServer world = DimensionManager.getWorld(id);
             if (world != null) {
                 for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), 20));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
                 }
             }
         }
