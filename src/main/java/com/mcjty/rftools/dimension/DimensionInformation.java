@@ -27,7 +27,7 @@ public class DimensionInformation {
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Block baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
-    private Block baseFeatureBlock = null;      // Block used for some of the features like tendrils or spheres. @todo
+    private Block baseFeatureBlock = null;      // Block used for some of the features like tendrils or spheres
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
@@ -246,10 +246,11 @@ public class DimensionInformation {
             }
         } else {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
+            // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
             if (random.nextFloat() < 0.6f) {
                 baseBlockForTerrain = Blocks.stone;
             } else {
-                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock(random);
+                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock(random, false);
             }
         }
 
@@ -328,7 +329,7 @@ public class DimensionInformation {
             // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
             if (blocks.isEmpty()) {
                 while (random.nextFloat() < 0.2f) {
-                    blocks.add(KnownDimletConfiguration.getRandomMaterialBlock(random));
+                    blocks.add(KnownDimletConfiguration.getRandomMaterialBlock(random, true));
                 }
             } else if (blocks.size() == 1 && blocks.get(0) == null) {
                 blocks.clear();
@@ -353,7 +354,7 @@ public class DimensionInformation {
                 if (random.nextFloat() < 0.6f) {
                     baseFeatureBlock = Blocks.stone;
                 } else {
-                    baseFeatureBlock = KnownDimletConfiguration.getRandomMaterialBlock(random);
+                    baseFeatureBlock = KnownDimletConfiguration.getRandomMaterialBlock(random, true);
                 }
             }
         } else {

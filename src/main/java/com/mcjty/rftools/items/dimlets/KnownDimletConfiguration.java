@@ -94,6 +94,7 @@ public class KnownDimletConfiguration {
     private static final Map<DimletKey,Integer> dimletBuiltinRfMaintain = new HashMap<DimletKey, Integer>();
     private static final Map<DimletKey,Integer> dimletBuiltinTickCost = new HashMap<DimletKey, Integer>();
     private static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
+    private static final Set<DimletKey> dimletIsExpensive = new HashSet<DimletKey>();
 
     public static int baseDimensionCreationCost = 1000;
     public static int baseDimensionMaintenanceCost = 10;
@@ -245,11 +246,23 @@ public class KnownDimletConfiguration {
         int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, dimletBuiltinRfMaintain, typeRfMaintainCost);
         int tickCost = checkCostConfig(cfg, "ticks.", key, dimletBuiltinTickCost, typeTickCost);
         int rarity = checkCostConfig(cfg, "rarity.", key, dimletBuiltinRarity, typeRarity);
+        boolean expensive = checkFlagConfig(cfg, "expensive.", key, dimletIsExpensive);
 
-        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity);
+        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, expensive);
         registerDimletEntry(id, entry);
 
         return id;
+    }
+
+    private static boolean checkFlagConfig(Configuration cfg, String prefix, DimletKey key, Set<DimletKey> builtinDefaults) {
+        String k;
+        k = prefix + key.getType().getName() + "." + key.getName();
+        boolean defaultValue = builtinDefaults.contains(key);
+        if (cfg.getCategory(CATEGORY_KNOWNDIMLETS).containsKey(k)) {
+            return cfg.get(CATEGORY_KNOWNDIMLETS, k, defaultValue).getBoolean();
+        } else {
+            return defaultValue;
+        }
     }
 
     private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, Map<DimletType,Integer> typeDefaults) {
@@ -461,8 +474,12 @@ public class KnownDimletConfiguration {
         return idToFluid.get(randomLiquidDimlets.select(random));
     }
 
-    public static Block getRandomMaterialBlock(Random random) {
-        return idToBlock.get(randomMaterialDimlets.select(random));
+    public static Block getRandomMaterialBlock(Random random, boolean allowExpensive) {
+        Integer id = randomMaterialDimlets.select(random);
+        while ((!allowExpensive) && idToDimlet.get(id).isExpensive()) {
+            id = randomMaterialDimlets.select(random);
+        }
+        return idToBlock.get(id);
     }
 
     private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {
@@ -558,6 +575,7 @@ public class KnownDimletConfiguration {
             Integer rfmaintain = array.get(3).getAsInt();
             Integer tickCost = array.get(4).getAsInt();
             Integer rarity = array.get(5).getAsInt();
+            Integer expensive = array.get(6).getAsInt();
             DimletType type = DimletType.getTypeByName(typeName);
             if (type == null) {
                 RFTools.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
@@ -568,6 +586,9 @@ public class KnownDimletConfiguration {
             dimletBuiltinRfMaintain.put(key, rfmaintain);
             dimletBuiltinTickCost.put(key, tickCost);
             dimletBuiltinRarity.put(key, rarity);
+            if (expensive != 0) {
+                dimletIsExpensive.add(key);
+            }
         }
     }
 
