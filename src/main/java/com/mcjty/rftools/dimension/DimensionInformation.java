@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.dimension.world.types.SpecialType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.dimlets.DimletType;
@@ -33,6 +34,7 @@ public class DimensionInformation {
     private Block sphereBlock = null;
 
     private List<Class<? extends EntityLiving>> extraMobs = new ArrayList<Class<? extends EntityLiving>>();
+    private boolean peaceful = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
@@ -63,6 +65,7 @@ public class DimensionInformation {
         calculateSky(dimlets, random);
 
         calculateMobs(dimlets, random);
+        calculateSpecial(dimlets, random);
     }
 
     private void logDebug(EntityPlayer player, String message) {
@@ -107,6 +110,9 @@ public class DimensionInformation {
         for (Class<? extends EntityLiving> entityClass : extraMobs) {
             logDebug(player, "    Mob: " + entityClass.getName());
         }
+        if (peaceful) {
+            logDebug(player, "    Peaceful mode");
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -144,6 +150,8 @@ public class DimensionInformation {
         for (Block block : fluidsForLakes) {
             buf.writeInt(Block.blockRegistry.getIDForObject(block));
         }
+
+        buf.writeBoolean(peaceful);
 
         skyDescriptor.toBytes(buf);
 
@@ -194,6 +202,8 @@ public class DimensionInformation {
         }
         fluidsForLakes = blocks.toArray(new Block[blocks.size()]);
 
+        peaceful = buf.readBoolean();
+
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
 
         // @todo do mobs
@@ -205,6 +215,15 @@ public class DimensionInformation {
 
     public void setSpawnPoint(Coordinate spawnPoint) {
         this.spawnPoint = spawnPoint;
+    }
+
+    private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+        dimlets = extractType(DimletType.DIMLET_SPECIAL, dimlets);
+        for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
+            if (KnownDimletConfiguration.idToSpecialType.get(dimlet.getLeft().getId()) == SpecialType.SPECIAL_PEACEFUL) {
+                peaceful = true;
+            }
+        }
     }
 
     private void calculateMobs(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
@@ -508,5 +527,9 @@ public class DimensionInformation {
 
     public List<Class<? extends EntityLiving>> getExtraMobs() {
         return extraMobs;
+    }
+
+    public boolean isPeaceful() {
+        return peaceful;
     }
 }

@@ -7,6 +7,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.SkyDescriptor;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.dimension.world.types.SpecialType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.ModItems;
@@ -82,6 +83,7 @@ public class KnownDimletConfiguration {
     public static final Map<Pair<DimletType,DimletType>,Integer> tickCostModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
 
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
+    public static final Map<Integer,SpecialType> idToSpecialType = new HashMap<Integer, SpecialType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
     public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();
@@ -126,6 +128,7 @@ public class KnownDimletConfiguration {
         initRarity(cfg, DimletType.DIMLET_TERRAIN, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_FEATURE, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_DIGIT, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_SPECIAL, RARITY_5);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
@@ -145,6 +148,7 @@ public class KnownDimletConfiguration {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfCreateModifierMultiplier.clear();
         initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
@@ -173,6 +177,7 @@ public class KnownDimletConfiguration {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfMaintainModifierMultiplier.clear();
         initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 20);
@@ -201,6 +206,7 @@ public class KnownDimletConfiguration {
         initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeTickCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         tickCostModifierMultiplier.clear();
         initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 2);
@@ -344,6 +350,8 @@ public class KnownDimletConfiguration {
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
 
         initLiquidItems(cfg, idsInConfig);
+
+        initSpecialItem(cfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
 
         int idDefaultMobs = initMobItem(cfg, idsInConfig, null, "Default");
         initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie");
@@ -675,6 +683,13 @@ public class KnownDimletConfiguration {
                 idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
             }
         }
+    }
+
+    private static int initSpecialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SpecialType specialType) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SPECIAL, name));
+        idToDisplayName.put(id, DimletType.DIMLET_SPECIAL.getName() + " " + name + " Dimlet");
+        idToSpecialType.put(id, specialType);
+        return id;
     }
 
     private static int initMobItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name) {

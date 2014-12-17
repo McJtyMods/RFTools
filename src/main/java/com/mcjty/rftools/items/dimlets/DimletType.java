@@ -13,7 +13,8 @@ public enum DimletType {
     DIMLET_TERRAIN("terrainDimlet", "Terrain", "T", false, new DimletType[] { DIMLET_MATERIAL, DIMLET_LIQUID }),
     DIMLET_FEATURE("featureDimlet", "Feature", "f", false, new DimletType[] { DIMLET_MATERIAL, DIMLET_LIQUID }),
     DIMLET_TIME("timeDimlet", "Time", "t", false, null),
-    DIMLET_DIGIT("digitDimlet", "Digit", "d", false, null);
+    DIMLET_DIGIT("digitDimlet", "Digit", "d", false, null),
+    DIMLET_SPECIAL("specialDimlet", "Special", "X", false, null);
 
     private final String textureName;
     private final String name;

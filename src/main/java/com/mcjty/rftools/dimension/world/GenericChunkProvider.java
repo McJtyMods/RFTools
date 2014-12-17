@@ -374,6 +374,9 @@ public class GenericChunkProvider implements IChunkProvider {
     private List getDefaultCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x, z);
         if (creatureType == EnumCreatureType.monster) {
+            if (dimensionInformation.isPeaceful()) {
+                return Collections.emptyList();
+            }
             if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
                 if (this.scatteredFeatureGenerator.func_143030_a(x, y, z)) {
                     return this.scatteredFeatureGenerator.getScatteredFeatureSpawnList();
