@@ -21,6 +21,8 @@
         [ "Material", "tile.netherquartz", 17000, 10000, 400, 3 ],
         [ "Material", "tile.quartzBlock", 25000, 20000, 600, 4 ],
         [ "Material", "tile.obsidian", 30000, 20000, 600, 4 ],
+        [ "Material", "tile.glass", 800, 400, 30, 5 ],
+        [ "Material", "tile.stainedGlass", 800, 400, 30, 5 ],
         [ "Liquid", "pyrotheum", 40000, 20000, 800, 5 ],
         [ "Liquid", "redstone", 40000, 20000, 800, 5 ],
         [ "Liquid", "cryotheum", 40000, 20000, 800, 5 ],

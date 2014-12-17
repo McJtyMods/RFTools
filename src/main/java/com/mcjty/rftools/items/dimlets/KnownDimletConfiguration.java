@@ -318,6 +318,8 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, idsInConfig, Blocks.cobblestone);
         initMaterialItem(cfg, idsInConfig, Blocks.obsidian);
         initMaterialItem(cfg, idsInConfig, Blocks.soul_sand);
+        initMaterialItem(cfg, idsInConfig, Blocks.glass);
+        initMaterialItem(cfg, idsInConfig, Blocks.stained_glass);
         initMaterialItem(cfg, idsInConfig, ModBlocks.dimensionalShardBlock);
 
         initFoliageItem(cfg, idsInConfig);
