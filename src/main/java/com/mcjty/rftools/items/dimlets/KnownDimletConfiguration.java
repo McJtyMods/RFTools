@@ -14,8 +14,8 @@ import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -56,6 +56,7 @@ public class KnownDimletConfiguration {
     public static final int RARITY_5 = 5;
     public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
+    public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
 
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
@@ -88,6 +89,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
     public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
+    public static final Map<Integer,Class <? extends EntityLiving>> idtoMob = new HashMap<Integer, Class<? extends EntityLiving>>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
@@ -343,8 +345,33 @@ public class KnownDimletConfiguration {
 
         initLiquidItems(cfg, idsInConfig);
 
+        int idDefaultMobs = initMobItem(cfg, idsInConfig, null, "Default");
         initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie");
         initMobItem(cfg, idsInConfig, EntitySkeleton.class, "Skeleton");
+        initMobItem(cfg, idsInConfig, EntityEnderman.class, "Enderman");
+        initMobItem(cfg, idsInConfig, EntityBlaze.class, "Blaze");
+        initMobItem(cfg, idsInConfig, EntityCreeper.class, "Creeper");
+        initMobItem(cfg, idsInConfig, EntityCaveSpider.class, "Cave Spider");
+        initMobItem(cfg, idsInConfig, EntityGhast.class, "Ghast");
+        initMobItem(cfg, idsInConfig, EntityGiantZombie.class, "Giant Zombie");
+        initMobItem(cfg, idsInConfig, EntityGolem.class, "Golem");
+        initMobItem(cfg, idsInConfig, EntityIronGolem.class, "Iron Golem");
+        initMobItem(cfg, idsInConfig, EntityMagmaCube.class, "Magma Cube");
+        initMobItem(cfg, idsInConfig, EntityPigZombie.class, "Zombie Pigman");
+        initMobItem(cfg, idsInConfig, EntitySlime.class, "Slime");
+        initMobItem(cfg, idsInConfig, EntitySnowman.class, "Snowman");
+        initMobItem(cfg, idsInConfig, EntitySpider.class, "Spider");
+        initMobItem(cfg, idsInConfig, EntityWitch.class, "Witch");
+        initMobItem(cfg, idsInConfig, EntityBat.class, "Bat");
+        initMobItem(cfg, idsInConfig, EntityChicken.class, "Chicken");
+        initMobItem(cfg, idsInConfig, EntityCow.class, "Cow");
+        initMobItem(cfg, idsInConfig, EntityHorse.class, "Horse");
+        initMobItem(cfg, idsInConfig, EntityMooshroom.class, "Mooshroom");
+        initMobItem(cfg, idsInConfig, EntityOcelot.class, "Ocelot");
+        initMobItem(cfg, idsInConfig, EntityPig.class, "Pig");
+        initMobItem(cfg, idsInConfig, EntitySheep.class, "Sheep");
+        initMobItem(cfg, idsInConfig, EntitySquid.class, "Squid");
+        initMobItem(cfg, idsInConfig, EntityWolf.class, "Wolf");
 
         int idNormalDay = initSkyItem(cfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
         initSkyItem(cfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
@@ -413,6 +440,9 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalNight);
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDefaultMobs), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idDefaultMobs);
+
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), "   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idDigit9));
@@ -454,6 +484,8 @@ public class KnownDimletConfiguration {
         setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
         randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
+        setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
 
         for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
@@ -467,8 +499,17 @@ public class KnownDimletConfiguration {
                 if (idToFluid.get(entry.getKey()) != null) {
                     randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
+            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_MOBS) {
+                // Don't add the 'null' mob.
+                if (idtoMob.get(entry.getKey()) != null) {
+                    randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
             }
         }
+    }
+
+    public static Class<? extends EntityLiving> getRandomMob(Random random) {
+        return idtoMob.get(randomMobDimlets.select(random));
     }
 
     public static Block getRandomFluidBlock(Random random) {
@@ -639,6 +680,7 @@ public class KnownDimletConfiguration {
     private static int initMobItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
         idToDisplayName.put(id, DimletType.DIMLET_MOBS.getName() + " " + name + " Dimlet");
+        idtoMob.put(id, entity);
         return id;
     }
 

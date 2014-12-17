@@ -9,6 +9,7 @@ import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,8 @@ public class DimensionInformation {
     private Block tendrilBlock = null;
     private Block canyonBlock = null;
     private Block sphereBlock = null;
+
+    private List<Class<? extends EntityLiving>> extraMobs = new ArrayList<Class<? extends EntityLiving>>();
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private Block[] extraOregen = new Block[] {};
@@ -58,6 +61,8 @@ public class DimensionInformation {
         calculateDigitString(dimlets);
 
         calculateSky(dimlets, random);
+
+        calculateMobs(dimlets, random);
     }
 
     private void logDebug(EntityPlayer player, String message) {
@@ -99,6 +104,9 @@ public class DimensionInformation {
         }
         logDebug(player, "    Sun brightness: " + skyDescriptor.getSunBrightnessFactor());
         logDebug(player, "    Star brightness: " + skyDescriptor.getStarBrightnessFactor());
+        for (Class<? extends EntityLiving> entityClass : extraMobs) {
+            logDebug(player, "    Mob: " + entityClass.getName());
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -138,6 +146,8 @@ public class DimensionInformation {
         }
 
         skyDescriptor.toBytes(buf);
+
+        // @todo do mobs
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -185,6 +195,8 @@ public class DimensionInformation {
         fluidsForLakes = blocks.toArray(new Block[blocks.size()]);
 
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
+
+        // @todo do mobs
     }
 
     public Coordinate getSpawnPoint() {
@@ -193,6 +205,21 @@ public class DimensionInformation {
 
     public void setSpawnPoint(Coordinate spawnPoint) {
         this.spawnPoint = spawnPoint;
+    }
+
+    private void calculateMobs(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+        dimlets = extractType(DimletType.DIMLET_MOBS, dimlets);
+        if (dimlets.isEmpty()) {
+            while (random.nextFloat() < .4f) {
+                extraMobs.add(KnownDimletConfiguration.getRandomMob(random));
+            }
+        } else if (dimlets.size() == 1 && KnownDimletConfiguration.idtoMob.get(dimlets.get(0).getLeft().getId()) == null) {
+            // Just default.
+        } else {
+            for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
+                extraMobs.add(KnownDimletConfiguration.idtoMob.get(dimletWithModifiers.getLeft().getId()));
+            }
+        }
     }
 
     private void calculateDigitString(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets) {
@@ -477,5 +504,9 @@ public class DimensionInformation {
 
     public SkyDescriptor getSkyDescriptor() {
         return skyDescriptor;
+    }
+
+    public List<Class<? extends EntityLiving>> getExtraMobs() {
+        return extraMobs;
     }
 }

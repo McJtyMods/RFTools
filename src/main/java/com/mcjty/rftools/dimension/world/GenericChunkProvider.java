@@ -8,6 +8,7 @@ import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
@@ -28,10 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
@@ -41,6 +39,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
     private World worldObj;
     public DimensionInformation dimensionInformation;
+    private List<BiomeGenBase.SpawnListEntry> extraSpawns;
 
     private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
 
@@ -114,6 +113,12 @@ public class GenericChunkProvider implements IChunkProvider {
         this.rand = new Random((seed + 516) * 314);
 
         terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);
+
+        extraSpawns = new ArrayList<BiomeGenBase.SpawnListEntry>();
+        for (Class<? extends EntityLiving> entityClass : dimensionInformation.getExtraMobs()) {
+            extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, 20, 3, 8));
+        }
+
     }
 
 
@@ -358,6 +363,15 @@ public class GenericChunkProvider implements IChunkProvider {
      */
     @Override
     public List getPossibleCreatures(EnumCreatureType creatureType, int x, int y, int z) {
+        List creatures = getDefaultCreatures(creatureType, x, y, z);
+        if (!extraSpawns.isEmpty()) {
+            creatures = new ArrayList(creatures);
+            creatures.addAll(extraSpawns);
+        }
+        return creatures;
+    }
+
+    private List getDefaultCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x, z);
         if (creatureType == EnumCreatureType.monster) {
             if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
@@ -378,7 +392,6 @@ public class GenericChunkProvider implements IChunkProvider {
         }
 
         return biomegenbase.getSpawnableList(creatureType);
-
     }
 
     @Override
