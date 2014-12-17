@@ -271,6 +271,7 @@ public class DimensionDescriptor {
 
     private int calculateMaintenanceRfCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets) {
         int rf = KnownDimletConfiguration.baseDimensionMaintenanceCost;
+        int rfGain = 0;
 
         for (Pair<Integer, List<DimletDescriptor>> dimletWithModifier : dimlets) {
             int id = dimletWithModifier.getLeft();
@@ -284,7 +285,16 @@ public class DimensionDescriptor {
                 }
             }
 
-            rf += getMaintenanceCost(type, id);
+            int c = getMaintenanceCost(type, id);
+            if (c < 0) {
+                rfGain -= c;        // This dimlet gives a bonus in cost. This value is a percentage.
+            } else {
+                rf += c;
+            }
+        }
+
+        if (rfGain > 0) {
+            rf = rf - (rf * rfGain / 100);
         }
 
         return rf;

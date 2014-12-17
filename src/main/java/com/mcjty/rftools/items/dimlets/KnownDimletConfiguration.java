@@ -352,6 +352,7 @@ public class KnownDimletConfiguration {
         initLiquidItems(cfg, idsInConfig);
 
         initSpecialItem(cfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
+        initSpecialItem(cfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
 
         int idDefaultMobs = initMobItem(cfg, idsInConfig, null, "Default");
         initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie");
