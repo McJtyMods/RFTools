@@ -98,11 +98,9 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
         restoreBlockFromNBT(world, x, y, z, itemStack);
 
         // Restore the transmitter beam if needed.
-        if (!world.isRemote) {
-            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) world.getTileEntity(x, y, z);
-            if (matterTransmitterTileEntity.getTeleportDestination() != null && matterTransmitterTileEntity.getTeleportDestination().isValid()) {
-                DialingDeviceTileEntity.makeBeam(new Coordinate(x, y, z), world, 1, 4, 2);
-            }
+        MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) world.getTileEntity(x, y, z);
+        if (matterTransmitterTileEntity.getTeleportDestination() != null && matterTransmitterTileEntity.getTeleportDestination().isValid()) {
+            DialingDeviceTileEntity.makeBeam(new Coordinate(x, y, z), world, 1, 4, 2);
         }
     }
 
