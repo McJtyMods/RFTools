@@ -36,10 +36,10 @@ public class DimensionMonitorItem extends Item {
             if (dimensionInformation == null) {
                 RFTools.message(player, "Not an RFTools dimension!");
             } else {
-                if (System.currentTimeMillis() - lastTime > 500) {
-                    lastTime = System.currentTimeMillis();
-                    PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
-                }
+//                if (System.currentTimeMillis() - lastTime > 500) {
+//                    lastTime = System.currentTimeMillis();
+//                    PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
+//                }
                 String name = dimensionInformation.getName();
                 DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
                 int power = storage != null ? storage.getEnergyLevel(id) : 0;

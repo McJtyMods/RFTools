@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.*;
 import com.mcjty.rftools.network.PacketHandler;
@@ -21,12 +22,23 @@ public class GenericWorldProvider extends WorldProvider {
         return dim * 13L + seed;
     }
 
+    private DimensionInformation getDimensionInformation() {
+        if (dimensionInformation == null) {
+            int dim = worldObj.provider.dimensionId;
+            dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
+            if (dimensionInformation == null) {
+                RFTools.log("Dimension information for dimension " + dim + " is missing!");
+            }
+        }
+        return dimensionInformation;
+    }
+
     @Override
     public void registerWorldChunkManager() {
         int dim = worldObj.provider.dimensionId;
         long seed = calculateSeed(worldObj.getSeed(), dim);
 
-        dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
+        getDimensionInformation();
         storage = DimensionStorage.getDimensionStorage(worldObj);
 
         if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
@@ -81,9 +93,17 @@ public class GenericWorldProvider extends WorldProvider {
 
         float factor = calculatePowerBlackout(dim);
 
-        float r = dimensionInformation.getSkyDescriptor().getSkyColorFactorR() * factor;
-        float g = dimensionInformation.getSkyDescriptor().getSkyColorFactorG() * factor;
-        float b = dimensionInformation.getSkyDescriptor().getSkyColorFactorB() * factor;
+        getDimensionInformation();
+        float r;
+        float g;
+        float b;
+        if (dimensionInformation == null) {
+            r = g = b = 1.0f;
+        } else {
+            r = dimensionInformation.getSkyDescriptor().getSkyColorFactorR() * factor;
+            g = dimensionInformation.getSkyDescriptor().getSkyColorFactorG() * factor;
+            b = dimensionInformation.getSkyDescriptor().getSkyColorFactorB() * factor;
+        }
 
         Vec3 skyColor = super.getSkyColor(cameraEntity, partialTicks);
         return Vec3.createVectorHelper(skyColor.xCoord * r, skyColor.yCoord * g, skyColor.zCoord * b);
@@ -107,6 +127,10 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public float getSunBrightness(float par1) {
+        getDimensionInformation();
+        if (dimensionInformation == null) {
+            return super.getSunBrightness(par1);
+        }
         int dim = worldObj.provider.dimensionId;
         float factor = calculatePowerBlackout(dim);
         return super.getSunBrightness(par1) * dimensionInformation.getSkyDescriptor().getSunBrightnessFactor() * factor;
@@ -115,11 +139,20 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public float getStarBrightness(float par1) {
+        getDimensionInformation();
+        if (dimensionInformation == null) {
+            return super.getStarBrightness(par1);
+        }
         return super.getStarBrightness(par1) * dimensionInformation.getSkyDescriptor().getStarBrightnessFactor();
     }
 
     @Override
     public float calculateCelestialAngle(long time, float p_76563_3_) {
+        getDimensionInformation();
+        if (dimensionInformation == null) {
+            return super.calculateCelestialAngle(time, p_76563_3_);
+        }
+
         if (dimensionInformation.getCelestialAngle() == null) {
             if (dimensionInformation.getTimeSpeed() == null) {
                 return super.calculateCelestialAngle(time, p_76563_3_);

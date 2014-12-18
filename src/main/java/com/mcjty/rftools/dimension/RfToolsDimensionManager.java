@@ -27,6 +27,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     private final Map<Integer, DimensionInformation> dimensionInformation = new HashMap<Integer, DimensionInformation>();
 
     public void syncFromServer(Map<Integer, DimensionDescriptor> dimensions, Map<DimensionDescriptor, Integer> dimensionToID, Map<Integer, DimensionInformation> dimensionInformation) {
+        System.out.println("RfToolsDimensionManager.syncFromServer");
         this.dimensions.clear();
         this.dimensions.putAll(dimensions);
         this.dimensionToID.clear();
@@ -62,8 +63,13 @@ public class RfToolsDimensionManager extends WorldSavedData {
         world.mapStorage.setData(DIMMANAGER_NAME, this);
         markDirty();
 
+        syncDimInfoToClients(world);
+    }
+
+    public void syncDimInfoToClients(World world) {
         if (!world.isRemote) {
-            // Sync to client.
+            // Sync to clients.
+            RFTools.log("Sync dimension info to clients!");
             PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionToID, dimensionInformation));
         }
     }
