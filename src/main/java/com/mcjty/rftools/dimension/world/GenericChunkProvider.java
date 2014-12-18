@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.terrain.*;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
@@ -10,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -40,8 +40,8 @@ public class GenericChunkProvider implements IChunkProvider {
 
     private World worldObj;
     public DimensionInformation dimensionInformation;
-    private List<BiomeGenBase.SpawnListEntry> extraSpawnsHostile;
-    private List<BiomeGenBase.SpawnListEntry> extraSpawnsPassive;
+    private List<BiomeGenBase.SpawnListEntry> extraSpawns;
+    private List<Integer> extraSpawnsMax;
 
     private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
 
@@ -84,8 +84,6 @@ public class GenericChunkProvider implements IChunkProvider {
     // The biomes that are used to generate the chunk
     public BiomeGenBase[] biomesForGeneration;
 
-    int[][] field_73219_j = new int[32][32];
-
     {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
         tendrilGenerator = TerrainGen.getModdedMapGen(tendrilGenerator, CAVE);
@@ -116,16 +114,13 @@ public class GenericChunkProvider implements IChunkProvider {
 
         terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);
 
-        extraSpawnsHostile = new ArrayList<BiomeGenBase.SpawnListEntry>();
-        extraSpawnsPassive = new ArrayList<BiomeGenBase.SpawnListEntry>();
-        for (Class<? extends EntityLiving> entityClass : dimensionInformation.getExtraMobs()) {
-            if (EntityMob.class.isAssignableFrom(entityClass)) {
-                extraSpawnsHostile.add(new BiomeGenBase.SpawnListEntry(entityClass, 100, 3, 5));
-                System.out.println("HOSTILE: entityClass = " + entityClass);
-            } else {
-                extraSpawnsPassive.add(new BiomeGenBase.SpawnListEntry(entityClass, 20, 3, 5));
-                System.out.println("PASSIVE: entityClass = " + entityClass);
-            }
+        extraSpawns = new ArrayList<BiomeGenBase.SpawnListEntry>();
+        extraSpawnsMax = new ArrayList<Integer>();
+        for (MobDescriptor mob : dimensionInformation.getExtraMobs()) {
+            Class<? extends EntityLiving> entityClass = mob.getEntityClass();
+            extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, mob.getSpawnChance(), mob.getMinGroup(), mob.getMaxGroup()));
+            extraSpawnsMax.add(mob.getMaxLoaded());
+            System.out.println("MOB: entityClass = " + entityClass);
         }
 
     }
@@ -367,19 +362,32 @@ public class GenericChunkProvider implements IChunkProvider {
         return "RandomLevelSource";
     }
 
+    private static long lastTime = 0;
+
     /**
      * Returns a list of creatures of the specified type that can spawn at the given location.
      */
     @Override
     public List getPossibleCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         List creatures = getDefaultCreatures(creatureType, x, y, z);
-        if (creatureType == EnumCreatureType.monster && !extraSpawnsHostile.isEmpty()) {
-            creatures = new ArrayList(creatures);
-            creatures.addAll(extraSpawnsHostile);
-        } else if (creatureType == EnumCreatureType.creature && !extraSpawnsPassive.isEmpty()) {
-            creatures = new ArrayList(creatures);
-            creatures.addAll(extraSpawnsPassive);
+        if (extraSpawns.isEmpty()) {
+            return creatures;
         }
+
+        if (creatureType == EnumCreatureType.ambient) {
+            if (true) { //System.currentTimeMillis() - lastTime > 50) {
+//                lastTime = System.currentTimeMillis();
+                creatures = new ArrayList(creatures);
+                for (int i = 0 ; i < extraSpawns.size() ; i++) {
+                    int count = worldObj.countEntities(extraSpawns.get(i).entityClass);
+                    System.out.println(extraSpawns.get(i).entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
+                    if (count < extraSpawnsMax.get(i)) {
+                        creatures.add(extraSpawns.get(i));
+                    }
+                }
+            }
+        }
+
         return creatures;
     }
 

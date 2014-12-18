@@ -34,7 +34,7 @@ public class DimensionInformation {
     private Block canyonBlock = null;
     private Block sphereBlock = null;
 
-    private List<Class<? extends EntityLiving>> extraMobs = new ArrayList<Class<? extends EntityLiving>>();
+    private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
@@ -112,8 +112,8 @@ public class DimensionInformation {
         }
         logDebug(player, "    Sun brightness: " + skyDescriptor.getSunBrightnessFactor());
         logDebug(player, "    Star brightness: " + skyDescriptor.getStarBrightnessFactor());
-        for (Class<? extends EntityLiving> entityClass : extraMobs) {
-            logDebug(player, "    Mob: " + entityClass.getName());
+        for (MobDescriptor mob : extraMobs) {
+            logDebug(player, "    Mob: " + mob.getEntityClass().getName());
         }
         if (peaceful) {
             logDebug(player, "    Peaceful mode");
@@ -576,7 +576,7 @@ public class DimensionInformation {
         return skyDescriptor;
     }
 
-    public List<Class<? extends EntityLiving>> getExtraMobs() {
+    public List<MobDescriptor> getExtraMobs() {
         return extraMobs;
     }
 
