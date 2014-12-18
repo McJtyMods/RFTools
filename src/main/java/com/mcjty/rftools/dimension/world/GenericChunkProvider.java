@@ -116,7 +116,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
         extraSpawns = new ArrayList<BiomeGenBase.SpawnListEntry>();
         for (Class<? extends EntityLiving> entityClass : dimensionInformation.getExtraMobs()) {
-            extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, 20, 3, 8));
+            extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, 10, 3, 5));
         }
 
     }
