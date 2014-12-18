@@ -93,6 +93,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
     public static final Map<Integer,Class <? extends EntityLiving>> idtoMob = new HashMap<Integer, Class<? extends EntityLiving>>();
     public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
+    public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
@@ -420,11 +421,13 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
         initFeatureItem(cfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
 
-        int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null);
-        initTimeItem(cfg, idsInConfig, "Noon", 0.0f);
-        initTimeItem(cfg, idsInConfig, "Midnight", 0.5f);
-        initTimeItem(cfg, idsInConfig, "Morning", 0.2f);
-        initTimeItem(cfg, idsInConfig, "Evening", 0.75f);
+        int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null, null);
+        initTimeItem(cfg, idsInConfig, "Noon", 0.0f, null);
+        initTimeItem(cfg, idsInConfig, "Midnight", 0.5f, null);
+        initTimeItem(cfg, idsInConfig, "Morning", 0.2f, null);
+        initTimeItem(cfg, idsInConfig, "Evening", 0.75f, null);
+        initTimeItem(cfg, idsInConfig, "Fast", null, 2.0f);
+        initTimeItem(cfg, idsInConfig, "Slow", null, 0.5f);
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
@@ -733,9 +736,10 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle) {
+    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle, Float speed) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
         idToCelestialAngle.put(id, angle);
+        idToSpeed.put(id, speed);
         idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         return id;
     }

@@ -121,7 +121,11 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public float calculateCelestialAngle(long time, float p_76563_3_) {
         if (dimensionInformation.getCelestialAngle() == null) {
-            return super.calculateCelestialAngle(time, p_76563_3_);
+            if (dimensionInformation.getTimeSpeed() == null) {
+                return super.calculateCelestialAngle(time, p_76563_3_);
+            } else {
+                return super.calculateCelestialAngle((long) (time * dimensionInformation.getTimeSpeed()), p_76563_3_);
+            }
         } else {
             return dimensionInformation.getCelestialAngle();
         }
