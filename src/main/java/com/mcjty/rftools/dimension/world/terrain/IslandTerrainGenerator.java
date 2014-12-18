@@ -81,21 +81,17 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         int k1 = 0;
         int l1 = 0;
 
-        for (int i2 = 0; i2 < p_73187_5_; ++i2)
-        {
-            for (int j2 = 0; j2 < p_73187_7_; ++j2)
-            {
+        for (int i2 = 0; i2 < p_73187_5_; ++i2) {
+            for (int j2 = 0; j2 < p_73187_7_; ++j2) {
                 double d2 = (this.noiseData4[l1] + 256.0D) / 512.0D;
 
-                if (d2 > 1.0D)
-                {
+                if (d2 > 1.0D) {
                     d2 = 1.0D;
                 }
 
                 double d3 = this.noiseData5[l1] / 8000.0D;
 
-                if (d3 < 0.0D)
-                {
+                if (d3 < 0.0D) {
                     d3 = -d3 * 0.3D;
                 }
 
@@ -104,26 +100,22 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                 float f1 = (float)(j2 + p_73187_4_ - 0) / 1.0F;
                 float f2 = 100.0F - MathHelper.sqrt_float(f * f + f1 * f1) * 8.0F;
 
-                if (f2 > 80.0F)
-                {
+                if (f2 > 80.0F) {
                     f2 = 80.0F;
                 }
 
-                if (f2 < -100.0F)
-                {
+                if (f2 < -100.0F) {
                     f2 = -100.0F;
                 }
 
-                if (d3 > 1.0D)
-                {
+                if (d3 > 1.0D) {
                     d3 = 1.0D;
                 }
 
                 d3 /= 8.0D;
                 d3 = 0.0D;
 
-                if (d2 < 0.0D)
-                {
+                if (d2 < 0.0D) {
                     d2 = 0.0D;
                 }
 
@@ -132,13 +124,11 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                 ++l1;
                 double d4 = (double)p_73187_6_ / 2.0D;
 
-                for (int k2 = 0; k2 < p_73187_6_; ++k2)
-                {
+                for (int k2 = 0; k2 < p_73187_6_; ++k2) {
                     double d5 = 0.0D;
                     double d6 = ((double)k2 - d4) * 8.0D / d2;
 
-                    if (d6 < 0.0D)
-                    {
+                    if (d6 < 0.0D) {
                         d6 *= -1.0D;
                     }
 
@@ -146,16 +136,12 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                     double d8 = this.noiseData3[k1] / 512.0D;
                     double d9 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
 
-                    if (d9 < 0.0D)
-                    {
+                    if (d9 < 0.0D) {
                         d5 = d7;
                     }
-                    else if (d9 > 1.0D)
-                    {
+                    else if (d9 > 1.0D) {
                         d5 = d8;
-                    }
-                    else
-                    {
+                    } else {
                         d5 = d7 + (d8 - d7) * d9;
                     }
 
@@ -164,17 +150,14 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                     byte b0 = 2;
                     double d10;
 
-                    if (k2 > p_73187_6_ / 2 - b0)
-                    {
+                    if (k2 > p_73187_6_ / 2 - b0) {
                         d10 = (double)((float)(k2 - (p_73187_6_ / 2 - b0)) / 64.0F);
 
-                        if (d10 < 0.0D)
-                        {
+                        if (d10 < 0.0D) {
                             d10 = 0.0D;
                         }
 
-                        if (d10 > 1.0D)
-                        {
+                        if (d10 > 1.0D) {
                             d10 = 1.0D;
                         }
 
@@ -183,8 +166,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
                     b0 = 8;
 
-                    if (k2 < b0)
-                    {
+                    if (k2 < b0) {
                         d10 = (double)((float)(b0 - k2) / ((float)b0 - 1.0F));
                         d5 = d5 * (1.0D - d10) + -30.0D * d10;
                     }
