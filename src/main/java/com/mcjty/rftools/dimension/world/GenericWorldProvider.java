@@ -117,4 +117,13 @@ public class GenericWorldProvider extends WorldProvider {
     public float getStarBrightness(float par1) {
         return super.getStarBrightness(par1) * dimensionInformation.getSkyDescriptor().getStarBrightnessFactor();
     }
+
+    @Override
+    public float calculateCelestialAngle(long time, float p_76563_3_) {
+        if (dimensionInformation.getCelestialAngle() == null) {
+            return super.calculateCelestialAngle(time, p_76563_3_);
+        } else {
+            return dimensionInformation.getCelestialAngle();
+        }
+    }
 }

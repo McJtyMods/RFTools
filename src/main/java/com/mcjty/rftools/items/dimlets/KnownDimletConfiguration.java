@@ -92,6 +92,7 @@ public class KnownDimletConfiguration {
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
     public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
     public static final Map<Integer,Class <? extends EntityLiving>> idtoMob = new HashMap<Integer, Class<? extends EntityLiving>>();
+    public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
     private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
@@ -118,7 +119,7 @@ public class KnownDimletConfiguration {
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
         initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_TIME, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_TIME, RARITY_2);
         initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_1);
         initRarity(cfg, DimletType.DIMLET_MATERIAL, RARITY_1);
@@ -138,7 +139,7 @@ public class KnownDimletConfiguration {
     public static void initTypeRfCreateCost(Configuration cfg) {
         typeRfCreateCost.clear();
         initTypeRfCreateCost(cfg, DimletType.DIMLET_BIOME, 100);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_TIME, 100);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_TIME, 300);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FOLIAGE, 200);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_LIQUID, 150);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_MATERIAL, 300);
@@ -167,7 +168,7 @@ public class KnownDimletConfiguration {
     public static void initTypeRfMaintainCost(Configuration cfg) {
         typeRfMaintainCost.clear();
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_BIOME, 0);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_TIME, 10);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_TIME, 20);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_LIQUID, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_MATERIAL, 10);
@@ -196,7 +197,7 @@ public class KnownDimletConfiguration {
     public static void initTypeTickCost(Configuration cfg) {
         typeTickCost.clear();
         initTypeTickCost(cfg, DimletType.DIMLET_BIOME, 1);
-        initTypeTickCost(cfg, DimletType.DIMLET_TIME, 1);
+        initTypeTickCost(cfg, DimletType.DIMLET_TIME, 10);
         initTypeTickCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
         initTypeTickCost(cfg, DimletType.DIMLET_LIQUID, 10);
         initTypeTickCost(cfg, DimletType.DIMLET_MATERIAL, 100);
@@ -419,9 +420,11 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
         initFeatureItem(cfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
 
-        initTimeItem(cfg, idsInConfig, "Day");
-        initTimeItem(cfg, idsInConfig, "Night");
-        initTimeItem(cfg, idsInConfig, "Day/Night");
+        int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null);
+        initTimeItem(cfg, idsInConfig, "Noon", 0.0f);
+        initTimeItem(cfg, idsInConfig, "Midnight", 0.5f);
+        initTimeItem(cfg, idsInConfig, "Morning", 0.2f);
+        initTimeItem(cfg, idsInConfig, "Evening", 0.75f);
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
@@ -439,18 +442,20 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idTerrainFlat);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', ModItems.dimletTemplate);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', Items.paper);
         craftableDimlets.add(idMaterialNone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', ModItems.dimletTemplate);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', Items.paper);
         craftableDimlets.add(idLiquidNone);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalDay), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.glowstone_dust, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalDay);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', ModItems.dimletTemplate);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', Items.paper);
         craftableDimlets.add(idNormalNight);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDefaultMobs), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idDefaultMobs);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalTime), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.clock, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idNormalTime);
 
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper);
@@ -728,8 +733,9 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name) {
+    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
+        idToCelestialAngle.put(id, angle);
         idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         return id;
     }

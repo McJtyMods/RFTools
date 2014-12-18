@@ -44,6 +44,8 @@ public class DimensionInformation {
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
     private String digitString = "";
 
+    private Float celestialAngle = null;
+
     private SkyDescriptor skyDescriptor;
 
     public DimensionInformation(String name, DimensionDescriptor descriptor) {
@@ -66,6 +68,7 @@ public class DimensionInformation {
 
         calculateMobs(dimlets, random);
         calculateSpecial(dimlets, random);
+        calculateCelestialAngle(dimlets, random);
     }
 
     private void logDebug(EntityPlayer player, String message) {
@@ -113,6 +116,9 @@ public class DimensionInformation {
         if (peaceful) {
             logDebug(player, "    Peaceful mode");
         }
+        if (celestialAngle != null) {
+            logDebug(player, "    Celestial angle: " + celestialAngle);
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -152,6 +158,12 @@ public class DimensionInformation {
         }
 
         buf.writeBoolean(peaceful);
+        if (celestialAngle != null) {
+            buf.writeBoolean(true);
+            buf.writeFloat(celestialAngle);
+        } else {
+            buf.writeBoolean(false);
+        }
 
         skyDescriptor.toBytes(buf);
 
@@ -204,6 +216,12 @@ public class DimensionInformation {
 
         peaceful = buf.readBoolean();
 
+        if (buf.readBoolean()) {
+            celestialAngle = buf.readFloat();
+        } else {
+            celestialAngle = null;
+        }
+
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
 
         // @todo do mobs
@@ -215,6 +233,21 @@ public class DimensionInformation {
 
     public void setSpawnPoint(Coordinate spawnPoint) {
         this.spawnPoint = spawnPoint;
+    }
+
+    private void calculateCelestialAngle(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+        dimlets = extractType(DimletType.DIMLET_TIME, dimlets);
+        if (dimlets.isEmpty()) {
+            if (random.nextFloat() < 0.5f) {
+                celestialAngle = null;      // Default
+            } else {
+                List<Float> angles = new ArrayList<Float>(KnownDimletConfiguration.idToCelestialAngle.values());
+                celestialAngle = angles.get(random.nextInt(angles.size()));
+            }
+        } else {
+            int id = dimlets.get(random.nextInt(dimlets.size())).getKey().getId();
+            celestialAngle = KnownDimletConfiguration.idToCelestialAngle.get(id);
+        }
     }
 
     private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
@@ -531,5 +564,9 @@ public class DimensionInformation {
 
     public boolean isPeaceful() {
         return peaceful;
+    }
+
+    public Float getCelestialAngle() {
+        return celestialAngle;
     }
 }
