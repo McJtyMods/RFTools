@@ -65,6 +65,7 @@ public final class ModBlocks {
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
     public static DimensionalShardBlock dimensionalShardBlock;
+    public static ActivityProbeBlock activityProbeBlock;
 
     public static void init() {
         monitorBlock = new RFMonitorBlock();
@@ -120,6 +121,9 @@ public final class ModBlocks {
 
         dimensionalShardBlock = new DimensionalShardBlock();
         GameRegistry.registerBlock(dimensionalShardBlock, "dimensionalShardBlock");
+
+        activityProbeBlock = new ActivityProbeBlock();
+        GameRegistry.registerBlock(activityProbeBlock, "activityProbeBlock");
     }
 
     private static void initCrafterBlocks() {
