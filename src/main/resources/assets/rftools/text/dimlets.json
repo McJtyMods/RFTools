@@ -1,7 +1,9 @@
 {
     "blacklist": [
         [ "Liquid", "glowstone" ],
-        [ "Feature", "Spheres" ]
+        [ "Feature", "Spheres" ],
+        [ "Foliage", "Oak" ],
+        [ "Terrain", "Cave World" ]
     ],
     "dimlets": [
         [ "Material", "tile.blockDiamond", 100000, 50000, 1000, 5, 0 ],
