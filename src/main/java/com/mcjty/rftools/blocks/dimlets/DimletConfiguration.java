@@ -24,6 +24,17 @@ public class DimletConfiguration {
     public static int dungeonChance = 160;
     public static int dimensionDifficulty = 1;      // 0 == easy, 1 == normal
 
+    public static float randomFeatureChance = 0.4f;
+    public static float randomLakeFluidChance = 0.2f;
+    public static float randomOregenMaterialChance = 0.2f;
+    public static float randomFeatureMaterialChance = 0.4f;
+    public static float randomStructureChance = 0.2f;
+    public static float randomOceanLiquidChance = 0.4f;
+    public static float randomBaseBlockChance = 0.4f;
+    public static float randomSpecialSkyChance = 0.5f;
+    public static float randomExtraMobsChance = 0.4f;
+    public static float randomSpecialTimeChance = 0.5f;
+
 
     public static void init(Configuration cfg) {
         RESEARCHER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletResearcherMaxRF", RESEARCHER_MAXENERGY,
@@ -69,6 +80,28 @@ public class DimletConfiguration {
                 "The chance for a dungeon to spawn in a chunk. Higher numbers mean less chance (1 in 'dungeonChance' chance)").getInt();
         dimensionDifficulty = cfg.get(CATEGORY_DIMLETS, "difficulty", dimensionDifficulty,
                 "Difficulty level for the dimension system. 0 means that you will not get killed but kicked out of the dimension when it runs out of power. 1 means certain death").getInt();
+
+        randomFeatureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureChance", randomFeatureChance,
+                "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();
+        randomLakeFluidChance = (float) cfg.get(CATEGORY_DIMLETS, "randomLakeFluidChance", randomLakeFluidChance,
+                "The chance that random fluid liquids are selected for lakes").getDouble();
+        randomOregenMaterialChance = (float) cfg.get(CATEGORY_DIMLETS, "randomOregenMaterialChance", randomOregenMaterialChance,
+                "The chance that random blocks are selected for extra oregen feature").getDouble();
+        randomFeatureMaterialChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureMaterialChance", randomFeatureMaterialChance,
+                "The chance that random blocks are selected for landscape features (tendrils, canyons, ...)").getDouble();
+        randomStructureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomStructureChance", randomStructureChance,
+                "The chance that every specific structure gets randomly selected in worldgen (village, nether fortress, ...)").getDouble();
+        randomOceanLiquidChance = (float) cfg.get(CATEGORY_DIMLETS, "randomOceanLiquidChance", randomOceanLiquidChance,
+                "The chance that a non-water block is selected for oceans and seas").getDouble();
+        randomBaseBlockChance = (float) cfg.get(CATEGORY_DIMLETS, "randomBaseBlockChance", randomBaseBlockChance,
+                "The chance that a non-stone block is selected for the main terrain").getDouble();
+        randomSpecialSkyChance = (float) cfg.get(CATEGORY_DIMLETS, "randomSpecialSkyChance", randomSpecialSkyChance,
+                "The chance that special sky features are selected").getDouble();
+        randomExtraMobsChance = (float) cfg.get(CATEGORY_DIMLETS, "randomExtraMobsChance", randomExtraMobsChance,
+                "The chance that extra specific mobs will spawn").getDouble();
+        randomSpecialTimeChance = (float) cfg.get(CATEGORY_DIMLETS, "randomSpecialTimeChance", randomSpecialTimeChance,
+                "The chance that special time features are selected").getDouble();
+
     }
 
 }
