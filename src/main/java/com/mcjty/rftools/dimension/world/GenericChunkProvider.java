@@ -11,6 +11,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -362,8 +364,6 @@ public class GenericChunkProvider implements IChunkProvider {
         return "RandomLevelSource";
     }
 
-    private static long lastTime = 0;
-
     /**
      * Returns a list of creatures of the specified type that can spawn at the given location.
      */
@@ -375,18 +375,31 @@ public class GenericChunkProvider implements IChunkProvider {
         }
 
         if (creatureType == EnumCreatureType.ambient) {
-            if (true) { //System.currentTimeMillis() - lastTime > 50) {
-//                lastTime = System.currentTimeMillis();
-                creatures = new ArrayList(creatures);
-                for (int i = 0 ; i < extraSpawns.size() ; i++) {
-                    int count = worldObj.countEntities(extraSpawns.get(i).entityClass);
-                    System.out.println(extraSpawns.get(i).entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
+            creatures = new ArrayList(creatures);
+            for (int i = 0 ; i < extraSpawns.size() ; i++) {
+                Class entityClass = extraSpawns.get(i).entityClass;
+                if (EntityAnimal.class.isAssignableFrom(entityClass)) {
+                    int count = worldObj.countEntities(entityClass);
                     if (count < extraSpawnsMax.get(i)) {
+//                        System.out.println("ANIMAL:" + entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
+                        creatures.add(extraSpawns.get(i));
+                    }
+                }
+            }
+        } else if (creatureType == EnumCreatureType.monster) {
+            creatures = new ArrayList(creatures);
+            for (int i = 0 ; i < extraSpawns.size() ; i++) {
+                Class entityClass = extraSpawns.get(i).entityClass;
+                if (EntityMob.class.isAssignableFrom(entityClass)) {
+                    int count = worldObj.countEntities(entityClass);
+                    if (count < extraSpawnsMax.get(i)) {
+//                        System.out.println("HOSTILE:" + entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
                         creatures.add(extraSpawns.get(i));
                     }
                 }
             }
         }
+
 
         return creatures;
     }
