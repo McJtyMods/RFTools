@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -39,7 +40,8 @@ public class GenericChunkProvider implements IChunkProvider {
 
     private World worldObj;
     public DimensionInformation dimensionInformation;
-    private List<BiomeGenBase.SpawnListEntry> extraSpawns;
+    private List<BiomeGenBase.SpawnListEntry> extraSpawnsHostile;
+    private List<BiomeGenBase.SpawnListEntry> extraSpawnsPassive;
 
     private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
 
@@ -114,9 +116,16 @@ public class GenericChunkProvider implements IChunkProvider {
 
         terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);
 
-        extraSpawns = new ArrayList<BiomeGenBase.SpawnListEntry>();
+        extraSpawnsHostile = new ArrayList<BiomeGenBase.SpawnListEntry>();
+        extraSpawnsPassive = new ArrayList<BiomeGenBase.SpawnListEntry>();
         for (Class<? extends EntityLiving> entityClass : dimensionInformation.getExtraMobs()) {
-            extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, 10, 3, 5));
+            if (EntityMob.class.isAssignableFrom(entityClass)) {
+                extraSpawnsHostile.add(new BiomeGenBase.SpawnListEntry(entityClass, 100, 3, 5));
+                System.out.println("HOSTILE: entityClass = " + entityClass);
+            } else {
+                extraSpawnsPassive.add(new BiomeGenBase.SpawnListEntry(entityClass, 20, 3, 5));
+                System.out.println("PASSIVE: entityClass = " + entityClass);
+            }
         }
 
     }
@@ -364,9 +373,12 @@ public class GenericChunkProvider implements IChunkProvider {
     @Override
     public List getPossibleCreatures(EnumCreatureType creatureType, int x, int y, int z) {
         List creatures = getDefaultCreatures(creatureType, x, y, z);
-        if (!extraSpawns.isEmpty()) {
+        if (creatureType == EnumCreatureType.monster && !extraSpawnsHostile.isEmpty()) {
             creatures = new ArrayList(creatures);
-            creatures.addAll(extraSpawns);
+            creatures.addAll(extraSpawnsHostile);
+        } else if (creatureType == EnumCreatureType.creature && !extraSpawnsPassive.isEmpty()) {
+            creatures = new ArrayList(creatures);
+            creatures.addAll(extraSpawnsPassive);
         }
         return creatures;
     }
