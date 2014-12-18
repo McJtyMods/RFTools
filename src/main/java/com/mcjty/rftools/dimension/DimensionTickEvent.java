@@ -36,8 +36,9 @@ public class DimensionTickEvent {
 
                 for (Map.Entry<Integer, DimensionDescriptor> entry : dimensionManager.getDimensions().entrySet()) {
                     Integer id = entry.getKey();
-                    // Only drain power if the dimension is loaded (a player is there or a chunkloader)
-                    if (DimensionManager.getWorld(id) != null) {
+                    // If there is an activity probe we only drain power if the dimension is loaded (a player is there or a chunkloader)
+                    DimensionInformation information = dimensionManager.getDimensionInformation(id);
+                    if (DimensionManager.getWorld(id) != null || information.getProbeCounter() == 0) {
                         int cost = entry.getValue().getRfMaintainCost();
                         int power = dimensionStorage.getEnergyLevel(id);
                         power -= cost * MAXTICKS;

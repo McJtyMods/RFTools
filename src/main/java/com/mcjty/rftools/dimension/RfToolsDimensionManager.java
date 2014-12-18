@@ -178,6 +178,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             dimensionInformation.put(id, dimensionInfo);
 
             dimensionInfo.setSpawnPoint(Coordinate.readFromNBT(tc, "spawnPoint"));
+            dimensionInfo.setProbeCounter(tc.getInteger("probeCounter"));
         }
     }
 
@@ -196,6 +197,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             if (spawnPoint != null) {
                 Coordinate.writeToNBT(tc, "spawnPoint", spawnPoint);
             }
+            tc.setInteger("probeCounter", dimensionInfo.getProbeCounter());
 
             lst.appendTag(tc);
         }

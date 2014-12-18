@@ -27,6 +27,8 @@ public class DimensionInformation {
 
     private Coordinate spawnPoint = null;
 
+    private int probeCounter = 0;
+
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private Block baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
@@ -124,6 +126,9 @@ public class DimensionInformation {
         if (timeSpeed != null) {
             logDebug(player, "    Time speed: " + timeSpeed);
         }
+        if (probeCounter > 0) {
+            logDebug(player, "    Probes: " + probeCounter);
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -175,6 +180,8 @@ public class DimensionInformation {
         } else {
             buf.writeBoolean(false);
         }
+
+        buf.writeInt(probeCounter);
 
         skyDescriptor.toBytes(buf);
 
@@ -238,6 +245,7 @@ public class DimensionInformation {
             timeSpeed = null;
         }
 
+        probeCounter = buf.readInt();
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
 
         // @todo do mobs
@@ -590,5 +598,24 @@ public class DimensionInformation {
 
     public Float getTimeSpeed() {
         return timeSpeed;
+    }
+
+    public void addProbe() {
+        probeCounter++;
+    }
+
+    public void removeProbe() {
+        probeCounter--;
+        if (probeCounter < 0) {
+            probeCounter = 0;
+        }
+    }
+
+    public int getProbeCounter() {
+        return probeCounter;
+    }
+
+    public void setProbeCounter(int probeCounter) {
+        this.probeCounter = probeCounter;
     }
 }
