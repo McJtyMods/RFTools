@@ -46,6 +46,7 @@ public class KnownDimletConfiguration {
     public static final String CATEGORY_TYPERFCREATECOST = "typerfcreatecost";
     public static final String CATEGORY_TYPERFMAINTAINCOST = "typerfmaintaincost";
     public static final String CATEGORY_TYPETICKCOST = "typetickcost";
+    public static final String CATEGORY_MOBSPAWNS = "mobspawns";
     public static final String CATEGORY_GENERAL = "general";
 
     // All dimlet ids in a weighted random selector based on rarity.
@@ -704,6 +705,10 @@ public class KnownDimletConfiguration {
                                    int chance, int mingroup, int maxgroup, int maxentity) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
         idToDisplayName.put(id, DimletType.DIMLET_MOBS.getName() + " " + name + " Dimlet");
+        chance = cfg.get(CATEGORY_MOBSPAWNS, name + ".chance", chance).getInt();
+        mingroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
+        maxgroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
+        maxentity = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
         idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
         return id;
     }

@@ -61,6 +61,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "The base amount of time needed to create a dimension per type of dimlet in it");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "The base amount of RF needed to create a dimension per type of dimlet in it");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "The base amount of RF needed to maintain a dimension per type of dimlet in it");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, "Settings for the mob dimlets");
             KnownDimletConfiguration.initGeneralConfig(cfg);
             KnownDimletConfiguration.initTypeRarity(cfg);
             KnownDimletConfiguration.initTypeRfCreateCost(cfg);
