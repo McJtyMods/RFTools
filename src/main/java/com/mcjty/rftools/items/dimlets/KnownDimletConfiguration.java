@@ -12,7 +12,6 @@ import com.mcjty.rftools.dimension.world.types.SpecialType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -31,7 +30,6 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,18 +47,6 @@ public class KnownDimletConfiguration {
     public static final String CATEGORY_MOBSPAWNS = "mobspawns";
     public static final String CATEGORY_GENERAL = "general";
 
-    // All dimlet ids in a weighted random selector based on rarity.
-    public static WeightedRandomSelector<Integer,Integer> randomDimlets;
-    public static final int RARITY_0 = 0;
-    public static final int RARITY_1 = 1;
-    public static final int RARITY_2 = 2;
-    public static final int RARITY_3 = 3;
-    public static final int RARITY_4 = 4;
-    public static final int RARITY_5 = 5;
-    public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
-
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
     public static final Map<DimletEntry,Integer> dimletToID = new HashMap<DimletEntry, Integer>();
@@ -74,156 +60,18 @@ public class KnownDimletConfiguration {
     // All craftable dimlets.
     public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
 
-    public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
-    public static final Map<DimletType,Integer> typeRfCreateCost = new HashMap<DimletType, Integer>();
-    public static final Map<DimletType,Integer> typeRfMaintainCost = new HashMap<DimletType, Integer>();
-    public static final Map<DimletType,Integer> typeTickCost = new HashMap<DimletType, Integer>();
-
-    // First element in the pair is the modifier type. Second element is the type that is being modified.
-    public static final Map<Pair<DimletType,DimletType>,Integer> rfCreateModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
-    public static final Map<Pair<DimletType,DimletType>,Integer> rfMaintainModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
-    public static final Map<Pair<DimletType,DimletType>,Integer> tickCostModifierMultiplier = new HashMap<Pair<DimletType, DimletType>, Integer>();
-
-    public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
-    public static final Map<Integer,SpecialType> idToSpecialType = new HashMap<Integer, SpecialType>();
-    public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
-    public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
-    public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();
-    public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
-    public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
-    public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
-    public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
-    public static final Map<Integer,MobDescriptor> idtoMob = new HashMap<Integer, MobDescriptor>();
-    public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
-    public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
-
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
-    private static final Map<DimletKey,Integer> dimletBuiltinRfCreate = new HashMap<DimletKey, Integer>();
-    private static final Map<DimletKey,Integer> dimletBuiltinRfMaintain = new HashMap<DimletKey, Integer>();
-    private static final Map<DimletKey,Integer> dimletBuiltinTickCost = new HashMap<DimletKey, Integer>();
-    private static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
     private static final Set<DimletKey> dimletIsExpensive = new HashSet<DimletKey>();
-
-    public static int baseDimensionCreationCost = 1000;
-    public static int baseDimensionMaintenanceCost = 10;
-    public static int baseDimensionTickCost = 100;
 
     private static int lastId = 0;
 
     public static void initGeneralConfig(Configuration cfg) {
-        baseDimensionCreationCost = cfg.get(CATEGORY_GENERAL, "baseDimensionCreationCost", baseDimensionCreationCost,
+        DimletCosts.baseDimensionCreationCost = cfg.get(CATEGORY_GENERAL, "baseDimensionCreationCost", DimletCosts.baseDimensionCreationCost,
                 "The base cost (in RF/tick) for creating a dimension").getInt();
-        baseDimensionMaintenanceCost = cfg.get(CATEGORY_GENERAL, "baseDimensionMaintenanceCost", baseDimensionMaintenanceCost,
+        DimletCosts.baseDimensionMaintenanceCost = cfg.get(CATEGORY_GENERAL, "baseDimensionMaintenanceCost", DimletCosts.baseDimensionMaintenanceCost,
                 "The base cost (in RF/tick) for maintaining a dimension").getInt();
-        baseDimensionTickCost = cfg.get(CATEGORY_GENERAL, "baseDimensionTickCost", baseDimensionTickCost,
+        DimletCosts.baseDimensionTickCost = cfg.get(CATEGORY_GENERAL, "baseDimensionTickCost", DimletCosts.baseDimensionTickCost,
                 "The base time (in ticks) for creating a dimension").getInt();
-    }
-
-    public static void initTypeRarity(Configuration cfg) {
-        typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_TIME, RARITY_2);
-        initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_1);
-        initRarity(cfg, DimletType.DIMLET_MATERIAL, RARITY_1);
-        initRarity(cfg, DimletType.DIMLET_MOBS, RARITY_2);
-        initRarity(cfg, DimletType.DIMLET_SKY, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_STRUCTURE, RARITY_3);
-        initRarity(cfg, DimletType.DIMLET_TERRAIN, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_FEATURE, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_DIGIT, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_SPECIAL, RARITY_5);
-    }
-
-    private static void initRarity(Configuration cfg, DimletType type, int rarity) {
-        typeRarity.put(type, cfg.get(CATEGORY_TYPERARIRTY, "rarity." + type.getName(), rarity).getInt());
-    }
-
-    public static void initTypeRfCreateCost(Configuration cfg) {
-        typeRfCreateCost.clear();
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_BIOME, 100);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_TIME, 300);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_FOLIAGE, 200);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_LIQUID, 150);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_MATERIAL, 300);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_MOBS, 300);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_SKY, 100);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_STRUCTURE, 600);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
-
-        rfCreateModifierMultiplier.clear();
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
-    }
-
-    private static void initRfCreateModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        rfCreateModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPERFCREATECOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
-    }
-
-    private static void initTypeRfCreateCost(Configuration cfg, DimletType type, int cost) {
-        typeRfCreateCost.put(type, cfg.get(CATEGORY_TYPERFCREATECOST, "rfcreate." + type.getName(), cost).getInt());
-    }
-
-    public static void initTypeRfMaintainCost(Configuration cfg) {
-        typeRfMaintainCost.clear();
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_BIOME, 0);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_TIME, 20);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_LIQUID, 1);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_MATERIAL, 10);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_MOBS, 100);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_SKY, 1);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_STRUCTURE, 100);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
-
-        rfMaintainModifierMultiplier.clear();
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 20);
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 20);
-    }
-
-    private static void initRfMaintainModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        rfMaintainModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPERFMAINTAINCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
-    }
-
-    private static void initTypeRfMaintainCost(Configuration cfg, DimletType type, int cost) {
-        typeRfMaintainCost.put(type, cfg.get(CATEGORY_TYPERFMAINTAINCOST, "rfmaintain." + type.getName(), cost).getInt());
-    }
-
-    public static void initTypeTickCost(Configuration cfg) {
-        typeTickCost.clear();
-        initTypeTickCost(cfg, DimletType.DIMLET_BIOME, 1);
-        initTypeTickCost(cfg, DimletType.DIMLET_TIME, 10);
-        initTypeTickCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
-        initTypeTickCost(cfg, DimletType.DIMLET_LIQUID, 10);
-        initTypeTickCost(cfg, DimletType.DIMLET_MATERIAL, 100);
-        initTypeTickCost(cfg, DimletType.DIMLET_MOBS, 200);
-        initTypeTickCost(cfg, DimletType.DIMLET_SKY, 1);
-        initTypeTickCost(cfg, DimletType.DIMLET_STRUCTURE, 900);
-        initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
-        initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
-        initTypeTickCost(cfg, DimletType.DIMLET_DIGIT, 0);
-        initTypeTickCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
-
-        tickCostModifierMultiplier.clear();
-        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 2);
-        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
-        initTickCostModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 2);
-    }
-
-    private static void initTickCostModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        tickCostModifierMultiplier.put(Pair.of(type1, type2), cfg.get(CATEGORY_TYPETICKCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
-    }
-
-    private static void initTypeTickCost(Configuration cfg, DimletType type, int cost) {
-        typeTickCost.put(type, cfg.get(CATEGORY_TYPETICKCOST, "ticks." + type.getName(), cost).getInt());
     }
 
     private static void registerDimletEntry(int id, DimletEntry dimletEntry) {
@@ -254,10 +102,10 @@ public class KnownDimletConfiguration {
             return -1;
         }
 
-        int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, dimletBuiltinRfCreate, typeRfCreateCost);
-        int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, dimletBuiltinRfMaintain, typeRfMaintainCost);
-        int tickCost = checkCostConfig(cfg, "ticks.", key, dimletBuiltinTickCost, typeTickCost);
-        int rarity = checkCostConfig(cfg, "rarity.", key, dimletBuiltinRarity, typeRarity);
+        int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, DimletCosts.dimletBuiltinRfCreate, DimletCosts.typeRfCreateCost);
+        int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, DimletCosts.typeRfMaintainCost);
+        int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
+        int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
         boolean expensive = checkFlagConfig(cfg, "expensive.", key, dimletIsExpensive);
 
         DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, expensive);
@@ -318,7 +166,7 @@ public class KnownDimletConfiguration {
 
         int idMaterialNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
         idToDisplayName.put(idMaterialNone, DimletType.DIMLET_MATERIAL.getName() + " None Dimlet");
-        idToBlock.put(idMaterialNone, null);
+        DimletMapping.idToBlock.put(idMaterialNone, null);
 
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
         initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
@@ -350,7 +198,7 @@ public class KnownDimletConfiguration {
         initFoliageItem(cfg, idsInConfig);
 
         int idLiquidNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
-        idToFluid.put(idLiquidNone, null);
+        DimletMapping.idToFluid.put(idLiquidNone, null);
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
 
         initLiquidItems(cfg, idsInConfig);
@@ -483,71 +331,8 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idDigit8);
         craftableDimlets.add(idDigit9);
 
-        setupWeightedRandomList(cfg);
+        DimletRandomizer.setupWeightedRandomList(cfg);
         setupChestLoot();
-    }
-
-    private static void setupWeightedRandomList(Configuration cfg) {
-        float rarity0 = (float) cfg.get(CATEGORY_RARITY, "level0", 250.0f).getDouble();
-        float rarity1 = (float) cfg.get(CATEGORY_RARITY, "level1", 150.0f).getDouble();
-        float rarity2 = (float) cfg.get(CATEGORY_RARITY, "level2", 90.0f).getDouble();
-        float rarity3 = (float) cfg.get(CATEGORY_RARITY, "level3", 40.0f).getDouble();
-        float rarity4 = (float) cfg.get(CATEGORY_RARITY, "level4", 20.0f).getDouble();
-        float rarity5 = (float) cfg.get(CATEGORY_RARITY, "level5", 1.0f).getDouble();
-
-        randomDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-        randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-        randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-        randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
-
-        for (Map.Entry<Integer, DimletEntry> entry : idToDimlet.entrySet()) {
-            randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
-            if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
-                // Don't add the 'null' material.
-                if (idToBlock.get(entry.getKey()) != null) {
-                    randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
-                }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
-                // Don't add the 'null' fluid.
-                if (idToFluid.get(entry.getKey()) != null) {
-                    randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
-                }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_MOBS) {
-                // Don't add the 'null' mob.
-                if (idtoMob.get(entry.getKey()) != null) {
-                    randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
-                }
-            }
-        }
-    }
-
-    public static MobDescriptor getRandomMob(Random random) {
-        return idtoMob.get(randomMobDimlets.select(random));
-    }
-
-    public static Block getRandomFluidBlock(Random random) {
-        return idToFluid.get(randomLiquidDimlets.select(random));
-    }
-
-    public static Block getRandomMaterialBlock(Random random, boolean allowExpensive) {
-        Integer id = randomMaterialDimlets.select(random);
-        while ((!allowExpensive) && idToDimlet.get(id).isExpensive()) {
-            id = randomMaterialDimlets.select(random);
-        }
-        return idToBlock.get(id);
-    }
-
-    private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {
-        randomDimlets.addRarity(RARITY_0, rarity0);
-        randomDimlets.addRarity(RARITY_1, rarity1);
-        randomDimlets.addRarity(RARITY_2, rarity2);
-        randomDimlets.addRarity(RARITY_3, rarity3);
-        randomDimlets.addRarity(RARITY_4, rarity4);
-        randomDimlets.addRarity(RARITY_5, rarity5);
     }
 
     /**
@@ -580,7 +365,7 @@ public class KnownDimletConfiguration {
     private static int initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
         idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
-        idToDigit.put(id, ""+digit);
+        DimletMapping.idToDigit.put(id, ""+digit);
         return id;
     }
 
@@ -588,7 +373,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
         ItemStack stack = new ItemStack(block);
         idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
-        idToBlock.put(id, block);
+        DimletMapping.idToBlock.put(id, block);
     }
 
     /**
@@ -641,10 +426,10 @@ public class KnownDimletConfiguration {
                 return;
             }
             DimletKey key = new DimletKey(type, name);
-            dimletBuiltinRfCreate.put(key, rfcreate);
-            dimletBuiltinRfMaintain.put(key, rfmaintain);
-            dimletBuiltinTickCost.put(key, tickCost);
-            dimletBuiltinRarity.put(key, rarity);
+            DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
+            DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
+            DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
+            DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
             if (expensive != 0) {
                 dimletIsExpensive.add(key);
             }
@@ -671,7 +456,7 @@ public class KnownDimletConfiguration {
             if (biome != null) {
                 String name = biome.biomeName;
                 int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
-                idToBiome.put(id, biome);
+                DimletMapping.idToBiome.put(id, biome);
                 idToDisplayName.put(id, DimletType.DIMLET_BIOME.getName() + " " + name + " Dimlet");
             }
         }
@@ -688,7 +473,7 @@ public class KnownDimletConfiguration {
             if (me.getValue().canBePlacedInWorld()) {
                 int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                 String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
-                idToFluid.put(id, me.getValue().getBlock());
+                DimletMapping.idToFluid.put(id, me.getValue().getBlock());
                 idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
             }
         }
@@ -697,7 +482,7 @@ public class KnownDimletConfiguration {
     private static int initSpecialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SpecialType specialType) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SPECIAL, name));
         idToDisplayName.put(id, DimletType.DIMLET_SPECIAL.getName() + " " + name + " Dimlet");
-        idToSpecialType.put(id, specialType);
+        DimletMapping.idToSpecialType.put(id, specialType);
         return id;
     }
 
@@ -709,117 +494,44 @@ public class KnownDimletConfiguration {
         mingroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
         maxgroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
         maxentity = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
-        idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
+        DimletMapping.idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
         return id;
     }
 
     private static int initSkyItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SkyDescriptor skyDescriptor) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
-        idToSkyDescriptor.put(id, skyDescriptor);
+        DimletMapping.idToSkyDescriptor.put(id, skyDescriptor);
         idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
         return id;
     }
 
     private static int initStructureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, StructureType structureType) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
-        idToStructureType.put(id, structureType);
+        DimletMapping.idToStructureType.put(id, structureType);
         idToDisplayName.put(id, DimletType.DIMLET_STRUCTURE.getName() + " " + name + " Dimlet");
         return id;
     }
 
     private static int initTerrainItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, TerrainType terrainType) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TERRAIN, name));
-        idToTerrainType.put(id, terrainType);
+        DimletMapping.idToTerrainType.put(id, terrainType);
         idToDisplayName.put(id, DimletType.DIMLET_TERRAIN.getName() + " " + name + " Dimlet");
         return id;
     }
 
     private static int initFeatureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, FeatureType featureType) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_FEATURE, name));
-        idToFeatureType.put(id, featureType);
+        DimletMapping.idToFeatureType.put(id, featureType);
         idToDisplayName.put(id, DimletType.DIMLET_FEATURE.getName() + " " + name + " Dimlet");
         return id;
     }
 
     private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle, Float speed) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
-        idToCelestialAngle.put(id, angle);
-        idToSpeed.put(id, speed);
+        DimletMapping.idToCelestialAngle.put(id, angle);
+        DimletMapping.idToSpeed.put(id, speed);
         idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         return id;
     }
 
-    // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
-    public static int getRandomDimlet(float bonus, Random random) {
-        return randomDimlets.select(randomDimlets.createDistribution(bonus), random);
-    }
-
-    // Get a random dimlet with no bonus.
-    public static int getRandomDimlet(Random random) {
-        return randomDimlets.select(random);
-    }
-
-    // Get a random dimlet with the given distribution.
-    public static int getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution, Random random) {
-        return randomDimlets.select(distribution, random);
-    }
-
-    public static void dumpRarityDistribution(float bonus) {
-        Random random = new Random();
-        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
-        WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
-
-        for (Integer id : dimletIds) {
-            counter.put(id, 0);
-        }
-
-        final int total = 10000000;
-        for (int i = 0 ; i < total ; i++) {
-            int id = randomDimlets.select(distribution, random);
-            counter.put(id, counter.get(id)+1);
-        }
-
-        RFTools.log("#### Dumping with bonus=" + bonus);
-        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
-        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
-            sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
-        }
-        Collections.sort(sortedCounters);
-
-        for (Pair<Integer, Integer> entry : sortedCounters) {
-            int count = entry.getKey();
-            int id = entry.getValue();
-            float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
-        }
-    }
-
-    public static void dumpMaterialRarityDistribution() {
-        Random random = new Random();
-        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
-
-        for (Integer id : idToBlock.keySet()) {
-            counter.put(id, 0);
-        }
-
-        final int total = 10000000;
-        for (int i = 0 ; i < total ; i++) {
-            int id = randomMaterialDimlets.select(random);
-            counter.put(id, counter.get(id)+1);
-        }
-
-        RFTools.log("#### Dumping material distribution");
-        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
-        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
-            sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
-        }
-        Collections.sort(sortedCounters);
-
-        for (Pair<Integer, Integer> entry : sortedCounters) {
-            int count = entry.getKey();
-            int id = entry.getValue();
-            float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
-        }
-    }
 }

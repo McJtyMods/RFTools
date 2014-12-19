@@ -6,12 +6,12 @@ import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.SpecialType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
+import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -266,22 +266,22 @@ public class DimensionInformation {
                 celestialAngle = null;      // Default
                 timeSpeed = null;
             } else {
-                List<Integer> keys = new ArrayList<Integer>(KnownDimletConfiguration.idToCelestialAngle.keySet());
+                List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToCelestialAngle.keySet());
                 int id = keys.get(random.nextInt(keys.size()));
-                celestialAngle = KnownDimletConfiguration.idToCelestialAngle.get(id);
-                timeSpeed = KnownDimletConfiguration.idToSpeed.get(id);
+                celestialAngle = DimletMapping.idToCelestialAngle.get(id);
+                timeSpeed = DimletMapping.idToSpeed.get(id);
             }
         } else {
             int id = dimlets.get(random.nextInt(dimlets.size())).getKey().getId();
-            celestialAngle = KnownDimletConfiguration.idToCelestialAngle.get(id);
-            timeSpeed = KnownDimletConfiguration.idToSpeed.get(id);
+            celestialAngle = DimletMapping.idToCelestialAngle.get(id);
+            timeSpeed = DimletMapping.idToSpeed.get(id);
         }
     }
 
     private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_SPECIAL, dimlets);
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-            if (KnownDimletConfiguration.idToSpecialType.get(dimlet.getLeft().getId()) == SpecialType.SPECIAL_PEACEFUL) {
+            if (DimletMapping.idToSpecialType.get(dimlet.getLeft().getId()) == SpecialType.SPECIAL_PEACEFUL) {
                 peaceful = true;
             }
         }
@@ -291,13 +291,13 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_MOBS, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomExtraMobsChance) {
-                extraMobs.add(KnownDimletConfiguration.getRandomMob(random));
+                extraMobs.add(DimletRandomizer.getRandomMob(random));
             }
-        } else if (dimlets.size() == 1 && KnownDimletConfiguration.idtoMob.get(dimlets.get(0).getLeft().getId()) == null) {
+        } else if (dimlets.size() == 1 && DimletMapping.idtoMob.get(dimlets.get(0).getLeft().getId()) == null) {
             // Just default.
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
-                extraMobs.add(KnownDimletConfiguration.idtoMob.get(dimletWithModifiers.getLeft().getId()));
+                extraMobs.add(DimletMapping.idtoMob.get(dimletWithModifiers.getLeft().getId()));
             }
         }
     }
@@ -307,7 +307,7 @@ public class DimensionInformation {
         digitString = "";
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
             int id = dimletWithModifiers.getKey().getId();
-            digitString += KnownDimletConfiguration.idToDigit.get(id);
+            digitString += DimletMapping.idToDigit.get(id);
         }
     }
 
@@ -315,7 +315,7 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_SKY, dimlets);
         if (random.nextFloat() < DimletConfiguration.randomSpecialSkyChance && dimlets.isEmpty()) {
             // If nothing was specified then there is random chance we get random sky stuff.
-            List<Integer> skyIds = new ArrayList<Integer>(KnownDimletConfiguration.idToSkyDescriptor.keySet());
+            List<Integer> skyIds = new ArrayList<Integer>(DimletMapping.idToSkyDescriptor.keySet());
             for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
                 int id = skyIds.get(random.nextInt(skyIds.size()));
                 List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
@@ -326,7 +326,7 @@ public class DimensionInformation {
         SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
             int id = dimletWithModifiers.getKey().getId();
-            builder.combine(KnownDimletConfiguration.idToSkyDescriptor.get(id));
+            builder.combine(DimletMapping.idToSkyDescriptor.get(id));
         }
         skyDescriptor = builder.build();
     }
@@ -352,7 +352,7 @@ public class DimensionInformation {
             modifiers = Collections.emptyList();
         } else {
             int index = random.nextInt(dimlets.size());
-            terrainType = KnownDimletConfiguration.idToTerrainType.get(dimlets.get(index).getLeft().getId());
+            terrainType = DimletMapping.idToTerrainType.get(dimlets.get(index).getLeft().getId());
             modifiers = dimlets.get(index).getRight();
         }
 
@@ -369,7 +369,7 @@ public class DimensionInformation {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
             // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
             if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
-                baseBlockForTerrain = KnownDimletConfiguration.getRandomMaterialBlock(random, false);
+                baseBlockForTerrain = DimletRandomizer.getRandomMaterialBlock(random, false);
             } else {
                 baseBlockForTerrain = Blocks.stone;
             }
@@ -382,7 +382,7 @@ public class DimensionInformation {
             }
         } else {
             if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
-                fluidForTerrain = KnownDimletConfiguration.getRandomFluidBlock(random);
+                fluidForTerrain = DimletRandomizer.getRandomFluidBlock(random);
             } else {
                 fluidForTerrain = Blocks.water;
             }
@@ -393,10 +393,10 @@ public class DimensionInformation {
         if (modifiers != null) {
             for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
                 if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
-                    Block block = KnownDimletConfiguration.idToBlock.get(modifier.getId());
+                    Block block = DimletMapping.idToBlock.get(modifier.getId());
                     blocks.add(block);
                 } else if (modifier.getType() == DimletType.DIMLET_LIQUID) {
-                    Block fluid = KnownDimletConfiguration.idToFluid.get(modifier.getId());
+                    Block fluid = DimletMapping.idToFluid.get(modifier.getId());
                     fluids.add(fluid);
                 }
             }
@@ -406,7 +406,7 @@ public class DimensionInformation {
     private void calculateFeatureType(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_FEATURE, dimlets);
         if (dimlets.isEmpty()) {
-            for (Map.Entry<Integer, FeatureType> entry : KnownDimletConfiguration.idToFeatureType.entrySet()) {
+            for (Map.Entry<Integer, FeatureType> entry : DimletMapping.idToFeatureType.entrySet()) {
                 if (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
                     featureTypes.add(entry.getValue());
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
@@ -418,7 +418,7 @@ public class DimensionInformation {
 
         Map<FeatureType,List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature = new HashMap<FeatureType, List<DimensionDescriptor.DimletDescriptor>>();
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-            FeatureType featureType = KnownDimletConfiguration.idToFeatureType.get(dimlet.getLeft().getId());
+            FeatureType featureType = DimletMapping.idToFeatureType.get(dimlet.getLeft().getId());
             featureTypes.add(featureType);
             modifiersForFeature.put(featureType, dimlet.getRight());
         }
@@ -431,7 +431,7 @@ public class DimensionInformation {
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
-                    fluids.add(KnownDimletConfiguration.getRandomFluidBlock(random));
+                    fluids.add(DimletRandomizer.getRandomFluidBlock(random));
                 }
             } else if (fluids.size() == 1 && fluids.get(0) == null) {
                 fluids.clear();
@@ -449,7 +449,7 @@ public class DimensionInformation {
             // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
             if (blocks.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomOregenMaterialChance) {
-                    blocks.add(KnownDimletConfiguration.getRandomMaterialBlock(random, true));
+                    blocks.add(DimletRandomizer.getRandomMaterialBlock(random, true));
                 }
             } else if (blocks.size() == 1 && blocks.get(0) == null) {
                 blocks.clear();
@@ -479,7 +479,7 @@ public class DimensionInformation {
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < DimletConfiguration.randomFeatureMaterialChance) {
-                    block = KnownDimletConfiguration.getRandomMaterialBlock(random, true);
+                    block = DimletRandomizer.getRandomMaterialBlock(random, true);
                 } else {
                     block = Blocks.stone;
                 }
@@ -501,7 +501,7 @@ public class DimensionInformation {
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
-                structureTypes.add(KnownDimletConfiguration.idToStructureType.get(dimletWithModifier.getLeft().getId()));
+                structureTypes.add(DimletMapping.idToStructureType.get(dimletWithModifier.getLeft().getId()));
             }
         }
     }
@@ -511,7 +511,7 @@ public class DimensionInformation {
         // @@@ TODO: distinguish between random overworld biome, random nether biome, random biome and specific biomes
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
             int id = dimletWithModifiers.getKey().getId();
-            biomes.add(KnownDimletConfiguration.idToBiome.get(id));
+            biomes.add(DimletMapping.idToBiome.get(id));
         }
     }
 

@@ -2,9 +2,6 @@ package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.*;
-import com.mcjty.rftools.dimension.world.types.FeatureType;
-import com.mcjty.rftools.dimension.world.types.StructureType;
-import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import java.util.*;
 
@@ -104,7 +100,7 @@ public class RealizedDimensionTab extends Item {
                 if (type == DimletType.DIMLET_DIGIT) {
                     String digitString = "";
                     for (int id : ids) {
-                        digitString += KnownDimletConfiguration.idToDigit.get(id);
+                        digitString += DimletMapping.idToDigit.get(id);
                     }
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {

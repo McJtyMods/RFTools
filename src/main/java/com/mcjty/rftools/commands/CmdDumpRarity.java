@@ -1,6 +1,6 @@
 package com.mcjty.rftools.commands;
 
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import net.minecraft.command.ICommandSender;
 
 public class CmdDumpRarity extends AbstractRfToolsCommand {
@@ -18,6 +18,6 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
     public void execute(ICommandSender sender, String[] args) {
         float bonus = fetchFloat(sender, args, 1, 0.0f);
 
-        KnownDimletConfiguration.dumpRarityDistribution(bonus);
+        DimletRandomizer.dumpRarityDistribution(bonus);
     }
 }

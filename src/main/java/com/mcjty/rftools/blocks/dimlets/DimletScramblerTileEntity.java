@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
@@ -40,7 +41,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         if (scrambling > 0) {
             scrambling--;
             if (scrambling == 0) {
-                int id = KnownDimletConfiguration.getRandomDimlet(bonus, worldObj.rand);
+                int id = DimletRandomizer.getRandomDimlet(bonus, worldObj.rand);
                 InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4);
             }
             markDirty();

@@ -13,6 +13,8 @@ import com.mcjty.rftools.dimension.DimensionTickEvent;
 import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.gui.GuiProxy;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletCosts;
+import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
@@ -63,10 +65,10 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "The base amount of RF needed to maintain a dimension per type of dimlet in it");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, "Settings for the mob dimlets");
             KnownDimletConfiguration.initGeneralConfig(cfg);
-            KnownDimletConfiguration.initTypeRarity(cfg);
-            KnownDimletConfiguration.initTypeRfCreateCost(cfg);
-            KnownDimletConfiguration.initTypeRfMaintainCost(cfg);
-            KnownDimletConfiguration.initTypeTickCost(cfg);
+            DimletRandomizer.initTypeRarity(cfg);
+            DimletCosts.initTypeRfCreateCost(cfg);
+            DimletCosts.initTypeRfMaintainCost(cfg);
+            DimletCosts.initTypeTickCost(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading dimlet config file!");
         } finally {
