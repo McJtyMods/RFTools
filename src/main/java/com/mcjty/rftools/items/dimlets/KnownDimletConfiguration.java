@@ -793,4 +793,33 @@ public class KnownDimletConfiguration {
             RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
+
+    public static void dumpMaterialRarityDistribution() {
+        Random random = new Random();
+        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
+
+        for (Integer id : idToBlock.keySet()) {
+            counter.put(id, 0);
+        }
+
+        final int total = 10000000;
+        for (int i = 0 ; i < total ; i++) {
+            int id = randomMaterialDimlets.select(random);
+            counter.put(id, counter.get(id)+1);
+        }
+
+        RFTools.log("#### Dumping material distribution");
+        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
+        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
+            sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
+        }
+        Collections.sort(sortedCounters);
+
+        for (Pair<Integer, Integer> entry : sortedCounters) {
+            int count = entry.getKey();
+            int id = entry.getValue();
+            float percentage = count * 100.0f / total;
+            RFTools.log("Id:"+id + ",    key:\"" + idToDimlet.get(id).getKey().getName() + "\",    name:\""+idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+        }
+    }
 }
