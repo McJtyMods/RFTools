@@ -179,12 +179,8 @@ public class RfToolsDimensionManager extends WorldSavedData {
             dimensions.put(id, descriptor);
             dimensionToID.put(descriptor, id);
 
-            String name = tc.getString("name");
-            DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor);
+            DimensionInformation dimensionInfo = new DimensionInformation(descriptor, tc);
             dimensionInformation.put(id, dimensionInfo);
-
-            dimensionInfo.setSpawnPoint(Coordinate.readFromNBT(tc, "spawnPoint"));
-            dimensionInfo.setProbeCounter(tc.getInteger("probeCounter"));
         }
     }
 
@@ -196,14 +192,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
             Integer id = me.getKey();
             tc.setInteger("id", id);
-            DimensionInformation dimensionInfo = dimensionInformation.get(id);
-            tc.setString("name", dimensionInfo.getName());
             me.getValue().writeToNBT(tc);
-            Coordinate spawnPoint = dimensionInfo.getSpawnPoint();
-            if (spawnPoint != null) {
-                Coordinate.writeToNBT(tc, "spawnPoint", spawnPoint);
-            }
-            tc.setInteger("probeCounter", dimensionInfo.getProbeCounter());
+            DimensionInformation dimensionInfo = dimensionInformation.get(id);
+            dimensionInfo.writeToNBT(tc);
 
             lst.appendTag(tc);
         }

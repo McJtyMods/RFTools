@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
 import org.apache.commons.lang3.tuple.Pair;
@@ -75,6 +76,21 @@ public class DimensionInformation {
         calculateMobs(dimlets, random);
         calculateSpecial(dimlets, random);
         calculateTime(dimlets, random);
+    }
+
+    public DimensionInformation(DimensionDescriptor descriptor, NBTTagCompound tagCompound) {
+        this(tagCompound.getString("name"), descriptor);
+        setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
+        setProbeCounter(tagCompound.getInteger("probeCounter"));
+    }
+
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setString("name", getName());
+        Coordinate spawnPoint = getSpawnPoint();
+        if (spawnPoint != null) {
+            Coordinate.writeToNBT(tagCompound, "spawnPoint", spawnPoint);
+        }
+        tagCompound.setInteger("probeCounter", getProbeCounter());
     }
 
     private void logDebug(EntityPlayer player, String message) {
