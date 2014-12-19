@@ -9,9 +9,11 @@ import com.mcjty.rftools.dimension.world.types.TerrainType;
 import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.DimletType;
+import com.mcjty.rftools.network.ByteBufTools;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -132,25 +134,16 @@ public class DimensionInformation {
     }
 
     public void toBytes(ByteBuf buf) {
-        if (terrainType == null) {
-            buf.writeInt(TerrainType.TERRAIN_VOID.ordinal());
-        } else {
-            buf.writeInt(terrainType.ordinal());
-        }
-        buf.writeInt(featureTypes.size());
-        for (FeatureType type : featureTypes) {
-            buf.writeInt(type.ordinal());
-        }
-        buf.writeInt(structureTypes.size());
-        for (StructureType type : structureTypes) {
-            buf.writeInt(type.ordinal());
-        }
+        ByteBufTools.writeEnum(buf, terrainType, TerrainType.TERRAIN_VOID);
+        ByteBufTools.writeEnumCollection(buf, featureTypes);
+        ByteBufTools.writeEnumCollection(buf, structureTypes);
+
         buf.writeInt(biomes.size());
         for (BiomeGenBase entry : biomes) {
             buf.writeInt(entry.biomeID);
         }
-        buf.writeInt(digitString.length());
-        buf.writeBytes(digitString.getBytes());
+
+        ByteBufTools.writeString(buf, digitString);
 
         buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
         buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock));
@@ -168,49 +161,35 @@ public class DimensionInformation {
         }
 
         buf.writeBoolean(peaceful);
-        if (celestialAngle != null) {
-            buf.writeBoolean(true);
-            buf.writeFloat(celestialAngle);
-        } else {
-            buf.writeBoolean(false);
-        }
-        if (timeSpeed != null) {
-            buf.writeBoolean(true);
-            buf.writeFloat(timeSpeed);
-        } else {
-            buf.writeBoolean(false);
-        }
+        ByteBufTools.writeFloat(buf, celestialAngle);
+        ByteBufTools.writeFloat(buf, timeSpeed);
 
         buf.writeInt(probeCounter);
 
         skyDescriptor.toBytes(buf);
 
-        // @todo do mobs
+        buf.writeInt(extraMobs.size());
+        for (MobDescriptor mob : extraMobs) {
+            ByteBufTools.writeString(buf, mob.getEntityClass().getName());
+            buf.writeInt(mob.getSpawnChance());
+            buf.writeInt(mob.getMinGroup());
+            buf.writeInt(mob.getMaxGroup());
+            buf.writeInt(mob.getMaxLoaded());
+        }
+
     }
 
     public void fromBytes(ByteBuf buf) {
-        terrainType = TerrainType.values()[buf.readInt()];
-
-        int size = buf.readInt();
-        featureTypes.clear();
-        for (int i = 0 ; i < size ; i++) {
-            featureTypes.add(FeatureType.values()[buf.readInt()]);
-        }
-
-        structureTypes.clear();
-        size = buf.readInt();
-        for (int i = 0 ; i < size ; i++) {
-            structureTypes.add(StructureType.values()[buf.readInt()]);
-        }
+        terrainType = ByteBufTools.readEnum(buf, TerrainType.values());
+        ByteBufTools.readEnumCollection(buf, featureTypes, FeatureType.values());
+        ByteBufTools.readEnumCollection(buf, structureTypes, StructureType.values());
 
         biomes.clear();
-        size = buf.readInt();
+        int size = buf.readInt();
         for (int i = 0 ; i < size ; i++) {
             biomes.add(BiomeGenBase.getBiome(buf.readInt()));
         }
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        digitString = new String(dst);
+        digitString = ByteBufTools.readString(buf);
 
         baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         tendrilBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
@@ -234,21 +213,28 @@ public class DimensionInformation {
 
         peaceful = buf.readBoolean();
 
-        if (buf.readBoolean()) {
-            celestialAngle = buf.readFloat();
-        } else {
-            celestialAngle = null;
-        }
-        if (buf.readBoolean()) {
-            timeSpeed = buf.readFloat();
-        } else {
-            timeSpeed = null;
-        }
+        celestialAngle = ByteBufTools.readFloat(buf);
+        timeSpeed = ByteBufTools.readFloat(buf);
 
         probeCounter = buf.readInt();
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
 
-        // @todo do mobs
+        extraMobs.clear();
+        size = buf.readInt();
+        for (int i = 0 ; i < size ; i++) {
+            String className = ByteBufTools.readString(buf);
+            try {
+                Class<? extends EntityLiving> c = (Class<? extends EntityLiving>) Class.forName(className);
+                int chance = buf.readInt();
+                int minGroup = buf.readInt();
+                int maxGroup = buf.readInt();
+                int maxLoaded = buf.readInt();
+                MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
+                extraMobs.add(mob);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Coordinate getSpawnPoint() {
