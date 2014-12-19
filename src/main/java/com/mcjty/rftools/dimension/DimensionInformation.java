@@ -18,8 +18,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -59,6 +61,10 @@ public class DimensionInformation {
         this.name = name;
         this.descriptor = descriptor;
 
+        setupFromDescriptor();
+    }
+
+    private void setupFromDescriptor() {
         List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets = descriptor.getDimletsWithModifiers();
 
         Random random = new Random(descriptor.calculateSeed());
@@ -79,9 +85,34 @@ public class DimensionInformation {
     }
 
     public DimensionInformation(DimensionDescriptor descriptor, NBTTagCompound tagCompound) {
-        this(tagCompound.getString("name"), descriptor);
+        this.name = tagCompound.getString("name");
+        this.descriptor = descriptor;
+
         setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
         setProbeCounter(tagCompound.getInteger("probeCounter"));
+
+        int version = tagCompound.getInteger("version");
+        if (version == 1) {
+            // This version of the dimension information has the random information persisted.
+            readFromNBT(tagCompound);
+        } else {
+            // This is an older version. Here we have to calculate the random information again.
+            setupFromDescriptor();
+        }
+    }
+
+    private static <T extends Enum> Set<T> toEnumSet(int[] arr, T[] values) {
+        Set<T> list = new HashSet<T>();
+        for (int a : arr) {
+            list.add(values[a]);
+        }
+        return list;
+    }
+
+    private void readFromNBT(NBTTagCompound tagCompound) {
+        terrainType = TerrainType.values()[tagCompound.getInteger("terrain")];
+        featureTypes = toEnumSet(tagCompound.getIntArray("features"), FeatureType.values());
+        structureTypes = toEnumSet(tagCompound.getIntArray("structures"), StructureType.values());
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -91,7 +122,67 @@ public class DimensionInformation {
             Coordinate.writeToNBT(tagCompound, "spawnPoint", spawnPoint);
         }
         tagCompound.setInteger("probeCounter", getProbeCounter());
+        tagCompound.setInteger("version", 1);           // Version number so that we can detect incompatible changes in persisted dimension information objects.
+
+        tagCompound.setInteger("terrain", terrainType == null ? TerrainType.TERRAIN_VOID.ordinal() : terrainType.ordinal());
+        tagCompound.setIntArray("features", toIntArray(featureTypes));
+        tagCompound.setIntArray("structures", toIntArray(structureTypes));
+
+        /*
+        ByteBufTools.writeEnumCollection(buf, featureTypes);
+        ByteBufTools.writeEnumCollection(buf, structureTypes);
+
+        buf.writeInt(biomes.size());
+        for (BiomeGenBase entry : biomes) {
+            buf.writeInt(entry.biomeID);
+        }
+
+        ByteBufTools.writeString(buf, digitString);
+
+        buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
+        buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
+
+        buf.writeInt(extraOregen.length);
+        for (Block block : extraOregen) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        }
+        buf.writeInt(fluidsForLakes.length);
+        for (Block block : fluidsForLakes) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        }
+
+        buf.writeBoolean(peaceful);
+        ByteBufTools.writeFloat(buf, celestialAngle);
+        ByteBufTools.writeFloat(buf, timeSpeed);
+
+        buf.writeInt(probeCounter);
+
+        skyDescriptor.toBytes(buf);
+
+        buf.writeInt(extraMobs.size());
+        for (MobDescriptor mob : extraMobs) {
+            ByteBufTools.writeString(buf, mob.getEntityClass().getName());
+            buf.writeInt(mob.getSpawnChance());
+            buf.writeInt(mob.getMinGroup());
+            buf.writeInt(mob.getMaxGroup());
+            buf.writeInt(mob.getMaxLoaded());
+        }
+
+
+         */
     }
+
+    private static <T extends Enum> int[] toIntArray(Collection<T> collection) {
+        List<Integer> c = new ArrayList<Integer>(collection.size());
+        for (T t : collection) {
+            c.add(t.ordinal());
+        }
+        return ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()]));
+    }
+
 
     private void logDebug(EntityPlayer player, String message) {
         RFTools.message(player, EnumChatFormatting.YELLOW + message);
@@ -192,7 +283,6 @@ public class DimensionInformation {
             buf.writeInt(mob.getMaxGroup());
             buf.writeInt(mob.getMaxLoaded());
         }
-
     }
 
     public void fromBytes(ByteBuf buf) {
