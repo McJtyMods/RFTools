@@ -19,6 +19,8 @@ public class DimletRandomizer {
     public static final int RARITY_5 = 5;
 
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
+    // Used for randomly generating dimlets.
+    public static final List<Integer> dimletIds = new ArrayList<Integer>();
     static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
 
     // All dimlet ids in a weighted random selector based on rarity.
@@ -130,7 +132,7 @@ public class DimletRandomizer {
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
         WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
 
-        for (Integer id : KnownDimletConfiguration.dimletIds) {
+        for (Integer id : dimletIds) {
             counter.put(id, 0);
         }
 

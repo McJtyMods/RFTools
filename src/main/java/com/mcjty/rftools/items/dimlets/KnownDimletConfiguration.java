@@ -54,9 +54,6 @@ public class KnownDimletConfiguration {
     // Map the id of a dimlet to a display name.
     public static final Map<Integer,String> idToDisplayName = new HashMap<Integer, String>();
 
-    // Used for randomly generating dimlets.
-    public static final List<Integer> dimletIds = new ArrayList<Integer>();
-
     // All craftable dimlets.
     public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
 
@@ -77,7 +74,7 @@ public class KnownDimletConfiguration {
     private static void registerDimletEntry(int id, DimletEntry dimletEntry) {
         idToDimlet.put(id, dimletEntry);
         dimletToID.put(dimletEntry, id);
-        dimletIds.add(id);
+        DimletRandomizer.dimletIds.add(id);
     }
 
     private static int registerDimlet(Configuration cfg, Map<DimletKey,Integer> idsInConfig, DimletKey key) {
