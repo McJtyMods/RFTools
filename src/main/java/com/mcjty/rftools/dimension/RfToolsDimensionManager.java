@@ -41,7 +41,12 @@ public class RfToolsDimensionManager extends WorldSavedData {
     }
 
     public static void clearInstance() {
-        instance = null;
+        if (instance != null) {
+            instance.dimensions.clear();
+            instance.dimensionToID.clear();
+            instance.dimensionInformation.clear();
+            instance = null;
+        }
     }
 
     public static void unregisterDimensions() {

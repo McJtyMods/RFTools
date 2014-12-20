@@ -29,7 +29,10 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public static void clearInstance() {
-        instance = null;
+        if (instance != null) {
+            instance.destinations.clear();
+            instance = null;
+        }
     }
 
     public void cleanupInvalid(World world) {

@@ -17,7 +17,10 @@ public class DimensionStorage extends WorldSavedData {
     private final Map<Integer,Integer> energy = new HashMap<Integer, Integer>();
 
     public static void clearInstance() {
-        instance = null;
+        if (instance != null) {
+            instance.energy.clear();
+            instance = null;
+        }
     }
 
     public DimensionStorage(String identifier) {
