@@ -52,7 +52,7 @@ public class PacketForceTeleport implements IMessage, IMessageHandler<PacketForc
             MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, message.dim,
                     new RfToolsTeleporter(worldServerForDimension, message.x+.5, message.y+1, message.z+.5));
         } else {
-            player.setPositionAndUpdate(message.x+.5, message.y + 1, message.z+.5);
+            player.setPositionAndUpdate(message.x+.5, message.y + 1.5, message.z+.5);
         }
         return null;
     }
