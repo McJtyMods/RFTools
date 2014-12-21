@@ -2,10 +2,14 @@ package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 
 import java.util.*;
@@ -25,6 +29,22 @@ public class KnownDimlet extends Item {
             IIcon icon = iconRegister.registerIcon(RFTools.MODID + ":dimlets/" + type.getTextureName());
             icons.put(type, icon);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage());
+        if (entry == null) {
+            // Safety. Should not occur.
+            return;
+        }
+
+        list.add(EnumChatFormatting.BLUE + "Rarity: " + entry.getRarity() + (KnownDimletConfiguration.craftableDimlets.contains(itemStack.getItemDamage()) ? " (craftable)" : ""));
+        list.add(EnumChatFormatting.YELLOW + "Create cost: " + entry.getRfCreateCost() + " RF/tick");
+        list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + entry.getRfMaintainCost() + " RF/tick");
+        list.add(EnumChatFormatting.YELLOW + "Tick cost: " + entry.getTickCost() + " ticks");
     }
 
     @Override

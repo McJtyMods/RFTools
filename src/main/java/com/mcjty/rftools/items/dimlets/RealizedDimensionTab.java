@@ -3,6 +3,8 @@ package com.mcjty.rftools.items.dimlets;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.*;
 import com.mcjty.rftools.network.PacketHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,6 +38,7 @@ public class RealizedDimensionTab extends Item {
         return stack;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
