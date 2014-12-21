@@ -44,8 +44,7 @@ public class PacketSyncDimensionInfo implements IMessage {
             byte[] dst = new byte[buf.readInt()];
             buf.readBytes(dst);
             String name = new String(dst);
-            DimensionInformation dimInfo = new DimensionInformation(name, dimensions.get(id));
-            dimInfo.fromBytes(buf);
+            DimensionInformation dimInfo = new DimensionInformation(name, dimensions.get(id), buf);
             dimensionInformation.put(id, dimInfo);
         }
     }

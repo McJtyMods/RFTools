@@ -153,7 +153,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
 
-        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor);
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world.getSeed());
         dimensionInformation.put(id, dimensionInfo);
 
         save(world);

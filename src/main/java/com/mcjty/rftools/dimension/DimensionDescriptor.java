@@ -177,8 +177,7 @@ public class DimensionDescriptor {
         return result;
     }
 
-    public int calculateSeed() {
-        int seed = 1;
+    public long calculateSeed(long seed) {
         List<DimletDescriptor> dimletDescriptors = parseDescriptionString(descriptionString);
         for (DimletDescriptor descriptor : dimletDescriptors) {
             seed = 31 * seed + descriptor.getId();

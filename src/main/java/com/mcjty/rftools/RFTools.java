@@ -1,8 +1,11 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.commands.CommandRftDim;
 import com.mcjty.rftools.commands.CommandRftTp;
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.ModDimensions;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
 import com.mcjty.rftools.network.DimensionSyncChannelHandler;
@@ -138,7 +141,17 @@ public class RFTools {
 
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
+        System.out.println("###### RFTools.serverStarted");
         ModDimensions.initDimensions();
+    }
+
+    @EventHandler
+    public void serverStopped(FMLServerStoppedEvent event) {
+        System.out.println("###### RFTools.serverStopped");
+        RfToolsDimensionManager.unregisterDimensions();
+        TeleportDestinations.clearInstance();
+        RfToolsDimensionManager.clearInstance();
+        DimensionStorage.clearInstance();
     }
 
     /**

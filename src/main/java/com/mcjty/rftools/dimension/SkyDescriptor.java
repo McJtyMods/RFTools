@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class SkyDescriptor {
     private final Float sunBrightnessFactor;
@@ -24,6 +25,24 @@ public class SkyDescriptor {
         writeFloat(buf, skyColorFactorR);
         writeFloat(buf, skyColorFactorG);
         writeFloat(buf, skyColorFactorB);
+    }
+
+    public void writeToNBT(NBTTagCompound compound) {
+        if (sunBrightnessFactor != null) {
+            compound.setFloat("sunBrightness", sunBrightnessFactor);
+        }
+        if (starBrightnessFactor != null) {
+            compound.setFloat("starBrightness", starBrightnessFactor);
+        }
+        if (skyColorFactorR != null) {
+            compound.setFloat("skyColorFactorR", skyColorFactorR);
+        }
+        if (skyColorFactorG != null) {
+            compound.setFloat("skyColorFactorG", skyColorFactorG);
+        }
+        if (skyColorFactorB != null) {
+            compound.setFloat("skyColorFactorB", skyColorFactorB);
+        }
     }
 
     private void writeFloat(ByteBuf buf, Float value) {
@@ -68,6 +87,35 @@ public class SkyDescriptor {
             skyColorFactorR = readFloat(buf);
             skyColorFactorG = readFloat(buf);
             skyColorFactorB = readFloat(buf);
+            return this;
+        }
+
+        public Builder fromNBT(NBTTagCompound compound) {
+            if (compound.hasKey("sunBrightness")) {
+                sunBrightnessFactor = compound.getFloat("sunBrightness");
+            } else {
+                sunBrightnessFactor = null;
+            }
+            if (compound.hasKey("starBrightness")) {
+                starBrightnessFactor = compound.getFloat("starBrightness");
+            } else {
+                starBrightnessFactor = null;
+            }
+            if (compound.hasKey("skyColorFactorR")) {
+                skyColorFactorR = compound.getFloat("skyColorFactorR");
+            } else {
+                skyColorFactorR = null;
+            }
+            if (compound.hasKey("skyColorFactorG")) {
+                skyColorFactorG = compound.getFloat("skyColorFactorG");
+            } else {
+                skyColorFactorG = null;
+            }
+            if (compound.hasKey("skyColorFactorB")) {
+                skyColorFactorB = compound.getFloat("skyColorFactorB");
+            } else {
+                skyColorFactorB = null;
+            }
             return this;
         }
 

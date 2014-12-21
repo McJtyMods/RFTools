@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -57,17 +58,17 @@ public class DimensionInformation {
 
     private SkyDescriptor skyDescriptor;
 
-    public DimensionInformation(String name, DimensionDescriptor descriptor) {
+    public DimensionInformation(String name, DimensionDescriptor descriptor, long seed) {
         this.name = name;
         this.descriptor = descriptor;
 
-        setupFromDescriptor();
+        setupFromDescriptor(seed);
     }
 
-    private void setupFromDescriptor() {
+    private void setupFromDescriptor(long seed) {
         List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets = descriptor.getDimletsWithModifiers();
 
-        Random random = new Random(descriptor.calculateSeed());
+        Random random = new Random(descriptor.calculateSeed(seed));
 
         calculateTerrainType(dimlets, random);
 
@@ -97,22 +98,74 @@ public class DimensionInformation {
             readFromNBT(tagCompound);
         } else {
             // This is an older version. Here we have to calculate the random information again.
-            setupFromDescriptor();
+            setupFromDescriptor(1);
         }
-    }
-
-    private static <T extends Enum> Set<T> toEnumSet(int[] arr, T[] values) {
-        Set<T> list = new HashSet<T>();
-        for (int a : arr) {
-            list.add(values[a]);
-        }
-        return list;
     }
 
     private void readFromNBT(NBTTagCompound tagCompound) {
         terrainType = TerrainType.values()[tagCompound.getInteger("terrain")];
         featureTypes = toEnumSet(tagCompound.getIntArray("features"), FeatureType.values());
         structureTypes = toEnumSet(tagCompound.getIntArray("structures"), StructureType.values());
+
+        biomes.clear();
+        for (int a : tagCompound.getIntArray("biomes")) {
+            biomes.add(BiomeGenBase.getBiome(a));
+        }
+
+        digitString = tagCompound.getString("digits");
+
+        baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("baseBlock"));
+        tendrilBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("tendrilBlock"));
+        sphereBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("sphereBlock"));
+        canyonBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("canyonBlock"));
+        fluidForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("fluidBlock"));
+
+        List<Block> ores = new ArrayList<Block>();
+        for (int a : tagCompound.getIntArray("extraOregen")) {
+            ores.add((Block) Block.blockRegistry.getObjectById(a));
+        }
+        extraOregen = ores.toArray(new Block[ores.size()]);
+
+        ores.clear();
+        for (int a : tagCompound.getIntArray("lakeFluids")) {
+            ores.add((Block) Block.blockRegistry.getObjectById(a));
+        }
+        fluidsForLakes = ores.toArray(new Block[ores.size()]);
+
+        peaceful = tagCompound.getBoolean("peaceful");
+        if (tagCompound.hasKey("celestialAngle")) {
+            celestialAngle = tagCompound.getFloat("celestialAngle");
+        } else {
+            celestialAngle = null;
+        }
+        if (tagCompound.hasKey("timeSpeed")) {
+            timeSpeed = tagCompound.getFloat("timeSpeed");
+        } else {
+            timeSpeed = null;
+        }
+        probeCounter = tagCompound.getInteger("probes");
+
+        skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
+
+        extraMobs.clear();
+        NBTTagList list = tagCompound.getTagList("mobs", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = list.getCompoundTagAt(i);
+            String className = tc.getString("class");
+            int chance = tc.getInteger("chance");
+            int minGroup = tc.getInteger("minGroup");
+            int maxGroup = tc.getInteger("maxGroup");
+            int maxLoaded = tc.getInteger("maxLoaded");
+            Class<? extends EntityLiving> c = null;
+            try {
+                c = (Class<? extends EntityLiving>) Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
+            extraMobs.add(mob);
+        }
+
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -128,51 +181,56 @@ public class DimensionInformation {
         tagCompound.setIntArray("features", toIntArray(featureTypes));
         tagCompound.setIntArray("structures", toIntArray(structureTypes));
 
-        /*
-        ByteBufTools.writeEnumCollection(buf, featureTypes);
-        ByteBufTools.writeEnumCollection(buf, structureTypes);
-
-        buf.writeInt(biomes.size());
-        for (BiomeGenBase entry : biomes) {
-            buf.writeInt(entry.biomeID);
+        List<Integer> c = new ArrayList<Integer>(biomes.size());
+        for (BiomeGenBase t : biomes) {
+            c.add(t.biomeID);
         }
+        tagCompound.setIntArray("biomes", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
+        tagCompound.setString("digits", digitString);
 
-        ByteBufTools.writeString(buf, digitString);
+        tagCompound.setInteger("baseBlock", Block.blockRegistry.getIDForObject(baseBlockForTerrain));
+        tagCompound.setInteger("tendrilBlock", Block.blockRegistry.getIDForObject(tendrilBlock));
+        tagCompound.setInteger("sphereBlock", Block.blockRegistry.getIDForObject(sphereBlock));
+        tagCompound.setInteger("canyonBlock", Block.blockRegistry.getIDForObject(canyonBlock));
+        tagCompound.setInteger("fluidBlock", Block.blockRegistry.getIDForObject(fluidForTerrain));
 
-        buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
-        buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock));
-        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock));
-        buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock));
-        buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
-
-        buf.writeInt(extraOregen.length);
-        for (Block block : extraOregen) {
-            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        c = new ArrayList<Integer>(extraOregen.length);
+        for (Block t : extraOregen) {
+            c.add(Block.blockRegistry.getIDForObject(t));
         }
-        buf.writeInt(fluidsForLakes.length);
-        for (Block block : fluidsForLakes) {
-            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        tagCompound.setIntArray("extraOregen", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
+
+        c = new ArrayList<Integer>(fluidsForLakes.length);
+        for (Block t : fluidsForLakes) {
+            c.add(Block.blockRegistry.getIDForObject(t));
         }
+        tagCompound.setIntArray("lakeFluids", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
 
-        buf.writeBoolean(peaceful);
-        ByteBufTools.writeFloat(buf, celestialAngle);
-        ByteBufTools.writeFloat(buf, timeSpeed);
+        tagCompound.setBoolean("peaceful", peaceful);
+        if (celestialAngle != null) {
+            tagCompound.setFloat("celestialAngle", celestialAngle);
+        }
+        if (timeSpeed != null) {
+            tagCompound.setFloat("timeSpeed", timeSpeed);
+        }
+        tagCompound.setInteger("probes", probeCounter);
 
-        buf.writeInt(probeCounter);
+        skyDescriptor.writeToNBT(tagCompound);
 
-        skyDescriptor.toBytes(buf);
-
-        buf.writeInt(extraMobs.size());
+        NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
-            ByteBufTools.writeString(buf, mob.getEntityClass().getName());
-            buf.writeInt(mob.getSpawnChance());
-            buf.writeInt(mob.getMinGroup());
-            buf.writeInt(mob.getMaxGroup());
-            buf.writeInt(mob.getMaxLoaded());
+            NBTTagCompound tc = new NBTTagCompound();
+            System.out.println("mob.getEntityClass().getName() = " + mob.getEntityClass().getName());
+            System.out.println("mob.getEntityClass().getCanonicalName() = " + mob.getEntityClass().getCanonicalName());
+            tc.setString("class", mob.getEntityClass().getName());
+            tc.setInteger("chance", mob.getSpawnChance());
+            tc.setInteger("minGroup", mob.getMinGroup());
+            tc.setInteger("maxGroup", mob.getMaxGroup());
+            tc.setInteger("maxLoaded", mob.getMaxLoaded());
+            list.appendTag(tc);
         }
 
-
-         */
+        tagCompound.setTag("mobs", list);
     }
 
     private static <T extends Enum> int[] toIntArray(Collection<T> collection) {
@@ -181,6 +239,14 @@ public class DimensionInformation {
             c.add(t.ordinal());
         }
         return ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()]));
+    }
+
+    private static <T extends Enum> Set<T> toEnumSet(int[] arr, T[] values) {
+        Set<T> list = new HashSet<T>();
+        for (int a : arr) {
+            list.add(values[a]);
+        }
+        return list;
     }
 
 
@@ -285,7 +351,10 @@ public class DimensionInformation {
         }
     }
 
-    public void fromBytes(ByteBuf buf) {
+    public DimensionInformation(String name, DimensionDescriptor descriptor, ByteBuf buf) {
+        this.name = name;
+        this.descriptor = descriptor;
+
         terrainType = ByteBufTools.readEnum(buf, TerrainType.values());
         ByteBufTools.readEnumCollection(buf, featureTypes, FeatureType.values());
         ByteBufTools.readEnumCollection(buf, structureTypes, StructureType.values());
@@ -338,7 +407,7 @@ public class DimensionInformation {
                 MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
                 extraMobs.add(mob);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
