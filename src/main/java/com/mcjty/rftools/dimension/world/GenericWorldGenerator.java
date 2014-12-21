@@ -71,7 +71,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
         int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
         if (starty == -1) {
             // No suitable spot. We will carve something out.
-            starty = 63;
+            starty = 64;
+        } else {
+            starty++;           // Go one up
         }
 
         for (int x = -3 ; x <= 3 ; x++) {

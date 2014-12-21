@@ -14,15 +14,12 @@ public class WorldGenerationTools {
 
         y--;            // y should now be at a solid block.
 
-        for (int i = 0 ; i <= 20 ; i++) {
-            Block block = world.getBlock(x, y+1, z);
-            if (block.getMaterial().isLiquid()) {
-                y++;
-                if (y > world.getHeight()-10) {
-                    return -1;
-                }
-            } else {
-                break;
+
+        Block block = world.getBlock(x, y+1, z);
+        while (block.getMaterial().isLiquid()) {
+            y++;
+            if (y > world.getHeight()-10) {
+                return -1;
             }
         }
 
