@@ -1,6 +1,7 @@
 {
     "blacklist": [
         [ "Liquid", "glowstone" ],
+        [ "Liquid", "honey" ],
         [ "Feature", "Spheres" ],
         [ "Foliage", "Oak" ],
         [ "Terrain", "Cave World" ]
