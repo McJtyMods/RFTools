@@ -220,8 +220,6 @@ public class DimensionInformation {
         NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
             NBTTagCompound tc = new NBTTagCompound();
-            System.out.println("mob.getEntityClass().getName() = " + mob.getEntityClass().getName());
-            System.out.println("mob.getEntityClass().getCanonicalName() = " + mob.getEntityClass().getCanonicalName());
             tc.setString("class", mob.getEntityClass().getName());
             tc.setInteger("chance", mob.getSpawnChance());
             tc.setInteger("minGroup", mob.getMinGroup());
