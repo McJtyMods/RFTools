@@ -21,6 +21,7 @@ public class WorldGenerationTools {
             if (y > world.getHeight()-10) {
                 return -1;
             }
+            block = world.getBlock(x, y+1, z);
         }
 
         return y;
