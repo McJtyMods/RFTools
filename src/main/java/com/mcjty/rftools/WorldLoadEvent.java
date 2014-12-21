@@ -24,8 +24,6 @@ public class WorldLoadEvent {
 
     @SubscribeEvent
     public void unloadEvent(WorldEvent.Unload evt) {
-        System.out.println("######### unloadEvent: evt.world.isRemote = " + evt.world.isRemote);
-        System.out.println("evt.world.provider.dimensionId = " + evt.world.provider.dimensionId);
         if (evt.world.isRemote) {
             return;
         }
