@@ -6,9 +6,7 @@ import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.SpecialType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.dimension.world.types.TerrainType;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
-import com.mcjty.rftools.items.dimlets.DimletRandomizer;
-import com.mcjty.rftools.items.dimlets.DimletType;
+import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.ByteBufTools;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
@@ -58,6 +56,9 @@ public class DimensionInformation {
 
     private SkyDescriptor skyDescriptor;
 
+    // The actual RF cost after taking into account the features we got in our world.
+    private int actualRfCost;
+
     public DimensionInformation(String name, DimensionDescriptor descriptor, long seed) {
         this.name = name;
         this.descriptor = descriptor;
@@ -69,6 +70,8 @@ public class DimensionInformation {
         List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets = descriptor.getDimletsWithModifiers();
 
         Random random = new Random(descriptor.calculateSeed(seed));
+
+        actualRfCost = 0;
 
         calculateTerrainType(dimlets, random);
 
@@ -83,6 +86,8 @@ public class DimensionInformation {
         calculateMobs(dimlets, random);
         calculateSpecial(dimlets, random);
         calculateTime(dimlets, random);
+
+        actualRfCost += descriptor.getRfMaintainCost();
     }
 
     public DimensionInformation(DimensionDescriptor descriptor, NBTTagCompound tagCompound) {
@@ -144,6 +149,7 @@ public class DimensionInformation {
             timeSpeed = null;
         }
         probeCounter = tagCompound.getInteger("probes");
+        actualRfCost = tagCompound.getInteger("actualCost");
 
         skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
 
@@ -214,6 +220,7 @@ public class DimensionInformation {
             tagCompound.setFloat("timeSpeed", timeSpeed);
         }
         tagCompound.setInteger("probes", probeCounter);
+        tagCompound.setInteger("actualCost", actualRfCost);
 
         skyDescriptor.writeToNBT(tagCompound);
 
@@ -336,6 +343,7 @@ public class DimensionInformation {
         ByteBufTools.writeFloat(buf, timeSpeed);
 
         buf.writeInt(probeCounter);
+        buf.writeInt(actualRfCost);
 
         skyDescriptor.toBytes(buf);
 
@@ -390,6 +398,8 @@ public class DimensionInformation {
         timeSpeed = ByteBufTools.readFloat(buf);
 
         probeCounter = buf.readInt();
+        actualRfCost = buf.readInt();
+
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
 
         extraMobs.clear();
@@ -507,7 +517,10 @@ public class DimensionInformation {
         if (dimlets.isEmpty()) {
             // Pick a random terrain type with a seed that is generated from all the
             // dimlets so we always get the same random value for these dimlets.
-            terrainType = TerrainType.values()[random.nextInt(TerrainType.values().length)];
+            ArrayList<Integer> idList = new ArrayList<Integer>(DimletMapping.idToTerrainType.keySet());
+            int id = idList.get(random.nextInt(idList.size()));
+            actualRfCost += calculateCostFactor(id);
+            terrainType = DimletMapping.idToTerrainType.get(id);
             modifiers = Collections.emptyList();
         } else {
             int index = random.nextInt(dimlets.size());
@@ -528,7 +541,9 @@ public class DimensionInformation {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
             // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
             if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
-                baseBlockForTerrain = DimletRandomizer.getRandomMaterialBlock(random, false);
+                int id = DimletRandomizer.getRandomMaterialBlock(random, false);
+                actualRfCost += calculateCostFactor(id);
+                baseBlockForTerrain = DimletMapping.idToBlock.get(id);
             } else {
                 baseBlockForTerrain = Blocks.stone;
             }
@@ -541,11 +556,22 @@ public class DimensionInformation {
             }
         } else {
             if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
-                fluidForTerrain = DimletRandomizer.getRandomFluidBlock(random);
+                int id = DimletRandomizer.getRandomFluidBlock(random);
+                actualRfCost += calculateCostFactor(id);
+                fluidForTerrain = DimletMapping.idToFluid.get(id);
             } else {
                 fluidForTerrain = Blocks.water;
             }
         }
+    }
+
+    private float calculateCostFactor(int id) {
+        DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(id);
+        if (dimletEntry == null) {
+            RFTools.logError("Something went wrong for id: "+id);
+            return 0.0f;
+        }
+        return dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor;
     }
 
     private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<Block> blocks, List<Block> fluids) {
@@ -567,6 +593,7 @@ public class DimensionInformation {
         if (dimlets.isEmpty()) {
             for (Map.Entry<Integer, FeatureType> entry : DimletMapping.idToFeatureType.entrySet()) {
                 if (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
+                    actualRfCost += calculateCostFactor(entry.getKey());
                     featureTypes.add(entry.getValue());
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
                     // @todo randomize those?
@@ -590,7 +617,9 @@ public class DimensionInformation {
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
-                    fluids.add(DimletRandomizer.getRandomFluidBlock(random));
+                    int id = DimletRandomizer.getRandomFluidBlock(random);
+                    actualRfCost += calculateCostFactor(id);
+                    fluids.add(DimletMapping.idToFluid.get(id));
                 }
             } else if (fluids.size() == 1 && fluids.get(0) == null) {
                 fluids.clear();
@@ -608,7 +637,9 @@ public class DimensionInformation {
             // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
             if (blocks.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomOregenMaterialChance) {
-                    blocks.add(DimletRandomizer.getRandomMaterialBlock(random, true));
+                    int id = DimletRandomizer.getRandomMaterialBlock(random, true);
+                    actualRfCost += calculateCostFactor(id);
+                    blocks.add(DimletMapping.idToBlock.get(id));
                 }
             } else if (blocks.size() == 1 && blocks.get(0) == null) {
                 blocks.clear();
@@ -638,7 +669,9 @@ public class DimensionInformation {
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < DimletConfiguration.randomFeatureMaterialChance) {
-                    block = DimletRandomizer.getRandomMaterialBlock(random, true);
+                    int id = DimletRandomizer.getRandomMaterialBlock(random, true);
+                    actualRfCost += calculateCostFactor(id);
+                    block = DimletMapping.idToBlock.get(id);
                 } else {
                     block = Blocks.stone;
                 }
@@ -653,9 +686,10 @@ public class DimensionInformation {
     private void calculateStructureType(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_STRUCTURE, dimlets);
         if (dimlets.isEmpty()) {
-            for (StructureType type : StructureType.values()) {
+            for (Integer id : DimletMapping.idToStructureType.keySet()) {
                 if (random.nextFloat() < DimletConfiguration.randomStructureChance) {
-                    structureTypes.add(type);
+                    actualRfCost += calculateCostFactor(id);
+                    structureTypes.add(DimletMapping.idToStructureType.get(id));
                 }
             }
         } else {
@@ -776,5 +810,9 @@ public class DimensionInformation {
 
     public void setProbeCounter(int probeCounter) {
         this.probeCounter = probeCounter;
+    }
+
+    public int getActualRfCost() {
+        return actualRfCost;
     }
 }

@@ -60,9 +60,15 @@ public class RealizedDimensionTab extends Item {
 
             Integer ticksLeft = tagCompound.getInteger("ticksLeft");
             if (ticksLeft == 0) {
+                DimensionInformation information = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld()).getDimensionInformation(id);
                 list.add(EnumChatFormatting.BLUE + "Dimension ready!");
                 int maintainCost = tagCompound.getInteger("rfMaintainCost");
-                list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                int actualCost = information.getActualRfCost();
+                if (actualCost == maintainCost || actualCost == 0) {
+                    list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                } else {
+                    list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + actualCost + " RF/tick (Specified: " + maintainCost + " RF/tick)");
+                }
                 if (id != 0) {
                     if (System.currentTimeMillis() - lastTime > 500) {
                         lastTime = System.currentTimeMillis();

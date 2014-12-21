@@ -91,16 +91,16 @@ public class DimletRandomizer {
         return DimletMapping.idtoMob.get(randomMobDimlets.select(random));
     }
 
-    public static Block getRandomFluidBlock(Random random) {
-        return DimletMapping.idToFluid.get(randomLiquidDimlets.select(random));
+    public static int getRandomFluidBlock(Random random) {
+        return randomLiquidDimlets.select(random);
     }
 
-    public static Block getRandomMaterialBlock(Random random, boolean allowExpensive) {
+    public static int getRandomMaterialBlock(Random random, boolean allowExpensive) {
         Integer id = randomMaterialDimlets.select(random);
         while ((!allowExpensive) && KnownDimletConfiguration.idToDimlet.get(id).isExpensive()) {
             id = randomMaterialDimlets.select(random);
         }
-        return DimletMapping.idToBlock.get(id);
+        return id;
     }
 
     private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {

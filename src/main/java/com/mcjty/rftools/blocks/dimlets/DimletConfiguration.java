@@ -23,6 +23,7 @@ public class DimletConfiguration {
     public static int maxInfuse = 256;
     public static int dungeonChance = 160;
     public static int dimensionDifficulty = 1;      // 0 == easy, 1 == normal
+    public static float afterCreationCostFactor = 0.1f;
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
@@ -72,6 +73,8 @@ public class DimletConfiguration {
                 "RF per tick that the the machine infuser can receive").getInt();
         rfInfuseOperation = cfg.get(CATEGORY_DIMLETS, "dimletScramblerRFPerOperation", rfInfuseOperation,
                 "RF that the machine infuser needs for one operation").getInt();
+        afterCreationCostFactor = (float) cfg.get(CATEGORY_DIMLETS, "afterCreationCostFactor", afterCreationCostFactor,
+                "If the dimension turns out to be more expensive after creation you get a factor of the actual cost extra to the RF/tick maintenance cost. If this is 0 there is no such cost. If this is 1 then you get the full cost").getDouble();
 
         maxInfuse = cfg.get(CATEGORY_DIMLETS, "maxInfuse", maxInfuse,
                 "The maximum amount of dimensional shards that can be infused in a single machine").getInt();
