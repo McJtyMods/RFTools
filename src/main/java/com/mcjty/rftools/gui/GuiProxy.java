@@ -8,6 +8,7 @@ import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -16,7 +17,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_DEVELOPERS_DELIGHT ||
-                guiid == RFTools.GUI_MANUAL) {
+                guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_MANUAL_DIMENSION) {
             return null;
         }
 
@@ -37,8 +38,10 @@ public class GuiProxy implements IGuiHandler {
             return new GuiTeleportProbe();
         } else if (guiid == RFTools.GUI_DEVELOPERS_DELIGHT) {
             return new GuiDevelopersDelight();
-        } else if (guiid == RFTools.GUI_MANUAL) {
-            return new GuiRFToolsManual();
+        } else if (guiid == RFTools.GUI_MANUAL_MAIN) {
+            return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_MAIN);
+        } else if (guiid == RFTools.GUI_MANUAL_DIMENSION) {
+            return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_DIMENSION);
         }
 
         Block block = world.getBlock(x, y, z);

@@ -1,6 +1,7 @@
 item.NetworkMonitor.name=RF Network Monitor
 item.TeleportProbe.name=Teleporter Probe
 item.RFToolsManual.name=RFTools Manual
+item.RFToolsManualDimension.name=RFTools Dimension Manual
 item.DevelopersDelight.name=Developers Delight
 item.UnknownDimlet.name=Unknown Dimlet
 item.KnownDimlet.name=Known Dimlet

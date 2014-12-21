@@ -4,6 +4,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
 import com.mcjty.rftools.items.dimlets.*;
+import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
@@ -13,6 +14,7 @@ public final class ModItems {
     public static NetworkMonitorItem networkMonitorItem;
     public static TeleportProbeItem teleportProbeItem;
     public static RFToolsManualItem rfToolsManualItem;
+    public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
     public static UnknownDimlet unknownDimlet;
     public static DimletTemplate dimletTemplate;
@@ -40,6 +42,12 @@ public final class ModItems {
         rfToolsManualItem.setCreativeTab(RFTools.tabRfTools);
         rfToolsManualItem.setTextureName(RFTools.MODID + ":rftoolsManual");
         GameRegistry.registerItem(rfToolsManualItem, "rfToolsManualItem");
+
+        rfToolsManualDimensionItem = new RFToolsManualDimensionItem();
+        rfToolsManualDimensionItem.setUnlocalizedName("RFToolsManualDimension");
+        rfToolsManualDimensionItem.setCreativeTab(RFTools.tabRfTools);
+        rfToolsManualDimensionItem.setTextureName(RFTools.MODID + ":rftoolsManualDimension");
+        GameRegistry.registerItem(rfToolsManualDimensionItem, "rfToolsManualDimensionItem");
 
         developersDelightItem = new DevelopersDelightItem();
         developersDelightItem.setUnlocalizedName("DevelopersDelight");

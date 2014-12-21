@@ -6,9 +6,9 @@ import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class RFToolsManualItem extends ItemBook {
+public class RFToolsManualDimensionItem extends ItemBook {
 
-    public RFToolsManualItem() {
+    public RFToolsManualDimensionItem() {
         setMaxStackSize(1);
     }
 
@@ -20,7 +20,7 @@ public class RFToolsManualItem extends ItemBook {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_MANUAL_MAIN, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_MANUAL_DIMENSION, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return stack;
         }
         return stack;

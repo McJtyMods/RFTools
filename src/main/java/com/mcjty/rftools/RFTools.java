@@ -77,7 +77,8 @@ public class RFTools {
     public static final int GUI_MATTER_RECEIVER = modGuiIndex++;
     public static final int GUI_DIALING_DEVICE = modGuiIndex++;
     public static final int GUI_TELEPORTPROBE = modGuiIndex++;
-    public static final int GUI_MANUAL = modGuiIndex++;
+    public static final int GUI_MANUAL_MAIN = modGuiIndex++;
+    public static final int GUI_MANUAL_DIMENSION = modGuiIndex++;
     public static final int GUI_ENDERGENIC = modGuiIndex++;
     public static final int GUI_SEQUENCER = modGuiIndex++;
     public static final int GUI_PEARL_INJECTOR = modGuiIndex++;

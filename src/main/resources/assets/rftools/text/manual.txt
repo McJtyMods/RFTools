@@ -16,6 +16,7 @@ Table of contents:
 {l:telepo}Teleporting System
 {l:power}Power Generator
 {l:shield}Shield System
+{l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
 {n:general}
@@ -410,4 +411,12 @@ will be 'generic' but you can also set it to 'player'. This
 will consume more energy but you will get XP orbs as well
 as loot that you normally only get when a mob is killed
 by the player.
+{-------------------------------------------------------------}
+{b}Dimension Builder
+{n:dimlet}
+
+The dimension builder is explained in another book. You can
+craft the dimension builder manual as follows:
+
+{ri:rfToolsManualDimensionItem}
 {-------------------------------------------------------------}
