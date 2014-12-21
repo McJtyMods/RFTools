@@ -12,7 +12,7 @@ public class WorldGenerationTools {
             return -1;
         }
 
-        y--;            // y should now be at a solid block.
+        y--;            // y should now be at a solid or liquid block.
 
 
         Block block = world.getBlock(x, y+1, z);

@@ -29,7 +29,7 @@ public class DimletConfiguration {
     public static float randomOregenMaterialChance = 0.2f;
     public static float randomFeatureMaterialChance = 0.4f;
     public static float randomStructureChance = 0.2f;
-    public static float randomOceanLiquidChance = 0.4f;
+    public static float randomOceanLiquidChance = 0.2f;
     public static float randomBaseBlockChance = 0.4f;
     public static float randomSpecialSkyChance = 0.5f;
     public static float randomExtraMobsChance = 0.4f;
