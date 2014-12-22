@@ -25,20 +25,18 @@ Builder you create your own dimensions with all kinds of special
 features. Make void worlds, mining ages, floating islands, ...
 
 There is one catch though. Dimensions require power to run (RF). Simple
-dimensions like a void age don't require a lot of power (10-200 RF/tick
-depending on the options you use) but very complex dimensions can easily
-go above millions RF/tick. So if you want a world made out of diamond
-blocks you're either going to have to be very lucky or else be prepared
-for a hefty power generation system.
+dimensions like a void age don't require a lot of power (10-200 RF/tick)
+but very complex dimensions can easily go above millions RF/tick. So if
+you want a world made out of diamond blocks you're either going to have
+to be very lucky or else be prepared for a hefty power generation system.
 
 RFTools generates dimensions with random features you can make things
 more deterministic by specifying every type of dimlet.
 {-------------------------------------------------------------}
 {b}Unknown Dimlets
 {n:unknown}
-Let's start by saying you don't need any dimlets to create a dimension.
-You can just specify no dimlets and generate a totally random world.
-Maybe you get lucky?
+You don't need any dimlets to create a dimension. You can just specify
+no dimlets and generate a totally random world. Maybe you get lucky?
 
 However, to have any kind of control you will need dimlets. Scattered
 throughout the world, in dungeons and other chests, you have a chance
@@ -60,8 +58,7 @@ there is some stone there (or else make a 'Flat Terrain' dimlet and be
 sure of a flat world) and go mine some with a fortune pickaxe. Or you
 can just melt the ore if you picked it up using silk touch.
 
-Dimensional Shards have several uses:
-
+{b}Dimensional Shards have several uses:
     First you require dimensional shards to create the dimlet template item.
         And this item in turn is required to craft some of the basic dimlets.
     You also need some shards to craft the 'Machine Infuser' (more later).
@@ -70,21 +67,19 @@ Dimensional Shards have several uses:
 {-------------------------------------------------------------}
 {b}Machine Infuser
 {n:infuser}
-
 RFTools has the 'Machine Infuser' which is crafted as follows:
 {rb:machineInfuserBlock}
 
-With this machines you can 'insert' dimensional shards into almost
-all other RFTools machines. Just pick up any RFTools machine with
-a wrench and put it in the machine. You can infuse up to 256 shards
-into a single machine. What does this do? Basically infused machines
-work more efficiently or faster. The benefits vary depending on the
-machine but in almost all cases it will need a lot less power to
-operate and in some cases speed will go up a lot.
+With this machines you can inject dimensional shards into almost all other
+RFTools machines. Just pick up any RFTools machine with a wrench and put
+it in the machine. You can infuse up to 256 shards into a single machine.
+Infused machines work more efficiently or faster. The benefits vary
+depending on the machine but in almost all cases it will need a lot less
+power to operate and in some cases speed will go up a lot.
 {-------------------------------------------------------------}
-One particular case is the Dimension Builder. A fully infused Dimension
-Builder will create dimensions a lot faster. But also the shield block,
-auto crafter, and so on will benefit from this.
+One particular use case is the Dimension Builder. A fully infused Dimension
+Builder will create dimensions a lot faster and use less energy. But also
+the shield block, auto crafter, and so on will benefit from this.
 
 It is also very useful to infuse your Matter Transmitter and Matter
 Receiver blocks as that way they will work faster and use a lot less
@@ -92,7 +87,6 @@ energy (making them safer to use).
 {-------------------------------------------------------------}
 {b}Dimlet Researcher
 {n:researcher}
-
 The Dimlet Researcher uses RF to examine your unknown dimlets, changing
 them to a random knonwn dimlet. It is crafted as follows:
 {rb:dimletResearcherBlock}
@@ -100,22 +94,18 @@ them to a random knonwn dimlet. It is crafted as follows:
 Note that some dimlets are more rare then others so it may take
 a while for your dimlet of choice to appear.
 
-Most dimlets can only be obtained this way as most dimlets cannot
-be crafted. There are some exceptions. Some very basic and simple
-dimlets can be crafted.
+Most dimlets can only be obtained this way as they cannot be crafted. There
+are some exceptions. Some very basic and simple dimlets can be crafted.
 {-------------------------------------------------------------}
 You may notice that some of these craftable dimlets require a
 weird item. This is a Dimlet Template which can be crafted as
 follows:
-
 {ri:dimletTemplate}
 
 To craft this you actually need dimensional shards.
 {-------------------------------------------------------------}
-{b}Dimlet Types
+{b}These are the current types of dimlets that you can find:
 {n:types}
-
-These are the current types of dimlets that you can find:
 
     Biome dimlets: these control what biomes you can have in a dimension.
         Note that at this moment you can only specify one biome.
@@ -159,7 +149,7 @@ These are the current types of dimlets that you can find:
     Special dimlets: these are special dimlets that are usually
         extremely rare.
 
-There are currently two special dimlets:
+{b}There are currently two special dimlets:
 
     Peaceful Dimlet: this dimlet prevents hostile mobs from
         spawning in your dimension (except for mobs that you
@@ -172,7 +162,6 @@ There are currently two special dimlets:
 {-------------------------------------------------------------}
 {b}Dimlet Scrambler
 {n:scrambler}
-
 Sometimes you collect a lot of dimlets that you don't find particularly
 useful. In that case the dimlet scrambler may be a useful machine for you.
 You can craft it as follows:
@@ -181,13 +170,10 @@ You can craft it as follows:
 This machine takes three dimlets (two should be non-craftable) of any type
 and recyles their components to create a new random dimlet. In contrast
 with the dimlet researcher this machine has a better chance of giving back
-rare dimlets. The chance of that is determined by the quality of the dimlets
-that you input. If you input three very rare dimlets you are more likely to
-get back another rare dimlet.
+rare dimlets. This depends on the rarity of the dimlets that you scramble.
 {-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}
-
 This machine is where you actually describe your dimensions.
 It is crafted as follows:
 {rb:dimensionEnscriberBlock}
@@ -212,7 +198,7 @@ want but note that not all combinations are useful (i.e. if you put in a
 of the dimension is calculated from the dimlets that are inserted. Not from
 the dimlets that are actually used! So inserting too many dimlets will make
 your dimension more expensive.
-
+{-------------------------------------------------------------}
 If you don't specify a certain type of dimlet then you will get a random
 selection of that dimlet type. For example, if you don't specify any
 structure dimlet then you might get a selection of random structures (like
@@ -225,16 +211,18 @@ dimension tab makes the 'signature' of that dimension. That means that if
 you create another dimension tab and insert exactly the same dimlets then
 it will refer to exactly the same dimension. This can be handy in case
 you want to power a dimension from multiple places (more on that in the
-Dimension Builder section) which can be handy for very expensive dimensions.
-
+Dimension Builder section) which can be handy for very expensive
+dimensions.
+{-------------------------------------------------------------}
 Note that with this dimension enscriber you can also deconstruct a realized
 dimension tab into its original dimlets and the empty dimension tab. The
 dimension will not be removed (if you created one) and can still be
 accessed if you have a teleporter to it. However, it can no longer be
-powered unless you have another realized dimension tab sitting in a Dimension
-Builder somewhere. If you accidentally deconstructed a realized dimension
-tab into its dimlets you can simply construct it again and it will refer to
-the original dimension (without having to build it again).
+powered unless you have another realized dimension tab sitting in a
+Dimension Builder somewhere. If you accidentally deconstructed a
+realized dimension tab into its dimlets you can simply construct it
+again and it will refer to the original dimension (without having to
+build it again).
 {-------------------------------------------------------------}
 This means that if you want to generate another dimension with exactly the
 same features as before you will need to add some dimlets to change the
@@ -243,7 +231,7 @@ dimlets don't do anything special to the dimension but they do change
 the signature allowing you to make multiple dimensions with identical
 features (although randomly generated features may and will differ if
 you didn't specify them).
-
+{-------------------------------------------------------------}
 Note that when you make a realized dimension tab you can see how much
 RF/tick will be consumed by this dimension when it made. But be aware
 that random features that are selected during creation of the dimension
@@ -257,13 +245,12 @@ unique dimension) and hope the next world will not be as expensive.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:builder}
-
 The Dimension Builder is the device that you need to actually create
 dimensions. It can be crafted as follows:
 {rb:dimensionBuilderBlock}
 
-Depending on the complexity of the dimension it will use some power and
-need some time to actually construct the dimension. If there is not enough
+Depending on the complexity of the dimension it will use power and need
+some time to actually construct the dimension. If there is not enough
 power present the building will be delayed. You can also take out your
 dimension tab if you want to temporarily stop building the dimension (if
 you need power for something else for example). The dimension tab will
@@ -304,10 +291,9 @@ dimension is created the Dimension Builder also generated a spawn platform
 with a Matter Receiver in the middle. This matter receiver will be fully
 charged so it is safe to teleport there.
 
-So after creating the dimension you will need a Dialing Device to dial a
-matter transmitter to that new destination. If you gave your realized
-dimension tab a name (in the enscriber) then that destination will also
-be named like that.
+So after creating the dimension you will need a Dialing Device to dial a matter
+transmitter to that new destination. If you gave your realized dimension tab a
+name (in the enscriber) then that destination will also be named like that.
 
 But don't just teleport to there yet! There are a few things you should
 worry about:
@@ -335,19 +321,18 @@ power from inside the dimension itself.
 {-------------------------------------------------------------}
 {b}Getting Back
 
-While the Dimension Builder generates a Matter Receiver in the
-dimension there will not be a Matter Transmitter! So you have to
-bring your own way back with you. You can do this with various
-teleportation systems but the recommended way is to use a Matter
-Transmitter that you bring with you. There are two options:
+While the Dimension Builder generates a Matter Receiver in the dimension
+there will not be a Matter Transmitter! So you have to bring your own way
+back with you. You can do this with various teleportation systems but the
+recommended way is to use a Matter Transmitter that you bring with you.
+There are two options:
 
-Put the matter transmitter in your main base, make it fully powered
-and dial it to a matter receiver also in your base. Then pick it
-up with a wrench. It will keep the settings and when you put it
-down in the other dimension it will have power and you will be
-able to get back with it. Keep in mind that power in that transmitter
-goes down a lot so you will have to be careful next time you go in
-the dimension.
+Put the matter transmitter in your main base, make it fully powered and dial
+it to a matter receiver also in your base. Then pick it up with a wrench. It
+will keep the settings and when you put it down in the other dimension it
+will have power and you will be able to get back with it. Keep in mind that
+power in that transmitter goes down a lot so you will have to be careful
+next time you go in the dimension.
 {-------------------------------------------------------------}
 Best is to bring along a battery or generator as well.
 Otherwise take some power, the matter transmitter and another
@@ -358,7 +343,6 @@ will return at your spawn point (but without inventory of course).
 If you are in the dimension then there is one handy tool that you
 can bring with you to monitor the power status of the dimension
 and that's the Dimension Monitor that you can craft like this:
-
 {ri:dimensionMonitorItem}
 
 Right clicking with this tool will show you the amount of power
@@ -370,7 +354,6 @@ still left in the dimension.
 Normally dimensions use power constantly. Even when nobody is in
 them. It is possible to make this a bit more efficient by making
 an Activity Probe. You can craft this block as follows:
-
 {rb:activityProbeBlock}
 {-------------------------------------------------------------}
 This device is passive. It doesn't use any power and it has no user
