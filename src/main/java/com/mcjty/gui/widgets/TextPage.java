@@ -228,20 +228,20 @@ public class TextPage extends AbstractWidget<TextPage> {
                 }
                 for (int i = 0 ; i < 3 ; i++) {
                     for (int j = 0 ; j < 3 ; j++) {
-                        RenderHelper.renderObject(mc, 25 + x+i*18, y+j*18, shapedRecipes.recipeItems[i+j*3], false);
+                        RenderHelper.renderObject(mc, 26 + x+i*18, 1 + y+j*18, shapedRecipes.recipeItems[i+j*3], false);
                     }
                 }
                 if (arrowImage != null) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     mc.getTextureManager().bindTexture(arrowImage);
-                    gui.drawTexturedModalRect(x+25+67, y+16, arrowU, arrowV, 16, 16);
+                    gui.drawTexturedModalRect(x+25+67, y+18, arrowU, arrowV, 16, 16);
                 }
                 if (craftingGridImage != null) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     mc.getTextureManager().bindTexture(craftingGridImage);
                     gui.drawTexturedModalRect(x+25+92, y + 16, craftU, craftV, 18, 18);
                 }
-                RenderHelper.renderObject(mc, x+25+92, y + 16, shapedRecipes.getRecipeOutput(), false);
+                RenderHelper.renderObject(mc, x+25+93, y + 17, shapedRecipes.getRecipeOutput(), false);
                 y -= 4;
             } else if (line.line != null) {
                 String s = "";
