@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.shield;
 
-import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
-import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
+import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -90,9 +89,13 @@ public class ShieldBlockTileEntity extends TileEntity {
                 List<Entity> l = worldObj.getEntitiesWithinAABB(Entity.class, beamBox);
                 for (Entity entity : l) {
                     if ((damageBits & AbstractShieldBlock.META_HOSTILE) != 0 && entity instanceof IMob) {
-                        shieldTileEntity.applyDamageToEntity(entity);
+                        if (checkEntityDamage(shieldTileEntity, HostileFilter.HOSTILE)) {
+                            shieldTileEntity.applyDamageToEntity(entity);
+                        }
                     } else if ((damageBits & AbstractShieldBlock.META_PASSIVE) != 0 && entity instanceof IAnimals) {
-                        shieldTileEntity.applyDamageToEntity(entity);
+                        if (checkEntityDamage(shieldTileEntity, AnimalFilter.ANIMAL)) {
+                            shieldTileEntity.applyDamageToEntity(entity);
+                        }
                     } else if ((damageBits & AbstractShieldBlock.META_PLAYERS) != 0 && entity instanceof EntityPlayer) {
                         if (checkPlayerDamage(shieldTileEntity, (EntityPlayer) entity)) {
                             shieldTileEntity.applyDamageToEntity(entity);
@@ -103,28 +106,35 @@ public class ShieldBlockTileEntity extends TileEntity {
         }
     }
 
-    private boolean checkPlayerDamage(ShieldTileEntity shieldTileEntity, EntityPlayer entity) {
-        boolean damage = false;
+    private boolean checkEntityDamage(ShieldTileEntity shieldTileEntity, String filterName) {
         List<ShieldFilter> filters = shieldTileEntity.getFilters();
         for (ShieldFilter filter : filters) {
-            if ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0) {
-                if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
-                    PlayerFilter playerFilter = (PlayerFilter) filter;
-                    String name = playerFilter.getName();
-                    if ((name == null || name.isEmpty())) {
-                        damage = true;
-                        break;
-                    } else if (name.equals(entity.getDisplayName())) {
-                        damage = true;
-                        break;
-                    }
+            if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                return ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0);
+            } else if (filterName.equals(filter.getFilterName())) {
+                return ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0);
+            }
+        }
+        return false;
+    }
+
+    private boolean checkPlayerDamage(ShieldTileEntity shieldTileEntity, EntityPlayer entity) {
+        List<ShieldFilter> filters = shieldTileEntity.getFilters();
+        for (ShieldFilter filter : filters) {
+            if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                return ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0);
+            } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
+                PlayerFilter playerFilter = (PlayerFilter) filter;
+                String name = playerFilter.getName();
+                if ((name == null || name.isEmpty())) {
+                    return ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0);
+                } else if (name.equals(entity.getDisplayName())) {
+                    return ((filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0);
                 }
             }
         }
-        return damage;
+        return false;
     }
-
-
 
     public void setShieldBlock(Coordinate c) {
         shieldBlock = c;

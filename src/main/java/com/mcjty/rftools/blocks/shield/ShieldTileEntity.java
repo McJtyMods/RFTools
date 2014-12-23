@@ -233,6 +233,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                     bits |= AbstractShieldBlock.META_HOSTILE;
                 } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
                     bits |= AbstractShieldBlock.META_PLAYERS;
+                } else if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                    bits |= AbstractShieldBlock.META_ITEMS | AbstractShieldBlock.META_PASSIVE | AbstractShieldBlock.META_HOSTILE | AbstractShieldBlock.META_PLAYERS;
                 }
             }
         }
@@ -251,6 +253,8 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                     meta |= AbstractShieldBlock.META_HOSTILE;
                 } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
                     meta |= AbstractShieldBlock.META_PLAYERS;
+                } else if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                    meta |= AbstractShieldBlock.META_ITEMS | AbstractShieldBlock.META_PASSIVE | AbstractShieldBlock.META_HOSTILE | AbstractShieldBlock.META_PLAYERS;
                 }
             }
         }

@@ -1,8 +1,7 @@
 package com.mcjty.rftools.blocks.shield;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.shield.filters.PlayerFilter;
-import com.mcjty.rftools.blocks.shield.filters.ShieldFilter;
+import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -47,34 +46,38 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         }
         if ((meta & META_HOSTILE) != 0) {
             if (entity instanceof IMob) {
-                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                if (checkEntityCD(world, x, y, z, HostileFilter.HOSTILE)) {
+                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                }
                 return;
             }
         }
         if ((meta & META_PASSIVE) != 0) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
-                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                if (checkEntityCD(world, x, y, z, AnimalFilter.ANIMAL)) {
+                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                }
                 return;
             }
         }
         if (entity instanceof EntityItem) {
             if ((meta & META_ITEMS) != 0) {
-                super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                if (checkEntityCD(world, x, y, z, ItemFilter.ITEM)) {
+                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                }
                 return;
             }
         }
         if ((meta & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
-                boolean blocked = checkPlayerCD(world, x, y, z, (EntityPlayer) entity);
-                if (blocked) {
+                if (checkPlayerCD(world, x, y, z, (EntityPlayer) entity)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
                 }
             }
         }
     }
 
-    private boolean checkPlayerCD(World world, int x, int y, int z, EntityPlayer entity) {
-        boolean blocked = false;
+    private boolean checkEntityCD(World world, int x, int y, int z, String filterName) {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
         Coordinate shieldBlock = shieldBlockTileEntity.getShieldBlock();
         if (shieldBlock != null) {
@@ -82,23 +85,41 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
             if (shieldTileEntity != null) {
                 List<ShieldFilter> filters = shieldTileEntity.getFilters();
                 for (ShieldFilter filter : filters) {
-                    if ((filter.getAction() & ShieldFilter.ACTION_SOLID) != 0) {
-                        if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
-                            PlayerFilter playerFilter = (PlayerFilter) filter;
-                            String name = playerFilter.getName();
-                            if ((name == null || name.isEmpty())) {
-                                blocked = true;
-                                break;
-                            } else if (name.equals(entity.getDisplayName())) {
-                                blocked = true;
-                                break;
-                            }
+                    if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                        return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+                    } else if (filterName.equals(filter.getFilterName())) {
+                        return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private boolean checkPlayerCD(World world, int x, int y, int z, EntityPlayer entity) {
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
+        Coordinate shieldBlock = shieldBlockTileEntity.getShieldBlock();
+        if (shieldBlock != null) {
+            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
+            if (shieldTileEntity != null) {
+                List<ShieldFilter> filters = shieldTileEntity.getFilters();
+                for (ShieldFilter filter : filters) {
+                    if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
+                        return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+                    } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
+                        PlayerFilter playerFilter = (PlayerFilter) filter;
+                        String name = playerFilter.getName();
+                        if ((name == null || name.isEmpty())) {
+                            return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
+                        } else if (name.equals(entity.getDisplayName())) {
+                            return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
                         }
                     }
                 }
             }
         }
-        return blocked;
+        return false;
     }
 
     @Override
