@@ -308,10 +308,15 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     protected void checkStateServer() {
         super.checkStateServer();
 
+        boolean checkPower = false;
         if (powerTimeout > 0) {
             powerTimeout--;
             markDirty();
-            return;
+            if (powerTimeout > 0) {
+                return;
+            } else {
+                checkPower = true;
+            }
         }
 
         boolean needsUpdate = false;
@@ -324,6 +329,9 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
                 powerTimeout = 100;     // Wait 5 seconds before trying again.
                 needsUpdate = true;
             } else {
+                if (checkPower) {
+                    needsUpdate = true;
+                }
                 extractEnergy(ForgeDirection.DOWN, rf, false);
             }
         }
