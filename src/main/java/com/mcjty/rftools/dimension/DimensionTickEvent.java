@@ -73,7 +73,7 @@ public class DimensionTickEvent {
                 } else {
                     Random random = new Random();
                     for (EntityPlayer player : players) {
-                        WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(0);
+                        WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(DimletConfiguration.spawnDimension);
                         int x = random.nextInt(2000) - 1000;
                         int z = random.nextInt(2000) - 1000;
                         int y = worldServerForDimension.getTopSolidOrLiquidBlock(x, z);
@@ -81,7 +81,7 @@ public class DimensionTickEvent {
                             y = 63;
                         }
 
-                        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, 0,
+                        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension,
                                 new RfToolsTeleporter(worldServerForDimension, x, y, z));
                     }
                 }

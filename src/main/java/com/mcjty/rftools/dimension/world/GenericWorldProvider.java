@@ -7,6 +7,7 @@ import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -66,6 +67,11 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public boolean canRespawnHere() {
         return false;
+    }
+
+    @Override
+    public int getRespawnDimension(EntityPlayerMP player) {
+        return DimletConfiguration.spawnDimension;
     }
 
     @Override

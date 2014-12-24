@@ -23,6 +23,7 @@ public class DimletConfiguration {
     public static int maxInfuse = 256;
     public static int dungeonChance = 160;
     public static int dimensionDifficulty = 1;      // 0 == easy, 1 == normal
+    public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static float afterCreationCostFactor = 0.1f;
 
     public static float randomFeatureChance = 0.4f;
@@ -83,6 +84,8 @@ public class DimletConfiguration {
                 "The chance for a dungeon to spawn in a chunk. Higher numbers mean less chance (1 in 'dungeonChance' chance)").getInt();
         dimensionDifficulty = cfg.get(CATEGORY_DIMLETS, "difficulty", dimensionDifficulty,
                 "Difficulty level for the dimension system. 0 means that you will not get killed but kicked out of the dimension when it runs out of power. 1 means certain death").getInt();
+        spawnDimension = cfg.get(CATEGORY_DIMLETS, "spawnDimension", spawnDimension,
+                "Dimension to respawn in after you get kicked out of an RFTools dimension").getInt();
 
         randomFeatureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureChance", randomFeatureChance,
                 "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();
