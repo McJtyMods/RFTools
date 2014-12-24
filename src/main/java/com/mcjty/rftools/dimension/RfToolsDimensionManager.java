@@ -2,9 +2,12 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRegisterDimensions;
 import com.mcjty.varia.Coordinate;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -70,6 +73,43 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
         syncDimInfoToClients(world);
     }
+
+    /**
+     * Check if the client dimlet id's match with the server.
+     */
+    public void checkDimletConfig(EntityPlayer player) {
+        if (!player.getEntityWorld().isRemote) {
+            // Send over dimlet configuration to the client so that the client can check that the id's match.
+            RFTools.log("Send validation data to the client");
+            Map<Integer, String> dimlets = new HashMap<Integer, String>(KnownDimletConfiguration.idToDisplayName);
+
+            PacketHandler.INSTANCE.sendTo(new PacketCheckDimletConfig(dimlets), (EntityPlayerMP) player);
+        }
+    }
+
+    public void checkDimletConfigFromServer(Map<Integer, String> dimlets) {
+        for (Map.Entry<Integer, String> entry : dimlets.entrySet()) {
+            int id = entry.getKey();
+            String name = entry.getValue();
+            if (!KnownDimletConfiguration.idToDisplayName.containsKey(id)) {
+                RFTools.logError("Dimlet id " + id + " (" + name + ") is missing on the client!");
+                RFTools.log("Dimlet id " + id + " (" + name + ") is missing on the client!");
+            } else if (!KnownDimletConfiguration.idToDisplayName.get(id).equals(name)) {
+                RFTools.logError("Dimlet id " + id + " (" + name + ") is mapped to another dimlet on the client: " + KnownDimletConfiguration.idToDisplayName.get(id) + "!");
+                RFTools.log("Dimlet id " + id + " (" + name + ") is mapped to another dimlet on the client: " + KnownDimletConfiguration.idToDisplayName.get(id) + "!");
+            }
+        }
+
+        for (Map.Entry<Integer, String> entry : KnownDimletConfiguration.idToDisplayName.entrySet()) {
+            int id = entry.getKey();
+            String name = entry.getValue();
+            if (!dimlets.containsKey(id)) {
+                RFTools.logError("Client has an invalid mapping for dimlet " + id + " (" + name + ")!");
+                RFTools.log("Client has an invalid mapping for dimlet " + id + " (" + name + ")!");
+            }
+        }
+    }
+
 
     public void syncDimInfoToClients(World world) {
         if (!world.isRemote) {

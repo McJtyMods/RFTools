@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.DimensionSyncPacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -20,6 +21,7 @@ public class PlayerLoginEvent {
             EntityPlayer player = event.player;
             RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
             manager.syncDimInfoToClients(player.getEntityWorld());
+            manager.checkDimletConfig(player);
         }
     }
 
