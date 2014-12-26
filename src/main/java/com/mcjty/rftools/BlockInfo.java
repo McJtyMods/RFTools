@@ -3,10 +3,10 @@ package com.mcjty.rftools;
 import cofh.api.energy.IEnergyHandler;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class BlockInfo {
         return first;
     }
 
-    public static String getReadableName(Block block, Coordinate coordinate, int metadata, WorldClient world) {
+    public static String getReadableName(Block block, Coordinate coordinate, int metadata, World world) {
         List<ItemStack> itemStacks = block.getDrops(world, coordinate.getX(), coordinate.getY(), coordinate.getZ(), metadata, 1);
         Object descriptiveObject = block;
         if (itemStacks != null && !itemStacks.isEmpty()) {
