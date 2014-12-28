@@ -49,6 +49,14 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
+        int editTicksLeft = tagCompound.getInteger("editTicksLeft");
+        if (editTicksLeft > 0) {
+            // This tab is in editing mode. Don't try to build it.
+            setState(-1, 0);
+            return;
+        }
+
+
         int ticksLeft = tagCompound.getInteger("ticksLeft");
         int tickCost = tagCompound.getInteger("tickCost");
         if (ticksLeft > 0) {

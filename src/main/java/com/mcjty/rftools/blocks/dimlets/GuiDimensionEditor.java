@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.GenericGuiContainer;
+import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
@@ -25,7 +26,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
     public GuiDimensionEditor(DimensionEditorTileEntity dimensionEditorTileEntity, DimensionEditorContainer container) {
         super(dimensionEditorTileEntity, container);
-        dimensionEditorTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
+        GenericEnergyHandlerTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = EDITOR_WIDTH;
         ySize = EDITOR_HEIGHT;
@@ -37,7 +38,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyHandlerTileEntity.getCurrentRF());
 
         stages = new ImageLabel(mc, this).setImage(iconStages, 0, 0);
         stages.setLayoutHint(new PositionalLayout.PositionalHint(61, 9, 48, 48));
@@ -57,7 +58,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        int pct = tileEntity.getBuildPercentage();
+        int pct = DimensionEditorTileEntity.getEditPercentage();
         int x = ((pct-1)/4) % 5;
         int y = ((pct-1)/4) / 5;
         stages.setImage(iconStages, x * 48, y * 48);
@@ -65,7 +66,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
         window.draw();
 
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyHandlerTileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer();
         tileEntity.requestBuildingPercentage();
