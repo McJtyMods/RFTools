@@ -12,6 +12,8 @@ public class DimletConfiguration {
     public static int rfScrambleOperation = 100;
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
+    public static int EDITOR_MAXENERGY = 5000000;
+    public static int EDITOR_RECEIVEPERTICK = 50000;
     public static int MAX_DIMENSION_POWER = 40000000;
     public static int DIMPOWER_WARN0 = 6000000;     // This is only used for darkness calculations.
     public static int DIMPOWER_WARN1 = 4000000;
@@ -57,6 +59,10 @@ public class DimletConfiguration {
                 "Maximum RF storage that the dimension builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimensionBuilderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the the dimension builder can receive").getInt();
+        EDITOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimensionEditorMaxRF", EDITOR_MAXENERGY,
+                "Maximum RF storage that the dimension editor can hold").getInt();
+        EDITOR_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimensionEditorRFPerTick", EDITOR_RECEIVEPERTICK,
+                "RF per tick that the the dimension editor can receive").getInt();
         MAX_DIMENSION_POWER = cfg.get(CATEGORY_DIMLETS, "dimensionPower", MAX_DIMENSION_POWER,
                 "The internal RF buffer for every dimension").getInt();
         DIMPOWER_WARN0 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn0", DIMPOWER_WARN0,

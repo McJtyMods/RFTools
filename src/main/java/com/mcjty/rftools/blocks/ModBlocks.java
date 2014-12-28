@@ -64,6 +64,7 @@ public final class ModBlocks {
     public static DimletScramblerBlock dimletScramblerBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
+    public static DimensionEditorBlock dimensionEditorBlock;
     public static DimensionalShardBlock dimensionalShardBlock;
     public static ActivityProbeBlock activityProbeBlock;
 
@@ -118,6 +119,10 @@ public final class ModBlocks {
         dimensionBuilderBlock = new DimensionBuilderBlock();
         GameRegistry.registerBlock(dimensionBuilderBlock, GenericItemBlock.class, "dimensionBuilderBlock");
         GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
+
+        dimensionEditorBlock = new DimensionEditorBlock();
+        GameRegistry.registerBlock(dimensionEditorBlock, GenericItemBlock.class, "dimensionEditorBlock");
+        GameRegistry.registerTileEntity(DimensionEditorTileEntity.class, "DimensionEditorTileEntity");
 
         dimensionalShardBlock = new DimensionalShardBlock();
         GameRegistry.registerBlock(dimensionalShardBlock, "dimensionalShardBlock");

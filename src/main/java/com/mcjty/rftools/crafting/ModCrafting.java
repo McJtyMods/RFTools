@@ -67,6 +67,8 @@ public final class ModCrafting {
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionBuilderBlock), "oEo", "DMD", "ggg", 'o', Items.ender_pearl, 'E', Items.emerald, 'D', Items.diamond,
                 'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionEditorBlock), "oEo", "DMD", "ggg", 'o', Items.redstone, 'E', Items.emerald, 'D', Items.diamond,
+                'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.activityProbeBlock), "sss", "oMo", "sss", 'o', Items.ender_pearl, 's', ModItems.dimensionalShard,
                 'M', ModBlocks.machineFrame);
 
