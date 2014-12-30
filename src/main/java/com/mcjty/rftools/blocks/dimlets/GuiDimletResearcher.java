@@ -23,9 +23,9 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimletresearcher.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiDimletResearcher(DimletResearcherTileEntity pearlInjectorTileEntity, DimletResearcherContainer container) {
-        super(pearlInjectorTileEntity, container);
-        pearlInjectorTileEntity.setCurrentRF(pearlInjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
+    public GuiDimletResearcher(DimletResearcherTileEntity dimletResearcherTileEntity, DimletResearcherContainer container) {
+        super(dimletResearcherTileEntity, container);
+        dimletResearcherTileEntity.setCurrentRF(dimletResearcherTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = RESEARCHER_WIDTH;
         ySize = RESEARCHER_HEIGHT;
