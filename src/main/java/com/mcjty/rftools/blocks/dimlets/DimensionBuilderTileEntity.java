@@ -26,7 +26,6 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
 
     private static int buildPercentage = 0;
-    private int ticker = 5;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionBuilderContainer.factory, 1);
 
@@ -36,12 +35,6 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     protected void checkStateServer() {
-        ticker--;
-        if (ticker > 0) {
-            return;
-        }
-        ticker = 5;
-
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
             setState(-1, 0);
@@ -49,13 +42,6 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        int editTicksLeft = tagCompound.getInteger("editTicksLeft");
-        if (editTicksLeft > 0) {
-            // This tab is in editing mode. Don't try to build it.
-            setState(-1, 0);
-            return;
-        }
-
 
         int ticksLeft = tagCompound.getInteger("ticksLeft");
         int tickCost = tagCompound.getInteger("tickCost");
