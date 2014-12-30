@@ -11,12 +11,14 @@ import net.minecraft.item.ItemStack;
 public class DimensionEditorContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
-    public static final int SLOT_TAB = 0;
+    public static final int SLOT_DIMLETINPUT = 0;
+    public static final int SLOT_DIMENSIONTARGET = 1;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.realizedDimensionTab)), CONTAINER_INVENTORY, SLOT_TAB, 28, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.knownDimlet)), CONTAINER_INVENTORY, SLOT_DIMLETINPUT, 64, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.realizedDimensionTab)), CONTAINER_INVENTORY, SLOT_DIMENSIONTARGET, 118, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

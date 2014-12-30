@@ -3,8 +3,9 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.dimension.DimensionDescriptor;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.items.dimlets.DimletCosts;
+import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -14,10 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
-import java.util.Random;
 
 public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
@@ -25,12 +24,11 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
     public static final String CLIENTCMD_GETEDITING = "getEditing";
 
     private static int editPercentage = 0;
-    private int ticker = 5;
+    private int ticksLeft = -1;
+    private int ticksCost = -1;
+    private int rfPerTick = -1;
 
-    private int target = 0;
-    private boolean isEditing = false;
-
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionEditorContainer.factory, 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionEditorContainer.factory, 2);
 
     public DimensionEditorTileEntity() {
         super(DimletConfiguration.EDITOR_MAXENERGY, DimletConfiguration.EDITOR_RECEIVEPERTICK);
@@ -38,91 +36,69 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     protected void checkStateServer() {
-        if (!isEditing) {
-            return;
-        }
+        ItemStack dimletItemStack = validateDimletItemStack();
+        if (dimletItemStack == null) return;
 
-        ticker--;
-        if (ticker > 0) {
-            return;
-        }
-        ticker = 5;
+        ItemStack dimensionItemStack = validateDimensionItemStack();
+        if (dimensionItemStack == null) return;
 
-        NBTTagCompound tagCompound = validateItemStack();
-        if (tagCompound == null) return;
-
-        int editTicksLeft = tagCompound.getInteger("editTicksLeft");
-        int editTickCost = tagCompound.getInteger("editTickCost");
-        if (editTicksLeft > 0) {
-            editTicksLeft = editDimensionTick(tagCompound, editTicksLeft);
+        if (ticksLeft == -1) {
+            // We were not injecting. Start now.
+            DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(dimensionItemStack.getItemDamage());
+            ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
+            ticksLeft = ticksCost;
+            rfPerTick = (DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost()) / (ticksCost + 1) + 1;
         } else {
-            stopEditing();
-            return;
+            ticksLeft--;
+            if (ticksLeft <= 0) {
+                stopInjecting();
+                // @todo, merge the dimlet!
+            }
         }
+        markDirty();
 
-        setState(editTicksLeft, editTickCost);
+        setState();
     }
 
-    private NBTTagCompound validateItemStack() {
-        ItemStack itemStack = inventoryHelper.getStacks()[0];
+    private ItemStack validateDimletItemStack() {
+        ItemStack itemStack = inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMLETINPUT];
         if (itemStack == null || itemStack.stackSize == 0) {
-            stopEditing();
+            stopInjecting();
+            return null;
+        }
+
+        // @todo validate that this dimlet is an allowed dimlet to inject in an existing dimension
+
+        return itemStack;
+    }
+
+    private ItemStack validateDimensionItemStack() {
+        ItemStack itemStack = inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMENSIONTARGET];
+        if (itemStack == null || itemStack.stackSize == 0) {
+            stopInjecting();
             return null;
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        int ticksLeft = tagCompound.getInteger("ticksLeft");
-
-        if (ticksLeft > 0) {
-            // This tab is in building progress. Don't try to edit it.
-            stopEditing();
+        int id = tagCompound.getInteger("id");
+        if (id == 0) {
+            // Not a valid dimension.
+            stopInjecting();
             return null;
         }
 
-        if (target == 0) {
-            // There is no valid target. Don't try to edit.
-            stopEditing();
-            return null;
-        }
-        return tagCompound;
+        return itemStack;
     }
 
-    private void stopEditing() {
-        setState(-1, 0);
-        isEditing = false;
+    private void stopInjecting() {
+        setState();
+        ticksLeft = -1;
+        ticksCost = -1;
+        rfPerTick = -1;
         markDirty();
     }
 
-    private static Random random = new Random();
-
-    private int editDimensionTick(NBTTagCompound tagCompound, int editTicksLeft) {
-        int createCost = tagCompound.getInteger("rfCreateCost");
-        createCost = (int) (createCost * (2.0f - getInfusedFactor()) / 2.0f);
-
-        if (getEnergyStored(ForgeDirection.DOWN) >= createCost) {
-            extractEnergy(ForgeDirection.DOWN, createCost, false);
-            editTicksLeft--;
-            if (random.nextFloat() < getInfusedFactor()) {
-                // Randomly reduce another tick if the device is infused.
-                editTicksLeft--;
-                if (editTicksLeft < 0) {
-                    editTicksLeft = 0;
-                }
-            }
-            tagCompound.setInteger("editTicksLeft", editTicksLeft);
-            if (editTicksLeft <= 0) {
-                // @todo The actual editing goes here!
-                RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
-                DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
-                String name = tagCompound.getString("name");
-                int id = manager.createNewDimension(worldObj, descriptor, name);
-                tagCompound.setInteger("id", id);
-            }
-        }
-        return editTicksLeft;
-    }
-
-    private void setState(int ticksLeft, int tickCost) {
+    private void setState() {
         int state = 0;
         if (ticksLeft == 0) {
             state = 0;
@@ -229,14 +205,10 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             return rc;
         }
         if (CMD_GETEDITING.equals(command)) {
-            ItemStack itemStack = inventoryHelper.getStacks()[0];
-            if (itemStack == null || itemStack.stackSize == 0) {
+            if (ticksLeft == -1) {
                 return 0;
             } else {
-                NBTTagCompound tagCompound = itemStack.getTagCompound();
-                int editTicksLeft = tagCompound.getInteger("editTicksLeft");
-                int editTickCost = tagCompound.getInteger("editTickCost");
-                return (editTickCost - editTicksLeft) * 100 / editTickCost;
+                return (ticksCost - ticksLeft) * 100 / ticksCost;
             }
         }
         return null;
@@ -268,8 +240,9 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        target = tagCompound.getInteger("target");
-        isEditing = tagCompound.getBoolean("editing");
+        ticksLeft = tagCompound.getInteger("ticksLeft");
+        ticksCost = tagCompound.getInteger("ticksCost");
+        rfPerTick = tagCompound.getInteger("rfPerTick");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -289,8 +262,9 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setInteger("target", target);
-        tagCompound.setBoolean("editing", isEditing);
+        tagCompound.setInteger("ticksLeft", ticksLeft);
+        tagCompound.setInteger("ticksCost", ticksCost);
+        tagCompound.setInteger("rfPerTick", rfPerTick);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {

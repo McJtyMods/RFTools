@@ -18,11 +18,11 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
     public static final int EDITOR_HEIGHT = 152;
 
     private EnergyBar energyBar;
-    private ImageLabel stages;
+    private ImageLabel arrow;
     private Label percentage;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensioneditor.png");
-    private static final ResourceLocation iconStages = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionbuilderstages.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionEditor(DimensionEditorTileEntity dimensionEditorTileEntity, DimensionEditorContainer container) {
         super(dimensionEditorTileEntity, container);
@@ -40,14 +40,14 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyHandlerTileEntity.getCurrentRF());
 
-        stages = new ImageLabel(mc, this).setImage(iconStages, 0, 0);
-        stages.setLayoutHint(new PositionalLayout.PositionalHint(61, 9, 48, 48));
+        arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
+        arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
 
         percentage = new Label(mc, this).setText("0%");
-        percentage.setLayoutHint(new PositionalLayout.PositionalHint(115, 25, 40, 16));
+        percentage.setLayoutHint(new PositionalLayout.PositionalHint(90, 40, 40, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(stages).addChild(percentage);
+                addChild(arrow).addChild(percentage);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -59,9 +59,11 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         int pct = DimensionEditorTileEntity.getEditPercentage();
-        int x = ((pct-1)/4) % 5;
-        int y = ((pct-1)/4) / 5;
-        stages.setImage(iconStages, x * 48, y * 48);
+        if (pct > 0) {
+            arrow.setImage(iconGuiElements, 144, 0);
+        } else {
+            arrow.setImage(iconGuiElements, 192, 0);
+        }
         percentage.setText(pct + "%");
 
         window.draw();
