@@ -54,9 +54,12 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
         } else {
             int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rf >= rfPerTick) {
+            int rfpt = rfPerTick;
+            rfpt = (int) (rfpt * (2.0f - getInfusedFactor()) / 2.0f);
+
+            if (rf >= rfpt) {
                 // Enough energy.
-                extractEnergy(ForgeDirection.DOWN, rfPerTick, false);
+                extractEnergy(ForgeDirection.DOWN, rfpt, false);
 
                 ticksLeft--;
                 if (ticksLeft <= 0) {
