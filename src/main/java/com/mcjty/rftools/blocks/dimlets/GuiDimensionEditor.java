@@ -44,7 +44,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
 
         percentage = new Label(mc, this).setText("0%");
-        percentage.setLayoutHint(new PositionalLayout.PositionalHint(76, 43, 40, 16));
+        percentage.setLayoutHint(new PositionalLayout.PositionalHint(80, 43, 40, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(arrow).addChild(percentage);

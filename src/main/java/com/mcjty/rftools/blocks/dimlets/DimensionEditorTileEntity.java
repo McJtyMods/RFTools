@@ -71,6 +71,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
                     DimensionInformation information = dimensionManager.getDimensionInformation(id);
                     information.injectDimlet(dimletId);
+                    dimensionManager.save(worldObj);
 
                     inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMLETINPUT] = null;
 
