@@ -90,6 +90,60 @@ public class DimensionInformation {
         actualRfCost += descriptor.getRfMaintainCost();
     }
 
+    public void injectDimlet(int id) {
+        DimletType type = KnownDimletConfiguration.idToDimlet.get(id).getKey().getType();
+        switch (type) {
+            case DIMLET_BIOME:
+            case DIMLET_FOLIAGE:
+            case DIMLET_LIQUID:
+            case DIMLET_MATERIAL:
+            case DIMLET_STRUCTURE:
+            case DIMLET_TERRAIN:
+            case DIMLET_DIGIT:
+            case DIMLET_FEATURE:
+                // Not supported
+                return;
+            case DIMLET_MOBS:
+                injectMobDimlet(id);
+                break;
+            case DIMLET_SKY:
+                injectSkyDimlet(id);
+                break;
+            case DIMLET_TIME:
+                injectTimeDimlet(id);
+                break;
+            case DIMLET_SPECIAL:
+                injectSpecialDimlet(id);
+                break;
+        }
+    }
+
+    private void injectMobDimlet(int id) {
+        addToCost(id);
+        extraMobs.add(DimletMapping.idtoMob.get(id));
+    }
+
+    private void injectSkyDimlet(int id) {
+        addToCost(id);
+        SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
+//        builder.combine(skyDescriptor);   @todo: should we allow combining?
+        builder.combine(DimletMapping.idToSkyDescriptor.get(id));
+        skyDescriptor = builder.build();
+    }
+
+    private void injectTimeDimlet(int id) {
+        addToCost(id);
+        celestialAngle = DimletMapping.idToCelestialAngle.get(id);
+        timeSpeed = DimletMapping.idToSpeed.get(id);
+    }
+
+    private void injectSpecialDimlet(int id) {
+        addToCost(id);
+        if (DimletMapping.idToSpecialType.get(id) == SpecialType.SPECIAL_PEACEFUL) {
+            peaceful = true;
+        }
+    }
+
     public DimensionInformation(DimensionDescriptor descriptor, NBTTagCompound tagCompound) {
         this.name = tagCompound.getString("name");
         this.descriptor = descriptor;
@@ -572,6 +626,20 @@ public class DimensionInformation {
             return 0.0f;
         }
         return dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor;
+    }
+
+    private void addToCost(int id) {
+        DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(id);
+        int rfMaintainCost = dimletEntry.getRfMaintainCost();
+
+        if (rfMaintainCost < 0) {
+            actualRfCost = actualRfCost - (actualRfCost * (-rfMaintainCost) / 100);
+            if (actualRfCost < 10) {
+                actualRfCost = 10;        // Never consume less then 10 RF/tick
+            }
+        } else {
+            actualRfCost += rfMaintainCost;
+        }
     }
 
     private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<Block> blocks, List<Block> fluids) {

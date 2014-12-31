@@ -3,8 +3,11 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.dimlets.DimletCosts;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
@@ -15,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -44,15 +48,34 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(dimensionItemStack.getItemDamage());
+            DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(dimletItemStack.getItemDamage());
             ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
             ticksLeft = ticksCost;
-            rfPerTick = (DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost()) / (ticksCost + 1) + 1;
+            rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
         } else {
-            ticksLeft--;
-            if (ticksLeft <= 0) {
-                stopInjecting();
-                // @todo, merge the dimlet!
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            if (rf >= rfPerTick) {
+                // Enough energy.
+                extractEnergy(ForgeDirection.DOWN, rfPerTick, false);
+
+                ticksLeft--;
+                if (ticksLeft <= 0) {
+                    RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+
+                    ItemStack dimensionTab = validateDimensionItemStack();
+                    NBTTagCompound tagCompound = dimensionTab.getTagCompound();
+                    int id = tagCompound.getInteger("id");
+
+                    ItemStack dimletStack = validateDimletItemStack();
+                    int dimletId = dimletStack.getItemDamage();
+
+                    DimensionInformation information = dimensionManager.getDimensionInformation(id);
+                    information.injectDimlet(dimletId);
+
+                    inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMLETINPUT] = null;
+
+                    stopInjecting();
+                }
             }
         }
         markDirty();
@@ -67,9 +90,16 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             return null;
         }
 
-        // @todo validate that this dimlet is an allowed dimlet to inject in an existing dimension
-
-        return itemStack;
+        DimletType type = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage()).getKey().getType();
+        switch (type) {
+            case DIMLET_MOBS:
+            case DIMLET_SKY:
+            case DIMLET_TIME:
+            case DIMLET_SPECIAL:
+                return itemStack;
+            default:
+                return null;
+        }
     }
 
     private ItemStack validateDimensionItemStack() {
