@@ -96,7 +96,7 @@ public class DimensionTickEvent {
                 for (EffectType effect : effects) {
                     Integer potionEffect = effectsMap.get(effect);
                     if (potionEffect != null) {
-                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS));       // @todo increase to a longer period
+                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS, 0, true));       // @todo increase to a longer period
                     }
                 }
 

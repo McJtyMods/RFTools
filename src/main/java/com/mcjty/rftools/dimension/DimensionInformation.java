@@ -355,8 +355,16 @@ public class DimensionInformation {
         for (StructureType structureType : getStructureTypes()) {
             logDebug(player, "    Structure: " + structureType.toString());
         }
+        for (EffectType effectType : getEffectTypes()) {
+            logDebug(player, "    Effect: " + effectType.toString());
+        }
         logDebug(player, "    Sun brightness: " + skyDescriptor.getSunBrightnessFactor());
         logDebug(player, "    Star brightness: " + skyDescriptor.getStarBrightnessFactor());
+        float r = skyDescriptor.getSkyColorFactorR();
+        float g = skyDescriptor.getSkyColorFactorG();
+        float b = skyDescriptor.getSkyColorFactorB();
+        logDebug(player, "    Sky color: " + r + ", " + g + ", " + b);
+
         for (MobDescriptor mob : extraMobs) {
             logDebug(player, "    Mob: " + mob.getEntityClass().getName());
         }
