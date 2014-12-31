@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
+import com.mcjty.rftools.dimension.world.types.EffectType;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,10 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class DimensionTickEvent {
     private static final int MAXTICKS = 10;
@@ -49,6 +47,7 @@ public class DimensionTickEvent {
                             power = 0;
                         }
 
+                        handleEffects(id, information);
                         handleLowPower(id, power);
 
                         dimensionStorage.setEnergyLevel(id, power);
@@ -57,6 +56,52 @@ public class DimensionTickEvent {
 
                 dimensionStorage.save(entityWorld);
             }
+        }
+    }
+
+    static Map<EffectType,Integer> effectsMap = new HashMap<EffectType, Integer>();
+
+    static {
+        effectsMap.put(EffectType.EFFECT_POISON, Potion.poison.getId());
+        effectsMap.put(EffectType.EFFECT_REGENERATION, Potion.regeneration.getId());
+        effectsMap.put(EffectType.EFFECT_MOVESLOWDOWN, Potion.moveSlowdown.getId());
+        effectsMap.put(EffectType.EFFECT_MOVESPEED, Potion.moveSpeed.getId());
+        effectsMap.put(EffectType.EFFECT_DIGSLOWDOWN, Potion.digSlowdown.getId());
+        effectsMap.put(EffectType.EFFECT_DIGSPEED, Potion.digSpeed.getId());
+        effectsMap.put(EffectType.EFFECT_DAMAGEBOOST, Potion.damageBoost.getId());
+        effectsMap.put(EffectType.EFFECT_HEAL, Potion.heal.getId());
+        effectsMap.put(EffectType.EFFECT_HARM, Potion.harm.getId());
+        effectsMap.put(EffectType.EFFECT_JUMP, Potion.jump.getId());
+        effectsMap.put(EffectType.EFFECT_CONFUSION, Potion.confusion.getId());
+        effectsMap.put(EffectType.EFFECT_RESISTANCE, Potion.resistance.getId());
+        effectsMap.put(EffectType.EFFECT_FIRERESISTANCE, Potion.fireResistance.getId());
+        effectsMap.put(EffectType.EFFECT_WATERBREATHING, Potion.waterBreathing.getId());
+        effectsMap.put(EffectType.EFFECT_INVISIBILITY, Potion.invisibility.getId());
+        effectsMap.put(EffectType.EFFECT_BLINDNESS, Potion.blindness.getId());
+        effectsMap.put(EffectType.EFFECT_NIGHTVISION, Potion.nightVision.getId());
+        effectsMap.put(EffectType.EFFECT_HUNGER, Potion.hunger.getId());
+        effectsMap.put(EffectType.EFFECT_WEAKNESS, Potion.weakness.getId());
+        effectsMap.put(EffectType.EFFECT_WITHER, Potion.wither.getId());
+        effectsMap.put(EffectType.EFFECT_HEALTHBOOST, Potion.field_76434_w.getId());
+        effectsMap.put(EffectType.EFFECT_ABSORPTION, Potion.field_76444_x.getId());
+        effectsMap.put(EffectType.EFFECT_HEALTH, Potion.field_76443_y.getId());
+    }
+
+    private void handleEffects(int id, DimensionInformation information) {
+        WorldServer world = DimensionManager.getWorld(id);
+        if (world != null) {
+            Set<EffectType> effects = information.getEffectTypes();
+            List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
+            for (EntityPlayer player : players) {
+                for (EffectType effect : effects) {
+                    Integer potionEffect = effectsMap.get(effect);
+                    if (potionEffect != null) {
+                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS));       // @todo increase to a longer period
+                    }
+                }
+
+            }
+
         }
     }
 

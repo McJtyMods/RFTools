@@ -265,7 +265,29 @@ public class KnownDimletConfiguration {
 
         int idEffectNone = initEffectItem(cfg, idsInConfig, "None", EffectType.EFFECT_NONE);
         initEffectItem(cfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
+//        initEffectItem(cfg, idsInConfig, "No Gravity", EffectType.EFFECT_NOGRAVITY);
         initEffectItem(cfg, idsInConfig, "Regeneration", EffectType.EFFECT_REGENERATION);
+        initEffectItem(cfg, idsInConfig, "Slowness", EffectType.EFFECT_MOVESLOWDOWN);
+        initEffectItem(cfg, idsInConfig, "Speed", EffectType.EFFECT_MOVESPEED);
+        initEffectItem(cfg, idsInConfig, "Mining Fatigue", EffectType.EFFECT_DIGSLOWDOWN);
+        initEffectItem(cfg, idsInConfig, "Haste", EffectType.EFFECT_DIGSPEED);
+        initEffectItem(cfg, idsInConfig, "Damage Boost", EffectType.EFFECT_DAMAGEBOOST);
+        initEffectItem(cfg, idsInConfig, "Heal", EffectType.EFFECT_HEAL);
+        initEffectItem(cfg, idsInConfig, "Harm", EffectType.EFFECT_HARM);
+        initEffectItem(cfg, idsInConfig, "Jump", EffectType.EFFECT_JUMP);
+        initEffectItem(cfg, idsInConfig, "Confusion", EffectType.EFFECT_CONFUSION);
+        initEffectItem(cfg, idsInConfig, "Resistance", EffectType.EFFECT_RESISTANCE);
+        initEffectItem(cfg, idsInConfig, "Fire Resistance", EffectType.EFFECT_FIRERESISTANCE);
+        initEffectItem(cfg, idsInConfig, "Water Breathing", EffectType.EFFECT_WATERBREATHING);
+        initEffectItem(cfg, idsInConfig, "Invisibility", EffectType.EFFECT_INVISIBILITY);
+        initEffectItem(cfg, idsInConfig, "Blindness", EffectType.EFFECT_BLINDNESS);
+        initEffectItem(cfg, idsInConfig, "Nightvision", EffectType.EFFECT_NIGHTVISION);
+        initEffectItem(cfg, idsInConfig, "Hunger", EffectType.EFFECT_HUNGER);
+        initEffectItem(cfg, idsInConfig, "Weakness", EffectType.EFFECT_WEAKNESS);
+        initEffectItem(cfg, idsInConfig, "Wither", EffectType.EFFECT_WITHER);
+        initEffectItem(cfg, idsInConfig, "Health Boost", EffectType.EFFECT_HEALTHBOOST);
+        initEffectItem(cfg, idsInConfig, "Absorption", EffectType.EFFECT_ABSORPTION);
+        initEffectItem(cfg, idsInConfig, "Health", EffectType.EFFECT_HEALTH);
 
         int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null, null);
         initTimeItem(cfg, idsInConfig, "Noon", 0.0f, null);

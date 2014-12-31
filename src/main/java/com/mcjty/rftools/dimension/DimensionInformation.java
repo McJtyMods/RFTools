@@ -553,7 +553,10 @@ public class DimensionInformation {
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
-                effectTypes.add(DimletMapping.idToEffectType.get(dimletWithModifier.getLeft().getId()));
+                EffectType effectType = DimletMapping.idToEffectType.get(dimletWithModifier.getLeft().getId());
+                if (effectType != EffectType.EFFECT_NONE) {
+                    effectTypes.add(effectType);
+                }
             }
         }
     }
