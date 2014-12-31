@@ -7,10 +7,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.SkyDescriptor;
-import com.mcjty.rftools.dimension.world.types.FeatureType;
-import com.mcjty.rftools.dimension.world.types.SpecialType;
-import com.mcjty.rftools.dimension.world.types.StructureType;
-import com.mcjty.rftools.dimension.world.types.TerrainType;
+import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
@@ -266,6 +263,10 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
         initFeatureItem(cfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
 
+        int idEffectNone = initEffectItem(cfg, idsInConfig, "None", EffectType.EFFECT_NONE);
+        initEffectItem(cfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
+        initEffectItem(cfg, idsInConfig, "Regeneration", EffectType.EFFECT_REGENERATION);
+
         int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null, null);
         initTimeItem(cfg, idsInConfig, "Noon", 0.0f, null);
         initTimeItem(cfg, idsInConfig, "Midnight", 0.5f, null);
@@ -281,6 +282,8 @@ public class KnownDimletConfiguration {
 
         GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idEffectNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.apple, 'p', Items.paper);
+        craftableDimlets.add(idEffectNone);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper);
         craftableDimlets.add(idFeatureNone);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper);
@@ -532,6 +535,15 @@ public class KnownDimletConfiguration {
         if (id != -1) {
             DimletMapping.idToTerrainType.put(id, terrainType);
             idToDisplayName.put(id, DimletType.DIMLET_TERRAIN.getName() + " " + name + " Dimlet");
+        }
+        return id;
+    }
+
+    private static int initEffectItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, EffectType effectType) {
+        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_EFFECT, "" + name));
+        if (id != -1) {
+            idToDisplayName.put(id, DimletType.DIMLET_EFFECT.getName() + " " + name + " Dimlet");
+            DimletMapping.idToEffectType.put(id, effectType);
         }
         return id;
     }

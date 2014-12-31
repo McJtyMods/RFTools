@@ -40,6 +40,9 @@
         [ "Mob", "Ghast", 4000, 2000, 600, 3, 0 ],
         [ "Mob", "Iron Golem", 10000, 5000, 800, 4, 0 ],
         [ "Special", "Peaceful", 70000, 40000, 900, 5, 0 ],
-        [ "Special", "Efficiency", 100000, -20, 900, 5, 0 ]
+        [ "Special", "Efficiency", 100000, -20, 900, 5, 0 ],
+        [ "Effect", "None", 2000, 10, 10, 0, 0 ],
+        [ "Effect", "Poison", 1000, -1, 200, 3, 0 ],
+        [ "Effect", "Regeneration", 100000, 50000, 900, 5, 0 ]
     ]
 }

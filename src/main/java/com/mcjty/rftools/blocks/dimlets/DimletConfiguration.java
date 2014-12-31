@@ -33,6 +33,7 @@ public class DimletConfiguration {
     public static float randomOregenMaterialChance = 0.2f;
     public static float randomFeatureMaterialChance = 0.4f;
     public static float randomStructureChance = 0.2f;
+    public static float randomEffectChance = 0.1f;
     public static float randomOceanLiquidChance = 0.2f;
     public static float randomBaseBlockChance = 0.4f;
     public static float randomSpecialSkyChance = 0.5f;
@@ -103,6 +104,8 @@ public class DimletConfiguration {
                 "The chance that random blocks are selected for landscape features (tendrils, canyons, ...)").getDouble();
         randomStructureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomStructureChance", randomStructureChance,
                 "The chance that every specific structure gets randomly selected in worldgen (village, nether fortress, ...)").getDouble();
+        randomEffectChance = (float) cfg.get(CATEGORY_DIMLETS, "randomEffectChance", randomEffectChance,
+                "The chance that an effect gets randomly selected in worldgen (poison, regeneration, ...)").getDouble();
         randomOceanLiquidChance = (float) cfg.get(CATEGORY_DIMLETS, "randomOceanLiquidChance", randomOceanLiquidChance,
                 "The chance that a non-water block is selected for oceans and seas").getDouble();
         randomBaseBlockChance = (float) cfg.get(CATEGORY_DIMLETS, "randomBaseBlockChance", randomBaseBlockChance,

@@ -2,10 +2,7 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import com.mcjty.rftools.dimension.world.types.FeatureType;
-import com.mcjty.rftools.dimension.world.types.SpecialType;
-import com.mcjty.rftools.dimension.world.types.StructureType;
-import com.mcjty.rftools.dimension.world.types.TerrainType;
+import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.ByteBufTools;
 import com.mcjty.varia.Coordinate;
@@ -48,6 +45,7 @@ public class DimensionInformation {
     private Block[] fluidsForLakes = new Block[] {};
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
+    private Set<EffectType> effectTypes = new HashSet<EffectType>();
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
     private String digitString = "";
 
@@ -86,6 +84,7 @@ public class DimensionInformation {
         calculateMobs(dimlets, random);
         calculateSpecial(dimlets, random);
         calculateTime(dimlets, random);
+        calculateEffects(dimlets, random);
 
         actualRfCost += descriptor.getRfMaintainCost();
     }
@@ -115,6 +114,9 @@ public class DimensionInformation {
             case DIMLET_SPECIAL:
                 injectSpecialDimlet(id);
                 break;
+            case DIMLET_EFFECT:
+                injectEffectDimlet(id);
+                break;
         }
     }
 
@@ -135,6 +137,11 @@ public class DimensionInformation {
         addToCost(id);
         celestialAngle = DimletMapping.idToCelestialAngle.get(id);
         timeSpeed = DimletMapping.idToSpeed.get(id);
+    }
+
+    private void injectEffectDimlet(int id) {
+        addToCost(id);
+        effectTypes.add(DimletMapping.idToEffectType.get(id));
     }
 
     private void injectSpecialDimlet(int id) {
@@ -165,6 +172,7 @@ public class DimensionInformation {
         terrainType = TerrainType.values()[tagCompound.getInteger("terrain")];
         featureTypes = toEnumSet(tagCompound.getIntArray("features"), FeatureType.values());
         structureTypes = toEnumSet(tagCompound.getIntArray("structures"), StructureType.values());
+        effectTypes = toEnumSet(tagCompound.getIntArray("effects"), EffectType.values());
 
         biomes.clear();
         for (int a : tagCompound.getIntArray("biomes")) {
@@ -240,6 +248,7 @@ public class DimensionInformation {
         tagCompound.setInteger("terrain", terrainType == null ? TerrainType.TERRAIN_VOID.ordinal() : terrainType.ordinal());
         tagCompound.setIntArray("features", toIntArray(featureTypes));
         tagCompound.setIntArray("structures", toIntArray(structureTypes));
+        tagCompound.setIntArray("effects", toIntArray(effectTypes));
 
         List<Integer> c = new ArrayList<Integer>(biomes.size());
         for (BiomeGenBase t : biomes) {
@@ -369,6 +378,7 @@ public class DimensionInformation {
         ByteBufTools.writeEnum(buf, terrainType, TerrainType.TERRAIN_VOID);
         ByteBufTools.writeEnumCollection(buf, featureTypes);
         ByteBufTools.writeEnumCollection(buf, structureTypes);
+        ByteBufTools.writeEnumCollection(buf, effectTypes);
 
         buf.writeInt(biomes.size());
         for (BiomeGenBase entry : biomes) {
@@ -418,6 +428,7 @@ public class DimensionInformation {
         terrainType = ByteBufTools.readEnum(buf, TerrainType.values());
         ByteBufTools.readEnumCollection(buf, featureTypes, FeatureType.values());
         ByteBufTools.readEnumCollection(buf, structureTypes, StructureType.values());
+        ByteBufTools.readEnumCollection(buf, effectTypes, EffectType.values());
 
         biomes.clear();
         int size = buf.readInt();
@@ -531,6 +542,19 @@ public class DimensionInformation {
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
             int id = dimletWithModifiers.getKey().getId();
             digitString += DimletMapping.idToDigit.get(id);
+        }
+    }
+
+    private void calculateEffects(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+        dimlets = extractType(DimletType.DIMLET_EFFECT, dimlets);
+        if (dimlets.isEmpty()) {
+            while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
+                effectTypes.add(DimletRandomizer.getRandomEffect(random));
+            }
+        } else {
+            for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
+                effectTypes.add(DimletMapping.idToEffectType.get(dimletWithModifier.getLeft().getId()));
+            }
         }
     }
 
@@ -803,6 +827,14 @@ public class DimensionInformation {
 
     public Set<StructureType> getStructureTypes() {
         return structureTypes;
+    }
+
+    public boolean hasEffectType(EffectType type) {
+        return effectTypes.contains(type);
+    }
+
+    public Set<EffectType> getEffectTypes() {
+        return effectTypes;
     }
 
     public List<BiomeGenBase> getBiomes() {

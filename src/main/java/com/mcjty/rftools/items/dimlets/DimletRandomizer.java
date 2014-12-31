@@ -2,6 +2,7 @@ package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.MobDescriptor;
+import com.mcjty.rftools.dimension.world.types.EffectType;
 import com.mcjty.varia.WeightedRandomSelector;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Configuration;
@@ -28,6 +29,7 @@ public class DimletRandomizer {
     public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
+    public static WeightedRandomSelector<Integer,Integer> randomEffectDimlets;
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
@@ -42,6 +44,7 @@ public class DimletRandomizer {
         initRarity(cfg, DimletType.DIMLET_TERRAIN, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_FEATURE, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_DIGIT, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_EFFECT, RARITY_3);
         initRarity(cfg, DimletType.DIMLET_SPECIAL, RARITY_5);
     }
 
@@ -65,6 +68,8 @@ public class DimletRandomizer {
         setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
         randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        randomEffectDimlets = new WeightedRandomSelector<Integer, Integer>();
+        setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
 
         for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
@@ -83,12 +88,21 @@ public class DimletRandomizer {
                 if (DimletMapping.idtoMob.get(entry.getKey()) != null) {
                     randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
+            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_EFFECT) {
+                // Don't add the 'null' mob.
+                if (DimletMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
+                    randomEffectDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
             }
         }
     }
 
     public static MobDescriptor getRandomMob(Random random) {
         return DimletMapping.idtoMob.get(randomMobDimlets.select(random));
+    }
+
+    public static EffectType getRandomEffect(Random random) {
+        return DimletMapping.idToEffectType.get(randomEffectDimlets.select(random));
     }
 
     public static int getRandomFluidBlock(Random random) {

@@ -37,6 +37,7 @@ public class DimletCosts {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TERRAIN, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FEATURE, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_EFFECT, 200);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfCreateModifierMultiplier.clear();
@@ -66,6 +67,7 @@ public class DimletCosts {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_EFFECT, 0);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfMaintainModifierMultiplier.clear();
@@ -95,6 +97,7 @@ public class DimletCosts {
         initTypeTickCost(cfg, DimletType.DIMLET_TERRAIN, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_FEATURE, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_DIGIT, 0);
+        initTypeTickCost(cfg, DimletType.DIMLET_EFFECT, 100);
         initTypeTickCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         tickCostModifierMultiplier.clear();
