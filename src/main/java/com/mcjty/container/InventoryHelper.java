@@ -16,7 +16,7 @@ public class InventoryHelper {
     }
 
     /**
-     * Merges provided ItemStack with the first avaliable one in this inventory.
+     * Merges provided ItemStack with the first available one in this inventory.
      */
     public static boolean mergeItemStack(IInventory inventory, ItemStack result, int start, int stop) {
         boolean success = false;

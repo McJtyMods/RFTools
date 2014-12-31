@@ -76,7 +76,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                     information.injectDimlet(dimletId);
                     dimensionManager.save(worldObj);
 
-                    inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMLETINPUT] = null;
+                    inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_DIMLETINPUT, 1);
 
                     stopInjecting();
                 }
@@ -203,7 +203,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public int getInventoryStackLimit() {
-        return 1;
+        return 16;
     }
 
     @Override
