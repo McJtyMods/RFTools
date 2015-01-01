@@ -195,7 +195,7 @@ public class DimensionTickEvent {
                         if (amplifier == null) {
                             amplifier = 0;
                         }
-                        player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS, amplifier, true));       // @todo increase to a longer period
+                        player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS, amplifier, true));
                     }
                 }
                 if (power < DimletConfiguration.DIMPOWER_WARN3) {
