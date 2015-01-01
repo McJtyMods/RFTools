@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import com.mcjty.rftools.dimension.world.types.EffectType;
+import com.mcjty.rftools.items.dimlets.DimletCosts;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,67 +22,57 @@ public class DimensionTickEvent {
     private static final int MAXTICKS = 10;
     private int counter = MAXTICKS;
 
-    private static final int MAXTICKS_EFFECTS = 180;
-    private int counterEffects = MAXTICKS_EFFECTS;
+    private static final int EFFECTS_MAX = 18;
+    private int counterEffects = EFFECTS_MAX;
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent evt) {
-        handlePower();
-        handleEffects();
-    }
-
-    private void handlePower() {
         counter--;
         if (counter <= 0) {
             counter = MAXTICKS;
-            World entityWorld = MinecraftServer.getServer().getEntityWorld();
-            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(entityWorld);
 
-            if (!dimensionManager.getDimensions().isEmpty()) {
-                DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(entityWorld);
-
-                for (Map.Entry<Integer, DimensionDescriptor> entry : dimensionManager.getDimensions().entrySet()) {
-                    Integer id = entry.getKey();
-                    // If there is an activity probe we only drain power if the dimension is loaded (a player is there or a chunkloader)
-                    DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    if (DimensionManager.getWorld(id) != null || information.getProbeCounter() == 0) {
-                        int cost = information.getActualRfCost();
-                        if (cost == 0) {
-                            cost = entry.getValue().getRfMaintainCost();
-                        }
-                        int power = dimensionStorage.getEnergyLevel(id);
-                        power -= cost * MAXTICKS;
-                        if (power < 0) {
-                            power = 0;
-                        }
-
-                        handleLowPower(id, power);
-
-                        dimensionStorage.setEnergyLevel(id, power);
-                    }
-                }
-
-                dimensionStorage.save(entityWorld);
+            counterEffects--;
+            boolean doEffects = false;
+            if (counterEffects <= 0) {
+                counterEffects = EFFECTS_MAX;
+                doEffects = true;
             }
+            handlePower(doEffects);
         }
     }
 
-    private void handleEffects() {
-        counterEffects--;
-        if (counterEffects <= 0) {
-            counterEffects = MAXTICKS_EFFECTS;
-            World entityWorld = MinecraftServer.getServer().getEntityWorld();
-            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(entityWorld);
+    private void handlePower(boolean doEffects) {
+        World entityWorld = MinecraftServer.getServer().getEntityWorld();
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(entityWorld);
 
-            if (!dimensionManager.getDimensions().isEmpty()) {
-                for (Map.Entry<Integer, DimensionDescriptor> entry : dimensionManager.getDimensions().entrySet()) {
-                    Integer id = entry.getKey();
-                    DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    if (DimensionManager.getWorld(id) != null) {
-                        handleEffectsForDimension(id, information);
+        if (!dimensionManager.getDimensions().isEmpty()) {
+            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(entityWorld);
+
+            for (Map.Entry<Integer, DimensionDescriptor> entry : dimensionManager.getDimensions().entrySet()) {
+                Integer id = entry.getKey();
+                // If there is an activity probe we only drain power if the dimension is loaded (a player is there or a chunkloader)
+                DimensionInformation information = dimensionManager.getDimensionInformation(id);
+                if (DimensionManager.getWorld(id) != null || information.getProbeCounter() == 0) {
+                    int cost = information.getActualRfCost();
+                    if (cost == 0) {
+                        cost = entry.getValue().getRfMaintainCost();
                     }
+                    int power = dimensionStorage.getEnergyLevel(id);
+                    power -= cost * MAXTICKS;
+                    if (power < 0) {
+                        power = 0;
+                    }
+
+                    handleLowPower(id, power);
+                    if (doEffects && power > 0) {
+                        handleEffectsForDimension(power, id, information);
+                    }
+
+                    dimensionStorage.setEnergyLevel(id, power);
                 }
             }
+
+            dimensionStorage.save(entityWorld);
         }
     }
 
@@ -191,7 +182,7 @@ public class DimensionTickEvent {
         effectAmplifierMap.put(EffectType.EFFECT_SATURATION3, 2);
     }
 
-    private void handleEffectsForDimension(int id, DimensionInformation information) {
+    private void handleEffectsForDimension(int power, int id, DimensionInformation information) {
         WorldServer world = DimensionManager.getWorld(id);
         if (world != null) {
             Set<EffectType> effects = information.getEffectTypes();
@@ -204,10 +195,20 @@ public class DimensionTickEvent {
                         if (amplifier == null) {
                             amplifier = 0;
                         }
-                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS_EFFECTS, amplifier, true));       // @todo increase to a longer period
+                        player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS, amplifier, true));       // @todo increase to a longer period
                     }
                 }
-
+                if (power < DimletConfiguration.DIMPOWER_WARN3) {
+                    // We are VERY low on power. Start bad effects.
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4));
+                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), EFFECTS_MAX*MAXTICKS, 2));
+                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 2));
+                } else if (power < DimletConfiguration.DIMPOWER_WARN2) {
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 2));
+                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 1));
+                } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS));
+                }
             }
 
         }
@@ -237,34 +238,6 @@ public class DimensionTickEvent {
                         MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension,
                                 new RfToolsTeleporter(worldServerForDimension, x, y, z));
                     }
-                }
-            }
-        } else if (power < DimletConfiguration.DIMPOWER_WARN3) {
-            // We are VERY low on power. Start bad effects.
-            WorldServer world = DimensionManager.getWorld(id);
-            if (world != null) {
-                for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.attackEntityFrom(DamageSource.generic, 0.1f);
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
-                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), MAXTICKS));
-                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), MAXTICKS, 2));
-                }
-            }
-        } else if (power < DimletConfiguration.DIMPOWER_WARN2) {
-            // We are low on power. Start bad effects.
-            WorldServer world = DimensionManager.getWorld(id);
-            if (world != null) {
-                for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
-                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), MAXTICKS, 2));
-                }
-            }
-        } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
-            // We are low on power. Start bad effects.
-            WorldServer world = DimensionManager.getWorld(id);
-            if (world != null) {
-                for (EntityPlayer player : (List<EntityPlayer>)world.playerEntities) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), MAXTICKS));
                 }
             }
         }
