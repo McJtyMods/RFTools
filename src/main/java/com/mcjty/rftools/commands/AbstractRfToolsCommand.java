@@ -16,6 +16,14 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         }
     }
 
+    protected String fetchString(ICommandSender sender, String[] args, int index, String defaultValue) {
+        try {
+            return args[index];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return defaultValue;
+        }
+    }
+
     protected int fetchInt(ICommandSender sender, String[] args, int index, int defaultValue) {
         int value;
         try {
