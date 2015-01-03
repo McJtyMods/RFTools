@@ -557,7 +557,7 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_EFFECT, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
-                effectTypes.add(DimletRandomizer.getRandomEffect(random));
+                effectTypes.add(DimletRandomizer.getRandomEffect(random, false));
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {

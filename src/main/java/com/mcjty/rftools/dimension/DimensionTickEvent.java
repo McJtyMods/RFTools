@@ -3,7 +3,6 @@ package com.mcjty.rftools.dimension;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import com.mcjty.rftools.dimension.world.types.EffectType;
-import com.mcjty.rftools.items.dimlets.DimletCosts;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,6 +96,8 @@ public class DimensionTickEvent {
         effectAmplifierMap.put(EffectType.EFFECT_MOVESLOWDOWN2, 1);
         effectsMap.put(EffectType.EFFECT_MOVESLOWDOWN3, Potion.moveSlowdown.getId());
         effectAmplifierMap.put(EffectType.EFFECT_MOVESLOWDOWN3, 2);
+        effectsMap.put(EffectType.EFFECT_MOVESLOWDOWN4, Potion.moveSlowdown.getId());
+        effectAmplifierMap.put(EffectType.EFFECT_MOVESLOWDOWN4, 3);
 
         effectsMap.put(EffectType.EFFECT_MOVESPEED, Potion.moveSpeed.getId());
         effectsMap.put(EffectType.EFFECT_MOVESPEED2, Potion.moveSpeed.getId());
@@ -109,6 +110,8 @@ public class DimensionTickEvent {
         effectAmplifierMap.put(EffectType.EFFECT_DIGSLOWDOWN2, 1);
         effectsMap.put(EffectType.EFFECT_DIGSLOWDOWN3, Potion.digSlowdown.getId());
         effectAmplifierMap.put(EffectType.EFFECT_DIGSLOWDOWN3, 2);
+        effectsMap.put(EffectType.EFFECT_DIGSLOWDOWN4, Potion.digSlowdown.getId());
+        effectAmplifierMap.put(EffectType.EFFECT_DIGSLOWDOWN4, 3);
 
         effectsMap.put(EffectType.EFFECT_DIGSPEED, Potion.digSpeed.getId());
         effectsMap.put(EffectType.EFFECT_DIGSPEED2, Potion.digSpeed.getId());
@@ -122,7 +125,7 @@ public class DimensionTickEvent {
         effectsMap.put(EffectType.EFFECT_DAMAGEBOOST3, Potion.damageBoost.getId());
         effectAmplifierMap.put(EffectType.EFFECT_DAMAGEBOOST3, 2);
 
-        effectsMap.put(EffectType.EFFECT_HEAL, Potion.heal.getId());
+        effectsMap.put(EffectType.EFFECT_INSTANTHEALTH, Potion.heal.getId());
         effectsMap.put(EffectType.EFFECT_HARM, Potion.harm.getId());
 
         effectsMap.put(EffectType.EFFECT_JUMP, Potion.jump.getId());

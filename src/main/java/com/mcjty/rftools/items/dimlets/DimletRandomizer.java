@@ -4,7 +4,6 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.world.types.EffectType;
 import com.mcjty.varia.WeightedRandomSelector;
-import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -101,17 +100,21 @@ public class DimletRandomizer {
         return DimletMapping.idtoMob.get(randomMobDimlets.select(random));
     }
 
-    public static EffectType getRandomEffect(Random random) {
-        return DimletMapping.idToEffectType.get(randomEffectDimlets.select(random));
+    public static EffectType getRandomEffect(Random random, boolean allowRandom) {
+        Integer id = randomEffectDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+            id = randomEffectDimlets.select(random);
+        }
+        return DimletMapping.idToEffectType.get(id);
     }
 
     public static int getRandomFluidBlock(Random random) {
         return randomLiquidDimlets.select(random);
     }
 
-    public static int getRandomMaterialBlock(Random random, boolean allowExpensive) {
+    public static int getRandomMaterialBlock(Random random, boolean allowRandom) {
         Integer id = randomMaterialDimlets.select(random);
-        while ((!allowExpensive) && KnownDimletConfiguration.idToDimlet.get(id).isExpensive()) {
+        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
             id = randomMaterialDimlets.select(random);
         }
         return id;

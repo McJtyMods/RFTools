@@ -55,7 +55,7 @@ public class KnownDimletConfiguration {
     public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
-    private static final Set<DimletKey> dimletIsExpensive = new HashSet<DimletKey>();
+    private static final Set<DimletKey> dimletRandomNotAllowed = new HashSet<DimletKey>();
 
     private static int lastId = 0;
 
@@ -100,9 +100,9 @@ public class KnownDimletConfiguration {
         int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, DimletCosts.typeRfMaintainCost);
         int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
         int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
-        boolean expensive = checkFlagConfig(cfg, "expensive.", key, dimletIsExpensive);
+        boolean randomNotAllowed = checkFlagConfig(cfg, "expensive.", key, dimletRandomNotAllowed);
 
-        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, expensive);
+        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, randomNotAllowed);
         registerDimletEntry(id, entry);
 
         return id;
@@ -274,19 +274,21 @@ public class KnownDimletConfiguration {
         initEffectItem(cfg, idsInConfig, "Slowness", EffectType.EFFECT_MOVESLOWDOWN);
         initEffectItem(cfg, idsInConfig, "Slowness II", EffectType.EFFECT_MOVESLOWDOWN2);
         initEffectItem(cfg, idsInConfig, "Slowness III", EffectType.EFFECT_MOVESLOWDOWN3);
+        initEffectItem(cfg, idsInConfig, "Slowness IV", EffectType.EFFECT_MOVESLOWDOWN4);
         initEffectItem(cfg, idsInConfig, "Speed", EffectType.EFFECT_MOVESPEED);
         initEffectItem(cfg, idsInConfig, "Speed II", EffectType.EFFECT_MOVESPEED2);
         initEffectItem(cfg, idsInConfig, "Speed III", EffectType.EFFECT_MOVESPEED3);
         initEffectItem(cfg, idsInConfig, "Mining Fatigue", EffectType.EFFECT_DIGSLOWDOWN);
         initEffectItem(cfg, idsInConfig, "Mining Fatigue II", EffectType.EFFECT_DIGSLOWDOWN2);
         initEffectItem(cfg, idsInConfig, "Mining Fatigue III", EffectType.EFFECT_DIGSLOWDOWN3);
+        initEffectItem(cfg, idsInConfig, "Mining Fatigue IV", EffectType.EFFECT_DIGSLOWDOWN4);
         initEffectItem(cfg, idsInConfig, "Haste", EffectType.EFFECT_DIGSPEED);
         initEffectItem(cfg, idsInConfig, "Haste II", EffectType.EFFECT_DIGSPEED2);
         initEffectItem(cfg, idsInConfig, "Haste III", EffectType.EFFECT_DIGSPEED3);
         initEffectItem(cfg, idsInConfig, "Damage Boost", EffectType.EFFECT_DAMAGEBOOST);
         initEffectItem(cfg, idsInConfig, "Damage Boost II", EffectType.EFFECT_DAMAGEBOOST2);
         initEffectItem(cfg, idsInConfig, "Damage Boost III", EffectType.EFFECT_DAMAGEBOOST3);
-        initEffectItem(cfg, idsInConfig, "Heal", EffectType.EFFECT_HEAL);
+        initEffectItem(cfg, idsInConfig, "Instant Health", EffectType.EFFECT_INSTANTHEALTH);
         initEffectItem(cfg, idsInConfig, "Harm", EffectType.EFFECT_HARM);
         initEffectItem(cfg, idsInConfig, "Jump", EffectType.EFFECT_JUMP);
         initEffectItem(cfg, idsInConfig, "Jump II", EffectType.EFFECT_JUMP2);
@@ -487,7 +489,7 @@ public class KnownDimletConfiguration {
             DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
             DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
             if (expensive != 0) {
-                dimletIsExpensive.add(key);
+                dimletRandomNotAllowed.add(key);
             }
         }
     }

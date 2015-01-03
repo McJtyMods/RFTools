@@ -16,7 +16,7 @@ public class CmdListEffects extends AbstractRfToolsCommand {
 
     @Override
     public String getCommand() {
-        return "effectslist";
+        return "effectlist";
     }
 
     @Override
