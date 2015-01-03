@@ -17,8 +17,8 @@ public class DimletConfiguration {
     public static int MAX_DIMENSION_POWER = 40000000;
     public static int DIMPOWER_WARN0 = 6000000;     // This is only used for darkness calculations.
     public static int DIMPOWER_WARN1 = 4000000;
-    public static int DIMPOWER_WARN2 = 2000000;
-    public static int DIMPOWER_WARN3 = 1000000;
+    public static int DIMPOWER_WARN2 = 1000000;
+    public static int DIMPOWER_WARN3 = 500000;
     public static int INFUSER_MAXENERGY = 60000;
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;

@@ -203,14 +203,17 @@ public class DimensionTickEvent {
                 }
                 if (power < DimletConfiguration.DIMPOWER_WARN3) {
                     // We are VERY low on power. Start bad effects.
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4));
-                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), EFFECTS_MAX*MAXTICKS, 2));
-                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 2));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                    player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                    player.addPotionEffect(new PotionEffect(Potion.poison.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
+                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
                 } else if (power < DimletConfiguration.DIMPOWER_WARN2) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 2));
-                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 1));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
+                    player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
+                    player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 1, true));
                 } else if (power < DimletConfiguration.DIMPOWER_WARN1) {
-                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS));
+                    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 0, true));
+                    player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 0, true));
                 }
             }
 
