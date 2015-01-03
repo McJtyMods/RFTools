@@ -32,7 +32,7 @@ public class CmdSetPower extends AbstractRfToolsCommand {
             return;
         }
 
-        int rf = fetchInt(sender, args, 1, DimletConfiguration.BUILDER_MAXENERGY);
+        int rf = fetchInt(sender, args, 1, DimletConfiguration.MAX_DIMENSION_POWER);
 
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
