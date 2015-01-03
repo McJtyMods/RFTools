@@ -4,6 +4,7 @@ import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -20,6 +21,10 @@ public class CmdDelDimension extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
+        if (!isAllowed(sender)) {
+            return;
+        }
+
         if (args.length < 2) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension parameters is missing!"));
             return;

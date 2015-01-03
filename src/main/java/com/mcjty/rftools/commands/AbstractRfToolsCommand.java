@@ -1,10 +1,21 @@
 package com.mcjty.rftools.commands;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 public abstract class AbstractRfToolsCommand implements RfToolsCommand {
+
+    protected boolean isAllowed(ICommandSender sender) {
+        if (MinecraftServer.getServer().getEntityWorld().getWorldInfo().areCommandsAllowed()) {
+            return true;
+        } else {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Command is not allowed!"));
+            return false;
+        }
+    }
+
     protected int fetchInt(ICommandSender sender, String[] args, int index, int defaultValue) {
         int value;
         try {
