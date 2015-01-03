@@ -12,6 +12,7 @@ public class CommandRftDim extends DefaultCommand {
         registerCommand(new CmdListEffects());
         registerCommand(new CmdAddEffect());
         registerCommand(new CmdDelEffect());
+        registerCommand(new CmdSetPower());
     }
 
     @Override
