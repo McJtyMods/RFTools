@@ -2,28 +2,41 @@ package com.mcjty.rftools.blocks.relay;
 
 import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
-import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
-import com.mcjty.gui.widgets.ChoiceLabel;
-import com.mcjty.gui.widgets.ImageLabel;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Panel;
-import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
-    public static final int RELAY_WIDTH = 140;
+    public static final int RELAY_WIDTH = 300;
     public static final int RELAY_HEIGHT = 50;
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    private ChoiceLabel choicesOn;
-    private ChoiceLabel choicesOff;
+    private Button offButtonSub1000;
+    private Button offButtonSub100;
+    private Button offButtonSub1;
+    private TextField offEnergy;
+    private Button offButtonAdd1;
+    private Button offButtonAdd100;
+    private Button offButtonAdd1000;
+
+    private Button onButtonSub1000;
+    private Button onButtonSub100;
+    private Button onButtonSub1;
+    private TextField onEnergy;
+    private Button onButtonAdd1;
+    private Button onButtonAdd100;
+    private Button onButtonAdd1000;
+
 
     public GuiRelay(RelayTileEntity relayTileEntity, Container container) {
         super(relayTileEntity, container);
@@ -37,37 +50,89 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
         ImageLabel redstoneOff = new ImageLabel(mc, this).setImage(iconGuiElements, 16, 0);
         redstoneOff.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal off");
-        choicesOff = new ChoiceLabel(mc, this).addChoices("0", "100", "500", "1000", "5000", "10000", "20000").setDesiredWidth(100).
-                setTooltips("Amount of RF to output", "when redstone is off").setDesiredHeight(16).addChoiceEvent(new ChoiceEvent() {
+        offEnergy = new TextField(mc, this).setTooltips("Amount of RF to output", "when redstone is off").addTextEvent(new TextEvent() {
             @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeRfOutput();
+            public void textChanged(Widget parent, String newText) {
+                adjustEnergy(offEnergy, 0);
             }
         });
-        choicesOff.setChoice(Integer.toString(tileEntity.getRfOff()));
-        Panel panelOff = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOff).addChild(choicesOff);
+        offButtonSub1000 = createEnergyOffsetButton(offEnergy, "-1000", -1000);
+        offButtonSub100 = createEnergyOffsetButton(offEnergy, "-100", -100);
+        offButtonSub1 = createEnergyOffsetButton(offEnergy, "-1", -1);
+        offButtonAdd1 = createEnergyOffsetButton(offEnergy, "+1", 1);
+        offButtonAdd100 = createEnergyOffsetButton(offEnergy, "+100", 100);
+        offButtonAdd1000 = createEnergyOffsetButton(offEnergy, "+1000", 1000);
+        offEnergy.setText(Integer.toString(tileEntity.getRfOff()));
+
+        Panel panelOff = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOff).
+                addChild(offButtonSub1000).
+                addChild(offButtonSub100).
+                addChild(offButtonSub1).
+                addChild(offEnergy).
+                addChild(offButtonAdd1).
+                addChild(offButtonAdd100).
+                addChild(offButtonAdd1000);
 
         ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 32, 0);
         redstoneOn.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal on");
-        choicesOn = new ChoiceLabel(mc, this).addChoices("0", "100", "500", "1000", "5000", "10000", "20000").setDesiredWidth(100).
-            setTooltips("Amount of RF to output", "when redstone is on").setDesiredHeight(16).addChoiceEvent(new ChoiceEvent() {
+        onEnergy = new TextField(mc, this).setTooltips("Amount of RF to output", "when redstone is on").addTextEvent(new TextEvent() {
             @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeRfOutput();
+            public void textChanged(Widget parent, String newText) {
+                adjustEnergy(onEnergy, 0);
             }
         });
-        choicesOn.setChoice(Integer.toString(tileEntity.getRfOn()));
-        Panel panelOn = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOn).addChild(choicesOn);
+        onButtonSub1000 = createEnergyOffsetButton(onEnergy, "-1000", -1000);
+        onButtonSub100 = createEnergyOffsetButton(onEnergy, "-100", -100);
+        onButtonSub1 = createEnergyOffsetButton(onEnergy, "-1", -1);
+        onButtonAdd1 = createEnergyOffsetButton(onEnergy, "+1", 1);
+        onButtonAdd100 = createEnergyOffsetButton(onEnergy, "+100", 100);
+        onButtonAdd1000 = createEnergyOffsetButton(onEnergy, "+1000", 1000);
+        onEnergy.setText(Integer.toString(tileEntity.getRfOn()));
+
+        Panel panelOn = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOn).
+                addChild(onButtonSub1000).
+                addChild(onButtonSub100).
+                addChild(onButtonSub1).
+                addChild(onEnergy).
+                addChild(onButtonAdd1).
+                addChild(onButtonAdd100).
+                addChild(onButtonAdd1000);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(panelOff).addChild(panelOn);
         toplevel.setBounds(new Rectangle(k, l, RELAY_WIDTH, RELAY_HEIGHT));
         window = new Window(this, toplevel);
     }
 
+    private Button createEnergyOffsetButton(final TextField energyField, String label, final int amount) {
+        return new Button(mc, this).setText(label).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                adjustEnergy(energyField, amount);
+            }
+        });
+    }
+
+    private void adjustEnergy(TextField energyField, int amount) {
+        int energy;
+        try {
+            energy = Integer.parseInt(energyField.getText());
+        } catch (NumberFormatException e) {
+            energy = 0;
+        }
+        energy += amount;
+        if (energy < 0) {
+            energy = 0;
+        } else if (energy > 50000) {
+            energy = 50000;
+        }
+        energyField.setText(Integer.toString(energy));
+        changeRfOutput();
+    }
+
     private void changeRfOutput() {
         sendServerCommand(RelayTileEntity.CMD_SETTINGS,
-                new Argument("on", new Integer(choicesOn.getCurrentChoice())),
-                new Argument("off", new Integer(choicesOff.getCurrentChoice())));
+                new Argument("on", Integer.parseInt(onEnergy.getText())),
+                new Argument("off", Integer.parseInt(offEnergy.getText())));
     }
 
     @Override

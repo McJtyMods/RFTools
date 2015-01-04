@@ -26,6 +26,12 @@ public class TextField extends AbstractWidget<TextField> {
     public TextField setText(String text) {
         this.text = text;
         cursor = text.length();
+        if (startOffset >= cursor) {
+            startOffset = cursor-1;
+            if (startOffset < 0) {
+                startOffset = 0;
+            }
+        }
         return this;
     }
 
@@ -74,8 +80,8 @@ public class TextField extends AbstractWidget<TextField> {
                 // Do nothing
             } else {
                 text = text.substring(0, cursor) + typedChar + text.substring(cursor);
-                fireTextEvents(text);
                 cursor++;
+                fireTextEvents(text);
             }
             return true;
         }
