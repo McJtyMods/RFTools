@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
+import com.mcjty.rftools.dimension.world.types.FeatureType;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -14,6 +15,8 @@ import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+
+import java.util.Random;
 
 public class NormalTerrainGenerator implements BaseTerrainGenerator {
     private World world;
@@ -92,6 +95,19 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         int i1 = 0;
         double d4 = 8.5D;
 
+        boolean domaze = false;
+        boolean elevated = false;
+        if (provider.dimensionInformation.hasFeatureType(FeatureType.FEATURE_MAZE)) {
+            domaze = true;
+            long s2 = (((chunkX4 >> 2) + provider.seed + 13) * 314) + (chunkZ4 >> 2) * 17L;
+            Random rand = new Random(s2);
+            rand.nextFloat();   // Skip one.
+            elevated = ((chunkX4 >> 2) & 1) == 0;
+            if (rand.nextFloat() < .2f) {
+                elevated = !elevated;
+            }
+        }
+
         for (int j1 = 0; j1 < 5; ++j1) {
             for (int k1 = 0; k1 < 5; ++k1) {
                 float f = 0.0F;
@@ -106,9 +122,28 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                         float f3 = biomegenbase1.rootHeight;
                         float f4 = biomegenbase1.heightVariation;
 
-                        if (provider.worldType == WorldType.AMPLIFIED && f3 > 0.0F) {
-                            f3 = 1.0F + f3 * 2.0F;
-                            f4 = 1.0F + f4 * 4.0F;
+                        if (domaze) {
+                            if (f3 > 0.0F && elevated) {
+                                if (provider.worldType == WorldType.AMPLIFIED) {
+                                    f3 = 2.0F + f3 * 1.5f;
+                                    f4 = 1.0F + f4 * 3.0f;
+                                } else {
+                                    f3 = 2.0F + f3;
+                                    f4 = 0.5F + f4 * 1.5f;
+                                }
+                            } else {
+                                if (provider.worldType == WorldType.AMPLIFIED && f3 > 0.0f) {
+                                    f3 = 0.5F + f3 * 1.5F;
+                                    f4 = 0.5F + f4 * 2.0F;
+                                } else {
+                                    f4 = f4 * 0.5F;
+                                }
+                            }
+                        } else {
+                            if (provider.worldType == WorldType.AMPLIFIED && f3 > 0.0F) {
+                                f3 = 1.0F + f3 * 2.0F;
+                                f4 = 1.0F + f4 * 4.0F;
+                            }
                         }
 
                         float f5 = parabolicField[l1 + 2 + (i2 + 2) * 5] / (f3 + 2.0F);
@@ -188,7 +223,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
-        func_147423_a( chunkX * 4, 0, chunkZ * 4);
+        func_147423_a(chunkX * 4, 0, chunkZ * 4);
 
         byte waterLevel = 63;
         for (int x4 = 0; x4 < 4; ++x4) {

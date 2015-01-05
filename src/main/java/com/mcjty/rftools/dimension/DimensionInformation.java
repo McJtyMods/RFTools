@@ -533,7 +533,9 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_MOBS, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomExtraMobsChance) {
-                extraMobs.add(DimletRandomizer.getRandomMob(random));
+                int id = DimletRandomizer.getRandomMob(random);
+                actualRfCost += calculateCostFactor(id);
+                extraMobs.add(DimletMapping.idtoMob.get(id));
             }
         } else if (dimlets.size() == 1 && DimletMapping.idtoMob.get(dimlets.get(0).getLeft().getId()) == null) {
             // Just default.
@@ -556,8 +558,13 @@ public class DimensionInformation {
     private void calculateEffects(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_EFFECT, dimlets);
         if (dimlets.isEmpty()) {
-            while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
-                effectTypes.add(DimletRandomizer.getRandomEffect(random, false));
+            while (random.nextFloat() < DimletConfiguration.randomEffectChance) {
+                int id = DimletRandomizer.getRandomEffect(random, false);
+                EffectType effectType = DimletMapping.idToEffectType.get(id);
+                if (!effectTypes.contains(effectType)) {
+                    actualRfCost += calculateCostFactor(id);
+                    effectTypes.add(effectType);
+                }
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
@@ -654,13 +661,13 @@ public class DimensionInformation {
         }
     }
 
-    private float calculateCostFactor(int id) {
+    private int calculateCostFactor(int id) {
         DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(id);
         if (dimletEntry == null) {
             RFTools.logError("Something went wrong for id: "+id);
-            return 0.0f;
+            return 0;
         }
-        return dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor;
+        return (int) (dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor);
     }
 
     private void addToCost(int id) {
@@ -694,13 +701,15 @@ public class DimensionInformation {
     private void calculateFeatureType(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_FEATURE, dimlets);
         if (dimlets.isEmpty()) {
-            for (Map.Entry<Integer, FeatureType> entry : DimletMapping.idToFeatureType.entrySet()) {
-                if (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
-                    actualRfCost += calculateCostFactor(entry.getKey());
-                    featureTypes.add(entry.getValue());
+            while (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
+                int id = DimletRandomizer.getRandomFeature(random, false);
+                FeatureType featureType = DimletMapping.idToFeatureType.get(id);
+                if (!featureTypes.contains(featureType)) {
+                    actualRfCost += calculateCostFactor(id);
+                    featureTypes.add(featureType);
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
                     // @todo randomize those?
-                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_FEATURE, entry.getKey()), modifiers));
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_FEATURE, id), modifiers));
                 }
             }
         }

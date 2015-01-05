@@ -39,6 +39,7 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 
 public class GenericChunkProvider implements IChunkProvider {
     public Random rand;
+    public long seed;
 
     private World worldObj;
     public DimensionInformation dimensionInformation;
@@ -112,6 +113,7 @@ public class GenericChunkProvider implements IChunkProvider {
             worldType = WorldType.FLAT;
         }
 
+        this.seed = seed;
         this.rand = new Random((seed + 516) * 314);
 
         terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);

@@ -262,6 +262,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
         initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
         initFeatureItem(cfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
+        initFeatureItem(cfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
 
         int idEffectNone = initEffectItem(cfg, idsInConfig, "None", EffectType.EFFECT_NONE);
         initEffectItem(cfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);

@@ -3,6 +3,7 @@ package com.mcjty.rftools.items.dimlets;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.world.types.EffectType;
+import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.varia.WeightedRandomSelector;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,6 +30,7 @@ public class DimletRandomizer {
     public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomEffectDimlets;
+    public static WeightedRandomSelector<Integer,Integer> randomFeatureDimlets;
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
@@ -69,6 +71,8 @@ public class DimletRandomizer {
         setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
         randomEffectDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
+        setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
 
         for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
@@ -92,20 +96,33 @@ public class DimletRandomizer {
                 if (DimletMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
                     randomEffectDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
+            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_FEATURE) {
+                // Don't add the 'null' mob.
+                if (DimletMapping.idToFeatureType.get(entry.getKey()) != FeatureType.FEATURE_NONE) {
+                    randomFeatureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
             }
         }
     }
 
-    public static MobDescriptor getRandomMob(Random random) {
-        return DimletMapping.idtoMob.get(randomMobDimlets.select(random));
+    public static int getRandomMob(Random random) {
+        return randomMobDimlets.select(random);
     }
 
-    public static EffectType getRandomEffect(Random random, boolean allowRandom) {
+    public static int getRandomEffect(Random random, boolean allowRandom) {
         Integer id = randomEffectDimlets.select(random);
         while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
             id = randomEffectDimlets.select(random);
         }
-        return DimletMapping.idToEffectType.get(id);
+        return id;
+    }
+
+    public static int getRandomFeature(Random random, boolean allowRandom) {
+        Integer id = randomFeatureDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+            id = randomFeatureDimlets.select(random);
+        }
+        return id;
     }
 
     public static int getRandomFluidBlock(Random random) {

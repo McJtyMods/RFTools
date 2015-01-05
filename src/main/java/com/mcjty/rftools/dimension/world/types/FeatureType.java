@@ -8,5 +8,6 @@ public enum FeatureType {
     FEATURE_OREGEN,
     FEATURE_LAKES,
     FEATURE_TENDRILS,
-    FEATURE_CANYONS
+    FEATURE_CANYONS,
+    FEATURE_MAZE
 }
