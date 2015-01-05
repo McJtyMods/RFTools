@@ -11,7 +11,7 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
-import com.mcjty.rftools.blocks.shards.DimensionalShardBlock;
+import com.mcjty.rftools.blocks.shards.*;
 import com.mcjty.rftools.blocks.shield.*;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -66,6 +66,11 @@ public final class ModBlocks {
     public static DimensionBuilderBlock dimensionBuilderBlock;
     public static DimensionEditorBlock dimensionEditorBlock;
     public static DimensionalShardBlock dimensionalShardBlock;
+    public static DimensionalBlankBlock dimensionalBlankBlock;
+    public static DimensionalBlock dimensionalBlock;
+    public static DimensionalSmallBlocks dimensionalSmallBlocks;
+    public static DimensionalCrossBlock dimensionalCrossBlock;
+    public static DimensionalCross2Block dimensionalCross2Block;
     public static ActivityProbeBlock activityProbeBlock;
 
     public static void init() {
@@ -126,6 +131,16 @@ public final class ModBlocks {
 
         dimensionalShardBlock = new DimensionalShardBlock();
         GameRegistry.registerBlock(dimensionalShardBlock, "dimensionalShardBlock");
+        dimensionalBlankBlock = new DimensionalBlankBlock();
+        GameRegistry.registerBlock(dimensionalBlankBlock, "dimensionalBlankBlock");
+        dimensionalBlock = new DimensionalBlock();
+        GameRegistry.registerBlock(dimensionalBlock, "dimensionalBlock");
+        dimensionalSmallBlocks = new DimensionalSmallBlocks();
+        GameRegistry.registerBlock(dimensionalSmallBlocks, "dimensionalSmallBlocks");
+        dimensionalCrossBlock = new DimensionalCrossBlock();
+        GameRegistry.registerBlock(dimensionalCrossBlock, "dimensionalCrossBlock");
+        dimensionalCross2Block = new DimensionalCross2Block();
+        GameRegistry.registerBlock(dimensionalCross2Block, "dimensionalCross2Block");
 
         activityProbeBlock = new ActivityProbeBlock();
         GameRegistry.registerBlock(activityProbeBlock, "activityProbeBlock");

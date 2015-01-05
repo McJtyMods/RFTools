@@ -47,9 +47,15 @@ tile.dimensionEnscriberBlock.name=Dimension Enscriber
 tile.dimensionBuilderBlock.name=Dimension Builder
 tile.dimensionEditorBlock.name=Dimension Editor
 tile.dimensionChestBlock.name=Dimension Chest
-tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.machineInfuserBlock.name=Machine Infuser
 tile.activityProbeBlock.name=Activity Probe
+
+tile.dimensionalShardBlock.name=Dimensional Shard Ore
+tile.dimensionalBlankBlock.name=Dimensional Blank Block
+tile.dimensionalBlock.name=Dimensional Block
+tile.dimensionalSmallBlocks.name=Dimensional Small Blocks
+tile.dimensionalCrossBlock.name=Dimensional Cross Block
+tile.dimensionalCross2Block.name=Dimensional Cross 2 Block
 
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools Dimlets
