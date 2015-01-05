@@ -30,23 +30,17 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
             }
         }
 
-
-        for (int x4 = 0; x4 < 4; ++x4) {
-            for (int z4 = 0; z4 < 4; ++z4) {
-                for (int height = 0; height < 256; ++height) {
-                    for (int x = 0; x < 4; ++x) {
-                        int index = ((x + (x4 * 4)) << 12) | ((0 + (z4 * 4)) << 8) | height;
-                        short maxheight = 256;
-                        index -= maxheight;
-
-                        for (int z = 0; z < 4; ++z) {
-                            if (height < waterLevel) {
-                                aBlock[index += maxheight] = baseBlock;
-                            } else {
-                                aBlock[index += maxheight] = null;
-                            }
-                        }
-                    }
+        int index = 0;
+        for (int x = 0; x < 16; ++x) {
+            for (int z = 0; z < 16; ++z) {
+                int height = 0;
+                while (height < waterLevel) {
+                    aBlock[index++] = baseBlock;
+                    height++;
+                }
+                while (height < 256) {
+                    aBlock[index++] = null;
+                    height++;
                 }
             }
         }
