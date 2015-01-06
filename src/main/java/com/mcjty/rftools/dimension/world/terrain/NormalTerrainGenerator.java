@@ -4,7 +4,6 @@ import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
