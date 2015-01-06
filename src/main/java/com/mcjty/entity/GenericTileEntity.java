@@ -1,12 +1,10 @@
 package com.mcjty.entity;
 
-import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.ClientCommandHandler;
 import com.mcjty.rftools.network.CommandHandler;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

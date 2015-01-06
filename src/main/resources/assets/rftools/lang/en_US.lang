@@ -15,6 +15,7 @@ tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3
 tile.relayBlock.name=Power Relay
+tile.itemFilterBlock.name=Item Filter
 tile.storageScannerBlock.name=Storage Scanner
 tile.rfMonitorBlock.name=RF Monitor
 tile.machineFrame.name=Machine Frame

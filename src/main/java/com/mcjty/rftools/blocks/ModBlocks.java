@@ -6,6 +6,8 @@ import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
+import com.mcjty.rftools.blocks.itemfilter.ItemFilterBlock;
+import com.mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity;
 import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
@@ -31,6 +33,8 @@ public final class ModBlocks {
     public static StorageScannerBlock storageScannerBlock;
 
     public static RelayBlock relayBlock;
+
+    public static ItemFilterBlock itemFilterBlock;
 
     public static MatterTransmitterBlock matterTransmitterBlock;
     public static MatterReceiverBlock matterReceiverBlock;
@@ -86,6 +90,10 @@ public final class ModBlocks {
         relayBlock = new RelayBlock();
         GameRegistry.registerBlock(relayBlock, GenericItemBlock.class, "relayBlock");
         GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
+
+        itemFilterBlock = new ItemFilterBlock();
+        GameRegistry.registerBlock(itemFilterBlock, GenericItemBlock.class, "itemFilterBlock");
+        GameRegistry.registerTileEntity(ItemFilterTileEntity.class, "ItemFilterTileEntity");
 
         storageScannerBlock = new StorageScannerBlock();
         GameRegistry.registerBlock(storageScannerBlock, GenericItemBlock.class, "storageScannerBlock");

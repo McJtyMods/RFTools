@@ -5,8 +5,6 @@ import com.mcjty.container.GenericContainer;
 import com.mcjty.container.SlotDefinition;
 import com.mcjty.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 public class CrafterContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -37,16 +35,5 @@ public class CrafterContainer extends GenericContainer {
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
-    }
-
-    @Override
-    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
-        if (factory.isGhostSlot(index)) {
-            Slot slot = getSlot(index);
-            if (slot.getHasStack()) {
-                slot.putStack(null);
-            }
-        }
-        return super.slotClick(index, button, mode, player);
     }
 }

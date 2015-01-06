@@ -92,6 +92,7 @@ public class RFTools {
     public static final int GUI_DIMLET_SCRAMBLER = modGuiIndex++;
     public static final int GUI_MACHINE_INFUSER = modGuiIndex++;
     public static final int GUI_DIMENSION_EDITOR = modGuiIndex++;
+    public static final int GUI_ITEMFILTER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);
