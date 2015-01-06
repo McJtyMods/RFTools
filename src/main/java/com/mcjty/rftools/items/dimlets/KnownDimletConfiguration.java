@@ -140,7 +140,7 @@ public class KnownDimletConfiguration {
     /**
      * This initializes all dimlets based on all loaded mods. This should be called from postInit.
      */
-    public static void init(Configuration cfg) {
+    public static void init(Configuration cfg, Configuration mainCfg) {
         readBuiltinConfig();
 
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
@@ -200,31 +200,31 @@ public class KnownDimletConfiguration {
         initSpecialItem(cfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
         initSpecialItem(cfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
 
-        int idDefaultMobs = initMobItem(cfg, idsInConfig, null, "Default", 1, 1, 1, 1);
-        initMobItem(cfg, idsInConfig, EntityZombie.class, "Zombie", 100, 8, 8, 60);
-        initMobItem(cfg, idsInConfig, EntitySkeleton.class, "Skeleton", 100, 8, 8, 60);
-        initMobItem(cfg, idsInConfig, EntityEnderman.class, "Enderman", 20, 2, 4, 20);
-        initMobItem(cfg, idsInConfig, EntityBlaze.class, "Blaze", 20, 2, 4, 20);
-        initMobItem(cfg, idsInConfig, EntityCreeper.class, "Creeper", 100, 8, 8, 60);
-        initMobItem(cfg, idsInConfig, EntityCaveSpider.class, "Cave Spider", 100, 8, 8, 60);
-        initMobItem(cfg, idsInConfig, EntityGhast.class, "Ghast", 20, 2, 4, 20);
-        initMobItem(cfg, idsInConfig, EntityIronGolem.class, "Iron Golem", 20, 1, 2, 6);
-        initMobItem(cfg, idsInConfig, EntityMagmaCube.class, "Magma Cube", 50, 2, 4, 30);
-        initMobItem(cfg, idsInConfig, EntityPigZombie.class, "Zombie Pigman", 20, 2, 4, 10);
-        initMobItem(cfg, idsInConfig, EntitySlime.class, "Slime", 50, 2, 4, 30);
-        initMobItem(cfg, idsInConfig, EntitySnowman.class, "Snowman", 50, 2, 4, 30);
-        initMobItem(cfg, idsInConfig, EntitySpider.class, "Spider", 100, 8, 8, 60);
-        initMobItem(cfg, idsInConfig, EntityWitch.class, "Witch", 10, 1, 1, 20);
-        initMobItem(cfg, idsInConfig, EntityBat.class, "Bat", 10, 8, 8, 20);
-        initMobItem(cfg, idsInConfig, EntityChicken.class, "Chicken", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntityCow.class, "Cow", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntityHorse.class, "Horse", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntityMooshroom.class, "Mooshroom", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntityOcelot.class, "Ocelot", 5, 2, 3, 20);
-        initMobItem(cfg, idsInConfig, EntityPig.class, "Pig", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntitySheep.class, "Sheep", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
-        initMobItem(cfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
+        int idDefaultMobs = initMobItem(cfg, mainCfg, idsInConfig, null, "Default", 1, 1, 1, 1);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityZombie.class, "Zombie", 100, 8, 8, 60);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySkeleton.class, "Skeleton", 100, 8, 8, 60);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityEnderman.class, "Enderman", 20, 2, 4, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityBlaze.class, "Blaze", 20, 2, 4, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityCreeper.class, "Creeper", 100, 8, 8, 60);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityCaveSpider.class, "Cave Spider", 100, 8, 8, 60);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityGhast.class, "Ghast", 20, 2, 4, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityIronGolem.class, "Iron Golem", 20, 1, 2, 6);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityMagmaCube.class, "Magma Cube", 50, 2, 4, 30);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityPigZombie.class, "Zombie Pigman", 20, 2, 4, 10);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySlime.class, "Slime", 50, 2, 4, 30);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySnowman.class, "Snowman", 50, 2, 4, 30);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySpider.class, "Spider", 100, 8, 8, 60);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityWitch.class, "Witch", 10, 1, 1, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityBat.class, "Bat", 10, 8, 8, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityChicken.class, "Chicken", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityCow.class, "Cow", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityHorse.class, "Horse", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityMooshroom.class, "Mooshroom", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityOcelot.class, "Ocelot", 5, 2, 3, 20);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityPig.class, "Pig", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySheep.class, "Sheep", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
+        initMobItem(cfg, mainCfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
 
         int idNormalDay = initSkyItem(cfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
         initSkyItem(cfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
@@ -386,7 +386,7 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idDigit8);
         craftableDimlets.add(idDigit9);
 
-        DimletRandomizer.setupWeightedRandomList(cfg);
+        DimletRandomizer.setupWeightedRandomList(mainCfg);
         setupChestLoot();
     }
 
@@ -553,15 +553,15 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initMobItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name,
+    private static int initMobItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name,
                                    int chance, int mingroup, int maxgroup, int maxentity) {
         int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_MOBS.getName() + " " + name + " Dimlet");
-            chance = cfg.get(CATEGORY_MOBSPAWNS, name + ".chance", chance).getInt();
-            mingroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
-            maxgroup = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
-            maxentity = cfg.get(CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
+            chance = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".chance", chance).getInt();
+            mingroup = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
+            maxgroup = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
+            maxentity = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
             DimletMapping.idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
         }
         return id;
