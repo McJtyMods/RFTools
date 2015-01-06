@@ -56,6 +56,8 @@ tile.dimensionalBlock.name=Dimensional Block
 tile.dimensionalSmallBlocks.name=Dimensional Small Blocks
 tile.dimensionalCrossBlock.name=Dimensional Cross Block
 tile.dimensionalCross2Block.name=Dimensional Cross 2 Block
+tile.dimensionalPattern1Block.name=Dimensional Pattern 1 Block
+tile.dimensionalPattern2Block.name=Dimensional Pattern 2 Block
 
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools Dimlets

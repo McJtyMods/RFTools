@@ -24,6 +24,7 @@ public class DimensionalBlock extends Block {
         return 6;
     }
 
+    @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":dimblock_block");
     }

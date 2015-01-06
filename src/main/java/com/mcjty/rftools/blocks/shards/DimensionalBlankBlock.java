@@ -30,6 +30,7 @@ public class DimensionalBlankBlock extends Block {
         return 6;
     }
 
+    @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":dimblock_blank_stone");
     }

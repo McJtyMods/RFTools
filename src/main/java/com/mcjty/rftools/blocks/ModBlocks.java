@@ -65,12 +65,15 @@ public final class ModBlocks {
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
     public static DimensionEditorBlock dimensionEditorBlock;
+
     public static DimensionalShardBlock dimensionalShardBlock;
     public static DimensionalBlankBlock dimensionalBlankBlock;
     public static DimensionalBlock dimensionalBlock;
     public static DimensionalSmallBlocks dimensionalSmallBlocks;
     public static DimensionalCrossBlock dimensionalCrossBlock;
     public static DimensionalCross2Block dimensionalCross2Block;
+    public static DimensionalPattern1Block dimensionalPattern1Block;
+    public static DimensionalPattern2Block dimensionalPattern2Block;
     public static ActivityProbeBlock activityProbeBlock;
 
     public static void init() {
@@ -141,6 +144,10 @@ public final class ModBlocks {
         GameRegistry.registerBlock(dimensionalCrossBlock, "dimensionalCrossBlock");
         dimensionalCross2Block = new DimensionalCross2Block();
         GameRegistry.registerBlock(dimensionalCross2Block, "dimensionalCross2Block");
+        dimensionalPattern1Block = new DimensionalPattern1Block();
+        GameRegistry.registerBlock(dimensionalPattern1Block, "dimensionalPattern1Block");
+        dimensionalPattern2Block = new DimensionalPattern2Block();
+        GameRegistry.registerBlock(dimensionalPattern2Block, "dimensionalPattern2Block");
 
         activityProbeBlock = new ActivityProbeBlock();
         GameRegistry.registerBlock(activityProbeBlock, "activityProbeBlock");
