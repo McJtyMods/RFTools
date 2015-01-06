@@ -81,6 +81,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
             Integer input = args.get("input").getInteger();
             inputMode[index] = (byte) (int) input;
             markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
         }
         return false;
