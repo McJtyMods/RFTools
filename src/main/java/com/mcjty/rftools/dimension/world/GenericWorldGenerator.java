@@ -111,13 +111,25 @@ public class GenericWorldGenerator implements IWorldGenerator {
         boolean do_small_antenna = random.nextInt(4) == 0;
         boolean do_extra_feature = random.nextInt(4) == 0;
 
-        int color = random.nextInt(3);
+        Block cornerBlock;
+        switch (random.nextInt(3)) {
+            case 0: cornerBlock = ModBlocks.dimensionalCrossBlock; break;
+            case 1: cornerBlock = ModBlocks.dimensionalPattern1Block; break;
+            case 2: cornerBlock = ModBlocks.dimensionalPattern2Block; break;
+            default: cornerBlock = ModBlocks.dimensionalCross2Block;
+        }
+
+        Block buildingBlock = Blocks.stained_hardened_clay;
+        int color = random.nextInt(5);
         if (color == 0) {
             color = 3;
         } else if (color == 1) {
             color = 9;
-        } else {
+        } else if (color == 2) {
             color = 11;
+        } else {
+            color = 0;
+            buildingBlock = ModBlocks.dimensionalBlankBlock;
         }
 
         // Spawn the building
@@ -130,21 +142,21 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 boolean small_antenna = do_small_antenna && (x == midx+2 && z == midz+2);
                 world.setBlock(x, starty, z, Blocks.double_stone_slab, 0, 2);
                 if (corner) {
-                    world.setBlock(x, starty + 1, z, Blocks.quartz_block, 0, 2);
-                    world.setBlock(x, starty + 2, z, Blocks.quartz_block, 0, 2);
-                    world.setBlock(x, starty + 3, z, Blocks.quartz_block, 0, 2);
+                    world.setBlock(x, starty + 1, z, cornerBlock, 1, 2);
+                    world.setBlock(x, starty + 2, z, cornerBlock, 1, 2);
+                    world.setBlock(x, starty + 3, z, cornerBlock, 1, 2);
                 } else if (xside) {
-                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, color, 2);
+                    world.setBlock(x, starty+1, z, buildingBlock, color, 2);
                     if (z >= midz-1 && z <= midz+1) {
                         world.setBlock(x, starty+2, z, Blocks.glass_pane, 0, 2);
                     } else {
-                        world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, color, 2);
+                        world.setBlock(x, starty+2, z, buildingBlock, color, 2);
                     }
-                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, color, 2);
+                    world.setBlock(x, starty+3, z, buildingBlock, color, 2);
                 } else if (zside) {
-                    world.setBlock(x, starty+1, z, Blocks.stained_hardened_clay, color, 2);
-                    world.setBlock(x, starty+2, z, Blocks.stained_hardened_clay, color, 2);
-                    world.setBlock(x, starty+3, z, Blocks.stained_hardened_clay, color, 2);
+                    world.setBlock(x, starty+1, z, buildingBlock, color, 2);
+                    world.setBlock(x, starty+2, z, buildingBlock, color, 2);
+                    world.setBlock(x, starty+3, z, buildingBlock, color, 2);
                 } else {
                     world.setBlockToAir(x, starty+1, z);
                     world.setBlockToAir(x, starty+2, z);
@@ -182,10 +194,10 @@ public class GenericWorldGenerator implements IWorldGenerator {
             world.setBlock(midx+4, starty+1, midz-3, Blocks.iron_bars, 0, 2);
             world.setBlock(midx+4, starty+2, midz-3, Blocks.iron_bars, 0, 2);
             if (!WorldGenerationTools.isSolid(world, midx+5, starty, midz-3)) {
-                world.setBlock(midx+5, starty, midz-3, Blocks.stained_hardened_clay, color, 2);
+                world.setBlock(midx+5, starty, midz-3, buildingBlock, color, 2);
             }
-            world.setBlock(midx+5, starty+1, midz-3, Blocks.stained_hardened_clay, color, 2);
-            world.setBlock(midx+5, starty+2, midz-3, Blocks.stained_hardened_clay, color, 2);
+            world.setBlock(midx+5, starty+1, midz-3, buildingBlock, color, 2);
+            world.setBlock(midx+5, starty+2, midz-3, buildingBlock, color, 2);
             WorldGenerationTools.fillEmptyWithStone(world, midx + 4, starty - 1, midz - 3);
             WorldGenerationTools.fillEmptyWithStone(world, midx+5, starty-1, midz-3);
         }
