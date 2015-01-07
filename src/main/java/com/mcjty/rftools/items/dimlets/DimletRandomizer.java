@@ -18,6 +18,7 @@ public class DimletRandomizer {
     public static final int RARITY_3 = 3;
     public static final int RARITY_4 = 4;
     public static final int RARITY_5 = 5;
+    public static final int RARITY_6 = 6;
 
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
     // Used for randomly generating dimlets.
@@ -54,25 +55,26 @@ public class DimletRandomizer {
     }
 
     static void setupWeightedRandomList(Configuration cfg) {
-        float rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 250.0f).getDouble();
-        float rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 150.0f).getDouble();
-        float rarity2 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level2", 90.0f).getDouble();
-        float rarity3 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level3", 40.0f).getDouble();
-        float rarity4 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level4", 20.0f).getDouble();
-        float rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 1.0f).getDouble();
+        float rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 500.0f).getDouble();
+        float rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 250.0f).getDouble();
+        float rarity2 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level2", 150.0f).getDouble();
+        float rarity3 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level3", 90.0f).getDouble();
+        float rarity4 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level4", 40.0f).getDouble();
+        float rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 20.0f).getDouble();
+        float rarity6 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level6", 1.0f).getDouble();
 
         randomDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomEffectDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
-        setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5);
+        setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
 
         for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
@@ -137,13 +139,14 @@ public class DimletRandomizer {
         return id;
     }
 
-    private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5) {
+    private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5, float rarity6) {
         randomDimlets.addRarity(RARITY_0, rarity0);
         randomDimlets.addRarity(RARITY_1, rarity1);
         randomDimlets.addRarity(RARITY_2, rarity2);
         randomDimlets.addRarity(RARITY_3, rarity3);
         randomDimlets.addRarity(RARITY_4, rarity4);
         randomDimlets.addRarity(RARITY_5, rarity5);
+        randomDimlets.addRarity(RARITY_6, rarity6);
     }
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
