@@ -35,7 +35,8 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class KnownDimletConfiguration {
-    public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";
+    public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";              // This is part of dimlets.cfg
+    public static final String CATEGORY_DIMLETSETTINGS = "dimletsettings";
     public static final String CATEGORY_RARITY = "rarity";
     public static final String CATEGORY_TYPERARIRTY = "typerarity";
     public static final String CATEGORY_TYPERFCREATECOST = "typerfcreatecost";
@@ -74,7 +75,7 @@ public class KnownDimletConfiguration {
         DimletRandomizer.dimletIds.add(id);
     }
 
-    private static int registerDimlet(Configuration cfg, Map<DimletKey,Integer> idsInConfig, DimletKey key) {
+    private static int registerDimlet(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, DimletKey key) {
         String k = "dimlet." + key.getType().getName() + "." + key.getName();
         int id;
         if (dimletBlackList.contains(key)) {
@@ -96,11 +97,11 @@ public class KnownDimletConfiguration {
             return -1;
         }
 
-        int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, DimletCosts.dimletBuiltinRfCreate, DimletCosts.typeRfCreateCost);
-        int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, DimletCosts.typeRfMaintainCost);
-        int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
-        int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
-        boolean randomNotAllowed = checkFlagConfig(cfg, "expensive.", key, dimletRandomNotAllowed);
+        int rfCreateCost = checkCostConfig(mainCfg, "rfcreate.", key, DimletCosts.dimletBuiltinRfCreate, DimletCosts.typeRfCreateCost);
+        int rfMaintainCost = checkCostConfig(mainCfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, DimletCosts.typeRfMaintainCost);
+        int tickCost = checkCostConfig(mainCfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
+        int rarity = checkCostConfig(mainCfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
+        boolean randomNotAllowed = checkFlagConfig(mainCfg, "expensive.", key, dimletRandomNotAllowed);
 
         DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, randomNotAllowed);
         registerDimletEntry(id, entry);
@@ -112,8 +113,8 @@ public class KnownDimletConfiguration {
         String k;
         k = prefix + key.getType().getName() + "." + key.getName();
         boolean defaultValue = builtinDefaults.contains(key);
-        if (cfg.getCategory(CATEGORY_KNOWNDIMLETS).containsKey(k)) {
-            return cfg.get(CATEGORY_KNOWNDIMLETS, k, defaultValue).getBoolean();
+        if (cfg.getCategory(CATEGORY_DIMLETSETTINGS).containsKey(k)) {
+            return cfg.get(CATEGORY_DIMLETSETTINGS, k, defaultValue).getBoolean();
         } else {
             return defaultValue;
         }
@@ -127,12 +128,12 @@ public class KnownDimletConfiguration {
             defaultValue = typeDefaults.get(key.getType());
         }
         int cost;
-        if (defaultValue.equals(typeDefaults.get(key.getType())) && !cfg.getCategory(CATEGORY_KNOWNDIMLETS).containsKey(k)) {
+        if (defaultValue.equals(typeDefaults.get(key.getType())) && !cfg.getCategory(CATEGORY_DIMLETSETTINGS).containsKey(k)) {
             // Still using default. We don't want to force a config value so we first check to see
             // if it is there.
             cost = defaultValue;
         } else {
-            cost = cfg.get(CATEGORY_KNOWNDIMLETS, k, defaultValue).getInt();
+            cost = cfg.get(CATEGORY_DIMLETSETTINGS, k, defaultValue).getInt();
         }
         return cost;
     }
@@ -145,60 +146,60 @@ public class KnownDimletConfiguration {
 
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
 
-        initBiomeItems(cfg, idsInConfig);
+        initBiomeItems(cfg, mainCfg, idsInConfig);
 
-        int idDigit0 = initDigitItem(cfg, idsInConfig, 0);
-        int idDigit1 = initDigitItem(cfg, idsInConfig, 1);
-        int idDigit2 = initDigitItem(cfg, idsInConfig, 2);
-        int idDigit3 = initDigitItem(cfg, idsInConfig, 3);
-        int idDigit4 = initDigitItem(cfg, idsInConfig, 4);
-        int idDigit5 = initDigitItem(cfg, idsInConfig, 5);
-        int idDigit6 = initDigitItem(cfg, idsInConfig, 6);
-        int idDigit7 = initDigitItem(cfg, idsInConfig, 7);
-        int idDigit8 = initDigitItem(cfg, idsInConfig, 8);
-        int idDigit9 = initDigitItem(cfg, idsInConfig, 9);
+        int idDigit0 = initDigitItem(cfg, mainCfg, idsInConfig, 0);
+        int idDigit1 = initDigitItem(cfg, mainCfg, idsInConfig, 1);
+        int idDigit2 = initDigitItem(cfg, mainCfg, idsInConfig, 2);
+        int idDigit3 = initDigitItem(cfg, mainCfg, idsInConfig, 3);
+        int idDigit4 = initDigitItem(cfg, mainCfg, idsInConfig, 4);
+        int idDigit5 = initDigitItem(cfg, mainCfg, idsInConfig, 5);
+        int idDigit6 = initDigitItem(cfg, mainCfg, idsInConfig, 6);
+        int idDigit7 = initDigitItem(cfg, mainCfg, idsInConfig, 7);
+        int idDigit8 = initDigitItem(cfg, mainCfg, idsInConfig, 8);
+        int idDigit9 = initDigitItem(cfg, mainCfg, idsInConfig, 9);
 
-        int idMaterialNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
+        int idMaterialNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
         idToDisplayName.put(idMaterialNone, DimletType.DIMLET_MATERIAL.getName() + " None Dimlet");
         DimletMapping.idToBlock.put(idMaterialNone, null);
 
-        initMaterialItem(cfg, idsInConfig, Blocks.diamond_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.diamond_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.emerald_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.emerald_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.quartz_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.quartz_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.gold_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.gold_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.iron_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.iron_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.coal_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.lapis_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.lapis_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.coal_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.redstone_block);
-        initMaterialItem(cfg, idsInConfig, Blocks.redstone_ore);
-        initMaterialItem(cfg, idsInConfig, Blocks.dirt);
-        initMaterialItem(cfg, idsInConfig, Blocks.sandstone);
-        initMaterialItem(cfg, idsInConfig, Blocks.end_stone);
-        initMaterialItem(cfg, idsInConfig, Blocks.netherrack);
-        initMaterialItem(cfg, idsInConfig, Blocks.cobblestone);
-        initMaterialItem(cfg, idsInConfig, Blocks.obsidian);
-        initMaterialItem(cfg, idsInConfig, Blocks.soul_sand);
-        initMaterialItem(cfg, idsInConfig, Blocks.glass);
-        initMaterialItem(cfg, idsInConfig, Blocks.stained_glass);
-        initMaterialItem(cfg, idsInConfig, ModBlocks.dimensionalShardBlock);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.diamond_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.diamond_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.emerald_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.emerald_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.quartz_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.quartz_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.gold_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.gold_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.iron_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.iron_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.coal_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.lapis_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.lapis_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.coal_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.redstone_block);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.redstone_ore);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.dirt);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.sandstone);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.end_stone);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.netherrack);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.cobblestone);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.obsidian);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.soul_sand);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.glass);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.stained_glass);
+        initMaterialItem(cfg, mainCfg, idsInConfig, ModBlocks.dimensionalShardBlock);
 
-        initFoliageItem(cfg, idsInConfig);
+        initFoliageItem(cfg, mainCfg, idsInConfig);
 
-        int idLiquidNone = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
+        int idLiquidNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
         DimletMapping.idToFluid.put(idLiquidNone, null);
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
 
-        initLiquidItems(cfg, idsInConfig);
+        initLiquidItems(cfg, mainCfg, idsInConfig);
 
-        initSpecialItem(cfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
-        initSpecialItem(cfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
+        initSpecialItem(cfg, mainCfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
+        initSpecialItem(cfg, mainCfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
 
         int idDefaultMobs = initMobItem(cfg, mainCfg, idsInConfig, null, "Default", 1, 1, 1, 1);
         initMobItem(cfg, mainCfg, idsInConfig, EntityZombie.class, "Zombie", 100, 8, 8, 60);
@@ -226,109 +227,109 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, mainCfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
         initMobItem(cfg, mainCfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
 
-        int idNormalDay = initSkyItem(cfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
-        initSkyItem(cfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
-        initSkyItem(cfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).skyColorFactor(0.6f, 0.6f, 0.6f).build());
-        int idNormalNight = initSkyItem(cfg, idsInConfig, "Normal Night", new SkyDescriptor.Builder().starBrightnessFactor(1.0f).build());
-        initSkyItem(cfg, idsInConfig, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build());
-        initSkyItem(cfg, idsInConfig, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build());
-        initSkyItem(cfg, idsInConfig, "Red Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 0.2f).build());
-        initSkyItem(cfg, idsInConfig, "Green Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, idsInConfig, "Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 0.2f, 1.0f).build());
-        initSkyItem(cfg, idsInConfig, "Yellow Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, idsInConfig, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build());
-        initSkyItem(cfg, idsInConfig, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build());
+        int idNormalDay = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).skyColorFactor(0.6f, 0.6f, 0.6f).build());
+        int idNormalNight = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Night", new SkyDescriptor.Builder().starBrightnessFactor(1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Red Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Green Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 0.2f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 1.0f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build());
 
-        int idStructureNone = initStructureItem(cfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
-        initStructureItem(cfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
-        initStructureItem(cfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
-        initStructureItem(cfg, idsInConfig, "Dungeon", StructureType.STRUCTURE_DUNGEON);
-        initStructureItem(cfg, idsInConfig, "Fortress", StructureType.STRUCTURE_FORTRESS);
-        initStructureItem(cfg, idsInConfig, "Mineshaft", StructureType.STRUCTURE_MINESHAFT);
-        initStructureItem(cfg, idsInConfig, "Scattered", StructureType.STRUCTURE_SCATTERED);
+        int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Dungeon", StructureType.STRUCTURE_DUNGEON);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Fortress", StructureType.STRUCTURE_FORTRESS);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Mineshaft", StructureType.STRUCTURE_MINESHAFT);
+        initStructureItem(cfg, mainCfg, idsInConfig, "Scattered", StructureType.STRUCTURE_SCATTERED);
 
-        int idTerrainVoid = initTerrainItem(cfg, idsInConfig, "Void", TerrainType.TERRAIN_VOID);
-        int idTerrainFlat = initTerrainItem(cfg, idsInConfig, "Flat", TerrainType.TERRAIN_FLAT);
-        initTerrainItem(cfg, idsInConfig, "Amplified", TerrainType.TERRAIN_AMPLIFIED);
-        initTerrainItem(cfg, idsInConfig, "Normal", TerrainType.TERRAIN_NORMAL);
-        initTerrainItem(cfg, idsInConfig, "Cave World", TerrainType.TERRAIN_CAVES);
-        initTerrainItem(cfg, idsInConfig, "Island", TerrainType.TERRAIN_ISLAND);
+        int idTerrainVoid = initTerrainItem(cfg, mainCfg, idsInConfig, "Void", TerrainType.TERRAIN_VOID);
+        int idTerrainFlat = initTerrainItem(cfg, mainCfg, idsInConfig, "Flat", TerrainType.TERRAIN_FLAT);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Amplified", TerrainType.TERRAIN_AMPLIFIED);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Normal", TerrainType.TERRAIN_NORMAL);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Cave World", TerrainType.TERRAIN_CAVES);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Island", TerrainType.TERRAIN_ISLAND);
 
-        int idFeatureNone = initFeatureItem(cfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
-        initFeatureItem(cfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
-        initFeatureItem(cfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
-        initFeatureItem(cfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
-        initFeatureItem(cfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
-        initFeatureItem(cfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
-        initFeatureItem(cfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
-        initFeatureItem(cfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
-        initFeatureItem(cfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
+        int idFeatureNone = initFeatureItem(cfg, mainCfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
 
-        int idEffectNone = initEffectItem(cfg, idsInConfig, "None", EffectType.EFFECT_NONE);
-        initEffectItem(cfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
-        initEffectItem(cfg, idsInConfig, "Poison II", EffectType.EFFECT_POISON2);
-        initEffectItem(cfg, idsInConfig, "Poison III", EffectType.EFFECT_POISON3);
-//        initEffectItem(cfg, idsInConfig, "No Gravity", EffectType.EFFECT_NOGRAVITY);
-        initEffectItem(cfg, idsInConfig, "Regeneration", EffectType.EFFECT_REGENERATION);
-        initEffectItem(cfg, idsInConfig, "Regeneration II", EffectType.EFFECT_REGENERATION2);
-        initEffectItem(cfg, idsInConfig, "Regeneration III", EffectType.EFFECT_REGENERATION3);
-        initEffectItem(cfg, idsInConfig, "Slowness", EffectType.EFFECT_MOVESLOWDOWN);
-        initEffectItem(cfg, idsInConfig, "Slowness II", EffectType.EFFECT_MOVESLOWDOWN2);
-        initEffectItem(cfg, idsInConfig, "Slowness III", EffectType.EFFECT_MOVESLOWDOWN3);
-        initEffectItem(cfg, idsInConfig, "Slowness IV", EffectType.EFFECT_MOVESLOWDOWN4);
-        initEffectItem(cfg, idsInConfig, "Speed", EffectType.EFFECT_MOVESPEED);
-        initEffectItem(cfg, idsInConfig, "Speed II", EffectType.EFFECT_MOVESPEED2);
-        initEffectItem(cfg, idsInConfig, "Speed III", EffectType.EFFECT_MOVESPEED3);
-        initEffectItem(cfg, idsInConfig, "Mining Fatigue", EffectType.EFFECT_DIGSLOWDOWN);
-        initEffectItem(cfg, idsInConfig, "Mining Fatigue II", EffectType.EFFECT_DIGSLOWDOWN2);
-        initEffectItem(cfg, idsInConfig, "Mining Fatigue III", EffectType.EFFECT_DIGSLOWDOWN3);
-        initEffectItem(cfg, idsInConfig, "Mining Fatigue IV", EffectType.EFFECT_DIGSLOWDOWN4);
-        initEffectItem(cfg, idsInConfig, "Haste", EffectType.EFFECT_DIGSPEED);
-        initEffectItem(cfg, idsInConfig, "Haste II", EffectType.EFFECT_DIGSPEED2);
-        initEffectItem(cfg, idsInConfig, "Haste III", EffectType.EFFECT_DIGSPEED3);
-        initEffectItem(cfg, idsInConfig, "Damage Boost", EffectType.EFFECT_DAMAGEBOOST);
-        initEffectItem(cfg, idsInConfig, "Damage Boost II", EffectType.EFFECT_DAMAGEBOOST2);
-        initEffectItem(cfg, idsInConfig, "Damage Boost III", EffectType.EFFECT_DAMAGEBOOST3);
-        initEffectItem(cfg, idsInConfig, "Instant Health", EffectType.EFFECT_INSTANTHEALTH);
-        initEffectItem(cfg, idsInConfig, "Harm", EffectType.EFFECT_HARM);
-        initEffectItem(cfg, idsInConfig, "Jump", EffectType.EFFECT_JUMP);
-        initEffectItem(cfg, idsInConfig, "Jump II", EffectType.EFFECT_JUMP2);
-        initEffectItem(cfg, idsInConfig, "Jump III", EffectType.EFFECT_JUMP3);
-        initEffectItem(cfg, idsInConfig, "Confusion", EffectType.EFFECT_CONFUSION);
-        initEffectItem(cfg, idsInConfig, "Resistance", EffectType.EFFECT_RESISTANCE);
-        initEffectItem(cfg, idsInConfig, "Resistance II", EffectType.EFFECT_RESISTANCE2);
-        initEffectItem(cfg, idsInConfig, "Resistance III", EffectType.EFFECT_RESISTANCE3);
-        initEffectItem(cfg, idsInConfig, "Fire Resistance", EffectType.EFFECT_FIRERESISTANCE);
-        initEffectItem(cfg, idsInConfig, "Water Breathing", EffectType.EFFECT_WATERBREATHING);
-        initEffectItem(cfg, idsInConfig, "Invisibility", EffectType.EFFECT_INVISIBILITY);
-        initEffectItem(cfg, idsInConfig, "Blindness", EffectType.EFFECT_BLINDNESS);
-        initEffectItem(cfg, idsInConfig, "Nightvision", EffectType.EFFECT_NIGHTVISION);
-        initEffectItem(cfg, idsInConfig, "Hunger", EffectType.EFFECT_HUNGER);
-        initEffectItem(cfg, idsInConfig, "Hunger II", EffectType.EFFECT_HUNGER2);
-        initEffectItem(cfg, idsInConfig, "Hunger III", EffectType.EFFECT_HUNGER3);
-        initEffectItem(cfg, idsInConfig, "Weakness", EffectType.EFFECT_WEAKNESS);
-        initEffectItem(cfg, idsInConfig, "Weakness II", EffectType.EFFECT_WEAKNESS2);
-        initEffectItem(cfg, idsInConfig, "Weakness III", EffectType.EFFECT_WEAKNESS3);
-        initEffectItem(cfg, idsInConfig, "Wither", EffectType.EFFECT_WITHER);
-        initEffectItem(cfg, idsInConfig, "Wither II", EffectType.EFFECT_WITHER2);
-        initEffectItem(cfg, idsInConfig, "Wither III", EffectType.EFFECT_WITHER3);
-        initEffectItem(cfg, idsInConfig, "Health Boost", EffectType.EFFECT_HEALTHBOOST);
-        initEffectItem(cfg, idsInConfig, "Health Boost II", EffectType.EFFECT_HEALTHBOOST2);
-        initEffectItem(cfg, idsInConfig, "Health Boost III", EffectType.EFFECT_HEALTHBOOST3);
-        initEffectItem(cfg, idsInConfig, "Absorption", EffectType.EFFECT_ABSORPTION);
-        initEffectItem(cfg, idsInConfig, "Absorption II", EffectType.EFFECT_ABSORPTION2);
-        initEffectItem(cfg, idsInConfig, "Absorption III", EffectType.EFFECT_ABSORPTION3);
-        initEffectItem(cfg, idsInConfig, "Saturation", EffectType.EFFECT_SATURATION);
-        initEffectItem(cfg, idsInConfig, "Saturation II", EffectType.EFFECT_SATURATION2);
-        initEffectItem(cfg, idsInConfig, "Saturation III", EffectType.EFFECT_SATURATION3);
+        int idEffectNone = initEffectItem(cfg, mainCfg, idsInConfig, "None", EffectType.EFFECT_NONE);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Poison II", EffectType.EFFECT_POISON2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Poison III", EffectType.EFFECT_POISON3);
+//        initEffectItem(cfg, mainCfg, idsInConfig, "No Gravity", EffectType.EFFECT_NOGRAVITY);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Regeneration", EffectType.EFFECT_REGENERATION);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Regeneration II", EffectType.EFFECT_REGENERATION2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Regeneration III", EffectType.EFFECT_REGENERATION3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Slowness", EffectType.EFFECT_MOVESLOWDOWN);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Slowness II", EffectType.EFFECT_MOVESLOWDOWN2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Slowness III", EffectType.EFFECT_MOVESLOWDOWN3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Slowness IV", EffectType.EFFECT_MOVESLOWDOWN4);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Speed", EffectType.EFFECT_MOVESPEED);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Speed II", EffectType.EFFECT_MOVESPEED2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Speed III", EffectType.EFFECT_MOVESPEED3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Mining Fatigue", EffectType.EFFECT_DIGSLOWDOWN);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Mining Fatigue II", EffectType.EFFECT_DIGSLOWDOWN2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Mining Fatigue III", EffectType.EFFECT_DIGSLOWDOWN3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Mining Fatigue IV", EffectType.EFFECT_DIGSLOWDOWN4);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Haste", EffectType.EFFECT_DIGSPEED);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Haste II", EffectType.EFFECT_DIGSPEED2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Haste III", EffectType.EFFECT_DIGSPEED3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Damage Boost", EffectType.EFFECT_DAMAGEBOOST);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Damage Boost II", EffectType.EFFECT_DAMAGEBOOST2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Damage Boost III", EffectType.EFFECT_DAMAGEBOOST3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Instant Health", EffectType.EFFECT_INSTANTHEALTH);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Harm", EffectType.EFFECT_HARM);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Jump", EffectType.EFFECT_JUMP);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Jump II", EffectType.EFFECT_JUMP2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Jump III", EffectType.EFFECT_JUMP3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Confusion", EffectType.EFFECT_CONFUSION);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Resistance", EffectType.EFFECT_RESISTANCE);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Resistance II", EffectType.EFFECT_RESISTANCE2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Resistance III", EffectType.EFFECT_RESISTANCE3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Fire Resistance", EffectType.EFFECT_FIRERESISTANCE);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Water Breathing", EffectType.EFFECT_WATERBREATHING);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Invisibility", EffectType.EFFECT_INVISIBILITY);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Blindness", EffectType.EFFECT_BLINDNESS);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Nightvision", EffectType.EFFECT_NIGHTVISION);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Hunger", EffectType.EFFECT_HUNGER);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Hunger II", EffectType.EFFECT_HUNGER2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Hunger III", EffectType.EFFECT_HUNGER3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Weakness", EffectType.EFFECT_WEAKNESS);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Weakness II", EffectType.EFFECT_WEAKNESS2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Weakness III", EffectType.EFFECT_WEAKNESS3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Wither", EffectType.EFFECT_WITHER);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Wither II", EffectType.EFFECT_WITHER2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Wither III", EffectType.EFFECT_WITHER3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Health Boost", EffectType.EFFECT_HEALTHBOOST);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Health Boost II", EffectType.EFFECT_HEALTHBOOST2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Health Boost III", EffectType.EFFECT_HEALTHBOOST3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Absorption", EffectType.EFFECT_ABSORPTION);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Absorption II", EffectType.EFFECT_ABSORPTION2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Absorption III", EffectType.EFFECT_ABSORPTION3);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Saturation", EffectType.EFFECT_SATURATION);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Saturation II", EffectType.EFFECT_SATURATION2);
+        initEffectItem(cfg, mainCfg, idsInConfig, "Saturation III", EffectType.EFFECT_SATURATION3);
 
-        int idNormalTime = initTimeItem(cfg, idsInConfig, "Normal", null, null);
-        initTimeItem(cfg, idsInConfig, "Noon", 0.0f, null);
-        initTimeItem(cfg, idsInConfig, "Midnight", 0.5f, null);
-        initTimeItem(cfg, idsInConfig, "Morning", 0.2f, null);
-        initTimeItem(cfg, idsInConfig, "Evening", 0.75f, null);
-        initTimeItem(cfg, idsInConfig, "Fast", null, 2.0f);
-        initTimeItem(cfg, idsInConfig, "Slow", null, 0.5f);
+        int idNormalTime = initTimeItem(cfg, mainCfg, idsInConfig, "Normal", null, null);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Noon", 0.0f, null);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Midnight", 0.5f, null);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Morning", 0.2f, null);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Evening", 0.75f, null);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Fast", null, 2.0f);
+        initTimeItem(cfg, mainCfg, idsInConfig, "Slow", null, 0.5f);
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
@@ -417,8 +418,8 @@ public class KnownDimletConfiguration {
         return idsInConfig;
     }
 
-    private static int initDigitItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, int digit) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
+    private static int initDigitItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, int digit) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
             DimletMapping.idToDigit.put(id, "" + digit);
@@ -426,8 +427,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static void initMaterialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, Block block) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
+    private static void initMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, Block block) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
         if (id != -1) {
             ItemStack stack = new ItemStack(block);
             idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
@@ -509,12 +510,12 @@ public class KnownDimletConfiguration {
         chest.addItem(new WeightedRandomChestContent(ModItems.unknownDimlet, 0, 1, 3, 50));
     }
 
-    private static void initBiomeItems(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
+    private static void initBiomeItems(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig) {
         BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
                 String name = biome.biomeName;
-                int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
+                int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
                 if (id != -1) {
                     DimletMapping.idToBiome.put(id, biome);
                     idToDisplayName.put(id, DimletType.DIMLET_BIOME.getName() + " " + name + " Dimlet");
@@ -523,18 +524,18 @@ public class KnownDimletConfiguration {
         }
     }
 
-    private static void initFoliageItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_FOLIAGE, "Oak"));
+    private static void initFoliageItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_FOLIAGE, "Oak"));
         if (id != -1) {
             idToDisplayName.put(id, "Foliage Oak Dimlet");
         }
     }
 
-    private static void initLiquidItems(Configuration cfg, Map<DimletKey,Integer> idsInConfig) {
+    private static void initLiquidItems(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig) {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
             if (me.getValue().canBePlacedInWorld()) {
-                int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
+                int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                 if (id != -1) {
                     String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
                     DimletMapping.idToFluid.put(id, me.getValue().getBlock());
@@ -544,8 +545,8 @@ public class KnownDimletConfiguration {
         }
     }
 
-    private static int initSpecialItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SpecialType specialType) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SPECIAL, name));
+    private static int initSpecialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, SpecialType specialType) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_SPECIAL, name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_SPECIAL.getName() + " " + name + " Dimlet");
             DimletMapping.idToSpecialType.put(id, specialType);
@@ -555,7 +556,7 @@ public class KnownDimletConfiguration {
 
     private static int initMobItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, Class <? extends EntityLiving> entity, String name,
                                    int chance, int mingroup, int maxgroup, int maxentity) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MOBS, name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_MOBS.getName() + " " + name + " Dimlet");
             chance = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".chance", chance).getInt();
@@ -567,8 +568,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initSkyItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, SkyDescriptor skyDescriptor) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
+    private static int initSkyItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, SkyDescriptor skyDescriptor) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
         if (id != -1) {
             DimletMapping.idToSkyDescriptor.put(id, skyDescriptor);
             idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
@@ -576,8 +577,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initStructureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, StructureType structureType) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
+    private static int initStructureItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, StructureType structureType) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
         if (id != -1) {
             DimletMapping.idToStructureType.put(id, structureType);
             idToDisplayName.put(id, DimletType.DIMLET_STRUCTURE.getName() + " " + name + " Dimlet");
@@ -585,8 +586,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initTerrainItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, TerrainType terrainType) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TERRAIN, name));
+    private static int initTerrainItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, TerrainType terrainType) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_TERRAIN, name));
         if (id != -1) {
             DimletMapping.idToTerrainType.put(id, terrainType);
             idToDisplayName.put(id, DimletType.DIMLET_TERRAIN.getName() + " " + name + " Dimlet");
@@ -594,8 +595,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initEffectItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, EffectType effectType) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_EFFECT, "" + name));
+    private static int initEffectItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, EffectType effectType) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_EFFECT, "" + name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_EFFECT.getName() + " " + name + " Dimlet");
             DimletMapping.idToEffectType.put(id, effectType);
@@ -603,8 +604,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initFeatureItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, FeatureType featureType) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_FEATURE, name));
+    private static int initFeatureItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, FeatureType featureType) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_FEATURE, name));
         if (id != -1) {
             DimletMapping.idToFeatureType.put(id, featureType);
             idToDisplayName.put(id, DimletType.DIMLET_FEATURE.getName() + " " + name + " Dimlet");
@@ -612,8 +613,8 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initTimeItem(Configuration cfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle, Float speed) {
-        int id = registerDimlet(cfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
+    private static int initTimeItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle, Float speed) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
         if (id != -1) {
             DimletMapping.idToCelestialAngle.put(id, angle);
             DimletMapping.idToSpeed.put(id, speed);
