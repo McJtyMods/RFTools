@@ -422,6 +422,19 @@ a specific type of item. Each of the six storage slots corresponds
 with one of the six sides of the block from which an item conduit
 can extract items.
 {-------------------------------------------------------------}
+Every side of the block can be configured in five different modes:
+
+    Disabled: no input or output from this side
+    Input: items can come from this side and they will go into
+           any matching slot (for which the configured block
+           matches)
+    Input Exact: items can come from this side and they will
+           only go into the slot corresponding with this side
+    Output: items can be extracted from this side and they will
+           come from any of the six internal slots
+    Output Exact: items can be extracted from this side but they
+           will only come out of the matching slot
+{-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
 

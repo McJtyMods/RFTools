@@ -17,9 +17,11 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemFilterContainer.factory, ItemFilterContainer.GHOST_SIZE + ItemFilterContainer.BUFFER_SIZE);
 
+    public static final byte MODE_INPUT_EXACT = 2;
     public static final byte MODE_INPUT = 1;
     public static final byte MODE_DISABLED = 0;
-    public static final byte MODE_OUTPUT = -1;
+    public static final byte MODE_OUTPUT_EXACT = -1;
+    public static final byte MODE_OUTPUT = -2;
     private byte inputMode[] = new byte[6];
 
     public byte[] getInputMode() {
@@ -165,10 +167,17 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         if (index < ItemFilterContainer.SLOT_BUFFER) {
             return false;
         }
-        if (inputMode[side] != MODE_INPUT) {
+        if (!isInputMode(side)) {
             return false;
         }
-        ItemStack ghostStack = inventoryHelper.getStacks()[index - ItemFilterContainer.SLOT_BUFFER];
+
+        int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
+
+        if (inputMode[side] == MODE_INPUT_EXACT && ghostIndex != side) {
+            return false;       // Only insert exactly here
+        }
+
+        ItemStack ghostStack = inventoryHelper.getStacks()[ghostIndex];
         if (ghostStack == null) {
             return true;
         }
@@ -180,9 +189,23 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         if (index < ItemFilterContainer.SLOT_BUFFER) {
             return false;
         }
-        if (inputMode[side] != MODE_OUTPUT) {
+        if (!isOutputMode(side)) {
             return false;
         }
-        return index-ItemFilterContainer.SLOT_BUFFER == side;
+
+        int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
+        if (inputMode[side] == MODE_OUTPUT_EXACT && ghostIndex != side) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isInputMode(int side) {
+        return inputMode[side] > MODE_DISABLED;
+    }
+
+    private boolean isOutputMode(int side) {
+        return inputMode[side] < MODE_DISABLED;
     }
 }
