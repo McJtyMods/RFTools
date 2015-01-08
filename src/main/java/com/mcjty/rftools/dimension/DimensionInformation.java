@@ -122,7 +122,10 @@ public class DimensionInformation {
 
     private void injectMobDimlet(int id) {
         addToCost(id);
-        extraMobs.add(DimletMapping.idtoMob.get(id));
+        MobDescriptor mobDescriptor = DimletMapping.idtoMob.get(id);
+        if (mobDescriptor != null && mobDescriptor.getEntityClass() != null) {
+            extraMobs.add(mobDescriptor);
+        }
     }
 
     private void injectSkyDimlet(int id) {
@@ -290,12 +293,17 @@ public class DimensionInformation {
         NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("class", mob.getEntityClass().getName());
-            tc.setInteger("chance", mob.getSpawnChance());
-            tc.setInteger("minGroup", mob.getMinGroup());
-            tc.setInteger("maxGroup", mob.getMaxGroup());
-            tc.setInteger("maxLoaded", mob.getMaxLoaded());
-            list.appendTag(tc);
+
+            if (mob != null) {
+                if (mob.getEntityClass() != null) {
+                    tc.setString("class", mob.getEntityClass().getName());
+                    tc.setInteger("chance", mob.getSpawnChance());
+                    tc.setInteger("minGroup", mob.getMinGroup());
+                    tc.setInteger("maxGroup", mob.getMaxGroup());
+                    tc.setInteger("maxLoaded", mob.getMaxLoaded());
+                    list.appendTag(tc);
+                }
+            }
         }
 
         tagCompound.setTag("mobs", list);
@@ -366,7 +374,13 @@ public class DimensionInformation {
         logDebug(player, "    Sky color: " + r + ", " + g + ", " + b);
 
         for (MobDescriptor mob : extraMobs) {
-            logDebug(player, "    Mob: " + mob.getEntityClass().getName());
+            if (mob != null) {
+                if (mob.getEntityClass() == null) {
+                    logDebug(player, "    Mob: " + mob);
+                } else {
+                    logDebug(player, "    Mob: " + mob.getEntityClass().getName());
+                }
+            }
         }
         if (peaceful) {
             logDebug(player, "    Peaceful mode");
@@ -421,11 +435,15 @@ public class DimensionInformation {
 
         buf.writeInt(extraMobs.size());
         for (MobDescriptor mob : extraMobs) {
-            ByteBufTools.writeString(buf, mob.getEntityClass().getName());
-            buf.writeInt(mob.getSpawnChance());
-            buf.writeInt(mob.getMinGroup());
-            buf.writeInt(mob.getMaxGroup());
-            buf.writeInt(mob.getMaxLoaded());
+            if (mob != null) {
+                if (mob.getEntityClass() != null) {
+                    ByteBufTools.writeString(buf, mob.getEntityClass().getName());
+                    buf.writeInt(mob.getSpawnChance());
+                    buf.writeInt(mob.getMinGroup());
+                    buf.writeInt(mob.getMaxGroup());
+                    buf.writeInt(mob.getMaxLoaded());
+                }
+            }
         }
     }
 

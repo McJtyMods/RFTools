@@ -90,7 +90,8 @@ public class DimletRandomizer {
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_MOBS) {
                 // Don't add the 'null' mob.
-                if (DimletMapping.idtoMob.get(entry.getKey()) != null) {
+                MobDescriptor descriptor = DimletMapping.idtoMob.get(entry.getKey());
+                if (descriptor != null && descriptor.getEntityClass() != null) {
                     randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_EFFECT) {
