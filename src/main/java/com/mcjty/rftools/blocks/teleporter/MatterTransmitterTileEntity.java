@@ -230,6 +230,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     public void setTeleportDestination(TeleportDestination teleportDestination) {
         this.teleportDestination = teleportDestination;
+        markDirty();
     }
 
     /**
