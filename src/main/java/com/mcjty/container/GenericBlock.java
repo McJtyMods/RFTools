@@ -44,6 +44,9 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);
         this.tileEntityClass = tileEntityClass;
+        setHardness(2.0f);
+        setStepSound(soundTypeMetal);
+        setHarvestLevel("pickaxe", 0);
     }
 
     public boolean isHorizRotation() {
