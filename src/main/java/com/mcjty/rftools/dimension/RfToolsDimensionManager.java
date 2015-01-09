@@ -188,7 +188,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
         int id = DimensionManager.getNextFreeDimId();
         registerDimensionToServerAndClient(id);
-        System.out.println("id = " + id + " for " + name);
+        RFTools.log("id = " + id + " for " + name + ", descriptor = " + descriptor.getDescriptionString());
 
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
