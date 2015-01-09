@@ -62,6 +62,7 @@ public class DimensionInformation {
         this.descriptor = descriptor;
 
         setupFromDescriptor(seed);
+        dump(null);
     }
 
     private void setupFromDescriptor(long seed) {
@@ -327,7 +328,11 @@ public class DimensionInformation {
 
 
     private void logDebug(EntityPlayer player, String message) {
-        RFTools.message(player, EnumChatFormatting.YELLOW + message);
+        if (player == null) {
+            RFTools.log(message);
+        } else {
+            RFTools.message(player, EnumChatFormatting.YELLOW + message);
+        }
     }
 
     public void dump(EntityPlayer player) {
