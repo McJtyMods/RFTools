@@ -34,6 +34,11 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
     }
 
     @Override
+    public boolean canUpdate() {
+        return false;
+    }
+
+    @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
