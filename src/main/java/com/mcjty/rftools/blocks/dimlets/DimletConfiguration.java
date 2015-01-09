@@ -23,7 +23,7 @@ public class DimletConfiguration {
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
     public static int maxInfuse = 256;
-    public static int dungeonChance = 160;
+    public static int dungeonChance = 200;
     public static int dimensionDifficulty = 1;      // 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static float afterCreationCostFactor = 0.1f;
