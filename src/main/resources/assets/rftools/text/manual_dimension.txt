@@ -16,6 +16,7 @@ Table of contents:
 {l:builder}Dimension Builder
 {l:teleport}Getting there
 {l:probe}Activity Probe
+{l:editor}Dimension Editor
 {-------------------------------------------------------------}
 {b}Introduction
 {n:intro}
@@ -363,4 +364,17 @@ dimension it monitors activity in that dimension and it will shut
 down power consumption from that dimension when nobody is in the
 dimension (including chunk loaders). So this block is an effective
 way to make sure your dimension isn't using power needlessly.
+{-------------------------------------------------------------}
+{b}Dimension Editor
+{n:editor}
+
+With the Dimension Editor you can alter already created dimensions
+by inserting some types of dimlets. It can be crafted as follows:
+{rb:dimensionEditorBlock}
+
+Note that inserted dimlets are lost during this process (you will not get
+it back even if you deconstruct the dimension tab) and you pay the full
+power cost for it. There is no way to undo this so be careful. This can
+only be done with dimlets of type 'special', 'mob', 'effect',
+'sky', and 'time'.
 {-------------------------------------------------------------}
