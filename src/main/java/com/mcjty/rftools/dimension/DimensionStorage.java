@@ -1,6 +1,5 @@
 package com.mcjty.rftools.dimension;
 
-import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
