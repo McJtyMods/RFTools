@@ -816,10 +816,12 @@ public class DimensionInformation {
     private void calculateStructureType(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_STRUCTURE, dimlets);
         if (dimlets.isEmpty()) {
-            for (Integer id : DimletMapping.idToStructureType.keySet()) {
-                if (random.nextFloat() < DimletConfiguration.randomStructureChance) {
+            while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
+                int id = DimletRandomizer.getRandomStructure(random, false);
+                StructureType structureType = DimletMapping.idToStructureType.get(id);
+                if (!structureTypes.contains(structureType)) {
                     actualRfCost += calculateCostFactor(id);
-                    structureTypes.add(DimletMapping.idToStructureType.get(id));
+                    structureTypes.add(structureType);
                 }
             }
         } else {

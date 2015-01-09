@@ -4,6 +4,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.world.types.EffectType;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.varia.WeightedRandomSelector;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,6 +31,7 @@ public class DimletRandomizer {
     public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
+    public static WeightedRandomSelector<Integer,Integer> randomStructureDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomEffectDimlets;
     public static WeightedRandomSelector<Integer,Integer> randomFeatureDimlets;
 
@@ -71,6 +73,8 @@ public class DimletRandomizer {
         setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
+        randomStructureDimlets = new WeightedRandomSelector<Integer, Integer>();
+        setupRarity(randomStructureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomEffectDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
@@ -95,14 +99,19 @@ public class DimletRandomizer {
                     randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_EFFECT) {
-                // Don't add the 'null' mob.
+                // Don't add the 'null' effect.
                 if (DimletMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
                     randomEffectDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_FEATURE) {
-                // Don't add the 'null' mob.
+                // Don't add the 'null' feature.
                 if (DimletMapping.idToFeatureType.get(entry.getKey()) != FeatureType.FEATURE_NONE) {
                     randomFeatureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
+                }
+            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_STRUCTURE) {
+                // Don't add the 'null' structure.
+                if (DimletMapping.idToStructureType.get(entry.getKey()) != StructureType.STRUCTURE_NONE) {
+                    randomStructureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             }
         }
@@ -124,6 +133,14 @@ public class DimletRandomizer {
         Integer id = randomFeatureDimlets.select(random);
         while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
             id = randomFeatureDimlets.select(random);
+        }
+        return id;
+    }
+
+    public static int getRandomStructure(Random random, boolean allowRandom) {
+        Integer id = randomStructureDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+            id = randomStructureDimlets.select(random);
         }
         return id;
     }
