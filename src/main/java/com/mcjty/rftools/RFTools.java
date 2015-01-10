@@ -1,6 +1,7 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import com.mcjty.rftools.commands.CommandRftDb;
 import com.mcjty.rftools.commands.CommandRftDim;
 import com.mcjty.rftools.commands.CommandRftTp;
 import com.mcjty.rftools.dimension.DimensionStorage;
@@ -49,6 +50,8 @@ public class RFTools {
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
+
+    public static boolean debugMode = false;
 
     public ClientInfo clientInfo = new ClientInfo();
 
@@ -115,6 +118,12 @@ public class RFTools {
         instance.logger.log(Level.INFO, message);
     }
 
+    public static void logDebug(String message) {
+        if (debugMode) {
+            instance.logger.log(Level.INFO, message);
+        }
+    }
+
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
      * register them with the GameRegistry.
@@ -140,6 +149,7 @@ public class RFTools {
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftDim());
         event.registerServerCommand(new CommandRftTp());
+        event.registerServerCommand(new CommandRftDb());
     }
 
     @EventHandler
