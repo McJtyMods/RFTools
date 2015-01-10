@@ -2,7 +2,9 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
@@ -306,10 +308,22 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         return true;
     }
 
+    @Override
+    public void updateEntity() {
+        if (RFTools.debugMode) {
+            RFTools.log("MatterTransmitterTileEntity: updateEntity (dim:" + worldObj.provider.dimensionId + ")");
+        }
+        super.updateEntity();
+    }
 
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
+
+        if (RFTools.debugMode) {
+            RFTools.log("MatterTransmitterTileEntity.checkStateServer: AAAAA (dim:" + worldObj.provider.dimensionId + ")");
+        }
+
 
         // Every few times we check if the receiver is ok (if we're dialed).
         if (teleportDestination != null) {
@@ -325,10 +339,20 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             }
         }
 
+        if (RFTools.debugMode) {
+            RFTools.log("MatterTransmitterTileEntity.checkStateServer: BBBBB (dim:" + worldObj.provider.dimensionId + ")");
+        }
+
         if (isCoolingDown()) {
             // We're still in cooldown. Do nothing.
+            if (RFTools.debugMode) {
+                RFTools.log("MatterTransmitterTileEntity.checkStateServer: we are in cooldown:" + cooldownTimer + " (dim:" + worldObj.provider.dimensionId + ")");
+            }
             return;
         } else if (teleportingPlayer == null) {
+            if (RFTools.debugMode) {
+                RFTools.log("MatterTransmitterTileEntity.checkStateServer: looking for player (dim:" + worldObj.provider.dimensionId + ")");
+            }
             // If we have a valid destination we check here if there is a player on this transmitter.
             if (isDestinationValid()) {
                 searchForNearestPlayer();
@@ -363,13 +387,26 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     // Server side only
     private int checkReceiverStatus() {
-        World w = DimensionManager.getWorld(teleportDestination.getDimension());
+        int dimension = teleportDestination.getDimension();
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        if (dimensionManager.getDimensionInformation(dimension) != null) {
+            // This is an RFTools dimension. Check power.
+            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+            int energyLevel = dimensionStorage.getEnergyLevel(dimension);
+            if (energyLevel < DimletConfiguration.DIMPOWER_WARN_TP) {
+                return TeleportBeamBlock.META_WARN;
+            }
+        }
+
+
+        World w = DimensionManager.getWorld(dimension);
         // By default we will not check if the dimension is not loaded. Can be changed in config.
         if (w == null) {
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
                 return TeleportBeamBlock.META_UNKNOWN;
             } else {
-                w = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
+                w = MinecraftServer.getServer().worldServerForDimension(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
@@ -426,6 +463,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         Entity nearestPlayer = findNearestPlayer(l);
 
         if (nearestPlayer == null) {
+            if (RFTools.debugMode) {
+                RFTools.log("No player found: l.size=" + l.size() + " (dim:" + worldObj.provider.dimensionId + ")");
+            }
             cooldownTimer = 5;
             return;
         }
@@ -433,6 +473,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (playerBB.intersectsWith(beamBox)) {
             startTeleportation(nearestPlayer);
         } else {
+            if (RFTools.debugMode) {
+                RFTools.log("No intersection! (dim:" + worldObj.provider.dimensionId + ")");
+            }
             cooldownTimer = 5;
         }
     }

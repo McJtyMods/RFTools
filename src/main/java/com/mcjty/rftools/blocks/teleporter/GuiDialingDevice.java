@@ -235,6 +235,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             setStatusError("Matter receiver power low!");
             return;
         }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_DIMENSION_POWER_LOW_MASK) != 0) {
+            setStatusError("Destination dimension power low!");
+            return;
+        }
         if ((dialResult & DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS) != 0) {
             setStatusError("No access to transmitter!");
             return;

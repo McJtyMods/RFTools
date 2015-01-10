@@ -2,7 +2,9 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
@@ -38,6 +40,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
     public static final int DIAL_RECEIVER_NOACCESS = 0x40;          // No access to receiver
     public static final int DIAL_INTERRUPTED = 0x80;                // The dial was interrupted
     public static final int DIAL_INVALID_SOURCE_MASK = 0x100;       // The source is somehow invalid
+    public static final int DIAL_DIMENSION_POWER_LOW_MASK = 0x200;  // The destination dimension is low on power
     public static final int DIAL_OK = 0;                            // All is ok
 
     public DialingDeviceTileEntity() {
@@ -235,7 +238,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
         extractEnergy(ForgeDirection.DOWN, cost, false);
 
-        World w = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(dim);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        World w = dimensionManager.getWorldForDimension(dim);
         if (w == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
@@ -243,6 +247,15 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
+        }
+
+        if (dimensionManager.getDimensionInformation(dim) != null) {
+            // This is an RFTools dimension. Check power.
+            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(w);
+            int energyLevel = dimensionStorage.getEnergyLevel(dim);
+            if (energyLevel < DimletConfiguration.DIMPOWER_WARN_TP) {
+                return DialingDeviceTileEntity.DIAL_DIMENSION_POWER_LOW_MASK;
+            }
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;

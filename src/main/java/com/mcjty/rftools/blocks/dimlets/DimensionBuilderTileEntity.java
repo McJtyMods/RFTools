@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.DimensionStorage;
@@ -54,6 +55,8 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         setState(ticksLeft, tickCost);
     }
 
+    static int counter = 20;
+
     private void maintainDimensionTick(NBTTagCompound tagCompound) {
         int id = tagCompound.getInteger("id");
 
@@ -64,6 +67,11 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
             int maxEnergy = DimletConfiguration.MAX_DIMENSION_POWER - energy;      // Max energy the dimension can still get.
             if (rf > maxEnergy) {
                 rf = maxEnergy;
+            }
+            counter--;
+            if (counter < 0) {
+                counter = 20;
+                System.out.println("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
             }
             extractEnergy(ForgeDirection.DOWN, rf, false);
             dimensionStorage.setEnergyLevel(id, energy + rf);

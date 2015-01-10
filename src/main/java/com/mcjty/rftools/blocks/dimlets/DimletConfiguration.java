@@ -19,6 +19,7 @@ public class DimletConfiguration {
     public static int DIMPOWER_WARN1 = 4000000;
     public static int DIMPOWER_WARN2 = 1000000;
     public static int DIMPOWER_WARN3 = 500000;
+    public static int DIMPOWER_WARN_TP = 500000;    // Warn level for teleporter device.
     public static int INFUSER_MAXENERGY = 60000;
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
@@ -74,6 +75,8 @@ public class DimletConfiguration {
                 "The second level at which power warning signs are starting to become worse").getInt();
         DIMPOWER_WARN3 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn3", DIMPOWER_WARN3,
                 "The third level at which power warning signs are starting to be very bad").getInt();
+        DIMPOWER_WARN_TP = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarnTP", DIMPOWER_WARN_TP,
+                "The level at which the teleportation system will consider a destination to be dangerous").getInt();
 
         INFUSER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "machineInfuserMaxRF", INFUSER_MAXENERGY,
                 "Maximum RF storage that the machine infuser can hold").getInt();
