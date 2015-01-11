@@ -44,6 +44,11 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
 
+        if (tagCompound == null) {
+            setState(-1, 0);
+            return;
+        }
+
         int ticksLeft = tagCompound.getInteger("ticksLeft");
         int tickCost = tagCompound.getInteger("tickCost");
         if (ticksLeft > 0) {
@@ -219,6 +224,9 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                 return 0;
             } else {
                 NBTTagCompound tagCompound = itemStack.getTagCompound();
+                if (tagCompound == null) {
+                    return 0;
+                }
                 int ticksLeft = tagCompound.getInteger("ticksLeft");
                 int tickCost = tagCompound.getInteger("tickCost");
                 return (tickCost - ticksLeft) * 100 / tickCost;
