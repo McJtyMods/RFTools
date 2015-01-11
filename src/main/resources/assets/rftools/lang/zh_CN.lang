@@ -47,7 +47,7 @@ tile.dimletScramblerBlock.name=Dimlet Scrambler
 tile.dimensionEnscriberBlock.name=信息卡刻录器
 tile.dimensionBuilderBlock.name=世界构建器
 tile.dimensionEditorBlock.name=Dimension Editor
-tile.dimensionChestBlock.name=次元箱子
+tile.dimensionMonitorBlock.name=Dimension Monitor
 tile.machineInfuserBlock.name=Machine Infuser
 tile.activityProbeBlock.name=Activity Probe
 

@@ -52,6 +52,8 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.timerBlock), "rcr", "TMT", "rTr", 'c', Items.clock, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.enderMonitorBlock), "ror", "TMT", "rTr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionMonitorBlock), " u ", "TMT", "rCr", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase,
+                'C', Items.comparator);
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.endergenicBlock), "DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.diamond, 'o', Items.ender_pearl);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.pearlInjectorBlock), " C ", "rMr", " H ", 'C', Blocks.chest, 'r', Items.redstone,
