@@ -17,6 +17,7 @@ Table of contents:
 {l:teleport}Getting there
 {l:probe}Activity Probe
 {l:editor}Dimension Editor
+{l:monitor}Dimension Monitor
 {-------------------------------------------------------------}
 {b}Introduction
 {n:intro}
@@ -347,7 +348,8 @@ and that's the Dimension Monitor that you can craft like this:
 {ri:dimensionMonitorItem}
 
 Right clicking with this tool will show you the amount of power
-still left in the dimension.
+still left in the dimension. The tool also gives a visual indication
+of the current amount of power.
 {-------------------------------------------------------------}
 {b}Activity Probe
 {n:probe}
@@ -377,4 +379,13 @@ it back even if you deconstruct the dimension tab) and you pay the full
 power cost for it. There is no way to undo this so be careful. This can
 only be done with dimlets of type 'special', 'mob', 'effect',
 'sky', and 'time'.
+{-------------------------------------------------------------}
+{b}Dimension Monitor
+{n:monitor}
+
+Besides the dimension monitor item there is also a dimension monitor
+block which sends out a redstone signal as soon as the power in
+the current dimension goes below a certain level. It can be
+crafted as follows:
+{rb:dimensionMonitorBlock}
 {-------------------------------------------------------------}
