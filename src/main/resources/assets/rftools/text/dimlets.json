@@ -52,6 +52,7 @@
         [ "Liquid", "ic2uumatter", 60000, 50000, 1000, 6, 0 ],
         [ "Liquid", "adamantine.molten", 40000, 20000, 700, 5, 0 ],
         [ "Liquid", "atlarus.molten", 40000, 20000, 700, 5, 0 ],
+        [ "Liquid", "tartarite.molten", 40000, 20000, 700, 5, 0 ],
         [ "Liquid", "celenigil.molten", 40000, 20000, 700, 5, 0 ],
         [ "Liquid", "alumite.molten", 40000, 20000, 700, 5, 0 ],
         [ "Liquid", "cobalt.molten", 40000, 20000, 700, 5, 0 ],
