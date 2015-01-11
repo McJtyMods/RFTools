@@ -6,12 +6,12 @@ Table of contents:
 {l:shards}Dimensional Shards
 {l:infuser}Machine Infuser
 {l:researcher}Dimlet Researcher
+{l:scrambler}Dimlet Scrambler
 {l:types}Dimlet Types
 {/}
 
 
 
-{l:scrambler}Dimlet Scrambler
 {l:enscriber}Dimension Enscriber
 {l:builder}Dimension Builder
 {l:teleport}Getting there
@@ -99,6 +99,18 @@ a while for your dimlet of choice to appear.
 Most dimlets can only be obtained this way as they cannot be crafted. There
 are some exceptions. Some very basic and simple dimlets can be crafted.
 {-------------------------------------------------------------}
+{b}Dimlet Scrambler
+{n:scrambler}
+Sometimes you collect a lot of dimlets that you don't find particularly
+useful. In that case the dimlet scrambler may be a useful machine for you.
+You can craft it as follows:
+{rb:dimletScramblerBlock}
+
+This machine takes three dimlets (two should be non-craftable) of any type
+and recyles their components to create a new random dimlet. In contrast
+with the dimlet researcher this machine has a better chance of giving back
+rare dimlets. This depends on the rarity of the dimlets that you scramble.
+{-------------------------------------------------------------}
 You may notice that some of these craftable dimlets require a
 weird item. This is a Dimlet Template which can be crafted as
 follows:
@@ -161,18 +173,6 @@ To craft this you actually need dimensional shards.
     Efficiency Dimlet: if you add this rare dimlet to your
         dimension tab then the dimension will consume 20% less
         energy per tick. This effect is cumulative.
-{-------------------------------------------------------------}
-{b}Dimlet Scrambler
-{n:scrambler}
-Sometimes you collect a lot of dimlets that you don't find particularly
-useful. In that case the dimlet scrambler may be a useful machine for you.
-You can craft it as follows:
-{rb:dimletScramblerBlock}
-
-This machine takes three dimlets (two should be non-craftable) of any type
-and recyles their components to create a new random dimlet. In contrast
-with the dimlet researcher this machine has a better chance of giving back
-rare dimlets. This depends on the rarity of the dimlets that you scramble.
 {-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}

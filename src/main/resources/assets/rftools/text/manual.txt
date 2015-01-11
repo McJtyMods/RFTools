@@ -254,10 +254,10 @@ analyzer connected to this machine (see below).
 {b}Destination Analyzer
 {n:tpdestcheck}
 {rb:destinationAnalyzerBlock}
-This is a passive block that you can place next to a dialing device.
-It enables the dialing device to check the status of a receiver. This way
-you can be sure that a receiver has enough power or is not blocked
-before attempting to make a connection.
+This is a passive block that you can place next to a dialing device. It
+enables the dialing device to check the status of a receiver or destination
+dimension. This way you can be sure that a receiver and/or dimension has
+enough power or is not blocked before attempting to make a connection.
 
 You can also place a destination analyzer next to a transmitter. In
 that case the transmitter will show a red colored teleportation beam
