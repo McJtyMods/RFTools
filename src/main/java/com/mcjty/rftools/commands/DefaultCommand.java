@@ -35,6 +35,11 @@ public abstract class DefaultCommand implements ICommand {
         }
 
         @Override
+        public int getPermissionLevel() {
+            return 0;
+        }
+
+        @Override
         public String getCommand() {
             return "help";
         }
@@ -66,7 +71,11 @@ public abstract class DefaultCommand implements ICommand {
                 if (command == null) {
                     sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown RfTools command: " + args[0]));
                 } else {
-                    command.execute(sender, args);
+                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
+                        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Command is not allowed!"));
+                    } else {
+                        command.execute(sender, args);
+                    }
                 }
             }
         }

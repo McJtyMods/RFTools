@@ -17,11 +17,12 @@ public class CmdDebugToggle extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
-        if (!isAllowed(sender)) {
-            return;
-        }
+    public int getPermissionLevel() {
+        return 1;
+    }
 
+    @Override
+    public void execute(ICommandSender sender, String[] args) {
         RFTools.debugMode = !RFTools.debugMode;
         if (RFTools.debugMode) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "RFTools Debug Mode enabled!"));

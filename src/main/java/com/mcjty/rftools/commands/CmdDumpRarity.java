@@ -15,6 +15,11 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
     }
 
     @Override
+    public int getPermissionLevel() {
+        return 0;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         float bonus = fetchFloat(sender, args, 1, 0.0f);
 

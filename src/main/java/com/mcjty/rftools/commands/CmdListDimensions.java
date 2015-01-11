@@ -24,6 +24,11 @@ public class CmdListDimensions extends AbstractRfToolsCommand {
     }
 
     @Override
+    public int getPermissionLevel() {
+        return 0;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         WorldServer[] worlds = DimensionManager.getWorlds();
         for (WorldServer world : worlds) {

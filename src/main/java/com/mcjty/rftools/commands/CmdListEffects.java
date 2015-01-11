@@ -20,11 +20,12 @@ public class CmdListEffects extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
-        if (!isAllowed(sender)) {
-            return;
-        }
+    public int getPermissionLevel() {
+        return 0;
+    }
 
+    @Override
+    public void execute(ICommandSender sender, String[] args) {
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
 

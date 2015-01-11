@@ -22,11 +22,12 @@ public class CmdSetPower extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
-        if (!isAllowed(sender)) {
-            return;
-        }
+    public int getPermissionLevel() {
+        return 2;
+    }
 
+    @Override
+    public void execute(ICommandSender sender, String[] args) {
         if (args.length > 2) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));
             return;

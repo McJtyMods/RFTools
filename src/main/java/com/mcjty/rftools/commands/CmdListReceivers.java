@@ -19,6 +19,11 @@ public class CmdListReceivers extends AbstractRfToolsCommand {
     }
 
     @Override
+    public int getPermissionLevel() {
+        return 0;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(sender.getEntityWorld());
 

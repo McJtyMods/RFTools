@@ -20,11 +20,12 @@ public class CmdDelDimension extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
-        if (!isAllowed(sender)) {
-            return;
-        }
+    public int getPermissionLevel() {
+        return 3;
+    }
 
+    @Override
+    public void execute(ICommandSender sender, String[] args) {
         if (args.length < 2) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension parameters is missing!"));
             return;
