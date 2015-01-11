@@ -61,7 +61,6 @@ public class TimerTileEntity extends GenericTileEntity {
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
-            RFTools.log(worldObj, this, "Timer output to " + newout);
             notifyBlockUpdate();
         }
     }

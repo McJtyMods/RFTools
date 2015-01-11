@@ -172,7 +172,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void log(String message) {
-        RFTools.log(worldObj, this, message);
+        /* RFTools.log(worldObj, this, message);*/
     }
 
     public void addMonitor(Coordinate c) {

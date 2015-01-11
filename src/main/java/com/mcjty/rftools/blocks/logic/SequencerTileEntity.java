@@ -113,7 +113,6 @@ public class SequencerTileEntity extends GenericTileEntity {
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
-            RFTools.log(worldObj, this, "Sequencer output to " + newout);
             notifyBlockUpdate();
         }
 
