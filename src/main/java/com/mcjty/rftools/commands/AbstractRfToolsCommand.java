@@ -12,7 +12,7 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             return true;
         } else {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Command is not allowed!"));
-            return false;
+            return true;
         }
     }
 
