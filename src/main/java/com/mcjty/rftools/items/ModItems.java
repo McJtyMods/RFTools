@@ -82,7 +82,6 @@ public final class ModItems {
         dimensionMonitorItem = new DimensionMonitorItem();
         dimensionMonitorItem.setUnlocalizedName("DimensionMonitor");
         dimensionMonitorItem.setCreativeTab(RFTools.tabRfTools);
-        dimensionMonitorItem.setTextureName(RFTools.MODID + ":dimensionMonitorItem");
         GameRegistry.registerItem(dimensionMonitorItem, "dimensionMonitorItem");
 
         dimensionalShard = new DimensionalShard();
