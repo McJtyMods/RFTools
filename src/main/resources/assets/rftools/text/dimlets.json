@@ -4,8 +4,7 @@
         [ "Liquid", "honey" ],
         [ "Liquid", "ic2constructionfoam" ],
         [ "Feature", "Spheres" ],
-        [ "Foliage", "Oak" ],
-        [ "Terrain", "Cave World" ]
+        [ "Foliage", "Oak" ]
     ],
     "dimlets": [
         [ "Material", "tile.blockDiamond", 100000, 50000, 1000, 5, 0 ],

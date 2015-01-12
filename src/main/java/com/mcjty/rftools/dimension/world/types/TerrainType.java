@@ -5,7 +5,7 @@ public enum TerrainType {
     TERRAIN_FLAT(true),
     TERRAIN_AMPLIFIED(true),
     TERRAIN_NORMAL(true),
-    TERRAIN_CAVES(true),
+    TERRAIN_CAVERN(true),
     TERRAIN_ISLAND(false);
 
     private final boolean supportsLakes;

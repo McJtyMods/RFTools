@@ -21,7 +21,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
     private World world;
     GenericChunkProvider provider;
 
-    private final double[] field_147434_q;                   // @todo better name once we figure out what this actually is
+    private final double[] noiseField;
     private double[] field_147427_d;
     private double[] field_147428_e;
     private double[] field_147425_f;
@@ -45,7 +45,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
 
 
     public NormalTerrainGenerator() {
-        this.field_147434_q = new double[825];
+        this.noiseField = new double[825];
 
         this.parabolicField = new float[25];
         for (int j = -2; j <= 2; ++j) {
@@ -80,19 +80,12 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
     }
 
     private void func_147423_a(int chunkX4, int chunkY4, int chunkZ4) {
-        double d0 = 684.412D;
-        double d1 = 684.412D;
-        double d2 = 512.0D;
-        double d3 = 512.0D;
         this.field_147426_g = this.noiseGen6.generateNoiseOctaves(this.field_147426_g, chunkX4, chunkZ4, 5, 5, 200.0D, 200.0D, 0.5D);
         this.field_147427_d = this.noiseGen3.generateNoiseOctaves(this.field_147427_d, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 8.555150000000001D, 4.277575000000001D, 8.555150000000001D);
         this.field_147428_e = this.noiseGen1.generateNoiseOctaves(this.field_147428_e, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
         this.field_147425_f = this.noiseGen2.generateNoiseOctaves(this.field_147425_f, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
-        boolean flag1 = false;
-        boolean flag = false;
         int l = 0;
         int i1 = 0;
-        double d4 = 8.5D;
 
         boolean domaze = false;
         boolean elevated = false;
@@ -210,7 +203,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                         d10 = d10 * (1.0D - d11) + -10.0D * d11;
                     }
 
-                    this.field_147434_q[l] = d10;
+                    this.noiseField[l] = d10;
                     ++l;
                 }
             }
@@ -237,14 +230,14 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
 
                 for (int height32 = 0; height32 < 32; ++height32) {
                     double d0 = 0.125D;
-                    double d1 = field_147434_q[k1 + height32];
-                    double d2 = field_147434_q[l1 + height32];
-                    double d3 = field_147434_q[i2 + height32];
-                    double d4 = field_147434_q[j2 + height32];
-                    double d5 = (field_147434_q[k1 + height32 + 1] - d1) * d0;
-                    double d6 = (field_147434_q[l1 + height32 + 1] - d2) * d0;
-                    double d7 = (field_147434_q[i2 + height32 + 1] - d3) * d0;
-                    double d8 = (field_147434_q[j2 + height32 + 1] - d4) * d0;
+                    double d1 = noiseField[k1 + height32];
+                    double d2 = noiseField[l1 + height32];
+                    double d3 = noiseField[i2 + height32];
+                    double d4 = noiseField[j2 + height32];
+                    double d5 = (noiseField[k1 + height32 + 1] - d1) * d0;
+                    double d6 = (noiseField[l1 + height32 + 1] - d2) * d0;
+                    double d7 = (noiseField[i2 + height32 + 1] - d3) * d0;
+                    double d8 = (noiseField[j2 + height32 + 1] - d4) * d0;
 
                     for (int h = 0; h < 8; ++h) {
                         double d9 = 0.25D;
