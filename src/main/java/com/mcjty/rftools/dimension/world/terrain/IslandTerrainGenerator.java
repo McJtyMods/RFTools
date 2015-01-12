@@ -78,21 +78,27 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         this.noiseData3 = this.noiseGen2.generateNoiseOctaves(this.noiseData3, chunkX2, chunkY2, chunkZ2, sizeX, sizeY, sizeZ, d0, d1, d0);
         int k1 = 0;
 
-        for (int i2 = 0; i2 < sizeX; ++i2) {
-            for (int j2 = 0; j2 < sizeZ; ++j2) {
-                float f = (i2 + chunkX2) / 1.0F;
-                float f1 = (j2 + chunkZ2) / 1.0F;
-                float f2 = 100.0F - MathHelper.sqrt_float(f * f + f1 * f1) * 8.0F;
+        for (int x = 0; x < sizeX; ++x) {
+            for (int z = 0; z < sizeZ; ++z) {
+                float xx = (x + chunkX2) / 1.0F;
+                float zz = (z + chunkZ2) / 1.0F;
+
+//=========== End ============
+                float f2 = 100.0F - MathHelper.sqrt_float(xx * xx + zz * zz) * 8.0F;
 
                 if (f2 > 80.0F) {
                     f2 = 80.0F;
-                }
-
-                if (f2 < -100.0F) {
+                } else if (f2 < -100.0F) {
                     f2 = -100.0F;
                 }
 
-                for (int k2 = 0; k2 < sizeY; ++k2) {
+//=========== CHAOTIC ============
+//                float f2 = 0.0F;
+
+//=========== WEIRD GLOBBY ISLAND: see below too ============
+//                float f2 = -20.0f;
+
+                for (int y = 0; y < sizeY; ++y) {
                     double d5 = 0.0D;
 
                     double d7 = this.noiseData2[k1] / 512.0D;
@@ -113,24 +119,24 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                     byte b0 = 2;
                     double d10;
 
-                    if (k2 > sizeY / 2 - b0) {
-                        d10 = ((k2 - (sizeY / 2 - b0)) / 64.0F);
+                    if (y > sizeY / 2 - b0) {
+                        d10 = ((y - (sizeY / 2 - b0)) / 64.0F);
 
                         if (d10 < 0.0D) {
                             d10 = 0.0D;
-                        }
-
-                        if (d10 > 1.0D) {
+                        } else if (d10 > 1.0D) {
                             d10 = 1.0D;
                         }
 
                         d5 = d5 * (1.0D - d10) + -3000.0D * d10;
+//=========== WEIRD GLOBBY ISLAND: see above too ============
+//                        d5 = d5 * (1.0D - d10) + -200.0D * d10;           <- VERY nice in combination with                    float f2 = -20.0f;
                     }
 
                     b0 = 8;
 
-                    if (k2 < b0) {
-                        d10 = ((b0 - k2) / (b0 - 1.0F));
+                    if (y < b0) {
+                        d10 = ((b0 - y) / (b0 - 1.0F));
                         d5 = d5 * (1.0D - d10) + -30.0D * d10;
                     }
 
