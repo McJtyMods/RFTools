@@ -76,7 +76,9 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
             counter--;
             if (counter < 0) {
                 counter = 20;
-                System.out.println("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
+                if (RFTools.debugMode) {
+                    RFTools.log("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
+                }
             }
             extractEnergy(ForgeDirection.DOWN, rf, false);
             dimensionStorage.setEnergyLevel(id, energy + rf);
