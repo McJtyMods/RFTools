@@ -33,6 +33,13 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     private double[] noiseData4;
     private double[] noiseData5;
 
+    private static final int NORMAL = 0;
+    private static final int CHAOTIC = 1;
+    private static final int GLOBBY = 2;
+    private static final int PLATEAU = 3;
+    private static final int ISLANDS = 4;
+    private static int type = NORMAL;
+
     @Override
     public void setup(World world, GenericChunkProvider provider) {
         this.world = world;
@@ -80,23 +87,35 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
         for (int x = 0; x < sizeX; ++x) {
             for (int z = 0; z < sizeZ; ++z) {
-                float xx = (x + chunkX2) / 1.0F;
-                float zz = (z + chunkZ2) / 1.0F;
 
-//=========== End ============
-                float f2 = 100.0F - MathHelper.sqrt_float(xx * xx + zz * zz) * 8.0F;
+                float f2 = 0.0f;
+                switch (type) {
+                    case NORMAL: {
+                        float xx = (x + chunkX2) / 1.0F;
+                        float zz = (z + chunkZ2) / 1.0F;
 
-                if (f2 > 80.0F) {
-                    f2 = 80.0F;
-                } else if (f2 < -100.0F) {
-                    f2 = -100.0F;
+                        f2 = 100.0F - MathHelper.sqrt_float(xx * xx + zz * zz) * 8.0F;
+
+                        if (f2 > 80.0F) {
+                            f2 = 80.0F;
+                        } else if (f2 < -100.0F) {
+                            f2 = -100.0F;
+                        }
+                        break;
+                    }
+                    case CHAOTIC:
+                        f2 = 0.0F;
+                        break;
+                    case GLOBBY:
+                        f2 = -20.0f;
+                        break;
+                    case PLATEAU:
+                        f2 = -5.0f;
+                        break;
+                    case ISLANDS:
+                        f2 = -12.0f;
+                        break;
                 }
-
-//=========== CHAOTIC ============
-//                float f2 = 0.0F;
-
-//=========== WEIRD GLOBBY ISLAND: see below too ============
-//                float f2 = -20.0f;
 
                 for (int y = 0; y < sizeY; ++y) {
                     double d5 = 0.0D;
@@ -116,10 +135,10 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
                     d5 -= 8.0D;
                     d5 += f2;
-                    byte b0 = 2;
+                    int b0 = 2;
                     double d10;
 
-                    if (y > sizeY / 2 - b0) {
+                    if (y > ((sizeY / 2) - b0)) {
                         d10 = ((y - (sizeY / 2 - b0)) / 64.0F);
 
                         if (d10 < 0.0D) {
@@ -128,16 +147,38 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             d10 = 1.0D;
                         }
 
-                        d5 = d5 * (1.0D - d10) + -3000.0D * d10;
-//=========== WEIRD GLOBBY ISLAND: see above too ============
-//                        d5 = d5 * (1.0D - d10) + -200.0D * d10;           <- VERY nice in combination with                    float f2 = -20.0f;
+                        switch (type) {
+                            case NORMAL:
+                            case CHAOTIC:
+                                d5 = d5 * (1.0D - d10) + -3000.0D * d10;
+                                break;
+                            case GLOBBY:
+                                d5 = d5 * (1.0D - d10) + -300.0D * d10;
+                                break;
+                            case PLATEAU:
+                                d5 = d5 * (1.0D - d10) + -1000.0D * d10;
+                                break;
+                            case ISLANDS:
+                                d5 = d5 * (1.0D - d10) + -600.0D * d10;
+                                break;
+                        }
                     }
 
-                    b0 = 8;
+                    if (type == PLATEAU) {
+                        b0 = (sizeY / 2) - 2;
+                    } else {
+                        b0 = 8;
+                    }
 
                     if (y < b0) {
                         d10 = ((b0 - y) / (b0 - 1.0F));
-                        d5 = d5 * (1.0D - d10) + -30.0D * d10;
+                        if (type == NORMAL || type == CHAOTIC || type == GLOBBY) {
+                            d5 = d5 * (1.0D - d10) + -30.0D * d10;
+                        } else if (type == PLATEAU) {
+                            d5 = d5 * (1.0D - d10) + -300.0D * d10;
+                        } else if (type == ISLANDS) {
+                            d5 = d5 * (1.0D - d10) + -200.0D * d10;
+                        }
                     }
 
                     densities[k1] = d5;
