@@ -14,6 +14,10 @@ public class WorldGenerationTools {
 
         y--;            // y should now be at a solid or liquid block.
 
+        if (y > world.getHeight() - 5) {
+            y = world.getHeight() / 2;
+        }
+
 
         Block block = world.getBlock(x, y+1, z);
         while (block.getMaterial().isLiquid()) {
