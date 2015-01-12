@@ -50,13 +50,6 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        TileEntity tileEntity = super.createTileEntity(world, metadata);
-        ((DimensionBuilderTileEntity)tileEntity).setCreative(isCreative());
-        return tileEntity;
-    }
-
-    @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         DimensionBuilderTileEntity dimensionBuilderTileEntity = (DimensionBuilderTileEntity)world.getTileEntity(x, y, z);
 

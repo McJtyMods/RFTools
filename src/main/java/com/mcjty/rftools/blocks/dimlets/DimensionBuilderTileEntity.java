@@ -4,12 +4,14 @@ import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.DimensionDescriptor;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -27,7 +29,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
 
     private static int buildPercentage = 0;
-    private boolean creative = false;
+    private int creative = -1;      // -1 is unknown
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionBuilderContainer.factory, 1);
 
@@ -35,8 +37,16 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         super(DimletConfiguration.BUILDER_MAXENERGY, DimletConfiguration.BUILDER_RECEIVEPERTICK);
     }
 
-    public void setCreative(boolean creative) {
-        this.creative = creative;
+    private boolean isCreative() {
+        if (creative == -1) {
+            Block block = worldObj.getBlock(xCoord, yCoord, zCoord);
+            if (ModBlocks.creativeDimensionBuilderBlock.equals(block)) {
+                creative = 1;
+            } else {
+                creative = 0;
+            }
+        }
+        return creative == 1;
     }
 
     @Override
@@ -73,7 +83,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         if (id != 0) {
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
             int rf;
-            if (creative) {
+            if (isCreative()) {
                 rf = DimletConfiguration.BUILDER_MAXENERGY;
             } else {
                 rf = getEnergyStored(ForgeDirection.DOWN);
@@ -90,7 +100,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                     RFTools.log("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
                 }
             }
-            if (!creative) {
+            if (!isCreative()) {
                 extractEnergy(ForgeDirection.DOWN, rf, false);
             }
             dimensionStorage.setEnergyLevel(id, energy + rf);
@@ -104,8 +114,8 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         int createCost = tagCompound.getInteger("rfCreateCost");
         createCost = (int) (createCost * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (creative || (getEnergyStored(ForgeDirection.DOWN) >= createCost)) {
-            if (creative) {
+        if (isCreative() || (getEnergyStored(ForgeDirection.DOWN) >= createCost)) {
+            if (isCreative()) {
                 ticksLeft = 0;
             } else {
                 extractEnergy(ForgeDirection.DOWN, createCost, false);
