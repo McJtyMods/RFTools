@@ -15,27 +15,25 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 
 public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private World world;
-    GenericChunkProvider provider;
+    private GenericChunkProvider provider;
 
     /** A NoiseGeneratorOctaves used in generating nether terrain */
     private NoiseGeneratorOctaves netherNoiseGen1;
     private NoiseGeneratorOctaves netherNoiseGen2;
     private NoiseGeneratorOctaves netherNoiseGen3;
-    /** Determines whether slowsand or gravel can be generated at a location */
-    private NoiseGeneratorOctaves slowsandGravelNoiseGen;
     /** Determines whether something other than nettherack can be generated at a location */
     private NoiseGeneratorOctaves netherrackExculsivityNoiseGen;
-    public NoiseGeneratorOctaves netherNoiseGen6;
-    public NoiseGeneratorOctaves netherNoiseGen7;
+    private NoiseGeneratorOctaves netherNoiseGen6;
+    private NoiseGeneratorOctaves netherNoiseGen7;
 
     private double[] noiseField;
     /** Holds the noise used to determine whether something other than the baseblock can be generated at a location */
     private double[] baseBlockExclusivityNoise = new double[256];
-    double[] noiseData1;
-    double[] noiseData2;
-    double[] noiseData3;
-    double[] noiseData4;
-    double[] noiseData5;
+    private double[] noiseData1;
+    private double[] noiseData2;
+    private double[] noiseData3;
+    private double[] noiseData4;
+    private double[] noiseData5;
 
     public CavernTerrainGenerator() {
     }
@@ -48,7 +46,8 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         this.netherNoiseGen1 = new NoiseGeneratorOctaves(provider.rand, 16);
         this.netherNoiseGen2 = new NoiseGeneratorOctaves(provider.rand, 16);
         this.netherNoiseGen3 = new NoiseGeneratorOctaves(provider.rand, 8);
-        this.slowsandGravelNoiseGen = new NoiseGeneratorOctaves(provider.rand, 4);
+        /* Determines whether slowsand or gravel can be generated at a location */
+        NoiseGeneratorOctaves slowsandGravelNoiseGen = new NoiseGeneratorOctaves(provider.rand, 4);
         this.netherrackExculsivityNoiseGen = new NoiseGeneratorOctaves(provider.rand, 4);
         this.netherNoiseGen6 = new NoiseGeneratorOctaves(provider.rand, 10);
         this.netherNoiseGen7 = new NoiseGeneratorOctaves(provider.rand, 16);
@@ -58,7 +57,6 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         this.netherNoiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
         this.netherNoiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
         this.netherNoiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
-        this.slowsandGravelNoiseGen = (NoiseGeneratorOctaves)noiseGens[3];
         this.netherrackExculsivityNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
         this.netherNoiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
         this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
@@ -71,7 +69,9 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private double[] initializeNoiseField(double[] noiseField, int x, int y, int z, int sx, int sy, int sz) {
         ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(provider, noiseField, x, y, z, sx, sy, sz);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.DENY) return event.noisefield;
+        if (event.getResult() == Event.Result.DENY) {
+            return event.noisefield;
+        }
 
         if (noiseField == null) {
             noiseField = new double[sx * sy * sz];
@@ -85,16 +85,15 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, x, y, z, sx, sy, sz, d0, d1, d0);
         this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, x, y, z, sx, sy, sz, d0, d1, d0);
         int k1 = 0;
-        int l1 = 0;
         double[] adouble1 = new double[sy];
         int i2;
 
         for (i2 = 0; i2 < sy; ++i2) {
-            adouble1[i2] = Math.cos((double)i2 * Math.PI * 6.0D / (double)sy) * 2.0D;
-            double d2 = (double)i2;
+            adouble1[i2] = Math.cos(i2 * Math.PI * 6.0D / sy) * 2.0D;
+            double d2 = i2;
 
             if (i2 > sy / 2) {
-                d2 = (double)(sy - 1 - i2);
+                d2 = (sy - 1 - i2);
             }
 
             if (d2 < 4.0D) {
@@ -106,8 +105,6 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         for (i2 = 0; i2 < sx; ++i2) {
             for (int k2 = 0; k2 < sz; ++k2) {
                 double d4 = 0.0D;
-
-                ++l1;
 
                 for (int j2 = 0; j2 < sy; ++j2) {
                     double d6;
@@ -128,12 +125,12 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                     double d11;
 
                     if (j2 > sy - 4) {
-                        d11 = (double)((float)(j2 - (sy - 4)) / 3.0F);
+                        d11 = ((j2 - (sy - 4)) / 3.0F);
                         d6 = d6 * (1.0D - d11) + -10.0D * d11;
                     }
 
-                    if ((double)j2 < d4) {
-                        d11 = (d4 - (double)j2) / 4.0D;
+                    if (j2 < d4) {
+                        d11 = (d4 - j2) / 4.0D;
 
                         if (d11 < 0.0D) {
                             d11 = 0.0D;
@@ -198,12 +195,10 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                             for (int k2 = 0; k2 < 4; ++k2) {
                                 Block block = null;
 
-                                if (height < b1) {
-                                    block = baseLiquid;
-                                }
-
                                 if (d15 > 0.0D) {
                                     block = baseBlock;
+                                } else if (height < b1) {
+                                    block = baseLiquid;
                                 }
 
                                 aBlock[index] = block;
@@ -231,7 +226,9 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases) {
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(provider, chunkX, chunkZ, aBlock, abyte, biomeGenBases, world);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.DENY) return;
+        if (event.getResult() == Event.Result.DENY) {
+            return;
+        }
 
         Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();

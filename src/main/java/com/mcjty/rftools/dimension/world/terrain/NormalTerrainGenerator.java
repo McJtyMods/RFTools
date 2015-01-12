@@ -19,26 +19,21 @@ import java.util.Random;
 
 public class NormalTerrainGenerator implements BaseTerrainGenerator {
     private World world;
-    GenericChunkProvider provider;
+    protected GenericChunkProvider provider;
 
     private final double[] noiseField;
-    private double[] field_147427_d;
-    private double[] field_147428_e;
-    private double[] field_147425_f;
-    private double[] field_147426_g;
+    private double[] noiseData1;
+    private double[] noiseData2;
+    private double[] noiseData3;
+    private double[] noiseData4;
 
     private NoiseGeneratorOctaves noiseGen1;
     private NoiseGeneratorOctaves noiseGen2;
     private NoiseGeneratorOctaves noiseGen3;
     private NoiseGeneratorPerlin noiseGen4;
 
-    //A NoiseGeneratorOctaves used in generating terrain
-    public NoiseGeneratorOctaves noiseGen5;
-
     // A NoiseGeneratorOctaves used in generating terrain
-    public NoiseGeneratorOctaves noiseGen6;
-
-    public NoiseGeneratorOctaves mobSpawnerNoise;
+    private NoiseGeneratorOctaves noiseGen6;
 
     private final float[] parabolicField;
     private double[] stoneNoise = new double[256];
@@ -50,7 +45,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         this.parabolicField = new float[25];
         for (int j = -2; j <= 2; ++j) {
             for (int k = -2; k <= 2; ++k) {
-                float f = 10.0F / MathHelper.sqrt_float((float) (j * j + k * k) + 0.2F);
+                float f = 10.0F / MathHelper.sqrt_float((j * j + k * k) + 0.2F);
                 this.parabolicField[j + 2 + (k + 2) * 5] = f;
             }
         }
@@ -65,9 +60,9 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         this.noiseGen2 = new NoiseGeneratorOctaves(provider.rand, 16);
         this.noiseGen3 = new NoiseGeneratorOctaves(provider.rand, 8);
         this.noiseGen4 = new NoiseGeneratorPerlin(provider.rand, 4);
-        this.noiseGen5 = new NoiseGeneratorOctaves(provider.rand, 10);
+        NoiseGeneratorOctaves noiseGen5 = new NoiseGeneratorOctaves(provider.rand, 10);
         this.noiseGen6 = new NoiseGeneratorOctaves(provider.rand, 16);
-        this.mobSpawnerNoise = new NoiseGeneratorOctaves(provider.rand, 8);
+        NoiseGeneratorOctaves mobSpawnerNoise = new NoiseGeneratorOctaves(provider.rand, 8);
 
         NoiseGenerator[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5, noiseGen6, mobSpawnerNoise};
         noiseGens = TerrainGen.getModdedNoiseGenerators(world, provider.rand, noiseGens);
@@ -75,15 +70,14 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         this.noiseGen2 = (NoiseGeneratorOctaves) noiseGens[1];
         this.noiseGen3 = (NoiseGeneratorOctaves) noiseGens[2];
         this.noiseGen4 = (NoiseGeneratorPerlin) noiseGens[3];
-        this.noiseGen5 = (NoiseGeneratorOctaves) noiseGens[4];
         this.noiseGen6 = (NoiseGeneratorOctaves) noiseGens[5];
     }
 
     private void func_147423_a(int chunkX4, int chunkY4, int chunkZ4) {
-        this.field_147426_g = this.noiseGen6.generateNoiseOctaves(this.field_147426_g, chunkX4, chunkZ4, 5, 5, 200.0D, 200.0D, 0.5D);
-        this.field_147427_d = this.noiseGen3.generateNoiseOctaves(this.field_147427_d, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 8.555150000000001D, 4.277575000000001D, 8.555150000000001D);
-        this.field_147428_e = this.noiseGen1.generateNoiseOctaves(this.field_147428_e, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
-        this.field_147425_f = this.noiseGen2.generateNoiseOctaves(this.field_147425_f, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
+        this.noiseData4 = this.noiseGen6.generateNoiseOctaves(this.noiseData4, chunkX4, chunkZ4, 5, 5, 200.0D, 200.0D, 0.5D);
+        this.noiseData1 = this.noiseGen3.generateNoiseOctaves(this.noiseData1, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 8.555150000000001D, 4.277575000000001D, 8.555150000000001D);
+        this.noiseData2 = this.noiseGen1.generateNoiseOctaves(this.noiseData2, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
+        this.noiseData3 = this.noiseGen2.generateNoiseOctaves(this.noiseData3, chunkX4, chunkY4, chunkZ4, 5, 33, 5, 684.412D, 684.412D, 684.412D);
         int l = 0;
         int i1 = 0;
 
@@ -154,7 +148,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                 f1 /= f2;
                 f = f * 0.9F + 0.1F;
                 f1 = (f1 * 4.0F - 1.0F) / 8.0F;
-                double d12 = this.field_147426_g[i1] / 8000.0D;
+                double d12 = this.noiseData4[i1] / 8000.0D;
 
                 if (d12 < 0.0D) {
                     d12 = -d12 * 0.3D;
@@ -180,26 +174,26 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                 }
 
                 ++i1;
-                double d13 = (double) f1;
-                double d14 = (double) f;
+                double d13 = f1;
+                double d14 = f;
                 d13 += d12 * 0.2D;
                 d13 = d13 * 8.5D / 8.0D;
                 double d5 = 8.5D + d13 * 4.0D;
 
                 for (int j2 = 0; j2 < 33; ++j2) {
-                    double d6 = ((double) j2 - d5) * 12.0D * 128.0D / 256.0D / d14;
+                    double d6 = (j2 - d5) * 12.0D * 128.0D / 256.0D / d14;
 
                     if (d6 < 0.0D) {
                         d6 *= 4.0D;
                     }
 
-                    double d7 = this.field_147428_e[l] / 512.0D;
-                    double d8 = this.field_147425_f[l] / 512.0D;
-                    double d9 = (this.field_147427_d[l] / 10.0D + 1.0D) / 2.0D;
+                    double d7 = this.noiseData2[l] / 512.0D;
+                    double d8 = this.noiseData3[l] / 512.0D;
+                    double d9 = (this.noiseData1[l] / 10.0D + 1.0D) / 2.0D;
                     double d10 = MathHelper.denormalizeClamp(d7, d8, d9) - d6;
 
                     if (j2 > 29) {
-                        double d11 = (double) ((float) (j2 - 29) / 3.0F);
+                        double d11 = ((j2 - 29) / 3.0F);
                         d10 = d10 * (1.0D - d11) + -10.0D * d11;
                     }
 

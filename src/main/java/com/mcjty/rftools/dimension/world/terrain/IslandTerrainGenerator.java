@@ -16,22 +16,22 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 
 public class IslandTerrainGenerator implements BaseTerrainGenerator {
     private World world;
-    GenericChunkProvider provider;
+    private GenericChunkProvider provider;
 
     private double[] densities;
 
     private NoiseGeneratorOctaves noiseGen1;
     private NoiseGeneratorOctaves noiseGen2;
     private NoiseGeneratorOctaves noiseGen3;
-    public NoiseGeneratorOctaves noiseGen4;
-    public NoiseGeneratorOctaves noiseGen5;
+    private NoiseGeneratorOctaves noiseGen4;
+    private NoiseGeneratorOctaves noiseGen5;
 
     private double[] stoneNoise = new double[256];
-    double[] noiseData1;
-    double[] noiseData2;
-    double[] noiseData3;
-    double[] noiseData4;
-    double[] noiseData5;
+    private double[] noiseData1;
+    private double[] noiseData2;
+    private double[] noiseData3;
+    private double[] noiseData4;
+    private double[] noiseData5;
 
     @Override
     public void setup(World world, GenericChunkProvider provider) {
@@ -60,7 +60,9 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     private double[] initializeNoiseField(double[] densities, int chunkX2, int chunkY2, int chunkZ2, int sizeX, int sizeY, int sizeZ) {
         ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(provider, densities, chunkX2, chunkY2, chunkZ2, sizeX, sizeY, sizeZ);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.DENY) return event.noisefield;
+        if (event.getResult() == Event.Result.DENY) {
+            return event.noisefield;
+        }
 
         if (densities == null) {
             densities = new double[sizeX * sizeY * sizeZ];
@@ -228,7 +230,6 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     public final void genBiomeTerrain(BiomeGenBase biomegenbase, Block[] blocks, byte[] abyte, int x, int z, double noise) {
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
-        boolean flag = true;
         Block block = biomegenbase.topBlock;
         byte b0 = (byte)(biomegenbase.field_150604_aj & 255);
         Block block1 = biomegenbase.fillerBlock;
