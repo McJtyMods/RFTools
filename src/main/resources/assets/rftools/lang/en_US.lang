@@ -46,6 +46,7 @@ tile.dimletResearcherBlock.name=Dimlet Researcher
 tile.dimletScramblerBlock.name=Dimlet Scrambler
 tile.dimensionEnscriberBlock.name=Dimension Enscriber
 tile.dimensionBuilderBlock.name=Dimension Builder
+tile.creativeDimensionBuilderBlock.name=Creative Dimension Builder
 tile.dimensionEditorBlock.name=Dimension Editor
 tile.dimensionMonitorBlock.name=Dimension Monitor
 tile.machineInfuserBlock.name=Machine Infuser

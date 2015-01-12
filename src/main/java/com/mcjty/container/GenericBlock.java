@@ -38,11 +38,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     protected IIcon iconSide;
     protected final Class<? extends TileEntity> tileEntityClass;
 
+    private boolean creative;
+
     // Set this to true in case horizontal rotation is used (2 bits rotation as opposed to 3).
     protected boolean horizRotation = false;
 
     public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);
+        this.creative = false;
         this.tileEntityClass = tileEntityClass;
         setHardness(2.0f);
         setStepSound(soundTypeMetal);
@@ -55,6 +58,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     public void setHorizRotation(boolean horizRotation) {
         this.horizRotation = horizRotation;
+    }
+
+    public boolean isCreative() {
+        return creative;
+    }
+
+    public void setCreative(boolean creative) {
+        this.creative = creative;
     }
 
     @SideOnly(Side.CLIENT)
@@ -292,7 +303,11 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         if (getIdentifyingIconName() != null) {
             iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + getIdentifyingIconName());
         }
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+        if (creative) {
+            iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSideC");
+        } else {
+            iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+        }
     }
 
     /**

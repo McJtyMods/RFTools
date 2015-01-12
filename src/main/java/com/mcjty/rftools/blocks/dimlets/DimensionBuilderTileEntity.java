@@ -27,11 +27,16 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
 
     private static int buildPercentage = 0;
+    private boolean creative = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionBuilderContainer.factory, 1);
 
     public DimensionBuilderTileEntity() {
         super(DimletConfiguration.BUILDER_MAXENERGY, DimletConfiguration.BUILDER_RECEIVEPERTICK);
+    }
+
+    public void setCreative(boolean creative) {
+        this.creative = creative;
     }
 
     @Override
@@ -67,7 +72,12 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
         if (id != 0) {
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
-            int rf = getEnergyStored(ForgeDirection.DOWN);
+            int rf;
+            if (creative) {
+                rf = DimletConfiguration.BUILDER_MAXENERGY;
+            } else {
+                rf = getEnergyStored(ForgeDirection.DOWN);
+            }
             int energy = dimensionStorage.getEnergyLevel(id);
             int maxEnergy = DimletConfiguration.MAX_DIMENSION_POWER - energy;      // Max energy the dimension can still get.
             if (rf > maxEnergy) {
@@ -80,7 +90,9 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                     RFTools.log("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
                 }
             }
-            extractEnergy(ForgeDirection.DOWN, rf, false);
+            if (!creative) {
+                extractEnergy(ForgeDirection.DOWN, rf, false);
+            }
             dimensionStorage.setEnergyLevel(id, energy + rf);
             dimensionStorage.save(worldObj);
         }
@@ -92,14 +104,18 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         int createCost = tagCompound.getInteger("rfCreateCost");
         createCost = (int) (createCost * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored(ForgeDirection.DOWN) >= createCost) {
-            extractEnergy(ForgeDirection.DOWN, createCost, false);
-            ticksLeft--;
-            if (random.nextFloat() < getInfusedFactor()) {
-                // Randomly reduce another tick if the device is infused.
+        if (creative || (getEnergyStored(ForgeDirection.DOWN) >= createCost)) {
+            if (creative) {
+                ticksLeft = 0;
+            } else {
+                extractEnergy(ForgeDirection.DOWN, createCost, false);
                 ticksLeft--;
-                if (ticksLeft < 0) {
-                    ticksLeft = 0;
+                if (random.nextFloat() < getInfusedFactor()) {
+                    // Randomly reduce another tick if the device is infused.
+                    ticksLeft--;
+                    if (ticksLeft < 0) {
+                        ticksLeft = 0;
+                    }
                 }
             }
             tagCompound.setInteger("ticksLeft", ticksLeft);
@@ -134,17 +150,17 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return DimletResearcherContainer.factory.getAccessibleSlots();
+        return DimensionBuilderContainer.factory.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainer.factory.isInputSlot(index);
+        return DimensionBuilderContainer.factory.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainer.factory.isOutputSlot(index);
+        return DimensionBuilderContainer.factory.isOutputSlot(index);
     }
 
     @Override

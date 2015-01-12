@@ -24,11 +24,12 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
     private IIcon iconFront_busy1;
     private IIcon iconFront_busy2;
 
-    public DimensionBuilderBlock() {
+    public DimensionBuilderBlock(boolean creative, String blockName) {
         super(Material.iron, DimensionBuilderTileEntity.class);
-        setBlockName("dimensionBuilderBlock");
+        setBlockName(blockName);
         setHorizRotation(true);
         setCreativeTab(RFTools.tabRfTools);
+        setCreative(creative);
     }
 
     @Override
@@ -39,11 +40,21 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         super.registerBlockIcons(iconRegister);
-        iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_empty");
+        if (isCreative()) {
+            iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilderC_empty");
+        } else {
+            iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_empty");
+        }
         iconFront_busy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy1");
         iconFront_busy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy2");
     }
 
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        TileEntity tileEntity = super.createTileEntity(world, metadata);
+        ((DimensionBuilderTileEntity)tileEntity).setCreative(isCreative());
+        return tileEntity;
+    }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
@@ -83,7 +94,11 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
 
     @Override
     public String getIdentifyingIconName() {
-        return "machineDimensionBuilder";
+        if (isCreative()) {
+            return "machineDimensionBuilderC";
+        } else {
+            return "machineDimensionBuilder";
+        }
     }
 
     @Override
