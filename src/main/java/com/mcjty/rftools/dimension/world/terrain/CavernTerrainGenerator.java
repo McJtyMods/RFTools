@@ -29,11 +29,8 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     public NoiseGeneratorOctaves netherNoiseGen7;
 
     private double[] noiseField;
-    /** Holds the noise used to determine whether slowsand can be generated at a location */
-    private double[] slowsandNoise = new double[256];
-    private double[] gravelNoise = new double[256];
-    /** Holds the noise used to determine whether something other than netherrack can be generated at a location */
-    private double[] netherrackExclusivityNoise = new double[256];
+    /** Holds the noise used to determine whether something other than the baseblock can be generated at a location */
+    private double[] baseBlockExclusivityNoise = new double[256];
     double[] noiseData1;
     double[] noiseData2;
     double[] noiseData3;
@@ -236,50 +233,36 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Event.Result.DENY) return;
 
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+        Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
+
         byte b0 = 64;
         double d0 = 0.03125D;
-        this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, chunkX * 16, chunkZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-        this.gravelNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.gravelNoise, chunkX * 16, 109, chunkZ * 16, 16, 1, 16, d0, 1.0D, d0);
-        this.netherrackExclusivityNoise = this.netherrackExculsivityNoiseGen.generateNoiseOctaves(this.netherrackExclusivityNoise, chunkX * 16, chunkZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+        this.baseBlockExclusivityNoise = this.netherrackExculsivityNoiseGen.generateNoiseOctaves(this.baseBlockExclusivityNoise, chunkX * 16, chunkZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
         for (int k = 0; k < 16; ++k) {
             for (int l = 0; l < 16; ++l) {
-                boolean flag = this.slowsandNoise[k + l * 16] + provider.rand.nextDouble() * 0.2D > 0.0D;
-                boolean flag1 = this.gravelNoise[k + l * 16] + provider.rand.nextDouble() * 0.2D > 0.0D;
-                int i1 = (int)(this.netherrackExclusivityNoise[k + l * 16] / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
+                int i1 = (int)(this.baseBlockExclusivityNoise[k + l * 16] / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
                 int j1 = -1;
-                Block block = Blocks.netherrack;
-                Block block1 = Blocks.netherrack;
+                Block block = baseBlock;
 
-                for (int k1 = 127; k1 >= 0; --k1) {
+                for (int k1 = 255; k1 >= 0; --k1) {
                     int l1 = (l * 16 + k) * 256 + k1;
 
-                    if (k1 < 255 - provider.rand.nextInt(5) && k1 > 0 + provider.rand.nextInt(5)) {
+                    if (k1 < 255 - provider.rand.nextInt(5) && k1 > provider.rand.nextInt(5)) {
                         Block block2 = aBlock[l1];
 
                         if (block2 != null && block2.getMaterial() != Material.air) {
-                            if (block2 == Blocks.netherrack) {
+                            if (block2 == baseBlock) {
                                 if (j1 == -1) {
                                     if (i1 <= 0) {
                                         block = null;
-                                        block1 = Blocks.netherrack;
                                     } else if (k1 >= b0 - 4 && k1 <= b0 + 1) {
-                                        block = Blocks.netherrack;
-                                        block1 = Blocks.netherrack;
-
-                                        if (flag1) {
-                                            block = Blocks.gravel;
-                                            block1 = Blocks.netherrack;
-                                        }
-
-                                        if (flag) {
-                                            block = Blocks.soul_sand;
-                                            block1 = Blocks.soul_sand;
-                                        }
+                                        block = baseBlock;
                                     }
 
                                     if (k1 < b0 && (block == null || block.getMaterial() == Material.air)) {
-                                        block = Blocks.lava;
+                                        block = baseLiquid;
                                     }
 
                                     j1 = i1;
@@ -287,12 +270,12 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                                     if (k1 >= b0 - 1) {
                                         aBlock[l1] = block;
                                     } else {
-                                        aBlock[l1] = block1;
+                                        aBlock[l1] = baseBlock;
                                     }
                                 }
                                 else if (j1 > 0) {
                                     --j1;
-                                    aBlock[l1] = block1;
+                                    aBlock[l1] = baseBlock;
                                 }
                             }
                         }
