@@ -113,7 +113,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                         f2 = -5.0f;
                         break;
                     case ISLANDS:
-                        f2 = -12.0f;
+                        f2 = -20.0f;
                         break;
                 }
 
@@ -276,10 +276,11 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
     public final void genBiomeTerrain(BiomeGenBase biomegenbase, Block[] blocks, byte[] abyte, int x, int z, double noise) {
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
 
         Block block = biomegenbase.topBlock;
         byte b0 = (byte)(biomegenbase.field_150604_aj & 255);
-        Block block1 = biomegenbase.fillerBlock;
+        Block block1 = biomegenbase.fillerBlock;    //baseBlock
         int k = -1;
         int l = (int)(noise / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
         int i1 = x & 15;
@@ -295,16 +296,16 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                 Block block2 = blocks[i2];
 
                 if (block2 != null && block2.getMaterial() != Material.air) {
-                    if (block2 == Blocks.stone) {
+                    if (block2 == baseBlock) {
                         if (k == -1) {
                             if (l <= 0) {
                                 block = null;
                                 b0 = 0;
-                                block1 = Blocks.stone;
+                                block1 = baseBlock;
                             } else if (l1 >= 59 && l1 <= 64) {
                                 block = biomegenbase.topBlock;
                                 b0 = (byte)(biomegenbase.field_150604_aj & 255);
-                                block1 = biomegenbase.fillerBlock;
+                                block1 = baseBlock; //biomegenbase.fillerBlock;
                             }
 
                             if (l1 < 63 && (block == null || block.getMaterial() == Material.air)) {
@@ -324,7 +325,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                                 abyte[i2] = b0;
                             } else if (l1 < 56 - l) {
                                 block = null;
-                                block1 = Blocks.stone;
+                                block1 = baseBlock; //Blocks.stone;
                                 blocks[i2] = Blocks.gravel;
                             } else {
                                 blocks[i2] = block1;
