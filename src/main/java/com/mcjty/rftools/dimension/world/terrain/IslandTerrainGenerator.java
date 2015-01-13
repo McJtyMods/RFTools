@@ -330,7 +330,8 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             } else if (height < 56 - l) {
                                 block = null;
                                 block1 = baseBlock; //Blocks.stone;
-                                blocks[index] = Blocks.gravel;
+                                blocks[index] = biomegenbase.fillerBlock;//Blocks.gravel;
+                                abyte[index] = (byte)(biomegenbase.field_76754_C & 266);
                             } else {
                                 blocks[index] = block1;
                             }
