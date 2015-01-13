@@ -4,6 +4,7 @@ public class CommandRftDb extends DefaultCommand {
     public CommandRftDb() {
         super();
         registerCommand(new CmdDebugToggle());
+        registerCommand(new CmdRefreshWorld());
     }
 
     @Override
