@@ -33,12 +33,40 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     private double[] noiseData4;
     private double[] noiseData5;
 
-    private static final int NORMAL = 0;
-    private static final int CHAOTIC = 1;
-    private static final int GLOBBY = 2;
-    private static final int PLATEAU = 3;
-    private static final int ISLANDS = 4;
-    private static int type = NORMAL;
+    public static final int NORMAL = 0;
+    public static final int CHAOTIC = 1;
+    public static final int PLATEAUS = 3;
+    public static final int ISLANDS = 4;
+
+    private final int type;
+    private final double topFactor;
+    private final double botFactor;
+    private final int bottomOffset;
+
+    public IslandTerrainGenerator(int type) {
+        this.type = type;
+        switch (type) {
+            case PLATEAUS:
+                topFactor = -1000.0D;
+                botFactor = -300.0D;
+                break;
+            case ISLANDS:
+                topFactor = -600.0D;
+                botFactor = -200.0D;
+                break;
+            default:
+                topFactor = -3000.0D;
+                botFactor = -30.D;
+                break;
+        }
+        if (type == PLATEAUS) {
+            bottomOffset = 14;
+        } else if (type == ISLANDS) {
+            bottomOffset = 11;
+        } else {
+            bottomOffset = 8;
+        }
+    }
 
     @Override
     public void setup(World world, GenericChunkProvider provider) {
@@ -106,10 +134,7 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                     case CHAOTIC:
                         f2 = 0.0F;
                         break;
-                    case GLOBBY:
-                        f2 = -20.0f;
-                        break;
-                    case PLATEAU:
+                    case PLATEAUS:
                         f2 = -5.0f;
                         break;
                     case ISLANDS:
@@ -147,38 +172,14 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             d10 = 1.0D;
                         }
 
-                        switch (type) {
-                            case NORMAL:
-                            case CHAOTIC:
-                                d5 = d5 * (1.0D - d10) + -3000.0D * d10;
-                                break;
-                            case GLOBBY:
-                                d5 = d5 * (1.0D - d10) + -300.0D * d10;
-                                break;
-                            case PLATEAU:
-                                d5 = d5 * (1.0D - d10) + -1000.0D * d10;
-                                break;
-                            case ISLANDS:
-                                d5 = d5 * (1.0D - d10) + -600.0D * d10;
-                                break;
-                        }
+                        d5 = d5 * (1.0D - d10) + topFactor * d10;
                     }
 
-                    if (type == PLATEAU) {
-                        b0 = (sizeY / 2) - 2;
-                    } else {
-                        b0 = 8;
-                    }
+                    b0 = bottomOffset;
 
                     if (y < b0) {
                         d10 = ((b0 - y) / (b0 - 1.0F));
-                        if (type == NORMAL || type == CHAOTIC || type == GLOBBY) {
-                            d5 = d5 * (1.0D - d10) + -30.0D * d10;
-                        } else if (type == PLATEAU) {
-                            d5 = d5 * (1.0D - d10) + -300.0D * d10;
-                        } else if (type == ISLANDS) {
-                            d5 = d5 * (1.0D - d10) + -200.0D * d10;
-                        }
+                        d5 = d5 * (1.0D - d10) + botFactor * d10;
                     }
 
                     densities[k1] = d5;
@@ -279,63 +280,66 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
 
         Block block = biomegenbase.topBlock;
-        byte b0 = (byte)(biomegenbase.field_150604_aj & 255);
+        byte blockMeta = (byte)(biomegenbase.field_150604_aj & 255);
+
         Block block1 = biomegenbase.fillerBlock;    //baseBlock
         int k = -1;
         int l = (int)(noise / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
-        int i1 = x & 15;
-        int j1 = z & 15;
-        int k1 = blocks.length / 256;
+        int cx = x & 15;
+        int cz = z & 15;
 
-        for (int l1 = 255; l1 >= 0; --l1) {
-            int i2 = (j1 * 16 + i1) * k1 + l1;
+        // Index of the bottom of the column.
+        int bottomIndex = ((cz * 16) + cx) * (blocks.length / 256);
 
-            if (l1 <= 2) {
-                blocks[i2] = Blocks.air;
+        for (int height = 255; height >= 0; --height) {
+            int index = bottomIndex + height;
+
+            if (height <= 2) {
+                blocks[index] = Blocks.air;
             } else {
-                Block block2 = blocks[i2];
+                Block currentBlock = blocks[index];
 
-                if (block2 != null && block2.getMaterial() != Material.air) {
-                    if (block2 == baseBlock) {
+                if (currentBlock != null && currentBlock.getMaterial() != Material.air) {
+                    if (currentBlock == baseBlock) {
                         if (k == -1) {
                             if (l <= 0) {
                                 block = null;
-                                b0 = 0;
+                                blockMeta = 0;
                                 block1 = baseBlock;
-                            } else if (l1 >= 59 && l1 <= 64) {
+                            } else if (height >= 59 && height <= 64) {
                                 block = biomegenbase.topBlock;
-                                b0 = (byte)(biomegenbase.field_150604_aj & 255);
+                                blockMeta = (byte)(biomegenbase.field_150604_aj & 255);
                                 block1 = baseBlock; //biomegenbase.fillerBlock;
                             }
 
-                            if (l1 < 63 && (block == null || block.getMaterial() == Material.air)) {
-                                if (biomegenbase.getFloatTemperature(x, l1, z) < 0.15F) {
+                            if (height < 63 && (block == null || block.getMaterial() == Material.air)) {
+                                if (biomegenbase.getFloatTemperature(x, height, z) < 0.15F) {
                                     block = Blocks.ice;
-                                    b0 = 0;
+                                    blockMeta = 0;
                                 } else {
                                     block = baseLiquid;
-                                    b0 = 0;
+                                    blockMeta = 0;
                                 }
                             }
 
                             k = l;
 
-                            if (l1 >= 62) {
-                                blocks[i2] = block;
-                                abyte[i2] = b0;
-                            } else if (l1 < 56 - l) {
+                            if (height >= 62) {
+                                blocks[index] = block;
+                                abyte[index] = blockMeta;
+                            } else if (height < 56 - l) {
                                 block = null;
                                 block1 = baseBlock; //Blocks.stone;
-                                blocks[i2] = Blocks.gravel;
+                                blocks[index] = Blocks.gravel;
                             } else {
-                                blocks[i2] = block1;
+                                blocks[index] = block1;
                             }
                         } else if (k > 0) {
                             --k;
-                            blocks[i2] = block1;
+                            blocks[index] = block1;
 
                             if (k == 0 && block1 == Blocks.sand) {
-                                k = provider.rand.nextInt(4) + Math.max(0, l1 - 63);
+                                k = provider.rand.nextInt(4) + Math.max(0, height - 63);
                                 block1 = Blocks.sandstone;
                             }
                         }

@@ -254,6 +254,9 @@ public class KnownDimletConfiguration {
         initTerrainItem(cfg, mainCfg, idsInConfig, "Normal", TerrainType.TERRAIN_NORMAL);
         initTerrainItem(cfg, mainCfg, idsInConfig, "Cavern", TerrainType.TERRAIN_CAVERN);
         initTerrainItem(cfg, mainCfg, idsInConfig, "Island", TerrainType.TERRAIN_ISLAND);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Islands", TerrainType.TERRAIN_ISLANDS);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Chaotic", TerrainType.TERRAIN_CHAOTIC);
+        initTerrainItem(cfg, mainCfg, idsInConfig, "Plateaus", TerrainType.TERRAIN_PLATEAUS);
 
         int idFeatureNone = initFeatureItem(cfg, mainCfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);

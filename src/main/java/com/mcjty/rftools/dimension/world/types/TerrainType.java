@@ -6,7 +6,10 @@ public enum TerrainType {
     TERRAIN_AMPLIFIED(true, false),
     TERRAIN_NORMAL(true, false),
     TERRAIN_CAVERN(true, true),
-    TERRAIN_ISLAND(false, true);
+    TERRAIN_ISLAND(false, true),
+    TERRAIN_ISLANDS(false, true),
+    TERRAIN_CHAOTIC(false, true),
+    TERRAIN_PLATEAUS(false, true);
 
     private final boolean supportsLakes;
     private final boolean noHorizon;
