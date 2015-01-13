@@ -37,7 +37,7 @@ public class DimletRandomizer {
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_0);
+        initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_1);
         initRarity(cfg, DimletType.DIMLET_TIME, RARITY_2);
         initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
         initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_1);
