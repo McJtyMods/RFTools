@@ -155,14 +155,6 @@ public class GenericChunkProvider implements IChunkProvider {
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
 
-        // @todo: is this right? Are we not overwriting standard biome information?
-        if (!dimensionInformation.getTerrainType().supportsLakes()) {
-            for (BiomeGenBase biome : biomesForGeneration) {
-                biome.theBiomeDecorator.generateLakes = false;
-            }
-        }
-
-
         terrainGenerator.generate(chunkX, chunkZ, ablock);
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
         terrainGenerator.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
@@ -256,7 +248,7 @@ public class GenericChunkProvider implements IChunkProvider {
         int i2;
 
 
-        if (dimensionInformation.getTerrainType().supportsLakes() && dimensionInformation.hasFeatureType(FeatureType.FEATURE_LAKES)) {
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_LAKES)) {
             if (dimensionInformation.getFluidsForLakes().length == 0) {
                 // No specific liquid dimlets specified: we generate default lakes (water and lava were appropriate).
                 if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
