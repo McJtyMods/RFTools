@@ -1,14 +1,13 @@
 package com.mcjty.rftools;
 
-import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.varia.Coordinate;
 
 /**
  * This class holds information on client-side only which are global to the mod.
  */
 public class ClientInfo {
-    private EndergenicTileEntity selectedEndergenicTileEntity = null;
-    private EndergenicTileEntity destinationEndergenicTileEntity = null;
+    private Coordinate selectedEndergenicTileEntity = null;
+    private Coordinate destinationEndergenicTileEntity = null;
 
     private Coordinate hilightedBlock = null;
     private long expireHilight = 0;
@@ -26,19 +25,19 @@ public class ClientInfo {
         return expireHilight;
     }
 
-    public EndergenicTileEntity getSelectedEndergenicTileEntity() {
+    public Coordinate getSelectedEndergenicTileEntity() {
         return selectedEndergenicTileEntity;
     }
 
-    public void setSelectedEndergenicTileEntity(EndergenicTileEntity selectedEndergenicTileEntity) {
+    public void setSelectedEndergenicTileEntity(Coordinate selectedEndergenicTileEntity) {
         this.selectedEndergenicTileEntity = selectedEndergenicTileEntity;
     }
 
-    public EndergenicTileEntity getDestinationEndergenicTileEntity() {
+    public Coordinate getDestinationEndergenicTileEntity() {
         return destinationEndergenicTileEntity;
     }
 
-    public void setDestinationEndergenicTileEntity(EndergenicTileEntity destinationEndergenicTileEntity) {
+    public void setDestinationEndergenicTileEntity(Coordinate destinationEndergenicTileEntity) {
         this.destinationEndergenicTileEntity = destinationEndergenicTileEntity;
     }
 }

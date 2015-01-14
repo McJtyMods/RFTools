@@ -383,31 +383,38 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
     // Called from client side when a wrench is used.
     public void useWrench(EntityPlayer player) {
-        EndergenicTileEntity otherTE = RFTools.instance.clientInfo.getSelectedEndergenicTileEntity();
-        if (otherTE == null) {
+        Coordinate thisCoord = new Coordinate(xCoord, yCoord, zCoord);
+        Coordinate coord = RFTools.instance.clientInfo.getSelectedEndergenicTileEntity();
+        TileEntity tileEntity = null;
+        if (coord != null) {
+            tileEntity = worldObj.getTileEntity(coord.getX(), coord.getY(), coord.getZ());
+        }
+
+        if (!(tileEntity instanceof EndergenicTileEntity)) {
             // None selected. Just select this one.
-            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(this);
+            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(thisCoord);
             EndergenicTileEntity destinationTE = getDestinationTE();
-            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(destinationTE);
             if (destinationTE == null) {
+                RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
                 RFTools.message(player, "Select another endergenic generator as destination");
             } else {
+                RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(new Coordinate(destinationTE.xCoord, destinationTE.yCoord, destinationTE.zCoord));
                 int distance = getDistanceInTicks();
                 RFTools.message(player, "Select another endergenic generator as destination (current distance "+distance+")");
             }
-        } else if (otherTE.equals(this)) {
+        } else if (coord.equals(thisCoord)) {
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
         } else {
             // Make a link.
-            Coordinate c = new Coordinate(xCoord, yCoord, zCoord);
-            int distance = otherTE.calculateDistance(c);
+            EndergenicTileEntity otherTE = (EndergenicTileEntity) tileEntity;
+            int distance = otherTE.calculateDistance(thisCoord);
             if (distance >= 5) {
                 RFTools.warn(player, "Distance is too far (maximum 4)");
                 return;
             }
-            otherTE.setDestination(c);
+            otherTE.setDestination(thisCoord);
             RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
             RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
             RFTools.message(player, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
