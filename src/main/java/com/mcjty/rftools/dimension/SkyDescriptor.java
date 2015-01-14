@@ -11,12 +11,19 @@ public class SkyDescriptor {
     private final Float skyColorFactorG;
     private final Float skyColorFactorB;
 
+    private final Float fogColorFactorR;
+    private final Float fogColorFactorG;
+    private final Float fogColorFactorB;
+
     private SkyDescriptor(Builder builder) {
         sunBrightnessFactor = builder.sunBrightnessFactor;
         starBrightnessFactor = builder.starBrightnessFactor;
         skyColorFactorR = builder.skyColorFactorR;
         skyColorFactorG = builder.skyColorFactorG;
         skyColorFactorB = builder.skyColorFactorB;
+        fogColorFactorR = builder.fogColorFactorR;
+        fogColorFactorG = builder.fogColorFactorG;
+        fogColorFactorB = builder.fogColorFactorB;
     }
 
     public void toBytes(ByteBuf buf) {
@@ -25,6 +32,9 @@ public class SkyDescriptor {
         writeFloat(buf, skyColorFactorR);
         writeFloat(buf, skyColorFactorG);
         writeFloat(buf, skyColorFactorB);
+        writeFloat(buf, fogColorFactorR);
+        writeFloat(buf, fogColorFactorG);
+        writeFloat(buf, fogColorFactorB);
     }
 
     public void writeToNBT(NBTTagCompound compound) {
@@ -42,6 +52,15 @@ public class SkyDescriptor {
         }
         if (skyColorFactorB != null) {
             compound.setFloat("skyColorFactorB", skyColorFactorB);
+        }
+        if (fogColorFactorR != null) {
+            compound.setFloat("fogColorFactorR", fogColorFactorR);
+        }
+        if (fogColorFactorG != null) {
+            compound.setFloat("fogColorFactorG", fogColorFactorG);
+        }
+        if (fogColorFactorB != null) {
+            compound.setFloat("fogColorFactorB", fogColorFactorB);
         }
     }
 
@@ -74,12 +93,27 @@ public class SkyDescriptor {
         return skyColorFactorB == null ? 1.0f : skyColorFactorB;
     }
 
+    public float getFogColorFactorR() {
+        return fogColorFactorR == null ? 1.0f : fogColorFactorR;
+    }
+
+    public float getFogColorFactorG() {
+        return fogColorFactorG == null ? 1.0f : fogColorFactorG;
+    }
+
+    public float getFogColorFactorB() {
+        return fogColorFactorB == null ? 1.0f : fogColorFactorB;
+    }
+
     public static class Builder {
         private Float sunBrightnessFactor = null;
         private Float starBrightnessFactor = null;
         private Float skyColorFactorR = null;
         private Float skyColorFactorG = null;
         private Float skyColorFactorB = null;
+        private Float fogColorFactorR = null;
+        private Float fogColorFactorG = null;
+        private Float fogColorFactorB = null;
 
         public Builder fromBytes(ByteBuf buf) {
             sunBrightnessFactor = readFloat(buf);
@@ -87,6 +121,9 @@ public class SkyDescriptor {
             skyColorFactorR = readFloat(buf);
             skyColorFactorG = readFloat(buf);
             skyColorFactorB = readFloat(buf);
+            fogColorFactorR = readFloat(buf);
+            fogColorFactorG = readFloat(buf);
+            fogColorFactorB = readFloat(buf);
             return this;
         }
 
@@ -116,6 +153,22 @@ public class SkyDescriptor {
             } else {
                 skyColorFactorB = null;
             }
+            if (compound.hasKey("fogColorFactorR")) {
+                fogColorFactorR = compound.getFloat("fogColorFactorR");
+            } else {
+                fogColorFactorR = null;
+            }
+            if (compound.hasKey("fogColorFactorG")) {
+                fogColorFactorG = compound.getFloat("fogColorFactorG");
+            } else {
+                fogColorFactorG = null;
+            }
+            if (compound.hasKey("fogColorFactorB")) {
+                fogColorFactorB = compound.getFloat("fogColorFactorB");
+            } else {
+                fogColorFactorB = null;
+            }
+
             return this;
         }
 
@@ -155,6 +208,28 @@ public class SkyDescriptor {
                     this.skyColorFactorB *= descriptor.skyColorFactorB;
                 }
             }
+            if (descriptor.fogColorFactorR != null) {
+                if (this.fogColorFactorR == null) {
+                    this.fogColorFactorR = descriptor.fogColorFactorR;
+                } else {
+                    this.fogColorFactorR *= descriptor.fogColorFactorR;
+                }
+            }
+            if (descriptor.fogColorFactorG != null) {
+                if (this.fogColorFactorG == null) {
+                    this.fogColorFactorG = descriptor.fogColorFactorG;
+                } else {
+                    this.fogColorFactorG *= descriptor.fogColorFactorG;
+                }
+            }
+            if (descriptor.fogColorFactorB != null) {
+                if (this.fogColorFactorB == null) {
+                    this.fogColorFactorB = descriptor.fogColorFactorB;
+                } else {
+                    this.fogColorFactorB *= descriptor.fogColorFactorB;
+                }
+            }
+
             return this;
         }
 
@@ -172,6 +247,13 @@ public class SkyDescriptor {
             this.skyColorFactorR = r;
             this.skyColorFactorG = g;
             this.skyColorFactorB = b;
+            return this;
+        }
+
+        public Builder fogColorFactor(float r, float g, float b) {
+            this.fogColorFactorR = r;
+            this.fogColorFactorG = g;
+            this.fogColorFactorB = b;
             return this;
         }
 

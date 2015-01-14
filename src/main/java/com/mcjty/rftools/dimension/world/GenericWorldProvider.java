@@ -96,6 +96,35 @@ public class GenericWorldProvider extends WorldProvider {
         return super.getBiomeGenForCoords(x, z);
     }
 
+    private static long lastFogTime = 0;
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Vec3 getFogColor(float angle, float p_76562_2_) {
+        int dim = worldObj.provider.dimensionId;
+        if (System.currentTimeMillis() - lastTime > 1000) {
+            lastTime = System.currentTimeMillis();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
+        }
+
+        float factor = calculatePowerBlackout(dim);
+        getDimensionInformation();
+
+        float r;
+        float g;
+        float b;
+        if (dimensionInformation == null) {
+            r = g = b = 1.0f;
+        } else {
+            r = dimensionInformation.getSkyDescriptor().getFogColorFactorR() * factor;
+            g = dimensionInformation.getSkyDescriptor().getFogColorFactorG() * factor;
+            b = dimensionInformation.getSkyDescriptor().getFogColorFactorB() * factor;
+        }
+
+        Vec3 color = super.getFogColor(angle, p_76562_2_);
+        return Vec3.createVectorHelper(color.xCoord * r, color.yCoord * g, color.zCoord * b);
+    }
+
     private static long lastTime = 0;
 
     @Override
@@ -108,8 +137,8 @@ public class GenericWorldProvider extends WorldProvider {
         }
 
         float factor = calculatePowerBlackout(dim);
-
         getDimensionInformation();
+
         float r;
         float g;
         float b;
