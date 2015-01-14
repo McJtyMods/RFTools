@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.render.DefaultISBRH;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -20,9 +21,10 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer {
 
         ResourceLocation txt;
 
-        if (endergenicTileEntity.equals(RFTools.instance.clientInfo.getSelectedEndergenicTileEntity())) {
+        Coordinate coord = new Coordinate(endergenicTileEntity.xCoord, endergenicTileEntity.yCoord, endergenicTileEntity.zCoord);
+        if (coord.equals(RFTools.instance.clientInfo.getSelectedEndergenicTileEntity())) {
             txt = redglow;
-        } else if (endergenicTileEntity.equals(RFTools.instance.clientInfo.getDestinationEndergenicTileEntity())) {
+        } else if (coord.equals(RFTools.instance.clientInfo.getDestinationEndergenicTileEntity())) {
             txt = blueglow;
         } else {
             return;
