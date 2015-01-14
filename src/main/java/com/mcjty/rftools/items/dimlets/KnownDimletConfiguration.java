@@ -7,6 +7,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.SkyDescriptor;
+import com.mcjty.rftools.dimension.SkyType;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -249,7 +250,8 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 1.0f).build());
         initSkyItem(cfg, mainCfg, idsInConfig, "Purple Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 1.0f).build());
 
-        initSkyItem(cfg, mainCfg, idsInConfig, "Ender", new SkyDescriptor.Builder().enderSky(true).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Ender", new SkyDescriptor.Builder().skyType(SkyType.SKY_ENDER).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Inferno", new SkyDescriptor.Builder().skyType(SkyType.SKY_INFERNO).build());
 
         int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);

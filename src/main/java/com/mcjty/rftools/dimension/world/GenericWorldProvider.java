@@ -2,10 +2,7 @@ package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.DimensionStorage;
-import com.mcjty.rftools.dimension.PacketGetDimensionEnergy;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.*;
 import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -52,10 +49,13 @@ public class GenericWorldProvider extends WorldProvider {
         }
         hasNoSky = !dimensionInformation.getTerrainType().hasSky();
 
-        if (dimensionInformation.getSkyDescriptor().hasEnderSky()) {
-            if (worldObj.isRemote) {
-                // Only on client!
+        if (worldObj.isRemote) {
+            // Only on client!
+            SkyType skyType = dimensionInformation.getSkyDescriptor().getSkyType();
+            if (skyType == SkyType.SKY_ENDER) {
                 SkyRenderer.registerEnderSky(this);
+            } else if (skyType == SkyType.SKY_INFERNO) {
+                SkyRenderer.registerPlasmaSky(this);
             }
         }
     }

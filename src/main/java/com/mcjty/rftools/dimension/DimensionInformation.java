@@ -388,8 +388,9 @@ public class DimensionInformation {
         g = skyDescriptor.getFogColorFactorG();
         b = skyDescriptor.getFogColorFactorB();
         logDebug(player, "    Fog color: " + r + ", " + g + ", " + b);
-        if (skyDescriptor.hasEnderSky()) {
-            logDebug(player, "    Ender Sky");
+        SkyType skyType = skyDescriptor.getSkyType();
+        if (skyType != SkyType.SKY_NORMAL) {
+            logDebug(player, "    Sky type: " + skyType.toString());
         }
 
         for (MobDescriptor mob : extraMobs) {

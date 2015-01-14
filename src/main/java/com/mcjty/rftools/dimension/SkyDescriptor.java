@@ -15,7 +15,7 @@ public class SkyDescriptor {
     private final Float fogColorFactorG;
     private final Float fogColorFactorB;
 
-    private final Boolean enderSky;
+    private final SkyType skyType;
 
     private SkyDescriptor(Builder builder) {
         sunBrightnessFactor = builder.sunBrightnessFactor;
@@ -26,7 +26,7 @@ public class SkyDescriptor {
         fogColorFactorR = builder.fogColorFactorR;
         fogColorFactorG = builder.fogColorFactorG;
         fogColorFactorB = builder.fogColorFactorB;
-        enderSky = builder.enderSky;
+        skyType = builder.skyType;
     }
 
     public void toBytes(ByteBuf buf) {
@@ -38,7 +38,7 @@ public class SkyDescriptor {
         writeFloat(buf, fogColorFactorR);
         writeFloat(buf, fogColorFactorG);
         writeFloat(buf, fogColorFactorB);
-        writeBoolean(buf, enderSky);
+        writeInteger(buf, skyType == null ? null : skyType.ordinal());
     }
 
     public void writeToNBT(NBTTagCompound compound) {
@@ -66,8 +66,8 @@ public class SkyDescriptor {
         if (fogColorFactorB != null) {
             compound.setFloat("fogColorFactorB", fogColorFactorB);
         }
-        if (enderSky != null) {
-            compound.setBoolean("enderSky", enderSky);
+        if (skyType != null) {
+            compound.setInteger("skyType", skyType.ordinal());
         }
     }
 
@@ -80,12 +80,12 @@ public class SkyDescriptor {
         }
     }
 
-    private void writeBoolean(ByteBuf buf, Boolean value) {
+    private void writeInteger(ByteBuf buf, Integer value) {
         if (value == null) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeBoolean(value);
+            buf.writeInt(value);
         }
     }
 
@@ -121,8 +121,8 @@ public class SkyDescriptor {
         return fogColorFactorB == null ? 1.0f : fogColorFactorB;
     }
 
-    public boolean hasEnderSky() {
-        return enderSky == null ? false : enderSky;
+    public SkyType getSkyType() {
+        return skyType == null ? SkyType.SKY_NORMAL : skyType;
     }
 
     public boolean specifiesSkyColor() {
@@ -142,7 +142,7 @@ public class SkyDescriptor {
         private Float fogColorFactorR = null;
         private Float fogColorFactorG = null;
         private Float fogColorFactorB = null;
-        private Boolean enderSky;
+        private SkyType skyType;
 
         public Builder fromBytes(ByteBuf buf) {
             sunBrightnessFactor = readFloat(buf);
@@ -153,7 +153,12 @@ public class SkyDescriptor {
             fogColorFactorR = readFloat(buf);
             fogColorFactorG = readFloat(buf);
             fogColorFactorB = readFloat(buf);
-            enderSky = readBoolean(buf);
+            Integer skyTypeI = readInteger(buf);
+            if (skyTypeI == null) {
+                skyType = null;
+            } else {
+                skyType = SkyType.values()[skyTypeI];
+            }
             return this;
         }
 
@@ -198,10 +203,11 @@ public class SkyDescriptor {
             } else {
                 fogColorFactorB = null;
             }
-            if (compound.hasKey("enderSky")) {
-                enderSky = compound.getBoolean("enderSky");
+            if (compound.hasKey("skyType")) {
+                int skyTypeI = compound.getInteger("skyType");
+                skyType = SkyType.values()[skyTypeI];
             } else {
-                enderSky = null;
+                skyType = null;
             }
 
             return this;
@@ -215,9 +221,9 @@ public class SkyDescriptor {
             }
         }
 
-        private Boolean readBoolean(ByteBuf buf) {
+        private Integer readInteger(ByteBuf buf) {
             if (buf.readBoolean()) {
-                return buf.readBoolean();
+                return buf.readInt();
             } else {
                 return null;
             }
@@ -230,8 +236,8 @@ public class SkyDescriptor {
             if (descriptor.sunBrightnessFactor != null) {
                 sunBrightnessFactor(descriptor.getSunBrightnessFactor());
             }
-            if (descriptor.enderSky != null) {
-                enderSky(descriptor.enderSky);
+            if (descriptor.skyType != null) {
+                skyType(descriptor.skyType);
             }
             if (descriptor.skyColorFactorR != null) {
                 if (this.skyColorFactorR == null) {
@@ -279,13 +285,13 @@ public class SkyDescriptor {
             return this;
         }
 
-        public Builder enderSky(boolean b) {
-            this.enderSky = b;
+        public Builder skyType(SkyType t) {
+            this.skyType = t;
             return this;
         }
 
-        public Builder resetEnderSky() {
-            this.enderSky = null;
+        public Builder resetSkytype() {
+            this.skyType = null;
             return this;
         }
 
