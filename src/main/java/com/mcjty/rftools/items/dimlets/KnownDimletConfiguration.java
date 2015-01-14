@@ -249,6 +249,8 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 1.0f).build());
         initSkyItem(cfg, mainCfg, idsInConfig, "Purple Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 1.0f).build());
 
+        initSkyItem(cfg, mainCfg, idsInConfig, "Ender", new SkyDescriptor.Builder().enderSky(true).build());
+
         int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
