@@ -240,6 +240,15 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build());
         initSkyItem(cfg, mainCfg, idsInConfig, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build());
 
+        initSkyItem(cfg, mainCfg, idsInConfig, "Normal Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Black Fog", new SkyDescriptor.Builder().fogColorFactor(0.0f, 0.0f, 0.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Red Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Green Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 0.2f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 0.2f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 1.0f).build());
+
         int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);

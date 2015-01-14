@@ -37,6 +37,14 @@ public class SkyDescriptor {
         writeFloat(buf, fogColorFactorB);
     }
 
+    public boolean specifiesSkyColor() {
+        return skyColorFactorR != null;
+    }
+
+    public boolean specifiesFogColor() {
+        return fogColorFactorR != null;
+    }
+
     public void writeToNBT(NBTTagCompound compound) {
         if (sunBrightnessFactor != null) {
             compound.setFloat("sunBrightness", sunBrightnessFactor);
@@ -247,6 +255,20 @@ public class SkyDescriptor {
             this.skyColorFactorR = r;
             this.skyColorFactorG = g;
             this.skyColorFactorB = b;
+            return this;
+        }
+
+        public Builder resetSkyColor() {
+            skyColorFactorR = null;
+            skyColorFactorG = null;
+            skyColorFactorB = null;
+            return this;
+        }
+
+        public Builder resetFogColor() {
+            fogColorFactorR = null;
+            fogColorFactorG = null;
+            fogColorFactorB = null;
             return this;
         }
 

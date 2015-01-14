@@ -132,8 +132,15 @@ public class DimensionInformation {
     private void injectSkyDimlet(int id) {
         addToCost(id);
         SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
-//        builder.combine(skyDescriptor);   @todo: should we allow combining?
-        builder.combine(DimletMapping.idToSkyDescriptor.get(id));
+        builder.combine(skyDescriptor);
+        SkyDescriptor newDescriptor = DimletMapping.idToSkyDescriptor.get(id);
+        if (newDescriptor.specifiesFogColor()) {
+            builder.resetFogColor();
+        }
+        if (newDescriptor.specifiesSkyColor()) {
+            builder.resetSkyColor();
+        }
+        builder.combine(newDescriptor);
         skyDescriptor = builder.build();
     }
 
@@ -377,6 +384,10 @@ public class DimensionInformation {
         float g = skyDescriptor.getSkyColorFactorG();
         float b = skyDescriptor.getSkyColorFactorB();
         logDebug(player, "    Sky color: " + r + ", " + g + ", " + b);
+        r = skyDescriptor.getFogColorFactorR();
+        g = skyDescriptor.getFogColorFactorG();
+        b = skyDescriptor.getFogColorFactorB();
+        logDebug(player, "    Fog color: " + r + ", " + g + ", " + b);
 
         for (MobDescriptor mob : extraMobs) {
             if (mob != null) {
