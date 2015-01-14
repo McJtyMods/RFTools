@@ -96,14 +96,19 @@ public class GenericWorldProvider extends WorldProvider {
         return super.getBiomeGenForCoords(x, z);
     }
 
+    @Override
+    public int getActualHeight() {
+        return 256;
+    }
+
     private static long lastFogTime = 0;
 
     @Override
     @SideOnly(Side.CLIENT)
     public Vec3 getFogColor(float angle, float p_76562_2_) {
         int dim = worldObj.provider.dimensionId;
-        if (System.currentTimeMillis() - lastTime > 1000) {
-            lastTime = System.currentTimeMillis();
+        if (System.currentTimeMillis() - lastFogTime > 1000) {
+            lastFogTime = System.currentTimeMillis();
             PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
         }
 
