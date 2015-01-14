@@ -1,23 +1,29 @@
 package com.mcjty.rftools.dimension.world.types;
 
 public enum TerrainType {
-    TERRAIN_VOID(true),
-    TERRAIN_FLAT(false),
-    TERRAIN_AMPLIFIED(false),
-    TERRAIN_NORMAL(false),
-    TERRAIN_CAVERN(true),
-    TERRAIN_ISLAND(true),
-    TERRAIN_ISLANDS(true),
-    TERRAIN_CHAOTIC(true),
-    TERRAIN_PLATEAUS(true);
+    TERRAIN_VOID(true, true),
+    TERRAIN_FLAT(false, true),
+    TERRAIN_AMPLIFIED(false, true),
+    TERRAIN_NORMAL(false, true),
+    TERRAIN_CAVERN(true, false),
+    TERRAIN_ISLAND(true, true),
+    TERRAIN_ISLANDS(true, true),
+    TERRAIN_CHAOTIC(true, true),
+    TERRAIN_PLATEAUS(true, true);
 
     private final boolean noHorizon;
+    private final boolean sky;
 
-    TerrainType(boolean noHorizon) {
+    TerrainType(boolean noHorizon, boolean clouds) {
         this.noHorizon = noHorizon;
+        this.sky = clouds;
     }
 
     public boolean hasNoHorizon() {
         return noHorizon;
+    }
+
+    public boolean hasSky() {
+        return sky;
     }
 }

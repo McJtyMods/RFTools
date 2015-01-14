@@ -13,6 +13,7 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.common.DimensionManager;
 
 public class GenericWorldProvider extends WorldProvider {
@@ -47,7 +48,7 @@ public class GenericWorldProvider extends WorldProvider {
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
         }
-        hasNoSky = false;
+        hasNoSky = !dimensionInformation.getTerrainType().hasSky();
     }
 
     public static WorldProvider getProviderForDimension(int id) {
@@ -62,6 +63,12 @@ public class GenericWorldProvider extends WorldProvider {
         } else {
             return super.getHorizon();
         }
+    }
+
+    @Override
+    public boolean isSurfaceWorld() {
+        getDimensionInformation();
+        return dimensionInformation.getTerrainType().hasSky();
     }
 
     @Override
@@ -201,6 +208,10 @@ public class GenericWorldProvider extends WorldProvider {
         getDimensionInformation();
         if (dimensionInformation == null) {
             return super.calculateCelestialAngle(time, p_76563_3_);
+        }
+
+        if (!dimensionInformation.getTerrainType().hasSky()) {
+            return 0.5F;
         }
 
         if (dimensionInformation.getCelestialAngle() == null) {
