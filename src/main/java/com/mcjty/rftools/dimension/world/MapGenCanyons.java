@@ -1,10 +1,12 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.items.dimlets.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
@@ -17,10 +19,10 @@ public class MapGenCanyons extends MapGenBase {
         this.provider = provider;
     }
 
-    protected void func_151540_a(long p_151540_1_, int p_151540_3_, int p_151540_4_, Block[] data, double p_151540_6_, double p_151540_8_, double p_151540_10_, float p_151540_12_, float p_151540_13_, float p_151540_14_, int p_151540_15_, int p_151540_16_, double p_151540_17_) {
-        Block baseBlock = provider.dimensionInformation.getCanyonBlock();
+    private void func_151540_a(long seed, int p_151540_3_, int p_151540_4_, Block[] data, byte[] meta, double p_151540_6_, double p_151540_8_, double p_151540_10_, float p_151540_12_, float p_151540_13_, float p_151540_14_, int p_151540_15_, int p_151540_16_, double p_151540_17_) {
+        BlockMeta baseBlock = provider.dimensionInformation.getCanyonBlock();
 
-        Random random = new Random(p_151540_1_);
+        Random random = new Random(seed);
         double d4 = (p_151540_3_ * 16 + 8);
         double d5 = (p_151540_4_ * 16 + 8);
         float f3 = 0.0F;
@@ -55,9 +57,9 @@ public class MapGenCanyons extends MapGenBase {
             d6 *= random.nextFloat() * 0.25D + 0.75D;
             float f6 = MathHelper.cos(p_151540_14_);
             float f7 = MathHelper.sin(p_151540_14_);
-            p_151540_6_ += (double)(MathHelper.cos(p_151540_13_) * f6);
-            p_151540_8_ += (double)f7;
-            p_151540_10_ += (double)(MathHelper.sin(p_151540_13_) * f6);
+            p_151540_6_ += (MathHelper.cos(p_151540_13_) * f6);
+            p_151540_8_ += f7;
+            p_151540_10_ += (MathHelper.sin(p_151540_13_) * f6);
             p_151540_14_ *= 0.7F;
             p_151540_14_ += f4 * 0.05F;
             p_151540_13_ += f3 * 0.05F;
@@ -126,7 +128,8 @@ public class MapGenCanyons extends MapGenBase {
                                         Block block  = data[k3];
 
                                         if (block == Blocks.air || block == null) {
-                                            data[k3] = baseBlock;
+                                            data[k3] = baseBlock.getBlock();
+                                            meta[k3] = baseBlock.getMeta();
                                         }
                                     }
 
@@ -144,19 +147,35 @@ public class MapGenCanyons extends MapGenBase {
         }
     }
 
-    @Override
-    protected void func_151538_a(World p_151538_1_, int p_151538_2_, int p_151538_3_, int p_151538_4_, int p_151538_5_, Block[] data) {
+    public void generate(IChunkProvider provider, World world, int p_151539_3_, int p_151539_4_, Block[] ablock, byte[] ameta) {
+        int k = this.range;
+        this.worldObj = world;
+        this.rand.setSeed(world.getSeed());
+        long l = this.rand.nextLong();
+        long i1 = this.rand.nextLong();
+
+        for (int j1 = p_151539_3_ - k; j1 <= p_151539_3_ + k; ++j1) {
+            for (int k1 = p_151539_4_ - k; k1 <= p_151539_4_ + k; ++k1) {
+                long l1 = j1 * l;
+                long i2 = k1 * i1;
+                this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
+                this.func_151538_a(world, j1, k1, p_151539_3_, p_151539_4_, ablock, ameta);
+            }
+        }
+    }
+
+    protected void func_151538_a(World world, int chunkX, int chunkZ, int p_151538_4_, int p_151538_5_, Block[] data, byte[] ameta) {
         if (this.rand.nextInt(50) == 0) {
-            double d0 = (p_151538_2_ * 16 + this.rand.nextInt(16));
+            double d0 = (chunkX * 16 + this.rand.nextInt(16));
             double d1 = (this.rand.nextInt(this.rand.nextInt(40) + 8) + 20);
-            double d2 = (p_151538_3_ * 16 + this.rand.nextInt(16));
+            double d2 = (chunkZ * 16 + this.rand.nextInt(16));
             byte b0 = 1;
 
             for (int i1 = 0; i1 < b0; ++i1) {
                 float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
                 float f1 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
                 float f2 = (this.rand.nextFloat() * 2.0F + this.rand.nextFloat()) * 2.0F;
-                this.func_151540_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
+                this.func_151540_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, ameta, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
             }
         }
     }

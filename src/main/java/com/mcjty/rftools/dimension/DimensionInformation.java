@@ -31,17 +31,17 @@ public class DimensionInformation {
     private int probeCounter = 0;
 
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
-    private Block baseBlockForTerrain = null;
+    private BlockMeta baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
-    private Block tendrilBlock = null;
-    private Block canyonBlock = null;
-    private Block sphereBlock = null;
+    private BlockMeta tendrilBlock = null;
+    private BlockMeta canyonBlock = null;
+    private BlockMeta sphereBlock = null;
 
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
-    private Block[] extraOregen = new Block[] {};
+    private BlockMeta[] extraOregen = new BlockMeta[] {};
     private Block[] fluidsForLakes = new Block[] {};
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
@@ -192,23 +192,14 @@ public class DimensionInformation {
 
         digitString = tagCompound.getString("digits");
 
-        baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("baseBlock"));
-        tendrilBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("tendrilBlock"));
-        sphereBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("sphereBlock"));
-        canyonBlock = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("canyonBlock"));
+        baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
+        tendrilBlock = getBlockMeta(tagCompound, "tendrilBlock");
+        sphereBlock = getBlockMeta(tagCompound, "sphereBlock");
+        canyonBlock = getBlockMeta(tagCompound, "canyonBlock");
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("fluidBlock"));
 
-        List<Block> ores = new ArrayList<Block>();
-        for (int a : tagCompound.getIntArray("extraOregen")) {
-            ores.add((Block) Block.blockRegistry.getObjectById(a));
-        }
-        extraOregen = ores.toArray(new Block[ores.size()]);
-
-        ores.clear();
-        for (int a : tagCompound.getIntArray("lakeFluids")) {
-            ores.add((Block) Block.blockRegistry.getObjectById(a));
-        }
-        fluidsForLakes = ores.toArray(new Block[ores.size()]);
+        readOresFromNBT(tagCompound);
+        readFluidsFromNBT(tagCompound);
 
         peaceful = tagCompound.getBoolean("peaceful");
         if (tagCompound.hasKey("celestialAngle")) {
@@ -247,6 +238,36 @@ public class DimensionInformation {
 
     }
 
+    private void readFluidsFromNBT(NBTTagCompound tagCompound) {
+        List<Block> ores = new ArrayList<Block>();
+        for (int a : tagCompound.getIntArray("lakeFluids")) {
+            ores.add((Block) Block.blockRegistry.getObjectById(a));
+        }
+        fluidsForLakes = ores.toArray(new Block[ores.size()]);
+    }
+
+    private void readOresFromNBT(NBTTagCompound tagCompound) {
+        List<BlockMeta> ores = new ArrayList<BlockMeta>();
+        int[] extraOregens = tagCompound.getIntArray("extraOregen");
+        int[] extraOregen_metas = tagCompound.getIntArray("extraOregen_meta");
+        for (int i = 0 ; i < extraOregens.length ; i++) {
+            int id = extraOregens[i];
+            Block block = (Block) Block.blockRegistry.getObjectById(id);
+            int meta = 0;
+            if (i < extraOregen_metas.length) {
+                meta = extraOregen_metas[i];
+            }
+            ores.add(new BlockMeta(block, meta));
+        }
+        extraOregen = ores.toArray(new BlockMeta[ores.size()]);
+    }
+
+    private BlockMeta getBlockMeta(NBTTagCompound tagCompound, String name) {
+        Block block = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger(name));
+        int meta = tagCompound.getInteger(name+"_meta");
+        return new BlockMeta(block, meta);
+    }
+
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setString("name", getName());
         Coordinate spawnPoint = getSpawnPoint();
@@ -268,23 +289,14 @@ public class DimensionInformation {
         tagCompound.setIntArray("biomes", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
         tagCompound.setString("digits", digitString);
 
-        tagCompound.setInteger("baseBlock", Block.blockRegistry.getIDForObject(baseBlockForTerrain));
-        tagCompound.setInteger("tendrilBlock", Block.blockRegistry.getIDForObject(tendrilBlock));
-        tagCompound.setInteger("sphereBlock", Block.blockRegistry.getIDForObject(sphereBlock));
-        tagCompound.setInteger("canyonBlock", Block.blockRegistry.getIDForObject(canyonBlock));
+        setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
+        setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
+        setBlockMeta(tagCompound, sphereBlock, "sphereBlock");
+        setBlockMeta(tagCompound, canyonBlock, "canyonBlock");
         tagCompound.setInteger("fluidBlock", Block.blockRegistry.getIDForObject(fluidForTerrain));
 
-        c = new ArrayList<Integer>(extraOregen.length);
-        for (Block t : extraOregen) {
-            c.add(Block.blockRegistry.getIDForObject(t));
-        }
-        tagCompound.setIntArray("extraOregen", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
-
-        c = new ArrayList<Integer>(fluidsForLakes.length);
-        for (Block t : fluidsForLakes) {
-            c.add(Block.blockRegistry.getIDForObject(t));
-        }
-        tagCompound.setIntArray("lakeFluids", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
+        writeOresToNBT(tagCompound);
+        writeFluidsToNBT(tagCompound);
 
         tagCompound.setBoolean("peaceful", peaceful);
         if (celestialAngle != null) {
@@ -315,6 +327,31 @@ public class DimensionInformation {
         }
 
         tagCompound.setTag("mobs", list);
+    }
+
+    private void setBlockMeta(NBTTagCompound tagCompound, BlockMeta blockMeta, String name) {
+        tagCompound.setInteger(name, Block.blockRegistry.getIDForObject(blockMeta.getBlock()));
+        tagCompound.setInteger(name+"_meta", blockMeta.getMeta());
+    }
+
+    private void writeFluidsToNBT(NBTTagCompound tagCompound) {
+        List<Integer> c;
+        c = new ArrayList<Integer>(fluidsForLakes.length);
+        for (Block t : fluidsForLakes) {
+            c.add(Block.blockRegistry.getIDForObject(t));
+        }
+        tagCompound.setIntArray("lakeFluids", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
+    }
+
+    private void writeOresToNBT(NBTTagCompound tagCompound) {
+        List<Integer> ids = new ArrayList<Integer>(extraOregen.length);
+        List<Integer> meta = new ArrayList<Integer>(extraOregen.length);
+        for (BlockMeta t : extraOregen) {
+            ids.add(Block.blockRegistry.getIDForObject(t.getBlock()));
+            meta.add((int)t.getMeta());
+        }
+        tagCompound.setIntArray("extraOregen", ArrayUtils.toPrimitive(ids.toArray(new Integer[ids.size()])));
+        tagCompound.setIntArray("extraOregen_meta", ArrayUtils.toPrimitive(meta.toArray(new Integer[meta.size()])));
     }
 
     private static <T extends Enum> int[] toIntArray(Collection<T> collection) {
@@ -349,15 +386,15 @@ public class DimensionInformation {
         }
         TerrainType terrainType = getTerrainType();
         logDebug(player, "    Terrain: " + terrainType.toString());
-        logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain).getDisplayName());
+        logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain.getBlock(), 1, baseBlockForTerrain.getMeta()).getDisplayName());
         if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
-            logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock).getDisplayName());
+            logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock.getBlock(), 1, tendrilBlock.getMeta()).getDisplayName());
         }
         if (featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
-            logDebug(player, "        Sphere block: " + new ItemStack(sphereBlock).getDisplayName());
+            logDebug(player, "        Sphere block: " + new ItemStack(sphereBlock.getBlock(), 1, sphereBlock.getMeta()).getDisplayName());
         }
         if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
-            logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock).getDisplayName());
+            logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock.getBlock(), 1, canyonBlock.getMeta()).getDisplayName());
         }
         logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
         for (BiomeGenBase biome : getBiomes()) {
@@ -366,8 +403,8 @@ public class DimensionInformation {
         for (FeatureType featureType : getFeatureTypes()) {
             logDebug(player, "    Feature: " + featureType.toString());
         }
-        for (Block block : extraOregen) {
-            logDebug(player, "        Extra ore: " + new ItemStack(block).getDisplayName());
+        for (BlockMeta block : extraOregen) {
+            logDebug(player, "        Extra ore: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
         }
         for (Block block : fluidsForLakes) {
             logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());
@@ -429,15 +466,20 @@ public class DimensionInformation {
 
         ByteBufTools.writeString(buf, digitString);
 
-        buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain));
-        buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock));
-        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock));
-        buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock));
+        buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain.getBlock()));
+        buf.writeInt(baseBlockForTerrain.getMeta());
+        buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock.getBlock()));
+        buf.writeInt(tendrilBlock.getMeta());
+        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock.getBlock()));
+        buf.writeInt(sphereBlock.getMeta());
+        buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock.getBlock()));
+        buf.writeInt(canyonBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
 
         buf.writeInt(extraOregen.length);
-        for (Block block : extraOregen) {
-            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+        for (BlockMeta block : extraOregen) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block.getBlock()));
+            buf.writeInt(block.getMeta());
         }
         buf.writeInt(fluidsForLakes.length);
         for (Block block : fluidsForLakes) {
@@ -483,21 +525,31 @@ public class DimensionInformation {
         }
         digitString = ByteBufTools.readString(buf);
 
-        baseBlockForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        tendrilBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        sphereBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        canyonBlock = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        Block block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        int meta = buf.readInt();
+        baseBlockForTerrain = new BlockMeta(block, meta);
+        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        meta = buf.readInt();
+        tendrilBlock = new BlockMeta(block, meta);
+        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        meta = buf.readInt();
+        sphereBlock = new BlockMeta(block, meta);
+        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        meta = buf.readInt();
+        canyonBlock = new BlockMeta(block, meta);
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
 
         size = buf.readInt();
-        List<Block> blocks = new ArrayList<Block>();
+        List<BlockMeta> blocksMeta = new ArrayList<BlockMeta>();
         for (int i = 0 ; i < size ; i++) {
-            blocks.add((Block) Block.blockRegistry.getObjectById(buf.readInt()));
+            Block b = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+            int m = buf.readInt();
+            blocksMeta.add(new BlockMeta(b, m));
         }
-        extraOregen = blocks.toArray(new Block[blocks.size()]);
+        extraOregen = blocksMeta.toArray(new BlockMeta[blocksMeta.size()]);
 
+        List<Block> blocks = new ArrayList<Block>();
         size = buf.readInt();
-        blocks = new ArrayList<Block>();
         for (int i = 0 ; i < size ; i++) {
             blocks.add((Block) Block.blockRegistry.getObjectById(buf.readInt()));
         }
@@ -662,14 +714,14 @@ public class DimensionInformation {
             modifiers = dimlets.get(index).getRight();
         }
 
-        List<Block> blocks = new ArrayList<Block>();
+        List<BlockMeta> blocks = new ArrayList<BlockMeta>();
         List<Block> fluids = new ArrayList<Block>();
         getMaterialAndFluidModifiers(modifiers, blocks, fluids);
 
         if (!blocks.isEmpty()) {
             baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
             if (baseBlockForTerrain == null) {
-                baseBlockForTerrain = Blocks.stone;     // This is the default in case None was specified.
+                baseBlockForTerrain = new BlockMeta(Blocks.stone, 0);     // This is the default in case None was specified.
             }
         } else {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
@@ -679,7 +731,7 @@ public class DimensionInformation {
                 actualRfCost += calculateCostFactor(id);
                 baseBlockForTerrain = DimletMapping.idToBlock.get(id);
             } else {
-                baseBlockForTerrain = Blocks.stone;
+                baseBlockForTerrain = new BlockMeta(Blocks.stone, 0);
             }
         }
 
@@ -722,11 +774,11 @@ public class DimensionInformation {
         }
     }
 
-    private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<Block> blocks, List<Block> fluids) {
+    private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<BlockMeta> blocks, List<Block> fluids) {
         if (modifiers != null) {
             for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
                 if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
-                    Block block = DimletMapping.idToBlock.get(modifier.getId());
+                    BlockMeta block = DimletMapping.idToBlock.get(modifier.getId());
                     blocks.add(block);
                 } else if (modifier.getType() == DimletType.DIMLET_LIQUID) {
                     Block fluid = DimletMapping.idToFluid.get(modifier.getId());
@@ -760,7 +812,7 @@ public class DimensionInformation {
         }
 
         if (featureTypes.contains(FeatureType.FEATURE_LAKES)) {
-            List<Block> blocks = new ArrayList<Block>();
+            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
             getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids);
 
@@ -780,7 +832,7 @@ public class DimensionInformation {
         }
 
         if (featureTypes.contains(FeatureType.FEATURE_OREGEN)) {
-            List<Block> blocks = new ArrayList<Block>();
+            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
             getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_OREGEN), blocks, fluids);
 
@@ -794,9 +846,9 @@ public class DimensionInformation {
             } else if (blocks.size() == 1 && blocks.get(0) == null) {
                 blocks.clear();
             }
-            extraOregen = blocks.toArray(new Block[blocks.size()]);
+            extraOregen = blocks.toArray(new BlockMeta[blocks.size()]);
         } else {
-            extraOregen = new Block[0];
+            extraOregen = new BlockMeta[0];
         }
 
         tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS);
@@ -804,17 +856,17 @@ public class DimensionInformation {
         canyonBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS);
     }
 
-    private Block getFeatureBlock(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
-        Block block;
+    private BlockMeta getFeatureBlock(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
+        BlockMeta block;
         if (featureTypes.contains(featureType)) {
-            List<Block> blocks = new ArrayList<Block>();
+            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
             getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
 
             if (!blocks.isEmpty()) {
                 block = blocks.get(random.nextInt(blocks.size()));
                 if (block == null) {
-                    block = Blocks.stone;     // This is the default in case None was specified.
+                    block = new BlockMeta(Blocks.stone, 0);     // This is the default in case None was specified.
                 }
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
@@ -823,11 +875,11 @@ public class DimensionInformation {
                     actualRfCost += calculateCostFactor(id);
                     block = DimletMapping.idToBlock.get(id);
                 } else {
-                    block = Blocks.stone;
+                    block = new BlockMeta(Blocks.stone, 0);
                 }
             }
         } else {
-            block = Blocks.stone;
+            block = new BlockMeta(Blocks.stone, 0);
         }
         return block;
     }
@@ -905,23 +957,23 @@ public class DimensionInformation {
         return digitString;
     }
 
-    public Block getBaseBlockForTerrain() {
+    public BlockMeta getBaseBlockForTerrain() {
         return baseBlockForTerrain;
     }
 
-    public Block getTendrilBlock() {
+    public BlockMeta getTendrilBlock() {
         return tendrilBlock;
     }
 
-    public Block getCanyonBlock() {
+    public BlockMeta getCanyonBlock() {
         return canyonBlock;
     }
 
-    public Block getSphereBlock() {
+    public BlockMeta getSphereBlock() {
         return sphereBlock;
     }
 
-    public Block[] getExtraOregen() {
+    public BlockMeta[] getExtraOregen() {
         return extraOregen;
     }
 

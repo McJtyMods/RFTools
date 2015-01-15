@@ -192,8 +192,9 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
     }
 
     @Override
-    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+    public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] meta) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
 
         byte b0 = 2;
         int k = b0 + 1;
@@ -230,13 +231,13 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             double d16 = (d11 - d10) * d14;
 
                             for (int k2 = 0; k2 < 8; ++k2) {
-                                Block block = null;
-
                                 if (d15 > 0.0D) {
-                                    block = baseBlock;
+                                    aBlock[index] = baseBlock;
+                                    meta[index] = baseMeta;
+                                } else {
+                                    aBlock[index] = null;
                                 }
 
-                                aBlock[index] = block;
                                 index += maxheight;
                                 d15 += d16;
                             }
@@ -277,12 +278,14 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
     public final void genBiomeTerrain(BiomeGenBase biomegenbase, Block[] blocks, byte[] abyte, int x, int z, double noise) {
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
 
         Block block = biomegenbase.topBlock;
         byte blockMeta = (byte)(biomegenbase.field_150604_aj & 255);
 
         Block block1 = biomegenbase.fillerBlock;    //baseBlock
+        byte block1Meta = (byte)(biomegenbase.field_76754_C & 255);
         int k = -1;
         int l = (int)(noise / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
         int cx = x & 15;
@@ -306,10 +309,12 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                                 block = null;
                                 blockMeta = 0;
                                 block1 = baseBlock;
+                                block1Meta = baseMeta;
                             } else if (height >= 59 && height <= 64) {
                                 block = biomegenbase.topBlock;
                                 blockMeta = (byte)(biomegenbase.field_150604_aj & 255);
                                 block1 = baseBlock; //biomegenbase.fillerBlock;
+                                block1Meta = baseMeta;
                             }
 
                             if (height < 63 && (block == null || block.getMaterial() == Material.air)) {
@@ -330,18 +335,22 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             } else if (height < 56 - l) {
                                 block = null;
                                 block1 = baseBlock; //Blocks.stone;
+                                block1Meta = baseMeta;
                                 blocks[index] = biomegenbase.fillerBlock;//Blocks.gravel;
                                 abyte[index] = (byte)(biomegenbase.field_76754_C & 266);
                             } else {
                                 blocks[index] = block1;
+                                abyte[index] = block1Meta;
                             }
                         } else if (k > 0) {
                             --k;
                             blocks[index] = block1;
+                            abyte[index] = block1Meta;
 
                             if (k == 0 && block1 == Blocks.sand) {
                                 k = provider.rand.nextInt(4) + Math.max(0, height - 63);
                                 block1 = Blocks.sandstone;
+                                block1Meta = 0;
                             }
                         }
                     }

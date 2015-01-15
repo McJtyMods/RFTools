@@ -1,9 +1,11 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.items.dimlets.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
@@ -15,12 +17,12 @@ public class MapGenTendrils extends MapGenBase {
         this.provider = provider;
     }
 
-    protected void func_151542_a(long p_151542_1_, int p_151542_3_, int p_151542_4_, Block[] p_151542_5_, double p_151542_6_, double p_151542_8_, double p_151542_10_) {
-        this.func_151541_a(p_151542_1_, p_151542_3_, p_151542_4_, p_151542_5_, p_151542_6_, p_151542_8_, p_151542_10_, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
+    private void func_151542_a(long p_151542_1_, int p_151542_3_, int p_151542_4_, Block[] data, byte[] meta, double p_151542_6_, double p_151542_8_, double p_151542_10_) {
+        this.func_151541_a(p_151542_1_, p_151542_3_, p_151542_4_, data, meta, p_151542_6_, p_151542_8_, p_151542_10_, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
-    protected void func_151541_a(long p_151541_1_, int p_151541_3_, int p_151541_4_, Block[] data, double p_151541_6_, double p_151541_8_, double p_151541_10_, float p_151541_12_, float p_151541_13_, float p_151541_14_, int p_151541_15_, int p_151541_16_, double p_151541_17_) {
-        Block baseBlock = provider.dimensionInformation.getTendrilBlock();
+    private void func_151541_a(long p_151541_1_, int p_151541_3_, int p_151541_4_, Block[] data, byte[] meta, double p_151541_6_, double p_151541_8_, double p_151541_10_, float p_151541_12_, float p_151541_13_, float p_151541_14_, int p_151541_15_, int p_151541_16_, double p_151541_17_) {
+        BlockMeta baseBlock = provider.dimensionInformation.getTendrilBlock();
 
         double d4 = (p_151541_3_ * 16 + 8);
         double d5 = (p_151541_4_ * 16 + 8);
@@ -65,8 +67,8 @@ public class MapGenTendrils extends MapGenBase {
             f3 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
 
             if (!flag2 && p_151541_15_ == k1 && p_151541_12_ > 1.0F && p_151541_16_ > 0) {
-                this.func_151541_a(random.nextLong(), p_151541_3_, p_151541_4_, data, p_151541_6_, p_151541_8_, p_151541_10_, random.nextFloat() * 0.5F + 0.5F, p_151541_13_ - ((float)Math.PI / 2F), p_151541_14_ / 3.0F, p_151541_15_, p_151541_16_, 1.0D);
-                this.func_151541_a(random.nextLong(), p_151541_3_, p_151541_4_, data, p_151541_6_, p_151541_8_, p_151541_10_, random.nextFloat() * 0.5F + 0.5F, p_151541_13_ + ((float)Math.PI / 2F), p_151541_14_ / 3.0F, p_151541_15_, p_151541_16_, 1.0D);
+                this.func_151541_a(random.nextLong(), p_151541_3_, p_151541_4_, data, meta, p_151541_6_, p_151541_8_, p_151541_10_, random.nextFloat() * 0.5F + 0.5F, p_151541_13_ - ((float)Math.PI / 2F), p_151541_14_ / 3.0F, p_151541_15_, p_151541_16_, 1.0D);
+                this.func_151541_a(random.nextLong(), p_151541_3_, p_151541_4_, data, meta, p_151541_6_, p_151541_8_, p_151541_10_, random.nextFloat() * 0.5F + 0.5F, p_151541_13_ + ((float)Math.PI / 2F), p_151541_14_ / 3.0F, p_151541_15_, p_151541_16_, 1.0D);
                 return;
             }
 
@@ -130,7 +132,8 @@ public class MapGenTendrils extends MapGenBase {
                                         Block block  = data[k3];
 
                                         if (block == Blocks.air || block == null) {
-                                            data[k3] = baseBlock;
+                                            data[k3] = baseBlock.getBlock();
+                                            meta[k3] = baseBlock.getMeta();
                                         }
                                     }
 
@@ -148,8 +151,24 @@ public class MapGenTendrils extends MapGenBase {
         }
     }
 
-    @Override
-    protected void func_151538_a(World world, int chunkX, int chunkZ, int p_151538_4_, int p_151538_5_, Block[] data) {
+    public void generate(IChunkProvider provider, World world, int p_151539_3_, int p_151539_4_, Block[] ablock, byte[] ameta) {
+        int k = this.range;
+        this.worldObj = world;
+        this.rand.setSeed(world.getSeed());
+        long l = this.rand.nextLong();
+        long i1 = this.rand.nextLong();
+
+        for (int j1 = p_151539_3_ - k; j1 <= p_151539_3_ + k; ++j1) {
+            for (int k1 = p_151539_4_ - k; k1 <= p_151539_4_ + k; ++k1) {
+                long l1 = j1 * l;
+                long i2 = k1 * i1;
+                this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
+                this.func_151538_a(world, j1, k1, p_151539_3_, p_151539_4_, ablock, ameta);
+            }
+        }
+    }
+
+    private void func_151538_a(World world, int chunkX, int chunkZ, int p_151538_4_, int p_151538_5_, Block[] data, byte[] meta) {
         int i1 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(15) + 1) + 1);
 
         if (this.rand.nextInt(7) != 0) {
@@ -163,7 +182,7 @@ public class MapGenTendrils extends MapGenBase {
             int k1 = 1;
 
             if (this.rand.nextInt(4) == 0) {
-                this.func_151542_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, d0, d1, d2);
+                this.func_151542_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, meta, d0, d1, d2);
                 k1 += this.rand.nextInt(4);
             }
 
@@ -176,7 +195,7 @@ public class MapGenTendrils extends MapGenBase {
                     f2 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
                 }
 
-                this.func_151541_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
+                this.func_151541_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, meta, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
             }
         }
     }

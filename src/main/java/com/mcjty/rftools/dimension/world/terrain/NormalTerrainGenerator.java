@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension.world.terrain;
 
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.items.dimlets.BlockMeta;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
@@ -205,8 +206,9 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
     }
 
     @Override
-    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+    public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] meta) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
         func_147423_a(chunkX * 4, 0, chunkZ * 4);
@@ -250,12 +252,14 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                             double d15 = d10 - d16;
 
                             for (int z = 0; z < 4; ++z) {
+                                index += maxheight;
                                 if ((d15 += d16) > 0.0D) {
-                                    aBlock[index += maxheight] = baseBlock;
+                                    aBlock[index] = baseBlock;
+                                    meta[index] = baseMeta;
                                 } else if (height < waterLevel) {
-                                    aBlock[index += maxheight] = baseLiquid;
+                                    aBlock[index] = baseLiquid;
                                 } else {
-                                    aBlock[index += maxheight] = null;
+                                    aBlock[index] = null;
                                 }
                             }
 

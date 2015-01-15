@@ -13,7 +13,7 @@ public class VoidTerrainGenerator implements BaseTerrainGenerator {
     }
 
     @Override
-    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
+    public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] meta) {
         for (int i = 0 ; i < 65536 ; i++) {
             aBlock[i] = null;
         }

@@ -10,6 +10,7 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.BlockMeta;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.varia.Coordinate;
 import com.mcjty.varia.WeightedRandomSelector;
@@ -35,13 +36,14 @@ public class GenericWorldGenerator implements IWorldGenerator {
         }
 
         DimensionInformation information = manager.getDimensionInformation(world.provider.dimensionId);
+        BlockMeta baseBlock = information.getBaseBlockForTerrain();
         if (information.hasFeatureType(FeatureType.FEATURE_OREGEN)) {
-            for (Block block : information.getExtraOregen()) {
-                addOreSpawn(block, information.getBaseBlockForTerrain(), world, random, chunkX * 16, chunkZ * 16, 7, 10, 12, 2, 60);
+            for (BlockMeta block : information.getExtraOregen()) {
+                addOreSpawn(block.getBlock(), block.getMeta(), baseBlock.getBlock(), world, random, chunkX * 16, chunkZ * 16, 7, 10, 12, 2, 60);
             }
         }
 
-        addOreSpawn(ModBlocks.dimensionalShardBlock, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
+        addOreSpawn(ModBlocks.dimensionalShardBlock, (byte)0, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
 
         if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
@@ -253,8 +255,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
         return frame;
     }
 
-    public void addOreSpawn(Block block, Block targetBlock, World world, Random random, int blockXPos, int blockZPos, int minVeinSize, int maxVeinSize, int chancesToSpawn, int minY, int maxY) {
-        WorldGenMinable minable = new WorldGenMinable(block, (minVeinSize - random.nextInt(maxVeinSize - minVeinSize)), targetBlock);
+    public void addOreSpawn(Block block, byte blockMeta, Block targetBlock,
+                            World world, Random random, int blockXPos, int blockZPos, int minVeinSize, int maxVeinSize, int chancesToSpawn, int minY, int maxY) {
+        WorldGenMinable minable = new WorldGenMinable(block, blockMeta, (minVeinSize - random.nextInt(maxVeinSize - minVeinSize)), targetBlock);
         for (int i = 0 ; i < chancesToSpawn ; i++) {
             int posX = blockXPos + random.nextInt(16);
             int posY = minY + random.nextInt(maxY - minY);

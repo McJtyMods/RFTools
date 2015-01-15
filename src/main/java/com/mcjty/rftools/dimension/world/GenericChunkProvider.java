@@ -66,8 +66,8 @@ public class GenericChunkProvider implements IChunkProvider {
     private MapGenBase caveGenerator = new MapGenCaves();
 
     // RFTools specific features.
-    private MapGenBase tendrilGenerator = new MapGenTendrils(this);
-    private MapGenBase canyonGenerator = new MapGenCanyons(this);
+    private MapGenTendrils tendrilGenerator = new MapGenTendrils(this);
+    private MapGenCanyons canyonGenerator = new MapGenCanyons(this);
 //    private MapGenBase sphereGenerator = new MapGenSpheres(this);
 
     // Holds Stronghold Generator
@@ -92,8 +92,8 @@ public class GenericChunkProvider implements IChunkProvider {
 
     {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
-        tendrilGenerator = TerrainGen.getModdedMapGen(tendrilGenerator, CAVE);
-        canyonGenerator = TerrainGen.getModdedMapGen(canyonGenerator, RAVINE);
+//        tendrilGenerator = TerrainGen.getModdedMapGen(tendrilGenerator, CAVE);
+//        canyonGenerator = TerrainGen.getModdedMapGen(canyonGenerator, RAVINE);
 //        sphereGenerator = TerrainGen.getModdedMapGen(sphereGenerator, RAVINE);
         strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
         villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
@@ -155,15 +155,15 @@ public class GenericChunkProvider implements IChunkProvider {
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
 
-        terrainGenerator.generate(chunkX, chunkZ, ablock);
+        terrainGenerator.generate(chunkX, chunkZ, ablock, abyte);
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
         terrainGenerator.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
 
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_TENDRILS)) {
-            this.tendrilGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+            this.tendrilGenerator.generate(this, this.worldObj, chunkX, chunkZ, ablock, abyte);
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CANYONS)) {
-            this.canyonGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+            this.canyonGenerator.generate(this, this.worldObj, chunkX, chunkZ, ablock, abyte);
         }
 //        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_SPHERES)) {
 //            this.sphereGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);

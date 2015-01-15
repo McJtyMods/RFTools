@@ -17,7 +17,7 @@ public class DimletMapping {
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
     public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();
     public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
-    public static final Map<Integer,Block> idToBlock = new HashMap<Integer, Block>();
+    public static final Map<Integer,BlockMeta> idToBlock = new HashMap<Integer, BlockMeta>();
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
     public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
     public static final Map<Integer,MobDescriptor> idtoMob = new HashMap<Integer, MobDescriptor>();

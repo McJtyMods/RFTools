@@ -153,8 +153,9 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     }
 
     @Override
-    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+    public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] meta) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
         byte b0 = 4;
@@ -193,15 +194,15 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                             double d16 = (d11 - d10) * d14;
 
                             for (int k2 = 0; k2 < 4; ++k2) {
-                                Block block = null;
-
                                 if (d15 > 0.0D) {
-                                    block = baseBlock;
+                                    aBlock[index] = baseBlock;
+                                    meta[index] = baseMeta;
                                 } else if (height < b1) {
-                                    block = baseLiquid;
+                                    aBlock[index] = baseLiquid;
+                                } else {
+                                    aBlock[index] = null;
                                 }
 
-                                aBlock[index] = block;
                                 index += maxheight;
                                 d15 += d16;
                             }
@@ -230,7 +231,8 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
             return;
         }
 
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
         byte b0 = 64;
@@ -242,6 +244,7 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                 int i1 = (int)(this.baseBlockExclusivityNoise[k + l * 16] / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
                 int j1 = -1;
                 Block block = baseBlock;
+                byte meta = baseMeta;
 
                 for (int k1 = 255; k1 >= 0; --k1) {
                     int l1 = (l * 16 + k) * 256 + k1;
@@ -254,25 +257,31 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                                 if (j1 == -1) {
                                     if (i1 <= 0) {
                                         block = null;
+                                        meta = 0;
                                     } else if (k1 >= b0 - 4 && k1 <= b0 + 1) {
                                         block = baseBlock;
+                                        meta = baseMeta;
                                     }
 
                                     if (k1 < b0 && (block == null || block.getMaterial() == Material.air)) {
                                         block = baseLiquid;
+                                        meta = 0;
                                     }
 
                                     j1 = i1;
 
                                     if (k1 >= b0 - 1) {
                                         aBlock[l1] = block;
+                                        abyte[l1] = meta;
                                     } else {
                                         aBlock[l1] = baseBlock;
+                                        abyte[l1] = baseMeta;
                                     }
                                 }
                                 else if (j1 > 0) {
                                     --j1;
                                     aBlock[l1] = baseBlock;
+                                    abyte[l1] = baseMeta;
                                 }
                             }
                         }

@@ -11,7 +11,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 public interface BaseTerrainGenerator {
     void setup(World world, GenericChunkProvider provider);
 
-    void generate(int chunkX, int chunkZ, Block[] aBlock);
+    void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte);
 
     void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases);
 

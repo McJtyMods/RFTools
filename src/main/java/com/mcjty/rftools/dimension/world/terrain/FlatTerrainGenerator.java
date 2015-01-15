@@ -9,8 +9,9 @@ import java.util.Random;
 public class FlatTerrainGenerator extends NormalTerrainGenerator {
 
     @Override
-    public void generate(int chunkX, int chunkZ, Block[] aBlock) {
-        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain();
+    public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte) {
+        Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
+        byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
 
         byte waterLevel = 63;
 
@@ -35,7 +36,8 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
             for (int z = 0; z < 16; ++z) {
                 int height = 0;
                 while (height < waterLevel) {
-                    aBlock[index++] = baseBlock;
+                    aBlock[index] = baseBlock;
+                    abyte[index++] = baseMeta;
                     height++;
                 }
                 while (height < 256) {
