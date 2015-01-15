@@ -189,7 +189,16 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.soul_sand);
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.glass);
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.stained_glass);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.glowstone);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.mossy_cobblestone);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.ice);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.packed_ice);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.clay);
+        initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.hardened_clay);
         initMaterialItem(cfg, mainCfg, idsInConfig, ModBlocks.dimensionalShardBlock);
+
+        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "marble");
+        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "limestone");
 
         initFoliageItem(cfg, mainCfg, idsInConfig);
 
@@ -410,6 +419,13 @@ public class KnownDimletConfiguration {
         setupChestLoot();
     }
 
+    private static void initModMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String modid, String blockname) {
+        Block block = GameRegistry.findBlock(modid, blockname);
+        if (block != null) {
+            initMaterialItem(cfg, mainCfg, idsInConfig, block);
+        }
+    }
+
     /**
      * Get all dimlets which are currently already registered in the config file.
      */
@@ -441,12 +457,12 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
-            DimletMapping.idToDigit.put(id, "" + digit);
+            DimletMapping.idToDigit.put(id, String.valueOf(digit));
         }
         return id;
     }
 
-    private static void initMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, Block block) {
+    private static void initMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, Block block) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, block.getUnlocalizedName()));
         if (id != -1) {
             ItemStack stack = new ItemStack(block);

@@ -27,6 +27,8 @@
         [ "Material", "tile.obsidian", 30000, 20000, 600, 4, 0 ],
         [ "Material", "tile.glass", 800, 400, 30, 2, 1 ],
         [ "Material", "tile.stainedGlass", 800, 400, 30, 2, 1 ],
+        [ "Material", "tile.lightgem", 15000, 8000, 200, 4, 0 ],
+        [ "Material", "tile.lightgem", 15000, 8000, 200, 4, 0 ],
         [ "Biome", "Desert Oil Field", 20000, 5000, 300, 3, 0 ],
         [ "Biome", "Biome.Ocean Oil Field", 20000, 5000, 300, 3, 0 ],
         [ "Liquid", "pyrotheum", 40000, 20000, 800, 5, 0 ],
