@@ -29,11 +29,11 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class KnownDimletConfiguration {
     public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";              // This is part of dimlets.cfg
@@ -142,7 +142,7 @@ public class KnownDimletConfiguration {
     /**
      * This initializes all dimlets based on all loaded mods. This should be called from postInit.
      */
-    public static void init(Configuration cfg, Configuration mainCfg) {
+    public static void init(Configuration cfg, Configuration mainCfg, File modConfigDir) {
         readBuiltinConfig();
 
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
@@ -200,8 +200,8 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.hardened_clay, 0);
         initMaterialItem(cfg, mainCfg, idsInConfig, ModBlocks.dimensionalShardBlock, 0);
 
-        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "marble");
-        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "limestone");
+        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "marble", 0);
+        initModMaterialItem(cfg, mainCfg, idsInConfig, "chisel", "limestone", 0);
 
         initFoliageItem(cfg, mainCfg, idsInConfig);
 
@@ -418,14 +418,18 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idDigit8);
         craftableDimlets.add(idDigit9);
 
+        readUserDimlets(cfg, mainCfg, idsInConfig, modConfigDir);
+
         DimletRandomizer.setupWeightedRandomList(mainCfg);
         setupChestLoot();
     }
 
-    private static void initModMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String modid, String blockname) {
+    private static int initModMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String modid, String blockname, int meta) {
         Block block = GameRegistry.findBlock(modid, blockname);
         if (block != null) {
-            initMaterialItem(cfg, mainCfg, idsInConfig, block, 0);
+            return initMaterialItem(cfg, mainCfg, idsInConfig, block, meta);
+        } else {
+            return -1;
         }
     }
 
@@ -465,7 +469,7 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static void initMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, Block block, int meta) {
+    private static int initMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, Block block, int meta) {
         String unlocalizedName = block.getUnlocalizedName();
         if (meta != 0) {
             unlocalizedName += meta;
@@ -475,6 +479,47 @@ public class KnownDimletConfiguration {
             ItemStack stack = new ItemStack(block, 1, meta);
             idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
             DimletMapping.idToBlock.put(id, new BlockMeta(block, (byte)meta));
+        }
+        return id;
+    }
+
+    /**
+     * Read user-specified dimlets.
+     */
+    private static void readUserDimlets(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, File modConfigDir) {
+        try {
+            File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userdimlets.json");
+            FileInputStream inputstream = new FileInputStream(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+            JsonParser parser = new JsonParser();
+            JsonElement element = parser.parse(br);
+            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
+                if ("material".equals(entry.getKey())) {
+                    JsonElement value = entry.getValue();
+                    JsonArray array = value.getAsJsonArray();
+                    String modid = array.get(0).getAsString();
+                    String name = array.get(1).getAsString();
+                    Integer meta = array.get(2).getAsInt();
+                    Integer rfcreate = array.get(3).getAsInt();
+                    Integer rfmaintain = array.get(4).getAsInt();
+                    Integer tickCost = array.get(5).getAsInt();
+                    Integer rarity = array.get(6).getAsInt();
+                    Integer expensive = array.get(7).getAsInt();
+                    int id = initModMaterialItem(cfg, mainCfg, idsInConfig, modid, name, meta);
+                    if (id != -1) {
+                        DimletKey key = idToDimlet.get(id).getKey();
+                        DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
+                        DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
+                        DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
+                        DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
+                        if (expensive != 0) {
+                            dimletRandomNotAllowed.add(key);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

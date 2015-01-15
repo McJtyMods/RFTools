@@ -33,11 +33,12 @@ import java.io.File;
 
 public class CommonProxy {
 
+    private File modConfigDir;
     private Configuration mainConfig;
     private Configuration dimletConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
-        File modConfigDir = e.getModConfigurationDirectory();
+        modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
         dimletConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "dimlets.cfg"));
         dimletConfig.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration. Do not delete this config on an existing world!");
@@ -105,7 +106,7 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent e) {
         dimletConfig.load();
-        KnownDimletConfiguration.init(dimletConfig, mainConfig);
+        KnownDimletConfiguration.init(dimletConfig, mainConfig, modConfigDir);
 
         if (mainConfig.hasChanged()) {
             mainConfig.save();
