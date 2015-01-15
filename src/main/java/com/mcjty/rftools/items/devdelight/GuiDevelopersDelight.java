@@ -6,11 +6,13 @@ import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
-import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.network.PacketHandler;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
@@ -188,8 +190,15 @@ public class GuiDevelopersDelight extends GuiScreen {
         listsDirty = false;
 
         blockClassList.removeChildren();
+
+        Block block = Minecraft.getMinecraft().theWorld.getBlock(selectedX, selectedY, selectedZ);
+
+        blockClassList.addChild(new Label(mc, this).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setText("Unloc Name: " + block.getUnlocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setText("Icon Name: " + block.getItemIconName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+
         for (String c : blockClasses) {
-            blockClassList.addChild(new Label(mc, this).setText(c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            blockClassList.addChild(new Label(mc, this).setText("Class: " + c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
         }
 
         teClassList.removeChildren();
