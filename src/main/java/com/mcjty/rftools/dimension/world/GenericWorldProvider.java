@@ -56,6 +56,8 @@ public class GenericWorldProvider extends WorldProvider {
                 SkyRenderer.registerEnderSky(this);
             } else if (skyType == SkyType.SKY_INFERNO) {
                 SkyRenderer.registerPlasmaSky(this);
+            } else {
+                SkyRenderer.registerSky(this);
             }
         }
     }
