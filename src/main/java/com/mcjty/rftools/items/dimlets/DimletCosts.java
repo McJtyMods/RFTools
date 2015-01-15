@@ -41,9 +41,9 @@ public class DimletCosts {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfCreateModifierMultiplier.clear();
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 5);
         initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
-        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
+        initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 5);
     }
 
     private static void initRfCreateModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
@@ -71,9 +71,9 @@ public class DimletCosts {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
 
         rfMaintainModifierMultiplier.clear();
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 20);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 10);
         initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_FEATURE, 1);
-        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 20);
+        initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_LIQUID, DimletType.DIMLET_TERRAIN, 10);
     }
 
     private static void initRfMaintainModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
