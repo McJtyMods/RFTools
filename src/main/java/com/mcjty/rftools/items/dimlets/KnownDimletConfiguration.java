@@ -228,6 +228,7 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, mainCfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
         initMobItem(cfg, mainCfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
 
+        int idSkyNormal = initSkyItem(cfg, mainCfg, idsInConfig, "Normal", new SkyDescriptor.Builder().skyType(SkyType.SKY_NORMAL).build());
         int idNormalDay = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
         initSkyItem(cfg, mainCfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
         initSkyItem(cfg, mainCfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).skyColorFactor(0.6f, 0.6f, 0.6f).build());
@@ -370,6 +371,8 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', Items.paper);
         craftableDimlets.add(idLiquidNone);
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idSkyNormal), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.feather, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idNormalDay);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalDay), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.glowstone_dust, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalDay);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', Items.paper);
