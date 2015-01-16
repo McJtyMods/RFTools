@@ -9,7 +9,8 @@ public enum TerrainType {
     TERRAIN_ISLAND(true, true),
     TERRAIN_ISLANDS(true, true),
     TERRAIN_CHAOTIC(true, true),
-    TERRAIN_PLATEAUS(true, true);
+    TERRAIN_PLATEAUS(true, true),
+    TERRAIN_GRID(true, true);
 
     private final boolean noHorizon;
     private final boolean sky;

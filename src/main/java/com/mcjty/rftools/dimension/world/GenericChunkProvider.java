@@ -58,6 +58,7 @@ public class GenericChunkProvider implements IChunkProvider {
         terrainGeneratorMap.put(TerrainType.TERRAIN_ISLANDS, new IslandTerrainGenerator(IslandTerrainGenerator.ISLANDS));
         terrainGeneratorMap.put(TerrainType.TERRAIN_CHAOTIC, new IslandTerrainGenerator(IslandTerrainGenerator.CHAOTIC));
         terrainGeneratorMap.put(TerrainType.TERRAIN_PLATEAUS, new IslandTerrainGenerator(IslandTerrainGenerator.PLATEAUS));
+        terrainGeneratorMap.put(TerrainType.TERRAIN_GRID, new GridTerrainGenerator());
     }
 
     // Are map structures going to be generated (e.g. strongholds)
