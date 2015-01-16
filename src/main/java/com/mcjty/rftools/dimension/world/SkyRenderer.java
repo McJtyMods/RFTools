@@ -496,7 +496,7 @@ public class SkyRenderer {
     private static void renderMoon(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, int index, float size) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(-90.0F + index * 30.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 120.0F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 1.13F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
         renderEngine.bindTexture(locationMoonPhasesPng);
         int k = world.getMoonPhase();
         int l = k % 4;
@@ -516,7 +516,7 @@ public class SkyRenderer {
     private static void renderSun(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, int index, float size) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(-90.0F + index * 30.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 120.0F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 1.13F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
         renderEngine.bindTexture(locationSunPng);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV((double) (-size), 100.0D, (double) (-size), 0.0D, 0.0D);
