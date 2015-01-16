@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension.world;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.world.types.SkyType;
 import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -57,7 +58,7 @@ public class GenericWorldProvider extends WorldProvider {
             } else if (skyType == SkyType.SKY_INFERNO) {
                 SkyRenderer.registerPlasmaSky(this);
             } else {
-                SkyRenderer.registerSky(this);
+                SkyRenderer.registerSky(this, dimensionInformation);
             }
         }
     }

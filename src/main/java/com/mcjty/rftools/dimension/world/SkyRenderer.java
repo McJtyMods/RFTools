@@ -1,6 +1,8 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.world.types.CelestialBodyType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -17,6 +19,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.IRenderHandler;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.Random;
 
 public class SkyRenderer {
@@ -116,11 +119,11 @@ public class SkyRenderer {
         });
     }
 
-    public static void registerSky(GenericWorldProvider provider) {
+    public static void registerSky(GenericWorldProvider provider, final DimensionInformation information) {
         provider.setSkyRenderer(new IRenderHandler() {
             @Override
             public void render(float partialTicks, WorldClient world, Minecraft mc) {
-                SkyRenderer.renderSky(partialTicks);
+                SkyRenderer.renderSky(partialTicks, information);
             }
         });
     }
@@ -256,7 +259,7 @@ public class SkyRenderer {
      * Renders the sky with the partial tick time. Args: partialTickTime
      */
     @SideOnly(Side.CLIENT)
-    private static void renderSky(float partialTickTime) {
+    private static void renderSky(float partialTickTime, DimensionInformation information) {
         initialize();
 
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
@@ -281,7 +284,7 @@ public class SkyRenderer {
         }
 
         GL11.glColor3f(skyRed, skyGreen, skyBlue);
-        Tessellator tessellator1 = Tessellator.instance;
+        Tessellator tessellator = Tessellator.instance;
         GL11.glDepthMask(false);
         GL11.glEnable(GL11.GL_FOG);
         GL11.glColor3f(skyRed, skyGreen, skyBlue);
@@ -318,72 +321,26 @@ public class SkyRenderer {
                 f8 = f11;
             }
 
-            tessellator1.startDrawing(6);
-            tessellator1.setColorRGBA_F(f6, f7, f8, sunsetColors[3]);
-            tessellator1.addVertex(0.0D, 100.0D, 0.0D);
+            tessellator.startDrawing(6);
+            tessellator.setColorRGBA_F(f6, f7, f8, sunsetColors[3]);
+            tessellator.addVertex(0.0D, 100.0D, 0.0D);
             byte b0 = 16;
-            tessellator1.setColorRGBA_F(sunsetColors[0], sunsetColors[1], sunsetColors[2], 0.0F);
+            tessellator.setColorRGBA_F(sunsetColors[0], sunsetColors[1], sunsetColors[2], 0.0F);
 
             for (int j = 0; j <= b0; ++j) {
                 f11 = (float) j * (float) Math.PI * 2.0F / (float) b0;
                 float f12 = MathHelper.sin(f11);
                 float f13 = MathHelper.cos(f11);
-                tessellator1.addVertex((double) (f12 * 120.0F), (double) (f13 * 120.0F), (double) (-f13 * 40.0F * sunsetColors[3]));
+                tessellator.addVertex((double) (f12 * 120.0F), (double) (f13 * 120.0F), (double) (-f13 * 40.0F * sunsetColors[3]));
             }
 
-            tessellator1.draw();
+            tessellator.draw();
             GL11.glPopMatrix();
             GL11.glShadeModel(GL11.GL_FLAT);
         }
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        OpenGlHelper.glBlendFunc(770, 1, 1, 0);
-        GL11.glPushMatrix();
-        f6 = 1.0F - world.getRainStrength(partialTickTime);
-        f7 = 0.0F;
-        f8 = 0.0F;
-        f9 = 0.0F;
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-        GL11.glTranslatef(f7, f8, f9);
-        GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(world.getCelestialAngle(partialTickTime) * 360.0F, 1.0F, 0.0F, 0.0F);
-        f10 = 30.0F;
-        renderEngine.bindTexture(locationSunPng);
-        tessellator1.startDrawingQuads();
-        tessellator1.addVertexWithUV((double) (-f10), 100.0D, (double) (-f10), 0.0D, 0.0D);
-        tessellator1.addVertexWithUV((double) f10, 100.0D, (double) (-f10), 1.0D, 0.0D);
-        tessellator1.addVertexWithUV((double) f10, 100.0D, (double) f10, 1.0D, 1.0D);
-        tessellator1.addVertexWithUV((double) (-f10), 100.0D, (double) f10, 0.0D, 1.0D);
-        tessellator1.draw();
-        f10 = 20.0F;
-        renderEngine.bindTexture(locationMoonPhasesPng);
-        int k = world.getMoonPhase();
-        int l = k % 4;
-        int i1 = k / 4 % 2;
-        float f14 = (float) (l + 0) / 4.0F;
-        float f15 = (float) (i1 + 0) / 2.0F;
-        float f16 = (float) (l + 1) / 4.0F;
-        float f17 = (float) (i1 + 1) / 2.0F;
-        tessellator1.startDrawingQuads();
-        tessellator1.addVertexWithUV((double) (-f10), -100.0D, (double) f10, (double) f16, (double) f17);
-        tessellator1.addVertexWithUV((double) f10, -100.0D, (double) f10, (double) f14, (double) f17);
-        tessellator1.addVertexWithUV((double) f10, -100.0D, (double) (-f10), (double) f14, (double) f15);
-        tessellator1.addVertexWithUV((double) (-f10), -100.0D, (double) (-f10), (double) f16, (double) f15);
-        tessellator1.draw();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        float f18 = world.getStarBrightness(partialTickTime) * f6;
+        renderCelestialBodies(partialTickTime, information, world, renderEngine, tessellator);
 
-        if (f18 > 0.0F) {
-            GL11.glColor4f(f18, f18, f18, f18);
-            GL11.glCallList(starGLCallList);
-        }
-
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_FOG);
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(0.0F, 0.0F, 0.0F);
         double d0 = player.getPosition(partialTickTime).yCoord - world.getHorizon();
 
@@ -395,29 +352,29 @@ public class SkyRenderer {
             f8 = 1.0F;
             f9 = -((float) (d0 + 65.0D));
             f10 = -f8;
-            tessellator1.startDrawingQuads();
-            tessellator1.setColorRGBA_I(0, 255);
-            tessellator1.addVertex((double) (-f8), (double) f9, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f9, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f10, (double) f8);
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) f8);
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) (-f8));
-            tessellator1.addVertex((double) f8, (double) f10, (double) (-f8));
-            tessellator1.addVertex((double) f8, (double) f9, (double) (-f8));
-            tessellator1.addVertex((double) (-f8), (double) f9, (double) (-f8));
-            tessellator1.addVertex((double) f8, (double) f10, (double) (-f8));
-            tessellator1.addVertex((double) f8, (double) f10, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f9, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f9, (double) (-f8));
-            tessellator1.addVertex((double) (-f8), (double) f9, (double) (-f8));
-            tessellator1.addVertex((double) (-f8), (double) f9, (double) f8);
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) f8);
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) (-f8));
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) (-f8));
-            tessellator1.addVertex((double) (-f8), (double) f10, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f10, (double) f8);
-            tessellator1.addVertex((double) f8, (double) f10, (double) (-f8));
-            tessellator1.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setColorRGBA_I(0, 255);
+            tessellator.addVertex((double) (-f8), (double) f9, (double) f8);
+            tessellator.addVertex((double) f8, (double) f9, (double) f8);
+            tessellator.addVertex((double) f8, (double) f10, (double) f8);
+            tessellator.addVertex((double) (-f8), (double) f10, (double) f8);
+            tessellator.addVertex((double) (-f8), (double) f10, (double) (-f8));
+            tessellator.addVertex((double) f8, (double) f10, (double) (-f8));
+            tessellator.addVertex((double) f8, (double) f9, (double) (-f8));
+            tessellator.addVertex((double) (-f8), (double) f9, (double) (-f8));
+            tessellator.addVertex((double) f8, (double) f10, (double) (-f8));
+            tessellator.addVertex((double) f8, (double) f10, (double) f8);
+            tessellator.addVertex((double) f8, (double) f9, (double) f8);
+            tessellator.addVertex((double) f8, (double) f9, (double) (-f8));
+            tessellator.addVertex((double) (-f8), (double) f9, (double) (-f8));
+            tessellator.addVertex((double) (-f8), (double) f9, (double) f8);
+            tessellator.addVertex((double) (-f8), (double) f10, (double) f8);
+            tessellator.addVertex((double) (-f8), (double) f10, (double) (-f8));
+            tessellator.addVertex((double) (-f8), (double) f10, (double) (-f8));
+            tessellator.addVertex((double) (-f8), (double) f10, (double) f8);
+            tessellator.addVertex((double) f8, (double) f10, (double) f8);
+            tessellator.addVertex((double) f8, (double) f10, (double) (-f8));
+            tessellator.draw();
         }
 
         if (world.provider.isSkyColored()) {
@@ -432,6 +389,141 @@ public class SkyRenderer {
         GL11.glPopMatrix();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(true);
+    }
+
+    private static void renderCelestialBodies(float partialTickTime, DimensionInformation information, WorldClient world, TextureManager renderEngine, Tessellator tessellator) {
+        List<CelestialBodyType> celestialBodies = information.getSkyDescriptor().getCelestialBodies();
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        OpenGlHelper.glBlendFunc(770, 1, 1, 0);
+        GL11.glPushMatrix();
+
+        float f6 = 1.0F - world.getRainStrength(partialTickTime);
+
+        if (celestialBodies.isEmpty()) {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+            GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(world.getCelestialAngle(partialTickTime) * 360.0F, 1.0F, 0.0F, 0.0F);
+            float f10 = 30.0F;
+            renderEngine.bindTexture(locationSunPng);
+            tessellator.startDrawingQuads();
+            tessellator.addVertexWithUV((double) (-f10), 100.0D, (double) (-f10), 0.0D, 0.0D);
+            tessellator.addVertexWithUV((double) f10, 100.0D, (double) (-f10), 1.0D, 0.0D);
+            tessellator.addVertexWithUV((double) f10, 100.0D, (double) f10, 1.0D, 1.0D);
+            tessellator.addVertexWithUV((double) (-f10), 100.0D, (double) f10, 0.0D, 1.0D);
+            tessellator.draw();
+            f10 = 20.0F;
+            renderEngine.bindTexture(locationMoonPhasesPng);
+            int k = world.getMoonPhase();
+            int l = k % 4;
+            int i1 = k / 4 % 2;
+            float f14 = (float) (l + 0) / 4.0F;
+            float f15 = (float) (i1 + 0) / 2.0F;
+            float f16 = (float) (l + 1) / 4.0F;
+            float f17 = (float) (i1 + 1) / 2.0F;
+            tessellator.startDrawingQuads();
+            tessellator.addVertexWithUV((double) (-f10), -100.0D, (double) f10, (double) f16, (double) f17);
+            tessellator.addVertexWithUV((double) f10, -100.0D, (double) f10, (double) f14, (double) f17);
+            tessellator.addVertexWithUV((double) f10, -100.0D, (double) (-f10), (double) f14, (double) f15);
+            tessellator.addVertexWithUV((double) (-f10), -100.0D, (double) (-f10), (double) f16, (double) f15);
+            tessellator.draw();
+        } else {
+            int index = 0;
+            for (CelestialBodyType body : celestialBodies) {
+                switch (body) {
+                    case BODY_NONE:
+                        break;
+                    case BODY_SUN:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, index, 30.0F);
+                        break;
+                    case BODY_LARGESUN:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, index, 60.0F);
+                        break;
+                    case BODY_SMALLSUN:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, index, 10.0F);
+                        break;
+                    case BODY_REDSUN:
+                        GL11.glColor4f(1.0F, 0.0F, 0.0F, f6);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, index, 30.0F);
+                        break;
+                    case BODY_MOON:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, index, 20.0F);
+                        break;
+                    case BODY_LARGEMOON:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, index, 40.0F);
+                        break;
+                    case BODY_SMALLMOON:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, index, 10.0F);
+                        break;
+                    case BODY_REDMOON:
+                        GL11.glColor4f(1.0F, 0.0F, 0.0F, f6);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, index, 20.0F);
+                        break;
+                    case BODY_PLANET:
+                        break;
+                    case BODY_LARGEPLANET:
+                        break;
+                }
+                index++;
+            }
+        }
+
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+        float f18 = world.getStarBrightness(partialTickTime) * f6;
+
+        if (f18 > 0.0F) {
+            GL11.glColor4f(f18, f18, f18, f18);
+            GL11.glCallList(starGLCallList);
+        }
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_FOG);
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+    }
+
+    private static void renderMoon(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, int index, float size) {
+        GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-90.0F + index * 30.0F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 120.0F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
+        renderEngine.bindTexture(locationMoonPhasesPng);
+        int k = world.getMoonPhase();
+        int l = k % 4;
+        int i1 = k / 4 % 2;
+        float f14 = (float) (l + 0) / 4.0F;
+        float f15 = (float) (i1 + 0) / 2.0F;
+        float f16 = (float) (l + 1) / 4.0F;
+        float f17 = (float) (i1 + 1) / 2.0F;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV((double) (-size), -100.0D, (double) size, (double) f16, (double) f17);
+        tessellator.addVertexWithUV((double) size, -100.0D, (double) size, (double) f14, (double) f17);
+        tessellator.addVertexWithUV((double) size, -100.0D, (double) (-size), (double) f14, (double) f15);
+        tessellator.addVertexWithUV((double) (-size), -100.0D, (double) (-size), (double) f16, (double) f15);
+        tessellator.draw();
+    }
+
+    private static void renderSun(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, int index, float size) {
+        GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-90.0F + index * 30.0F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(world.getCelestialAngle(partialTickTime + index * 120.0F /*@@@ TODO more variation!*/) * 360.0F, 1.0F, 0.0F, 0.0F);
+        renderEngine.bindTexture(locationSunPng);
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV((double) (-size), 100.0D, (double) (-size), 0.0D, 0.0D);
+        tessellator.addVertexWithUV((double) size, 100.0D, (double) (-size), 1.0D, 0.0D);
+        tessellator.addVertexWithUV((double) size, 100.0D, (double) size, 1.0D, 1.0D);
+        tessellator.addVertexWithUV((double) (-size), 100.0D, (double) size, 0.0D, 1.0D);
+        tessellator.draw();
     }
 
     private static void renderStars() {

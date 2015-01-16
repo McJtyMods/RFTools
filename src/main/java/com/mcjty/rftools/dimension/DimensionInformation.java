@@ -429,6 +429,10 @@ public class DimensionInformation {
         if (skyType != SkyType.SKY_NORMAL) {
             logDebug(player, "    Sky type: " + skyType.toString());
         }
+        for (CelestialBodyType bodyType : skyDescriptor.getCelestialBodies()) {
+            logDebug(player, "    Sky body: " + bodyType.name());
+        }
+
 
         for (MobDescriptor mob : extraMobs) {
             if (mob != null) {
@@ -673,6 +677,19 @@ public class DimensionInformation {
             List<Integer> skyIds = new ArrayList<Integer>(DimletMapping.idToSkyDescriptor.keySet());
             for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
                 int id = skyIds.get(random.nextInt(skyIds.size()));
+                List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
+                dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
+            }
+
+            List<Integer> bodyIds = new ArrayList<Integer>();
+            for (Integer id : skyIds) {
+                if (DimletMapping.celestialBodies.contains(id)) {
+                    bodyIds.add(id);
+                }
+            }
+
+            for (int i = 0 ; i < random.nextInt(3) ; i++) {
+                int id = bodyIds.get(random.nextInt(bodyIds.size()));
                 List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
                 dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
             }

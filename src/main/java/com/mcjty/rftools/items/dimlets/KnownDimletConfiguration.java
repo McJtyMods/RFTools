@@ -7,7 +7,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.MobDescriptor;
 import com.mcjty.rftools.dimension.SkyDescriptor;
-import com.mcjty.rftools.dimension.SkyType;
+import com.mcjty.rftools.dimension.world.types.SkyType;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -240,31 +240,43 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, mainCfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
         initMobItem(cfg, mainCfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
 
-        int idSkyNormal = initSkyItem(cfg, mainCfg, idsInConfig, "Normal", new SkyDescriptor.Builder().skyType(SkyType.SKY_NORMAL).build());
-        int idNormalDay = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).skyColorFactor(0.6f, 0.6f, 0.6f).build());
-        int idNormalNight = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Night", new SkyDescriptor.Builder().starBrightnessFactor(1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Red Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Green Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 0.2f, 1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build());
+        int idSkyNormal = initSkyItem(cfg, mainCfg, idsInConfig, "Normal", new SkyDescriptor.Builder().skyType(SkyType.SKY_NORMAL).build(), false);
+        int idNormalDay = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.5f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Day", new SkyDescriptor.Builder().sunBrightnessFactor(0.4f).skyColorFactor(0.6f, 0.6f, 0.6f).build(), false);
+        int idNormalNight = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Night", new SkyDescriptor.Builder().starBrightnessFactor(1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Red Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Green Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 0.2f, 1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 1.0f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build(), false);
 
-        initSkyItem(cfg, mainCfg, idsInConfig, "Normal Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Black Fog", new SkyDescriptor.Builder().fogColorFactor(0.0f, 0.0f, 0.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Red Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Green Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 0.2f, 1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 0.2f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 1.0f).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 1.0f).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Normal Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Black Fog", new SkyDescriptor.Builder().fogColorFactor(0.0f, 0.0f, 0.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Red Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Green Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Blue Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 0.2f, 1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Yellow Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 0.2f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Cyan Fog", new SkyDescriptor.Builder().fogColorFactor(0.2f, 1.0f, 1.0f).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Purple Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 0.2f, 1.0f).build(), false);
 
-        initSkyItem(cfg, mainCfg, idsInConfig, "Ender", new SkyDescriptor.Builder().skyType(SkyType.SKY_ENDER).build());
-        initSkyItem(cfg, mainCfg, idsInConfig, "Inferno", new SkyDescriptor.Builder().skyType(SkyType.SKY_INFERNO).build());
+        initSkyItem(cfg, mainCfg, idsInConfig, "Ender", new SkyDescriptor.Builder().skyType(SkyType.SKY_ENDER).build(), false);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Inferno", new SkyDescriptor.Builder().skyType(SkyType.SKY_INFERNO).build(), false);
+
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body None", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_NONE).build(), false);   // False because we don't want to select this randomly.
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Sun", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_SUN).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Large Sun", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_LARGESUN).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Small Sun", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_SMALLSUN).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Red Sun", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_REDSUN).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Moon", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_MOON).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Large Moon", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_LARGEMOON).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Small Moon", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_SMALLMOON).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Red Moon", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_REDMOON).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_PLANET).build(), true);
+        initSkyItem(cfg, mainCfg, idsInConfig, "Body Large Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_LARGEPLANET).build(), true);
 
         int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
@@ -655,11 +667,14 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static int initSkyItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, SkyDescriptor skyDescriptor) {
+    private static int initSkyItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String name, SkyDescriptor skyDescriptor, boolean isbody) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
         if (id != -1) {
             DimletMapping.idToSkyDescriptor.put(id, skyDescriptor);
             idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
+            if (isbody) {
+                DimletMapping.celestialBodies.add(id);
+            }
         }
         return id;
     }

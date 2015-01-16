@@ -1,7 +1,12 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.dimension.world.types.CelestialBodyType;
+import com.mcjty.rftools.dimension.world.types.SkyType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkyDescriptor {
     private final Float sunBrightnessFactor;
@@ -17,6 +22,8 @@ public class SkyDescriptor {
 
     private final SkyType skyType;
 
+    private final List<CelestialBodyType> celestialBodies;
+
     private SkyDescriptor(Builder builder) {
         sunBrightnessFactor = builder.sunBrightnessFactor;
         starBrightnessFactor = builder.starBrightnessFactor;
@@ -27,6 +34,7 @@ public class SkyDescriptor {
         fogColorFactorG = builder.fogColorFactorG;
         fogColorFactorB = builder.fogColorFactorB;
         skyType = builder.skyType;
+        celestialBodies = new ArrayList<CelestialBodyType>(builder.celestialBodies);
     }
 
     public void toBytes(ByteBuf buf) {
@@ -39,6 +47,11 @@ public class SkyDescriptor {
         writeFloat(buf, fogColorFactorG);
         writeFloat(buf, fogColorFactorB);
         writeInteger(buf, skyType == null ? null : skyType.ordinal());
+        buf.writeInt(celestialBodies.size());
+        for (CelestialBodyType body : celestialBodies) {
+            buf.writeInt(body.ordinal());
+        }
+
     }
 
     public void writeToNBT(NBTTagCompound compound) {
@@ -69,6 +82,12 @@ public class SkyDescriptor {
         if (skyType != null) {
             compound.setInteger("skyType", skyType.ordinal());
         }
+
+        int[] bodies = new int[celestialBodies.size()];
+        for (int i = 0 ; i < celestialBodies.size() ; i++) {
+            bodies[i] = celestialBodies.get(i).ordinal();
+        }
+        compound.setIntArray("celestialBodies", bodies);
     }
 
     private void writeFloat(ByteBuf buf, Float value) {
@@ -133,6 +152,10 @@ public class SkyDescriptor {
         return fogColorFactorR != null;
     }
 
+    public List<CelestialBodyType> getCelestialBodies() {
+        return celestialBodies;
+    }
+
     public static class Builder {
         private Float sunBrightnessFactor = null;
         private Float starBrightnessFactor = null;
@@ -143,6 +166,7 @@ public class SkyDescriptor {
         private Float fogColorFactorG = null;
         private Float fogColorFactorB = null;
         private SkyType skyType;
+        private List<CelestialBodyType> celestialBodies = new ArrayList<CelestialBodyType>();
 
         public Builder fromBytes(ByteBuf buf) {
             sunBrightnessFactor = readFloat(buf);
@@ -158,6 +182,11 @@ public class SkyDescriptor {
                 skyType = null;
             } else {
                 skyType = SkyType.values()[skyTypeI];
+            }
+            celestialBodies.clear();
+            int size = buf.readInt();
+            for (int i = 0 ; i < size ; i++) {
+                celestialBodies.add(CelestialBodyType.values()[buf.readInt()]);
             }
             return this;
         }
@@ -203,11 +232,18 @@ public class SkyDescriptor {
             } else {
                 fogColorFactorB = null;
             }
+
             if (compound.hasKey("skyType")) {
                 int skyTypeI = compound.getInteger("skyType");
                 skyType = SkyType.values()[skyTypeI];
             } else {
                 skyType = null;
+            }
+
+            int[] bodies = compound.getIntArray("celestialBodies");
+            celestialBodies.clear();
+            for (int body : bodies) {
+                celestialBodies.add(CelestialBodyType.values()[body]);
             }
 
             return this;
@@ -282,6 +318,16 @@ public class SkyDescriptor {
                 }
             }
 
+            for (CelestialBodyType body : descriptor.celestialBodies) {
+                if (body == CelestialBodyType.BODY_NONE) {
+                    // Reset
+                    celestialBodies.clear();
+                } else {
+                    celestialBodies.add(body);
+                }
+            }
+
+
             return this;
         }
 
@@ -327,9 +373,14 @@ public class SkyDescriptor {
         }
 
         public Builder fogColorFactor(float r, float g, float b) {
-            this.fogColorFactorR = r;
-            this.fogColorFactorG = g;
-            this.fogColorFactorB = b;
+            fogColorFactorR = r;
+            fogColorFactorG = g;
+            fogColorFactorB = b;
+            return this;
+        }
+
+        public Builder addBody(CelestialBodyType body) {
+            celestialBodies.add(body);
             return this;
         }
 

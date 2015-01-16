@@ -7,7 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DimletMapping {
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
@@ -23,4 +25,6 @@ public class DimletMapping {
     public static final Map<Integer,MobDescriptor> idtoMob = new HashMap<Integer, MobDescriptor>();
     public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
     public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
+
+    public static final Set<Integer> celestialBodies = new HashSet<Integer>();
 }
