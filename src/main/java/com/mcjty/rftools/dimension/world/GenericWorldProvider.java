@@ -53,7 +53,9 @@ public class GenericWorldProvider extends WorldProvider {
         if (worldObj.isRemote) {
             // Only on client!
             SkyType skyType = dimensionInformation.getSkyDescriptor().getSkyType();
-            if (skyType == SkyType.SKY_ENDER) {
+            if (hasNoSky) {
+                SkyRenderer.registerNoSky(this);
+            } else if (skyType == SkyType.SKY_ENDER) {
                 SkyRenderer.registerEnderSky(this);
             } else if (skyType == SkyType.SKY_INFERNO) {
                 SkyRenderer.registerPlasmaSky(this);

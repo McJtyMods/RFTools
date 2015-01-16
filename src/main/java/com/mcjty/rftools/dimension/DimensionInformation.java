@@ -53,6 +53,7 @@ public class DimensionInformation {
     private Float timeSpeed = null;
 
     private SkyDescriptor skyDescriptor;
+    private List<CelestialBodyDescriptor> celestialBodyDescriptors;
 
     // The actual RF cost after taking into account the features we got in our world.
     private int actualRfCost;
@@ -142,6 +143,7 @@ public class DimensionInformation {
         }
         builder.combine(newDescriptor);
         skyDescriptor = builder.build();
+        calculateCelestialBodyDescriptors();
     }
 
     private void injectTimeDimlet(int id) {
@@ -216,6 +218,7 @@ public class DimensionInformation {
         actualRfCost = tagCompound.getInteger("actualCost");
 
         skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
+        calculateCelestialBodyDescriptors();
 
         extraMobs.clear();
         NBTTagList list = tagCompound.getTagList("mobs", Constants.NBT.TAG_COMPOUND);
@@ -568,6 +571,7 @@ public class DimensionInformation {
         actualRfCost = buf.readInt();
 
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
+        calculateCelestialBodyDescriptors();
 
         extraMobs.clear();
         size = buf.readInt();
@@ -672,26 +676,30 @@ public class DimensionInformation {
 
     private void calculateSky(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_SKY, dimlets);
-        if (random.nextFloat() < DimletConfiguration.randomSpecialSkyChance && dimlets.isEmpty()) {
-            // If nothing was specified then there is random chance we get random sky stuff.
-            List<Integer> skyIds = new ArrayList<Integer>(DimletMapping.idToSkyDescriptor.keySet());
-            for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
-                int id = skyIds.get(random.nextInt(skyIds.size()));
-                List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
-                dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
-            }
-
-            List<Integer> bodyIds = new ArrayList<Integer>();
-            for (Integer id : skyIds) {
-                if (DimletMapping.celestialBodies.contains(id)) {
-                    bodyIds.add(id);
+        if (dimlets.isEmpty()) {
+            if (random.nextFloat() < DimletConfiguration.randomSpecialSkyChance) {
+                // If nothing was specified then there is random chance we get random sky stuff.
+                List<Integer> skyIds = new ArrayList<Integer>(DimletMapping.idToSkyDescriptor.keySet());
+                for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
+                    int id = skyIds.get(random.nextInt(skyIds.size()));
+                    List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
                 }
             }
 
-            for (int i = 0 ; i < random.nextInt(3) ; i++) {
-                int id = bodyIds.get(random.nextInt(bodyIds.size()));
-                List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
-                dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
+            if (random.nextFloat() < DimletConfiguration.randomSpecialSkyChance) {
+                List<Integer> bodyIds = new ArrayList<Integer>();
+                for (Integer id : DimletMapping.idToSkyDescriptor.keySet()) {
+                    if (DimletMapping.celestialBodies.contains(id)) {
+                        bodyIds.add(id);
+                    }
+                }
+
+                for (int i = 0 ; i < random.nextInt(3) ; i++) {
+                    int id = bodyIds.get(random.nextInt(bodyIds.size()));
+                    List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,id), modifiers));
+                }
             }
         }
 
@@ -701,6 +709,40 @@ public class DimensionInformation {
             builder.combine(DimletMapping.idToSkyDescriptor.get(id));
         }
         skyDescriptor = builder.build();
+        calculateCelestialBodyDescriptors();
+    }
+
+    private void calculateCelestialBodyDescriptors() {
+        List<CelestialBodyType> celestialBodies = skyDescriptor.getCelestialBodies();
+        // Find the most suitable sun and moon. This is typically the largest sun in the list of celestial bodies.
+        int sunidx = -1;
+        int bestsun = 0;
+        int moonidx = -1;
+        int bestmoon = 0;
+        for (int i = 0 ; i < celestialBodies.size() ; i++) {
+            CelestialBodyType type = celestialBodies.get(i);
+            if (type.getGoodSunFactor() > bestsun) {
+                bestsun = type.getGoodSunFactor();
+                sunidx = i;
+            }
+            if (type.getGoodMoonFactor() > bestmoon) {
+                bestmoon = type.getGoodMoonFactor();
+                moonidx = i;
+            }
+        }
+
+        // Always the same random series.
+        Random random = new Random(123);
+        random.nextFloat();
+        celestialBodyDescriptors = new ArrayList<CelestialBodyDescriptor>();
+        for (int i = 0 ; i < celestialBodies.size() ; i++) {
+            CelestialBodyType type = celestialBodies.get(i);
+            if (i == sunidx || i == moonidx) {
+                celestialBodyDescriptors.add(new CelestialBodyDescriptor(type, 0.0f, 1.0f, -90.0f));
+            } else {
+                celestialBodyDescriptors.add(new CelestialBodyDescriptor(type, random.nextFloat() * 100.0f, random.nextFloat() * 3.0f, -random.nextFloat() * 180.0f));
+            }
+        }
     }
 
     private List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> extractType(DimletType type, List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets) {
@@ -1004,6 +1046,10 @@ public class DimensionInformation {
 
     public SkyDescriptor getSkyDescriptor() {
         return skyDescriptor;
+    }
+
+    public List<CelestialBodyDescriptor> getCelestialBodyDescriptors() {
+        return celestialBodyDescriptors;
     }
 
     public List<MobDescriptor> getExtraMobs() {
