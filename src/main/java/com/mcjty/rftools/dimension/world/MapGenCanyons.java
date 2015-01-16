@@ -147,35 +147,35 @@ public class MapGenCanyons extends MapGenBase {
         }
     }
 
-    public void generate(IChunkProvider provider, World world, int p_151539_3_, int p_151539_4_, Block[] ablock, byte[] ameta) {
+    public void generate(IChunkProvider provider, World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
         int k = this.range;
         this.worldObj = world;
         this.rand.setSeed(world.getSeed());
         long l = this.rand.nextLong();
         long i1 = this.rand.nextLong();
 
-        for (int j1 = p_151539_3_ - k; j1 <= p_151539_3_ + k; ++j1) {
-            for (int k1 = p_151539_4_ - k; k1 <= p_151539_4_ + k; ++k1) {
-                long l1 = j1 * l;
-                long i2 = k1 * i1;
+        for (int cx = chunkX - k; cx <= chunkX + k; ++cx) {
+            for (int cz = chunkZ - k; cz <= chunkZ + k; ++cz) {
+                long l1 = cx * l;
+                long i2 = cz * i1;
                 this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
-                this.func_151538_a(world, j1, k1, p_151539_3_, p_151539_4_, ablock, ameta);
+                this.func_151538_a(world, cx, cz, chunkX, chunkZ, ablock, ameta);
             }
         }
     }
 
-    protected void func_151538_a(World world, int chunkX, int chunkZ, int p_151538_4_, int p_151538_5_, Block[] data, byte[] ameta) {
+    protected void func_151538_a(World world, int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] ameta) {
         if (this.rand.nextInt(50) == 0) {
-            double d0 = (chunkX * 16 + this.rand.nextInt(16));
+            double d0 = (cx * 16 + this.rand.nextInt(16));
             double d1 = (this.rand.nextInt(this.rand.nextInt(40) + 8) + 20);
-            double d2 = (chunkZ * 16 + this.rand.nextInt(16));
+            double d2 = (cz * 16 + this.rand.nextInt(16));
             byte b0 = 1;
 
             for (int i1 = 0; i1 < b0; ++i1) {
                 float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
                 float f1 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
                 float f2 = (this.rand.nextFloat() * 2.0F + this.rand.nextFloat()) * 2.0F;
-                this.func_151540_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, ameta, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
+                this.func_151540_a(this.rand.nextLong(), chunkX, chunkZ, data, ameta, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
             }
         }
     }

@@ -10,10 +10,10 @@ import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
 
-public class MapGenTendrils extends MapGenBase {
+public class MapGenSpheres extends MapGenBase {
     private final GenericChunkProvider provider;
 
-    public MapGenTendrils(GenericChunkProvider provider) {
+    public MapGenSpheres(GenericChunkProvider provider) {
         this.provider = provider;
     }
 
@@ -80,49 +80,49 @@ public class MapGenTendrils extends MapGenBase {
                 }
 
                 if (p_151541_6_ >= d4 - 16.0D - d6 * 2.0D && p_151541_10_ >= d5 - 16.0D - d6 * 2.0D && p_151541_6_ <= d4 + 16.0D + d6 * 2.0D && p_151541_10_ <= d5 + 16.0D + d6 * 2.0D) {
-                    int i4 = MathHelper.floor_double(p_151541_6_ - d6) - chunkX * 16 - 1;
-                    int l1 = MathHelper.floor_double(p_151541_6_ + d6) - chunkX * 16 + 1;
-                    int j4 = MathHelper.floor_double(p_151541_8_ - d7) - 1;
-                    int i2 = MathHelper.floor_double(p_151541_8_ + d7) + 1;
-                    int k4 = MathHelper.floor_double(p_151541_10_ - d6) - chunkZ * 16 - 1;
-                    int j2 = MathHelper.floor_double(p_151541_10_ + d6) - chunkZ * 16 + 1;
+                    int x_i4 = MathHelper.floor_double(p_151541_6_ - d6) - chunkX * 16 - 1;
+                    int x_l1 = MathHelper.floor_double(p_151541_6_ + d6) - chunkX * 16 + 1;
+                    int y_j4 = MathHelper.floor_double(p_151541_8_ - d7) - 1;
+                    int y_i2 = MathHelper.floor_double(p_151541_8_ + d7) + 1;
+                    int z_k4 = MathHelper.floor_double(p_151541_10_ - d6) - chunkZ * 16 - 1;
+                    int z_j2 = MathHelper.floor_double(p_151541_10_ + d6) - chunkZ * 16 + 1;
 
-                    if (i4 < 0) {
-                        i4 = 0;
+                    if (x_i4 < 0) {
+                        x_i4 = 0;
                     }
 
-                    if (l1 > 16) {
-                        l1 = 16;
+                    if (x_l1 > 16) {
+                        x_l1 = 16;
                     }
 
-                    if (j4 < 1) {
-                        j4 = 1;
+                    if (y_j4 < 1) {
+                        y_j4 = 1;
                     }
 
-                    if (i2 > 248) {
-                        i2 = 248;
+                    if (y_i2 > 248) {
+                        y_i2 = 248;
                     }
 
-                    if (k4 < 0) {
-                        k4 = 0;
+                    if (z_k4 < 0) {
+                        z_k4 = 0;
                     }
 
-                    if (j2 > 16) {
-                        j2 = 16;
+                    if (z_j2 > 16) {
+                        z_j2 = 16;
                     }
 
-                    int k2;
-                    int j3;
+                    int x_k2;
+                    int z_j3;
 
-                    for (k2 = i4; k2 < l1; ++k2) {
-                        double d13 = ((k2 + chunkX * 16) + 0.5D - p_151541_6_) / d6;
+                    for (x_k2 = x_i4; x_k2 < x_l1; ++x_k2) {
+                        double d13 = ((x_k2 + chunkX * 16) + 0.5D - p_151541_6_) / d6;
 
-                        for (j3 = k4; j3 < j2; ++j3) {
-                            double d14 = ((j3 + chunkZ * 16) + 0.5D - p_151541_10_) / d6;
-                            int k3 = (k2 * 16 + j3) * 256 + i2;
+                        for (z_j3 = z_k4; z_j3 < z_j2; ++z_j3) {
+                            double d14 = ((z_j3 + chunkZ * 16) + 0.5D - p_151541_10_) / d6;
+                            int k3 = (x_k2 * 16 + z_j3) * 256 + y_i2;
 
                             if (d13 * d13 + d14 * d14 < 1.0D) {
-                                for (int l3 = i2 - 1; l3 >= j4; --l3) {
+                                for (int l3 = y_i2 - 1; l3 >= y_j4; --l3) {
                                     double d12 = (l3 + 0.5D - p_151541_8_) / d7;
 
                                     if (d12 > -0.7D && d13 * d13 + d12 * d12 + d14 * d14 < 1.0D) {
@@ -150,23 +150,45 @@ public class MapGenTendrils extends MapGenBase {
     }
 
     public void generate(IChunkProvider provider, World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
-        int k = this.range;
-        this.worldObj = world;
-        this.rand.setSeed(world.getSeed());
-        long l = this.rand.nextLong();
-        long i1 = this.rand.nextLong();
+        if (chunkX % 5 == 0 && chunkZ % 5 == 0) {
+            Block block = Blocks.stone;
+            byte blockMeta = 0;
+            double sqradius = 4.0*4.0;
 
-        for (int cx = chunkX - k; cx <= chunkX + k; ++cx) {
-            for (int cz = chunkZ - k; cz <= chunkZ + k; ++cz) {
-                long l1 = cx * l;
-                long i2 = cz * i1;
-                this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
-                this.func_151538_a(world, cx, cz, chunkX, chunkZ, ablock, ameta);
+            for (int x = 2 ; x <= 13 ; x++) {
+                double dxdx = (x-8.0) * (x-8.0);
+                for (int z = 2 ; z <= 13 ; z++) {
+                    double dzdz = (z-8.0) * (z-8.0);
+                    int index = (x * 16 + z) * 256;
+                    for (int y = 70 ; y <= 81 ; y++) {
+                        double dydy = (y-76.0) * (y-76.0);
+                        double dist = dxdx + dydy + dzdz;
+                        if (dist <= sqradius) {
+                            ablock[index + y] = block;
+                            ameta[index + y] = blockMeta;
+                        }
+                    }
+                }
             }
         }
+
+//        int k = this.range;
+//        this.worldObj = world;
+//        this.rand.setSeed(world.getSeed());
+//        long l = this.rand.nextLong();
+//        long i1 = this.rand.nextLong();
+//
+//        for (int j1 = chunkX - k; j1 <= chunkX + k; ++j1) {
+//            for (int k1 = chunkZ - k; k1 <= chunkZ + k; ++k1) {
+//                long l1 = j1 * l;
+//                long i2 = k1 * i1;
+//                this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
+//                this.func_151538_a(world, j1, k1, chunkX, chunkZ, ablock, ameta);
+//            }
+//        }
     }
 
-    private void func_151538_a(World world, int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] meta) {
+    private void func_151538_a(World world, int chunkX, int chunkZ, int p_151538_4_, int p_151538_5_, Block[] data, byte[] meta) {
         int i1 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(15) + 1) + 1);
 
         if (this.rand.nextInt(7) != 0) {
@@ -174,13 +196,13 @@ public class MapGenTendrils extends MapGenBase {
         }
 
         for (int j1 = 0; j1 < i1; ++j1) {
-            double d0 = (cx * 16 + this.rand.nextInt(16));
+            double d0 = (chunkX * 16 + this.rand.nextInt(16));
             double d1 = this.rand.nextInt(this.rand.nextInt(120) + 8);
-            double d2 = (cz * 16 + this.rand.nextInt(16));
+            double d2 = (chunkZ * 16 + this.rand.nextInt(16));
             int k1 = 1;
 
             if (this.rand.nextInt(4) == 0) {
-                this.func_151541_a(this.rand.nextLong(), chunkX, chunkZ, data, meta, d0, d1, d2, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
+                this.func_151541_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, meta, d0, d1, d2, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
                 k1 += this.rand.nextInt(4);
             }
 
@@ -193,7 +215,7 @@ public class MapGenTendrils extends MapGenBase {
                     f2 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
                 }
 
-                this.func_151541_a(this.rand.nextLong(), chunkX, chunkZ, data, meta, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
+                this.func_151541_a(this.rand.nextLong(), p_151538_4_, p_151538_5_, data, meta, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
             }
         }
     }
