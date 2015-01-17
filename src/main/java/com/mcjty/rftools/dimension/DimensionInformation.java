@@ -36,6 +36,8 @@ public class DimensionInformation {
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
     private BlockMeta sphereBlock = null;
+    private BlockMeta liquidSphereBlock = null;
+    private Block liquidSphereFluid = null;
 
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
@@ -197,6 +199,8 @@ public class DimensionInformation {
         baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
         tendrilBlock = getBlockMeta(tagCompound, "tendrilBlock");
         sphereBlock = getBlockMeta(tagCompound, "sphereBlock");
+        liquidSphereBlock = getBlockMeta(tagCompound, "liquidSphereBlock");
+        liquidSphereFluid = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("liquidSphereFluid"));
         canyonBlock = getBlockMeta(tagCompound, "canyonBlock");
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("fluidBlock"));
 
@@ -295,6 +299,8 @@ public class DimensionInformation {
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
         setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
         setBlockMeta(tagCompound, sphereBlock, "sphereBlock");
+        setBlockMeta(tagCompound, liquidSphereBlock, "liquidSphereBlock");
+        tagCompound.setInteger("liquidSphereFluid", Block.blockRegistry.getIDForObject(liquidSphereFluid));
         setBlockMeta(tagCompound, canyonBlock, "canyonBlock");
         tagCompound.setInteger("fluidBlock", Block.blockRegistry.getIDForObject(fluidForTerrain));
 
@@ -393,8 +399,11 @@ public class DimensionInformation {
         if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
             logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock.getBlock(), 1, tendrilBlock.getMeta()).getDisplayName());
         }
-        if (featureTypes.contains(FeatureType.FEATURE_SPHERES)) {
-            logDebug(player, "        Sphere block: " + new ItemStack(sphereBlock.getBlock(), 1, sphereBlock.getMeta()).getDisplayName());
+        if (featureTypes.contains(FeatureType.FEATURE_ORBS)) {
+            logDebug(player, "        Orbs block: " + new ItemStack(sphereBlock.getBlock(), 1, sphereBlock.getMeta()).getDisplayName());
+        }
+        if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
+            logDebug(player, "        Liquid Orbs block: " + new ItemStack(liquidSphereBlock.getBlock(), 1, liquidSphereBlock.getMeta()).getDisplayName());
         }
         if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
             logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock.getBlock(), 1, canyonBlock.getMeta()).getDisplayName());
@@ -411,6 +420,10 @@ public class DimensionInformation {
         }
         for (Block block : fluidsForLakes) {
             logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());
+        }
+        if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
+            logDebug(player, "        Liquid orb fluid: " + new ItemStack(liquidSphereFluid).getDisplayName());
+
         }
         for (StructureType structureType : getStructureTypes()) {
             logDebug(player, "    Structure: " + structureType.toString());
@@ -479,6 +492,9 @@ public class DimensionInformation {
         buf.writeInt(tendrilBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock.getBlock()));
         buf.writeInt(sphereBlock.getMeta());
+        buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereBlock.getBlock()));
+        buf.writeInt(liquidSphereBlock.getMeta());
+        buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereFluid));
         buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock.getBlock()));
         buf.writeInt(canyonBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
@@ -538,9 +554,15 @@ public class DimensionInformation {
         block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         meta = buf.readInt();
         tendrilBlock = new BlockMeta(block, meta);
+
         block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         meta = buf.readInt();
         sphereBlock = new BlockMeta(block, meta);
+        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        meta = buf.readInt();
+        liquidSphereBlock = new BlockMeta(block, meta);
+        liquidSphereFluid = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+
         block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         meta = buf.readInt();
         canyonBlock = new BlockMeta(block, meta);
@@ -890,28 +912,30 @@ public class DimensionInformation {
             fluidsForLakes = new Block[0];
         }
 
-        if (featureTypes.contains(FeatureType.FEATURE_OREGEN)) {
+        if (featureTypes.contains(FeatureType.FEATURE_LAKES)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_OREGEN), blocks, fluids);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids);
 
-            // If no blocks for oregen are specified we have a small chance that some extra oregen is generated anyway.
-            if (blocks.isEmpty()) {
-                while (random.nextFloat() < DimletConfiguration.randomOregenMaterialChance) {
-                    int id = DimletRandomizer.getRandomMaterialBlock(random, true);
+            // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
+            if (fluids.isEmpty()) {
+                while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
+                    int id = DimletRandomizer.getRandomFluidBlock(random);
                     actualRfCost += calculateCostFactor(id);
-                    blocks.add(DimletMapping.idToBlock.get(id));
+                    fluids.add(DimletMapping.idToFluid.get(id));
                 }
-            } else if (blocks.size() == 1 && blocks.get(0) == null) {
-                blocks.clear();
+            } else if (fluids.size() == 1 && fluids.get(0) == null) {
+                fluids.clear();
             }
-            extraOregen = blocks.toArray(new BlockMeta[blocks.size()]);
+            fluidsForLakes = fluids.toArray(new Block[fluids.size()]);
         } else {
-            extraOregen = new BlockMeta[0];
+            fluidsForLakes = new Block[0];
         }
 
         tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS);
-        sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_SPHERES);
+        sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_ORBS);
+        liquidSphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS);
+        liquidSphereFluid = getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS);
         canyonBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS);
     }
 
@@ -942,6 +966,35 @@ public class DimensionInformation {
         }
         return block;
     }
+
+    private Block getFeatureLiquid(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
+        Block block;
+        if (featureTypes.contains(featureType)) {
+            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
+            List<Block> fluids = new ArrayList<Block>();
+            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
+
+            if (!fluids.isEmpty()) {
+                block = fluids.get(random.nextInt(fluids.size()));
+                if (block == null) {
+                    block = Blocks.water;     // This is the default in case None was specified.
+                }
+            } else {
+                // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
+                if (random.nextFloat() < DimletConfiguration.randomOrbFluidChance) {
+                    int id = DimletRandomizer.getRandomFluidBlock(random);
+                    actualRfCost += calculateCostFactor(id);
+                    block = DimletMapping.idToFluid.get(id);
+                } else {
+                    block = Blocks.water;
+                }
+            }
+        } else {
+            block = Blocks.water;
+        }
+        return block;
+    }
+
 
 
     private void calculateStructureType(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
@@ -1030,6 +1083,14 @@ public class DimensionInformation {
 
     public BlockMeta getSphereBlock() {
         return sphereBlock;
+    }
+
+    public BlockMeta getLiquidSphereBlock() {
+        return liquidSphereBlock;
+    }
+
+    public Block getLiquidSphereFluid() {
+        return liquidSphereFluid;
     }
 
     public BlockMeta[] getExtraOregen() {

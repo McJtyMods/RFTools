@@ -31,6 +31,7 @@ public class DimletConfiguration {
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
+    public static float randomOrbFluidChance = 0.2f;
     public static float randomOregenMaterialChance = 0.2f;
     public static float randomFeatureMaterialChance = 0.4f;
     public static float randomStructureChance = 0.2f;
@@ -101,6 +102,8 @@ public class DimletConfiguration {
                 "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();
         randomLakeFluidChance = (float) cfg.get(CATEGORY_DIMLETS, "randomLakeFluidChance", randomLakeFluidChance,
                 "The chance that random fluid liquids are selected for lakes").getDouble();
+        randomOrbFluidChance = (float) cfg.get(CATEGORY_DIMLETS, "randomOrbFluidChance", randomOrbFluidChance,
+                "The chance that random fluid liquids are selected for liquid orbs").getDouble();
         randomOregenMaterialChance = (float) cfg.get(CATEGORY_DIMLETS, "randomOregenMaterialChance", randomOregenMaterialChance,
                 "The chance that random blocks are selected for extra oregen feature").getDouble();
         randomFeatureMaterialChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureMaterialChance", randomFeatureMaterialChance,

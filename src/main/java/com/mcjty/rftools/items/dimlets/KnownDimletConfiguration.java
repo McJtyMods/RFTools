@@ -300,12 +300,13 @@ public class KnownDimletConfiguration {
         int idFeatureNone = initFeatureItem(cfg, mainCfg, idsInConfig, "None", FeatureType.FEATURE_NONE);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Caves", FeatureType.FEATURE_CAVES);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Ravines", FeatureType.FEATURE_RAVINES);
-        initFeatureItem(cfg, mainCfg, idsInConfig, "Spheres", FeatureType.FEATURE_SPHERES);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Orbs", FeatureType.FEATURE_ORBS);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Oregen", FeatureType.FEATURE_OREGEN);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Lakes", FeatureType.FEATURE_LAKES);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Tendrils", FeatureType.FEATURE_TENDRILS);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Liquid Orbs", FeatureType.FEATURE_LIQUIDORBS);
 
         int idEffectNone = initEffectItem(cfg, mainCfg, idsInConfig, "None", EffectType.EFFECT_NONE);
         initEffectItem(cfg, mainCfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
