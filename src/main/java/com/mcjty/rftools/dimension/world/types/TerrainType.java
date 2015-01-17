@@ -5,12 +5,13 @@ public enum TerrainType {
     TERRAIN_FLAT(false, true),
     TERRAIN_AMPLIFIED(false, true),
     TERRAIN_NORMAL(false, true),
-    TERRAIN_CAVERN(true, false),
+    TERRAIN_CAVERN_OLD(true, false),
     TERRAIN_ISLAND(true, true),
     TERRAIN_ISLANDS(true, true),
     TERRAIN_CHAOTIC(true, true),
     TERRAIN_PLATEAUS(true, true),
-    TERRAIN_GRID(true, true);
+    TERRAIN_GRID(true, true),
+    TERRAIN_CAVERN(true, false);
 
     private final boolean noHorizon;
     private final boolean sky;

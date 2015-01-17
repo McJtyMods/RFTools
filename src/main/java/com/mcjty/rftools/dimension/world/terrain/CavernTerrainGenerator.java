@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
@@ -16,7 +17,15 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private World world;
     private GenericChunkProvider provider;
-    private boolean halfheight;
+
+    public enum CavernHeight {
+        HEIGHT_64,
+        HEIGHT_128,
+        HEIGHT_196,
+        HEIGHT_256
+    }
+    private CavernHeight heightsetting;
+    private static int cavernheight[] = new int[] {8, 16, 24, 32};
 
     /** A NoiseGeneratorOctaves used in generating nether terrain */
     private NoiseGeneratorOctaves netherNoiseGen1;
@@ -36,8 +45,18 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private double[] noiseData4;
     private double[] noiseData5;
 
-    public CavernTerrainGenerator(boolean halfheight) {
-        this.halfheight = halfheight;
+    public CavernTerrainGenerator(CavernHeight heightsetting) {
+        if (heightsetting == null) {
+            int hs = DimletConfiguration.cavernHeightLimit;
+            if (hs < 0) {
+                hs = 0;
+            } else if (hs > 3) {
+                hs = 3;
+            }
+            this.heightsetting = CavernHeight.values()[hs];
+        } else {
+            this.heightsetting = heightsetting;
+        }
     }
 
     @Override
@@ -75,10 +94,7 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
             return event.noisefield;
         }
 
-        int syr = sy;
-        if (halfheight) {
-            syr = syr / 2;
-        }
+        int syr = cavernheight[heightsetting.ordinal()];
 
         if (noiseField == null) {
             noiseField = new double[sx * sy * sz];
@@ -176,7 +192,7 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
 
         for (int x4 = 0; x4 < b0; ++x4) {
             for (int z4 = 0; z4 < b0; ++z4) {
-                for (int height32 = 0; height32 < (halfheight ? 16 : 32); ++height32) {
+                for (int height32 = 0; height32 < cavernheight[heightsetting.ordinal()]; ++height32) {
                     double d0 = 0.125D;
                     double d1 = this.noiseField[((x4 + 0) * l + z4 + 0) * b2 + height32 + 0];
                     double d2 = this.noiseField[((x4 + 0) * l + z4 + 1) * b2 + height32 + 0];

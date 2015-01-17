@@ -27,6 +27,7 @@ public class DimletConfiguration {
     public static int dungeonChance = 200;
     public static int dimensionDifficulty = 1;      // 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
+    public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
 
     public static float randomFeatureChance = 0.4f;
@@ -97,6 +98,8 @@ public class DimletConfiguration {
                 "Difficulty level for the dimension system. 0 means that you will not get killed but kicked out of the dimension when it runs out of power. 1 means certain death").getInt();
         spawnDimension = cfg.get(CATEGORY_DIMLETS, "spawnDimension", spawnDimension,
                 "Dimension to respawn in after you get kicked out of an RFTools dimension").getInt();
+        cavernHeightLimit = cfg.get(CATEGORY_DIMLETS, "cavernHeightLimit", cavernHeightLimit,
+                "Maximum height of the caverns. 0=64, 1=128, 2=196, 3=256").getInt();
 
         randomFeatureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureChance", randomFeatureChance,
                 "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();
