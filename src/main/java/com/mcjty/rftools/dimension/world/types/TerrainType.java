@@ -11,14 +11,15 @@ public enum TerrainType {
     TERRAIN_CHAOTIC(true, true),
     TERRAIN_PLATEAUS(true, true),
     TERRAIN_GRID(true, true),
-    TERRAIN_CAVERN(true, false);
+    TERRAIN_CAVERN(true, false),
+    TERRAIN_LOW_CAVERN(true, true);
 
     private final boolean noHorizon;
     private final boolean sky;
 
-    TerrainType(boolean noHorizon, boolean clouds) {
+    TerrainType(boolean noHorizon, boolean sky) {
         this.noHorizon = noHorizon;
-        this.sky = clouds;
+        this.sky = sky;
     }
 
     public boolean hasNoHorizon() {
