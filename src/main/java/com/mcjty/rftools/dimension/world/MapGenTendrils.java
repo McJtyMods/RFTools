@@ -5,13 +5,14 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
 
-public class MapGenTendrils extends MapGenBase {
+public class MapGenTendrils {
     private final GenericChunkProvider provider;
+    private int range = 8;
+    private Random rand = new Random();
+
 
     public MapGenTendrils(GenericChunkProvider provider) {
         this.provider = provider;
@@ -149,9 +150,8 @@ public class MapGenTendrils extends MapGenBase {
         }
     }
 
-    public void generate(IChunkProvider provider, World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
+    public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
         int k = this.range;
-        this.worldObj = world;
         this.rand.setSeed(world.getSeed());
         long l = this.rand.nextLong();
         long i1 = this.rand.nextLong();
@@ -161,12 +161,12 @@ public class MapGenTendrils extends MapGenBase {
                 long l1 = cx * l;
                 long i2 = cz * i1;
                 this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
-                this.func_151538_a(world, cx, cz, chunkX, chunkZ, ablock, ameta);
+                this.fillChunk(cx, cz, chunkX, chunkZ, ablock, ameta);
             }
         }
     }
 
-    private void func_151538_a(World world, int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] meta) {
+    private void fillChunk(int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] meta) {
         int i1 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(15) + 1) + 1);
 
         if (this.rand.nextInt(7) != 0) {

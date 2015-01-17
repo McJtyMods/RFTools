@@ -163,10 +163,10 @@ public class GenericChunkProvider implements IChunkProvider {
         terrainGenerator.replaceBlocksForBiome(chunkX, chunkZ, ablock, abyte, this.biomesForGeneration);
 
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_TENDRILS)) {
-            this.tendrilGenerator.generate(this, this.worldObj, chunkX, chunkZ, ablock, abyte);
+            this.tendrilGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CANYONS)) {
-            this.canyonGenerator.generate(this, this.worldObj, chunkX, chunkZ, ablock, abyte);
+            this.canyonGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_ORBS)) {
             this.sphereGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);

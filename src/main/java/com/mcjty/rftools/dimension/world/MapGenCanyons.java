@@ -5,14 +5,14 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.MapGenBase;
 
 import java.util.Random;
 
-public class MapGenCanyons extends MapGenBase {
+public class MapGenCanyons {
     private final GenericChunkProvider provider;
+    private int range = 8;
+    private Random rand = new Random();
+
     private float[] field_75046_d = new float[1024];
 
     public MapGenCanyons(GenericChunkProvider provider) {
@@ -147,9 +147,8 @@ public class MapGenCanyons extends MapGenBase {
         }
     }
 
-    public void generate(IChunkProvider provider, World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
+    public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
         int k = this.range;
-        this.worldObj = world;
         this.rand.setSeed(world.getSeed());
         long l = this.rand.nextLong();
         long i1 = this.rand.nextLong();
@@ -159,44 +158,25 @@ public class MapGenCanyons extends MapGenBase {
                 long l1 = cx * l;
                 long i2 = cz * i1;
                 this.rand.setSeed(l1 ^ i2 ^ world.getSeed());
-                this.func_151538_a(world, cx, cz, chunkX, chunkZ, ablock, ameta);
+                this.fillChunk(cx, cz, chunkX, chunkZ, ablock, ameta);
             }
         }
     }
 
-    protected void func_151538_a(World world, int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] ameta) {
+    private void fillChunk(int cx, int cz, int chunkX, int chunkZ, Block[] data, byte[] ameta) {
         if (this.rand.nextInt(50) == 0) {
-            double d0 = (cx * 16 + this.rand.nextInt(16));
-            double d1 = (this.rand.nextInt(this.rand.nextInt(40) + 8) + 20);
-            double d2 = (cz * 16 + this.rand.nextInt(16));
+            double x = (cx * 16 + this.rand.nextInt(16));
+            double y = (this.rand.nextInt(this.rand.nextInt(40) + 8) + 20);
+            double z = (cz * 16 + this.rand.nextInt(16));
             byte b0 = 1;
 
             for (int i1 = 0; i1 < b0; ++i1) {
                 float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
                 float f1 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
                 float f2 = (this.rand.nextFloat() * 2.0F + this.rand.nextFloat()) * 2.0F;
-                this.func_151540_a(this.rand.nextLong(), chunkX, chunkZ, data, ameta, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
+                this.func_151540_a(this.rand.nextLong(), chunkX, chunkZ, data, ameta, x, y, z, f2, f, f1, 0, 0, 3.0D);
             }
         }
-    }
-
-    protected boolean isOceanBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ) {
-        return data[index] == Blocks.water || data[index] == Blocks.flowing_water;
-    }
-
-    //Exception biomes to make sure we generate like vanilla
-    private boolean isExceptionBiome(BiomeGenBase biome) {
-        if (biome == BiomeGenBase.mushroomIsland) return true;
-        if (biome == BiomeGenBase.beach) return true;
-        if (biome == BiomeGenBase.desert) return true;
-        return false;
-    }
-
-    //Determine if the block at the specified location is the top block for the biome, we take into account
-    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
-    private boolean isTopBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ) {
-        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-        return (isExceptionBiome(biome) ? data[index] == Blocks.grass : data[index] == biome.topBlock);
     }
 
 }
