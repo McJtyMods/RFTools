@@ -203,9 +203,15 @@ public class RfToolsDimensionManager extends WorldSavedData {
         WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(id);
         ChunkProviderServer providerServer = worldServerForDimension.theChunkProviderServer;
         if (!providerServer.chunkExists(0, 0)) {
-            providerServer.loadChunk(0, 0);
-            providerServer.populate(providerServer, 0, 0);
-            providerServer.unloadChunksIfNotNearSpawn(0, 0);
+            try {
+                providerServer.loadChunk(0, 0);
+                providerServer.populate(providerServer, 0, 0);
+                providerServer.unloadChunksIfNotNearSpawn(0, 0);
+            } catch (Exception e) {
+                RFTools.logError("Something went wrong during creation of the dimension!");
+                e.printStackTrace();
+                // We catch this exception to make sure our dimension tab is at least ok.
+            }
         }
 
         return id;
