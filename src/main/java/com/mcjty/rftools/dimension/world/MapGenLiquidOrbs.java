@@ -32,8 +32,8 @@ public class MapGenLiquidOrbs {
     }
 
     private void fillSphere(Block[] ablock, byte[] ameta, int centerx, int centery, int centerz, int radius) {
-        Block block = provider.dimensionInformation.getSphereBlock().getBlock();
-        byte blockMeta = provider.dimensionInformation.getSphereBlock().getMeta();
+        Block block = provider.dimensionInformation.getLiquidSphereBlock().getBlock();
+        byte blockMeta = provider.dimensionInformation.getLiquidSphereBlock().getMeta();
         Block fluid = provider.dimensionInformation.getLiquidSphereFluid();
 
         double sqradius = radius * radius;
