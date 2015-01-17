@@ -16,6 +16,7 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private World world;
     private GenericChunkProvider provider;
+    private boolean halfheight;
 
     /** A NoiseGeneratorOctaves used in generating nether terrain */
     private NoiseGeneratorOctaves netherNoiseGen1;
@@ -35,7 +36,8 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
     private double[] noiseData4;
     private double[] noiseData5;
 
-    public CavernTerrainGenerator() {
+    public CavernTerrainGenerator(boolean halfheight) {
+        this.halfheight = halfheight;
     }
 
     @Override
@@ -73,6 +75,11 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
             return event.noisefield;
         }
 
+        int syr = sy;
+        if (halfheight) {
+            syr = syr / 2;
+        }
+
         if (noiseField == null) {
             noiseField = new double[sx * sy * sz];
         }
@@ -89,11 +96,13 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         int i2;
 
         for (i2 = 0; i2 < sy; ++i2) {
-            adouble1[i2] = Math.cos(i2 * Math.PI * 6.0D / sy) * 2.0D;
+            adouble1[i2] = Math.cos(i2 * Math.PI * 6.0D / syr) * 2.0D;
             double d2 = i2;
 
-            if (i2 > sy / 2) {
-                d2 = (sy - 1 - i2);
+            if (i2 > syr) {
+                d2 = 0;
+            } else if (i2 > syr / 2) {
+                d2 = (syr - 1 - i2);
             }
 
             if (d2 < 4.0D) {
@@ -167,7 +176,7 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
 
         for (int x4 = 0; x4 < b0; ++x4) {
             for (int z4 = 0; z4 < b0; ++z4) {
-                for (int height32 = 0; height32 < 32; ++height32) {
+                for (int height32 = 0; height32 < (halfheight ? 16 : 32); ++height32) {
                     double d0 = 0.125D;
                     double d1 = this.noiseField[((x4 + 0) * l + z4 + 0) * b2 + height32 + 0];
                     double d2 = this.noiseField[((x4 + 0) * l + z4 + 1) * b2 + height32 + 0];
