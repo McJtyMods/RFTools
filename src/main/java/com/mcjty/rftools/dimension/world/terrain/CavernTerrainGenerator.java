@@ -313,7 +313,8 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                         else {
                             j1 = -1;
                         }
-                    } else {
+                    } else if (heightsetting == CavernHeight.HEIGHT_256) {
+                        // Only use a bedrock ceiling if the height is 256.
                         aBlock[l1] = Blocks.bedrock;
                     }
                 }
