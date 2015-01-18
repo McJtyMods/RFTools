@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "2.13"
+version = "2.14"
 group= "com.mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "rftools"
 
