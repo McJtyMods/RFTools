@@ -54,6 +54,7 @@ public class GenericWorldProvider extends WorldProvider {
             worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
+//            worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj);
         }
 
         if (dimensionInformation != null) {
