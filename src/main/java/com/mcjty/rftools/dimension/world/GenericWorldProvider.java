@@ -82,7 +82,7 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public double getHorizon() {
         getDimensionInformation();
-        if (dimensionInformation.getTerrainType().hasNoHorizon()) {
+        if (dimensionInformation != null && dimensionInformation.getTerrainType().hasNoHorizon()) {
             return 0;
         } else {
             return super.getHorizon();
@@ -92,6 +92,9 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public boolean isSurfaceWorld() {
         getDimensionInformation();
+        if (dimensionInformation == null) {
+            return super.isSurfaceWorld();
+        }
         return dimensionInformation.getTerrainType().hasSky();
     }
 
