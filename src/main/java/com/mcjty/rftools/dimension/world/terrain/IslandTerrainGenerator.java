@@ -262,6 +262,16 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(provider, chunkX, chunkZ, aBlock, abyte, biomeGenBases, world);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Event.Result.DENY) {
+            // Get rid of all bedrock
+            for (int cx = 0; cx < 16; ++cx) {
+                for (int cz = 0; cz < 16; ++cz) {
+                    int bottomIndex = ((cz * 16) + cx) * (aBlock.length / 256);
+                    while (aBlock[bottomIndex] == Blocks.bedrock) {
+                        aBlock[bottomIndex++] = null;
+                    }
+                }
+            }
+
             return;
         }
 
