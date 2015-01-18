@@ -19,6 +19,7 @@ import net.minecraftforge.common.DimensionManager;
 public class GenericWorldProvider extends WorldProvider {
     private DimensionInformation dimensionInformation;
     private DimensionStorage storage;
+    private long seed;
 
     private long calculateSeed(long seed, int dim) {
         return dim * 13L + seed;
@@ -30,6 +31,8 @@ public class GenericWorldProvider extends WorldProvider {
             dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
             if (dimensionInformation == null) {
                 RFTools.log("Dimension information for dimension " + dim + " is missing!");
+            } else {
+                setupProviderInfo();
             }
         }
         return dimensionInformation;
@@ -38,29 +41,36 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public void registerWorldChunkManager() {
         int dim = worldObj.provider.dimensionId;
-        long seed = calculateSeed(worldObj.getSeed(), dim);
+        seed = calculateSeed(worldObj.getSeed(), dim);
 
         getDimensionInformation();
         storage = DimensionStorage.getDimensionStorage(worldObj);
 
+        setupProviderInfo();
+    }
+
+    private void setupProviderInfo() {
         if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
             worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
         }
-        hasNoSky = !dimensionInformation.getTerrainType().hasSky();
 
-        if (worldObj.isRemote) {
-            // Only on client!
-            SkyType skyType = dimensionInformation.getSkyDescriptor().getSkyType();
-            if (hasNoSky) {
-                SkyRenderer.registerNoSky(this);
-            } else if (skyType == SkyType.SKY_ENDER) {
-                SkyRenderer.registerEnderSky(this);
-            } else if (skyType == SkyType.SKY_INFERNO) {
-                SkyRenderer.registerPlasmaSky(this);
-            } else {
-                SkyRenderer.registerSky(this, dimensionInformation);
+        if (dimensionInformation != null) {
+            hasNoSky = !dimensionInformation.getTerrainType().hasSky();
+
+            if (worldObj.isRemote) {
+                // Only on client!
+                SkyType skyType = dimensionInformation.getSkyDescriptor().getSkyType();
+                if (hasNoSky) {
+                    SkyRenderer.registerNoSky(this);
+                } else if (skyType == SkyType.SKY_ENDER) {
+                    SkyRenderer.registerEnderSky(this);
+                } else if (skyType == SkyType.SKY_INFERNO) {
+                    SkyRenderer.registerPlasmaSky(this);
+                } else {
+                    SkyRenderer.registerSky(this, dimensionInformation);
+                }
             }
         }
     }
