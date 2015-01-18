@@ -14,5 +14,4 @@ public interface BaseTerrainGenerator {
     void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte);
 
     void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases);
-
 }

@@ -259,21 +259,11 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
     @Override
     public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte, BiomeGenBase[] biomeGenBases) {
-        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(provider, chunkX, chunkZ, aBlock, abyte, biomeGenBases, world);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.DENY) {
-            // Get rid of all bedrock
-            for (int cx = 0; cx < 16; ++cx) {
-                for (int cz = 0; cz < 16; ++cz) {
-                    int bottomIndex = ((cz * 16) + cx) * (aBlock.length / 256);
-                    while (aBlock[bottomIndex] == Blocks.bedrock) {
-                        aBlock[bottomIndex++] = null;
-                    }
-                }
-            }
-
-            return;
-        }
+//        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(provider, chunkX, chunkZ, aBlock, abyte, biomeGenBases, world);
+//        MinecraftForge.EVENT_BUS.post(event);
+//        if (event.getResult() == Event.Result.DENY) {
+//            return;
+//        }
 
         double d0 = 0.03125D;
         this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, (chunkX * 16), (chunkZ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
@@ -311,65 +301,68 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                 blocks[index] = Blocks.air;
             } else {
                 Block currentBlock = blocks[index];
-
-                if (currentBlock != null && currentBlock.getMaterial() != Material.air) {
-                    if (currentBlock == baseBlock) {
-                        if (k == -1) {
-                            if (l <= 0) {
-                                block = null;
-                                blockMeta = 0;
-                                block1 = baseBlock;
-                                block1Meta = baseMeta;
-                            } else if (height >= 59 && height <= 64) {
-                                block = biomegenbase.topBlock;
-                                blockMeta = (byte)(biomegenbase.field_150604_aj & 255);
-                                block1 = baseBlock; //biomegenbase.fillerBlock;
-                                block1Meta = baseMeta;
-                            }
-
-                            if (height < 63 && (block == null || block.getMaterial() == Material.air)) {
-                                if (biomegenbase.getFloatTemperature(x, height, z) < 0.15F) {
-                                    block = Blocks.ice;
+                if (currentBlock == Blocks.bedrock && height <= 12) {
+                    blocks[index] = Blocks.air;
+                    k = -1;
+                } else {
+                    if (currentBlock != null && currentBlock.getMaterial() != Material.air) {
+                        if (currentBlock == baseBlock) {
+                            if (k == -1) {
+                                if (l <= 0) {
+                                    block = null;
                                     blockMeta = 0;
-                                } else {
-                                    block = baseLiquid;
-                                    blockMeta = 0;
+                                    block1 = baseBlock;
+                                    block1Meta = baseMeta;
+                                } else if (height >= 59 && height <= 64) {
+                                    block = biomegenbase.topBlock;
+                                    blockMeta = (byte) (biomegenbase.field_150604_aj & 255);
+                                    block1 = baseBlock; //biomegenbase.fillerBlock;
+                                    block1Meta = baseMeta;
                                 }
-                            }
 
-                            k = l;
+                                if (height < 63 && (block == null || block.getMaterial() == Material.air)) {
+                                    if (biomegenbase.getFloatTemperature(x, height, z) < 0.15F) {
+                                        block = Blocks.ice;
+                                        blockMeta = 0;
+                                    } else {
+                                        block = baseLiquid;
+                                        blockMeta = 0;
+                                    }
+                                }
 
-                            if (height >= 62) {
-                                blocks[index] = block;
-                                abyte[index] = blockMeta;
-                            } else if (height < 56 - l) {
-                                block = null;
-                                block1 = baseBlock; //Blocks.stone;
-                                block1Meta = baseMeta;
-                                blocks[index] = biomegenbase.fillerBlock;//Blocks.gravel;
-                                abyte[index] = (byte)(biomegenbase.field_76754_C & 266);
-                            } else {
+                                k = l;
+
+                                if (height >= 62) {
+                                    blocks[index] = block;
+                                    abyte[index] = blockMeta;
+                                } else if (height < 56 - l) {
+                                    block = null;
+                                    block1 = baseBlock; //Blocks.stone;
+                                    block1Meta = baseMeta;
+                                    blocks[index] = biomegenbase.fillerBlock;//Blocks.gravel;
+                                    abyte[index] = (byte) (biomegenbase.field_76754_C & 266);
+                                } else {
+                                    blocks[index] = block1;
+                                    abyte[index] = block1Meta;
+                                }
+                            } else if (k > 0) {
+                                --k;
                                 blocks[index] = block1;
                                 abyte[index] = block1Meta;
-                            }
-                        } else if (k > 0) {
-                            --k;
-                            blocks[index] = block1;
-                            abyte[index] = block1Meta;
 
-                            if (k == 0 && block1 == Blocks.sand) {
-                                k = provider.rand.nextInt(4) + Math.max(0, height - 63);
-                                block1 = Blocks.sandstone;
-                                block1Meta = 0;
+                                if (k == 0 && block1 == Blocks.sand) {
+                                    k = provider.rand.nextInt(4) + Math.max(0, height - 63);
+                                    block1 = Blocks.sandstone;
+                                    block1Meta = 0;
+                                }
                             }
                         }
+                    } else {
+                        k = -1;
                     }
-                } else {
-                    k = -1;
                 }
             }
         }
     }
-
 
 }

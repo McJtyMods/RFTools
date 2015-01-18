@@ -206,6 +206,7 @@ public class GenericChunkProvider implements IChunkProvider {
         }
 
         chunk.generateSkylightMap();
+
         return chunk;
     }
 

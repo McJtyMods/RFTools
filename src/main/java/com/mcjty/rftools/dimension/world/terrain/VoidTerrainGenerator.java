@@ -25,4 +25,5 @@ public class VoidTerrainGenerator implements BaseTerrainGenerator {
             abyte[i] = 0;
         }
     }
+
 }

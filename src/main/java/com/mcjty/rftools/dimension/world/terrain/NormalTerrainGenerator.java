@@ -2,7 +2,6 @@ package com.mcjty.rftools.dimension.world.terrain;
 
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
-import com.mcjty.rftools.items.dimlets.BlockMeta;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
