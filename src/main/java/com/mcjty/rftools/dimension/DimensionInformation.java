@@ -48,6 +48,7 @@ public class DimensionInformation {
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private Set<EffectType> effectTypes = new HashSet<EffectType>();
+    private ControllerType controllerType = null;
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
     private String digitString = "";
 
@@ -194,6 +195,16 @@ public class DimensionInformation {
         for (int a : tagCompound.getIntArray("biomes")) {
             biomes.add(BiomeGenBase.getBiome(a));
         }
+        if (tagCompound.hasKey("controller")) {
+            controllerType = ControllerType.values()[tagCompound.getInteger("controller")];
+        } else {
+            // Support for old type.
+            if (biomes.isEmpty()) {
+                controllerType = ControllerType.CONTROLLER_DEFAULT;
+            } else {
+                controllerType = ControllerType.CONTROLLER_SINGLE;
+            }
+        }
 
         digitString = tagCompound.getString("digits");
 
@@ -295,6 +306,7 @@ public class DimensionInformation {
             c.add(t.biomeID);
         }
         tagCompound.setIntArray("biomes", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
+        tagCompound.setInteger("controller", controllerType == null ? ControllerType.CONTROLLER_DEFAULT.ordinal() : controllerType.ordinal());
         tagCompound.setString("digits", digitString);
 
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
@@ -410,6 +422,7 @@ public class DimensionInformation {
             logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock.getBlock(), 1, canyonBlock.getMeta()).getDisplayName());
         }
         logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
+        logDebug(player, "    Biome controller: " + (controllerType == null ? "<null>" : controllerType.name()));
         for (BiomeGenBase biome : getBiomes()) {
             logDebug(player, "    Biome: " + biome.biomeName);
         }
@@ -484,6 +497,7 @@ public class DimensionInformation {
         for (BiomeGenBase entry : biomes) {
             buf.writeInt(entry.biomeID);
         }
+        ByteBufTools.writeEnum(buf, controllerType, ControllerType.CONTROLLER_DEFAULT);
 
         ByteBufTools.writeString(buf, digitString);
 
@@ -547,6 +561,7 @@ public class DimensionInformation {
         for (int i = 0 ; i < size ; i++) {
             biomes.add(BiomeGenBase.getBiome(buf.readInt()));
         }
+        controllerType = ByteBufTools.readEnum(buf, ControllerType.values());
         digitString = ByteBufTools.readString(buf);
 
         Block block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
@@ -1017,11 +1032,57 @@ public class DimensionInformation {
     }
 
     private void calculateBiomes(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
-        dimlets = extractType(DimletType.DIMLET_BIOME, dimlets);
-        // @@@ TODO: distinguish between random overworld biome, random nether biome, random biome and specific biomes
-        for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
+        List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> biomeDimlets = extractType(DimletType.DIMLET_BIOME, dimlets);
+        List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> controllerDimlets = extractType(DimletType.DIMLET_CONTROLLER, dimlets);
+        for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : biomeDimlets) {
             int id = dimletWithModifiers.getKey().getId();
             biomes.add(DimletMapping.idToBiome.get(id));
+        }
+
+        // First determine the controller to use.
+        if (controllerDimlets.isEmpty()) {
+            if (random.nextFloat() < DimletConfiguration.randomControllerChance) {
+                List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToControllerType.keySet());
+                int id = keys.get(random.nextInt(keys.size()));
+                controllerType = DimletMapping.idToControllerType.get(id);
+            } else {
+                if (biomeDimlets.isEmpty()) {
+                    controllerType = ControllerType.CONTROLLER_DEFAULT;
+                } else {
+                    controllerType = ControllerType.CONTROLLER_SINGLE;
+                }
+            }
+        } else {
+            int id = controllerDimlets.get(random.nextInt(controllerDimlets.size())).getLeft().getId();
+            controllerType = DimletMapping.idToControllerType.get(id);
+        }
+
+        // Now see if we have to add or randomize biomes.
+        switch (controllerType) {
+            case CONTROLLER_DEFAULT:
+                break;
+            case CONTROLLER_SINGLE:
+                if (biomes.isEmpty()) {
+                    // We need at least one biome if that wasn't specified.
+                    List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
+                    int id = keys.get(random.nextInt(keys.size()));
+                    biomes.add(DimletMapping.idToBiome.get(id));
+                }
+                break;
+            case CONTROLLER_CHECKERBOARD:
+                while (biomes.size() < 2) {
+                    // We need at least two biomes.
+                    int id;
+                    List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
+                    while (true) {
+                        id = keys.get(random.nextInt(keys.size()));
+                        if (biomes.isEmpty() || (biomes.get(0) != DimletMapping.idToBiome.get(id))) {
+                            break;
+                        }
+                    }
+                    biomes.add(DimletMapping.idToBiome.get(id));
+                }
+                break;
         }
     }
 
@@ -1064,6 +1125,10 @@ public class DimensionInformation {
 
     public List<BiomeGenBase> getBiomes() {
         return biomes;
+    }
+
+    public ControllerType getControllerType() {
+        return controllerType;
     }
 
     public String getDigitString() {

@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension.world;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.dimension.world.types.SkyType;
 import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -50,11 +51,17 @@ public class GenericWorldProvider extends WorldProvider {
     }
 
     private void setupProviderInfo() {
-        if (dimensionInformation != null && !dimensionInformation.getBiomes().isEmpty()) {
-            worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
+        if (dimensionInformation != null) {
+            ControllerType type = dimensionInformation.getControllerType();
+            if (type == ControllerType.CONTROLLER_SINGLE) {
+                worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
+            } else if (type == ControllerType.CONTROLLER_DEFAULT) {
+                worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
+            } else {
+                worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj);
+            }
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
-//            worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj);
         }
 
         if (dimensionInformation != null) {

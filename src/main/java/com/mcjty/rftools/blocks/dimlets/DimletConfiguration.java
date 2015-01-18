@@ -42,6 +42,7 @@ public class DimletConfiguration {
     public static float randomSpecialSkyChance = 0.5f;
     public static float randomExtraMobsChance = 0.4f;
     public static float randomSpecialTimeChance = 0.5f;
+    public static float randomControllerChance = 0.4f;
 
 
     public static void init(Configuration cfg) {
@@ -125,6 +126,8 @@ public class DimletConfiguration {
                 "The chance that extra specific mobs will spawn").getDouble();
         randomSpecialTimeChance = (float) cfg.get(CATEGORY_DIMLETS, "randomSpecialTimeChance", randomSpecialTimeChance,
                 "The chance that special time features are selected").getDouble();
+        randomControllerChance = (float) cfg.get(CATEGORY_DIMLETS, "randomControllerChance", randomControllerChance,
+                "The chance that a random biome controller is selected").getDouble();
 
     }
 

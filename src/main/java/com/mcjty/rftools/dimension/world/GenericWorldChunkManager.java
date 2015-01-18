@@ -17,7 +17,7 @@ public class GenericWorldChunkManager extends WorldChunkManager {
     private DimensionInformation dimensionInformation = null;
     private final World world;
 
-    private DimensionInformation getDimensionInformation() {
+    public DimensionInformation getDimensionInformation() {
         if (dimensionInformation == null) {
             dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
         }
@@ -78,7 +78,7 @@ public class GenericWorldChunkManager extends WorldChunkManager {
     @Override
     public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
         GenLayer[] layer = super.getModdedBiomeGenerators(worldType, seed, original);
-        RFToolsGenLayer rfToolsGenLayer = new RFToolsGenLayer(seed, layer[0]);
+        GenLayerCheckerboard rfToolsGenLayer = new GenLayerCheckerboard(this, seed, layer[0]);
         GenLayerVoronoiZoom zoomLayer = new GenLayerVoronoiZoom(10L, rfToolsGenLayer);
         zoomLayer.initWorldGenSeed(seed);
         return new GenLayer[] {rfToolsGenLayer, zoomLayer, rfToolsGenLayer};
