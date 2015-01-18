@@ -15,6 +15,7 @@ public class DimletMapping {
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
     public static final Map<Integer,SpecialType> idToSpecialType = new HashMap<Integer, SpecialType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
+    public static final Map<Integer,ControllerType> idToControllerType = new HashMap<Integer, ControllerType>();
     public static final Map<Integer,EffectType> idToEffectType = new HashMap<Integer, EffectType>();
     public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
     public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();

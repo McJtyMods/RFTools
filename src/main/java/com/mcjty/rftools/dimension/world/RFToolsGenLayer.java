@@ -16,9 +16,10 @@ public class RFToolsGenLayer extends GenLayer {
     @Override
     public int[] getInts(int x, int z, int width, int length) {
 //        return parent.getInts(x, z, width, length);
+        boolean b = ((x >> 3) & 1) == ((z >> 3) & 1);
         int[] aint = IntCache.getIntCache(width * length);
         for (int i = 0; i < width * length; ++i) {
-            if (((x>>4) & 1) == ((z>>4) & 1)) {
+            if (b) {
                 aint[i] = BiomeGenBase.plains.biomeID;
             } else {
                 aint[i] = BiomeGenBase.desert.biomeID;

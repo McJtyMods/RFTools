@@ -149,6 +149,10 @@ public class KnownDimletConfiguration {
 
         initBiomeItems(cfg, mainCfg, idsInConfig);
 
+        initControllerItem(cfg, mainCfg, idsInConfig, "Default", ControllerType.CONTROLLER_DEFAULT);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Single", ControllerType.CONTROLLER_SINGLE);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Checkerboard", ControllerType.CONTROLLER_CHECKERBOARD);
+
         int idDigit0 = initDigitItem(cfg, mainCfg, idsInConfig, 0);
         int idDigit1 = initDigitItem(cfg, mainCfg, idsInConfig, 1);
         int idDigit2 = initDigitItem(cfg, mainCfg, idsInConfig, 2);
@@ -610,6 +614,15 @@ public class KnownDimletConfiguration {
     private static void setupChestLoot(String category) {
         ChestGenHooks chest = ChestGenHooks.getInfo(category);
         chest.addItem(new WeightedRandomChestContent(ModItems.unknownDimlet, 0, 1, 3, 50));
+    }
+
+    private static int initControllerItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, ControllerType type) {
+        int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_CONTROLLER, name));
+        if (id != -1) {
+            DimletMapping.idToControllerType.put(id, type);
+            idToDisplayName.put(id, DimletType.DIMLET_CONTROLLER.getName() + " " + name + " Dimlet");
+        }
+        return -1;
     }
 
     private static void initBiomeItems(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig) {

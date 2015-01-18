@@ -104,6 +104,7 @@ public class DimensionInformation {
             case DIMLET_TERRAIN:
             case DIMLET_DIGIT:
             case DIMLET_FEATURE:
+            case DIMLET_CONTROLLER:
                 // Not supported
                 return;
             case DIMLET_MOBS:
