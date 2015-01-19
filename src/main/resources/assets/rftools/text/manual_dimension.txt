@@ -122,10 +122,9 @@ To craft this you actually need dimensional shards.
 {n:types}
 
     Biome dimlets: these control what biomes you can have in a dimension.
-        Note that at this moment you can only specify one biome.
-        Specifying more biomes simply doesn't work (this is on the todo
-        for later). If you don't specify a biome then you will just get the
-        default biomes.
+        How many biomes are supported depends on the controller.
+    Biome controller: determine how many and which type of biomes
+        are selected.
     Foliage dimlets: currently not implemented.
     Liquid dimlets: this is a modifier dimlet that can be used in
         combination with the Terrain dimlets and the Lake feature. It
@@ -156,7 +155,7 @@ To craft this you actually need dimensional shards.
         features) modifiers.
     Terrain dimlets: these are used to control the overall form of the
         terrain. Void and flat are craftable but you can also get island,
-        normal or amplified.
+        islands, normal, amplified, chaotic, plateaus, or grid.
     Digit dimlets: use digit dimlets to make new unique worlds using exactly
         the same dimlets as another world you just created.
 {-------------------------------------------------------------}
