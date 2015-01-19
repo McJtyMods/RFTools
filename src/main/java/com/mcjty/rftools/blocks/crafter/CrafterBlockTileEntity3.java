@@ -15,6 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -263,9 +264,31 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
                         ItemStack result = craftingRecipe.getResult();
                         // First check if we have room for the result. If yes we can actually craft.
                         boolean internal = craftingRecipe.isCraftInternal();
-                        if (placeResult(internal, result)) {
+
+                        List<InventoryHelper.SlotModifier> undo = new ArrayList<InventoryHelper.SlotModifier>();
+
+                        // Try to merge the output and the secondary outputs (buckets and such). If there is something
+                        // that doesn't fit we undo everything.
+                        int amountLeft = placeResult(internal, result, undo);
+                        if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
+                            // We have container items.
+                            for (ItemStack stack : craftingRecipe.getContainerItems()) {
+                                amountLeft = placeResult(internal, stack, undo);
+                                if (amountLeft != 0) {
+                                    break;      // Not enough room.
+                                }
+                            }
+                        }
+
+                        if (amountLeft == 0) {
                             consumeCraftingItems(stackWithCounts, keep);
                             energyConsumed = true;
+                        } else {
+                            // We don't have place. Undo the operation.
+                            for (InventoryHelper.SlotModifier modifier : undo) {
+                                inventoryHelper.getStacks()[modifier.getSlot()] = modifier.getOld();
+                            }
+
                         }
                     }
                 }
@@ -323,7 +346,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
         }
     }
 
-    private boolean placeResult(boolean internal, ItemStack result) {
+    private int placeResult(boolean internal, ItemStack result, List<InventoryHelper.SlotModifier> undo) {
         int start;
         int stop;
         if (internal) {
@@ -333,10 +356,7 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             start = CrafterContainer.SLOT_BUFFEROUT;
             stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
-        if (!InventoryHelper.checkIfStackCanBeMerged(this, result, start, stop)) {
-            return false;
-        }
-        return InventoryHelper.mergeItemStack(this, result, start, stop);
+        return InventoryHelper.mergeItemStack(this, result, start, stop, undo);
     }
 
     @Override

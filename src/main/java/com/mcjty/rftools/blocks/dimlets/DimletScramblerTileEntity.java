@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
@@ -42,7 +43,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             scrambling--;
             if (scrambling == 0) {
                 int id = DimletRandomizer.getRandomDimlet(bonus, worldObj.rand);
-                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4);
+                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4, new ArrayList<InventoryHelper.SlotModifier>());
             }
             markDirty();
         } else {

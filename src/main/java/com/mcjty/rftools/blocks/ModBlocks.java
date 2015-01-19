@@ -1,7 +1,10 @@
 package com.mcjty.rftools.blocks;
 
 import com.mcjty.container.GenericItemBlock;
-import com.mcjty.rftools.blocks.crafter.*;
+import com.mcjty.rftools.blocks.crafter.CrafterBlock;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity1;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity2;
+import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;

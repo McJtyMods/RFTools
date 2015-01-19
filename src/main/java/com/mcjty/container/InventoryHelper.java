@@ -4,6 +4,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.List;
+
 public class InventoryHelper {
     private final TileEntity tileEntity;
     private final ContainerFactory containerFactory;
@@ -15,11 +17,29 @@ public class InventoryHelper {
         stacks = new ItemStack[count];
     }
 
+    public static class SlotModifier {
+        private final int slot;
+        private final ItemStack old;
+
+        public SlotModifier(int slot, ItemStack old) {
+            this.slot = slot;
+            this.old = old;
+        }
+
+        public int getSlot() {
+            return slot;
+        }
+
+        public ItemStack getOld() {
+            return old;
+        }
+    }
+
     /**
-     * Merges provided ItemStack with the first available one in this inventory.
+     * Merges provided ItemStack with the first available one in this inventory. It will return the amount
+     * of items that could not be merged. Also fills the undo buffer in case you want to undo the operation.
      */
-    public static boolean mergeItemStack(IInventory inventory, ItemStack result, int start, int stop) {
-        boolean success = false;
+    public static int mergeItemStack(IInventory inventory, ItemStack result, int start, int stop, List<SlotModifier> undo) {
         int k = start;
 
         ItemStack itemstack1;
@@ -33,15 +53,15 @@ public class InventoryHelper {
                     int l = itemstack1.stackSize + itemsToPlace;
 
                     if (l <= result.getMaxStackSize()) {
+                        undo.add(new SlotModifier(k, itemstack1.copy()));
                         itemsToPlace = 0;
                         itemstack1.stackSize = l;
                         inventory.markDirty();
-                        success = true;
                     } else if (itemstack1.stackSize < result.getMaxStackSize()) {
+                        undo.add(new SlotModifier(k, itemstack1.copy()));
                         itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
                         itemstack1.stackSize = result.getMaxStackSize();
                         inventory.markDirty();
-                        success = true;
                     }
                 }
 
@@ -56,10 +76,10 @@ public class InventoryHelper {
                 itemstack1 = inventory.getStackInSlot(k);
 
                 if (itemstack1 == null) {
+                    undo.add(new SlotModifier(k, null));
                     inventory.setInventorySlotContents(k, result.copy());
                     inventory.markDirty();
                     itemsToPlace = 0;
-                    success = true;
                     break;
                 }
 
@@ -67,51 +87,7 @@ public class InventoryHelper {
             }
         }
 
-        return success;
-    }
-
-    /**
-     * Check if a given stack can be merged completely with the inventory.
-     */
-    public static boolean checkIfStackCanBeMerged(IInventory inventory, ItemStack result, int start, int stop) {
-        int k = start;
-
-        ItemStack itemstack1;
-        int itemsToPlace = result.stackSize;
-
-        if (result.isStackable()) {
-            while (itemsToPlace > 0 && (k < stop)) {
-                itemstack1 = inventory.getStackInSlot(k);
-
-                if (itemstack1 != null && itemstack1.getItem() == result.getItem() && (!result.getHasSubtypes() || result.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(result, itemstack1)) {
-                    int l = itemstack1.stackSize + itemsToPlace;
-
-                    if (l <= result.getMaxStackSize()) {
-                        return true;
-                    } else if (itemstack1.stackSize < result.getMaxStackSize()) {
-                        itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
-                    }
-                }
-
-                ++k;
-            }
-        }
-
-        if (itemsToPlace > 0) {
-            k = start;
-
-            while (k < stop) {
-                itemstack1 = inventory.getStackInSlot(k);
-
-                if (itemstack1 == null) {
-                    return true;
-                }
-
-                ++k;
-            }
-        }
-
-        return false;
+        return itemsToPlace;
     }
 
     public ItemStack[] getStacks() {

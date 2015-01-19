@@ -22,6 +22,7 @@ public class CraftingRecipe {
         }
     }, 3, 3);
     private ItemStack result;
+    private List<ItemStack> containerItems = null; // Possible container items that are output by the recipe.
 
     private boolean recipePresent = false;
     private IRecipe recipe = null;
@@ -42,6 +43,19 @@ public class CraftingRecipe {
         return null;
     }
 
+    private void findContainerItems() {
+        containerItems = new ArrayList<ItemStack>();
+        for (int i = 0 ; i < inv.getSizeInventory() ; i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && stack.getItem() != null) {
+                ItemStack containerItem = stack.getItem().getContainerItem(stack);
+                if (containerItem != null) {
+                    containerItems.add(containerItem);
+                }
+            }
+        }
+    }
+
     public void readFromNBT(NBTTagCompound tagCompound) {
         NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
@@ -57,6 +71,7 @@ public class CraftingRecipe {
         keepOne = tagCompound.getBoolean("Keep");
         craftInternal = tagCompound.getBoolean("Int");
         recipePresent = false;
+        findContainerItems();
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -85,6 +100,7 @@ public class CraftingRecipe {
         }
         this.result = result;
         recipePresent = false;
+        findContainerItems();
     }
 
     public InventoryCrafting getInventory() {
@@ -97,6 +113,10 @@ public class CraftingRecipe {
 
     public ItemStack getResult() {
         return result;
+    }
+
+    public List<ItemStack> getContainerItems() {
+        return containerItems;
     }
 
     private void putStackInCache(ItemStack stack) {
