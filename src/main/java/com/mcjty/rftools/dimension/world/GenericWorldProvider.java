@@ -58,7 +58,8 @@ public class GenericWorldProvider extends WorldProvider {
             } else if (type == ControllerType.CONTROLLER_DEFAULT) {
                 worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
             } else {
-                worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj);
+                GenericWorldChunkManager.hackyDimensionInformation = dimensionInformation;      // Hack to get the dimension information in the superclass.
+                worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj, dimensionInformation);
             }
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());

@@ -149,9 +149,17 @@ public class KnownDimletConfiguration {
 
         initBiomeItems(cfg, mainCfg, idsInConfig);
 
-        initControllerItem(cfg, mainCfg, idsInConfig, "Default", ControllerType.CONTROLLER_DEFAULT);
-        initControllerItem(cfg, mainCfg, idsInConfig, "Single", ControllerType.CONTROLLER_SINGLE);
+        int idControllerDefault = initControllerItem(cfg, mainCfg, idsInConfig, "Default", ControllerType.CONTROLLER_DEFAULT);
+        int idControllerSingle = initControllerItem(cfg, mainCfg, idsInConfig, "Single", ControllerType.CONTROLLER_SINGLE);
         initControllerItem(cfg, mainCfg, idsInConfig, "Checkerboard", ControllerType.CONTROLLER_CHECKERBOARD);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Cold", ControllerType.CONTROLLER_COLD);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Medium", ControllerType.CONTROLLER_MEDIUM);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Warm", ControllerType.CONTROLLER_WARM);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Dry", ControllerType.CONTROLLER_DRY);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Wet", ControllerType.CONTROLLER_WET);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Fields", ControllerType.CONTROLLER_FIELDS);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Mountains", ControllerType.CONTROLLER_MOUNTAINS);
+        BiomeControllerMapping.setupControllerBiomes();
 
         int idDigit0 = initDigitItem(cfg, mainCfg, idsInConfig, 0);
         int idDigit1 = initDigitItem(cfg, mainCfg, idsInConfig, 1);
@@ -396,6 +404,11 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idTerrainVoid);
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idTerrainFlat);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerDefault), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', Items.paper);
+        craftableDimlets.add(idControllerDefault);
+        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerSingle), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', ModItems.dimletTemplate);
+        craftableDimlets.add(idControllerSingle);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', Items.paper);
         craftableDimlets.add(idMaterialNone);

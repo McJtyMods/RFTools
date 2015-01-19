@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.world.types.ControllerType;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
@@ -17,16 +18,16 @@ public class GenericWorldChunkManager extends WorldChunkManager {
     private DimensionInformation dimensionInformation = null;
     private final World world;
 
+    public static DimensionInformation hackyDimensionInformation;       // Hack to get the dimension information here before 'super'.
+
     public DimensionInformation getDimensionInformation() {
-        if (dimensionInformation == null) {
-            dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
-        }
         return dimensionInformation;
     }
 
-    public GenericWorldChunkManager(long seed, WorldType worldType, World world) {
+    public GenericWorldChunkManager(long seed, WorldType worldType, World world, DimensionInformation dimensionInformation) {
         super(seed, worldType);
         this.world = world;
+        this.dimensionInformation = dimensionInformation;
     }
 
     @Override
@@ -78,9 +79,33 @@ public class GenericWorldChunkManager extends WorldChunkManager {
     @Override
     public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
         GenLayer[] layer = super.getModdedBiomeGenerators(worldType, seed, original);
-        GenLayerCheckerboard rfToolsGenLayer = new GenLayerCheckerboard(this, seed, layer[0]);
-        GenLayerVoronoiZoom zoomLayer = new GenLayerVoronoiZoom(10L, rfToolsGenLayer);
+        GenLayer rflayer = null;
+        ControllerType type;
+        if (dimensionInformation == null) {
+            type = hackyDimensionInformation.getControllerType();
+        } else {
+            type = dimensionInformation.getControllerType();
+        }
+        switch (type) {
+            case CONTROLLER_DEFAULT:
+            case CONTROLLER_SINGLE:
+                // Cannot happen
+                break;
+            case CONTROLLER_CHECKERBOARD:
+                rflayer = new GenLayerCheckerboard(this, seed, layer[0]);
+                break;
+            case CONTROLLER_COLD:
+            case CONTROLLER_WARM:
+            case CONTROLLER_MEDIUM:
+            case CONTROLLER_DRY:
+            case CONTROLLER_WET:
+            case CONTROLLER_FIELDS:
+            case CONTROLLER_MOUNTAINS:
+                rflayer = new GenLayerFiltered(this, seed, layer[0], type);
+                break;
+        }
+        GenLayerVoronoiZoom zoomLayer = new GenLayerVoronoiZoom(10L, rflayer);
         zoomLayer.initWorldGenSeed(seed);
-        return new GenLayer[] {rfToolsGenLayer, zoomLayer, rfToolsGenLayer};
+        return new GenLayer[] {rflayer, zoomLayer, rflayer};
     }
 }

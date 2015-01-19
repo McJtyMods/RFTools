@@ -1032,11 +1032,13 @@ public class DimensionInformation {
     }
 
     private void calculateBiomes(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+        Set<Integer> biomeIds = new HashSet<Integer>();
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> biomeDimlets = extractType(DimletType.DIMLET_BIOME, dimlets);
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> controllerDimlets = extractType(DimletType.DIMLET_CONTROLLER, dimlets);
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : biomeDimlets) {
             int id = dimletWithModifiers.getKey().getId();
             biomes.add(DimletMapping.idToBiome.get(id));
+            biomeIds.add(id);
         }
 
         // First determine the controller to use.
@@ -1058,31 +1060,19 @@ public class DimensionInformation {
         }
 
         // Now see if we have to add or randomize biomes.
-        switch (controllerType) {
-            case CONTROLLER_DEFAULT:
-                break;
-            case CONTROLLER_SINGLE:
-                if (biomes.isEmpty()) {
-                    // We need at least one biome if that wasn't specified.
-                    List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
-                    int id = keys.get(random.nextInt(keys.size()));
-                    biomes.add(DimletMapping.idToBiome.get(id));
-                }
-                break;
-            case CONTROLLER_CHECKERBOARD:
-                while (biomes.size() < 2) {
-                    // We need at least two biomes.
-                    int id;
-                    List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
-                    while (true) {
-                        id = keys.get(random.nextInt(keys.size()));
-                        if (biomes.isEmpty() || (biomes.get(0) != DimletMapping.idToBiome.get(id))) {
-                            break;
-                        }
-                    }
-                    biomes.add(DimletMapping.idToBiome.get(id));
-                }
-                break;
+        while (biomeIds.size() < controllerType.getNeededBiomes()) {
+            int id;
+            List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
+            id = keys.get(random.nextInt(keys.size()));
+            while (biomeIds.contains(id)) {
+                id = keys.get(random.nextInt(keys.size()));
+            }
+            biomeIds.add(id);
+        }
+
+        biomes.clear();
+        for (Integer id : biomeIds) {
+            biomes.add(DimletMapping.idToBiome.get(id));
         }
     }
 
