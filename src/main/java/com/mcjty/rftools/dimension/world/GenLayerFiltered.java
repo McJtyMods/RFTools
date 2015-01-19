@@ -32,16 +32,22 @@ public class GenLayerFiltered extends GenLayer {
                 filterMap = BiomeControllerMapping.coldBiomeReplacements;
                 break;
             case CONTROLLER_MEDIUM:
+                filterMap = BiomeControllerMapping.mediumBiomeReplacements;
                 break;
             case CONTROLLER_WARM:
+                filterMap = BiomeControllerMapping.warmBiomeReplacements;
                 break;
             case CONTROLLER_DRY:
+                filterMap = BiomeControllerMapping.dryBiomeReplacements;
                 break;
             case CONTROLLER_WET:
+                filterMap = BiomeControllerMapping.wetBiomeReplacements;
                 break;
             case CONTROLLER_FIELDS:
+                filterMap = BiomeControllerMapping.fieldsBiomeReplacements;
                 break;
             case CONTROLLER_MOUNTAINS:
+                filterMap = BiomeControllerMapping.mountainsBiomeReplacements;
                 break;
         }
     }

@@ -11,11 +11,21 @@ public enum ControllerType {
         public boolean match(BiomeGenBase biome) {
             return biome.getTempCategory() == BiomeGenBase.TempCategory.COLD;
         }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, true, false);
+        }
     }),
     CONTROLLER_MEDIUM(0, new BiomeFilter() {
         @Override
         public boolean match(BiomeGenBase biome) {
             return biome.getTempCategory() == BiomeGenBase.TempCategory.MEDIUM;
+        }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, true, false);
         }
     }),
     CONTROLLER_WARM(0, new BiomeFilter() {
@@ -23,11 +33,21 @@ public enum ControllerType {
         public boolean match(BiomeGenBase biome) {
             return biome.getTempCategory() == BiomeGenBase.TempCategory.WARM;
         }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, true, false);
+        }
     }),
     CONTROLLER_DRY(0, new BiomeFilter() {
         @Override
         public boolean match(BiomeGenBase biome) {
             return biome.getFloatRainfall() < 0.1;
+        }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, true, false, false);
         }
     }),
     CONTROLLER_WET(0, new BiomeFilter() {
@@ -35,17 +55,32 @@ public enum ControllerType {
         public boolean match(BiomeGenBase biome) {
             return biome.isHighHumidity();
         }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, true, false, false);
+        }
     }),
     CONTROLLER_FIELDS(0, new BiomeFilter() {
         @Override
         public boolean match(BiomeGenBase biome) {
             return biome.heightVariation < 0.11 && biome.rootHeight < 0.25f;
         }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, false, true);
+        }
     }),
     CONTROLLER_MOUNTAINS(0, new BiomeFilter() {
         @Override
         public boolean match(BiomeGenBase biome) {
             return biome.heightVariation > 0.45f;
+        }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, false, true);
         }
     });
 
@@ -65,16 +100,25 @@ public enum ControllerType {
         return filter;
     }
 
-    public static class BiomeFilter {
-        public boolean match(BiomeGenBase biome) {
-            return false;
-        }
+    public abstract static class BiomeFilter {
+        public abstract boolean match(BiomeGenBase biome);
+        public abstract double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b);
 
-        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b, boolean ignoreRain, boolean ignoreTemperature, boolean ignoreHeight) {
             float dr = a.getFloatRainfall() - b.getFloatRainfall();
-            float dt = 0;//a.temperature - b.temperature;
+            if (ignoreRain) {
+                dr = 0.0f;
+            }
+            float dt = a.temperature - b.temperature;
+            if (ignoreTemperature) {
+                dt = 0.0f;
+            }
             float dv = a.heightVariation - b.heightVariation;
             float dh = a.rootHeight - b.rootHeight;
+            if (ignoreHeight) {
+                dv = 0.0f;
+                dh = 0.0f;
+            }
             return Math.sqrt(dr * dr + dt * dt + dv * dv + dh * dh);
         }
     }

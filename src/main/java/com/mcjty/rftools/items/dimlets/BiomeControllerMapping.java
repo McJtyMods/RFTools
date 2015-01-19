@@ -8,19 +8,34 @@ import java.util.Map;
 
 public class BiomeControllerMapping {
 
-    public final static Map<Integer, Integer> coldBiomeReplacements = new HashMap<Integer, Integer>();
-    public final static Map<Integer, Integer> warmBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> coldBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> warmBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> mediumBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> wetBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> dryBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> fieldsBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> mountainsBiomeReplacements = new HashMap<Integer, Integer>();
 
 
     public static void setupControllerBiomes() {
         BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
 
+        makeFilteredBiomeMap(biomeGenArray, coldBiomeReplacements, ControllerType.CONTROLLER_COLD);
+        makeFilteredBiomeMap(biomeGenArray, warmBiomeReplacements, ControllerType.CONTROLLER_WARM);
+        makeFilteredBiomeMap(biomeGenArray, mediumBiomeReplacements, ControllerType.CONTROLLER_MEDIUM);
+        makeFilteredBiomeMap(biomeGenArray, wetBiomeReplacements, ControllerType.CONTROLLER_WET);
+        makeFilteredBiomeMap(biomeGenArray, dryBiomeReplacements, ControllerType.CONTROLLER_DRY);
+        makeFilteredBiomeMap(biomeGenArray, fieldsBiomeReplacements, ControllerType.CONTROLLER_FIELDS);
+        makeFilteredBiomeMap(biomeGenArray, mountainsBiomeReplacements, ControllerType.CONTROLLER_MOUNTAINS);
+    }
+
+    private static void makeFilteredBiomeMap(BiomeGenBase[] biomeGenArray, Map<Integer, Integer> map, ControllerType type) {
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
-                if (biome.getTempCategory() == BiomeGenBase.TempCategory.COLD) {
-                    coldBiomeReplacements.put(biome.biomeID, biome.biomeID);
+                if (type.getFilter().match(biome)) {
+                    map.put(biome.biomeID, biome.biomeID);
                 } else {
-                    coldBiomeReplacements.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, ControllerType.CONTROLLER_COLD.getFilter()));
+                    map.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, type.getFilter()));
                 }
             }
         }
