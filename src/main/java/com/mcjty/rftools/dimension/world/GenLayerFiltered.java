@@ -2,54 +2,51 @@ package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.items.dimlets.BiomeControllerMapping;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-import java.util.List;
 import java.util.Map;
 
 public class GenLayerFiltered extends GenLayer {
 
     private final GenLayer parent;
     private final GenericWorldChunkManager chunkManager;
-    private final ControllerType type;
     private Map<Integer, Integer> filterMap;
 
-    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, ControllerType type) {
+    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, Map<Integer, Integer> filterMap) {
         super(seed);
         this.parent = parent;
         this.chunkManager = chunkManager;
-        this.type = type;
+        this.filterMap = filterMap;
+    }
+
+    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, ControllerType type) {
+        this(chunkManager, seed, parent, getFilterFromType(type));
+    }
+
+    private static Map<Integer, Integer> getFilterFromType(ControllerType type) {
         switch (type) {
             case CONTROLLER_DEFAULT:
             case CONTROLLER_SINGLE:
             case CONTROLLER_CHECKERBOARD:
                 // Cannot happen
-                filterMap = null;
-                break;
+                return null;
             case CONTROLLER_COLD:
-                filterMap = BiomeControllerMapping.coldBiomeReplacements;
-                break;
+                return BiomeControllerMapping.coldBiomeReplacements;
             case CONTROLLER_MEDIUM:
-                filterMap = BiomeControllerMapping.mediumBiomeReplacements;
-                break;
+                return BiomeControllerMapping.mediumBiomeReplacements;
             case CONTROLLER_WARM:
-                filterMap = BiomeControllerMapping.warmBiomeReplacements;
-                break;
+                return BiomeControllerMapping.warmBiomeReplacements;
             case CONTROLLER_DRY:
-                filterMap = BiomeControllerMapping.dryBiomeReplacements;
-                break;
+                return BiomeControllerMapping.dryBiomeReplacements;
             case CONTROLLER_WET:
-                filterMap = BiomeControllerMapping.wetBiomeReplacements;
-                break;
+                return BiomeControllerMapping.wetBiomeReplacements;
             case CONTROLLER_FIELDS:
-                filterMap = BiomeControllerMapping.fieldsBiomeReplacements;
-                break;
+                return BiomeControllerMapping.fieldsBiomeReplacements;
             case CONTROLLER_MOUNTAINS:
-                filterMap = BiomeControllerMapping.mountainsBiomeReplacements;
-                break;
+                return BiomeControllerMapping.mountainsBiomeReplacements;
         }
+        return null;
     }
 
     @Override

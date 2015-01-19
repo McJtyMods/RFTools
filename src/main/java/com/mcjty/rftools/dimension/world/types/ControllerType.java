@@ -82,7 +82,8 @@ public enum ControllerType {
         public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
             return calculateBiomeDistance(a, b, false, false, true);
         }
-    });
+    }),
+    CONTROLLER_FILTERED(-1, null);
 
     private final int neededBiomes;
     private final BiomeFilter filter;
@@ -92,6 +93,10 @@ public enum ControllerType {
         this.filter = filter;
     }
 
+    /**
+     * Return the amount of biomes needed for this controller. -1 means that it can use any number of biomes.
+     * @return
+     */
     public int getNeededBiomes() {
         return neededBiomes;
     }
@@ -101,7 +106,14 @@ public enum ControllerType {
     }
 
     public abstract static class BiomeFilter {
+        /**
+         * Return true if this biome should be selected by this filter.
+         */
         public abstract boolean match(BiomeGenBase biome);
+
+        /**
+         * Return the similarity distance between two biomes.
+         */
         public abstract double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b);
 
         public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b, boolean ignoreRain, boolean ignoreTemperature, boolean ignoreHeight) {

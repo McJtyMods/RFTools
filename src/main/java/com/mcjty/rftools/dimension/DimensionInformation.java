@@ -48,8 +48,11 @@ public class DimensionInformation {
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private Set<EffectType> effectTypes = new HashSet<EffectType>();
+
     private ControllerType controllerType = null;
     private List<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>();
+    private static final Map<Integer, Integer> biomeMapping = new HashMap<Integer, Integer>();
+
     private String digitString = "";
 
     private Float celestialAngle = null;
@@ -66,6 +69,8 @@ public class DimensionInformation {
         this.descriptor = descriptor;
 
         setupFromDescriptor(seed);
+        setupBiomeMapping();
+
         dump(null);
     }
 
@@ -183,6 +188,8 @@ public class DimensionInformation {
             // This is an older version. Here we have to calculate the random information again.
             setupFromDescriptor(1);
         }
+
+        setupBiomeMapping();
     }
 
     private void readFromNBT(NBTTagCompound tagCompound) {
@@ -1035,11 +1042,6 @@ public class DimensionInformation {
         Set<Integer> biomeIds = new HashSet<Integer>();
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> biomeDimlets = extractType(DimletType.DIMLET_BIOME, dimlets);
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> controllerDimlets = extractType(DimletType.DIMLET_CONTROLLER, dimlets);
-        for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : biomeDimlets) {
-            int id = dimletWithModifiers.getKey().getId();
-            biomes.add(DimletMapping.idToBiome.get(id));
-            biomeIds.add(id);
-        }
 
         // First determine the controller to use.
         if (controllerDimlets.isEmpty()) {
@@ -1050,6 +1052,8 @@ public class DimensionInformation {
             } else {
                 if (biomeDimlets.isEmpty()) {
                     controllerType = ControllerType.CONTROLLER_DEFAULT;
+                } else if (biomeDimlets.size() > 1) {
+                    controllerType = ControllerType.CONTROLLER_FILTERED;
                 } else {
                     controllerType = ControllerType.CONTROLLER_SINGLE;
                 }
@@ -1060,7 +1064,18 @@ public class DimensionInformation {
         }
 
         // Now see if we have to add or randomize biomes.
-        while (biomeIds.size() < controllerType.getNeededBiomes()) {
+        for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : biomeDimlets) {
+            int id = dimletWithModifiers.getKey().getId();
+            biomeIds.add(id);
+        }
+
+        int neededBiomes = controllerType.getNeededBiomes();
+        if (neededBiomes == -1) {
+            // Can work with any number of biomes.
+            neededBiomes = random.nextInt(10) + 3;
+        }
+
+        while (biomeIds.size() < neededBiomes) {
             int id;
             List<Integer> keys = new ArrayList<Integer>(DimletMapping.idToBiome.keySet());
             id = keys.get(random.nextInt(keys.size()));
@@ -1076,6 +1091,29 @@ public class DimensionInformation {
         }
     }
 
+    private void setupBiomeMapping() {
+        biomeMapping.clear();
+        if (controllerType == ControllerType.CONTROLLER_FILTERED) {
+            BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
+            final Set<Integer> ids = new HashSet<Integer>();
+            for (BiomeGenBase biome : biomes) {
+                ids.add(biome.biomeID);
+            }
+
+            ControllerType.BiomeFilter biomeFilter = new ControllerType.BiomeFilter() {
+                @Override
+                public boolean match(BiomeGenBase biome) {
+                    return ids.contains(biome.biomeID);
+                }
+
+                @Override
+                public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+                    return calculateBiomeDistance(a, b, false, false, false);
+                }
+            };
+            BiomeControllerMapping.makeFilteredBiomeMap(biomeGenArray, biomeMapping, biomeFilter);
+        }
+    }
 
     public DimensionDescriptor getDescriptor() {
         return descriptor;
@@ -1115,6 +1153,10 @@ public class DimensionInformation {
 
     public List<BiomeGenBase> getBiomes() {
         return biomes;
+    }
+
+    public Map<Integer, Integer> getBiomeMapping() {
+        return biomeMapping;
     }
 
     public ControllerType getControllerType() {

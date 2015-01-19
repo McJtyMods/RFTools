@@ -30,12 +30,16 @@ public class BiomeControllerMapping {
     }
 
     private static void makeFilteredBiomeMap(BiomeGenBase[] biomeGenArray, Map<Integer, Integer> map, ControllerType type) {
+        makeFilteredBiomeMap(biomeGenArray, map, type.getFilter());
+    }
+
+    public static void makeFilteredBiomeMap(BiomeGenBase[] biomeGenArray, Map<Integer, Integer> map, ControllerType.BiomeFilter filter) {
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
-                if (type.getFilter().match(biome)) {
+                if (filter.match(biome)) {
                     map.put(biome.biomeID, biome.biomeID);
                 } else {
-                    map.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, type.getFilter()));
+                    map.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, filter));
                 }
             }
         }
@@ -53,11 +57,7 @@ public class BiomeControllerMapping {
                     return base.biomeID;
                 }
 
-                float dr = biome.getFloatRainfall() - base.getFloatRainfall();
-                float dt = 0;//biome.temperature - base.temperature;
-                float dv = biome.heightVariation - base.heightVariation;
-                float dh = biome.rootHeight - base.rootHeight;
-                double dist = Math.sqrt(dr * dr + dt * dt + dv * dv + dh * dh);
+                double dist = filter.calculateBiomeDistance(biome, base);
                 if (dist < bestdist) {
                     bestdist = dist;
                     bestidx = base.biomeID;
