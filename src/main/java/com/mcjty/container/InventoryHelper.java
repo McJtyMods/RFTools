@@ -70,6 +70,50 @@ public class InventoryHelper {
         return success;
     }
 
+    /**
+     * Check if a given stack can be merged completely with the inventory.
+     */
+    public static boolean checkIfStackCanBeMerged(IInventory inventory, ItemStack result, int start, int stop) {
+        int k = start;
+
+        ItemStack itemstack1;
+        int itemsToPlace = result.stackSize;
+
+        if (result.isStackable()) {
+            while (itemsToPlace > 0 && (k < stop)) {
+                itemstack1 = inventory.getStackInSlot(k);
+
+                if (itemstack1 != null && itemstack1.getItem() == result.getItem() && (!result.getHasSubtypes() || result.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(result, itemstack1)) {
+                    int l = itemstack1.stackSize + itemsToPlace;
+
+                    if (l <= result.getMaxStackSize()) {
+                        return true;
+                    } else if (itemstack1.stackSize < result.getMaxStackSize()) {
+                        itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
+                    }
+                }
+
+                ++k;
+            }
+        }
+
+        if (itemsToPlace > 0) {
+            k = start;
+
+            while (k < stop) {
+                itemstack1 = inventory.getStackInSlot(k);
+
+                if (itemstack1 == null) {
+                    return true;
+                }
+
+                ++k;
+            }
+        }
+
+        return false;
+    }
+
     public ItemStack[] getStacks() {
         return stacks;
     }

@@ -333,6 +333,9 @@ public class CrafterBlockTileEntity3 extends GenericEnergyHandlerTileEntity impl
             start = CrafterContainer.SLOT_BUFFEROUT;
             stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
+        if (!InventoryHelper.checkIfStackCanBeMerged(this, result, start, stop)) {
+            return false;
+        }
         return InventoryHelper.mergeItemStack(this, result, start, stop);
     }
 
