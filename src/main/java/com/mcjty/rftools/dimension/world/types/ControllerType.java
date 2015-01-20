@@ -43,7 +43,7 @@ public enum ControllerType {
     CONTROLLER_DRY(0, new BiomeFilter() {
         @Override
         public boolean match(BiomeGenBase biome) {
-            return biome.getFloatRainfall() < 0.1;
+            return biome.rainfall < 0.1;
         }
 
         @Override
@@ -118,7 +118,6 @@ public enum ControllerType {
 
     /**
      * Return the amount of biomes needed for this controller. -1 means that it can use any number of biomes.
-     * @return
      */
     public int getNeededBiomes() {
         return neededBiomes;
@@ -140,7 +139,7 @@ public enum ControllerType {
         public abstract double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b);
 
         public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b, boolean ignoreRain, boolean ignoreTemperature, boolean ignoreHeight) {
-            float dr = a.getFloatRainfall() - b.getFloatRainfall();
+            float dr = a.rainfall - b.rainfall;
             if (ignoreRain) {
                 dr = 0.0f;
             }
