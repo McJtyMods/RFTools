@@ -1074,7 +1074,7 @@ public class DimensionInformation {
         int neededBiomes = controllerType.getNeededBiomes();
         if (neededBiomes == -1) {
             // Can work with any number of biomes.
-            if (biomeIds.size() > 3) {
+            if (biomeIds.size() >= 2) {
                 neededBiomes = biomeIds.size();     // We already have enough biomes
             } else {
                 neededBiomes = random.nextInt(10) + 3;
