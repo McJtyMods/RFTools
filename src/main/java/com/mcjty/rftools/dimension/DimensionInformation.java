@@ -636,7 +636,7 @@ public class DimensionInformation {
                 MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
                 extraMobs.add(mob);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
 
@@ -687,11 +687,16 @@ public class DimensionInformation {
                 actualRfCost += calculateCostFactor(id);
                 extraMobs.add(DimletMapping.idtoMob.get(id));
             }
-        } else if (dimlets.size() == 1 && DimletMapping.idtoMob.get(dimlets.get(0).getLeft().getId()) == null) {
-            // Just default.
         } else {
-            for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
-                extraMobs.add(DimletMapping.idtoMob.get(dimletWithModifiers.getLeft().getId()));
+            if (dimlets.size() == 1 && DimletMapping.idtoMob.get(dimlets.get(0).getLeft().getId()).getEntityClass() == null) {
+                // Just default.
+            } else {
+                for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
+                    MobDescriptor descriptor = DimletMapping.idtoMob.get(dimletWithModifiers.getLeft().getId());
+                    if (descriptor.getEntityClass() != null) {
+                        extraMobs.add(descriptor);
+                    }
+                }
             }
         }
     }
