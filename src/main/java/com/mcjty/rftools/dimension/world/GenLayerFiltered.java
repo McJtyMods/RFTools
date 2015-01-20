@@ -41,6 +41,10 @@ public class GenLayerFiltered extends GenLayer {
                 return BiomeControllerMapping.fieldsBiomeReplacements;
             case CONTROLLER_MOUNTAINS:
                 return BiomeControllerMapping.mountainsBiomeReplacements;
+            case CONTROLLER_MAGICAL:
+                return BiomeControllerMapping.magicalBiomeReplacements;
+            case CONTROLLER_FOREST:
+                return BiomeControllerMapping.forestBiomeReplacements;
             case CONTROLLER_FILTERED:
                 return chunkManager.getDimensionInformation().getBiomeMapping();
         }

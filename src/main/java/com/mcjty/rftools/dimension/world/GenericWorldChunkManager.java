@@ -106,6 +106,8 @@ public class GenericWorldChunkManager extends WorldChunkManager {
             case CONTROLLER_WET:
             case CONTROLLER_FIELDS:
             case CONTROLLER_MOUNTAINS:
+            case CONTROLLER_MAGICAL:
+            case CONTROLLER_FOREST:
             case CONTROLLER_FILTERED:
                 rflayer = new GenLayerFiltered(this, seed, layer[0], type);
                 break;

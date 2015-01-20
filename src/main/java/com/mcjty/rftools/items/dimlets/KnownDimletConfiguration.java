@@ -160,6 +160,8 @@ public class KnownDimletConfiguration {
         initControllerItem(cfg, mainCfg, idsInConfig, "Fields", ControllerType.CONTROLLER_FIELDS);
         initControllerItem(cfg, mainCfg, idsInConfig, "Mountains", ControllerType.CONTROLLER_MOUNTAINS);
         initControllerItem(cfg, mainCfg, idsInConfig, "Filtered", ControllerType.CONTROLLER_FILTERED);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Magical", ControllerType.CONTROLLER_MAGICAL);
+        initControllerItem(cfg, mainCfg, idsInConfig, "Forest", ControllerType.CONTROLLER_FOREST);
         BiomeControllerMapping.setupControllerBiomes();
 
         int idDigit0 = initDigitItem(cfg, mainCfg, idsInConfig, 0);

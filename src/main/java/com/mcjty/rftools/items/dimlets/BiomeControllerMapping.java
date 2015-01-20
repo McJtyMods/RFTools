@@ -15,6 +15,8 @@ public class BiomeControllerMapping {
     public static final Map<Integer, Integer> dryBiomeReplacements = new HashMap<Integer, Integer>();
     public static final Map<Integer, Integer> fieldsBiomeReplacements = new HashMap<Integer, Integer>();
     public static final Map<Integer, Integer> mountainsBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> magicalBiomeReplacements = new HashMap<Integer, Integer>();
+    public static final Map<Integer, Integer> forestBiomeReplacements = new HashMap<Integer, Integer>();
 
 
     public static void setupControllerBiomes() {
@@ -27,6 +29,8 @@ public class BiomeControllerMapping {
         makeFilteredBiomeMap(biomeGenArray, dryBiomeReplacements, ControllerType.CONTROLLER_DRY);
         makeFilteredBiomeMap(biomeGenArray, fieldsBiomeReplacements, ControllerType.CONTROLLER_FIELDS);
         makeFilteredBiomeMap(biomeGenArray, mountainsBiomeReplacements, ControllerType.CONTROLLER_MOUNTAINS);
+        makeFilteredBiomeMap(biomeGenArray, magicalBiomeReplacements, ControllerType.CONTROLLER_MAGICAL);
+        makeFilteredBiomeMap(biomeGenArray, forestBiomeReplacements, ControllerType.CONTROLLER_FOREST);
     }
 
     private static void makeFilteredBiomeMap(BiomeGenBase[] biomeGenArray, Map<Integer, Integer> map, ControllerType type) {
@@ -34,12 +38,32 @@ public class BiomeControllerMapping {
     }
 
     public static void makeFilteredBiomeMap(BiomeGenBase[] biomeGenArray, Map<Integer, Integer> map, ControllerType.BiomeFilter filter) {
+        // First check if there exist biomes for a certain filter.
+        boolean ok = false;
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
                 if (filter.match(biome)) {
+                    ok = true;
+                    break;
+                }
+            }
+        }
+
+        if (!ok) {
+            // No biomes found! We just map every biome to itself as a fallback.
+            for (BiomeGenBase biome : biomeGenArray) {
+                if (biome != null) {
                     map.put(biome.biomeID, biome.biomeID);
-                } else {
-                    map.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, filter));
+                }
+            }
+        } else {
+            for (BiomeGenBase biome : biomeGenArray) {
+                if (biome != null) {
+                    if (filter.match(biome)) {
+                        map.put(biome.biomeID, biome.biomeID);
+                    } else {
+                        map.put(biome.biomeID, findSuitableBiomes(biomeGenArray, biome, filter));
+                    }
                 }
             }
         }

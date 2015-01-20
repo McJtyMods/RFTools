@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world.types;
 
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.BiomeDictionary;
 
 public enum ControllerType {
     CONTROLLER_DEFAULT(0, null),
@@ -83,7 +84,29 @@ public enum ControllerType {
             return calculateBiomeDistance(a, b, false, false, true);
         }
     }),
-    CONTROLLER_FILTERED(-1, null);
+    CONTROLLER_FILTERED(-1, null),
+    CONTROLLER_MAGICAL(0, new BiomeFilter() {
+        @Override
+        public boolean match(BiomeGenBase biome) {
+            return BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.MAGICAL) || BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.SPOOKY);
+        }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, false, false);
+        }
+    }),
+    CONTROLLER_FOREST(0, new BiomeFilter() {
+        @Override
+        public boolean match(BiomeGenBase biome) {
+            return biome.theBiomeDecorator.treesPerChunk >= 5;
+        }
+
+        @Override
+        public double calculateBiomeDistance(BiomeGenBase a, BiomeGenBase b) {
+            return calculateBiomeDistance(a, b, false, false, false);
+        }
+    });
 
     private final int neededBiomes;
     private final BiomeFilter filter;
