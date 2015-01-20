@@ -82,6 +82,7 @@
         [ "Liquid", "electrum.molten", 20000, 10000, 350, 3, 0 ],
         [ "Liquid", "ceruclase.molten", 20000, 10000, 350, 3, 0 ],
         [ "Liquid", "mithril.molten", 20000, 10000, 350, 3, 0 ],
+        [ "Mob", "Default", 300, 100, 200, 1, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0 ],
         [ "Mob", "Enderman", 10000, 5000, 800, 4, 0 ],
         [ "Mob", "Ghast", 4000, 2000, 600, 3, 0 ],
