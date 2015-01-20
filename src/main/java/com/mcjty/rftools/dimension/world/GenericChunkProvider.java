@@ -72,6 +72,7 @@ public class GenericChunkProvider implements IChunkProvider {
     private MapGenTendrils tendrilGenerator = new MapGenTendrils(this);
     private MapGenCanyons canyonGenerator = new MapGenCanyons(this);
     private MapGenOrbs sphereGenerator = new MapGenOrbs(this);
+    private MapGenRuinedCities ruinedCitiesGenerator = new MapGenRuinedCities(this);
     private MapGenLiquidOrbs liquidSphereGenerator = new MapGenLiquidOrbs(this);
 
     // Holds Stronghold Generator
@@ -197,6 +198,8 @@ public class GenericChunkProvider implements IChunkProvider {
         if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_SCATTERED)) {
             this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }
+
+//        this.ruinedCitiesGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
 
         Chunk chunk = new Chunk(this.worldObj, ablock, abyte, chunkX, chunkZ);
         byte[] abyte1 = chunk.getBiomeArray();
