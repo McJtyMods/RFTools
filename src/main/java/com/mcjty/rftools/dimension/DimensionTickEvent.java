@@ -52,10 +52,14 @@ public class DimensionTickEvent {
                 // If there is an activity probe we only drain power if the dimension is loaded (a player is there or a chunkloader)
                 DimensionInformation information = dimensionManager.getDimensionInformation(id);
                 if (DimensionManager.getWorld(id) != null || information.getProbeCounter() == 0) {
-                    int cost = information.getActualRfCost();
-                    if (cost == 0) {
-                        cost = entry.getValue().getRfMaintainCost();
+                    int cost = 0;
+                    if (DimletConfiguration.dimensionDifficulty != -1) {
+                        cost = information.getActualRfCost();
+                        if (cost == 0) {
+                            cost = entry.getValue().getRfMaintainCost();
+                        }
                     }
+
                     int power = dimensionStorage.getEnergyLevel(id);
                     power -= cost * MAXTICKS;
                     if (power < 0) {
