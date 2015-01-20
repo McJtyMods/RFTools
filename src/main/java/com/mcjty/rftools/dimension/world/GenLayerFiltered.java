@@ -11,20 +11,16 @@ public class GenLayerFiltered extends GenLayer {
 
     private final GenLayer parent;
     private final GenericWorldChunkManager chunkManager;
-    private Map<Integer, Integer> filterMap;
+    private final ControllerType type;
 
-    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, Map<Integer, Integer> filterMap) {
+    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, ControllerType type) {
         super(seed);
         this.parent = parent;
         this.chunkManager = chunkManager;
-        this.filterMap = filterMap;
+        this.type = type;
     }
 
-    public GenLayerFiltered(GenericWorldChunkManager chunkManager, long seed, GenLayer parent, ControllerType type) {
-        this(chunkManager, seed, parent, getFilterFromType(type));
-    }
-
-    private static Map<Integer, Integer> getFilterFromType(ControllerType type) {
+    private Map<Integer, Integer> getFilterFromType() {
         switch (type) {
             case CONTROLLER_DEFAULT:
             case CONTROLLER_SINGLE:
@@ -45,6 +41,8 @@ public class GenLayerFiltered extends GenLayer {
                 return BiomeControllerMapping.fieldsBiomeReplacements;
             case CONTROLLER_MOUNTAINS:
                 return BiomeControllerMapping.mountainsBiomeReplacements;
+            case CONTROLLER_FILTERED:
+                return chunkManager.getDimensionInformation().getBiomeMapping();
         }
         return null;
     }
@@ -53,6 +51,7 @@ public class GenLayerFiltered extends GenLayer {
     public int[] getInts(int x, int z, int width, int length) {
         int[] ints = parent.getInts(x, z, width, length);
         int[] aint = IntCache.getIntCache(width * length);
+        Map<Integer, Integer> filterMap = getFilterFromType();
         for (int i = 0; i < width * length; ++i) {
             aint[i] = filterMap.get(ints[i]);
         }

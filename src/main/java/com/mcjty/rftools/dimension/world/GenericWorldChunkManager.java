@@ -78,6 +78,9 @@ public class GenericWorldChunkManager extends WorldChunkManager {
 
     @Override
     public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
+        if (dimensionInformation == null) {
+            dimensionInformation = hackyDimensionInformation;
+        }
         GenLayer[] layer = super.getModdedBiomeGenerators(worldType, seed, original);
         GenLayer rflayer = null;
         ControllerType type;
@@ -103,10 +106,8 @@ public class GenericWorldChunkManager extends WorldChunkManager {
             case CONTROLLER_WET:
             case CONTROLLER_FIELDS:
             case CONTROLLER_MOUNTAINS:
-                rflayer = new GenLayerFiltered(this, seed, layer[0], type);
-                break;
             case CONTROLLER_FILTERED:
-                rflayer = new GenLayerFiltered(this, seed, layer[0], di.getBiomeMapping());
+                rflayer = new GenLayerFiltered(this, seed, layer[0], type);
                 break;
         }
         GenLayerVoronoiZoom zoomLayer = new GenLayerVoronoiZoom(10L, rflayer);

@@ -634,6 +634,8 @@ public class DimensionInformation {
                 throw new RuntimeException(e);
             }
         }
+
+        setupBiomeMapping();
     }
 
     public Coordinate getSpawnPoint() {
@@ -1072,7 +1074,11 @@ public class DimensionInformation {
         int neededBiomes = controllerType.getNeededBiomes();
         if (neededBiomes == -1) {
             // Can work with any number of biomes.
-            neededBiomes = random.nextInt(10) + 3;
+            if (biomeIds.size() > 3) {
+                neededBiomes = biomeIds.size();     // We already have enough biomes
+            } else {
+                neededBiomes = random.nextInt(10) + 3;
+            }
         }
 
         while (biomeIds.size() < neededBiomes) {
@@ -1096,7 +1102,10 @@ public class DimensionInformation {
         if (controllerType == ControllerType.CONTROLLER_FILTERED) {
             BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
             final Set<Integer> ids = new HashSet<Integer>();
+            System.out.println("DimensionInformation.setupBiomeMapping");
             for (BiomeGenBase biome : biomes) {
+                System.out.println("biome.biomeID = " + biome.biomeID);
+                System.out.println("biome.biomeName = " + biome.biomeName);
                 ids.add(biome.biomeID);
             }
 
@@ -1112,6 +1121,10 @@ public class DimensionInformation {
                 }
             };
             BiomeControllerMapping.makeFilteredBiomeMap(biomeGenArray, biomeMapping, biomeFilter);
+            for (Map.Entry<Integer, Integer> me : biomeMapping.entrySet()) {
+                System.out.println("me.getValue() = " + me.getValue() + ", me.getKey() = " + me.getKey());
+            }
+
         }
     }
 
@@ -1156,6 +1169,9 @@ public class DimensionInformation {
     }
 
     public Map<Integer, Integer> getBiomeMapping() {
+        if (biomeMapping.isEmpty()) {
+            setupBiomeMapping();
+        }
         return biomeMapping;
     }
 
