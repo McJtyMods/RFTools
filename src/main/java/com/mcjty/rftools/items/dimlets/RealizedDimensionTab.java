@@ -2,6 +2,8 @@ package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
+import com.mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import com.mcjty.rftools.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

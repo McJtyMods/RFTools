@@ -10,7 +10,7 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.dimlets.BlockMeta;
+import com.mcjty.varia.BlockMeta;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.varia.Coordinate;
 import com.mcjty.varia.WeightedRandomSelector;

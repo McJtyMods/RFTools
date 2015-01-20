@@ -1,9 +1,8 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.dimension.CelestialBodyDescriptor;
+import com.mcjty.rftools.dimension.description.CelestialBodyDescriptor;
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.world.types.CelestialBodyType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;

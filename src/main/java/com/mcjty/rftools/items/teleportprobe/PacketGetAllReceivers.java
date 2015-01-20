@@ -3,7 +3,7 @@ package com.mcjty.rftools.items.teleportprobe;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
-import com.mcjty.rftools.dimension.DimensionDescriptor;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;

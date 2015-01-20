@@ -1,5 +1,6 @@
-package com.mcjty.rftools.dimension.world;
+package com.mcjty.rftools.dimension.world.mapgen;
 
+import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;

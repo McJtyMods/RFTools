@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension.world;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.dimension.world.types.SkyType;
 import com.mcjty.rftools.network.PacketHandler;

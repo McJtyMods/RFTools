@@ -1,4 +1,4 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.description;
 
 import net.minecraft.entity.EntityLiving;
 

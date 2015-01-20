@@ -2,9 +2,14 @@ package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.dimension.description.CelestialBodyDescriptor;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
+import com.mcjty.rftools.dimension.description.SkyDescriptor;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.ByteBufTools;
+import com.mcjty.varia.BlockMeta;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;

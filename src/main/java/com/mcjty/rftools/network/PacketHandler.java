@@ -8,7 +8,7 @@ import com.mcjty.rftools.blocks.shield.PacketFiltersReady;
 import com.mcjty.rftools.blocks.shield.PacketGetFilters;
 import com.mcjty.rftools.blocks.storagemonitor.*;
 import com.mcjty.rftools.blocks.teleporter.*;
-import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.network.*;
 import com.mcjty.rftools.items.devdelight.PacketDelightingInfoReady;
 import com.mcjty.rftools.items.devdelight.PacketGetDelightingInfo;
 import com.mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;

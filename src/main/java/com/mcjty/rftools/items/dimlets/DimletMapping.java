@@ -1,8 +1,9 @@
 package com.mcjty.rftools.items.dimlets;
 
-import com.mcjty.rftools.dimension.MobDescriptor;
-import com.mcjty.rftools.dimension.SkyDescriptor;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
+import com.mcjty.rftools.dimension.description.SkyDescriptor;
 import com.mcjty.rftools.dimension.world.types.*;
+import com.mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
 

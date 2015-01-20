@@ -1,8 +1,9 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.MobDescriptor;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.world.mapgen.*;
 import com.mcjty.rftools.dimension.world.terrain.*;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;

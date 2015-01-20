@@ -1,4 +1,4 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.description;
 
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.items.dimlets.DimletCosts;

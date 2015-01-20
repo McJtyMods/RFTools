@@ -1,4 +1,4 @@
-package com.mcjty.rftools.items.dimlets;
+package com.mcjty.varia;
 
 import net.minecraft.block.Block;
 

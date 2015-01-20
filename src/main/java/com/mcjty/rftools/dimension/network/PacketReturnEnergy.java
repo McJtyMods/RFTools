@@ -1,4 +1,4 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.network;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;

@@ -1,5 +1,6 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.network;
 
+import com.mcjty.rftools.dimension.DimensionStorage;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;

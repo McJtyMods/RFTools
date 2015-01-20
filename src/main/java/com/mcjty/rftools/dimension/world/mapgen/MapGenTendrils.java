@@ -1,6 +1,7 @@
-package com.mcjty.rftools.dimension.world;
+package com.mcjty.rftools.dimension.world.mapgen;
 
-import com.mcjty.rftools.items.dimlets.BlockMeta;
+import com.mcjty.rftools.dimension.world.GenericChunkProvider;
+import com.mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;

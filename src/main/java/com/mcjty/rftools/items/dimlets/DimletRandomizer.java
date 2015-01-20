@@ -1,7 +1,7 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.dimension.MobDescriptor;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.world.types.EffectType;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;

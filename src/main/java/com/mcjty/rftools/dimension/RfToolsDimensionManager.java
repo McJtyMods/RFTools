@@ -1,11 +1,13 @@
 package com.mcjty.rftools.dimension;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
+import com.mcjty.rftools.dimension.network.PacketCheckDimletConfig;
+import com.mcjty.rftools.dimension.network.PacketSyncDimensionInfo;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRegisterDimensions;
-import com.mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

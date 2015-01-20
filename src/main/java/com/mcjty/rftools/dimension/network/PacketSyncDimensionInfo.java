@@ -1,5 +1,7 @@
-package com.mcjty.rftools.dimension;
+package com.mcjty.rftools.dimension.network;
 
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
