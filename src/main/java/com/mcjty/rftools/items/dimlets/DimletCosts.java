@@ -29,7 +29,7 @@ public class DimletCosts {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_BIOME, 100);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_TIME, 300);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_FOLIAGE, 200);
-        initTypeRfCreateCost(cfg, DimletType.DIMLET_LIQUID, 150);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_LIQUID, 300);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_MATERIAL, 300);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_MOBS, 300);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_SKY, 100);
@@ -60,7 +60,7 @@ public class DimletCosts {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_BIOME, 0);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_TIME, 20);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
-        initTypeRfMaintainCost(cfg, DimletType.DIMLET_LIQUID, 1);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_LIQUID, 100);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_MATERIAL, 10);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_MOBS, 100);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_SKY, 1);
@@ -91,7 +91,7 @@ public class DimletCosts {
         initTypeTickCost(cfg, DimletType.DIMLET_BIOME, 1);
         initTypeTickCost(cfg, DimletType.DIMLET_TIME, 10);
         initTypeTickCost(cfg, DimletType.DIMLET_FOLIAGE, 10);
-        initTypeTickCost(cfg, DimletType.DIMLET_LIQUID, 10);
+        initTypeTickCost(cfg, DimletType.DIMLET_LIQUID, 100);
         initTypeTickCost(cfg, DimletType.DIMLET_MATERIAL, 100);
         initTypeTickCost(cfg, DimletType.DIMLET_MOBS, 200);
         initTypeTickCost(cfg, DimletType.DIMLET_SKY, 1);

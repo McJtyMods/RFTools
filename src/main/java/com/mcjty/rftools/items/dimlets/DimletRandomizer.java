@@ -40,7 +40,7 @@ public class DimletRandomizer {
         initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_1);
         initRarity(cfg, DimletType.DIMLET_TIME, RARITY_2);
         initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_1);
+        initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_2);
         initRarity(cfg, DimletType.DIMLET_MATERIAL, RARITY_1);
         initRarity(cfg, DimletType.DIMLET_MOBS, RARITY_2);
         initRarity(cfg, DimletType.DIMLET_SKY, RARITY_0);
