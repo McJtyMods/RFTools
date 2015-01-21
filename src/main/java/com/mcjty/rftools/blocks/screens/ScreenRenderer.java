@@ -65,6 +65,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
         GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_LIGHTING);
 
         int currenty = 7;
         for (ClientScreenModule module : modules) {
