@@ -312,7 +312,6 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     /**
      * Return the name of the icon to be used for the front side of the machine.
-     * @return
      */
     public String getIdentifyingIconName() {
         return null;
@@ -320,7 +319,6 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     /**
      * Return the id of the gui to use for this block.
-     * @return
      */
     public abstract int getGuiID();
 

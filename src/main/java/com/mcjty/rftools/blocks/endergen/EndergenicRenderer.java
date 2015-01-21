@@ -17,11 +17,9 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
-        EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) tileEntity;
-
         ResourceLocation txt;
 
-        Coordinate coord = new Coordinate(endergenicTileEntity.xCoord, endergenicTileEntity.yCoord, endergenicTileEntity.zCoord);
+        Coordinate coord = new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
         if (coord.equals(RFTools.instance.clientInfo.getSelectedEndergenicTileEntity())) {
             txt = redglow;
         } else if (coord.equals(RFTools.instance.clientInfo.getDestinationEndergenicTileEntity())) {

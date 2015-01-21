@@ -16,6 +16,8 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
+import com.mcjty.rftools.blocks.screens.SimpleScreenBlock;
+import com.mcjty.rftools.blocks.screens.SimpleScreenTileEntity;
 import com.mcjty.rftools.blocks.shards.*;
 import com.mcjty.rftools.blocks.shield.*;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
@@ -85,6 +87,8 @@ public final class ModBlocks {
     public static DimensionalPattern2Block dimensionalPattern2Block;
     public static ActivityProbeBlock activityProbeBlock;
 
+    public static SimpleScreenBlock simpleScreenBlock;
+
     public static void init() {
         monitorBlock = new RFMonitorBlock();
         GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
@@ -107,6 +111,10 @@ public final class ModBlocks {
         machineInfuserBlock = new MachineInfuserBlock();
         GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
+
+        simpleScreenBlock = new SimpleScreenBlock();
+        GameRegistry.registerBlock(simpleScreenBlock, GenericItemBlock.class, "simpleScreenBlock");
+        GameRegistry.registerTileEntity(SimpleScreenTileEntity.class, "SimpleScreenTileEntity");
 
         initDimletBlocks();
         initTeleporterBlocks();

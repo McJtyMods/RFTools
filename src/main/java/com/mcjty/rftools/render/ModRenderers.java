@@ -4,6 +4,8 @@ import com.mcjty.rftools.blocks.endergen.EndergenicRenderer;
 import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.blocks.logic.LogicSlabBlock;
 import com.mcjty.rftools.blocks.logic.LogicSlabRenderer;
+import com.mcjty.rftools.blocks.screens.ScreenRenderer;
+import com.mcjty.rftools.blocks.screens.SimpleScreenTileEntity;
 import com.mcjty.rftools.blocks.teleporter.BeamRenderer;
 import com.mcjty.rftools.blocks.teleporter.TeleportBeamBlock;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -19,5 +21,6 @@ public final class ModRenderers {
         RenderingRegistry.registerBlockHandler(LogicSlabBlock.RENDERID_LOGICSLAB, new LogicSlabRenderer());
 
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(SimpleScreenTileEntity.class, new ScreenRenderer());
     }
 }
