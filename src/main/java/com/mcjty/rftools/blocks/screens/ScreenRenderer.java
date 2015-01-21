@@ -85,6 +85,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                         break;
                     case ITEM:
+                        f3 = 0.0075F;
                         GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
                         GL11.glScalef(f3, -f3, -0.0001f);
                         break;
