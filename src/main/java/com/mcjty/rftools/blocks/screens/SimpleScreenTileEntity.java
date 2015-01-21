@@ -14,6 +14,16 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
 
     @Override
+    protected void checkStateClient() {
+        super.checkStateClient();
+    }
+
+    @Override
+    protected void checkStateServer() {
+        super.checkStateServer();
+    }
+
+    @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         return ScreenContainer.factory.getAccessibleSlots();
     }

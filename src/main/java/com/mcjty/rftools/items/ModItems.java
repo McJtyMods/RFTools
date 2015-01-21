@@ -7,6 +7,7 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import com.mcjty.rftools.items.screenmodules.TextModuleItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -24,12 +25,20 @@ public final class ModItems {
     public static DimensionMonitorItem dimensionMonitorItem;
     public static DimensionalShard dimensionalShard;
 
+    public static TextModuleItem textModuleItem;
+
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
         networkMonitorItem.setUnlocalizedName("NetworkMonitor");
         networkMonitorItem.setCreativeTab(RFTools.tabRfTools);
         networkMonitorItem.setTextureName(RFTools.MODID + ":networkMonitorItem");
         GameRegistry.registerItem(networkMonitorItem, "networkMonitorItem");
+
+        textModuleItem = new TextModuleItem();
+        textModuleItem.setUnlocalizedName("TextModule");
+        textModuleItem.setCreativeTab(RFTools.tabRfTools);
+        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
+        GameRegistry.registerItem(textModuleItem, "textModuleItem");
 
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
