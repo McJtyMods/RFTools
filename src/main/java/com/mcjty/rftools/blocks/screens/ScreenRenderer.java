@@ -1,6 +1,5 @@
 package com.mcjty.rftools.blocks.screens;
 
-import com.mcjty.gui.RenderHelper;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.modules.EnergyBarScreenModule;
 import com.mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
@@ -8,18 +7,14 @@ import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
 import com.mcjty.rftools.blocks.screens.modules.TextScreenModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
@@ -31,6 +26,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     private List<ScreenModule> modules;
 
     public ScreenRenderer() {
+        modules = new ArrayList<ScreenModule>();
         modules.add(new TextScreenModule("Large capacitor:"));
         modules.add(new EnergyBarScreenModule());
         modules.add(new TextScreenModule("Dimension 'mining':"));
@@ -68,50 +64,42 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         FontRenderer fontrenderer = this.func_147498_b();
 
-
-
-        GL11.glPushMatrix();
-
-        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-        f3 = 0.0075F;
-        GL11.glScalef(f3, -f3, f3);
-        GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        ScreenModule.TransformMode mode = ScreenModule.TransformMode.NONE;
         GL11.glDepthMask(false);
 
-        int color = 0xffffff;
-        String[] test = new String[] { "Large capacitor:", "" /*"Energy: 1003554 RF"*/, "Dimension 'mining':", "Energy: 40000000RF", "", "",
-            "", "Inventory:" };
-        for (int i = 0; i < test.length; ++i) {
-            String s = test[i];
+        int currenty = 7;
+        for (ScreenModule module : modules) {
+            if (module.getTransformMode() != mode) {
+                if (mode != ScreenModule.TransformMode.NONE) {
+                    GL11.glPopMatrix();
+                }
+                GL11.glPushMatrix();
+                mode = module.getTransformMode();
 
-            fontrenderer.drawString(s, 7, 7 + i * 10, (i == 1 || i == 3) ? 0x00FF00 : color);
+                switch (mode) {
+                    case TEXT:
+                        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                        f3 = 0.0075F;
+                        GL11.glScalef(f3, -f3, f3);
+                        GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        break;
+                    case ITEM:
+                        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                        GL11.glScalef(f3, -f3, -0.0001f);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            module.render(fontrenderer, currenty);
+            currenty += module.getHeight();
         }
 
-
-        RenderHelper.drawHorizontalGradientRect(7 + 10, 7 + 11, 7+60, 7+10+8, 0xffff0000, 0xff333300);
-
-        GL11.glPopMatrix();
-
-        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-        GL11.glScalef(f3, -f3, -0.0001f);
-
-        RenderItem itemRender = new RenderItem();
-        short short1 = 240;
-        short short2 = 240;
-        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
-        ItemStack itm = new ItemStack(Blocks.cobblestone, 32);
-        itemRender.renderItemIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 20, 90);
-        itemRender.renderItemOverlayIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 20, 90);
-
-        itm = new ItemStack(Blocks.dirt, 20);
-        itemRender.renderItemIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 50, 90);
-        itemRender.renderItemOverlayIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 50, 90);
-
-        itm = new ItemStack(Blocks.glowstone, 64);
-        itemRender.renderItemIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, 90);
-        itemRender.renderItemOverlayIntoGUI(fontrenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, 90);
+        if (mode != ScreenModule.TransformMode.NONE) {
+            GL11.glPopMatrix();
+        }
 
         GL11.glDepthMask(true);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
