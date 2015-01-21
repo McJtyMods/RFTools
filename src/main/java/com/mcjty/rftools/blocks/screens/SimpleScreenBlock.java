@@ -14,7 +14,7 @@ public class SimpleScreenBlock extends GenericBlock {
 
     public SimpleScreenBlock() {
         super(Material.iron, SimpleScreenTileEntity.class);
-        float width = 0.25F;
+        float width = 0.5F;
         float height = 1.0F;
         this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
         setBlockName("simpleScreenBlock");
@@ -35,6 +35,7 @@ public class SimpleScreenBlock extends GenericBlock {
      * Returns a bounding box from the pool of bounding boxes (this means this box can change after the pool has been
      * cleared to be reused)
      */
+    @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
         return null;
     }
@@ -42,10 +43,11 @@ public class SimpleScreenBlock extends GenericBlock {
     /**
      * Updates the blocks bounds based on its current state. Args: world, x, y, z
      */
+    @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         int meta = world.getBlockMetadata(x, y, z);
-        float f = 0.28125F;
-        float f1 = 0.78125F;
+        float f = 0.0F;
+        float f1 = 1.0F;
         float f2 = 0.0F;
         float f3 = 1.0F;
         float f4 = 0.125F;
@@ -71,6 +73,7 @@ public class SimpleScreenBlock extends GenericBlock {
     /**
      * Returns the bounding box of the wired rectangular prism to render.
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
         this.setBlockBoundsBasedOnState(world, x, y, z);
@@ -80,6 +83,7 @@ public class SimpleScreenBlock extends GenericBlock {
     /**
      * The type of render function that is called for this block
      */
+    @Override
     public int getRenderType() {
         return -1;
     }
@@ -87,10 +91,12 @@ public class SimpleScreenBlock extends GenericBlock {
     /**
      * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
      */
+    @Override
     public boolean renderAsNormalBlock() {
         return false;
     }
 
+    @Override
     public boolean getBlocksMovement(IBlockAccess world, int x, int y, int z) {
         return true;
     }
@@ -99,41 +105,8 @@ public class SimpleScreenBlock extends GenericBlock {
      * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
      * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
      */
+    @Override
     public boolean isOpaqueCube() {
         return false;
-    }
-
-    /**
-     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
-     * their own) Args: x, y, z, neighbor Block
-     */
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        boolean flag = false;
-
-        int meta = world.getBlockMetadata(x, y, z);
-        flag = true;
-
-        if (meta == 2 && world.getBlock(x, y, z + 1).getMaterial().isSolid()) {
-            flag = false;
-        }
-
-        if (meta == 3 && world.getBlock(x, y, z - 1).getMaterial().isSolid()) {
-            flag = false;
-        }
-
-        if (meta == 4 && world.getBlock(x + 1, y, z).getMaterial().isSolid()) {
-            flag = false;
-        }
-
-        if (meta == 5 && world.getBlock(x - 1, y, z).getMaterial().isSolid()) {
-            flag = false;
-        }
-
-        if (flag) {
-            this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-            world.setBlockToAir(x, y, z);
-        }
-
-        super.onNeighborBlockChange(world, x, y, z, block);
     }
 }
