@@ -1,16 +1,16 @@
-package com.mcjty.rftools.blocks.screens.modules;
+package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import net.minecraft.client.gui.FontRenderer;
 
-public class TextScreenModule implements ScreenModule {
+public class TextClientScreenModule implements ClientScreenModule {
     private String line;
     private int color = 0xffffff;
 
-    public TextScreenModule(String line) {
+    public TextClientScreenModule(String line) {
         this.line = line;
     }
 
-    public TextScreenModule color(int color) {
+    public TextClientScreenModule color(int color) {
         this.color = color;
         return this;
     }

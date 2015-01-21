@@ -1,16 +1,19 @@
 package com.mcjty.rftools.blocks.screens;
 
-import com.mcjty.container.GenericBlock;
+import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class SimpleScreenBlock extends GenericBlock {
+public class SimpleScreenBlock extends GenericContainerBlock {
 
     public SimpleScreenBlock() {
         super(Material.iron, SimpleScreenTileEntity.class);
@@ -19,11 +22,6 @@ public class SimpleScreenBlock extends GenericBlock {
         this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
         setBlockName("simpleScreenBlock");
         setCreativeTab(RFTools.tabRfTools);
-    }
-
-    @Override
-    public int getGuiID() {
-        return 0;
     }
 
     @Override
@@ -109,4 +107,23 @@ public class SimpleScreenBlock extends GenericBlock {
     public boolean isOpaqueCube() {
         return false;
     }
+
+    @Override
+    public int getGuiID() {
+        return RFTools.GUI_SCREEN;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        SimpleScreenTileEntity screenTileEntity = (SimpleScreenTileEntity) tileEntity;
+        ScreenContainer screenContainer = new ScreenContainer(entityPlayer, screenTileEntity);
+        return new GuiScreen(screenTileEntity, screenContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new ScreenContainer(entityPlayer, (SimpleScreenTileEntity) tileEntity);
+    }
+
 }

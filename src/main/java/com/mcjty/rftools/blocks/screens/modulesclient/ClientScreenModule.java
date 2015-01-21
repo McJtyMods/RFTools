@@ -1,8 +1,8 @@
-package com.mcjty.rftools.blocks.screens.modules;
+package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import net.minecraft.client.gui.FontRenderer;
 
-public interface ScreenModule {
+public interface ClientScreenModule {
     public enum TransformMode {
         NONE,
         TEXT,

@@ -1,10 +1,9 @@
 package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.screens.modules.EnergyBarScreenModule;
-import com.mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
-import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
-import com.mcjty.rftools.blocks.screens.modules.TextScreenModule;
+import com.mcjty.rftools.blocks.screens.modulesclient.*;
+import com.mcjty.rftools.blocks.screens.modulesclient.EnergyBarClientScreenModule;
+import com.mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.FontRenderer;
@@ -23,17 +22,17 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
     private final ModelScreen screenModel = new ModelScreen();
 
-    private List<ScreenModule> modules;
+    private List<ClientScreenModule> modules;
 
     public ScreenRenderer() {
-        modules = new ArrayList<ScreenModule>();
-        modules.add(new TextScreenModule("Large capacitor:"));
-        modules.add(new EnergyBarScreenModule());
-        modules.add(new TextScreenModule("Dimension 'mining':"));
-        modules.add(new TextScreenModule("40000000RF").color(0x00ff00));
-        modules.add(new TextScreenModule(""));
-        modules.add(new TextScreenModule("Inventory:"));
-        modules.add(new ItemStackScreenModule());
+        modules = new ArrayList<ClientScreenModule>();
+        modules.add(new TextClientScreenModule("Large capacitor:"));
+        modules.add(new EnergyBarClientScreenModule());
+        modules.add(new TextClientScreenModule("Dimension 'mining':"));
+        modules.add(new TextClientScreenModule("40000000RF").color(0x00ff00));
+        modules.add(new TextClientScreenModule(""));
+        modules.add(new TextClientScreenModule("Inventory:"));
+        modules.add(new ItemStackClientScreenModule());
     }
 
     @Override
@@ -64,13 +63,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         FontRenderer fontrenderer = this.func_147498_b();
 
-        ScreenModule.TransformMode mode = ScreenModule.TransformMode.NONE;
+        ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
         GL11.glDepthMask(false);
 
         int currenty = 7;
-        for (ScreenModule module : modules) {
+        for (ClientScreenModule module : modules) {
             if (module.getTransformMode() != mode) {
-                if (mode != ScreenModule.TransformMode.NONE) {
+                if (mode != ClientScreenModule.TransformMode.NONE) {
                     GL11.glPopMatrix();
                 }
                 GL11.glPushMatrix();
@@ -97,7 +96,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             currenty += module.getHeight();
         }
 
-        if (mode != ScreenModule.TransformMode.NONE) {
+        if (mode != ClientScreenModule.TransformMode.NONE) {
             GL11.glPopMatrix();
         }
 

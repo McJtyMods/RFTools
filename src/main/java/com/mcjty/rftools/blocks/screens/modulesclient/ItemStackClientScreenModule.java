@@ -1,4 +1,4 @@
-package com.mcjty.rftools.blocks.screens.modules;
+package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-public class ItemStackScreenModule implements ScreenModule {
+public class ItemStackClientScreenModule implements ClientScreenModule {
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.ITEM;
