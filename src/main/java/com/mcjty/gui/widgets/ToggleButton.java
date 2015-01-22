@@ -28,10 +28,13 @@ public class ToggleButton extends Label<ToggleButton> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        if (enabled) {
+        if (isEnabled()) {
             if (pressed) {
                 RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff666666, 0xff333333, 0xffeeeeee);
             } else {
@@ -46,7 +49,7 @@ public class ToggleButton extends Label<ToggleButton> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             pressed = !pressed;
             fireButtonEvents();
             return this;

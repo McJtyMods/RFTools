@@ -58,10 +58,13 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        if (enabled) {
+        if (isEnabled()) {
             RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
         } else {
             RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff888888, 0xff555555, 0xff666666);
@@ -72,7 +75,7 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             int index = choiceList.indexOf(currentChoice);
             index++;
             if (index >= choiceList.size()) {

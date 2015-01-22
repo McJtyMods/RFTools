@@ -25,6 +25,9 @@ public class BlockRender extends AbstractWidget<BlockRender> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
         if (renderItem != null) {
             RenderHelper.renderObject(mc, x + bounds.x, y + bounds.y, renderItem, false);

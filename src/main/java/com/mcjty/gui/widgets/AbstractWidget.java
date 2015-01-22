@@ -19,7 +19,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     protected Minecraft mc;
     protected Gui gui;
     private LayoutHint layoutHint = null;
-    protected boolean enabled = true;
+    private boolean enabled = true;
+    protected boolean visible = true;
     protected List<String> tooltips = null;
 
     private boolean layoutDirty = true;
@@ -72,6 +73,22 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean isEnabledAndVisible() {
+        return enabled && visible;
+    }
+
+    @Override
+    public P setVisible(boolean visible) {
+        this.visible = visible;
+        return (P) this;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
     }
 
     @Override
@@ -150,6 +167,9 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     }
 
     protected void drawBackground(int x, int y) {
+        if (!visible) {
+            return;
+        }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         int xx = x + bounds.x;

@@ -28,6 +28,9 @@ public class ImageLabel<P extends ImageLabel> extends AbstractWidget<P> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
 
         if (image != null) {

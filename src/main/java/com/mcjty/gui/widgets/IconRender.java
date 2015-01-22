@@ -26,6 +26,9 @@ public class IconRender extends AbstractWidget<IconRender> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
         if (icon != null) {
             RenderHelper.renderObject(mc, x + bounds.x, y + bounds.y, icon, false);

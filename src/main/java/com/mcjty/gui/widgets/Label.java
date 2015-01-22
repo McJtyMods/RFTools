@@ -98,13 +98,16 @@ public class Label<P extends Label> extends AbstractWidget<P> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
 
         int dx = calculateHorizontalOffset();
         int dy = calculateVerticalOffset();
 
         int col = color;
-        if (!enabled) {
+        if (!isEnabled()) {
             col = disabledColor;
         }
 

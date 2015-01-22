@@ -19,10 +19,13 @@ public class Button extends Label<Button> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         int xx = x + bounds.x;
         int yy = y + bounds.y;
 
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             if (pressed) {
                 RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff666666, 0xff333333, 0xffeeeeee);
             } else {
@@ -37,7 +40,7 @@ public class Button extends Label<Button> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             pressed = true;
             return this;
         }
@@ -49,7 +52,7 @@ public class Button extends Label<Button> {
         super.mouseRelease(x, y, button);
         if (pressed) {
             pressed = false;
-            if (enabled) {
+            if (isEnabledAndVisible()) {
                 fireButtonEvents();
             }
         }

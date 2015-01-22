@@ -147,7 +147,7 @@ public class TextPage extends AbstractWidget<TextPage> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             window.setTextFocus(this);
             for (Link link : links) {
                 if (tabCounter == 0) {
@@ -182,7 +182,7 @@ public class TextPage extends AbstractWidget<TextPage> {
         if (rc) {
             return true;
         }
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_LEFT) {
                 prevPage();
                 return true;

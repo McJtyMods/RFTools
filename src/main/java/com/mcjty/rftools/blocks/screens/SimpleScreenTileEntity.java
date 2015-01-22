@@ -11,7 +11,9 @@ import net.minecraftforge.common.util.Constants;
 
 public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
-    InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
+    public static final String CMD_ = "settings";
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
 
     @Override
     protected void checkStateClient() {

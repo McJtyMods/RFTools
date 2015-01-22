@@ -1,7 +1,9 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mcjty.gui.widgets.Panel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.init.Blocks;
@@ -36,5 +38,10 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         itm = new ItemStack(Blocks.glowstone, 64);
         itemRender.renderItemIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, currenty);
         itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, currenty);
+    }
+
+    @Override
+    public Panel createGui(Minecraft mc, Gui gui) {
+        return null;
     }
 }

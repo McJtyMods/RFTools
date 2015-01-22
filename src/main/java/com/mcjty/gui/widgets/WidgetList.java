@@ -54,6 +54,9 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
         int xx = x + bounds.x + 2;
         int yy = y + bounds.y;
@@ -71,7 +74,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             } else if (hilighted) {
                 RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xffbbbb00, 0xff999900);
             }
-            if (enabled) {
+            if (isEnabledAndVisible()) {
                 child.draw(window, xx, yy);
             } else {
                 boolean en = child.isEnabled();
@@ -85,7 +88,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (!enabled) {
+        if (!isEnabledAndVisible()) {
             return null;
         }
         int newSelected = -1;

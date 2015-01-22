@@ -37,7 +37,7 @@ public class TextField extends AbstractWidget<TextField> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             window.setTextFocus(this);
             return this;
         }
@@ -50,7 +50,7 @@ public class TextField extends AbstractWidget<TextField> {
         if (rc) {
             return true;
         }
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
                 window.setTextFocus(null);
             } else if (keyCode == Keyboard.KEY_BACK) {

@@ -64,6 +64,15 @@ public interface Widget<P extends Widget> {
 
     boolean isEnabled();
 
+    boolean isEnabledAndVisible();
+
+    /**
+     * Make this widget visible/invisible.
+     */
+    P setVisible(boolean visible);
+
+    boolean isVisible();
+
     /**
      * Get the bounds for this widget relative to the parents coordinate system.
      * Can be null in case the layout for this widget hasn't been set yet.

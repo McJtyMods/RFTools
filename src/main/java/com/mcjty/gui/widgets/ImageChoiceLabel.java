@@ -48,7 +48,7 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
 
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
-        if (enabled) {
+        if (isEnabledAndVisible()) {
             currentChoice++;
             if (currentChoice >= choiceList.size()) {
                 currentChoice = 0;

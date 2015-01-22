@@ -46,6 +46,9 @@ public class Slider extends AbstractWidget<Slider> {
 
     @Override
     public void draw(Window window, int x, int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
 
         int xx = x + bounds.x;

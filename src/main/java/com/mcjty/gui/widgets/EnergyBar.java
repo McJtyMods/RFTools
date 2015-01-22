@@ -125,6 +125,9 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
 
     @Override
     public void draw(Window window, final int x, final int y) {
+        if (!visible) {
+            return;
+        }
         super.draw(window, x, y);
         int currentValue = getValue();
         int maximum = getMaxValue();
