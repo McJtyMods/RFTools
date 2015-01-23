@@ -18,6 +18,10 @@ buildscript {
 apply plugin: 'forge'
 
 version = "2.16"
+def ENV = System.getenv()
+if (ENV.DRONE_BUILD_NUMBER) {
+    version += ".n" + ENV.DRONE_BUILD_NUMBER
+}
 group= "com.mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "rftools"
 
