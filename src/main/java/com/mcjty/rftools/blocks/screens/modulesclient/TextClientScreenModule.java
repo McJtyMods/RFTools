@@ -15,7 +15,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     private int color = 0xffffff;
 
     public TextClientScreenModule() {
-        line = "";
+        line = "Init";
     }
 
     public TextClientScreenModule(String line) {
