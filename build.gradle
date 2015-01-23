@@ -26,6 +26,21 @@ minecraft {
     assetDir = "eclipse/assets"
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+}
+
+artifacts {
+    archives sourceJar
+    archives deobfJar
+}
+
 
 repositories {
     maven { // The repo from which to get waila
