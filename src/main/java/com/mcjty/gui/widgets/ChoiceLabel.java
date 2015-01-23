@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Gui;
 import java.util.*;
 
 public class ChoiceLabel extends Label<ChoiceLabel> {
-    private ArrayList<String> choiceList = new ArrayList<String>();
+    private List<String> choiceList = new ArrayList<String>();
     private Map<String,List<String>> tooltipMap = new HashMap<String, List<String>>();
     private String currentChoice = null;
     private List<ChoiceEvent> choiceEvents = null;

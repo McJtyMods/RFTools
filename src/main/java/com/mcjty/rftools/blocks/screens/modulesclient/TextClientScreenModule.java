@@ -1,6 +1,9 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
+import com.mcjty.gui.widgets.ColorChoiceLabel;
+import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import net.minecraft.client.Minecraft;
@@ -42,7 +45,11 @@ public class TextClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        panel.addChild(new TextField(mc, gui));
+        panel.addChild(new TextField(mc, gui).setDesiredHeight(20));
+        panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, gui).setText("Color:")).
+                addChild(new ColorChoiceLabel(mc, gui).addColors(0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(60).setDesiredHeight(18)).
+                setDesiredHeight(20));
         return panel;
     }
 }
