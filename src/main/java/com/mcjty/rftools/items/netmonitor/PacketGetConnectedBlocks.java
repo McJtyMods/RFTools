@@ -12,8 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<PacketGetConnectedBlocks, PacketConnectedBlocksReady> {
     private int x;
@@ -46,8 +45,12 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
     @Override
     public PacketConnectedBlocksReady onMessage(PacketGetConnectedBlocks message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
-        HashMap<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
+        Map<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
         findConnectedBlocks(connectedBlocks, player.worldObj, message.x, message.y, message.z);
+
+        if (connectedBlocks.size() > NetworkMonitorConfiguration.maximumBlocks) {
+            connectedBlocks = compactConnectedBlocks(connectedBlocks, message.x, message.y, message.z, NetworkMonitorConfiguration.maximumBlocks);
+        }
 
         int minx = 300000000;
         int miny = 300000000;
@@ -60,6 +63,40 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
 
         return new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz);
     }
+
+    private Map<Coordinate,BlockInfo> compactConnectedBlocks(Map<Coordinate,BlockInfo> old, final int x, final int y, final int z, int max) {
+        List<Coordinate> list = new ArrayList<Coordinate>(old.keySet());
+        Collections.sort(list, new Comparator<Coordinate>() {
+            @Override
+            public int compare(Coordinate o1, Coordinate o2) {
+                double sqdist1 = calcDist(o1);
+                double sqdist2 = calcDist(o2);
+                if (sqdist1 < sqdist2) {
+                    return -1;
+                } else if (sqdist1 > sqdist2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            private int calcDist(Coordinate o1) {
+                return (o1.getX()-x) * (o1.getX()-x) + (o1.getY()-y) * (o1.getY()-y) + (o1.getZ()-z) * (o1.getZ()-z);
+            }
+        });
+
+        Map<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
+        for (Coordinate coordinate : list) {
+            connectedBlocks.put(coordinate, old.get(coordinate));
+            max--;
+            if (max <= 0) {
+                break;
+            }
+        }
+
+        return connectedBlocks;
+    }
+
 
     private void findConnectedBlocks(Map<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z) {
         if (y < 0 || y >= world.getActualHeight()) {
