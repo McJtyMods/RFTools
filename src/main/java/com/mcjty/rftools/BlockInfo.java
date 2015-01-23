@@ -40,13 +40,11 @@ public class BlockInfo {
 
     public static String getReadableName(Block block, Coordinate coordinate, int metadata, World world) {
         List<ItemStack> itemStacks = block.getDrops(world, coordinate.getX(), coordinate.getY(), coordinate.getZ(), metadata, 1);
-        Object descriptiveObject = block;
-        if (itemStacks != null && !itemStacks.isEmpty()) {
-            descriptiveObject = itemStacks.get(0).getItem();
-            System.out.println("itemStacks.get(0).getDisplayName() = " + itemStacks.get(0).getDisplayName());
+        if (itemStacks != null && !itemStacks.isEmpty() && itemStacks.get(0).getItem() != null) {
+            return getReadableName(itemStacks.get(0).getItem(), metadata);
         }
 
-        return getReadableName(descriptiveObject, metadata);
+        return getReadableName(block, metadata);
     }
 
     public static String getReadableName(Object object, int metadata) {
