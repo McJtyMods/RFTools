@@ -112,9 +112,9 @@ public final class ModBlocks {
         GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
 
-        simpleScreenBlock = new SimpleScreenBlock();
-        GameRegistry.registerBlock(simpleScreenBlock, GenericItemBlock.class, "simpleScreenBlock");
-        GameRegistry.registerTileEntity(SimpleScreenTileEntity.class, "SimpleScreenTileEntity");
+//        simpleScreenBlock = new SimpleScreenBlock();
+//        GameRegistry.registerBlock(simpleScreenBlock, GenericItemBlock.class, "simpleScreenBlock");
+//        GameRegistry.registerTileEntity(SimpleScreenTileEntity.class, "SimpleScreenTileEntity");
 
         initDimletBlocks();
         initTeleporterBlocks();

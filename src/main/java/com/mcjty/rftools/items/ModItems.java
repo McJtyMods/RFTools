@@ -34,11 +34,11 @@ public final class ModItems {
         networkMonitorItem.setTextureName(RFTools.MODID + ":networkMonitorItem");
         GameRegistry.registerItem(networkMonitorItem, "networkMonitorItem");
 
-        textModuleItem = new TextModuleItem();
-        textModuleItem.setUnlocalizedName("TextModule");
-        textModuleItem.setCreativeTab(RFTools.tabRfTools);
-        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
-        GameRegistry.registerItem(textModuleItem, "textModuleItem");
+//        textModuleItem = new TextModuleItem();
+//        textModuleItem.setUnlocalizedName("TextModule");
+//        textModuleItem.setCreativeTab(RFTools.tabRfTools);
+//        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
+//        GameRegistry.registerItem(textModuleItem, "textModuleItem");
 
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
