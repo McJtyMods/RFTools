@@ -81,7 +81,7 @@ public class TabbedPanel extends AbstractContainerWidget<Panel> {
         y -= bounds.y;
 
         if (current != null) {
-            if (current.in(x, y)) {
+            if (current.in(x, y) && current.isVisible()) {
                 return current.mouseClick(window, x, y, button);
             }
         }

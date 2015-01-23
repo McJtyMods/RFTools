@@ -7,6 +7,8 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import com.mcjty.rftools.items.screenmodules.EnergyModuleItem;
+import com.mcjty.rftools.items.screenmodules.InventoryModuleItem;
 import com.mcjty.rftools.items.screenmodules.TextModuleItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -17,6 +19,7 @@ public final class ModItems {
     public static RFToolsManualItem rfToolsManualItem;
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
+
     public static UnknownDimlet unknownDimlet;
     public static DimletTemplate dimletTemplate;
     public static KnownDimlet knownDimlet;
@@ -26,6 +29,8 @@ public final class ModItems {
     public static DimensionalShard dimensionalShard;
 
     public static TextModuleItem textModuleItem;
+    public static EnergyModuleItem energyModuleItem;
+    public static InventoryModuleItem inventoryModuleItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -33,12 +38,6 @@ public final class ModItems {
         networkMonitorItem.setCreativeTab(RFTools.tabRfTools);
         networkMonitorItem.setTextureName(RFTools.MODID + ":networkMonitorItem");
         GameRegistry.registerItem(networkMonitorItem, "networkMonitorItem");
-
-        textModuleItem = new TextModuleItem();
-        textModuleItem.setUnlocalizedName("TextModule");
-        textModuleItem.setCreativeTab(RFTools.tabRfTools);
-        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
-        GameRegistry.registerItem(textModuleItem, "textModuleItem");
 
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
@@ -64,6 +63,31 @@ public final class ModItems {
         developersDelightItem.setTextureName(RFTools.MODID + ":developersDelightItem");
         GameRegistry.registerItem(developersDelightItem, "developersDelightItem");
 
+        initScreenModuleItems();
+        initDimensionItems();
+    }
+
+    private static void initScreenModuleItems() {
+        textModuleItem = new TextModuleItem();
+        textModuleItem.setUnlocalizedName("TextModule");
+        textModuleItem.setCreativeTab(RFTools.tabRfTools);
+        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
+        GameRegistry.registerItem(textModuleItem, "textModuleItem");
+
+        inventoryModuleItem = new InventoryModuleItem();
+        inventoryModuleItem.setUnlocalizedName("InventoryModule");
+        inventoryModuleItem.setCreativeTab(RFTools.tabRfTools);
+        inventoryModuleItem.setTextureName(RFTools.MODID + ":inventoryModuleItem");
+        GameRegistry.registerItem(inventoryModuleItem, "inventoryModuleItem");
+
+        energyModuleItem = new EnergyModuleItem();
+        energyModuleItem.setUnlocalizedName("EnergyModule");
+        energyModuleItem.setCreativeTab(RFTools.tabRfTools);
+        energyModuleItem.setTextureName(RFTools.MODID + ":energyModuleItem");
+        GameRegistry.registerItem(energyModuleItem, "energyModuleItem");
+    }
+
+    private static void initDimensionItems() {
         unknownDimlet = new UnknownDimlet();
         unknownDimlet.setUnlocalizedName("UnknownDimlet");
         unknownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);

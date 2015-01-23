@@ -10,6 +10,9 @@ item.RealizedDimensionTab.name=Realized Dimension Tab
 item.DimensionMonitor.name=Dimension Monitor
 item.DimensionalShard.name=Dimensional Shard
 item.DimletTemplate.name=Dimlet Template
+item.TextModule.name=Text Module
+item.EnergyModule.name=Energy Module
+item.InventoryModule.name=Inventory Module
 
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2

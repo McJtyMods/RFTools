@@ -27,7 +27,7 @@ public class Window {
 
     public void mouseClicked(int x, int y, int button) {
         textFocus = null;
-        if (toplevel.in(x, y)) {
+        if (toplevel.in(x, y) && toplevel.isVisible()) {
             toplevel.mouseClick(this, x, y, button);
         }
     }
@@ -72,7 +72,7 @@ public class Window {
     public List<String> getTooltips() {
         int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
         int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
-        if (toplevel.in(x, y)) {
+        if (toplevel.in(x, y) && toplevel.isVisible()) {
             Widget w = toplevel.getWidgetAtPosition(x, y);
             List<String> tooltips = w.getTooltips();
             if (tooltips != null) {

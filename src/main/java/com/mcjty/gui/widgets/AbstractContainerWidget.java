@@ -25,7 +25,7 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         y -= bounds.y;
 
         for (Widget child : children) {
-            if (child.in(x, y)) {
+            if (child.in(x, y) && child.isVisible()) {
                 return child.getWidgetAtPosition(x, y);
             }
         }

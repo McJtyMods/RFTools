@@ -10,9 +10,11 @@ import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.util.Map;
 
 public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     public static final int SCREEN_WIDTH = 256;
@@ -41,7 +43,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         for (int i = 0 ; i < 7 ; i++) {
-            buttons[i] = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i*18 + 1, 40, 16)).setEnabled(false);
+            buttons[i] = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i*18 + 1, 55, 16)).setEnabled(false).setColor(0xff000000);
             final int finalI = i;
             buttons[i].addButtonEvent(new ButtonEvent() {
                 @Override
@@ -67,7 +69,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
 
     private void refreshButtons() {
         for (int i = 0 ; i < 7 ; i++) {
-            ItemStack slot = tileEntity.getStackInSlot(i);
+            final ItemStack slot = tileEntity.getStackInSlot(i);
             if (slot != null && slot.getItem() != null && slot.getItem() instanceof ModuleProvider) {
                 buttons[i].setEnabled(true);
                 ModuleProvider moduleProvider = (ModuleProvider) slot.getItem();
@@ -82,8 +84,22 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
-                    modulePanels[i] = clientScreenModules[i].createGui(mc, this);
-                    modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 7, 150, 130));
+
+                    NBTTagCompound tagCompound = slot.getTagCompound();
+                    if (tagCompound == null) {
+                        tagCompound = new NBTTagCompound();
+                    }
+
+                    final NBTTagCompound finalTagCompound = tagCompound;
+                    final int finalI = i;
+                    modulePanels[i] = clientScreenModules[i].createGui(mc, this, tagCompound, new ModuleGuiChanged() {
+                        @Override
+                        public void updateData() {
+                            slot.setTagCompound(finalTagCompound);
+                            tileEntity.setInventorySlotContents(finalI, slot);
+                        }
+                    });
+                    modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 140, 130));
                     toplevel.addChild(modulePanels[i]);
                 }
 
@@ -100,6 +116,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
             }
             if (modulePanels[i] != null) {
                 modulePanels[i].setVisible(selected == i);
+                buttons[i].setColor(selected == i ? 0xffffffff : 0xff000000);
             }
         }
     }

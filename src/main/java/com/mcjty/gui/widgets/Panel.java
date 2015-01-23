@@ -51,7 +51,7 @@ public class Panel extends AbstractContainerWidget<Panel> {
         y -= bounds.y;
 
         for (Widget child : children) {
-            if (child.in(x, y)) {
+            if (child.in(x, y) && child.isVisible()) {
                 focus = child.mouseClick(window, x, y, button);
                 return this;
             }
@@ -71,7 +71,7 @@ public class Panel extends AbstractContainerWidget<Panel> {
             focus = null;
         } else {
             for (Widget child : children) {
-                if (child.in(x, y)) {
+                if (child.in(x, y) && child.isVisible()) {
                     child.mouseRelease(x, y, button);
                     return;
                 }
@@ -90,7 +90,7 @@ public class Panel extends AbstractContainerWidget<Panel> {
             focus.mouseMove(x, y);
         } else {
             for (Widget child : children) {
-                if (child.in(x, y)) {
+                if (child.in(x, y) && child.isVisible()) {
                     child.mouseMove(x, y);
                     return;
                 }

@@ -10,6 +10,9 @@ item.RealizedDimensionTab.name=刻录世界构建模板
 item.DimensionMonitor.name=Dimension Monitor
 item.DimensionalShard.name=Dimensional Shard
 item.DimletTemplate.name=Dimlet Template
+item.TextModule.name=Text Module
+item.EnergyModule.name=Energy Module
+item.InventoryModule.name=Inventory Module
 
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>

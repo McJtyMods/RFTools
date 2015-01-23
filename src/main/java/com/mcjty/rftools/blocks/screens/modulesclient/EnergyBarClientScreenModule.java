@@ -1,10 +1,13 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import com.mcjty.gui.RenderHelper;
+import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class EnergyBarClientScreenModule implements ClientScreenModule {
     @Override
@@ -23,7 +26,8 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui) {
-        return null;
+    public Panel createGui(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged) {
+        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
+        return panel;
     }
 }
