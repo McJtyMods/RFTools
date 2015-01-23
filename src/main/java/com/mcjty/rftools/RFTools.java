@@ -36,7 +36,7 @@ import java.util.EnumMap;
 @Mod(modid = RFTools.MODID, version = RFTools.VERSION)
 public class RFTools {
     public static final String MODID = "rftools";
-    public static final String VERSION = "2.15";
+    public static final String VERSION = "2.16";
 
     @SidedProxy(clientSide="com.mcjty.rftools.ClientProxy", serverSide="com.mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
