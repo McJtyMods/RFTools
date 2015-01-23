@@ -211,7 +211,8 @@ public class GuiNetworkMonitor extends GuiScreen {
 
     private int getTextColor(BlockInfo blockInfo) {
         int color;
-        if (blockInfo.isFirst()) {
+        Coordinate c = blockInfo.getCoordinate();
+        if (c.getX() == selectedX && c.getY() == selectedY && c.getZ() == selectedZ) {
             color = SEL_TEXT_COLOR;
         } else {
             color = TEXT_COLOR;

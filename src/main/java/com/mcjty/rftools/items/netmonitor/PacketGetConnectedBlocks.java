@@ -47,11 +47,21 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
     public PacketConnectedBlocksReady onMessage(PacketGetConnectedBlocks message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         HashMap<Coordinate,BlockInfo> connectedBlocks = new HashMap<Coordinate, BlockInfo>();
-        findConnectedBlocks(connectedBlocks, player.worldObj, message.x, message.y, message.z, true);
-        return new PacketConnectedBlocksReady(connectedBlocks);
+        findConnectedBlocks(connectedBlocks, player.worldObj, message.x, message.y, message.z);
+
+        int minx = 300000000;
+        int miny = 300000000;
+        int minz = 300000000;
+        for (Coordinate coordinate : connectedBlocks.keySet()) {
+            minx = Math.min(minx, coordinate.getX());
+            miny = Math.min(miny, coordinate.getY());
+            minz = Math.min(minz, coordinate.getZ());
+        }
+
+        return new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz);
     }
 
-    private void findConnectedBlocks(Map<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z, boolean first) {
+    private void findConnectedBlocks(Map<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z) {
         if (y < 0 || y >= world.getActualHeight()) {
             return;
         }
@@ -62,13 +72,13 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             if (tileEntity instanceof IEnergyHandler) {
-                connectedBlocks.put(c, new BlockInfo(tileEntity, c, first));
-                findConnectedBlocks(connectedBlocks, world, x + 1, y, z, false);
-                findConnectedBlocks(connectedBlocks, world, x - 1, y, z, false);
-                findConnectedBlocks(connectedBlocks, world, x, y - 1, z, false);
-                findConnectedBlocks(connectedBlocks, world, x, y + 1, z, false);
-                findConnectedBlocks(connectedBlocks, world, x, y, z - 1, false);
-                findConnectedBlocks(connectedBlocks, world, x, y, z + 1, false);
+                connectedBlocks.put(c, new BlockInfo(tileEntity, c));
+                findConnectedBlocks(connectedBlocks, world, x + 1, y, z);
+                findConnectedBlocks(connectedBlocks, world, x - 1, y, z);
+                findConnectedBlocks(connectedBlocks, world, x, y - 1, z);
+                findConnectedBlocks(connectedBlocks, world, x, y + 1, z);
+                findConnectedBlocks(connectedBlocks, world, x, y, z - 1);
+                findConnectedBlocks(connectedBlocks, world, x, y, z + 1);
             }
         }
     }

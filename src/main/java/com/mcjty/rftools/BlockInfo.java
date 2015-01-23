@@ -12,19 +12,16 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.List;
 
 public class BlockInfo {
-    private boolean first;
     private Coordinate coordinate;
     int energyStored;
     int maxEnergyStored;
 
-    public BlockInfo(TileEntity tileEntity, Coordinate coordinate, boolean first) {
-        this.first = first;
+    public BlockInfo(TileEntity tileEntity, Coordinate coordinate) {
         this.coordinate = coordinate;
         fetchEnergyValues(tileEntity);
     }
 
-    public BlockInfo(boolean first, Coordinate coordinate, int energyStored, int maxEnergyStored) {
-        this.first = first;
+    public BlockInfo(Coordinate coordinate, int energyStored, int maxEnergyStored) {
         this.coordinate = coordinate;
         this.energyStored = energyStored;
         this.maxEnergyStored = maxEnergyStored;
@@ -32,10 +29,6 @@ public class BlockInfo {
 
     public Coordinate getCoordinate() {
         return coordinate;
-    }
-
-    public boolean isFirst() {
-        return first;
     }
 
     public static String getReadableName(Block block, Coordinate coordinate, int metadata, World world) {
@@ -112,7 +105,6 @@ public class BlockInfo {
         BlockInfo blockInfo = (BlockInfo) o;
 
         if (energyStored != blockInfo.energyStored) return false;
-        if (first != blockInfo.first) return false;
         if (maxEnergyStored != blockInfo.maxEnergyStored) return false;
         if (coordinate != null ? !coordinate.equals(blockInfo.coordinate) : blockInfo.coordinate != null) return false;
 
@@ -121,8 +113,7 @@ public class BlockInfo {
 
     @Override
     public int hashCode() {
-        int result = (first ? 1 : 0);
-        result = 31 * result + (coordinate != null ? coordinate.hashCode() : 0);
+        int result = coordinate != null ? coordinate.hashCode() : 0;
         result = 31 * result + energyStored;
         result = 31 * result + maxEnergyStored;
         return result;

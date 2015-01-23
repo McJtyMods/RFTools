@@ -11,28 +11,38 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketConnectedBlocksReady implements IMessage, IMessageHandler<PacketConnectedBlocksReady, IMessage> {
+    private int minx;
+    private int miny;
+    private int minz;
     private Map<Coordinate,BlockInfo> blockInfoMap;
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        minx = buf.readInt();
+        miny = buf.readInt();
+        minz = buf.readInt();
+
         int size = buf.readInt();
         blockInfoMap = new HashMap<Coordinate, BlockInfo>();
         for (int i = 0 ; i < size ; i++) {
-            Coordinate coordinate = new Coordinate(buf.readInt(), buf.readInt(), buf.readInt());
-            BlockInfo blockInfo = new BlockInfo(buf.readBoolean(), coordinate, buf.readInt(), buf.readInt());
+            Coordinate coordinate = new Coordinate(buf.readShort() + minx, buf.readShort() + miny, buf.readShort() + minz);
+            BlockInfo blockInfo = new BlockInfo(coordinate, buf.readInt(), buf.readInt());
             blockInfoMap.put(coordinate, blockInfo);
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeInt(minx);
+        buf.writeInt(miny);
+        buf.writeInt(minz);
+
         buf.writeInt(blockInfoMap.size());
         for (Map.Entry<Coordinate,BlockInfo> me : blockInfoMap.entrySet()) {
             Coordinate c = me.getKey();
-            buf.writeInt(c.getX());
-            buf.writeInt(c.getY());
-            buf.writeInt(c.getZ());
-            buf.writeBoolean(me.getValue().isFirst());
+            buf.writeShort(c.getX() - minx);
+            buf.writeShort(c.getY() - miny);
+            buf.writeShort(c.getZ() - minz);
             buf.writeInt(me.getValue().getEnergyStored());
             buf.writeInt(me.getValue().getMaxEnergyStored());
         }
@@ -41,9 +51,12 @@ public class PacketConnectedBlocksReady implements IMessage, IMessageHandler<Pac
     public PacketConnectedBlocksReady() {
     }
 
-    public PacketConnectedBlocksReady(Map<Coordinate,BlockInfo> blockInfoMap) {
-        this.blockInfoMap = new HashMap<Coordinate, BlockInfo>();
-        this.blockInfoMap.putAll(blockInfoMap);
+    public PacketConnectedBlocksReady(Map<Coordinate,BlockInfo> blockInfoMap, int minx, int miny, int minz) {
+        this.blockInfoMap = new HashMap<Coordinate, BlockInfo>(blockInfoMap);
+
+        this.minx = minx;
+        this.miny = miny;
+        this.minz = minz;
     }
 
     @Override
