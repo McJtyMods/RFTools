@@ -25,6 +25,8 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     private Panel modulePanels[] = new Panel[7];
     private ClientScreenModule[] clientScreenModules = new ClientScreenModule[7];
 
+    private int selected = -1;
+
     public GuiScreen(SimpleScreenTileEntity screenTileEntity, ScreenContainer container) {
         super(screenTileEntity, container);
 
@@ -55,10 +57,12 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        selected = -1;
     }
 
     private void selectPanel(int i) {
-
+        selected = i;
     }
 
     private void refreshButtons() {
@@ -90,6 +94,12 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
                 clientScreenModules[i] = null;
                 toplevel.removeChild(modulePanels[i]);
                 modulePanels[i] = null;
+                if (selected == i) {
+                    selected = -1;
+                }
+            }
+            if (modulePanels[i] != null) {
+                modulePanels[i].setVisible(selected == i);
             }
         }
     }
