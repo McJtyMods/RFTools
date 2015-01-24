@@ -55,7 +55,12 @@ public class BlockInfo {
 
     private static String getReadableName(Block block, int metadata) {
         ItemStack s = new ItemStack(block, 1, metadata);
-        String displayName = s.getDisplayName();
+        String displayName;
+        if (s.getItem() == null) {
+            return block.getUnlocalizedName();
+        } else {
+            displayName = s.getDisplayName();
+        }
         if (displayName.startsWith("tile.")) {
             displayName = displayName.substring(5);
         }
