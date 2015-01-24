@@ -116,7 +116,7 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return MachineInfuserContainer.factory.isInputSlot(index);
+        return MachineInfuserContainer.factory.isInputSlot(index) || MachineInfuserContainer.factory.isSpecificItemSlot(index);
     }
 
     @Override

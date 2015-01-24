@@ -111,7 +111,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return DimletResearcherContainer.factory.isInputSlot(index);
+        return DimletResearcherContainer.factory.isInputSlot(index) || DimletResearcherContainer.factory.isSpecificItemSlot(index);
     }
 
     @Override

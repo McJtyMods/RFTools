@@ -152,7 +152,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return DimletScramblerContainer.factory.isInputSlot(index);
+        return DimletScramblerContainer.factory.isInputSlot(index) || DimletScramblerContainer.factory.isSpecificItemSlot(index);
     }
 
     @Override
