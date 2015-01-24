@@ -48,4 +48,9 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
         return panel;
     }
+
+    @Override
+    public void setupFromNBT(NBTTagCompound tagCompound) {
+
+    }
 }

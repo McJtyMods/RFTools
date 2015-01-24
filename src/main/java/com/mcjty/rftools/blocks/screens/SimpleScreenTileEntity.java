@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,11 +10,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
     public static final String CMD_ = "settings";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
+
+    private List<ClientScreenModule> screenModules = null;
 
     @Override
     protected void checkStateClient() {
@@ -52,6 +58,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        screenModules = null;
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -63,6 +70,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        screenModules = null;
     }
 
     @Override
@@ -117,6 +125,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             inventoryHelper.getStacks()[i+ScreenContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
+        screenModules = null;
     }
 
     @Override
@@ -147,5 +156,30 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
         ItemStack stack = inventoryHelper.getStacks()[slot];
         stack.setTagCompound(tagCompound);
         markDirty();
+    }
+
+    public List<ClientScreenModule> getScreenModules() {
+        if (screenModules == null) {
+            screenModules = new ArrayList<ClientScreenModule>();
+            for (ItemStack itemStack : inventoryHelper.getStacks()) {
+                if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
+                    ModuleProvider moduleProvider = (ModuleProvider) itemStack.getItem();
+                    ClientScreenModule clientScreenModule;
+                    try {
+                        clientScreenModule = moduleProvider.getClientScreenModule().newInstance();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    clientScreenModule.setupFromNBT(itemStack.getTagCompound());
+                    screenModules.add(clientScreenModule);
+                }
+            }
+
+        }
+        return screenModules;
     }
 }

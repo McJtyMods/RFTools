@@ -19,10 +19,6 @@ public class TextClientScreenModule implements ClientScreenModule {
         line = "";
     }
 
-    public TextClientScreenModule(String line) {
-        this.line = line;
-    }
-
     public TextClientScreenModule color(int color) {
         this.color = color;
         return this;
@@ -54,7 +50,7 @@ public class TextClientScreenModule implements ClientScreenModule {
             }
         });
         panel.addChild(textField);
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger("color", newColor);
@@ -75,5 +71,13 @@ public class TextClientScreenModule implements ClientScreenModule {
                 addChild(colorSelector).
                 setDesiredHeight(18));
         return panel;
+    }
+
+    @Override
+    public void setupFromNBT(NBTTagCompound tagCompound) {
+        if (tagCompound != null) {
+            line = tagCompound.getString("text");
+            color = tagCompound.getInteger("color");
+        }
     }
 }

@@ -23,4 +23,6 @@ public interface ClientScreenModule {
     void render(FontRenderer fontRenderer, int currenty);
 
     Panel createGui(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged);
+
+    void setupFromNBT(NBTTagCompound tagCompound);
 }

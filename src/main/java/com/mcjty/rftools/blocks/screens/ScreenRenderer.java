@@ -22,19 +22,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
     private final ModelScreen screenModel = new ModelScreen();
 
-    private List<ClientScreenModule> modules;
-
-    public ScreenRenderer() {
-        modules = new ArrayList<ClientScreenModule>();
-        modules.add(new TextClientScreenModule("Large capacitor:"));
-        modules.add(new EnergyBarClientScreenModule());
-        modules.add(new TextClientScreenModule("Dimension 'mining':"));
-        modules.add(new TextClientScreenModule("40000000RF").color(0x00ff00));
-        modules.add(new TextClientScreenModule(""));
-        modules.add(new TextClientScreenModule("Inventory:"));
-        modules.add(new ItemStackClientScreenModule());
-    }
-
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
         GL11.glPushMatrix();
@@ -67,6 +54,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
 
+        List<ClientScreenModule> modules = ((SimpleScreenTileEntity)tileEntity).getScreenModules();
         int currenty = 7;
         for (ClientScreenModule module : modules) {
             if (module.getTransformMode() != mode) {
