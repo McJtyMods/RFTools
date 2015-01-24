@@ -7,12 +7,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.ForgeHooksClient;
+import org.lwjgl.opengl.GL11;
 
 public class ItemStackClientScreenModule implements ClientScreenModule {
+    private RenderItem itemRender = new RenderItem();
+    private RenderBlocks renderBlocks = new RenderBlocks();
+
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.ITEM;
@@ -25,22 +32,29 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     @Override
     public void render(FontRenderer fontRenderer, int currenty) {
-        RenderItem itemRender = new RenderItem();
         short short1 = 240;
         short short2 = 240;
-        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderHelper.enableStandardItemLighting();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
         ItemStack itm = new ItemStack(Blocks.cobblestone, 32);
-        itemRender.renderItemIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 20, currenty);
-        itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 20, currenty);
+        int x = 20;
+        renderItemStack(fontRenderer, currenty, itm, x);
 
         itm = new ItemStack(Blocks.dirt, 20);
-        itemRender.renderItemIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 50, currenty);
-        itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 50, currenty);
+        x += 30;
+        renderItemStack(fontRenderer, currenty, itm, x);
 
         itm = new ItemStack(Blocks.glowstone, 64);
-        itemRender.renderItemIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, currenty);
-        itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, 80, currenty);
+        x += 30;
+        renderItemStack(fontRenderer, currenty, itm, x);
+    }
+
+    private void renderItemStack(FontRenderer fontRenderer, int currenty, ItemStack itm, int x) {
+        if (!ForgeHooksClient.renderInventoryItem(renderBlocks, Minecraft.getMinecraft().getTextureManager(), itm, true, 0.0F, x, currenty)) {
+            itemRender.renderItemIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
+        }
+        itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
     }
 
     @Override
