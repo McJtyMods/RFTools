@@ -10,6 +10,7 @@ import com.mcjty.gui.widgets.ToggleButton;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -126,6 +127,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
             public void updateData() {
                 slot.setTagCompound(finalTagCompound);
                 tileEntity.setInventorySlotContents(finalI, slot);
+                PacketHandler.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
             }
         });
         modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 140, 130));

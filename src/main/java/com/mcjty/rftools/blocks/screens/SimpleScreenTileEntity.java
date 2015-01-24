@@ -143,4 +143,9 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
         tagCompound.setTag("Items", bufferTagList);
     }
 
+    public void updateModuleData(int slot, NBTTagCompound tagCompound) {
+        ItemStack stack = inventoryHelper.getStacks()[slot];
+        stack.setTagCompound(tagCompound);
+        markDirty();
+    }
 }

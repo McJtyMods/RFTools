@@ -4,6 +4,7 @@ import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
 import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
+import com.mcjty.rftools.blocks.screens.PacketModuleUpdate;
 import com.mcjty.rftools.blocks.shield.PacketFiltersReady;
 import com.mcjty.rftools.blocks.shield.PacketGetFilters;
 import com.mcjty.rftools.blocks.storagemonitor.*;
@@ -49,6 +50,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetFilters.class, PacketGetFilters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDelightingInfo.class, PacketGetDelightingInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDimensionEnergy.class, PacketGetDimensionEnergy.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
