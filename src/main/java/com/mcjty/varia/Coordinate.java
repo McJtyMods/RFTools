@@ -26,6 +26,10 @@ public class Coordinate implements ByteBufConverter {
         buf.writeInt(z);
     }
 
+    public boolean isValid() {
+        return y >= 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

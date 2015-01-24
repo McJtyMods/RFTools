@@ -2,8 +2,9 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.modulesclient.*;
-import com.mcjty.rftools.blocks.screens.modulesclient.EnergyBarClientScreenModule;
-import com.mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
+import com.mcjty.rftools.blocks.screens.network.PacketGetScreenData;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,8 +14,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class ScreenRenderer extends TileEntitySpecialRenderer {
@@ -22,8 +24,20 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
     private final ModelScreen screenModel = new ModelScreen();
 
+    private static long lastTime = 0;
+
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
+        if (System.currentTimeMillis() - lastTime > 500) {
+            lastTime = System.currentTimeMillis();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        }
+
+        Map<Integer,String> screenData = SimpleScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        if (screenData == null) {
+            screenData = new HashMap<Integer, String>();
+        }
+
         GL11.glPushMatrix();
         float f3;
 
@@ -54,36 +68,40 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
 
-        List<ClientScreenModule> modules = ((SimpleScreenTileEntity)tileEntity).getScreenModules();
+        List<ClientScreenModule> modules = ((SimpleScreenTileEntity)tileEntity).getClientScreenModules();
         int currenty = 7;
+        int moduleIndex = 0;
         for (ClientScreenModule module : modules) {
-            if (module.getTransformMode() != mode) {
-                if (mode != ClientScreenModule.TransformMode.NONE) {
-                    GL11.glPopMatrix();
-                }
-                GL11.glPushMatrix();
-                mode = module.getTransformMode();
+            if (module != null) {
+                if (module.getTransformMode() != mode) {
+                    if (mode != ClientScreenModule.TransformMode.NONE) {
+                        GL11.glPopMatrix();
+                    }
+                    GL11.glPushMatrix();
+                    mode = module.getTransformMode();
 
-                switch (mode) {
-                    case TEXT:
-                        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                        f3 = 0.0075F;
-                        GL11.glScalef(f3, -f3, f3);
-                        GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                        break;
-                    case ITEM:
-                        f3 = 0.0075F;
-                        GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                        GL11.glScalef(f3, -f3, -0.0001f);
-                        break;
-                    default:
-                        break;
+                    switch (mode) {
+                        case TEXT:
+                            GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                            f3 = 0.0075F;
+                            GL11.glScalef(f3, -f3, f3);
+                            GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+                            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                            break;
+                        case ITEM:
+                            f3 = 0.0075F;
+                            GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                            GL11.glScalef(f3, -f3, -0.0001f);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
+                module.render(fontrenderer, currenty, screenData.get(moduleIndex));
+                currenty += module.getHeight();
             }
-
-            module.render(fontrenderer, currenty);
-            currenty += module.getHeight();
+            moduleIndex++;
         }
 
         if (mode != ClientScreenModule.TransformMode.NONE) {

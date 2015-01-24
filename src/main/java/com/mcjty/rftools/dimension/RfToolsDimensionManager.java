@@ -168,14 +168,11 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     /**
      * Get a world for a dimension, possibly loading it from the configuration manager.
-     * @param id
-     * @return
      */
-    public World getWorldForDimension(int id) {
+    public static World getWorldForDimension(int id) {
         World w = DimensionManager.getWorld(id);
         if (w == null) {
-            WorldServer worldServer = MinecraftServer.getServer().getConfigurationManager().getServerInstance().worldServerForDimension(id);
-            w = worldServer;
+            w = MinecraftServer.getServer().getConfigurationManager().getServerInstance().worldServerForDimension(id);
         }
         return w;
     }

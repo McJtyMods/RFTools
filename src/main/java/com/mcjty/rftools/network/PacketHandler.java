@@ -4,10 +4,16 @@ import com.mcjty.rftools.blocks.crafter.PacketCrafter;
 import com.mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
 import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
 import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
-import com.mcjty.rftools.blocks.screens.PacketModuleUpdate;
+import com.mcjty.rftools.blocks.screens.network.PacketGetScreenData;
+import com.mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
+import com.mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
+import com.mcjty.rftools.blocks.screens.network.PacketReturnScreenDataHandler;
 import com.mcjty.rftools.blocks.shield.PacketFiltersReady;
 import com.mcjty.rftools.blocks.shield.PacketGetFilters;
-import com.mcjty.rftools.blocks.storagemonitor.*;
+import com.mcjty.rftools.blocks.storagemonitor.PacketGetInventory;
+import com.mcjty.rftools.blocks.storagemonitor.PacketInventoryReady;
+import com.mcjty.rftools.blocks.storagemonitor.PacketSearchItems;
+import com.mcjty.rftools.blocks.storagemonitor.PacketSearchReady;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.dimension.network.*;
 import com.mcjty.rftools.items.devdelight.PacketDelightingInfoReady;
@@ -50,6 +56,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetFilters.class, PacketGetFilters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDelightingInfo.class, PacketGetDelightingInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDimensionEnergy.class, PacketGetDimensionEnergy.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetScreenData.class, PacketGetScreenData.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, nextID(), Side.SERVER);
 
         // Client side
@@ -67,6 +74,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSyncDimensionInfoHandler.class, PacketSyncDimensionInfo.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketCheckDimletConfigHandler.class, PacketCheckDimletConfig.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReturnEnergyHandler.class, PacketReturnEnergy.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketReturnScreenDataHandler.class, PacketReturnScreenData.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketRegisterDimensionsHandler.class, PacketRegisterDimensions.class, nextID(), Side.CLIENT);
     }
 }

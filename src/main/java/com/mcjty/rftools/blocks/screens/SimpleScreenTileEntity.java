@@ -2,7 +2,11 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -11,7 +15,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
@@ -19,7 +25,12 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
 
-    private List<ClientScreenModule> screenModules = null;
+    private List<ClientScreenModule> clientScreenModules = null;
+    private List<ScreenModule> screenModules = null;
+
+    // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
+    @SideOnly(Side.CLIENT)
+    public static Map<Coordinate,Map<Integer,String>> screenData = new HashMap<Coordinate, Map<Integer, String>>();
 
     @Override
     protected void checkStateClient() {
@@ -58,7 +69,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        screenModules = null;
+        clientScreenModules = null;
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -70,7 +81,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        screenModules = null;
+        clientScreenModules = null;
     }
 
     @Override
@@ -125,7 +136,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             inventoryHelper.getStacks()[i+ScreenContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
-        screenModules = null;
+        clientScreenModules = null;
     }
 
     @Override
@@ -158,9 +169,10 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
         markDirty();
     }
 
-    public List<ClientScreenModule> getScreenModules() {
-        if (screenModules == null) {
-            screenModules = new ArrayList<ClientScreenModule>();
+    // This is called client side.
+    public List<ClientScreenModule> getClientScreenModules() {
+        if (clientScreenModules == null) {
+            clientScreenModules = new ArrayList<ClientScreenModule>();
             for (ItemStack itemStack : inventoryHelper.getStacks()) {
                 if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
                     ModuleProvider moduleProvider = (ModuleProvider) itemStack.getItem();
@@ -174,12 +186,60 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
                         e.printStackTrace();
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTagCompound());
-                    screenModules.add(clientScreenModule);
+                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
+                    clientScreenModules.add(clientScreenModule);
+                } else {
+                    clientScreenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
+                }
+            }
+
+        }
+        return clientScreenModules;
+    }
+
+    // This is called server side.
+    public List<ScreenModule> getScreenModules() {
+        if (screenModules == null) {
+            screenModules = new ArrayList<ScreenModule>();
+            for (ItemStack itemStack : inventoryHelper.getStacks()) {
+                if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
+                    ModuleProvider moduleProvider = (ModuleProvider) itemStack.getItem();
+                    ScreenModule screenModule;
+                    try {
+                        screenModule = moduleProvider.getServerScreenModule().newInstance();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
+                    screenModules.add(screenModule);
+                } else {
+                    screenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }
             }
 
         }
         return screenModules;
+    }
+
+
+    // This is called server side.
+    public Map<Integer,String> getScreenData() {
+        HashMap<Integer, String> map = new HashMap<Integer, String>();
+        List<ScreenModule> screenModules = getScreenModules();
+        int moduleIndex = 0;
+        for (ScreenModule module : screenModules) {
+            if (module != null) {
+                String data = module.getData();
+                if (data != null) {
+                    map.put(moduleIndex, data);
+                }
+            }
+            moduleIndex++;
+        }
+        return map;
     }
 }

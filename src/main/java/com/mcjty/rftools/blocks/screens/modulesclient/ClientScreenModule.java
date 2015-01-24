@@ -20,9 +20,9 @@ public interface ClientScreenModule {
 
     int getHeight();
 
-    void render(FontRenderer fontRenderer, int currenty);
+    void render(FontRenderer fontRenderer, int currenty, String screenData);
 
     Panel createGui(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged);
 
-    void setupFromNBT(NBTTagCompound tagCompound);
+    void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z);
 }

@@ -27,7 +27,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty) {
+    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         fontRenderer.drawString(line, 7, currenty, color);
     }
@@ -67,7 +67,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             color = tagCompound.getInteger("color");

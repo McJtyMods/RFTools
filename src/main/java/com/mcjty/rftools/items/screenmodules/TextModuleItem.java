@@ -32,7 +32,7 @@ public class TextModuleItem extends Item implements ModuleProvider {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.BLUE + "Text: " + tagCompound.getString("text"));
+            list.add(EnumChatFormatting.YELLOW + "Text: " + tagCompound.getString("text"));
         }
     }
 

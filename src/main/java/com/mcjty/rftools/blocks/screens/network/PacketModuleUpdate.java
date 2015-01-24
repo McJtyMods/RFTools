@@ -1,12 +1,10 @@
-package com.mcjty.rftools.blocks.screens;
+package com.mcjty.rftools.blocks.screens.network;
 
-import com.mcjty.rftools.blocks.crafter.CraftingRecipe;
-import com.mcjty.rftools.network.NetworkTools;
+import com.mcjty.rftools.blocks.screens.SimpleScreenTileEntity;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;

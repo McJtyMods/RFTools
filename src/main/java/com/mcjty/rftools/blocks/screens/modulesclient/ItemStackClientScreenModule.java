@@ -31,11 +31,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty) {
+    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
         short short1 = 240;
         short short2 = 240;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableGUIStandardItemLighting();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
         ItemStack itm = new ItemStack(Blocks.cobblestone, 32);
         int x = 20;
@@ -64,7 +64,7 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
 
     }
 }

@@ -7,6 +7,7 @@ import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.rftools.blocks.screens.ModuleGuiChanged;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -16,6 +17,8 @@ import org.lwjgl.opengl.GL11;
 public class EnergyBarClientScreenModule implements ClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
+    private int dim = 0;
+    private Coordinate coordinate = Coordinate.INVALID;
 
     @Override
     public TransformMode getTransformMode() {
@@ -28,13 +31,38 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty) {
+    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty, color);
         }
 
-        RenderHelper.drawHorizontalGradientRect(7 + 40, currenty+1, 7 + 120, currenty + 8, 0xffff0000, 0xff333300);
+        if (coordinate.isValid()) {
+            int energy;
+            int maxEnergy;
+            if (screenData == null) {
+                energy = 0;
+                maxEnergy = 0;
+            } else {
+                int i = screenData.indexOf('/');
+                energy = Integer.parseInt(screenData.substring(0, i));
+                maxEnergy = Integer.parseInt(screenData.substring(i+1));
+            }
+
+            if (maxEnergy > 0) {
+                int width = 80;
+                int value = energy * width / maxEnergy;
+                if (value < 0) {
+                    value = 0;
+                } else if (value > width) {
+                    value = width;
+                }
+                RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, 7 + 40 + value, currenty + 8, 0xffff0000, 0xff333300);
+                fontRenderer.drawString(energy + "RF", 7 + 40, currenty, 0xffffff);
+            }
+        } else {
+            fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
+        }
     }
 
     @Override
@@ -72,10 +100,23 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             color = tagCompound.getInteger("color");
+            coordinate = Coordinate.INVALID;
+            if (tagCompound.hasKey("monitorx")) {
+                this.dim = tagCompound.getInteger("dim");
+                if (dim == this.dim) {
+                    Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                    int dx = Math.abs(c.getX() - x);
+                    int dy = Math.abs(c.getY() - y);
+                    int dz = Math.abs(c.getZ() - z);
+                    if (dx <= 16 && dy <= 16 && dz <= 16) {
+                        coordinate = c;
+                    }
+                }
+            }
         }
     }
 }

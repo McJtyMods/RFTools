@@ -53,7 +53,7 @@ public class BlockInfo {
         }
     }
 
-    private static String getReadableName(Block block, int metadata) {
+    public static String getReadableName(Block block, int metadata) {
         ItemStack s = new ItemStack(block, 1, metadata);
         String displayName;
         if (s.getItem() == null) {
