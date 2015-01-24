@@ -6,6 +6,7 @@ import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.gui.widgets.ToggleButton;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
@@ -14,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.Map;
 
 public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     public static final int SCREEN_WIDTH = 256;
@@ -23,7 +23,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screen.png");
 
     private Panel toplevel;
-    private Button buttons[] = new Button[7];
+    private ToggleButton buttons[] = new ToggleButton[7];
     private Panel modulePanels[] = new Panel[7];
     private ClientScreenModule[] clientScreenModules = new ClientScreenModule[7];
 
@@ -43,7 +43,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         for (int i = 0 ; i < 7 ; i++) {
-            buttons[i] = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i*18 + 1, 55, 16)).setEnabled(false).setColor(0xff000000);
+            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i*18 + 1, 55, 16)).setEnabled(false);
             final int finalI = i;
             buttons[i].addButtonEvent(new ButtonEvent() {
                 @Override
@@ -64,7 +64,11 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     }
 
     private void selectPanel(int i) {
-        selected = i;
+        if (buttons[i].isPressed()) {
+            selected = i;
+        } else {
+            selected = -1;
+        }
     }
 
     private void refreshButtons() {
@@ -116,7 +120,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
             }
             if (modulePanels[i] != null) {
                 modulePanels[i].setVisible(selected == i);
-                buttons[i].setColor(selected == i ? 0xffffffff : 0xff000000);
+                buttons[i].setPressed(selected == i);
             }
         }
     }
