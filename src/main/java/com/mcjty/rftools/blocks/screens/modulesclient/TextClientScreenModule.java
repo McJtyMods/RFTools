@@ -10,19 +10,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
+import org.lwjgl.opengl.GL11;
 
 public class TextClientScreenModule implements ClientScreenModule {
-    private String line;
+    private String line = "";
     private int color = 0xffffff;
-
-    public TextClientScreenModule() {
-        line = "";
-    }
-
-    public TextClientScreenModule color(int color) {
-        this.color = color;
-        return this;
-    }
 
     @Override
     public TransformMode getTransformMode() {
@@ -36,6 +28,7 @@ public class TextClientScreenModule implements ClientScreenModule {
 
     @Override
     public void render(FontRenderer fontRenderer, int currenty) {
+        GL11.glDisable(GL11.GL_LIGHTING);
         fontRenderer.drawString(line, 7, currenty, color);
     }
 
