@@ -46,7 +46,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(18).addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(16).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 currentData.setString("text", newText);
@@ -54,7 +54,7 @@ public class TextClientScreenModule implements ClientScreenModule {
             }
         });
         panel.addChild(textField);
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(16).addChoiceEvent(new ColorChoiceEvent() {
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger("color", newColor);
@@ -66,7 +66,7 @@ public class TextClientScreenModule implements ClientScreenModule {
             textField.setText(currentData.getString("text"));
             int currentColor = currentData.getInteger("color");
             if (currentColor != 0) {
-                colorSelector.setColor(currentColor);
+                colorSelector.setCurrentColor(currentColor);
             }
         }
 

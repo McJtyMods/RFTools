@@ -44,7 +44,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         for (int i = 0 ; i < 7 ; i++) {
-            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 55, 16)).setEnabled(false);
+            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 60, 16)).setEnabled(false);
             final int finalI = i;
             buttons[i].addButtonEvent(new ButtonEvent() {
                 @Override
@@ -130,7 +130,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
                 PacketHandler.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
             }
         });
-        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 140, 130));
+        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 164, 130));
         toplevel.addChild(modulePanels[i]);
         buttons[i].setText(moduleProvider.getName());
     }

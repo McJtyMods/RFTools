@@ -35,7 +35,7 @@ public class ColorChoiceLabel extends Label<ColorChoiceLabel> {
         return this;
     }
 
-    public ColorChoiceLabel setColor(Integer color) {
+    public ColorChoiceLabel setCurrentColor(Integer color) {
         currentColor = color;
         return this;
     }
