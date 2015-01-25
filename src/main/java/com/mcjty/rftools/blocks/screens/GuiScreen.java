@@ -24,9 +24,9 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screen.png");
 
     private Panel toplevel;
-    private ToggleButton buttons[] = new ToggleButton[7];
-    private Panel modulePanels[] = new Panel[7];
-    private ClientScreenModule[] clientScreenModules = new ClientScreenModule[7];
+    private ToggleButton buttons[] = new ToggleButton[ScreenContainer.SCREEN_MODULES];
+    private Panel modulePanels[] = new Panel[ScreenContainer.SCREEN_MODULES];
+    private ClientScreenModule[] clientScreenModules = new ClientScreenModule[ScreenContainer.SCREEN_MODULES];
 
     private int selected = -1;
 
@@ -43,8 +43,8 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
 
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        for (int i = 0 ; i < 7 ; i++) {
-            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 60, 16)).setEnabled(false);
+        for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
+            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false);
             final int finalI = i;
             buttons[i].addButtonEvent(new ButtonEvent() {
                 @Override
@@ -73,7 +73,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
     }
 
     private void refreshButtons() {
-        for (int i = 0 ; i < 7 ; i++) {
+        for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
             final ItemStack slot = tileEntity.getStackInSlot(i);
             if (slot != null && slot.getItem() != null && slot.getItem() instanceof ModuleProvider) {
                 ModuleProvider moduleProvider = (ModuleProvider) slot.getItem();
@@ -130,17 +130,13 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
                 PacketHandler.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
             }
         });
-        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 164, 130));
+        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(70, 7, 184, 130));
         toplevel.addChild(modulePanels[i]);
         buttons[i].setText(moduleProvider.getName());
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-//        sendServerCommand(SimpleScreenTileEntity.CMD_SETTINGS,
-//                new Argument("on", Integer.parseInt(onEnergy.getText())),
-//                new Argument("off", Integer.parseInt(offEnergy.getText())));
-
         refreshButtons();
         window.draw();
     }

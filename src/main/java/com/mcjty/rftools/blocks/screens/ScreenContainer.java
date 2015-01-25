@@ -10,12 +10,12 @@ public class ScreenContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
     public static final int SLOT_MODULES = 0;
-    public static final int BUFFER_SIZE = 7;
+    public static final int SCREEN_MODULES = 11;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULES, 7, 7, 1, 18, 7, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULES, 7, 7, 1, 18, SCREEN_MODULES, 18);
             layoutPlayerInventorySlots(85, 142);
         }
     };
