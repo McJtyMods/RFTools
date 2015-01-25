@@ -14,6 +14,7 @@ item.TextModule.name=Text Module
 item.EnergyModule.name=Energy Module
 item.DimensionModule.name=Dimension Module
 item.InventoryModule.name=Inventory Module
+item.ClockModule.name=Clock Module
 
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>

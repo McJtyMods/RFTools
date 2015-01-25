@@ -7,10 +7,7 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
-import com.mcjty.rftools.items.screenmodules.DimensionModuleItem;
-import com.mcjty.rftools.items.screenmodules.EnergyModuleItem;
-import com.mcjty.rftools.items.screenmodules.InventoryModuleItem;
-import com.mcjty.rftools.items.screenmodules.TextModuleItem;
+import com.mcjty.rftools.items.screenmodules.*;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -33,6 +30,7 @@ public final class ModItems {
     public static EnergyModuleItem energyModuleItem;
     public static DimensionModuleItem dimensionModuleItem;
     public static InventoryModuleItem inventoryModuleItem;
+    public static ClockModuleItem clockModuleItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -93,6 +91,12 @@ public final class ModItems {
         dimensionModuleItem.setCreativeTab(RFTools.tabRfTools);
         dimensionModuleItem.setTextureName(RFTools.MODID + ":dimensionModuleItem");
         GameRegistry.registerItem(dimensionModuleItem, "dimensionModuleItem");
+
+        clockModuleItem = new ClockModuleItem();
+        clockModuleItem.setUnlocalizedName("ClockModule");
+        clockModuleItem.setCreativeTab(RFTools.tabRfTools);
+        clockModuleItem.setTextureName(RFTools.MODID + ":clockModuleItem");
+        GameRegistry.registerItem(clockModuleItem, "clockModuleItem");
     }
 
     private static void initDimensionItems() {
