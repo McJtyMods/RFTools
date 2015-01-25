@@ -69,7 +69,7 @@ public class ClockClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 currentData.setString("text", newText);
@@ -85,7 +85,7 @@ public class ClockClientScreenModule implements ClientScreenModule {
             }
         });
 
-        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large");
+        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large").setTooltips("Large or small font");
         largeButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {

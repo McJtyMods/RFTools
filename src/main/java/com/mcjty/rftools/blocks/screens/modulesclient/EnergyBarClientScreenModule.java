@@ -79,7 +79,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 currentData.setString("text", newText);
@@ -110,7 +110,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
-        final ToggleButton barButton = new ToggleButton(mc, gui).setText("Bar");
+        final ToggleButton barButton = new ToggleButton(mc, gui).setText("Bar").setTooltips("Toggle visibility of the", "energy bar");
         barButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
@@ -120,7 +120,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(barButton);
 
-        final ToggleButton textButton = new ToggleButton(mc, gui).setText("Text");
+        final ToggleButton textButton = new ToggleButton(mc, gui).setText("Text").setTooltips("Toggle visibility of the", "energy text");
         textButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
