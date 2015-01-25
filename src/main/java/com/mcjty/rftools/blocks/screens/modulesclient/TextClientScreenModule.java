@@ -70,7 +70,11 @@ public class TextClientScreenModule implements ClientScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            color = tagCompound.getInteger("color");
+            if (tagCompound.hasKey("color")) {
+                color = tagCompound.getInteger("color");
+            } else {
+                color = 0xffffff;
+            }
         }
     }
 
