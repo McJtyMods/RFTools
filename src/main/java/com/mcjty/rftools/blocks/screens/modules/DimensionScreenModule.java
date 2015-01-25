@@ -20,4 +20,9 @@ public class DimensionScreenModule implements ScreenModule {
             this.dim = tagCompound.getInteger("dim");
         }
     }
+
+    @Override
+    public int getRfPerTick() {
+        return 6;
+    }
 }

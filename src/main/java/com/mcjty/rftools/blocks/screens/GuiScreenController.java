@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.rftools.RFTools;
@@ -36,9 +37,22 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         energyBar.setValue(tileEntity.getCurrentRF());
 
         Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Find all nearby screens", "and connect to them").setLayoutHint(new PositionalLayout.PositionalHint(30, 7, 50, 14));
+        scanButton.addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                sendServerCommand(ScreenControllerTileEntity.CMD_SCAN);
+            }
+        });
         Button detachButton = new Button(mc, this).setText("Detach").setTooltips("Detach from all screens").setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 50, 14));
+        detachButton.addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                sendServerCommand(ScreenControllerTileEntity.CMD_DETACH);
+            }
+        });
         infoLabel = new Label(mc, this);
         infoLabel.setLayoutHint(new PositionalLayout.PositionalHint(30, 25, 140, 14));
+        infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(scanButton).addChild(detachButton).
                 addChild(infoLabel);

@@ -52,21 +52,24 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         renderScreenBoard();
 
-        FontRenderer fontrenderer = this.func_147498_b();
-
-        ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_LIGHTING);
-
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
-        Map<Integer, String> screenData = updateScreenData(tileEntity, screenTileEntity);
+        if (screenTileEntity.isPowerOn()) {
+            FontRenderer fontrenderer = this.func_147498_b();
 
-        List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
-        renderModules(fontrenderer, mode, modules, screenData);
+            ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
+            GL11.glDepthMask(false);
+            GL11.glDisable(GL11.GL_LIGHTING);
 
-        GL11.glDepthMask(true);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+            Map<Integer, String> screenData = updateScreenData(tileEntity, screenTileEntity);
+
+            List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
+            renderModules(fontrenderer, mode, modules, screenData);
+
+            GL11.glDepthMask(true);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        }
         GL11.glPopMatrix();
     }
 

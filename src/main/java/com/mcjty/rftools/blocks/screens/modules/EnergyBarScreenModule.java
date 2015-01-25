@@ -46,4 +46,9 @@ public class EnergyBarScreenModule implements ScreenModule {
         }
 
     }
+
+    @Override
+    public int getRfPerTick() {
+        return 4;
+    }
 }

@@ -12,4 +12,9 @@ public class ClockScreenModule implements ScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
 
     }
+
+    @Override
+    public int getRfPerTick() {
+        return 1;
+    }
 }

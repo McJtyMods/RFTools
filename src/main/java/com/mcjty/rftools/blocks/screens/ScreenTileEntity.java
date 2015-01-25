@@ -33,10 +33,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private List<ClientScreenModule> clientScreenModules = null;
 
     private boolean needsServerData = false;
+    private boolean powerOn = false;         // True if screen is powerOn.
 
     // Cached server screen modules
     private List<ScreenModule> screenModules = null;
 
+    private int totalRfPerTick = 0;     // The total rf per tick for all modules.
 
     @Override
     protected void checkStateClient() {
@@ -130,6 +132,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        powerOn = tagCompound.getBoolean("powerOn");
     }
 
     @Override
@@ -151,6 +154,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setBoolean("powerOn", powerOn);
     }
 
     @Override
@@ -170,6 +174,18 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag("Items", bufferTagList);
+    }
+
+    public void setPower(boolean power) {
+        if (powerOn == power) {
+            return;
+        }
+        powerOn = power;
+        markDirty();
+    }
+
+    public boolean isPowerOn() {
+        return powerOn;
     }
 
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {
@@ -216,9 +232,17 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         return needsServerData;
     }
 
+    public int getTotalRfPerTick() {
+        if (screenModules == null) {
+            getScreenModules();
+        }
+        return totalRfPerTick;
+    }
+
     // This is called server side.
     public List<ScreenModule> getScreenModules() {
         if (screenModules == null) {
+            totalRfPerTick = 0;
             screenModules = new ArrayList<ScreenModule>();
             for (ItemStack itemStack : inventoryHelper.getStacks()) {
                 if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
@@ -235,6 +259,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
                     }
                     screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
                     screenModules.add(screenModule);
+                    totalRfPerTick += screenModule.getRfPerTick();
                 } else {
                     screenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }

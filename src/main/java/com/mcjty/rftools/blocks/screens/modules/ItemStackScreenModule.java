@@ -12,4 +12,9 @@ public class ItemStackScreenModule implements ScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
 
     }
+
+    @Override
+    public int getRfPerTick() {
+        return 0;
+    }
 }

@@ -2,11 +2,22 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.network.Argument;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
+
+    public static final String CMD_SCAN = "scan";
+    public static final String CMD_DETACH = "detach";
+
+    private final List<Coordinate> connectedScreens = new ArrayList<Coordinate>();
+    private int tickCounter = 20;
 
     public ScreenControllerTileEntity() {
         super(ScreenConfiguration.CONTROLLER_MAXENERGY, ScreenConfiguration.CONTROLLER_RECEIVEPERTICK);
@@ -15,6 +26,13 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        int[] xes = tagCompound.getIntArray("screensx");
+        int[] yes = tagCompound.getIntArray("screensy");
+        int[] zes = tagCompound.getIntArray("screensz");
+        connectedScreens.clear();
+        for (int i = 0 ; i < xes.length ; i++) {
+            connectedScreens.add(new Coordinate(xes[i], yes[i], zes[i]));
+        }
     }
 
     @Override
@@ -25,6 +43,18 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        int[] xes = new int[connectedScreens.size()];
+        int[] yes = new int[connectedScreens.size()];
+        int[] zes = new int[connectedScreens.size()];
+        for (int i = 0 ; i < connectedScreens.size() ; i++) {
+            Coordinate c = connectedScreens.get(i);
+            xes[i] = c.getX();
+            yes[i] = c.getY();
+            zes[i] = c.getZ();
+        }
+        tagCompound.setIntArray("screensx", xes);
+        tagCompound.setIntArray("screensy", yes);
+        tagCompound.setIntArray("screensz", zes);
     }
 
     @Override
@@ -33,16 +63,71 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     @Override
+    protected void checkStateServer() {
+        tickCounter--;
+        if (tickCounter > 0) {
+            return;
+        }
+        tickCounter = 20;
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rememberRf = rf;
+        for (Coordinate c : connectedScreens) {
+            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
+                if (rfModule < rf) {
+                    screenTileEntity.setPower(false);
+                } else {
+                    rf -= rfModule;
+                    screenTileEntity.setPower(true);
+                }
+            }
+        }
+        if (rf < rememberRf) {
+            extractEnergy(ForgeDirection.DOWN, rememberRf - rf, false);
+        }
+    }
+
+    private void scan() {
+        connectedScreens.clear();
+        for (int y = yCoord - 16 ; y <= yCoord + 16 ; y++) {
+            if (y >= 0 && y < 256) {
+                for (int x = xCoord - 16; x <= xCoord + 16; x++) {
+                    for (int z = zCoord - 16; z <= zCoord + 16; z++) {
+                        TileEntity te = worldObj.getTileEntity(x, y, z);
+                        if (te instanceof ScreenTileEntity) {
+                            connectedScreens.add(new Coordinate(x, y, z));
+                        }
+                    }
+                }
+            }
+        }
+        markDirty();
+    }
+
+    private void detach() {
+        connectedScreens.clear();
+        markDirty();
+    }
+
+    public List<Coordinate> getConnectedScreens() {
+        return connectedScreens;
+    }
+
+    @Override
     public boolean execute(String command, Map<String, Argument> args) {
         boolean rc = super.execute(command, args);
         if (rc) {
             return true;
         }
-//        if (CMD_SETTINGS.equals(command)) {
-//            setRfOn(args.get("on").getInteger());
-//            setRfOff(args.get("off").getInteger());
-//            return true;
-//        }
+        if (CMD_SCAN.equals(command)) {
+            scan();
+            return true;
+        } else  if (CMD_DETACH.equals(command)) {
+            detach();
+            return true;
+        }
         return false;
     }
 }
