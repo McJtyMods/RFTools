@@ -89,33 +89,37 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         int moduleIndex = 0;
         for (ClientScreenModule module : modules) {
             if (module != null) {
-                if (module.getTransformMode() != mode) {
-                    if (mode != ClientScreenModule.TransformMode.NONE) {
-                        GL11.glPopMatrix();
-                    }
-                    GL11.glPushMatrix();
-                    mode = module.getTransformMode();
+                int height = module.getHeight();
+                // Check if this module has enough room
+                if (currenty + height <= 124) {
+                    if (module.getTransformMode() != mode) {
+                        if (mode != ClientScreenModule.TransformMode.NONE) {
+                            GL11.glPopMatrix();
+                        }
+                        GL11.glPushMatrix();
+                        mode = module.getTransformMode();
 
-                    switch (mode) {
-                        case TEXT:
-                            GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                            f3 = 0.0075F;
-                            GL11.glScalef(f3, -f3, f3);
-                            GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                            break;
-                        case ITEM:
-                            f3 = 0.0075F;
-                            GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                            GL11.glScalef(f3, -f3, -0.0001f);
-                            break;
-                        default:
-                            break;
+                        switch (mode) {
+                            case TEXT:
+                                GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                                f3 = 0.0075F;
+                                GL11.glScalef(f3, -f3, f3);
+                                GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+                                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                                break;
+                            case ITEM:
+                                f3 = 0.0075F;
+                                GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                                GL11.glScalef(f3, -f3, -0.0001f);
+                                break;
+                            default:
+                                break;
+                        }
                     }
+
+                    module.render(fontrenderer, currenty, screenData.get(moduleIndex));
+                    currenty += height;
                 }
-
-                module.render(fontrenderer, currenty, screenData.get(moduleIndex));
-                currenty += module.getHeight();
             }
             moduleIndex++;
         }

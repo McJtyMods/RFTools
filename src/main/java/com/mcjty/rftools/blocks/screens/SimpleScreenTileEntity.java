@@ -76,6 +76,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         clientScreenModules = null;
+        screenModules = null;
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -88,6 +89,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         clientScreenModules = null;
+        screenModules = null;
     }
 
     @Override
@@ -143,6 +145,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
             inventoryHelper.getStacks()[i+ScreenContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
         clientScreenModules = null;
+        screenModules = null;
     }
 
     @Override
@@ -172,6 +175,8 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {
         ItemStack stack = inventoryHelper.getStacks()[slot];
         stack.setTagCompound(tagCompound);
+        screenModules = null;
+        clientScreenModules = null;
         markDirty();
     }
 
