@@ -14,6 +14,7 @@ import com.mcjty.rftools.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
@@ -60,6 +61,7 @@ public class GuiScreen  extends GenericGuiContainer<SimpleScreenTileEntity> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+        Keyboard.enableRepeatEvents(true);
 
         selected = -1;
     }
