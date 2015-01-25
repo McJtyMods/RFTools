@@ -58,7 +58,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
 
-        SimpleScreenTileEntity screenTileEntity = (SimpleScreenTileEntity) tileEntity;
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
         Map<Integer, String> screenData = updateScreenData(tileEntity, screenTileEntity);
 
@@ -70,13 +70,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String> updateScreenData(TileEntity tileEntity, SimpleScreenTileEntity screenTileEntity) {
+    private Map<Integer, String> updateScreenData(TileEntity tileEntity, ScreenTileEntity screenTileEntity) {
         if ((System.currentTimeMillis() - lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             lastTime = System.currentTimeMillis();
             PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
         }
 
-        Map<Integer,String> screenData = SimpleScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        Map<Integer,String> screenData = ScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }

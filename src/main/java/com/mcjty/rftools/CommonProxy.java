@@ -5,6 +5,7 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.endergen.EndergenicConfiguration;
+import com.mcjty.rftools.blocks.screens.ScreenConfiguration;
 import com.mcjty.rftools.blocks.shield.ShieldConfiguration;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
@@ -82,6 +83,7 @@ public class CommonProxy {
             EndergenicConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
             DimletConfiguration.init(cfg);
+            ScreenConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
             DimletRandomizer.initTypeRarity(cfg);
             DimletCosts.initTypeRfCreateCost(cfg);

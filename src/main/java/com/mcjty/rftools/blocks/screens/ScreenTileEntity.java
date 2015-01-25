@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedInventory {
+public class ScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
     public static final String CMD_ = "settings";
 

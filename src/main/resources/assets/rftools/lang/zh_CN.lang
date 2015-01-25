@@ -56,7 +56,8 @@ tile.dimensionEditorBlock.name=Dimension Editor
 tile.dimensionMonitorBlock.name=Dimension Monitor
 tile.machineInfuserBlock.name=Machine Infuser
 tile.activityProbeBlock.name=Activity Probe
-tile.simpleScreenBlock.name=Simple Screen
+tile.screenBlock.name=Screen
+tile.screenControllerBlock.name=Screen Controller
 
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.dimensionalBlankBlock.name=Dimensional Blank Block

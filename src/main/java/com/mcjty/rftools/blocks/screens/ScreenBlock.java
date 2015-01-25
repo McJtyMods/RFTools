@@ -2,8 +2,10 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,15 +15,26 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class SimpleScreenBlock extends GenericContainerBlock {
+public class ScreenBlock extends GenericContainerBlock {
 
-    public SimpleScreenBlock() {
-        super(Material.iron, SimpleScreenTileEntity.class);
+    public ScreenBlock() {
+        super(Material.iron, ScreenTileEntity.class);
         float width = 0.5F;
         float height = 1.0F;
         this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
-        setBlockName("simpleScreenBlock");
+        setBlockName("screenBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
+
+        if (screenTileEntity != null) {
+            BlockTools.emptyInventoryInWorld(world, x, y, z, block, screenTileEntity);
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override
@@ -116,14 +129,14 @@ public class SimpleScreenBlock extends GenericContainerBlock {
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        SimpleScreenTileEntity screenTileEntity = (SimpleScreenTileEntity) tileEntity;
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
         ScreenContainer screenContainer = new ScreenContainer(entityPlayer, screenTileEntity);
         return new GuiScreen(screenTileEntity, screenContainer);
     }
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new ScreenContainer(entityPlayer, (SimpleScreenTileEntity) tileEntity);
+        return new ScreenContainer(entityPlayer, (ScreenTileEntity) tileEntity);
     }
 
 }

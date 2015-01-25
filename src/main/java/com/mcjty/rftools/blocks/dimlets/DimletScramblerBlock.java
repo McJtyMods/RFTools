@@ -52,9 +52,9 @@ public class DimletScramblerBlock extends GenericContainerBlock implements Infus
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        DimletScramblerTileEntity DimletScramblerTileEntity = (DimletScramblerTileEntity) tileEntity;
-        DimletScramblerContainer DimletScramblerContainer = new DimletScramblerContainer(entityPlayer, DimletScramblerTileEntity);
-        return new GuiDimletScrambler(DimletScramblerTileEntity, DimletScramblerContainer);
+        DimletScramblerTileEntity dimletScramblerTileEntity = (DimletScramblerTileEntity) tileEntity;
+        DimletScramblerContainer dimletScramblerContainer = new DimletScramblerContainer(entityPlayer, dimletScramblerTileEntity);
+        return new GuiDimletScrambler(dimletScramblerTileEntity, dimletScramblerContainer);
     }
 
     @Override

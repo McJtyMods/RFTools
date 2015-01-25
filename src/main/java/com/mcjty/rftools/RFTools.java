@@ -97,6 +97,7 @@ public class RFTools {
     public static final int GUI_DIMENSION_EDITOR = modGuiIndex++;
     public static final int GUI_ITEMFILTER = modGuiIndex++;
     public static final int GUI_SCREEN = modGuiIndex++;
+    public static final int GUI_SCREENCONTROLLER = modGuiIndex++;
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

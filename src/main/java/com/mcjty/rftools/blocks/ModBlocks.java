@@ -16,8 +16,10 @@ import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
 import com.mcjty.rftools.blocks.relay.RelayTileEntity;
-import com.mcjty.rftools.blocks.screens.SimpleScreenBlock;
-import com.mcjty.rftools.blocks.screens.SimpleScreenTileEntity;
+import com.mcjty.rftools.blocks.screens.ScreenControllerBlock;
+import com.mcjty.rftools.blocks.screens.ScreenControllerTileEntity;
+import com.mcjty.rftools.blocks.screens.ScreenBlock;
+import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
 import com.mcjty.rftools.blocks.shards.*;
 import com.mcjty.rftools.blocks.shield.*;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
@@ -87,7 +89,8 @@ public final class ModBlocks {
     public static DimensionalPattern2Block dimensionalPattern2Block;
     public static ActivityProbeBlock activityProbeBlock;
 
-    public static SimpleScreenBlock simpleScreenBlock;
+    public static ScreenBlock screenBlock;
+    public static ScreenControllerBlock screenControllerBlock;
 
     public static void init() {
         monitorBlock = new RFMonitorBlock();
@@ -112,9 +115,13 @@ public final class ModBlocks {
         GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
 
-        simpleScreenBlock = new SimpleScreenBlock();
-        GameRegistry.registerBlock(simpleScreenBlock, GenericItemBlock.class, "simpleScreenBlock");
-        GameRegistry.registerTileEntity(SimpleScreenTileEntity.class, "SimpleScreenTileEntity");
+        screenBlock = new ScreenBlock();
+        GameRegistry.registerBlock(screenBlock, GenericItemBlock.class, "screenBlock");
+        GameRegistry.registerTileEntity(ScreenTileEntity.class, "ScreenTileEntity");
+
+        screenControllerBlock = new ScreenControllerBlock();
+        GameRegistry.registerBlock(screenControllerBlock, GenericItemBlock.class, "screenControllerBlock");
+        GameRegistry.registerTileEntity(ScreenControllerTileEntity.class, "ScreenControllerTileEntity");
 
         initDimletBlocks();
         initTeleporterBlocks();
