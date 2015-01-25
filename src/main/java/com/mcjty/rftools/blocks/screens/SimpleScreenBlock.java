@@ -25,8 +25,8 @@ public class SimpleScreenBlock extends GenericContainerBlock {
     }
 
     @Override
-    public String getIdentifyingIconName() {
-        return "machineSide";
+    public String getSideIconName() {
+        return "screenFrame_icon";
     }
 
     /**

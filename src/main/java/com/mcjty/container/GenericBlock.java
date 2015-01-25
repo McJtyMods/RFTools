@@ -303,10 +303,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         if (getIdentifyingIconName() != null) {
             iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + getIdentifyingIconName());
         }
+        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
+    }
+
+    public String getSideIconName() {
         if (creative) {
-            iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSideC");
+            return "machineSideC";
         } else {
-            iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+            return "machineSide";
         }
     }
 
