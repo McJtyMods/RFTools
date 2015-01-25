@@ -45,7 +45,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
-            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false);
+            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false).setTooltips("Open the gui for this", "module");
             final int finalI = i;
             buttons[i].addButtonEvent(new ButtonEvent() {
                 @Override
