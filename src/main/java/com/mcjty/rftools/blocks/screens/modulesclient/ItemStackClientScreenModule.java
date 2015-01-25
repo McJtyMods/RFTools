@@ -67,4 +67,9 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
 
     }
+
+    @Override
+    public boolean needsServerData() {
+        return true;
+    }
 }

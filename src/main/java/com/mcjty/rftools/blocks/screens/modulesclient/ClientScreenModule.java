@@ -25,4 +25,7 @@ public interface ClientScreenModule {
     Panel createGui(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged);
 
     void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z);
+
+    // Return true if this module needs server data.
+    boolean needsServerData();
 }

@@ -119,4 +119,9 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
             }
         }
     }
+
+    @Override
+    public boolean needsServerData() {
+        return true;
+    }
 }

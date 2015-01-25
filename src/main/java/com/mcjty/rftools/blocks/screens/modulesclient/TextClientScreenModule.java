@@ -73,4 +73,9 @@ public class TextClientScreenModule implements ClientScreenModule {
             color = tagCompound.getInteger("color");
         }
     }
+
+    @Override
+    public boolean needsServerData() {
+        return false;
+    }
 }

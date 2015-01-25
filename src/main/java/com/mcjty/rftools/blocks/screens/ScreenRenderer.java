@@ -1,7 +1,7 @@
 package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.screens.modulesclient.*;
+import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import com.mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.varia.Coordinate;
@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,16 +28,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
-        if (System.currentTimeMillis() - lastTime > 500) {
-            lastTime = System.currentTimeMillis();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
-        }
-
-        Map<Integer,String> screenData = SimpleScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
-        if (screenData == null) {
-            screenData = new HashMap<Integer, String>();
-        }
-
         GL11.glPushMatrix();
         float f3;
 
@@ -68,7 +58,33 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
 
-        List<ClientScreenModule> modules = ((SimpleScreenTileEntity)tileEntity).getClientScreenModules();
+        SimpleScreenTileEntity screenTileEntity = (SimpleScreenTileEntity) tileEntity;
+
+        Map<Integer, String> screenData = updateScreenData(tileEntity, screenTileEntity);
+
+        List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
+        renderModules(fontrenderer, mode, modules, screenData);
+
+        GL11.glDepthMask(true);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glPopMatrix();
+    }
+
+    private Map<Integer, String> updateScreenData(TileEntity tileEntity, SimpleScreenTileEntity screenTileEntity) {
+        if ((System.currentTimeMillis() - lastTime > 500) && screenTileEntity.isNeedsServerData()) {
+            lastTime = System.currentTimeMillis();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        }
+
+        Map<Integer,String> screenData = SimpleScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        if (screenData == null) {
+            screenData = Collections.EMPTY_MAP;
+        }
+        return screenData;
+    }
+
+    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String> screenData) {
+        float f3;
         int currenty = 7;
         int moduleIndex = 0;
         for (ClientScreenModule module : modules) {
@@ -107,10 +123,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         if (mode != ClientScreenModule.TransformMode.NONE) {
             GL11.glPopMatrix();
         }
-
-        GL11.glDepthMask(true);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glPopMatrix();
     }
 
     private void renderScreenBoard() {

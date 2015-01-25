@@ -25,12 +25,18 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.BUFFER_SIZE);
 
-    private List<ClientScreenModule> clientScreenModules = null;
-    private List<ScreenModule> screenModules = null;
-
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
     @SideOnly(Side.CLIENT)
     public static Map<Coordinate,Map<Integer,String>> screenData = new HashMap<Coordinate, Map<Integer, String>>();
+
+    // Cached client screen modules
+    private List<ClientScreenModule> clientScreenModules = null;
+
+    private boolean needsServerData = false;
+
+    // Cached server screen modules
+    private List<ScreenModule> screenModules = null;
+
 
     @Override
     protected void checkStateClient() {
@@ -172,6 +178,7 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
     // This is called client side.
     public List<ClientScreenModule> getClientScreenModules() {
         if (clientScreenModules == null) {
+            needsServerData = false;
             clientScreenModules = new ArrayList<ClientScreenModule>();
             for (ItemStack itemStack : inventoryHelper.getStacks()) {
                 if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
@@ -188,6 +195,9 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
                     }
                     clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
                     clientScreenModules.add(clientScreenModule);
+                    if (clientScreenModule.needsServerData()) {
+                        needsServerData = true;
+                    }
                 } else {
                     clientScreenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }
@@ -195,6 +205,10 @@ public class SimpleScreenTileEntity extends GenericTileEntity implements ISidedI
 
         }
         return clientScreenModules;
+    }
+
+    public boolean isNeedsServerData() {
+        return needsServerData;
     }
 
     // This is called server side.
