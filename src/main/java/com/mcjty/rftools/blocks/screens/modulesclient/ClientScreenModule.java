@@ -13,6 +13,7 @@ public interface ClientScreenModule {
     public enum TransformMode {
         NONE,
         TEXT,
+        TEXTLARGE,
         ITEM
     }
 

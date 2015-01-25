@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -15,15 +16,16 @@ import org.lwjgl.opengl.GL11;
 public class ClockClientScreenModule implements ClientScreenModule {
     private int color = 0xffffff;
     private String line = "";
+    private boolean large = false;
 
     @Override
     public TransformMode getTransformMode() {
-        return TransformMode.TEXT;
+        return large ? TransformMode.TEXTLARGE : TransformMode.TEXT;
     }
 
     @Override
     public int getHeight() {
-        return 10;
+        return large ? 20 : 10;
     }
 
     @Override
@@ -57,7 +59,11 @@ public class ClockClientScreenModule implements ClientScreenModule {
             timeString += Integer.toString(minutes);
         }
 
-        fontRenderer.drawString(line + " " + timeString, 7, currenty, color);
+        if (large) {
+            fontRenderer.drawString(line + " " + timeString, 4, currenty / 2 + 1, color);
+        } else {
+            fontRenderer.drawString(line + " " + timeString, 7, currenty, color);
+        }
     }
 
     @Override
@@ -79,12 +85,23 @@ public class ClockClientScreenModule implements ClientScreenModule {
             }
         });
 
+        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large");
+        largeButton.addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                currentData.setBoolean("large", largeButton.isPressed());
+                moduleGuiChanged.updateData();
+            }
+        });
+        panel.addChild(largeButton);
+
         if (currentData != null) {
             textField.setText(currentData.getString("text"));
             int currentColor = currentData.getInteger("color");
             if (currentColor != 0) {
                 colorSelector.setCurrentColor(currentColor);
             }
+            largeButton.setPressed(currentData.getBoolean("large"));
         }
 
         panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
@@ -103,6 +120,7 @@ public class ClockClientScreenModule implements ClientScreenModule {
             } else {
                 color = 0xffffff;
             }
+            large = tagCompound.getBoolean("large");
         }
     }
 
