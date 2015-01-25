@@ -12,6 +12,7 @@ item.DimensionalShard.name=Dimensional Shard
 item.DimletTemplate.name=Dimlet Template
 item.TextModule.name=Text Module
 item.EnergyModule.name=Energy Module
+item.DimensionModule.name=Dimension Module
 item.InventoryModule.name=Inventory Module
 
 tile.crafterBlock1.name=自动合成机<1级>

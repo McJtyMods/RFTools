@@ -7,6 +7,7 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import com.mcjty.rftools.items.screenmodules.DimensionModuleItem;
 import com.mcjty.rftools.items.screenmodules.EnergyModuleItem;
 import com.mcjty.rftools.items.screenmodules.InventoryModuleItem;
 import com.mcjty.rftools.items.screenmodules.TextModuleItem;
@@ -30,6 +31,7 @@ public final class ModItems {
 
     public static TextModuleItem textModuleItem;
     public static EnergyModuleItem energyModuleItem;
+    public static DimensionModuleItem dimensionModuleItem;
     public static InventoryModuleItem inventoryModuleItem;
 
     public static void init() {
@@ -85,6 +87,12 @@ public final class ModItems {
         energyModuleItem.setCreativeTab(RFTools.tabRfTools);
         energyModuleItem.setTextureName(RFTools.MODID + ":energyModuleItem");
         GameRegistry.registerItem(energyModuleItem, "energyModuleItem");
+
+        dimensionModuleItem = new DimensionModuleItem();
+        dimensionModuleItem.setUnlocalizedName("DimensionModule");
+        dimensionModuleItem.setCreativeTab(RFTools.tabRfTools);
+        dimensionModuleItem.setTextureName(RFTools.MODID + ":dimensionModuleItem");
+        GameRegistry.registerItem(dimensionModuleItem, "dimensionModuleItem");
     }
 
     private static void initDimensionItems() {

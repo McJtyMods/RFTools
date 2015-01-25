@@ -33,6 +33,6 @@ public class InventoryModuleItem extends Item implements ModuleProvider {
 
     @Override
     public String getName() {
-        return "Inventory";
+        return "Inv";
     }
 }
