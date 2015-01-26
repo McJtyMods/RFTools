@@ -5,8 +5,6 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import com.mcjty.varia.Coordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -26,7 +24,6 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
-    @SideOnly(Side.CLIENT)
     public static Map<Coordinate,Map<Integer,String>> screenData = new HashMap<Coordinate, Map<Integer, String>>();
 
     // Cached client screen modules
