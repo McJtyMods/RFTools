@@ -8,7 +8,6 @@ import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -142,7 +141,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         String monitoring;
         if (currentData.hasKey("monitorx")) {
             int dim = currentData.getInteger("dim");
-            World world = RfToolsDimensionManager.getWorldForDimension(dim);
+            World world = mc.thePlayer.worldObj;
             int x = currentData.getInteger("monitorx");
             int y = currentData.getInteger("monitory");
             int z = currentData.getInteger("monitorz");
