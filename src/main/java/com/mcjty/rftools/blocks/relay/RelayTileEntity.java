@@ -1,9 +1,10 @@
 package com.mcjty.rftools.blocks.relay;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyConnection;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
+import com.mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -48,10 +49,10 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
         for (int i = 0 ; i < 6 ; i++) {
             ForgeDirection dir = ForgeDirection.getOrientation(i);
             TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
-            if (te instanceof IEnergyHandler) {
-                IEnergyHandler handler = (IEnergyHandler) te;
+            if (EnergyTools.isEnergyTE(te)) {
+                IEnergyConnection connection = (IEnergyConnection) te;
                 ForgeDirection opposite = dir.getOpposite();
-                if (handler.canConnectEnergy(opposite)) {
+                if (connection.canConnectEnergy(opposite)) {
                     int rfToGive;
                     if (rf <= energyStored) {
                         rfToGive = rf;
@@ -59,7 +60,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
                         rfToGive = energyStored;
                     }
 
-                    int received = handler.receiveEnergy(opposite, rfToGive, false);
+                    int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     energyStored -= extractEnergy(ForgeDirection.DOWN, received, false);
                     if (energyStored <= 0) {
                         return;

@@ -1,6 +1,6 @@
 package com.mcjty.rftools.blocks.endergen;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyConnection;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
@@ -8,6 +8,7 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -228,10 +229,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             int y = yCoord + dir.offsetY;
             int z = zCoord + dir.offsetZ;
             TileEntity te = worldObj.getTileEntity(x, y, z);
-            if (te instanceof IEnergyHandler) {
-                IEnergyHandler handler = (IEnergyHandler) te;
+            if (EnergyTools.isEnergyTE(te)) {
+                IEnergyConnection connection = (IEnergyConnection) te;
                 ForgeDirection opposite = dir.getOpposite();
-                if (handler.canConnectEnergy(opposite)) {
+                if (connection.canConnectEnergy(opposite)) {
                     int rfToGive;
                     if (EndergenicConfiguration.rfOutput <= energyStored) {
                         rfToGive = EndergenicConfiguration.rfOutput;
@@ -239,7 +240,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                         rfToGive = energyStored;
                     }
 
-                    int received = handler.receiveEnergy(opposite, rfToGive, false);
+                    int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     energyStored -= extractEnergy(ForgeDirection.DOWN, received, false);
                     if (energyStored <= 0) {
                         break;

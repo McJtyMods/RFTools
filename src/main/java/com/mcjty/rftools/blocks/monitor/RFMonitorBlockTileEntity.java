@@ -1,14 +1,13 @@
 package com.mcjty.rftools.blocks.monitor;
 
-import cofh.api.energy.IEnergyHandler;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +110,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
                         if (dx != 0 || dy != 0 || dz != 0) {
                             TileEntity tileEntity = worldObj.getTileEntity(xx, yy, zz);
                             if (tileEntity != null) {
-                                if (tileEntity instanceof IEnergyHandler) {
+                                if (EnergyTools.isEnergyTE(tileEntity)) {
                                     adjacentBlocks.add(new Coordinate(xx, yy, zz));
                                 }
                             }
@@ -137,17 +136,17 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
         counter = 20;
 
         TileEntity tileEntity = worldObj.getTileEntity(monitorX, monitorY, monitorZ);
-        if (!(tileEntity instanceof IEnergyHandler)) {
+        if (!EnergyTools.isEnergyTE(tileEntity)) {
             setInvalid();
             return;
         }
-        IEnergyHandler handler = (IEnergyHandler) tileEntity;
-        int maxEnergy = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+        EnergyTools.EnergyLevel energy = EnergyTools.getEnergyLevel(tileEntity);
+        int maxEnergy = energy.getMaxEnergy();
         int ratio = 0;  // Will be set as metadata;
         boolean alarm = false;
 
         if (maxEnergy > 0) {
-            int stored = handler.getEnergyStored(ForgeDirection.DOWN);
+            int stored = energy.getEnergy();
             ratio = 1 + (stored * 5) / maxEnergy;
             if (ratio < 1) {
                 ratio = 1;

@@ -1,12 +1,11 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
-import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnergyBarScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
@@ -20,11 +19,12 @@ public class EnergyBarScreenModule implements ScreenModule {
             return null;
         }
         TileEntity te = world.getTileEntity(coordinate.getX(), coordinate.getY(), coordinate.getZ());
-        if (!(te instanceof IEnergyHandler)) {
+        if (!EnergyTools.isEnergyTE(te)) {
             return null;
         }
-        int energy = ((IEnergyHandler)te).getEnergyStored(ForgeDirection.DOWN);
-        int maxEnergy = ((IEnergyHandler)te).getMaxEnergyStored(ForgeDirection.DOWN);
+        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(te);
+        int energy = energyLevel.getEnergy();
+        int maxEnergy = energyLevel.getMaxEnergy();
         return energy + "/" + maxEnergy;
     }
 

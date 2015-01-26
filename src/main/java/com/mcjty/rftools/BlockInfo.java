@@ -1,20 +1,19 @@
 package com.mcjty.rftools;
 
-import cofh.api.energy.IEnergyHandler;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
 
 public class BlockInfo {
     private Coordinate coordinate;
-    int energyStored;
-    int maxEnergyStored;
+    private int energyStored;
+    private int maxEnergyStored;
 
     public BlockInfo(TileEntity tileEntity, Coordinate coordinate) {
         this.coordinate = coordinate;
@@ -83,15 +82,9 @@ public class BlockInfo {
     }
 
     private void fetchEnergyValues(TileEntity tileEntity) {
-        try {
-            IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
-        } catch (ClassCastException e) {
-            // Not an energy handler. Just ignore
-            maxEnergyStored = 0;
-            energyStored = 0;
-        }
+        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(tileEntity);
+        maxEnergyStored = energyLevel.getMaxEnergy();
+        energyStored = energyLevel.getEnergy();
     }
 
     public int getEnergyStored() {

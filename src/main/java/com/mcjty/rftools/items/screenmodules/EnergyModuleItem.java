@@ -1,15 +1,13 @@
 package com.mcjty.rftools.items.screenmodules;
 
-import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.screens.ModuleProvider;
 import com.mcjty.rftools.blocks.screens.modules.EnergyBarScreenModule;
 import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
-import com.mcjty.rftools.blocks.screens.modules.TextScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.EnergyBarClientScreenModule;
-import com.mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
+import com.mcjty.varia.EnergyTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -74,7 +72,7 @@ public class EnergyModuleItem extends Item implements ModuleProvider {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (te instanceof IEnergyHandler) {
+        if (EnergyTools.isEnergyTE(te)) {
             tagCompound.setInteger("dim", world.provider.dimensionId);
             tagCompound.setInteger("monitorx", x);
             tagCompound.setInteger("monitory", y);

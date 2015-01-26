@@ -1,13 +1,12 @@
 package com.mcjty.rftools.items.netmonitor;
 
-import cofh.api.energy.IEnergyHandler;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.EnergyTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -108,7 +107,7 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
         }
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
-            if (tileEntity instanceof IEnergyHandler) {
+            if (EnergyTools.isEnergyTE(tileEntity)) {
                 connectedBlocks.put(c, new BlockInfo(tileEntity, c));
                 findConnectedBlocks(connectedBlocks, world, x + 1, y, z);
                 findConnectedBlocks(connectedBlocks, world, x - 1, y, z);
