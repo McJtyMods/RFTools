@@ -89,6 +89,19 @@ public final class ModCrafting {
         ItemStack bonemealStack = new ItemStack(Items.dye, 1, 15);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionalPattern2Block, 7), "bxb", "bbb", "bxb", 'b', ModBlocks.dimensionalBlankBlock, 'x', bonemealStack);
 
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.screenControllerBlock), "ror", "gMg", "rgr", 'r', Items.redstone, 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
+                'g', Blocks.glass);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
+                'g', Blocks.glass, 'i', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(ModItems.textModuleItem), " p ", "rir", " b ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.clockModuleItem), " c ", "rir", " b ", 'c', Items.clock, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.energyModuleItem), " r ", "rir", " b ", 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.dimensionModuleItem), " c ", "rir", " b ", 'c', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+
         // Recipes for known dimlets are added in KnownDimletConfiguration.
     }
 }
