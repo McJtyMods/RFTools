@@ -62,7 +62,7 @@ public class RenderHelper {
             GL11.glDisable(GL11.GL_LIGHTING);
             drawVerticalGradientRect(x, y, x+16, y+16, 0x80ffffff, 0xffffffff);
         }
-        if (itm != null) {
+        if (itm != null && itm.getItem() != null) {
             rc = true;
             boolean isRescaleNormalEnabled = GL11.glIsEnabled(GL12.GL_RESCALE_NORMAL);
             GL11.glPushMatrix();
