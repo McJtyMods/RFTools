@@ -20,8 +20,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RfToolsDimensionManager extends WorldSavedData {
     public static final String DIMMANAGER_NAME = "RFToolsDimensionManager";
@@ -30,6 +29,8 @@ public class RfToolsDimensionManager extends WorldSavedData {
     private final Map<Integer, DimensionDescriptor> dimensions = new HashMap<Integer, DimensionDescriptor>();
     private final Map<DimensionDescriptor, Integer> dimensionToID = new HashMap<DimensionDescriptor, Integer>();
     private final Map<Integer, DimensionInformation> dimensionInformation = new HashMap<Integer, DimensionInformation>();
+
+    private final Set<Integer> reclaimedIds = new HashSet<Integer>();
 
     public void syncFromServer(Map<Integer, DimensionDescriptor> dimensions, Map<DimensionDescriptor, Integer> dimensionToID, Map<Integer, DimensionInformation> dimensionInformation) {
         System.out.println("RfToolsDimensionManager.syncFromServer");
@@ -50,6 +51,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             instance.dimensions.clear();
             instance.dimensionToID.clear();
             instance.dimensionInformation.clear();
+            instance.reclaimedIds.clear();
             instance = null;
         }
     }
@@ -66,6 +68,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             instance.getDimensions().clear();
             instance.dimensionToID.clear();
             instance.dimensionInformation.clear();
+            instance.reclaimedIds.clear();
         }
     }
 
@@ -74,6 +77,10 @@ public class RfToolsDimensionManager extends WorldSavedData {
         markDirty();
 
         syncDimInfoToClients(world);
+    }
+
+    public void reclaimId(int id) {
+        reclaimedIds.add(id);
     }
 
     /**
@@ -182,10 +189,26 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.remove(id);
         dimensionToID.remove(descriptor);
         dimensionInformation.remove(id);
+        if (DimensionManager.isDimensionRegistered(id)) {
+            DimensionManager.unregisterDimension(id);
+        }
+        DimensionManager.unregisterProviderType(id);
     }
 
     public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
-        int id = DimensionManager.getNextFreeDimId();
+        int id = 0;
+        while (!reclaimedIds.isEmpty()) {
+            int rid = reclaimedIds.iterator().next();
+            reclaimedIds.remove(rid);
+            if (!DimensionManager.isDimensionRegistered(rid)) {
+                id = rid;
+                break;
+            }
+        }
+        if (id == 0) {
+            id = DimensionManager.getNextFreeDimId();
+        }
+
         registerDimensionToServerAndClient(id);
         RFTools.log("id = " + id + " for " + name + ", descriptor = " + descriptor.getDescriptionString());
 
@@ -221,6 +244,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.clear();
         dimensionToID.clear();
         dimensionInformation.clear();
+        reclaimedIds.clear();
         NBTTagList lst = tagCompound.getTagList("dimensions", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
@@ -232,6 +256,12 @@ public class RfToolsDimensionManager extends WorldSavedData {
             DimensionInformation dimensionInfo = new DimensionInformation(descriptor, tc);
             dimensionInformation.put(id, dimensionInfo);
         }
+
+        int[] lstIds = tagCompound.getIntArray("reclaimedIds");
+        for (int id : lstIds) {
+            reclaimedIds.add(id);
+        }
+
     }
 
     @Override
@@ -249,5 +279,12 @@ public class RfToolsDimensionManager extends WorldSavedData {
             lst.appendTag(tc);
         }
         tagCompound.setTag("dimensions", lst);
+
+        List<Integer> ids = new ArrayList<Integer>(reclaimedIds);
+        int[] lstIds = new int[ids.size()];
+        for (int i = 0 ; i < ids.size() ; i++) {
+            lstIds[i] = ids.get(i);
+        }
+        tagCompound.setIntArray("reclaimedIds", lstIds);
     }
 }
