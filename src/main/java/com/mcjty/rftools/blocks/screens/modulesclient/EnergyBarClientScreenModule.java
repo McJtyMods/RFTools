@@ -87,7 +87,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         });
         panel.addChild(textField);
         ColorChoiceLabel labelColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "color", "Label Color:");
-        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "rfColor", "RF Color:");
+        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "rfcolor", "RF Color:");
         addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
         addMonitorPanel(mc, gui, currentData, panel);
 

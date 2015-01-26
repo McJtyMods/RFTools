@@ -64,7 +64,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
                     } else if (value > width) {
                         value = width;
                     }
-                    RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xff0000ff, 0xff003333);
+                    RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xff0088ff, 0xff003333);
                 }
                 if (!hidetext) {
                     fontRenderer.drawString(contents + "mb", 7 + 40, currenty, mbcolor);
@@ -87,7 +87,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         });
         panel.addChild(textField);
         ColorChoiceLabel labelColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "color", "Label Color:");
-        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "rfColor", "Mb Color:");
+        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "mbcolor", "Mb Color:");
         addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
         addMonitorPanel(mc, gui, currentData, panel);
 
