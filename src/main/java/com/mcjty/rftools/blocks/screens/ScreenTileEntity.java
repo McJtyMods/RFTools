@@ -38,6 +38,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
 
+    public long lastTime = 0;
+
     @Override
     protected void checkStateClient() {
         super.checkStateClient();

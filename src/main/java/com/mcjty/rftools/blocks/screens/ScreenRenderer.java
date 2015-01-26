@@ -24,8 +24,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
     private final ModelScreen screenModel = new ModelScreen();
 
-    private static long lastTime = 0;
-
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
         GL11.glPushMatrix();
@@ -62,7 +60,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
 
 
-            Map<Integer, String> screenData = updateScreenData(tileEntity, screenTileEntity);
+            Map<Integer, String> screenData = updateScreenData(screenTileEntity);
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData);
@@ -74,13 +72,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String> updateScreenData(TileEntity tileEntity, ScreenTileEntity screenTileEntity) {
-        if ((System.currentTimeMillis() - lastTime > 500) && screenTileEntity.isNeedsServerData()) {
-            lastTime = System.currentTimeMillis();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+    private Map<Integer, String> updateScreenData(ScreenTileEntity screenTileEntity) {
+        if ((System.currentTimeMillis() - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
+            screenTileEntity.lastTime = System.currentTimeMillis();
+            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         }
 
-        Map<Integer,String> screenData = ScreenTileEntity.screenData.get(new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        Map<Integer,String> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
