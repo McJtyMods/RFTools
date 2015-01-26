@@ -555,7 +555,7 @@ public class KnownDimletConfiguration {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            RFTools.log("Could not read 'userdimlets.json', this is not an error!");
         }
     }
 
