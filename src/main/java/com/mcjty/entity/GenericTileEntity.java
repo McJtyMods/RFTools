@@ -172,15 +172,15 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         return coordinate;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GenericTileEntity)) return false;
-        return getCoordinate().equals(((GenericTileEntity) o).getCoordinate());
-    }
-
-    @Override
-    public int hashCode() {
-        return getCoordinate().hashCode();
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof GenericTileEntity)) return false;
+//        return getCoordinate().equals(((GenericTileEntity) o).getCoordinate());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return getCoordinate().hashCode();
+//    }
 }

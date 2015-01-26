@@ -19,11 +19,10 @@ import java.util.Map;
 
 public class ScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
-    public static final String CMD_ = "settings";
-
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
+    // @todo dimension in the map!!!
     public static Map<Coordinate,Map<Integer,String>> screenData = new HashMap<Coordinate, Map<Integer, String>>();
 
     // Cached client screen modules
@@ -41,13 +40,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public long lastTime = 0;
 
     @Override
-    protected void checkStateClient() {
-        super.checkStateClient();
-    }
-
-    @Override
-    protected void checkStateServer() {
-        super.checkStateServer();
+    public boolean canUpdate() {
+        return false;
     }
 
     @Override
