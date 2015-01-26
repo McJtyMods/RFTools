@@ -6,6 +6,8 @@ import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -52,7 +54,6 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         });
         infoLabel = new Label(mc, this);
         infoLabel.setLayoutHint(new PositionalLayout.PositionalHint(30, 25, 140, 14));
-        infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(scanButton).addChild(detachButton).
                 addChild(infoLabel);
@@ -68,6 +69,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         window.draw();
 
         energyBar.setValue(tileEntity.getCurrentRF());
+        infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");
 
         tileEntity.requestRfFromServer();
     }

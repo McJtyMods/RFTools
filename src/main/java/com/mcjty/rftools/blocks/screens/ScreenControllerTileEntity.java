@@ -76,7 +76,8 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
             if (te instanceof ScreenTileEntity) {
                 ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
-                if (rfModule < rf) {
+
+                if (rfModule > rf) {
                     screenTileEntity.setPower(false);
                 } else {
                     rf -= rfModule;
@@ -90,25 +91,38 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     private void scan() {
-        connectedScreens.clear();
+        detach();
         for (int y = yCoord - 16 ; y <= yCoord + 16 ; y++) {
             if (y >= 0 && y < 256) {
                 for (int x = xCoord - 16; x <= xCoord + 16; x++) {
                     for (int z = zCoord - 16; z <= zCoord + 16; z++) {
                         TileEntity te = worldObj.getTileEntity(x, y, z);
                         if (te instanceof ScreenTileEntity) {
-                            connectedScreens.add(new Coordinate(x, y, z));
+                            if (!((ScreenTileEntity) te).isConnected()) {
+                                connectedScreens.add(new Coordinate(x, y, z));
+                                ((ScreenTileEntity) te).setConnected(true);
+                            }
                         }
                     }
                 }
             }
         }
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    private void detach() {
+    public void detach() {
+        for (Coordinate c : connectedScreens) {
+            TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+            if (te instanceof ScreenTileEntity) {
+                ((ScreenTileEntity) te).setPower(false);
+                ((ScreenTileEntity) te).setConnected(false);
+            }
+        }
+
         connectedScreens.clear();
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public List<Coordinate> getConnectedScreens() {
@@ -124,7 +138,7 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
         if (CMD_SCAN.equals(command)) {
             scan();
             return true;
-        } else  if (CMD_DETACH.equals(command)) {
+        } else if (CMD_DETACH.equals(command)) {
             detach();
             return true;
         }

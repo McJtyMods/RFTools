@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnergyBarScreenModule implements ScreenModule {
+    public static final int RFPERTICK = 4;
     private int dim = 0;
     private Coordinate coordinate = Coordinate.INVALID;
 
@@ -49,6 +50,6 @@ public class EnergyBarScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return 4;
+        return RFPERTICK;
     }
 }

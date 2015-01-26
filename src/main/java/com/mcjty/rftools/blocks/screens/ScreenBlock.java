@@ -5,15 +5,22 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class ScreenBlock extends GenericContainerBlock {
 
@@ -24,6 +31,26 @@ public class ScreenBlock extends GenericContainerBlock {
         this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
         setBlockName("screenBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            boolean connected = tagCompound.getBoolean("connected");
+            if (connected) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[CONNECTED]");
+            }
+            boolean power = tagCompound.getBoolean("powerOn");
+            if (power) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[POWER]");
+            }
+            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+            currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+        }
+        return currenttip;
     }
 
     @Override

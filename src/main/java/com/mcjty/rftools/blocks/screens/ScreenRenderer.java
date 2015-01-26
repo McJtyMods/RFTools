@@ -67,9 +67,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData);
 
-            GL11.glDepthMask(true);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
+
+        GL11.glDepthMask(true);
         GL11.glPopMatrix();
     }
 

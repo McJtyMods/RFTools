@@ -53,6 +53,7 @@ public class EnergyModuleItem extends Item implements ModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        list.add(EnumChatFormatting.GREEN + "Uses " + EnergyBarScreenModule.RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));

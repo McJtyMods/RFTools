@@ -33,7 +33,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private List<ClientScreenModule> clientScreenModules = null;
 
     private boolean needsServerData = false;
-    private boolean powerOn = false;         // True if screen is powerOn.
+    private boolean powerOn = false;         // True if screen is powered.
+    private boolean connected = false;       // True if screen is connected to a controller.
 
     // Cached server screen modules
     private List<ScreenModule> screenModules = null;
@@ -133,6 +134,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         powerOn = tagCompound.getBoolean("powerOn");
+        connected = tagCompound.getBoolean("connected");
+        totalRfPerTick = tagCompound.getInteger("rfPerTick");
     }
 
     @Override
@@ -155,6 +158,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powerOn", powerOn);
+        tagCompound.setBoolean("connected", connected);
+        tagCompound.setInteger("rfPerTick", totalRfPerTick);
     }
 
     @Override
@@ -182,10 +187,24 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         }
         powerOn = power;
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public boolean isPowerOn() {
         return powerOn;
+    }
+
+    public void setConnected(boolean c) {
+        if (connected == c) {
+            return;
+        }
+        connected = c;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {

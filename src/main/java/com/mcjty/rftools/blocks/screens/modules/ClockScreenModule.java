@@ -3,6 +3,9 @@ package com.mcjty.rftools.blocks.screens.modules;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ClockScreenModule implements ScreenModule {
+
+    public static final int RFPERTICK = 1;
+
     @Override
     public String getData() {
         return null;
@@ -15,6 +18,6 @@ public class ClockScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return 1;
+        return RFPERTICK;
     }
 }

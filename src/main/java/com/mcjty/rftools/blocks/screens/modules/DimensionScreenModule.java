@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
 
 public class DimensionScreenModule implements ScreenModule {
+    public static final int RFPERTICK = 6;
     private int dim = 0;
 
     @Override
@@ -23,6 +24,6 @@ public class DimensionScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return 6;
+        return RFPERTICK;
     }
 }
