@@ -16,7 +16,7 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
 
-    private final List<Coordinate> connectedScreens = new ArrayList<Coordinate>();
+    private List<Coordinate> connectedScreens = new ArrayList<Coordinate>();
     private int tickCounter = 20;
 
     public ScreenControllerTileEntity() {
@@ -71,6 +71,7 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
         tickCounter = 20;
         int rf = getEnergyStored(ForgeDirection.DOWN);
         int rememberRf = rf;
+        boolean fixesAreNeeded = false;
         for (Coordinate c : connectedScreens) {
             TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
             if (te instanceof ScreenTileEntity) {
@@ -83,10 +84,26 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
                     rf -= rfModule;
                     screenTileEntity.setPower(true);
                 }
+            } else {
+                // This coordinate is no longer a valid screen. We need to update.
+                fixesAreNeeded = true;
             }
         }
         if (rf < rememberRf) {
             extractEnergy(ForgeDirection.DOWN, rememberRf - rf, false);
+        }
+
+        if (fixesAreNeeded) {
+            List<Coordinate> newScreens = new ArrayList<Coordinate>();
+            for (Coordinate c : connectedScreens) {
+                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (te instanceof ScreenTileEntity) {
+                    newScreens.add(c);
+                }
+            }
+            connectedScreens = newScreens;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }
 
