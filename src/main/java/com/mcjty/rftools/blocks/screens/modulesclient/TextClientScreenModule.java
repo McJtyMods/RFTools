@@ -32,9 +32,9 @@ public class TextClientScreenModule implements ClientScreenModule {
     public void render(FontRenderer fontRenderer, int currenty, String screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         if (large) {
-            fontRenderer.drawString(line, 4, currenty / 2 + 1, color);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 60), 4, currenty / 2 + 1, color);
         } else {
-            fontRenderer.drawString(line, 7, currenty, color);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 115), 7, currenty, color);
         }
     }
 
