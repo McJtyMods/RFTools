@@ -90,12 +90,12 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
     @Override
     public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
-        if(!(te instanceof CrafterBlockTileEntity3)) {
+        if(!(te instanceof CrafterBaseTE)) {
             // @Todo better logging
             System.out.println("createPowerMonitotPacket: TileEntity is not a CrafterBlockTileEntity!");
             return null;
         }
-        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) te;
+        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;
         if (message.recipeIndex != -1) {
             CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
             recipe.setRecipe(message.items, message.items[9]);

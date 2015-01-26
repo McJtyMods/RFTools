@@ -27,7 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.awt.*;
 
-public class GuiCrafter extends GenericGuiContainer<CrafterBlockTileEntity3> {
+public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
     public static final int CRAFTER_HEIGHT = 224;
 
@@ -42,7 +42,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBlockTileEntity3> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiCrafter(CrafterBlockTileEntity3 crafterBlockTileEntity, CrafterContainer container) {
+    public GuiCrafter(CrafterBaseTE crafterBlockTileEntity, CrafterContainer container) {
         super(crafterBlockTileEntity, container);
         crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
@@ -171,7 +171,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBlockTileEntity3> {
     }
 
     private void sendChangeToServer() {
-        sendServerCommand(CrafterBlockTileEntity3.CMD_MODE,
+        sendServerCommand(CrafterBaseTE.CMD_MODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()),
                 new Argument("speed", speedMode.getCurrentChoice()));
     }

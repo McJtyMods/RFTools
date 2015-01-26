@@ -1,6 +1,6 @@
 package com.mcjty.rftools.blocks.crafter;
 
-public class CrafterBlockTileEntity1 extends CrafterBlockTileEntity3 {
+public class CrafterBlockTileEntity1 extends CrafterBaseTE {
 
     public CrafterBlockTileEntity1() {
         super();

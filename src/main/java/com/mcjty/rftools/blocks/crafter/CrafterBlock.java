@@ -60,7 +60,7 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3)world.getTileEntity(x, y, z);
+        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE)world.getTileEntity(x, y, z);
 
         if (crafterBlockTileEntity != null) {
             // To avoid the ghost items being dropped in the world (which would give easy item duplication)
@@ -78,7 +78,7 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
     @Override
     protected void breakWithWrench(World world, int x, int y, int z) {
         // To avoid the inventory being dropped all over the place when wrenching we clear it first.
-        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3)world.getTileEntity(x, y, z);
+        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE)world.getTileEntity(x, y, z);
 
         if (crafterBlockTileEntity != null) {
             for (int i = 0 ; i < crafterBlockTileEntity.getSizeInventory() ; i++) {
@@ -110,13 +110,13 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        CrafterBlockTileEntity3 crafterBlockTileEntity = (CrafterBlockTileEntity3) tileEntity;
+        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) tileEntity;
         CrafterContainer crafterContainer = new CrafterContainer(entityPlayer, crafterBlockTileEntity);
         return new GuiCrafter(crafterBlockTileEntity, crafterContainer);
     }
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new CrafterContainer(entityPlayer, (CrafterBlockTileEntity3) tileEntity);
+        return new CrafterContainer(entityPlayer, (CrafterBaseTE) tileEntity);
     }
 }
