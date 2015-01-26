@@ -31,6 +31,7 @@ public final class ModItems {
     public static DimensionModuleItem dimensionModuleItem;
     public static InventoryModuleItem inventoryModuleItem;
     public static ClockModuleItem clockModuleItem;
+    public static FluidModuleItem fluidModuleItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -97,6 +98,12 @@ public final class ModItems {
         clockModuleItem.setCreativeTab(RFTools.tabRfTools);
         clockModuleItem.setTextureName(RFTools.MODID + ":clockModuleItem");
         GameRegistry.registerItem(clockModuleItem, "clockModuleItem");
+
+        fluidModuleItem = new FluidModuleItem();
+        fluidModuleItem.setUnlocalizedName("FluidModule");
+        fluidModuleItem.setCreativeTab(RFTools.tabRfTools);
+        fluidModuleItem.setTextureName(RFTools.MODID + ":fluidModuleItem");
+        GameRegistry.registerItem(fluidModuleItem, "fluidModuleItem");
     }
 
     private static void initDimensionItems() {

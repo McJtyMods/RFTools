@@ -101,6 +101,8 @@ public final class ModCrafting {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.dimensionModuleItem), " c ", "rir", " b ", 'c', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.fluidModuleItem), " c ", "rir", " b ", 'c', Items.bucket, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
 
         // Recipes for known dimlets are added in KnownDimletConfiguration.
     }

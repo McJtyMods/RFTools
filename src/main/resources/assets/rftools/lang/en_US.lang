@@ -15,6 +15,7 @@ item.EnergyModule.name=Energy Module
 item.DimensionModule.name=Dimension Module
 item.InventoryModule.name=Inventory Module
 item.ClockModule.name=Clock Module
+item.FluidModule.name=Fluid Module
 
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
