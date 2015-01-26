@@ -17,6 +17,7 @@ Table of contents:
 {l:telepo}Teleporting System
 {l:power}Power Generator
 {l:shield}Shield System
+{l:screens}Modular Screens
 {l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
@@ -434,6 +435,46 @@ Every side of the block can be configured in five different modes:
            come from any of the six internal slots
     Output Exact: items can be extracted from this side but they
            will only come out of the matching slot
+{-------------------------------------------------------------}
+{b}Modular Screens
+{n:screens}
+
+If you want to display various things in your base then the
+modular screen system in RFTools might be ideal for you. In
+these screens you can insert up to 11 modules which can give
+you various bits of information like energy in a machine,
+the amount of fluids in a tank, the time of the day, simple text,
+the amount of RF left in a dimension and so on. More modules
+are planned for the future.
+{-------------------------------------------------------------}
+Screens are not directly powered but get power from a Screen
+Controller that you can craft as follows:
+{rb:screenControllerBlock}
+
+In the GUI of this block you can press 'Scan'. This will locate
+all screens in a 33x33x33 area around the controller. From that
+point on these screens will receive power from this controller.
+{-------------------------------------------------------------}
+You can craft a screen as follows:
+{rb:screenBlock}
+
+A screen with no modules is just black. So to make things interesting you
+should add one or more module.
+
+Note that even with modules a screen will be black if it is
+not getting power. Make sure you have a screen controller
+nearby and press 'Scan' on that so that it finds all screens.
+{-------------------------------------------------------------}
+The following screen modules are currently supported:
+    - Text: simple line of text
+    - Clock: a digital clock showing the time of the day
+    - Energy: monitor the RF energy level of a machine
+    - Dimension: monitor the RF energy level of a dimension
+    - Fluid: monitor the amount of fluids in a tank
+
+Some modules (like energy and fluid modules) require that you first
+shift-right click on the machine/tank that you want to monitor. After
+that insert them in the screen.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
