@@ -1,6 +1,7 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
+import com.mcjty.rftools.dimension.world.types.FeatureType;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -13,6 +14,8 @@ import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+
+import java.util.Random;
 
 public class IslandTerrainGenerator implements BaseTerrainGenerator {
     private World world;
@@ -103,6 +106,8 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
             densities = new double[sizeX * sizeY * sizeZ];
         }
 
+        boolean shallowOcean = provider.dimensionInformation.hasFeatureType(FeatureType.FEATURE_SHALLOW_OCEAN);
+
         double d0 = 684.412D;
         double d1 = 684.412D;
         this.noiseData4 = this.noiseGen4.generateNoiseOctaves(this.noiseData4, chunkX2, chunkZ2, sizeX, sizeZ, 1.121D, 1.121D, 0.5D);
@@ -112,6 +117,9 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         this.noiseData2 = this.noiseGen1.generateNoiseOctaves(this.noiseData2, chunkX2, chunkY2, chunkZ2, sizeX, sizeY, sizeZ, d0, d1, d0);
         this.noiseData3 = this.noiseGen2.generateNoiseOctaves(this.noiseData3, chunkX2, chunkY2, chunkZ2, sizeX, sizeY, sizeZ, d0, d1, d0);
         int k1 = 0;
+
+        Random random = new Random(chunkX2 * 13 + chunkY2 * 157 + chunkZ2 * 13883);
+        random.nextFloat();
 
         for (int x = 0; x < sizeX; ++x) {
             for (int z = 0; z < sizeZ; ++z) {
@@ -182,7 +190,13 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                         d5 = d5 * (1.0D - d10) + botFactor * d10;
                     }
 
-                    densities[k1] = d5;
+                    if (shallowOcean && y == 0) {
+                        densities[k1] = 100.0f;
+                    } else if (shallowOcean && y == 1) {
+                        densities[k1] = 50.0f + (random.nextFloat() * 200.0f);
+                    } else {
+                        densities[k1] = d5;
+                    }
                     ++k1;
                 }
             }
@@ -294,15 +308,26 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
         // Index of the bottom of the column.
         int bottomIndex = ((cz * 16) + cx) * (blocks.length / 256);
 
+        boolean shallowOcean = provider.dimensionInformation.hasFeatureType(FeatureType.FEATURE_SHALLOW_OCEAN);
+        int shallowWaterY = 30;
+
         for (int height = 255; height >= 0; --height) {
             int index = bottomIndex + height;
 
             if (height <= 2) {
-                blocks[index] = Blocks.air;
+                if (shallowOcean) {
+                    blocks[index] = Blocks.bedrock;
+                } else {
+                    blocks[index] = Blocks.air;
+                }
             } else {
                 Block currentBlock = blocks[index];
                 if (currentBlock == Blocks.bedrock && height <= 12) {
-                    blocks[index] = Blocks.air;
+                    if (shallowOcean) {
+                        blocks[index] = baseLiquid;
+                    } else {
+                        blocks[index] = Blocks.air;
+                    }
                     k = -1;
                 } else {
                     if (currentBlock != null && currentBlock.getMaterial() != Material.air) {
@@ -358,6 +383,9 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                             }
                         }
                     } else {
+                        if (shallowOcean && height <= shallowWaterY) {
+                            blocks[index] = baseLiquid;
+                        }
                         k = -1;
                     }
                 }

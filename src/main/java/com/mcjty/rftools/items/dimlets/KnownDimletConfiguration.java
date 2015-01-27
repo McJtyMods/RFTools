@@ -324,6 +324,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, mainCfg, idsInConfig, "Canyons", FeatureType.FEATURE_CANYONS);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Liquid Orbs", FeatureType.FEATURE_LIQUIDORBS);
+        initFeatureItem(cfg, mainCfg, idsInConfig, "Shallow Ocean", FeatureType.FEATURE_SHALLOW_OCEAN);
 
         int idEffectNone = initEffectItem(cfg, mainCfg, idsInConfig, "None", EffectType.EFFECT_NONE);
         initEffectItem(cfg, mainCfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
