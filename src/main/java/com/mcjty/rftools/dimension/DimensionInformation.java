@@ -1112,10 +1112,7 @@ public class DimensionInformation {
         if (controllerType == ControllerType.CONTROLLER_FILTERED) {
             BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
             final Set<Integer> ids = new HashSet<Integer>();
-            System.out.println("DimensionInformation.setupBiomeMapping");
             for (BiomeGenBase biome : biomes) {
-                System.out.println("biome.biomeID = " + biome.biomeID);
-                System.out.println("biome.biomeName = " + biome.biomeName);
                 ids.add(biome.biomeID);
             }
 
