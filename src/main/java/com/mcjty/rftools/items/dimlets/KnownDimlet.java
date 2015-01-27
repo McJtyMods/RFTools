@@ -43,7 +43,12 @@ public class KnownDimlet extends Item {
 
         list.add(EnumChatFormatting.BLUE + "Rarity: " + entry.getRarity() + (KnownDimletConfiguration.craftableDimlets.contains(itemStack.getItemDamage()) ? " (craftable)" : ""));
         list.add(EnumChatFormatting.YELLOW + "Create cost: " + entry.getRfCreateCost() + " RF/tick");
-        list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + entry.getRfMaintainCost() + " RF/tick");
+        int maintainCost = entry.getRfMaintainCost();
+        if (maintainCost < 0) {
+            list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + maintainCost + "% RF/tick");
+        } else {
+            list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + maintainCost + " RF/tick");
+        }
         list.add(EnumChatFormatting.YELLOW + "Tick cost: " + entry.getTickCost() + " ticks");
     }
 
