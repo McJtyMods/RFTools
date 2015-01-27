@@ -4,6 +4,7 @@ import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
@@ -68,15 +69,14 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     private void renderEnergyLevel(FontRenderer fontRenderer, int currenty, String screenData) {
-        int energy;
-        int maxEnergy;
-        if (screenData == null) {
-            energy = 0;
-            maxEnergy = 0;
-        } else {
+        int energy = 0;
+        int maxEnergy = 0;
+        if (screenData != null) {
             int i = screenData.indexOf('/');
-            energy = Integer.parseInt(screenData.substring(0, i));
-            maxEnergy = Integer.parseInt(screenData.substring(i+1));
+            if (i >= 0) {
+                energy = Integer.parseInt(screenData.substring(0, i));
+                maxEnergy = Integer.parseInt(screenData.substring(i+1));
+            }
         }
 
         if (maxEnergy > 0) {
@@ -165,12 +165,17 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         if (currentData.hasKey("monitorx")) {
             int dim = currentData.getInteger("dim");
             World world = mc.thePlayer.worldObj;
-            int x = currentData.getInteger("monitorx");
-            int y = currentData.getInteger("monitory");
-            int z = currentData.getInteger("monitorz");
-            monitoring = currentData.getString("monitorname");
-            Block block = world.getBlock(x, y, z);
-            monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
+            if (dim == world.provider.dimensionId) {
+                int x = currentData.getInteger("monitorx");
+                int y = currentData.getInteger("monitory");
+                int z = currentData.getInteger("monitorz");
+                monitoring = currentData.getString("monitorname");
+                Block block = world.getBlock(x, y, z);
+                monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
+                monitorPanel.addChild(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
+            } else {
+                monitoring = "<unreachable>";
+            }
         } else {
             monitoring = "<not set>";
         }

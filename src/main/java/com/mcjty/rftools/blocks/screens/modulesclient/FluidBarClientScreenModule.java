@@ -4,6 +4,7 @@ import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
+import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
@@ -86,21 +87,12 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
             }
         });
         panel.addChild(textField);
-        ColorChoiceLabel labelColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "color", "Label Color:");
-        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "mbcolor", "Mb Color:");
+        addColorPanel(mc, gui, currentData, moduleGuiChanged, panel);
         addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
         addMonitorPanel(mc, gui, currentData, panel);
 
         if (currentData != null) {
             textField.setText(currentData.getString("text"));
-            int currentColor = currentData.getInteger("color");
-            if (currentColor != 0) {
-                labelColorSelector.setCurrentColor(currentColor);
-            }
-            int currentRfColor = currentData.getInteger("mbcolor");
-            if (currentRfColor != 0) {
-                rfColorSelector.setCurrentColor(currentRfColor);
-            }
         }
 
         return panel;
@@ -142,12 +134,17 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         if (currentData.hasKey("monitorx")) {
             int dim = currentData.getInteger("dim");
             World world = mc.thePlayer.worldObj;
-            int x = currentData.getInteger("monitorx");
-            int y = currentData.getInteger("monitory");
-            int z = currentData.getInteger("monitorz");
-            monitoring = currentData.getString("monitorname");
-            Block block = world.getBlock(x, y, z);
-            monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
+            if (dim == world.provider.dimensionId) {
+                int x = currentData.getInteger("monitorx");
+                int y = currentData.getInteger("monitory");
+                int z = currentData.getInteger("monitorz");
+                monitoring = currentData.getString("monitorname");
+                Block block = world.getBlock(x, y, z);
+                monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
+                monitorPanel.addChild(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
+            } else {
+                monitoring = "<unreachable>";
+            }
         } else {
             monitoring = "<not set>";
         }
@@ -155,21 +152,33 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         panel.addChild(new Label(mc, gui).setText(monitoring));
     }
 
-    private ColorChoiceLabel addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel, final String tagName, String labelName) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+    private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
+        ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
+        ColorChoiceLabel rfColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "mbcolor").setTooltips("Color for the fluid text");
+        Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, gui).setText("L:")).addChild(labelColorSelector).
+                addChild(new Label(mc, gui).setText("F:")).addChild(rfColorSelector).
+                setDesiredHeight(12);
+        panel.addChild(colorPanel);
+    }
+
+    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, final String tagName) {
+        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger(tagName, newColor);
                 moduleGuiChanged.updateData();
             }
         });
-        Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText(labelName)).
-                addChild(colorSelector).
-                setDesiredHeight(12);
-        panel.addChild(colorPanel);
-        return colorSelector;
+        if (currentData != null) {
+            int currentColor = currentData.getInteger(tagName);
+            if (currentColor != 0) {
+                colorChoiceLabel.setCurrentColor(currentColor);
+            }
+        }
+        return colorChoiceLabel;
     }
+
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
