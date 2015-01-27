@@ -910,7 +910,7 @@ public class DimensionInformation {
             while (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
                 int id = DimletRandomizer.getRandomFeature(random, false);
                 FeatureType featureType = DimletMapping.idToFeatureType.get(id);
-                if (!featureTypes.contains(featureType)) {
+                if (!featureTypes.contains(featureType) && featureType.isTerrainSupported(terrainType)) {
                     actualRfCost += calculateCostFactor(id);
                     featureTypes.add(featureType);
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
