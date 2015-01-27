@@ -65,6 +65,18 @@ public class ScreenBlock extends GenericContainerBlock {
     }
 
     @Override
+    protected void breakWithWrench(World world, int x, int y, int z) {
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
+
+        if (screenTileEntity != null) {
+            for (int i = 0 ; i < screenTileEntity.getSizeInventory() ; i++) {
+                screenTileEntity.setInventorySlotContents(i, null);
+            }
+        }
+    }
+
+
+    @Override
     public String getSideIconName() {
         return "screenFrame_icon";
     }
