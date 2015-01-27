@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world.types;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +26,10 @@ public enum FeatureType {
      */
     FeatureType(TerrainType... terrainTypes) {
         supportedTerrains = new HashSet<TerrainType>();
-        for (TerrainType type : terrainTypes) {
-            supportedTerrains.add(type);
-        }
+        Collections.addAll(supportedTerrains, terrainTypes);
     }
 
     public boolean isTerrainSupported(TerrainType type) {
-        if (supportedTerrains.isEmpty()) {
-            return true;
-        }
-        return supportedTerrains.contains(type);
+        return supportedTerrains.isEmpty() || supportedTerrains.contains(type);
     }
 }
