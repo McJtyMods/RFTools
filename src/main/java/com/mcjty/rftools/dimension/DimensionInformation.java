@@ -1128,10 +1128,6 @@ public class DimensionInformation {
                 }
             };
             BiomeControllerMapping.makeFilteredBiomeMap(biomeGenArray, biomeMapping, biomeFilter);
-            for (Map.Entry<Integer, Integer> me : biomeMapping.entrySet()) {
-                System.out.println("me.getValue() = " + me.getValue() + ", me.getKey() = " + me.getKey());
-            }
-
         }
     }
 
