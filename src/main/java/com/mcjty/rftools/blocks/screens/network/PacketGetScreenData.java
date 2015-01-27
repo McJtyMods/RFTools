@@ -14,12 +14,14 @@ public class PacketGetScreenData implements IMessage,IMessageHandler<PacketGetSc
     private int x;
     private int y;
     private int z;
+    private long millis;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
+        millis = buf.readLong();
     }
 
     @Override
@@ -27,15 +29,17 @@ public class PacketGetScreenData implements IMessage,IMessageHandler<PacketGetSc
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
+        buf.writeLong(millis);
     }
 
     public PacketGetScreenData() {
     }
 
-    public PacketGetScreenData(int tileX, int tileY, int tileZ) {
+    public PacketGetScreenData(int tileX, int tileY, int tileZ, long millis) {
         this.x = tileX;
         this.y = tileY;
         this.z = tileZ;
+        this.millis = millis;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class PacketGetScreenData implements IMessage,IMessageHandler<PacketGetSc
             System.out.println("PacketGetScreenData: TileEntity is not a SimpleScreenTileEntity!");
             return null;
         }
-        Map<Integer, String> screenData = ((ScreenTileEntity) te).getScreenData();
+        Map<Integer, String> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
         return new PacketReturnScreenData(message.x, message.y, message.z, screenData);
     }
 

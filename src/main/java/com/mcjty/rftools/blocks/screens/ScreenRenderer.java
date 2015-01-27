@@ -73,9 +73,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
     }
 
     private Map<Integer, String> updateScreenData(ScreenTileEntity screenTileEntity) {
-        if ((System.currentTimeMillis() - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
-            screenTileEntity.lastTime = System.currentTimeMillis();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
+        long millis = System.currentTimeMillis();
+        if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
+            screenTileEntity.lastTime = millis;
+            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
         Map<Integer,String> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));

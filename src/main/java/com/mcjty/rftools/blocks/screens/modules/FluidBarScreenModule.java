@@ -15,7 +15,7 @@ public class FluidBarScreenModule implements ScreenModule {
     private Coordinate coordinate = Coordinate.INVALID;
 
     @Override
-    public String getData() {
+    public String getData(long millis) {
         World world = RfToolsDimensionManager.getWorldForDimension(dim);
         if (world == null) {
             return null;

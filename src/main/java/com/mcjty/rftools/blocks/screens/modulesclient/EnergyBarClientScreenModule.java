@@ -24,6 +24,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private int dim = 0;
     private boolean hidebar = false;
     private boolean hidetext = false;
+    private boolean showdiff = false;
     private Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -44,34 +45,53 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            int energy;
-            int maxEnergy;
-            if (screenData == null) {
-                energy = 0;
-                maxEnergy = 0;
+            if (showdiff) {
+                renderEnergyDiff(fontRenderer, currenty, screenData);
             } else {
-                int i = screenData.indexOf('/');
-                energy = Integer.parseInt(screenData.substring(0, i));
-                maxEnergy = Integer.parseInt(screenData.substring(i+1));
-            }
-
-            if (maxEnergy > 0) {
-                if (!hidebar) {
-                    int width = 80;
-                    long value = (long)energy * width / (long)maxEnergy;
-                    if (value < 0) {
-                        value = 0;
-                    } else if (value > width) {
-                        value = width;
-                    }
-                    RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xffff0000, 0xff333300);
-                }
-                if (!hidetext) {
-                    fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
-                }
+                renderEnergyLevel(fontRenderer, currenty, screenData);
             }
         } else {
             fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
+        }
+    }
+
+    private void renderEnergyDiff(FontRenderer fontRenderer, int currenty, String screenData) {
+        if (screenData == null) {
+            screenData = "?";
+        }
+        if (screenData.startsWith("-")) {
+            fontRenderer.drawString(screenData + " RF/tick", 7 + 40, currenty, rfcolor);
+        } else {
+            fontRenderer.drawString("+" + screenData + " RF/tick", 7 + 40, currenty, rfcolor);
+        }
+    }
+
+    private void renderEnergyLevel(FontRenderer fontRenderer, int currenty, String screenData) {
+        int energy;
+        int maxEnergy;
+        if (screenData == null) {
+            energy = 0;
+            maxEnergy = 0;
+        } else {
+            int i = screenData.indexOf('/');
+            energy = Integer.parseInt(screenData.substring(0, i));
+            maxEnergy = Integer.parseInt(screenData.substring(i+1));
+        }
+
+        if (maxEnergy > 0) {
+            if (!hidebar) {
+                int width = 80;
+                long value = (long)energy * width / (long)maxEnergy;
+                if (value < 0) {
+                    value = 0;
+                } else if (value > width) {
+                    value = width;
+                }
+                RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xffff0000, 0xff333300);
+            }
+            if (!hidetext) {
+                fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
+            }
         }
     }
 
@@ -129,8 +149,19 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(textButton);
 
+        final ToggleButton diffButton = new ToggleButton(mc, gui).setText("Diff").setTooltips("Toggle display of RF/tick", "difference instead of RF");
+        diffButton.addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                currentData.setBoolean("showdiff", !diffButton.isPressed());
+                moduleGuiChanged.updateData();
+            }
+        });
+        optionPanel.addChild(diffButton);
+
         barButton.setPressed(!currentData.getBoolean("hidebar"));
         textButton.setPressed(!currentData.getBoolean("hidetext"));
+        diffButton.setPressed(!currentData.getBoolean("showdiff"));
 
         panel.addChild(optionPanel);
     }
@@ -156,7 +187,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     private ColorChoiceLabel addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel, final String tagName, String labelName) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(40).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger(tagName, newColor);
@@ -188,6 +219,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
 
             hidebar = tagCompound.getBoolean("hidebar");
             hidetext = tagCompound.getBoolean("hidetext");
+            showdiff = tagCompound.getBoolean("showdiff");
 
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {

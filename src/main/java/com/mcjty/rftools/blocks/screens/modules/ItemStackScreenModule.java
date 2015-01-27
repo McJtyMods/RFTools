@@ -7,7 +7,7 @@ public class ItemStackScreenModule implements ScreenModule {
     public static final int RFPERTICK = 0;
 
     @Override
-    public String getData() {
+    public String getData(long millis) {
         return null;
     }
 

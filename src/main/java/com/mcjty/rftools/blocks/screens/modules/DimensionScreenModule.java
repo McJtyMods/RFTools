@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
 import com.mcjty.rftools.dimension.DimensionStorage;
-import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
 
@@ -10,7 +9,7 @@ public class DimensionScreenModule implements ScreenModule {
     private int dim = 0;
 
     @Override
-    public String getData() {
+    public String getData(long millis) {
         int energy = DimensionStorage.getDimensionStorage(DimensionManager.getWorld(0)).getEnergyLevel(dim);
         return Integer.toString(energy);
     }
