@@ -452,8 +452,9 @@ Controller that you can craft as follows:
 {rb:screenControllerBlock}
 
 In the GUI of this block you can press 'Scan'. This will locate
-all screens in a 33x33x33 area around the controller. From that
-point on these screens will receive power from this controller.
+all screens in a 65x33x65 area around the controller (or 129x33x129
+for a maximum infused controller). From that point on these
+screens will receive power from this controller.
 {-------------------------------------------------------------}
 You can craft a screen as follows:
 {rb:screenBlock}
@@ -474,7 +475,8 @@ The following screen modules are currently supported:
 
 Some modules (like energy and fluid modules) require that you first
 shift-right click on the machine/tank that you want to monitor. After
-that insert them in the screen.
+that insert them in the screen. The maximum distance between
+the screen and the monitored block is 32.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}

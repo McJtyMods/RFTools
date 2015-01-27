@@ -109,10 +109,12 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
 
     private void scan() {
         detach();
+        int radius = 32 + (int) (getInfusedFactor() * 32);
+
         for (int y = yCoord - 16 ; y <= yCoord + 16 ; y++) {
             if (y >= 0 && y < 256) {
-                for (int x = xCoord - 16; x <= xCoord + 16; x++) {
-                    for (int z = zCoord - 16; z <= zCoord + 16; z++) {
+                for (int x = xCoord - radius; x <= xCoord + radius; x++) {
+                    for (int z = zCoord - radius; z <= zCoord + radius; z++) {
                         TileEntity te = worldObj.getTileEntity(x, y, z);
                         if (te instanceof ScreenTileEntity) {
                             if (!((ScreenTileEntity) te).isConnected()) {

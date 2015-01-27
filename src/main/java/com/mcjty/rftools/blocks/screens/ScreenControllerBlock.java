@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -12,7 +13,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class ScreenControllerBlock extends GenericBlock {
+public class ScreenControllerBlock extends GenericBlock implements Infusable {
 
     public ScreenControllerBlock() {
         super(Material.iron, ScreenControllerTileEntity.class);
