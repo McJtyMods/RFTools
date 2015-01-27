@@ -131,6 +131,16 @@ public interface Widget<P extends Widget> {
     void mouseMove(int x, int y);
 
     /**
+     * Handle mousewheel.
+     *
+     * @param amount
+     * @param x
+     * @param y
+     * @return true if handled
+     */
+    boolean mouseWheel(int amount, int x, int y);
+
+    /**
      * Handle a keyboard event.
      *
      * @param window

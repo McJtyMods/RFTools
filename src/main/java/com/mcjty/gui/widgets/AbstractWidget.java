@@ -209,6 +209,11 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     }
 
     @Override
+    public boolean mouseWheel(int amount, int x, int y) {
+        return false;
+    }
+
+    @Override
     public boolean keyTyped(Window window, char typedChar, int keyCode) {
         return false;
     }

@@ -121,6 +121,28 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     }
 
     @Override
+    public boolean mouseWheel(int amount, int x, int y) {
+        int divider = getMaximum() - getCountSelected();
+        if (divider <= 0) {
+            first = 0;
+        } else {
+            if (amount > 0) {
+                first -= 3;
+            } else if (amount < 0) {
+                first += 3;
+            }
+        }
+        if (first > divider) {
+            first = divider;
+        }
+        if (first < 0) {
+            first = 0;
+        }
+
+        return true;
+    }
+
+    @Override
     public int getMaximum() {
         return children.size();
     }

@@ -33,6 +33,22 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         return this;
     }
 
+    @Override
+    public boolean mouseWheel(int amount, int x, int y) {
+        x -= bounds.x;
+        y -= bounds.y;
+
+        for (Widget child : children) {
+            if (child.in(x, y) && child.isVisible()) {
+                if (child.mouseWheel(amount, x, y)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public P addChild(Widget child) {
         if (child == null) {
             throw new RuntimeException("THIS IS NOT POSSIBLE!");

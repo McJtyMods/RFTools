@@ -66,6 +66,12 @@ public class Window {
     }
 
     public void draw() {
+        int dwheel = Mouse.getDWheel();
+        if (dwheel != 0) {
+            int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
+            int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
+            toplevel.mouseWheel(dwheel, x, y);
+        }
         toplevel.draw(this, 0, 0);
     }
 
