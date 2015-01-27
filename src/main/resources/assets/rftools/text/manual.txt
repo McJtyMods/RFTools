@@ -476,7 +476,7 @@ The following screen modules are currently supported:
 Some modules (like energy and fluid modules) require that you first
 shift-right click on the machine/tank that you want to monitor. After
 that insert them in the screen. The maximum distance between
-the screen and the monitored block is 32.
+the screen and the monitored block is 64.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}

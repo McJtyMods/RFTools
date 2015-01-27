@@ -39,7 +39,7 @@ public class EnergyBarScreenModule implements ScreenModule {
                     int dx = Math.abs(c.getX() - x);
                     int dy = Math.abs(c.getY() - y);
                     int dz = Math.abs(c.getZ() - z);
-                    if (dx <= 32 && dy <= 32 && dz <= 32) {
+                    if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
                     }
                 }

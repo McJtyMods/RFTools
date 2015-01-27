@@ -46,7 +46,7 @@ public class FluidBarScreenModule implements ScreenModule {
                     int dx = Math.abs(c.getX() - x);
                     int dy = Math.abs(c.getY() - y);
                     int dz = Math.abs(c.getZ() - z);
-                    if (dx <= 31 && dy <= 31 && dz <= 31) {
+                    if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
                     }
                 }
