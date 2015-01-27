@@ -62,6 +62,7 @@ public class GenericChunkProvider implements IChunkProvider {
         terrainGeneratorMap.put(TerrainType.TERRAIN_GRID, new GridTerrainGenerator());
         terrainGeneratorMap.put(TerrainType.TERRAIN_CAVERN, new CavernTerrainGenerator(null));
         terrainGeneratorMap.put(TerrainType.TERRAIN_LOW_CAVERN, new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128));
+        terrainGeneratorMap.put(TerrainType.TERRAIN_FLOODED_CAVERN, new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128));
     }
 
     // Are map structures going to be generated (e.g. strongholds)

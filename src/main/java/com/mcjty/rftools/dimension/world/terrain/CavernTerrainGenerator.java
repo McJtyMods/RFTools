@@ -2,6 +2,7 @@ package com.mcjty.rftools.dimension.world.terrain;
 
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
+import com.mcjty.rftools.dimension.world.types.TerrainType;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -184,7 +185,10 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
         Block baseLiquid = provider.dimensionInformation.getFluidForTerrain();
 
         byte b0 = 4;
-        byte b1 = 32;
+        int liquidlevel = 32;
+        if (provider.dimensionInformation.getTerrainType() == TerrainType.TERRAIN_FLOODED_CAVERN) {
+            liquidlevel = 127;
+        }
         int k = b0 + 1;
         byte b2 = 33;
         int l = b0 + 1;
@@ -222,7 +226,7 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                                 if (d15 > 0.0D) {
                                     aBlock[index] = baseBlock;
                                     meta[index] = baseMeta;
-                                } else if (height < b1) {
+                                } else if (height < liquidlevel) {
                                     aBlock[index] = baseLiquid;
                                 } else {
                                     aBlock[index] = null;
