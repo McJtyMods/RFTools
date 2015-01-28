@@ -3,6 +3,8 @@
         [ "Liquid", "glowstone" ],
         [ "Liquid", "honey" ],
         [ "Liquid", "ic2constructionfoam" ],
+        [ "Liquid", "yellorium" ],
+        [ "Liquid", "cyanite" ],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
