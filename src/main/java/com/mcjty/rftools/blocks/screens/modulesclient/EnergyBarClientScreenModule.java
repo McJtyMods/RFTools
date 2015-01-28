@@ -41,16 +41,20 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
+        int xoffset;
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty, color);
+            xoffset = 7 + 40;
+        } else {
+            xoffset = 7;
         }
 
         if (coordinate.isValid()) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
+            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
         } else {
-            fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
+            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
     }
 

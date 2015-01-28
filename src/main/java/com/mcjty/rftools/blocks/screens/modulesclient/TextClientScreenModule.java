@@ -29,7 +29,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         if (large) {
             fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 60), 4, currenty / 2 + 1, color);

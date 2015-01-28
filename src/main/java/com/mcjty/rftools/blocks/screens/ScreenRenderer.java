@@ -60,7 +60,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
 
 
-            Map<Integer, String> screenData = updateScreenData(screenTileEntity);
+            Map<Integer, String[]> screenData = updateScreenData(screenTileEntity);
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData);
@@ -72,21 +72,21 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String> updateScreenData(ScreenTileEntity screenTileEntity) {
+    private Map<Integer, String[]> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
-        Map<Integer,String> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
+        Map<Integer,String[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
         return screenData;
     }
 
-    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String> screenData) {
+    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String[]> screenData) {
         float f3;
         int currenty = 7;
         int moduleIndex = 0;

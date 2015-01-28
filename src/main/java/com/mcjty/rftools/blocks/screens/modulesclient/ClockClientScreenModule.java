@@ -29,7 +29,7 @@ public class ClockClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         Minecraft minecraft = Minecraft.getMinecraft();
         double time = 0.0D;

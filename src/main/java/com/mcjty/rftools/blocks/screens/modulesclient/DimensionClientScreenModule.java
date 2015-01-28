@@ -19,6 +19,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private int rfcolor = 0xffffff;
+    private int rfcolor_neg = 0xffffff;
     private boolean hidebar = false;
     private boolean hidetext = false;
     private boolean showdiff = false;
@@ -35,13 +36,17 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
+        int xoffset;
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty, color);
+            xoffset = 7 + 40;
+        } else {
+            xoffset = 7;
         }
 
-        ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor, 0xffff0000, 0xff333300);
+        ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
     }
 
     @Override
@@ -55,25 +60,48 @@ public class DimensionClientScreenModule implements ClientScreenModule {
             }
         });
         panel.addChild(textField);
-        ColorChoiceLabel labelColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "color", "Label Color:");
-        ColorChoiceLabel rfColorSelector = addColorPanel(mc, gui, currentData, moduleGuiChanged, panel, "rfColor", "RF Color:");
+        addColorPanel(mc, gui, currentData, moduleGuiChanged, panel);
+
         addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
         addMonitorPanel(mc, gui, currentData, moduleGuiChanged, panel);
 
         if (currentData != null) {
             textField.setText(currentData.getString("text"));
-            int currentColor = currentData.getInteger("color");
-            if (currentColor != 0) {
-                labelColorSelector.setCurrentColor(currentColor);
-            }
-            int currentRfColor = currentData.getInteger("rfcolor");
-            if (currentRfColor != 0) {
-                rfColorSelector.setCurrentColor(currentRfColor);
-            }
         }
 
         return panel;
     }
+
+    private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
+        ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
+        ColorChoiceLabel rfColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor").setTooltips("Color for the RF text");
+        ColorChoiceLabel rfNegColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor_neg").setTooltips("Color for the negative", "RF/tick ratio");
+        Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, gui).setText("L:")).addChild(labelColorSelector).
+                addChild(new Label(mc, gui).setText("+:")).addChild(rfColorSelector).
+                addChild(new Label(mc, gui).setText("-:")).addChild(rfNegColorSelector).
+                setDesiredHeight(12);
+        panel.addChild(colorPanel);
+    }
+
+
+    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, final String tagName) {
+        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, Integer newColor) {
+                currentData.setInteger(tagName, newColor);
+                moduleGuiChanged.updateData();
+            }
+        });
+        if (currentData != null) {
+            int currentColor = currentData.getInteger(tagName);
+            if (currentColor != 0) {
+                colorChoiceLabel.setCurrentColor(currentColor);
+            }
+        }
+        return colorChoiceLabel;
+    }
+
 
     private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
@@ -125,22 +153,6 @@ public class DimensionClientScreenModule implements ClientScreenModule {
         panel.addChild(monitorPanel);
     }
 
-    private ColorChoiceLabel addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel, final String tagName, String labelName) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger(tagName, newColor);
-                moduleGuiChanged.updateData();
-            }
-        });
-        Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText(labelName)).
-                addChild(colorSelector).
-                setDesiredHeight(12);
-        panel.addChild(colorPanel);
-        return colorSelector;
-    }
-
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
@@ -154,6 +166,11 @@ public class DimensionClientScreenModule implements ClientScreenModule {
                 rfcolor = tagCompound.getInteger("rfcolor");
             } else {
                 rfcolor = 0xffffff;
+            }
+            if (tagCompound.hasKey("rfcolor_neg")) {
+                rfcolor_neg = tagCompound.getInteger("rfcolor_neg");
+            } else {
+                rfcolor_neg = 0xffffff;
             }
 
             hidebar = tagCompound.getBoolean("hidebar");

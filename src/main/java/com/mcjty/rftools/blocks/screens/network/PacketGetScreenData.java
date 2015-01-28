@@ -51,7 +51,7 @@ public class PacketGetScreenData implements IMessage,IMessageHandler<PacketGetSc
             System.out.println("PacketGetScreenData: TileEntity is not a SimpleScreenTileEntity!");
             return null;
         }
-        Map<Integer, String> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
+        Map<Integer, String[]> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
         return new PacketReturnScreenData(message.x, message.y, message.z, screenData);
     }
 

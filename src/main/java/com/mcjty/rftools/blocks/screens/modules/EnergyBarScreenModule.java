@@ -14,7 +14,7 @@ public class EnergyBarScreenModule implements ScreenModule {
     private ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
-    public String getData(long millis) {
+    public String[] getData(long millis) {
         World world = RfToolsDimensionManager.getWorldForDimension(dim);
         if (world == null) {
             return null;

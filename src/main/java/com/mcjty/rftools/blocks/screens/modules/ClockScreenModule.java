@@ -7,7 +7,7 @@ public class ClockScreenModule implements ScreenModule {
     public static final int RFPERTICK = 1;
 
     @Override
-    public String getData(long millis) {
+    public String[] getData(long millis) {
         return null;
     }
 

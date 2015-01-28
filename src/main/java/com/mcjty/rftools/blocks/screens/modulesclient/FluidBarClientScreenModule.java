@@ -22,6 +22,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private int mbcolor = 0xffffff;
+    private int mbcolor_neg = 0xffffff;
     private int dim = 0;
     private boolean hidebar = false;
     private boolean hidetext = false;
@@ -40,16 +41,20 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
+        int xoffset;
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty, color);
+            xoffset = 7 + 40;
+        } else {
+            xoffset = 7;
         }
 
         if (coordinate.isValid()) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor, 0xff0088ff, 0xff003333);
+            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor_neg, 0xff0088ff, 0xff003333);
         } else {
-            fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
+            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
     }
 
@@ -123,13 +128,16 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
 
     private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
         ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
-        ColorChoiceLabel rfColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "mbcolor").setTooltips("Color for the fluid text");
+        ColorChoiceLabel rfColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor").setTooltips("Color for the fluid text");
+        ColorChoiceLabel rfNegColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor_neg").setTooltips("Color for the negative", "mb/tick ratio");
         Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
                 addChild(new Label(mc, gui).setText("L:")).addChild(labelColorSelector).
-                addChild(new Label(mc, gui).setText("F:")).addChild(rfColorSelector).
+                addChild(new Label(mc, gui).setText("+:")).addChild(rfColorSelector).
+                addChild(new Label(mc, gui).setText("-:")).addChild(rfNegColorSelector).
                 setDesiredHeight(12);
         panel.addChild(colorPanel);
     }
+
 
     private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, final String tagName) {
         ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
@@ -147,7 +155,6 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         }
         return colorChoiceLabel;
     }
-
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {

@@ -23,7 +23,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
     // @todo dimension in the map!!!
-    public static Map<Coordinate,Map<Integer,String>> screenData = new HashMap<Coordinate, Map<Integer, String>>();
+    public static Map<Coordinate,Map<Integer,String[]>> screenData = new HashMap<Coordinate, Map<Integer, String[]>>();
 
     // Cached client screen modules
     private List<ClientScreenModule> clientScreenModules = null;
@@ -283,13 +283,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
 
     // This is called server side.
-    public Map<Integer,String> getScreenData(long millis) {
-        HashMap<Integer, String> map = new HashMap<Integer, String>();
+    public Map<Integer,String[]> getScreenData(long millis) {
+        HashMap<Integer, String[]> map = new HashMap<Integer, String[]>();
         List<ScreenModule> screenModules = getScreenModules();
         int moduleIndex = 0;
         for (ScreenModule module : screenModules) {
             if (module != null) {
-                String data = module.getData(millis);
+                String[] data = module.getData(millis);
                 if (data != null) {
                     map.put(moduleIndex, data);
                 }
