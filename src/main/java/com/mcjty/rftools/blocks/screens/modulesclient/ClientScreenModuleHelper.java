@@ -15,15 +15,15 @@ public class ClientScreenModuleHelper {
     public static void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, String[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                                    int poscolor, int negcolor,
                                    int gradient1, int gradient2) {
-        int contents = 0;
-        int maxContents = 0;
-        if (screenData != null) {
-            contents = Integer.parseInt(screenData[0]);
-            maxContents = Integer.parseInt(screenData[1]);
+        if (screenData == null) {
+            return;
         }
 
+        int maxContents = Integer.parseInt(screenData[1]);
         if (maxContents > 0) {
             if (!hidebar) {
+                int contents = Integer.parseInt(screenData[0]);
+
                 int width = 80 - xoffset + 7 + 40;
                 long value = (long) contents * width / maxContents;
                 if (value < 0) {
@@ -36,9 +36,7 @@ public class ClientScreenModuleHelper {
         }
         if (!hidetext) {
             if (showdiff) {
-                if (screenData == null) {
-                    fontRenderer.drawString("?" , xoffset, currenty, negcolor);
-                } else if (screenData[2].startsWith("-")) {
+                if (screenData[2].startsWith("-")) {
                     fontRenderer.drawString(screenData[2] + " " + label + "/t", xoffset, currenty, negcolor);
                 } else {
                     fontRenderer.drawString("+" + screenData[2] + " " + label + "/t", xoffset, currenty, poscolor);
@@ -46,6 +44,7 @@ public class ClientScreenModuleHelper {
 
             } else if (maxContents > 0) {
                 if (showpct) {
+                    int contents = Integer.parseInt(screenData[0]);
                     long value = (long)contents * 100 / (long)maxContents;
                     if (value < 0) {
                         value = 0;
@@ -54,7 +53,7 @@ public class ClientScreenModuleHelper {
                     }
                     fontRenderer.drawString(value + "%", xoffset, currenty, poscolor);
                 } else {
-                    fontRenderer.drawString(contents + label, xoffset, currenty, poscolor);
+                    fontRenderer.drawString(screenData[0] + label, xoffset, currenty, poscolor);
                 }
             }
         }
