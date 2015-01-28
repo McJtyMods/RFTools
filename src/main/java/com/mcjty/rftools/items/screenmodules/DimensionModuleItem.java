@@ -18,7 +18,7 @@ import java.util.List;
 public class DimensionModuleItem extends Item implements ModuleProvider {
 
     public DimensionModuleItem() {
-        setMaxStackSize(1);
+        setMaxStackSize(16);
     }
 
     @Override

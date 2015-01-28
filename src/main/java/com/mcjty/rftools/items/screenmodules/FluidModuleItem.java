@@ -24,7 +24,7 @@ import java.util.List;
 public class FluidModuleItem extends Item implements ModuleProvider {
 
     public FluidModuleItem() {
-        setMaxStackSize(1);
+        setMaxStackSize(16);
     }
 
     @Override

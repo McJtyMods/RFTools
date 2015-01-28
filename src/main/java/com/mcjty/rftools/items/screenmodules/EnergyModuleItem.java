@@ -24,7 +24,7 @@ import java.util.List;
 public class EnergyModuleItem extends Item implements ModuleProvider {
 
     public EnergyModuleItem() {
-        setMaxStackSize(1);
+        setMaxStackSize(16);
     }
 
     @Override

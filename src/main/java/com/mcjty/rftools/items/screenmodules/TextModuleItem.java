@@ -18,7 +18,7 @@ import java.util.List;
 public class TextModuleItem extends Item implements ModuleProvider {
 
     public TextModuleItem() {
-        setMaxStackSize(1);
+        setMaxStackSize(16);
     }
 
     @Override

@@ -18,7 +18,7 @@ import java.util.List;
 public class ClockModuleItem extends Item implements ModuleProvider {
 
     public ClockModuleItem() {
-        setMaxStackSize(1);
+        setMaxStackSize(16);
     }
 
     @SideOnly(Side.CLIENT)
