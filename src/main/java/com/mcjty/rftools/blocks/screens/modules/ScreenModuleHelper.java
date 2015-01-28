@@ -3,9 +3,9 @@ package com.mcjty.rftools.blocks.screens.modules;
 public class ScreenModuleHelper {
     private boolean showdiff = false;
     private long prevMillis = 0;
-    private int prevContents = 0;
+    private long prevContents = 0;
 
-    public String[] getContentsValue(long millis, int contents, int maxContents) {
+    public String[] getContentsValue(long millis, long contents, long maxContents) {
         if (showdiff) {
             if (prevMillis == 0 || millis <= prevMillis) {
                 prevMillis = millis;
@@ -17,7 +17,7 @@ public class ScreenModuleHelper {
                 if (ticks == 0) {
                     ticks = 1;
                 }
-                int diffEnergy = contents - prevContents;
+                long diffEnergy = contents - prevContents;
                 prevMillis = millis;
                 prevContents = contents;
                 return new String[] { String.valueOf(contents), String.valueOf(maxContents), String.valueOf(diffEnergy / ticks) };

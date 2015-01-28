@@ -3,6 +3,8 @@ package com.mcjty.varia;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.apideps.EnderIOCompatibility;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -26,8 +28,52 @@ public class EnergyTools {
         }
     }
 
+    public static class EnergyLevelMulti {
+        private final long energy;
+        private final long maxEnergy;
+
+        public EnergyLevelMulti(long energy, long maxEnergy) {
+            this.energy = energy;
+            this.maxEnergy = maxEnergy;
+        }
+
+        public long getEnergy() {
+            return energy;
+        }
+
+        public long getMaxEnergy() {
+            return maxEnergy;
+        }
+    }
+
     public static boolean isEnergyTE(TileEntity te) {
         return te instanceof IEnergyHandler || te instanceof IEnergyReceiver || te instanceof IEnergyProvider;
+    }
+
+    // Get energy level with possible support for multiblocks (like EnderIO capacitor bank).
+    public static EnergyLevelMulti getEnergyLevelMulti(TileEntity tileEntity) {
+        long maxEnergyStored;
+        long energyStored;
+        if (RFTools.instance.enderio && EnderIOCompatibility.isPowerStorage(tileEntity)) {
+            maxEnergyStored = EnderIOCompatibility.getMaxEnergyLevel(tileEntity);
+            energyStored = EnderIOCompatibility.getEnergyLevel(tileEntity);
+        } else if (tileEntity instanceof IEnergyHandler) {
+            IEnergyHandler handler = (IEnergyHandler) tileEntity;
+            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+        } else if (tileEntity instanceof IEnergyReceiver) {
+            IEnergyReceiver handler = (IEnergyReceiver) tileEntity;
+            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+        } else if (tileEntity instanceof IEnergyProvider) {
+            IEnergyProvider handler = (IEnergyProvider) tileEntity;
+            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
+            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+        } else {
+            maxEnergyStored = 0;
+            energyStored = 0;
+        }
+        return new EnergyLevelMulti(energyStored, maxEnergyStored);
     }
 
     public static EnergyLevel getEnergyLevel(TileEntity tileEntity) {

@@ -23,9 +23,9 @@ public class EnergyBarScreenModule implements ScreenModule {
         if (!EnergyTools.isEnergyTE(te)) {
             return null;
         }
-        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(te);
-        int energy = energyLevel.getEnergy();
-        int maxEnergy = energyLevel.getMaxEnergy();
+        EnergyTools.EnergyLevelMulti energyLevel = EnergyTools.getEnergyLevelMulti(te);
+        long energy = energyLevel.getEnergy();
+        long maxEnergy = energyLevel.getMaxEnergy();
         return helper.getContentsValue(millis, energy, maxEnergy);
     }
 

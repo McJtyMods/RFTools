@@ -10,6 +10,7 @@ import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
 import com.mcjty.rftools.network.DimensionSyncChannelHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -43,6 +44,9 @@ public class RFTools {
 
     @Mod.Instance("rftools")
     public static RFTools instance;
+
+    // Is EnderIO loaded.
+    public boolean enderio = false;
 
     public Logger logger;
 
@@ -175,6 +179,7 @@ public class RFTools {
     @EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
+        enderio = Loader.isModLoaded("EnderIO");
     }
 
     public static void message(EntityPlayer player, String message) {
