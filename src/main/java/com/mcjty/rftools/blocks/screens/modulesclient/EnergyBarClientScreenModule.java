@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -19,6 +20,12 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class EnergyBarClientScreenModule implements ClientScreenModule {
+
+    private static final String MODE_NONE = "None";
+    private static final String MODE_RF = "RF";
+    private static final String MODE_RFTICK = "RF/t";
+    private static final String MODE_RFPCT = "RF%";
+
     private String line = "";
     private int color = 0xffffff;
     private int rfcolor = 0xffffff;
@@ -27,6 +34,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private boolean hidebar = false;
     private boolean hidetext = false;
     private boolean showdiff = false;
+    private boolean showpct = false;
     private Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -91,7 +99,17 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
                 RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xffff0000, 0xff333300);
             }
             if (!hidetext) {
-                fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
+                if (showpct) {
+                    long value = (long)energy * 100 / (long)maxEnergy;
+                    if (value < 0) {
+                        value = 0;
+                    } else if (value > 100) {
+                        value = 100;
+                    }
+                    fontRenderer.drawString(value + "%", 7 + 40, currenty, rfcolor);
+                } else {
+                    fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
+                }
             }
         }
     }
@@ -131,29 +149,46 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(barButton);
 
-        final ToggleButton textButton = new ToggleButton(mc, gui).setText("Text").setTooltips("Toggle visibility of the", "energy text");
-        textButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("hidetext", !textButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(textButton);
-
-        final ToggleButton diffButton = new ToggleButton(mc, gui).setText("Diff").setTooltips("Toggle display of RF/tick", "difference instead of RF");
-        diffButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("showdiff", !diffButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(diffButton);
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(MODE_NONE, MODE_RF, MODE_RFTICK, MODE_RFPCT).
+                setChoiceTooltip(MODE_NONE, "No text is shown").
+                setChoiceTooltip(MODE_RF, "Show the amount of RF").
+                setChoiceTooltip(MODE_RFTICK, "Show the average RF/tick", "gain or loss").
+                setChoiceTooltip(MODE_RFPCT, "Show the amount of RF", "as a percentage").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        if (MODE_RF.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", false);
+                        } else if (MODE_RFTICK.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", true);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", false);
+                        } else if (MODE_RFPCT.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", true);
+                            currentData.setBoolean("hidetext", false);
+                        } else {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", true);
+                        }
+                        moduleGuiChanged.updateData();
+                    }
+                });
+        optionPanel.addChild(modeButton);
 
         barButton.setPressed(!currentData.getBoolean("hidebar"));
-        textButton.setPressed(!currentData.getBoolean("hidetext"));
-        diffButton.setPressed(!currentData.getBoolean("showdiff"));
+        if (currentData.getBoolean("hidetext")) {
+            modeButton.setChoice(MODE_NONE);
+        } else if (currentData.getBoolean("showdiff")) {
+            modeButton.setChoice(MODE_RFTICK);
+        } else if (currentData.getBoolean("showpct")) {
+            modeButton.setChoice(MODE_RFPCT);
+        } else {
+            modeButton.setChoice(MODE_RF);
+        }
 
         panel.addChild(optionPanel);
     }
@@ -235,6 +270,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
             hidebar = tagCompound.getBoolean("hidebar");
             hidetext = tagCompound.getBoolean("hidetext");
             showdiff = tagCompound.getBoolean("showdiff");
+            showpct = tagCompound.getBoolean("showpct");
 
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {
