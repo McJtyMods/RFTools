@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -19,12 +20,20 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class FluidBarClientScreenModule implements ClientScreenModule {
+
+    private static final String MODE_NONE = "None";
+    private static final String MODE_MB = "mb";
+    private static final String MODE_MBTICK = "mb/t";
+    private static final String MODE_MBPCT = "mb%";
+
     private String line = "";
     private int color = 0xffffff;
     private int mbcolor = 0xffffff;
     private int dim = 0;
     private boolean hidebar = false;
     private boolean hidetext = false;
+    private boolean showdiff = false;
+    private boolean showpct = false;
     private Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -45,34 +54,62 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            int contents;
-            int maxContents;
-            if (screenData == null) {
-                contents = 0;
-                maxContents = 0;
+            if (showdiff) {
+                renderFluidDiff(fontRenderer, currenty, screenData);
             } else {
-                int i = screenData.indexOf('/');
-                contents = Integer.parseInt(screenData.substring(0, i));
-                maxContents = Integer.parseInt(screenData.substring(i+1));
-            }
-
-            if (maxContents > 0) {
-                if (!hidebar) {
-                    int width = 80;
-                    long value = (long)contents * width / maxContents;
-                    if (value < 0) {
-                        value = 0;
-                    } else if (value > width) {
-                        value = width;
-                    }
-                    RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xff0088ff, 0xff003333);
-                }
-                if (!hidetext) {
-                    fontRenderer.drawString(contents + "mb", 7 + 40, currenty, mbcolor);
-                }
+                renderFluidLevel(fontRenderer, currenty, screenData);
             }
         } else {
             fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
+        }
+    }
+
+    private void renderFluidDiff(FontRenderer fontRenderer, int currenty, String screenData) {
+        if (screenData == null) {
+            screenData = "?";
+        }
+        if (screenData.startsWith("-")) {
+            fontRenderer.drawString(screenData + " mb/tick", 7 + 40, currenty, mbcolor);
+        } else {
+            fontRenderer.drawString("+" + screenData + " mb/tick", 7 + 40, currenty, mbcolor);
+        }
+    }
+
+    private void renderFluidLevel(FontRenderer fontRenderer, int currenty, String screenData) {
+        int contents = 0;
+        int maxContents = 0;
+        if (screenData != null) {
+            int i = screenData.indexOf('/');
+            if (i >= 0) {
+                contents = Integer.parseInt(screenData.substring(0, i));
+                maxContents = Integer.parseInt(screenData.substring(i + 1));
+            }
+        }
+
+        if (maxContents > 0) {
+            if (!hidebar) {
+                int width = 80;
+                long value = (long)contents * width / maxContents;
+                if (value < 0) {
+                    value = 0;
+                } else if (value > width) {
+                    value = width;
+                }
+                RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xff0088ff, 0xff003333);
+            }
+            if (!hidetext) {
+                if (showpct) {
+                    long value = (long)contents * 100 / (long)maxContents;
+                    if (value < 0) {
+                        value = 0;
+                    } else if (value > 100) {
+                        value = 100;
+                    }
+                    fontRenderer.drawString(value + "%", 7 + 40, currenty, mbcolor);
+                } else {
+                    fontRenderer.drawString(contents + "mb", 7 + 40, currenty, mbcolor);
+                }
+            }
         }
     }
 
@@ -111,18 +148,47 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(barButton);
 
-        final ToggleButton textButton = new ToggleButton(mc, gui).setText("Text").setTooltips("Toggle visibility of the", "energy text");
-        textButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("hidetext", !textButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(textButton);
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(MODE_NONE, MODE_MB, MODE_MBTICK, MODE_MBPCT).
+                setChoiceTooltip(MODE_NONE, "No text is shown").
+                setChoiceTooltip(MODE_MB, "Show the amount of mb").
+                setChoiceTooltip(MODE_MBTICK, "Show the average mb/tick", "gain or loss").
+                setChoiceTooltip(MODE_MBPCT, "Show the amount of mb", "as a percentage").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        if (MODE_MB.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", false);
+                        } else if (MODE_MBTICK.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", true);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", false);
+                        } else if (MODE_MBPCT.equals(newChoice)) {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", true);
+                            currentData.setBoolean("hidetext", false);
+                        } else {
+                            currentData.setBoolean("showdiff", false);
+                            currentData.setBoolean("showpct", false);
+                            currentData.setBoolean("hidetext", true);
+                        }
+                        moduleGuiChanged.updateData();
+                    }
+                });
+        optionPanel.addChild(modeButton);
+
 
         barButton.setPressed(!currentData.getBoolean("hidebar"));
-        textButton.setPressed(!currentData.getBoolean("hidetext"));
+        if (currentData.getBoolean("hidetext")) {
+            modeButton.setChoice(MODE_NONE);
+        } else if (currentData.getBoolean("showdiff")) {
+            modeButton.setChoice(MODE_MBTICK);
+        } else if (currentData.getBoolean("showpct")) {
+            modeButton.setChoice(MODE_MBPCT);
+        } else {
+            modeButton.setChoice(MODE_MB);
+        }
 
         panel.addChild(optionPanel);
     }
@@ -197,6 +263,8 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
 
             hidebar = tagCompound.getBoolean("hidebar");
             hidetext = tagCompound.getBoolean("hidetext");
+            showdiff = tagCompound.getBoolean("showdiff");
+            showpct = tagCompound.getBoolean("showpct");
 
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {
