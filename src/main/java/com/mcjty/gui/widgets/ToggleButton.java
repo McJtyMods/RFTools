@@ -12,6 +12,7 @@ import java.util.List;
 public class ToggleButton extends Label<ToggleButton> {
     private List<ButtonEvent> buttonEvents = null;
     private boolean pressed = false;
+    private boolean checkMarker = false;
 
     public ToggleButton(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -26,6 +27,15 @@ public class ToggleButton extends Label<ToggleButton> {
         return this;
     }
 
+    public boolean isCheckMarker() {
+        return checkMarker;
+    }
+
+    public ToggleButton setCheckMarker(boolean checkMarker) {
+        this.checkMarker = checkMarker;
+        return this;
+    }
+
     @Override
     public void draw(Window window, int x, int y) {
         if (!visible) {
@@ -37,6 +47,9 @@ public class ToggleButton extends Label<ToggleButton> {
         if (isEnabled()) {
             if (pressed) {
                 RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xff666666, 0xff333333, 0xffeeeeee);
+                if (checkMarker) {
+                    RenderHelper.drawHorizontalGradientRect(xx - 5, yy + 2, xx - 1, yy + bounds.height - 3, 0xffff0000, 0xffff0000);
+                }
             } else {
                 RenderHelper.drawBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, 0xffeeeeee, 0xff333333, 0xff666666);
             }
