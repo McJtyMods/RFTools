@@ -1,8 +1,6 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
-import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
-import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -20,11 +18,6 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class EnergyBarClientScreenModule implements ClientScreenModule {
-
-    private static final String MODE_NONE = "None";
-    private static final String MODE_RF = "RF";
-    private static final String MODE_RFTICK = "RF/t";
-    private static final String MODE_RFPCT = "RF%";
 
     private String line = "";
     private int color = 0xffffff;
@@ -56,61 +49,12 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
 
         if (coordinate.isValid()) {
             if (showdiff) {
-                renderEnergyDiff(fontRenderer, currenty, screenData);
+                ClientScreenModuleHelper.renderDiff(fontRenderer, currenty, screenData, " RF/tick", rfcolor, rfcolor_neg);
             } else {
-                renderEnergyLevel(fontRenderer, currenty, screenData);
+                ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, hidebar, hidetext, showpct, rfcolor, 0xffff0000, 0xff333300);
             }
         } else {
             fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
-        }
-    }
-
-    private void renderEnergyDiff(FontRenderer fontRenderer, int currenty, String screenData) {
-        if (screenData == null) {
-            screenData = "?";
-        }
-        if (screenData.startsWith("-")) {
-            fontRenderer.drawString(screenData + " RF/tick", 7 + 40, currenty, rfcolor_neg);
-        } else {
-            fontRenderer.drawString("+" + screenData + " RF/tick", 7 + 40, currenty, rfcolor);
-        }
-    }
-
-    private void renderEnergyLevel(FontRenderer fontRenderer, int currenty, String screenData) {
-        int energy = 0;
-        int maxEnergy = 0;
-        if (screenData != null) {
-            int i = screenData.indexOf('/');
-            if (i >= 0) {
-                energy = Integer.parseInt(screenData.substring(0, i));
-                maxEnergy = Integer.parseInt(screenData.substring(i+1));
-            }
-        }
-
-        if (maxEnergy > 0) {
-            if (!hidebar) {
-                int width = 80;
-                long value = (long)energy * width / (long)maxEnergy;
-                if (value < 0) {
-                    value = 0;
-                } else if (value > width) {
-                    value = width;
-                }
-                RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xffff0000, 0xff333300);
-            }
-            if (!hidetext) {
-                if (showpct) {
-                    long value = (long)energy * 100 / (long)maxEnergy;
-                    if (value < 0) {
-                        value = 0;
-                    } else if (value > 100) {
-                        value = 100;
-                    }
-                    fontRenderer.drawString(value + "%", 7 + 40, currenty, rfcolor);
-                } else {
-                    fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
-                }
-            }
         }
     }
 
@@ -149,46 +93,10 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(barButton);
 
-        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(MODE_NONE, MODE_RF, MODE_RFTICK, MODE_RFPCT).
-                setChoiceTooltip(MODE_NONE, "No text is shown").
-                setChoiceTooltip(MODE_RF, "Show the amount of RF").
-                setChoiceTooltip(MODE_RFTICK, "Show the average RF/tick", "gain or loss").
-                setChoiceTooltip(MODE_RFPCT, "Show the amount of RF", "as a percentage").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        if (MODE_RF.equals(newChoice)) {
-                            currentData.setBoolean("showdiff", false);
-                            currentData.setBoolean("showpct", false);
-                            currentData.setBoolean("hidetext", false);
-                        } else if (MODE_RFTICK.equals(newChoice)) {
-                            currentData.setBoolean("showdiff", true);
-                            currentData.setBoolean("showpct", false);
-                            currentData.setBoolean("hidetext", false);
-                        } else if (MODE_RFPCT.equals(newChoice)) {
-                            currentData.setBoolean("showdiff", false);
-                            currentData.setBoolean("showpct", true);
-                            currentData.setBoolean("hidetext", false);
-                        } else {
-                            currentData.setBoolean("showdiff", false);
-                            currentData.setBoolean("showpct", false);
-                            currentData.setBoolean("hidetext", true);
-                        }
-                        moduleGuiChanged.updateData();
-                    }
-                });
+        ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "RF", currentData, moduleGuiChanged);
         optionPanel.addChild(modeButton);
 
         barButton.setPressed(!currentData.getBoolean("hidebar"));
-        if (currentData.getBoolean("hidetext")) {
-            modeButton.setChoice(MODE_NONE);
-        } else if (currentData.getBoolean("showdiff")) {
-            modeButton.setChoice(MODE_RFTICK);
-        } else if (currentData.getBoolean("showpct")) {
-            modeButton.setChoice(MODE_RFPCT);
-        } else {
-            modeButton.setChoice(MODE_RF);
-        }
 
         panel.addChild(optionPanel);
     }

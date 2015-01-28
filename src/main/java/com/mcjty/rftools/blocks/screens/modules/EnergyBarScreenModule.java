@@ -11,9 +11,7 @@ public class EnergyBarScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
     private int dim = 0;
     private Coordinate coordinate = Coordinate.INVALID;
-    private boolean showdiff = false;
-    private long prevMillis = 0;
-    private int prevEnergy = 0;
+    private ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
     public String getData(long millis) {
@@ -28,31 +26,13 @@ public class EnergyBarScreenModule implements ScreenModule {
         EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(te);
         int energy = energyLevel.getEnergy();
         int maxEnergy = energyLevel.getMaxEnergy();
-        if (showdiff) {
-            if (prevMillis == 0 || millis <= prevMillis) {
-                prevMillis = millis;
-                prevEnergy = energy;
-                return "?";
-            } else {
-                long diff = millis - prevMillis;
-                int ticks = (int) (diff * 20 / 1000);
-                if (ticks == 0) {
-                    ticks = 1;
-                }
-                int diffEnergy = energy - prevEnergy;
-                prevMillis = millis;
-                prevEnergy = energy;
-                return String.valueOf(diffEnergy / ticks);
-            }
-        } else {
-            return energy + "/" + maxEnergy;
-        }
+        return helper.getContentsValue(millis, energy, maxEnergy);
     }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
-            showdiff = tagCompound.getBoolean("showdiff");
+            helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {
                 this.dim = tagCompound.getInteger("dim");

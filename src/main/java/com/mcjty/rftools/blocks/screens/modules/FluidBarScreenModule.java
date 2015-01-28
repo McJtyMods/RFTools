@@ -13,9 +13,7 @@ public class FluidBarScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
     private int dim = 0;
     private Coordinate coordinate = Coordinate.INVALID;
-    private boolean showdiff = false;
-    private long prevMillis = 0;
-    private int prevMb = 0;
+    private ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
     public String getData(long millis) {
@@ -36,31 +34,13 @@ public class FluidBarScreenModule implements ScreenModule {
             maxContents = tankInfo[0].capacity;
         }
 
-        if (showdiff) {
-            if (prevMillis == 0 || millis <= prevMillis) {
-                prevMillis = millis;
-                prevMb = contents;
-                return "?";
-            } else {
-                long diff = millis - prevMillis;
-                int ticks = (int) (diff * 20 / 1000);
-                if (ticks == 0) {
-                    ticks = 1;
-                }
-                int diffMb = contents - prevMb;
-                prevMillis = millis;
-                prevMb = contents;
-                return String.valueOf(diffMb / ticks);
-            }
-        } else {
-            return contents + "/" + maxContents;
-        }
+        return helper.getContentsValue(millis, contents, maxContents);
     }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
-            showdiff = tagCompound.getBoolean("showdiff");
+            helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {
                 this.dim = tagCompound.getInteger("dim");
