@@ -83,7 +83,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
-        final ToggleButton barButton = new ToggleButton(mc, gui).setText("Bar").setTooltips("Toggle visibility of the", "energy bar");
+        final ToggleButton barButton = new ToggleButton(mc, gui).setText("Bar").setTooltips("Toggle visibility of the", "energy bar").setDesiredHeight(13);
         barButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {

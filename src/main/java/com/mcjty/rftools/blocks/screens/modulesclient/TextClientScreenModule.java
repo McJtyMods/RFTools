@@ -57,7 +57,7 @@ public class TextClientScreenModule implements ClientScreenModule {
             }
         });
 
-        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large").setTooltips("Large or small font");
+        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large").setTooltips("Large or small font").setDesiredHeight(13);
         largeButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
