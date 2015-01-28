@@ -111,7 +111,7 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return MachineInfuserContainer.factory.getAccessibleSlots();
+        return new int[] { MachineInfuserContainer.SLOT_SHARDINPUT, MachineInfuserContainer.SLOT_MACHINEOUTPUT};
     }
 
     @Override

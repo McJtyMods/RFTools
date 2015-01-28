@@ -106,7 +106,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return DimletResearcherContainer.factory.getAccessibleSlots();
+        return new int[] { DimletResearcherContainer.SLOT_DIMLETINPUT, DimletResearcherContainer.SLOT_DIMLETOUTPUT };
     }
 
     @Override

@@ -147,7 +147,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return DimletScramblerContainer.factory.getAccessibleSlots();
+        return new int[] { 0, 1, 2, 3 };
     }
 
     @Override
