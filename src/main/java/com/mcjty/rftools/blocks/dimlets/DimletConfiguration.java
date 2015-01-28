@@ -38,7 +38,7 @@ public class DimletConfiguration {
     public static float randomStructureChance = 0.2f;
     public static float randomEffectChance = 0.1f;
     public static float randomOceanLiquidChance = 0.2f;
-    public static float randomBaseBlockChance = 0.4f;
+    public static float randomBaseBlockChance = 0.3f;
     public static float randomSpecialSkyChance = 0.5f;
     public static float randomExtraMobsChance = 0.4f;
     public static float randomSpecialTimeChance = 0.5f;
