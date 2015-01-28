@@ -21,6 +21,8 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     private int rfcolor = 0xffffff;
     private boolean hidebar = false;
     private boolean hidetext = false;
+    private boolean showdiff = false;
+    private boolean showpct = false;
 
     @Override
     public TransformMode getTransformMode() {
@@ -39,27 +41,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
             fontRenderer.drawString(line, 7, currenty, color);
         }
 
-        int energy;
-        if (screenData == null) {
-            energy = 0;
-        } else {
-            energy = Integer.parseInt(screenData);
-        }
-
-        if (!hidebar) {
-            long maxEnergy = DimletConfiguration.MAX_DIMENSION_POWER;
-            int width = 80;
-            long value = (long) energy * width / maxEnergy;
-            if (value < 0) {
-                value = 0;
-            } else if (value > width) {
-                value = width;
-            }
-            RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, 0xffff0000, 0xff333300);
-        }
-        if (!hidetext) {
-            fontRenderer.drawString(energy + "RF", 7 + 40, currenty, rfcolor);
-        }
+        ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor, 0xffff0000, 0xff333300);
     }
 
     @Override
@@ -106,22 +88,13 @@ public class DimensionClientScreenModule implements ClientScreenModule {
         });
         optionPanel.addChild(barButton);
 
-        final ToggleButton textButton = new ToggleButton(mc, gui).setText("Text").setTooltips("Toggle visibility of the", "energy text");
-        textButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("hidetext", !textButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(textButton);
+        ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "RF", currentData, moduleGuiChanged);
+        optionPanel.addChild(modeButton);
 
         if (currentData != null) {
             barButton.setPressed(!currentData.getBoolean("hidebar"));
-            textButton.setPressed(!currentData.getBoolean("hidetext"));
         } else {
             barButton.setPressed(true);
-            textButton.setPressed(true);
         }
 
         panel.addChild(optionPanel);
@@ -185,6 +158,8 @@ public class DimensionClientScreenModule implements ClientScreenModule {
 
             hidebar = tagCompound.getBoolean("hidebar");
             hidetext = tagCompound.getBoolean("hidetext");
+            showdiff = tagCompound.getBoolean("showdiff");
+            showpct = tagCompound.getBoolean("showpct");
         }
     }
 

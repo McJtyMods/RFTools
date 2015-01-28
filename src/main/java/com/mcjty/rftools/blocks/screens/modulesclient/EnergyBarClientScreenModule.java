@@ -48,11 +48,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            if (showdiff) {
-                ClientScreenModuleHelper.renderDiff(fontRenderer, currenty, screenData, " RF/tick", rfcolor, rfcolor_neg);
-            } else {
-                ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, hidebar, hidetext, showpct, rfcolor, 0xffff0000, 0xff333300);
-            }
+            ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
         } else {
             fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
         }

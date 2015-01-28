@@ -12,19 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ClientScreenModuleHelper {
 
-    public static void renderDiff(FontRenderer fontRenderer, int currenty, String screenData, String label, int poscolor, int negcolor) {
-        if (screenData == null) {
-            screenData = "?";
-        }
-        if (screenData.startsWith("-")) {
-            fontRenderer.drawString(screenData + label, 7 + 40, currenty, negcolor);
-        } else {
-            fontRenderer.drawString("+" + screenData + label, 7 + 40, currenty, poscolor);
-        }
-    }
-
-
-    public static void renderLevel(FontRenderer fontRenderer, int currenty, String screenData, boolean hidebar, boolean hidetext, boolean showpct, int poscolor,
+    public static void renderLevel(FontRenderer fontRenderer, int currenty, String screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
+                                   int poscolor, int negcolor,
                                    int gradient1, int gradient2) {
         int contents = 0;
         int maxContents = 0;
@@ -39,7 +28,7 @@ public class ClientScreenModuleHelper {
         if (maxContents > 0) {
             if (!hidebar) {
                 int width = 80;
-                long value = (long)contents * width / maxContents;
+                long value = (long) contents * width / maxContents;
                 if (value < 0) {
                     value = 0;
                 } else if (value > width) {
@@ -47,7 +36,18 @@ public class ClientScreenModuleHelper {
                 }
                 RenderHelper.drawHorizontalGradientRect(7 + 40, currenty, (int) (7 + 40 + value), currenty + 8, gradient1, gradient2);
             }
-            if (!hidetext) {
+        }
+        if (!hidetext) {
+            if (showdiff) {
+                if (screenData == null) {
+                    fontRenderer.drawString("?" , 7 + 40, currenty, negcolor);
+                } else if (screenData.startsWith("-")) {
+                    fontRenderer.drawString(screenData + " " + label + "/t", 7 + 40, currenty, negcolor);
+                } else {
+                    fontRenderer.drawString("+" + screenData + " " + label + "/t", 7 + 40, currenty, poscolor);
+                }
+
+            } else if (maxContents > 0) {
                 if (showpct) {
                     long value = (long)contents * 100 / (long)maxContents;
                     if (value < 0) {
@@ -57,7 +57,7 @@ public class ClientScreenModuleHelper {
                     }
                     fontRenderer.drawString(value + "%", 7 + 40, currenty, poscolor);
                 } else {
-                    fontRenderer.drawString(contents + "mb", 7 + 40, currenty, poscolor);
+                    fontRenderer.drawString(contents + label, 7 + 40, currenty, poscolor);
                 }
             }
         }

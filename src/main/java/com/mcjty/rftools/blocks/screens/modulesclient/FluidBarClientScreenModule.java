@@ -47,11 +47,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            if (showdiff) {
-                ClientScreenModuleHelper.renderDiff(fontRenderer, currenty, screenData, " mb/tick", mbcolor, mbcolor);
-            } else {
-                ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, hidebar, hidetext, showpct, mbcolor, 0xff0088ff, 0xff003333);
-            }
+            ClientScreenModuleHelper.renderLevel(fontRenderer, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor, 0xff0088ff, 0xff003333);
         } else {
             fontRenderer.drawString("<invalid>", 7 + 40, currenty, 0xff0000);
         }
