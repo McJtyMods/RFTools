@@ -19,13 +19,13 @@ public class ClientScreenModuleHelper {
             return;
         }
 
-        int maxContents = Integer.parseInt(screenData[1]);
+        long maxContents = Long.parseLong(screenData[1]);
         if (maxContents > 0) {
             if (!hidebar) {
-                int contents = Integer.parseInt(screenData[0]);
+                long contents = Long.parseLong(screenData[0]);
 
                 int width = 80 - xoffset + 7 + 40;
-                long value = (long) contents * width / maxContents;
+                long value = contents * width / maxContents;
                 if (value < 0) {
                     value = 0;
                 } else if (value > width) {
@@ -44,8 +44,8 @@ public class ClientScreenModuleHelper {
 
             } else if (maxContents > 0) {
                 if (showpct) {
-                    int contents = Integer.parseInt(screenData[0]);
-                    long value = (long)contents * 100 / (long)maxContents;
+                    long contents = Long.parseLong(screenData[0]);
+                    long value = contents * 100 / maxContents;
                     if (value < 0) {
                         value = 0;
                     } else if (value > 100) {
