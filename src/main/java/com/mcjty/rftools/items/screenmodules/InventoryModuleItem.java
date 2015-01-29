@@ -19,7 +19,7 @@ import java.util.List;
 public class InventoryModuleItem extends Item implements ModuleProvider {
 
     public InventoryModuleItem() {
-        setMaxStackSize(16);
+        setMaxStackSize(1);
     }
 
     @SideOnly(Side.CLIENT)
