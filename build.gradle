@@ -55,6 +55,10 @@ repositories {
         name 'CB Repo'
         url "http://chickenbones.net/maven/"
     }
+    maven {
+        name 'OC Repo'
+        url "http://maven.cil.li/"
+    }
     // maven { // ttCore
         // name 'tterrag Repo'
         // url "http://maven.tterrag.com"
@@ -77,6 +81,7 @@ dependencies {
 
     compile "mcp.mobius.waila:Waila:1.5.5_1.7.10"
     // compile "com.enderio:EnderIO:1.7.10-2.2.7.331"
+    compile "li.cil.oc:OpenComputers:MC1.7.10-1.4.+:api"
 }
 
 processResources
