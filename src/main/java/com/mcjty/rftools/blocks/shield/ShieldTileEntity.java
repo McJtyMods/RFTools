@@ -8,9 +8,12 @@ import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
-import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.common.Optional;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -28,7 +31,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements IInventory {
+@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
+public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements IInventory, SimpleComponent {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -76,6 +80,24 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     public ShieldTileEntity() {
         super(ShieldConfiguration.MAXENERGY, ShieldConfiguration.RECEIVEPERTICK);
         registerSyncedObject(shieldBlocks);
+    }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return "shield_projector";
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    Object[] isShieldActive(Context context, Arguments args) {
+        return new Object[] { isShieldActive() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    Object[] isShieldComposed(Context context, Arguments args) {
+        return new Object[] { isShieldComposed() };
     }
 
     public List<ShieldFilter> getFilters() {
@@ -276,6 +298,10 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     public boolean isShieldComposed() {
         return shieldComposed;
+    }
+
+    public boolean isShieldActive() {
+        return shieldActive;
     }
 
     public void applyDamageToEntity(Entity entity) {
