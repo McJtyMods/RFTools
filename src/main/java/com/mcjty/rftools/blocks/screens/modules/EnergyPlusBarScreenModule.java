@@ -12,6 +12,7 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = Coordinate.INVALID;
             if (tagCompound.hasKey("monitorx")) {
+                this.dim = tagCompound.getInteger("dim");
                 coordinate = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
             }
         }

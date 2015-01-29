@@ -187,7 +187,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         coordinate = Coordinate.INVALID;
         if (tagCompound.hasKey("monitorx")) {
-            dim = tagCompound.getInteger("dim");
+            this.dim = tagCompound.getInteger("dim");
             if (dim == this.dim) {
                 Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
                 int dx = Math.abs(c.getX() - x);

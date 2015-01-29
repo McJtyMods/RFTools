@@ -1,13 +1,11 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
-import com.mcjty.gui.RenderHelper;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
-import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
