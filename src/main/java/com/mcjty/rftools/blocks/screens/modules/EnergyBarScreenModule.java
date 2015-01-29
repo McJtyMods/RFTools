@@ -1,11 +1,11 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import com.mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class EnergyBarScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
@@ -15,10 +15,15 @@ public class EnergyBarScreenModule implements ScreenModule {
 
     @Override
     public String[] getData(long millis) {
-        World world = RfToolsDimensionManager.getWorldForDimension(dim);
+        World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
         }
+
+        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+            return null;
+        }
+
         TileEntity te = world.getTileEntity(coordinate.getX(), coordinate.getY(), coordinate.getZ());
         if (!EnergyTools.isEnergyTE(te)) {
             return null;

@@ -1,10 +1,10 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -17,10 +17,15 @@ public class FluidBarScreenModule implements ScreenModule {
 
     @Override
     public String[] getData(long millis) {
-        World world = RfToolsDimensionManager.getWorldForDimension(dim);
+        World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
         }
+
+        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+            return null;
+        }
+
         TileEntity te = world.getTileEntity(coordinate.getX(), coordinate.getY(), coordinate.getZ());
         if (!(te instanceof IFluidHandler)) {
             return null;
