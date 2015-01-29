@@ -347,7 +347,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
         } else {
             // Otherwise we get RF and this block goes into holding mode.
             int rf = rfPerHit[chargingMode];
-            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+            rf = (int) (rf * (getInfusedFactor() + 3.0f) / 3.0f);
 
             // Give a bonus for pearls that have been around a bit longer.
             int a = age*5;
