@@ -11,9 +11,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class FluidBarScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
-    private int dim = 0;
-    private Coordinate coordinate = Coordinate.INVALID;
-    private ScreenModuleHelper helper = new ScreenModuleHelper();
+    protected int dim = 0;
+    protected Coordinate coordinate = Coordinate.INVALID;
+    protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
     public String[] getData(long millis) {

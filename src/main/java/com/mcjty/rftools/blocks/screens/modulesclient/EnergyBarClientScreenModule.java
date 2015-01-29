@@ -23,12 +23,12 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private int color = 0xffffff;
     private int rfcolor = 0xffffff;
     private int rfcolor_neg = 0xffffff;
-    private int dim = 0;
+    protected int dim = 0;
     private boolean hidebar = false;
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
-    private Coordinate coordinate = Coordinate.INVALID;
+    protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override
     public TransformMode getTransformMode() {
@@ -180,17 +180,21 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
             showdiff = tagCompound.getBoolean("showdiff");
             showpct = tagCompound.getBoolean("showpct");
 
-            coordinate = Coordinate.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                this.dim = tagCompound.getInteger("dim");
-                if (dim == this.dim) {
-                    Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
-                    int dx = Math.abs(c.getX() - x);
-                    int dy = Math.abs(c.getY() - y);
-                    int dz = Math.abs(c.getZ() - z);
-                    if (dx <= 64 && dy <= 64 && dz <= 64) {
-                        coordinate = c;
-                    }
+            setupCoordinateFromNBT(tagCompound, dim, x, y, z);
+        }
+    }
+
+    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+        coordinate = Coordinate.INVALID;
+        if (tagCompound.hasKey("monitorx")) {
+            dim = tagCompound.getInteger("dim");
+            if (dim == this.dim) {
+                Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                int dx = Math.abs(c.getX() - x);
+                int dy = Math.abs(c.getY() - y);
+                int dz = Math.abs(c.getZ() - z);
+                if (dx <= 64 && dy <= 64 && dz <= 64) {
+                    coordinate = c;
                 }
             }
         }

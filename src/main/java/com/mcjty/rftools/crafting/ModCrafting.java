@@ -5,8 +5,11 @@ import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 
 public final class ModCrafting {
 
@@ -26,8 +29,16 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.monitorBlock), " T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone);
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock1), " T ", "cMc", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Blocks.crafting_table);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock2), " T ", "cMc", " T ", 'M', ModBlocks.crafterBlock1, 'T', redstoneTorch, 'c', Blocks.crafting_table);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.crafterBlock3), " T ", "cMc", " T ", 'M', ModBlocks.crafterBlock2, 'T', redstoneTorch, 'c', Blocks.crafting_table);
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack((Item) redstoneTorch), null,
+                new ItemStack(Blocks.crafting_table), new ItemStack(ModBlocks.crafterBlock1), new ItemStack(Blocks.crafting_table),
+                null, new ItemStack((Item) redstoneTorch), null
+        }, new ItemStack(ModBlocks.crafterBlock2), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack((Item) redstoneTorch), null,
+                new ItemStack(Blocks.crafting_table), new ItemStack(ModBlocks.crafterBlock2), new ItemStack(Blocks.crafting_table),
+                null, new ItemStack((Item) redstoneTorch), null
+        }, new ItemStack(ModBlocks.crafterBlock3), 4));
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineInfuserBlock), "srs", "dMd", "srs", 'M', ModBlocks.machineFrame, 's', ModItems.dimensionalShard,
                 'r', Items.redstone, 'd', Items.diamond);
@@ -103,6 +114,15 @@ public final class ModCrafting {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.fluidModuleItem), " c ", "rir", " b ", 'c', Items.bucket, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack(Items.ender_pearl), null,
+                new ItemStack(Items.gold_ingot), new ItemStack(ModItems.energyModuleItem), new ItemStack(Items.gold_ingot),
+                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.energyPlusModuleItem), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack(Items.ender_pearl), null,
+                new ItemStack(Items.gold_ingot), new ItemStack(ModItems.fluidModuleItem), new ItemStack(Items.gold_ingot),
+                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.fluidPlusModuleItem), 4));
 
         // Recipes for known dimlets are added in KnownDimletConfiguration.
     }

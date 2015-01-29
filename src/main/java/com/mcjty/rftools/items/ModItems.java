@@ -28,10 +28,12 @@ public final class ModItems {
 
     public static TextModuleItem textModuleItem;
     public static EnergyModuleItem energyModuleItem;
+    public static EnergyPlusModuleItem energyPlusModuleItem;
     public static DimensionModuleItem dimensionModuleItem;
     public static InventoryModuleItem inventoryModuleItem;
     public static ClockModuleItem clockModuleItem;
     public static FluidModuleItem fluidModuleItem;
+    public static FluidPlusModuleItem fluidPlusModuleItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -72,38 +74,50 @@ public final class ModItems {
         textModuleItem = new TextModuleItem();
         textModuleItem.setUnlocalizedName("TextModule");
         textModuleItem.setCreativeTab(RFTools.tabRfTools);
-        textModuleItem.setTextureName(RFTools.MODID + ":textModuleItem");
+        textModuleItem.setTextureName(RFTools.MODID + ":modules/textModuleItem");
         GameRegistry.registerItem(textModuleItem, "textModuleItem");
 
         inventoryModuleItem = new InventoryModuleItem();
         inventoryModuleItem.setUnlocalizedName("InventoryModule");
         inventoryModuleItem.setCreativeTab(RFTools.tabRfTools);
-        inventoryModuleItem.setTextureName(RFTools.MODID + ":inventoryModuleItem");
+        inventoryModuleItem.setTextureName(RFTools.MODID + ":modules/inventoryModuleItem");
         GameRegistry.registerItem(inventoryModuleItem, "inventoryModuleItem");
 
         energyModuleItem = new EnergyModuleItem();
         energyModuleItem.setUnlocalizedName("EnergyModule");
         energyModuleItem.setCreativeTab(RFTools.tabRfTools);
-        energyModuleItem.setTextureName(RFTools.MODID + ":energyModuleItem");
+        energyModuleItem.setTextureName(RFTools.MODID + ":modules/energyModuleItem");
         GameRegistry.registerItem(energyModuleItem, "energyModuleItem");
+
+        energyPlusModuleItem = new EnergyPlusModuleItem();
+        energyPlusModuleItem.setUnlocalizedName("EnergyPlusModule");
+        energyPlusModuleItem.setCreativeTab(RFTools.tabRfTools);
+        energyPlusModuleItem.setTextureName(RFTools.MODID + ":modules/energyPlusModuleItem");
+        GameRegistry.registerItem(energyPlusModuleItem, "energyPlusModuleItem");
 
         dimensionModuleItem = new DimensionModuleItem();
         dimensionModuleItem.setUnlocalizedName("DimensionModule");
         dimensionModuleItem.setCreativeTab(RFTools.tabRfTools);
-        dimensionModuleItem.setTextureName(RFTools.MODID + ":dimensionModuleItem");
+        dimensionModuleItem.setTextureName(RFTools.MODID + ":modules/dimensionModuleItem");
         GameRegistry.registerItem(dimensionModuleItem, "dimensionModuleItem");
 
         clockModuleItem = new ClockModuleItem();
         clockModuleItem.setUnlocalizedName("ClockModule");
         clockModuleItem.setCreativeTab(RFTools.tabRfTools);
-        clockModuleItem.setTextureName(RFTools.MODID + ":clockModuleItem");
+        clockModuleItem.setTextureName(RFTools.MODID + ":modules/clockModuleItem");
         GameRegistry.registerItem(clockModuleItem, "clockModuleItem");
 
         fluidModuleItem = new FluidModuleItem();
         fluidModuleItem.setUnlocalizedName("FluidModule");
         fluidModuleItem.setCreativeTab(RFTools.tabRfTools);
-        fluidModuleItem.setTextureName(RFTools.MODID + ":fluidModuleItem");
+        fluidModuleItem.setTextureName(RFTools.MODID + ":modules/fluidModuleItem");
         GameRegistry.registerItem(fluidModuleItem, "fluidModuleItem");
+
+        fluidPlusModuleItem = new FluidPlusModuleItem();
+        fluidPlusModuleItem.setUnlocalizedName("FluidPlusModule");
+        fluidPlusModuleItem.setCreativeTab(RFTools.tabRfTools);
+        fluidPlusModuleItem.setTextureName(RFTools.MODID + ":modules/fluidPlusModuleItem");
+        GameRegistry.registerItem(fluidPlusModuleItem, "fluidPlusModuleItem");
     }
 
     private static void initDimensionItems() {
