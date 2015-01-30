@@ -16,24 +16,20 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.Rectangle;
 
 public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
-    public static final int RELAY_WIDTH = 300;
+    public static final int RELAY_WIDTH = 240;
     public static final int RELAY_HEIGHT = 50;
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private Button offButtonSub1000;
     private Button offButtonSub100;
-    private Button offButtonSub1;
     private TextField offEnergy;
-    private Button offButtonAdd1;
     private Button offButtonAdd100;
     private Button offButtonAdd1000;
 
     private Button onButtonSub1000;
     private Button onButtonSub100;
-    private Button onButtonSub1;
     private TextField onEnergy;
-    private Button onButtonAdd1;
     private Button onButtonAdd100;
     private Button onButtonAdd1000;
 
@@ -58,8 +54,6 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         });
         offButtonSub1000 = createEnergyOffsetButton(offEnergy, "-1000", -1000);
         offButtonSub100 = createEnergyOffsetButton(offEnergy, "-100", -100);
-        offButtonSub1 = createEnergyOffsetButton(offEnergy, "-1", -1);
-        offButtonAdd1 = createEnergyOffsetButton(offEnergy, "+1", 1);
         offButtonAdd100 = createEnergyOffsetButton(offEnergy, "+100", 100);
         offButtonAdd1000 = createEnergyOffsetButton(offEnergy, "+1000", 1000);
         offEnergy.setText(Integer.toString(tileEntity.getRfOff()));
@@ -67,9 +61,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         Panel panelOff = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOff).
                 addChild(offButtonSub1000).
                 addChild(offButtonSub100).
-                addChild(offButtonSub1).
                 addChild(offEnergy).
-                addChild(offButtonAdd1).
                 addChild(offButtonAdd100).
                 addChild(offButtonAdd1000);
 
@@ -83,8 +75,6 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         });
         onButtonSub1000 = createEnergyOffsetButton(onEnergy, "-1000", -1000);
         onButtonSub100 = createEnergyOffsetButton(onEnergy, "-100", -100);
-        onButtonSub1 = createEnergyOffsetButton(onEnergy, "-1", -1);
-        onButtonAdd1 = createEnergyOffsetButton(onEnergy, "+1", 1);
         onButtonAdd100 = createEnergyOffsetButton(onEnergy, "+100", 100);
         onButtonAdd1000 = createEnergyOffsetButton(onEnergy, "+1000", 1000);
         onEnergy.setText(Integer.toString(tileEntity.getRfOn()));
@@ -92,9 +82,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         Panel panelOn = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOn).
                 addChild(onButtonSub1000).
                 addChild(onButtonSub100).
-                addChild(onButtonSub1).
                 addChild(onEnergy).
-                addChild(onButtonAdd1).
                 addChild(onButtonAdd100).
                 addChild(onButtonAdd1000);
 
