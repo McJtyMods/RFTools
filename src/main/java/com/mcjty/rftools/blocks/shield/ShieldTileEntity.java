@@ -90,13 +90,13 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
 
     @Callback
     @Optional.Method(modid = "OpenComputers")
-    Object[] isShieldActive(Context context, Arguments args) {
+    public Object[] isShieldActive(Context context, Arguments args) throws Exception {
         return new Object[] { isShieldActive() };
     }
 
     @Callback
     @Optional.Method(modid = "OpenComputers")
-    Object[] isShieldComposed(Context context, Arguments args) {
+    public Object[] isShieldComposed(Context context, Arguments args) throws Exception {
         return new Object[] { isShieldComposed() };
     }
 

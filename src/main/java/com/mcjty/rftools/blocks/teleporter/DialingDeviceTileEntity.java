@@ -101,9 +101,9 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         return destinations.getDestination(coordinate, dimension);
     }
 
-    private List<TeleportDestinationClientInfo> searchReceivers() {
+    private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations());
+        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations(playerName));
     }
 
     public List<TransmitterInfo> searchTransmitters() {
@@ -192,7 +192,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         Coordinate c = teleportDestination.getCoordinate();
-        World recWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(teleportDestination.getDimension());
+        World recWorld = RfToolsDimensionManager.getWorldForDimension(teleportDestination.getDimension());
         if (recWorld == null) {
             recWorld = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
             if (recWorld == null) {
@@ -269,7 +269,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return rc;
         }
         if (CMD_GETRECEIVERS.equals(command)) {
-            return searchReceivers();
+            String playerName = args.get("player").getString();
+            return searchReceivers(playerName);
         } else if (CMD_GETTRANSMITTERS.equals(command)) {
             return searchTransmitters();
         }

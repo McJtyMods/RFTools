@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketRequestListFromServer;
 
 import java.util.List;
@@ -9,8 +10,8 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
     public PacketGetReceivers() {
     }
 
-    public PacketGetReceivers(int x, int y, int z) {
-        super(x, y, z, DialingDeviceTileEntity.CMD_GETRECEIVERS);
+    public PacketGetReceivers(int x, int y, int z, String playerName) {
+        super(x, y, z, DialingDeviceTileEntity.CMD_GETRECEIVERS, new Argument("player", playerName));
     }
 
     @Override

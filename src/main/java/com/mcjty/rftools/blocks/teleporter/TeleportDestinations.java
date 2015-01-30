@@ -78,7 +78,7 @@ public class TeleportDestinations extends WorldSavedData {
 
 
     // Server side only
-    public Collection<TeleportDestinationClientInfo> getValidDestinations() {
+    public Collection<TeleportDestinationClientInfo> getValidDestinations(String playerName) {
         List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
@@ -89,6 +89,15 @@ public class TeleportDestinations extends WorldSavedData {
                     dimName = "Id " + destination.getDimension();
                 }
                 destinationClientInfo.setDimensionName(dimName);
+                Coordinate c = destination.getCoordinate();
+                TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
+                if (te instanceof MatterReceiverTileEntity) {
+                    MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+                    if (playerName != null && !matterReceiverTileEntity.checkAccess(playerName)) {
+                        // No access.
+                        continue;
+                    }
+                }
             }
             result.add(destinationClientInfo);
         }
