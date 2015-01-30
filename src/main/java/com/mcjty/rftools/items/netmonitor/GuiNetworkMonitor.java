@@ -3,12 +3,15 @@ package com.mcjty.rftools.items.netmonitor;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
+import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.BlockInfo;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.PacketHandler;
@@ -53,7 +56,10 @@ public class GuiNetworkMonitor extends GuiScreen {
     private Window window;
     private ToggleButton showRfPerTick;
     private WidgetList list;
+    private TextField filterTextField;
     private int listDirty;
+
+    private String filter = null;
 
     public static void setSelected(int x, int y, int z) {
         selectedX = x;
@@ -102,8 +108,18 @@ public class GuiNetworkMonitor extends GuiScreen {
             public void buttonClicked(Widget parent) {
                 previousRfMillis = 0;
             }
+        }).setDesiredHeight(13);
+        filterTextField = new TextField(mc, this).setDesiredHeight(13).addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                filter = filterTextField.getText();
+                if (filter.trim().isEmpty()) {
+                    filter = null;
+                }
+                connectedBlocks = null;
+            }
         });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).setDesiredHeight(16);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(16);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(buttonPanel).setDesiredHeight(13);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
@@ -134,7 +150,10 @@ public class GuiNetworkMonitor extends GuiScreen {
             int maxEnergy = blockInfo.getMaxEnergyStored();
 
             EnergyBar energyLabel = labelMap.get(me.getKey());
-            setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
+            // First test if this label isn't filtered out.
+            if (energyLabel != null) {
+                setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
+            }
         }
     }
 
@@ -187,6 +206,12 @@ public class GuiNetworkMonitor extends GuiScreen {
 
                 int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
                 String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
+
+                if (filter != null) {
+                    if (!displayName.toLowerCase().contains(filter)) {
+                        continue;
+                    }
+                }
 
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 

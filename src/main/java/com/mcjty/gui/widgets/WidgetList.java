@@ -57,6 +57,10 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         if (!visible) {
             return;
         }
+
+        // Use the function above to force reset of the slider in case the contents changed so that it doesn't look weird.
+        mouseWheel(0, x, y);
+
         super.draw(window, x, y);
         int xx = x + bounds.x + 2;
         int yy = y + bounds.y;
