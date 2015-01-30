@@ -3,8 +3,6 @@
         [ "Liquid", "glowstone" ],
         [ "Liquid", "honey" ],
         [ "Liquid", "ic2constructionfoam" ],
-        [ "Liquid", "yellorium" ],
-        [ "Liquid", "cyanite" ],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
@@ -58,6 +56,8 @@
         [ "Liquid", "steam", 25000, 15000, 500, 4, 0 ],
         [ "Liquid", "rocket_fuel", 20000, 5000, 300, 3, 0 ],
         [ "Liquid", "biofuel", 20000, 5000, 300, 3, 0 ],
+        [ "Liquid", "yellorium", 20000, 5000, 300, 3, 0 ],
+        [ "Liquid", "cyanite", 20000, 5000, 300, 3, 0 ],
         [ "Liquid", "ethanol", 20000, 5000, 300, 3, 0 ],
         [ "Liquid", "oil", 20000, 5000, 300, 3, 0 ],
         [ "Liquid", "fuel", 20000, 5000, 300, 3, 0 ],
