@@ -1,9 +1,11 @@
 package com.mcjty.rftools.items.netmonitor;
 
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
+import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
@@ -26,6 +28,11 @@ public class GuiNetworkMonitor extends GuiScreen {
     private Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
     private Map<Coordinate, EnergyBar> labelMap;
+
+    // Previous rf for a given coordinate.
+    private Map<Coordinate, Integer> previousRf = null;
+    private long previousRfMillis = 0;
+
     // A map mapping index in our widget list to coordinates.
     private Map<Integer, Coordinate> indexToCoordinate;
 
@@ -38,12 +45,13 @@ public class GuiNetworkMonitor extends GuiScreen {
     /** The X size of the window in pixels. */
     protected int xSize = 356;
     /** The Y size of the window in pixels. */
-    protected int ySize = 180;
+    protected int ySize = 206;
 
     public static final int TEXT_COLOR = 0x19979f;
     public static final int SEL_TEXT_COLOR = 0x092020;
 
     private Window window;
+    private ToggleButton showRfPerTick;
     private WidgetList list;
     private int listDirty;
 
@@ -55,6 +63,7 @@ public class GuiNetworkMonitor extends GuiScreen {
 
     public GuiNetworkMonitor() {
         listDirty = 0;
+        previousRfMillis = 0;
     }
 
     public static void setServerConnectedBlocks(Map<Coordinate, BlockInfo> serverConnectedBlocks) {
@@ -86,7 +95,17 @@ public class GuiNetworkMonitor extends GuiScreen {
         });
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+
+        showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                previousRfMillis = 0;
+            }
+        });
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).setDesiredHeight(16);
+
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(buttonPanel).setDesiredHeight(13);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -104,7 +123,10 @@ public class GuiNetworkMonitor extends GuiScreen {
         Minecraft.getMinecraft().thePlayer.closeScreen();
     }
 
-    private void refreshList() {
+    private void refreshList(boolean recalcPerTick) {
+        long millis = System.currentTimeMillis();
+        boolean rftick = showRfPerTick.isPressed();
+
         for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
 
@@ -112,7 +134,20 @@ public class GuiNetworkMonitor extends GuiScreen {
             int maxEnergy = blockInfo.getMaxEnergyStored();
 
             EnergyBar energyLabel = labelMap.get(me.getKey());
-            energyLabel.setValue(energy).setMaxValue(maxEnergy);
+            setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
+        }
+    }
+
+    private void setEnergyLabel(long millis, boolean rftick, boolean recalcPerTick, Map.Entry<Coordinate, BlockInfo> me, int energy, int maxEnergy, EnergyBar energyLabel) {
+        energyLabel.setValue(energy).setMaxValue(maxEnergy).setShowRfPerTick(rftick);
+        if (rftick && recalcPerTick) {
+            long dt = millis - previousRfMillis;
+            int rft = 0;
+            if (dt > 0 && previousRf != null && previousRf.containsKey(me.getKey())) {
+                rft = energy - previousRf.get(me.getKey());
+                rft = rft * 20 / (int)dt;
+            }
+            energyLabel.setRfPerTick(rft);
         }
     }
 
@@ -122,45 +157,63 @@ public class GuiNetworkMonitor extends GuiScreen {
         if (serverConnectedBlocks == null) {
             return;
         }
+
+        boolean rftick = showRfPerTick.isPressed();
+        long millis = System.currentTimeMillis();
+        boolean recalcPerTick = previousRfMillis == 0 || (millis - previousRfMillis) > 1000;
+
         if (serverConnectedBlocks.equals(connectedBlocks)) {
-            refreshList();
-            return;
+            refreshList(recalcPerTick);
+        } else {
+            connectedBlocks = new HashMap<Coordinate, BlockInfo>(serverConnectedBlocks);
+            Map<Coordinate, EnergyBar> oldLabelMap = labelMap;
+            labelMap = new HashMap<Coordinate, EnergyBar>();
+            indexToCoordinate = new HashMap<Integer, Coordinate>();
+            list.removeChildren();
+
+            int index = 0;
+            for (Map.Entry<Coordinate, BlockInfo> me : connectedBlocks.entrySet()) {
+                BlockInfo blockInfo = me.getValue();
+                Coordinate coordinate = me.getKey();
+                Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+                if (block == null || block.isAir(mc.theWorld, coordinate.getX(), coordinate.getY(), coordinate.getZ())) {
+                    continue;
+                }
+
+                int energy = blockInfo.getEnergyStored();
+                int maxEnergy = blockInfo.getMaxEnergyStored();
+
+                int color = getTextColor(blockInfo);
+
+                int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+                String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
+
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+
+                panel.addChild(new BlockRender(mc, this).setRenderItem(block));
+                panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
+                panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
+                EnergyBar energyLabel = oldLabelMap == null ? null : oldLabelMap.get(coordinate);
+                if (energyLabel == null) {
+                    energyLabel = new EnergyBar(mc, this).setColor(TEXT_COLOR).setHorizontal();
+                }
+                setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
+
+                panel.addChild(energyLabel);
+                list.addChild(panel);
+
+                labelMap.put(coordinate, energyLabel);
+                indexToCoordinate.put(index, coordinate);
+                index++;
+            }
         }
 
-        connectedBlocks = new HashMap<Coordinate, BlockInfo>(serverConnectedBlocks);
-        labelMap = new HashMap<Coordinate, EnergyBar>();
-        indexToCoordinate = new HashMap<Integer, Coordinate>();
-        list.removeChildren();
-
-        int index = 0;
-        for (Map.Entry<Coordinate,BlockInfo> me : connectedBlocks.entrySet()) {
-            BlockInfo blockInfo = me.getValue();
-            Coordinate coordinate = me.getKey();
-            Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
-            if (block == null || block.isAir(mc.theWorld, coordinate.getX(), coordinate.getY(), coordinate.getZ())) {
-                continue;
+        if (rftick && recalcPerTick) {
+            previousRfMillis = millis;
+            previousRf = new HashMap<Coordinate, Integer>(connectedBlocks.size());
+            for (Map.Entry<Coordinate, BlockInfo> me : connectedBlocks.entrySet()) {
+                previousRf.put(me.getKey(), me.getValue().getEnergyStored());
             }
-
-            int energy = blockInfo.getEnergyStored();
-            int maxEnergy = blockInfo.getMaxEnergyStored();
-
-            int color = getTextColor(blockInfo);
-
-            int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
-            String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
-
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-
-            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
-            EnergyBar energyLabel = new EnergyBar(mc, this).setValue(energy).setMaxValue(maxEnergy).setColor(TEXT_COLOR).setHorizontal();
-            panel.addChild(energyLabel);
-            list.addChild(panel);
-
-            labelMap.put(coordinate, energyLabel);
-            indexToCoordinate.put(index, coordinate);
-            index++;
         }
     }
 

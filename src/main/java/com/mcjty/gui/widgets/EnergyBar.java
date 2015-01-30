@@ -19,6 +19,8 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
     private boolean horizontal = false;
     private IEnergyHandler handler = null;
     private boolean showText = true;
+    private boolean showRfPerTick = false;
+    private int rfPerTick = 0;
 
     public EnergyBar(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -69,6 +71,24 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
 
     public EnergyBar setShowText(boolean showText) {
         this.showText = showText;
+        return this;
+    }
+
+    public boolean isShowRfPerTick() {
+        return showRfPerTick;
+    }
+
+    public EnergyBar setShowRfPerTick(boolean showRfPerTick) {
+        this.showRfPerTick = showRfPerTick;
+        return this;
+    }
+
+    public int getRfPerTick() {
+        return rfPerTick;
+    }
+
+    public EnergyBar setRfPerTick(int rfPerTick) {
+        this.rfPerTick = rfPerTick;
         return this;
     }
 
@@ -142,7 +162,12 @@ public class EnergyBar extends AbstractWidget<EnergyBar> {
             }
         }
         if (showText) {
-            String s = currentValue + "/" + maximum;
+            String s;
+            if (showRfPerTick) {
+                s = rfPerTick + "RF/t";
+            } else {
+                s = currentValue + "/" + maximum;
+            }
             mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, getBounds().width), x+bounds.x, y+bounds.y+(bounds.height-mc.fontRenderer.FONT_HEIGHT)/2, color);
         }
     }
