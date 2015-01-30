@@ -17,15 +17,21 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemFilterContainer.factory, ItemFilterContainer.GHOST_SIZE + ItemFilterContainer.BUFFER_SIZE);
 
-    public static final byte MODE_INPUT_EXACT = 2;
-    public static final byte MODE_INPUT = 1;
-    public static final byte MODE_DISABLED = 0;
-    public static final byte MODE_OUTPUT_EXACT = -1;
-    public static final byte MODE_OUTPUT = -2;
-    private byte inputMode[] = new byte[6];
+    public static final byte OLDMODE_INPUT_EXACT = 2;
+    public static final byte OLDMODE_INPUT = 1;
+    public static final byte OLDMODE_DISABLED = 0;
+    public static final byte OLDMODE_OUTPUT_EXACT = -1;
+    public static final byte OLDMODE_OUTPUT = -2;
 
-    public byte[] getInputMode() {
+    private int inputMode[] = new int[6];
+    private int outputMode[] = new int[6];
+
+    public int[] getInputMode() {
         return inputMode;
+    }
+
+    public int[] getOutputMode() {
+        return outputMode;
     }
 
     @Override
@@ -42,7 +48,33 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        inputMode = tagCompound.getByteArray("inputMode");
+        if (tagCompound.hasKey("inputMode")) {
+            // This is an old item filter that still uses input mode. We need
+            // to convert it.
+
+            // First move the six items from the old positions to the new positions.
+            for (int i = ItemFilterContainer.SLOT_BUFFER+5 ; i >= ItemFilterContainer.SLOT_BUFFER ; i--) {
+                inventoryHelper.getStacks()[i] = inventoryHelper.getStacks()[i-3];
+                inventoryHelper.getStacks()[i-3] = null;
+            }
+
+            // Now convert the modes to the new system.
+            byte[] oldInputMode = tagCompound.getByteArray("inputMode");
+            for (int i = 0 ; i < 6 ; i++) {
+                byte im = oldInputMode[i];
+                switch (im) {
+                    case OLDMODE_INPUT_EXACT:  inputMode[i] = 1 << i; outputMode[i] = 0; break;
+                    case OLDMODE_INPUT:        inputMode[i] = 0x3f; outputMode[i] = 0; break;
+                    case OLDMODE_OUTPUT_EXACT: inputMode[i] = 0; outputMode[i] = 1 << i; break;
+                    case OLDMODE_OUTPUT:       inputMode[i] = 0; outputMode[i] = 0x3f; break;
+                    case OLDMODE_DISABLED:     inputMode[i] = 0; outputMode[i] = 0; break;
+                }
+            }
+
+        } else {
+            inputMode = tagCompound.getIntArray("inputs");
+            outputMode = tagCompound.getIntArray("outputs");
+        }
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -62,7 +94,8 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setByteArray("inputMode", inputMode);
+        tagCompound.setIntArray("inputs", inputMode);
+        tagCompound.setIntArray("outputs", outputMode);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -84,9 +117,20 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
             return true;
         }
         if (CMD_SETMODE.equals(command)) {
-            Integer index = args.get("index").getInteger();
-            Integer input = args.get("input").getInteger();
-            inputMode[index] = (byte) (int) input;
+            Integer side = args.get("side").getInteger();
+            Integer slot = args.get("slot").getInteger();
+            Boolean input = args.get("input").getBoolean();
+            Boolean output = args.get("output").getBoolean();
+
+            inputMode[side] &= ~(1 << slot);
+            if (input) {
+                inputMode[side] |= 1 << slot;
+            }
+            outputMode[side] &= ~(1 << slot);
+            if (output) {
+                outputMode[side] |= 1 << slot;
+            }
+
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
@@ -155,16 +199,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
             return true;
         }
         ItemStack ghostStack = inventoryHelper.getStacks()[index - ItemFilterContainer.SLOT_BUFFER];
-        if (ghostStack == null) {
-            return true;
-        }
-        return ghostStack.isItemEqual(stack);
+        return ghostStack == null || ghostStack.isItemEqual(stack);
     }
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         int v = ItemFilterContainer.SLOT_BUFFER;
-        return new int[] { v, v+1, v+2, v+3, v+4, v+5 };
+        return new int[] { v, v+1, v+2, v+3, v+4, v+5, v+6, v+7, v+8 };
     }
 
     @Override
@@ -172,18 +213,23 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         if (index < ItemFilterContainer.SLOT_BUFFER) {
             return false;
         }
-        if (!isInputMode(side)) {
+        if (!isInputMode(side, index - ItemFilterContainer.SLOT_BUFFER)) {
             return false;
         }
 
         int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
 
-        if (inputMode[side] == MODE_INPUT_EXACT && ghostIndex != side) {
-            return false;       // Only insert exactly here
-        }
-
         ItemStack ghostStack = inventoryHelper.getStacks()[ghostIndex];
         if (ghostStack == null) {
+            // First check if there are other ghosted items for this side that match.
+            // In that case we don't allow input here.
+            int im = inputMode[side];
+            for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
+                ItemStack g = inventoryHelper.getStacks()[i];
+                if (g != null && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
+                    return false;
+                }
+            }
             return true;
         }
         return ghostStack.isItemEqual(stack);
@@ -194,23 +240,14 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         if (index < ItemFilterContainer.SLOT_BUFFER) {
             return false;
         }
-        if (!isOutputMode(side)) {
-            return false;
-        }
-
-        int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
-        if (inputMode[side] == MODE_OUTPUT_EXACT && ghostIndex != side) {
-            return false;
-        }
-
-        return true;
+        return isOutputMode(side, index - ItemFilterContainer.SLOT_BUFFER);
     }
 
-    private boolean isInputMode(int side) {
-        return inputMode[side] > MODE_DISABLED;
+    private boolean isInputMode(int side, int slot) {
+        return (inputMode[side] & (1<<slot)) != 0;
     }
 
-    private boolean isOutputMode(int side) {
-        return inputMode[side] < MODE_DISABLED;
+    private boolean isOutputMode(int side, int slot) {
+        return (outputMode[side] & (1<<slot)) != 0;
     }
 }

@@ -4,7 +4,7 @@ import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.layout.PositionalLayout;
-import com.mcjty.gui.widgets.ChoiceLabel;
+import com.mcjty.gui.widgets.ImageChoiceLabel;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.RFTools;
@@ -15,18 +15,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.awt.*;
 
 public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
-    public static final int ITEMFILTER_WIDTH = 181;
-    public static final int ITEMFILTER_HEIGHT = 224;
+    public static final int ITEMFILTER_WIDTH = 195;
+    public static final int ITEMFILTER_HEIGHT = 212;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/itemfilter.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public static final String DISABLED = "Disabled";
-    public static final String INPUT = "Input";
-    public static final String INPUT_EXACT = "Input Exact";
-    public static final String OUTPUT = "Output";
-    public static final String OUTPUT_EXACT = "Output Exact";
-
-    private ChoiceLabel inputMode[] = new ChoiceLabel[6];
+    private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterContainer.BUFFER_SIZE * 6];
 
     public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, ItemFilterContainer container) {
         super(itemFilterTileEntity, container);
@@ -41,34 +36,34 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        byte[] modes = tileEntity.getInputMode();
+        int[] inputMode = tileEntity.getInputMode();
+        int[] outputMode = tileEntity.getOutputMode();
+
         for (ForgeDirection direction : ForgeDirection.values()) {
             if (!ForgeDirection.UNKNOWN.equals(direction)) {
-                final int i = direction.ordinal();
-                inputMode[i] = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(94, 6 + i * 18, 80, 16)).addChoices(DISABLED, INPUT, INPUT_EXACT, OUTPUT, OUTPUT_EXACT).
-                        addChoiceEvent(new ChoiceEvent() {
-                            @Override
-                            public void choiceChanged(Widget parent, String newChoice) {
-                                changeMode(i, newChoice);
-                            }
-                        });
-                inputMode[i].setChoiceTooltip(DISABLED, "No input/output on this side");
-                inputMode[i].setChoiceTooltip(INPUT, "Items can come from this side", "and go to any matching slot");
-                inputMode[i].setChoiceTooltip(INPUT_EXACT, "Items can come from this side", "and go only to this slot");
-                inputMode[i].setChoiceTooltip(OUTPUT, "Items can come out of this side", "from any slot");
-                inputMode[i].setChoiceTooltip(OUTPUT_EXACT, "Items can come out of this side", "but only from this slot");
-                if (modes[i] == ItemFilterTileEntity.MODE_DISABLED) {
-                    inputMode[i].setChoice(DISABLED);
-                } else if (modes[i] == ItemFilterTileEntity.MODE_OUTPUT) {
-                    inputMode[i].setChoice(OUTPUT);
-                } else if (modes[i] == ItemFilterTileEntity.MODE_OUTPUT_EXACT) {
-                    inputMode[i].setChoice(OUTPUT_EXACT);
-                } else if (modes[i] == ItemFilterTileEntity.MODE_INPUT) {
-                    inputMode[i].setChoice(INPUT);
-                } else {
-                    inputMode[i].setChoice(INPUT_EXACT);
+                final int side = direction.ordinal();
+                for (int slot = 0 ; slot < ItemFilterContainer.BUFFER_SIZE ; slot++) {
+                    ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(25 + slot * 18, 4 + side * 13, 12, 12)).
+                            addChoice("0", "Disabled", iconGuiElements, 160, 0).
+                            addChoice("1", "Input", iconGuiElements, 96, 16).
+                            addChoice("2", "Output", iconGuiElements, 80, 16);
+                    bits[side * ItemFilterContainer.BUFFER_SIZE + slot] = choiceLabel;
+                    if ((inputMode[side] & (1<<slot)) != 0) {
+                        choiceLabel.setCurrentChoice(1);
+                    } else if ((outputMode[side] & (1<<slot)) != 0) {
+                        choiceLabel.setCurrentChoice(2);
+                    } else {
+                        choiceLabel.setCurrentChoice(0);
+                    }
+                    final int finalSlot = slot;
+                    choiceLabel.addChoiceEvent(new ChoiceEvent() {
+                        @Override
+                        public void choiceChanged(Widget parent, String newChoice) {
+                            changeMode(side, finalSlot);
+                        }
+                    });
+                    toplevel.addChild(choiceLabel);
                 }
-                toplevel.addChild(inputMode[i]);
             }
         }
 
@@ -77,23 +72,25 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
         window = new Window(this, toplevel);
     }
 
-    private void changeMode(int i, String newChoice) {
-        int m;
-        if (INPUT.equals(newChoice)) {
-            m = ItemFilterTileEntity.MODE_INPUT;
-        } else if (INPUT_EXACT.equals(newChoice)) {
-            m = ItemFilterTileEntity.MODE_INPUT_EXACT;
-        } else if (OUTPUT.equals(newChoice)) {
-            m = ItemFilterTileEntity.MODE_OUTPUT;
-        } else if (OUTPUT_EXACT.equals(newChoice)) {
-            m = ItemFilterTileEntity.MODE_OUTPUT_EXACT;
-        } else {
-            m = ItemFilterTileEntity.MODE_DISABLED;
+
+
+    private void changeMode(int side, int slot) {
+        ImageChoiceLabel choiceLabel = bits[side * ItemFilterContainer.BUFFER_SIZE + slot];
+        int c = choiceLabel.getCurrentChoice();
+        boolean input = false;
+        boolean output = false;
+        if (c == 1) {
+            input = true;
+            output = false;
+        } else if (c == 2) {
+            input = false;
+            output = true;
         }
         sendServerCommand(ItemFilterTileEntity.CMD_SETMODE,
-                new Argument("index", i),
-                new Argument("input", m));
-
+                new Argument("side", side),
+                new Argument("slot", slot),
+                new Argument("input", input),
+                new Argument("output", output));
     }
 
     @Override
