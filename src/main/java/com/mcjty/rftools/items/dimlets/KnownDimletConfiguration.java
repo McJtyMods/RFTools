@@ -31,10 +31,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KnownDimletConfiguration {
     public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";              // This is part of dimlets.cfg
@@ -69,6 +66,95 @@ public class KnownDimletConfiguration {
                 "The base cost (in RF/tick) for maintaining a dimension").getInt();
         DimletCosts.baseDimensionTickCost = cfg.get(CATEGORY_GENERAL, "baseDimensionTickCost", DimletCosts.baseDimensionTickCost,
                 "The base time (in ticks) for creating a dimension").getInt();
+    }
+
+
+    private static <T> void remapIdsInMap(Map<Integer, Integer> mapFromTo, Map<Integer,T> baseMap) {
+        Map<Integer,T> oldMap = new HashMap<Integer, T>(baseMap);
+        baseMap.clear();
+        for (Map.Entry<Integer, T> entry : oldMap.entrySet()) {
+            Integer id = entry.getKey();
+            T de = entry.getValue();
+            if (mapFromTo.containsKey(id)) {
+                baseMap.put(mapFromTo.get(id), de);
+            } else {
+                baseMap.put(id, de);
+            }
+        }
+    }
+
+    private static <T> void remapIdsInMapReversed(Map<Integer, Integer> mapFromTo, Map<T,Integer> baseMap) {
+        Map<T,Integer> oldMap = new HashMap<T,Integer>(baseMap);
+        baseMap.clear();
+        for (Map.Entry<T, Integer> entry : oldMap.entrySet()) {
+            Integer id = entry.getValue();
+            T de = entry.getKey();
+            if (mapFromTo.containsKey(id)) {
+                baseMap.put(de, mapFromTo.get(id));
+            } else {
+                baseMap.put(de, id);
+            }
+        }
+    }
+
+    private static void remapIdsInSet(Map<Integer, Integer> mapFromTo, Set<Integer> baseSet) {
+        Set<Integer> oldSet = new HashSet<Integer>(baseSet);
+        baseSet.clear();
+        for (Integer id : oldSet) {
+            if (mapFromTo.containsKey(id)) {
+                baseSet.add(mapFromTo.get(id));
+            } else {
+                baseSet.add(id);
+            }
+        }
+    }
+
+    private static void remapIdsInList(Map<Integer, Integer> mapFromTo, List<Integer> baseList) {
+        List<Integer> oldList = new ArrayList<Integer>(baseList);
+        baseList.clear();
+        for (Integer id : oldList) {
+            if (mapFromTo.containsKey(id)) {
+                baseList.add(mapFromTo.get(id));
+            } else {
+                baseList.add(id);
+            }
+        }
+    }
+
+    /**
+     * This is on the client side in case the server finds mismatching dimlet id's between
+     * the server and the client. Here this will be corrected.
+     */
+    public static void remapIds(Map<Integer,Integer> mapFromTo) {
+        remapIdsInMap(mapFromTo, idToDimlet);
+        remapIdsInMapReversed(mapFromTo, dimletToID);
+        remapIdsInMap(mapFromTo, idToDisplayName);
+        remapIdsInSet(mapFromTo, craftableDimlets);
+
+        remapIdsInMap(mapFromTo, DimletMapping.idToTerrainType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToSpecialType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToFeatureType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToControllerType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToEffectType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToStructureType);
+        remapIdsInMap(mapFromTo, DimletMapping.idToBiome);
+        remapIdsInMap(mapFromTo, DimletMapping.idToDigit);
+        remapIdsInMap(mapFromTo, DimletMapping.idToBlock);
+        remapIdsInMap(mapFromTo, DimletMapping.idToFluid);
+        remapIdsInMap(mapFromTo, DimletMapping.idToSkyDescriptor);
+        remapIdsInMap(mapFromTo, DimletMapping.idtoMob);
+        remapIdsInMap(mapFromTo, DimletMapping.idToCelestialAngle);
+        remapIdsInMap(mapFromTo, DimletMapping.idToSpeed);
+        remapIdsInSet(mapFromTo, DimletMapping.celestialBodies);
+
+        remapIdsInList(mapFromTo, DimletRandomizer.dimletIds);
+        DimletRandomizer.randomDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomMaterialDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomLiquidDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomMobDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomStructureDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomEffectDimlets.remapValues(mapFromTo);
+        DimletRandomizer.randomFeatureDimlets.remapValues(mapFromTo);
     }
 
     private static void registerDimletEntry(int id, DimletEntry dimletEntry) {
@@ -148,8 +234,6 @@ public class KnownDimletConfiguration {
 
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
 
-        initBiomeItems(cfg, mainCfg, idsInConfig);
-
         int idControllerDefault = initControllerItem(cfg, mainCfg, idsInConfig, "Default", ControllerType.CONTROLLER_DEFAULT);
         int idControllerSingle = initControllerItem(cfg, mainCfg, idsInConfig, "Single", ControllerType.CONTROLLER_SINGLE);
         initControllerItem(cfg, mainCfg, idsInConfig, "Checkerboard", ControllerType.CONTROLLER_CHECKERBOARD);
@@ -224,8 +308,6 @@ public class KnownDimletConfiguration {
         int idLiquidNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
         DimletMapping.idToFluid.put(idLiquidNone, null);
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
-
-        initLiquidItems(cfg, mainCfg, idsInConfig);
 
         initSpecialItem(cfg, mainCfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
         initSpecialItem(cfg, mainCfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
@@ -392,6 +474,9 @@ public class KnownDimletConfiguration {
         initTimeItem(cfg, mainCfg, idsInConfig, "Evening", 0.75f, null);
         initTimeItem(cfg, mainCfg, idsInConfig, "Fast", null, 2.0f);
         initTimeItem(cfg, mainCfg, idsInConfig, "Slow", null, 0.5f);
+
+        initBiomeItems(cfg, mainCfg, idsInConfig);
+        initLiquidItems(cfg, mainCfg, idsInConfig);
 
         ModItems.knownDimlet = new KnownDimlet();
         ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");

@@ -5,6 +5,8 @@ import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.network.PacketCheckDimletConfig;
 import com.mcjty.rftools.dimension.network.PacketSyncDimensionInfo;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
+import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRegisterDimensions;
@@ -85,38 +87,53 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     /**
      * Check if the client dimlet id's match with the server.
+     * This is executed on the server to the clients.
      */
     public void checkDimletConfig(EntityPlayer player) {
         if (!player.getEntityWorld().isRemote) {
             // Send over dimlet configuration to the client so that the client can check that the id's match.
             RFTools.log("Send validation data to the client");
-            Map<Integer, String> dimlets = new HashMap<Integer, String>(KnownDimletConfiguration.idToDisplayName);
+            Map<Integer, DimletKey> dimlets = new HashMap<Integer, DimletKey>();
+            for (Integer id : KnownDimletConfiguration.idToDimlet.keySet()) {
+                dimlets.put(id, KnownDimletConfiguration.idToDimlet.get(id).getKey());
+            }
 
             PacketHandler.INSTANCE.sendTo(new PacketCheckDimletConfig(dimlets), (EntityPlayerMP) player);
         }
     }
 
-    public void checkDimletConfigFromServer(Map<Integer, String> dimlets) {
-        for (Map.Entry<Integer, String> entry : dimlets.entrySet()) {
-            int id = entry.getKey();
-            String name = entry.getValue();
-            if (!KnownDimletConfiguration.idToDisplayName.containsKey(id)) {
-                RFTools.logError("Dimlet id " + id + " (" + name + ") is missing on the client!");
-                RFTools.log("Dimlet id " + id + " (" + name + ") is missing on the client!");
-            } else if (!KnownDimletConfiguration.idToDisplayName.get(id).equals(name)) {
-                RFTools.logError("Dimlet id " + id + " (" + name + ") is mapped to another dimlet on the client: " + KnownDimletConfiguration.idToDisplayName.get(id) + "!");
-                RFTools.log("Dimlet id " + id + " (" + name + ") is mapped to another dimlet on the client: " + KnownDimletConfiguration.idToDisplayName.get(id) + "!");
+    private Integer findClientDimletId(DimletKey key) {
+        for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
+            if (entry.getValue().getKey().equals(key)) {
+                return entry.getKey();
             }
         }
+        return null;
+    }
 
-        for (Map.Entry<Integer, String> entry : KnownDimletConfiguration.idToDisplayName.entrySet()) {
-            int id = entry.getKey();
-            String name = entry.getValue();
-            if (!dimlets.containsKey(id)) {
-                RFTools.logError("Client has an invalid mapping for dimlet " + id + " (" + name + ")!");
-                RFTools.log("Client has an invalid mapping for dimlet " + id + " (" + name + ")!");
+    /**
+     * Here the information from the server arrives. This code is executed on the client.
+     */
+    public void checkDimletConfigFromServer(Map<Integer, DimletKey> dimlets) {
+        Map<Integer,Integer> mapFromTo = new HashMap<Integer, Integer>();
+
+        for (Map.Entry<Integer, DimletKey> entry : dimlets.entrySet()) {
+            Integer id = entry.getKey();
+            DimletKey key = entry.getValue();
+            DimletEntry clientEntry = KnownDimletConfiguration.idToDimlet.get(id);
+            if (clientEntry == null || !clientEntry.getKey().equals(key)) {
+                Integer clientId = findClientDimletId(key);
+                if (clientId == null) {
+                    // Serious error. This dimlet is completely missing on the client.
+                    RFTools.logError("Dimlet id " + id + " (" + key.getName() + ") is missing on the client!");
+                    RFTools.log("Dimlet id " + id + " (" + key.getName() + ") is missing on the client!");
+                } else {
+                    mapFromTo.put(clientId, id);
+                    RFTools.log("Remapping dimlet id " + clientId + " to " + id);
+                }
             }
         }
+        KnownDimletConfiguration.remapIds(mapFromTo);
     }
 
 

@@ -7,7 +7,7 @@ public class DimletKey {
     final DimletType type;
     final String name;
 
-    DimletKey(DimletType type, String name) {
+    public DimletKey(DimletType type, String name) {
         this.type = type;
         this.name = name;
     }

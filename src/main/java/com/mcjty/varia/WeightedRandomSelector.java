@@ -37,6 +37,21 @@ public class WeightedRandomSelector<K,E> {
         dirty = true;
     }
 
+    public void remapValues(Map<Integer, E> mapFromTo) {
+        for (Map.Entry<K, List<E>> entry : items.entrySet()) {
+            List<E> baseList = entry.getValue();
+            List<E> oldList = new ArrayList<E>(baseList);
+            baseList.clear();
+            for (E id : oldList) {
+                if (mapFromTo.containsKey(id)) {
+                    baseList.add(mapFromTo.get(id));
+                } else {
+                    baseList.add(id);
+                }
+            }
+        }
+    }
+
     /**
      * Add a new item.
      */
