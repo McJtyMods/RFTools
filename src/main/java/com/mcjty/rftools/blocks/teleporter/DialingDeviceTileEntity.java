@@ -7,6 +7,11 @@ import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.common.Optional;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -16,10 +21,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
+@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
+public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent {
 
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";
@@ -84,6 +91,112 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return "dialing_device";
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getTransmitters(Context context, Arguments args) throws Exception {
+        List<TransmitterInfo> transmitterInfos = searchTransmitters();
+        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
+        for (TransmitterInfo info : transmitterInfos) {
+            Map<String,Integer> coordinate = new HashMap<String, Integer>();
+            coordinate.put("x", info.getCoordinate().getX());
+            coordinate.put("y", info.getCoordinate().getY());
+            coordinate.put("z", info.getCoordinate().getZ());
+            result.add(coordinate);
+        }
+
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getReceivers(Context context, Arguments args) throws Exception {
+        List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
+        for (TeleportDestinationClientInfo info : receivers) {
+            Map<String,Integer> coordinate = new HashMap<String, Integer>();
+            coordinate.put("dim", info.getDimension());
+            coordinate.put("x", info.getCoordinate().getX());
+            coordinate.put("y", info.getCoordinate().getY());
+            coordinate.put("z", info.getCoordinate().getZ());
+            result.add(coordinate);
+        }
+
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] dial(Context context, Arguments args) throws Exception {
+        Map transmitter = args.checkTable(0);
+        Map receiver = args.checkTable(1);
+        if (!transmitter.containsKey("x") || !transmitter.containsKey("y") || !transmitter.containsKey("z")) {
+            throw new IllegalArgumentException("Transmitter map doesn't contain the right x,y,z coordinate!");
+        }
+        if (!receiver.containsKey("x") || !receiver.containsKey("y") || !receiver.containsKey("z")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right x,y,z coordinate!");
+        }
+        if (!receiver.containsKey("dim")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right dimension!");
+        }
+
+        Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
+        int transDim = worldObj.provider.dimensionId;
+        Coordinate recC = new Coordinate(((Double) receiver.get("x")).intValue(), ((Double) receiver.get("y")).intValue(), ((Double) receiver.get("z")).intValue());
+        int recDim = ((Double) receiver.get("dim")).intValue();
+
+        int result = dial(null, transC, transDim, recC, recDim);
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] interrupt(Context context, Arguments args) throws Exception {
+        Map transmitter = args.checkTable(0);
+        if (!transmitter.containsKey("x") || !transmitter.containsKey("y") || !transmitter.containsKey("z")) {
+            throw new IllegalArgumentException("Transmitter map doesn't contain the right x,y,z coordinate!");
+        }
+
+        Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
+        int transDim = worldObj.provider.dimensionId;
+
+        int result = dial(null, transC, transDim, null, -1);
+        if (result == DIAL_INVALID_DESTINATION_MASK) {
+            result = 0;
+        }
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getDialed(Context context, Arguments args) throws Exception {
+        Map transmitter = args.checkTable(0);
+        if (!transmitter.containsKey("x") || !transmitter.containsKey("y") || !transmitter.containsKey("z")) {
+            throw new IllegalArgumentException("Transmitter map doesn't contain the right x,y,z coordinate!");
+        }
+
+        Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
+
+        List<TransmitterInfo> transmitterInfos = searchTransmitters();
+        for (TransmitterInfo info : transmitterInfos) {
+            if (info.getCoordinate().equals(transC)) {
+                Map<String,Integer> coordinate = new HashMap<String, Integer>();
+                coordinate.put("dim", info.getTeleportDestination().getDimension());
+                Coordinate c = info.getTeleportDestination().getCoordinate();
+                coordinate.put("x", c.getX());
+                coordinate.put("y", c.getY());
+                coordinate.put("z", c.getZ());
+                return new Object[] { coordinate };
+            }
+        }
+        return null;
     }
 
     @Override
@@ -176,7 +289,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
         }
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
 
-        if (!transmitterTileEntity.checkAccess(player)) {
+        if (player != null && !transmitterTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS;
         }
 
@@ -206,7 +319,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity {
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-        if (!matterReceiverTileEntity.checkAccess(player)) {
+        if (player != null && !matterReceiverTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }
 
