@@ -88,6 +88,62 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return "shield_projector";
     }
 
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getDamageMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getDamageMode().getDescription() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setDamageMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        DamageTypeMode damageMode = DamageTypeMode.getMode(mode);
+        if (damageMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setDamageMode(damageMode);
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getRedstoneMode().getDescription() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRedstoneMode(redstoneMode);
+        return null;
+    }
+
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getShieldRenderingMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getShieldRenderingMode().getDescription() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setShieldRenderingMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        ShieldRenderingMode renderingMode = ShieldRenderingMode.getMode(mode);
+        if (renderingMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setShieldRenderingMode(renderingMode);
+        return null;
+    }
+
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] isShieldActive(Context context, Arguments args) throws Exception {
@@ -98,6 +154,28 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     @Optional.Method(modid = "OpenComputers")
     public Object[] isShieldComposed(Context context, Arguments args) throws Exception {
         return new Object[] { isShieldComposed() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] composeShield(Context context, Arguments args) throws Exception {
+        boolean done = false;
+        if (!isShieldComposed()) {
+            composeShield();
+            done = true;
+        }
+        return new Object[] { done };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] decomposeShield(Context context, Arguments args) throws Exception {
+        boolean done = false;
+        if (isShieldComposed()) {
+            decomposeShield();
+            done = true;
+        }
+        return new Object[] { done };
     }
 
     public List<ShieldFilter> getFilters() {
