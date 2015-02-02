@@ -126,7 +126,6 @@ public class RfToolsDimensionManager extends WorldSavedData {
                 if (clientId == null) {
                     // Serious error. This dimlet is completely missing on the client.
                     RFTools.logError("Dimlet id " + id + " (" + key.getName() + ") is missing on the client!");
-                    RFTools.log("Dimlet id " + id + " (" + key.getName() + ") is missing on the client!");
                 } else {
                     mapFromTo.put(clientId, id);
                     RFTools.log("Remapping dimlet id " + clientId + " to " + id);
