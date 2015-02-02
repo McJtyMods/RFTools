@@ -101,6 +101,9 @@ public class TeleportDestinations extends WorldSavedData {
             }
             result.add(destinationClientInfo);
         }
+
+        Collections.sort(result);
+
         return result;
     }
 

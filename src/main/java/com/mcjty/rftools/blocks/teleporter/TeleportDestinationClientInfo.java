@@ -2,7 +2,7 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
 
-public class TeleportDestinationClientInfo extends TeleportDestination {
+public class TeleportDestinationClientInfo extends TeleportDestination implements Comparable<TeleportDestinationClientInfo> {
 
     private String dimensionName = "";
 
@@ -31,5 +31,15 @@ public class TeleportDestinationClientInfo extends TeleportDestination {
 
     public void setDimensionName(String dimensionName) {
         this.dimensionName = dimensionName;
+    }
+
+    @Override
+    public int compareTo(TeleportDestinationClientInfo o) {
+        if (getDimension() < o.getDimension()) {
+            return -1;
+        } else if (getDimension() > o.getDimension()) {
+            return 1;
+        }
+        return dimensionName.compareTo(o.dimensionName);
     }
 }
