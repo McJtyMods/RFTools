@@ -127,6 +127,11 @@ public final class ModItems {
         unknownDimlet.setTextureName(RFTools.MODID + ":unknownDimletItem");
         GameRegistry.registerItem(unknownDimlet, "unknownDimlet");
 
+        knownDimlet = new KnownDimlet();
+        knownDimlet.setUnlocalizedName("KnownDimlet");
+        knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
+        GameRegistry.registerItem(knownDimlet, "knownDimlet");
+
         dimletTemplate = new DimletTemplate();
         dimletTemplate.setUnlocalizedName("DimletTemplate");
         dimletTemplate.setCreativeTab(RFTools.tabRfToolsDimlets);

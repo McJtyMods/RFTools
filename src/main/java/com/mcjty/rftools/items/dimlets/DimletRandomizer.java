@@ -57,6 +57,16 @@ public class DimletRandomizer {
         typeRarity.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "rarity." + type.getName(), rarity).getInt());
     }
 
+    public static void clean() {
+        randomDimlets = null;
+        randomMaterialDimlets = null;
+        randomLiquidDimlets = null;
+        randomMobDimlets = null;
+        randomStructureDimlets = null;
+        randomEffectDimlets = null;
+        randomFeatureDimlets = null;
+    }
+
     static void setupWeightedRandomList(Configuration cfg) {
         float rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 500.0f).getDouble();
         float rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 250.0f).getDouble();

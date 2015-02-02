@@ -3,6 +3,7 @@ package com.mcjty.rftools.items.dimlets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mcjty.rftools.CommonProxy;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
@@ -17,8 +18,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -46,7 +45,7 @@ public class KnownDimletConfiguration {
 
     // This map keeps track of all known dimlets by id. Also the reverse map.
     public static final Map<Integer,DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
-    public static final Map<DimletEntry,Integer> dimletToID = new HashMap<DimletEntry, Integer>();
+    public static final Map<DimletKey,Integer> dimletToID = new HashMap<DimletKey, Integer>();
 
     // Map the id of a dimlet to a display name.
     public static final Map<Integer,String> idToDisplayName = new HashMap<Integer, String>();
@@ -159,7 +158,7 @@ public class KnownDimletConfiguration {
 
     private static void registerDimletEntry(int id, DimletEntry dimletEntry) {
         idToDimlet.put(id, dimletEntry);
-        dimletToID.put(dimletEntry, id);
+        dimletToID.put(dimletEntry.getKey(), id);
         DimletRandomizer.dimletIds.add(id);
     }
 
@@ -226,10 +225,32 @@ public class KnownDimletConfiguration {
         return cost;
     }
 
+    private static void clean() {
+        lastId = 0;
+
+        idToDimlet.clear();
+        dimletToID.clear();
+        idToDisplayName.clear();
+        craftableDimlets.clear();
+        dimletBlackList.clear();
+        dimletRandomNotAllowed.clear();
+
+        DimletMapping.clean();
+        DimletRandomizer.clean();
+    }
+
     /**
      * This initializes all dimlets based on all loaded mods. This should be called from postInit.
      */
-    public static void init(Configuration cfg, Configuration mainCfg, File modConfigDir) {
+    public static void init() {
+        clean();
+
+        File modConfigDir = CommonProxy.modConfigDir;
+        Configuration mainCfg = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
+        Configuration cfg = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "dimlets.cfg"));
+        mainCfg.load();
+        cfg.load();
+
         readBuiltinConfig();
 
         Map<DimletKey,Integer> idsInConfig = getDimletsFromConfig(cfg);
@@ -478,58 +499,52 @@ public class KnownDimletConfiguration {
         initBiomeItems(cfg, mainCfg, idsInConfig);
         initLiquidItems(cfg, mainCfg, idsInConfig);
 
-        ModItems.knownDimlet = new KnownDimlet();
-        ModItems.knownDimlet.setUnlocalizedName("KnownDimlet");
-        ModItems.knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
-        GameRegistry.registerItem(ModItems.knownDimlet, "knownDimlet");
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
-
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idEffectNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.apple, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idEffectNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.apple, 'p', Items.paper);
         craftableDimlets.add(idEffectNone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idFeatureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.string, 'p', Items.paper);
         craftableDimlets.add(idFeatureNone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idStructureNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bone, 'p', Items.paper);
         craftableDimlets.add(idStructureNone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainVoid), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', Items.paper);
         craftableDimlets.add(idTerrainVoid);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTerrainFlat), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.brick, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idTerrainFlat);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerDefault), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerDefault), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', Items.paper);
         craftableDimlets.add(idControllerDefault);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerSingle), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idControllerSingle), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.comparator, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idControllerSingle);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idMaterialNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Blocks.dirt, 'p', Items.paper);
         craftableDimlets.add(idMaterialNone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idLiquidNone), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.bucket, 'p', Items.paper);
         craftableDimlets.add(idLiquidNone);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idSkyNormal), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.feather, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idSkyNormal), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.feather, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalDay);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalDay), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.glowstone_dust, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalDay), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.glowstone_dust, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalDay);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalNight), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', Items.paper);
         craftableDimlets.add(idNormalNight);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDefaultMobs), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDefaultMobs), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idDefaultMobs);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalTime), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.clock, 'p', ModItems.dimletTemplate);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idNormalTime), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.clock, 'p', ModItems.dimletTemplate);
         craftableDimlets.add(idNormalTime);
 
-        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), "   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idDigit9));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit1), "   ", " 0 ", "   ", '0', new ItemStack(ModItems.knownDimlet, 1, idDigit0));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit2), "   ", " 1 ", "   ", '1', new ItemStack(ModItems.knownDimlet, 1, idDigit1));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit3), "   ", " 2 ", "   ", '2', new ItemStack(ModItems.knownDimlet, 1, idDigit2));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit4), "   ", " 3 ", "   ", '3', new ItemStack(ModItems.knownDimlet, 1, idDigit3));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit5), "   ", " 4 ", "   ", '4', new ItemStack(ModItems.knownDimlet, 1, idDigit4));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit6), "   ", " 5 ", "   ", '5', new ItemStack(ModItems.knownDimlet, 1, idDigit5));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit7), "   ", " 6 ", "   ", '6', new ItemStack(ModItems.knownDimlet, 1, idDigit6));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit8), "   ", " 7 ", "   ", '7', new ItemStack(ModItems.knownDimlet, 1, idDigit7));
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit9), "   ", " 8 ", "   ", '8', new ItemStack(ModItems.knownDimlet, 1, idDigit8));
+//        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper);
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit0), "   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idDigit9));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit1), "   ", " 0 ", "   ", '0', new ItemStack(ModItems.knownDimlet, 1, idDigit0));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit2), "   ", " 1 ", "   ", '1', new ItemStack(ModItems.knownDimlet, 1, idDigit1));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit3), "   ", " 2 ", "   ", '2', new ItemStack(ModItems.knownDimlet, 1, idDigit2));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit4), "   ", " 3 ", "   ", '3', new ItemStack(ModItems.knownDimlet, 1, idDigit3));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit5), "   ", " 4 ", "   ", '4', new ItemStack(ModItems.knownDimlet, 1, idDigit4));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit6), "   ", " 5 ", "   ", '5', new ItemStack(ModItems.knownDimlet, 1, idDigit5));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit7), "   ", " 6 ", "   ", '6', new ItemStack(ModItems.knownDimlet, 1, idDigit6));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit8), "   ", " 7 ", "   ", '7', new ItemStack(ModItems.knownDimlet, 1, idDigit7));
+//        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idDigit9), "   ", " 8 ", "   ", '8', new ItemStack(ModItems.knownDimlet, 1, idDigit8));
         craftableDimlets.add(idDigit0);
         craftableDimlets.add(idDigit1);
         craftableDimlets.add(idDigit2);
@@ -545,6 +560,13 @@ public class KnownDimletConfiguration {
 
         DimletRandomizer.setupWeightedRandomList(mainCfg);
         setupChestLoot();
+
+        if (mainCfg.hasChanged()) {
+            mainCfg.save();
+        }
+        if (cfg.hasChanged()) {
+            cfg.save();
+        }
     }
 
     private static int initModMaterialItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String modid, String blockname, int meta) {

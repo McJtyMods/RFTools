@@ -29,4 +29,22 @@ public class DimletMapping {
     public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
 
     public static final Set<Integer> celestialBodies = new HashSet<Integer>();
+
+    public static void clean() {
+        idToTerrainType.clear();
+        idToSpecialType.clear();
+        idToFeatureType.clear();
+        idToControllerType.clear();
+        idToEffectType.clear();
+        idToStructureType.clear();
+        idToBiome.clear();
+        idToDigit.clear();
+        idToBlock.clear();
+        idToFluid.clear();
+        idToSkyDescriptor.clear();
+        idtoMob.clear();
+        idToCelestialAngle.clear();
+        idToSpeed.clear();
+        celestialBodies.clear();
+    }
 }

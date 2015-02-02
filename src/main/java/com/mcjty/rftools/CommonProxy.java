@@ -34,7 +34,7 @@ import java.io.File;
 
 public class CommonProxy {
 
-    private File modConfigDir;
+    public static File modConfigDir;
     private Configuration mainConfig;
     private Configuration dimletConfig;
 
@@ -107,15 +107,8 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
-        dimletConfig.load();
-        KnownDimletConfiguration.init(dimletConfig, mainConfig, modConfigDir);
+//        KnownDimletConfiguration.init();
 
-        if (mainConfig.hasChanged()) {
-            mainConfig.save();
-        }
-        if (dimletConfig.hasChanged()) {
-            dimletConfig.save();
-        }
         mainConfig = null;
         dimletConfig = null;
         WrenchChecker.init();

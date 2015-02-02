@@ -21,6 +21,15 @@ public class WeightedRandomSelector<K,E> {
     public WeightedRandomSelector() {
     }
 
+    public void clear() {
+        dirty = true;
+        keys.clear();
+        minChance = Float.MAX_VALUE;
+        maxChance = Float.MIN_VALUE;
+        defaultDistribution.reset();
+        items.clear();
+    }
+
     /**
      * Add a new rarity key. All items associated with this key should
      * have 'chance' chance of being selected.
