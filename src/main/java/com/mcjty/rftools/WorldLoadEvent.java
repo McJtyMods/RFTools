@@ -35,11 +35,13 @@ public class WorldLoadEvent {
 //            if (Minecraft.getMinecraft().isSingleplayer()) {
                 // If we are single player then we register our dimlet stuff here.
                 System.out.println("SINGLE PLAYER");
-                KnownDimletConfiguration.init();
+            KnownDimletConfiguration.init();
+            KnownDimletConfiguration.initCrafting();
 //            }
         } else if (MinecraftServer.getServer().isDedicatedServer()) {
             System.out.println("SERVER START");
             KnownDimletConfiguration.init();
+            KnownDimletConfiguration.initCrafting();
         }
     }
 

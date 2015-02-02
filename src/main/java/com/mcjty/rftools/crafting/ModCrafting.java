@@ -148,16 +148,16 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_MOBS, "Default"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate));
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_TIME, "Normal"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.clock, 'p', ModItems.dimletTemplate));
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_DIGIT, "0"), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("0", "1"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("1", "2"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("2", "3"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("3", "4"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("4", "5"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("5", "6"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("6", "7"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("7", "8"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("8", "9"));
-        GameRegistry.addRecipe(new KnownDimletShapedRecipe("9", "0"));
+//        GameRegistry.addRecipe(new DigitRecipe("0", "1"));
+//        GameRegistry.addRecipe(new DigitRecipe("1", "2"));
+//        GameRegistry.addRecipe(new DigitRecipe("2", "3"));
+//        GameRegistry.addRecipe(new DigitRecipe("3", "4"));
+//        GameRegistry.addRecipe(new DigitRecipe("4", "5"));
+//        GameRegistry.addRecipe(new DigitRecipe("5", "6"));
+//        GameRegistry.addRecipe(new DigitRecipe("6", "7"));
+//        GameRegistry.addRecipe(new DigitRecipe("7", "8"));
+//        GameRegistry.addRecipe(new DigitRecipe("8", "9"));
+//        GameRegistry.addRecipe(new DigitRecipe("9", "0"));
     }
 
 }
