@@ -27,14 +27,15 @@ public class WorldLoadEvent {
 
     @SubscribeEvent
     public void loadEvent(WorldEvent.Load evt) {
-        System.out.println("################################################ WorldLoadEvent.loadEvent:" + evt.world.isRemote + ", dim: " + evt.world.provider.dimensionId);
         if (evt.world.isRemote) {
-            System.out.println("SINGLE PLAYER");
-            KnownDimletConfiguration.init();
-            KnownDimletConfiguration.initCrafting();
+            if (!KnownDimletConfiguration.isInitialized()) {
+                RFTools.log("Clientside World Load Event: initialize dimlets");
+                KnownDimletConfiguration.init();
+                KnownDimletConfiguration.initCrafting();
+            }
         } else if (MinecraftServer.getServer().isDedicatedServer()) {
-            if (evt.world.provider.dimensionId == 0) {
-                System.out.println("SERVER START");
+            if (evt.world.provider.dimensionId == 0 && !KnownDimletConfiguration.isInitialized()) {
+                RFTools.log("Serverside World Load Event: initialize dimlets");
                 KnownDimletConfiguration.init();
                 KnownDimletConfiguration.initCrafting();
             }

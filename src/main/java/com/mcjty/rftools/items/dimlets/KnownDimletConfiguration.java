@@ -243,6 +243,10 @@ public class KnownDimletConfiguration {
         DimletRandomizer.clean();
     }
 
+    public static boolean isInitialized() {
+        return !idToDimlet.isEmpty();
+    }
+
     /**
      * This initializes all dimlets based on all loaded mods. This should be called from postInit.
      */

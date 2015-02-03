@@ -16,7 +16,6 @@ import net.minecraft.server.MinecraftServer;
 public class PlayerLoginEvent {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        System.out.println("################################################ PlayerLoginEvent.onPlayerLoggedIn: " + event.player.getEntityWorld().isRemote);
         if (MinecraftServer.getServer().isDedicatedServer()) {
             RFTools.log("SMP: Player logged in: Sync diminfo to clients");
             EntityPlayer player = event.player;
