@@ -52,6 +52,7 @@ public class FluidPlusModuleItem extends Item implements ModuleProvider {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(EnumChatFormatting.GREEN + "Uses " + FluidPlusBarScreenModule.RFPERTICK + " RF/tick");
+        boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
@@ -63,7 +64,12 @@ public class FluidPlusModuleItem extends Item implements ModuleProvider {
                 String monitorname = tagCompound.getString("monitorname");
                 list.add(EnumChatFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
                 list.add(EnumChatFormatting.YELLOW + "Dimension: " + dim);
+                hasTarget = true;
             }
+        }
+        if (!hasTarget) {
+            list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a tank to set the");
+            list.add(EnumChatFormatting.YELLOW + "target for this fluid module");
         }
     }
 

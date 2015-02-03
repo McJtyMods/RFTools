@@ -52,6 +52,7 @@ public class EnergyModuleItem extends Item implements ModuleProvider {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(EnumChatFormatting.GREEN + "Uses " + EnergyBarScreenModule.RFPERTICK + " RF/tick");
+        boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
@@ -61,7 +62,12 @@ public class EnergyModuleItem extends Item implements ModuleProvider {
                 int monitorz = tagCompound.getInteger("monitorz");
                 String monitorname = tagCompound.getString("monitorname");
                 list.add(EnumChatFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                hasTarget = true;
             }
+        }
+        if (!hasTarget) {
+            list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a machine to set the");
+            list.add(EnumChatFormatting.YELLOW + "target for this energy module");
         }
     }
 
