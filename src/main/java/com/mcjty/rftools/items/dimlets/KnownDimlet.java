@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import org.lwjgl.input.Keyboard;
 
 import java.util.*;
 
@@ -38,6 +39,8 @@ public class KnownDimlet extends Item {
         DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage());
         if (entry == null) {
             // Safety. Should not occur.
+            list.add(EnumChatFormatting.RED + "Something is wrong!");
+            list.add(EnumChatFormatting.RED + "Dimlet with id " + itemStack.getItemDamage() + " is missing!");
             return;
         }
 
@@ -50,6 +53,19 @@ public class KnownDimlet extends Item {
             list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + maintainCost + " RF/tick");
         }
         list.add(EnumChatFormatting.YELLOW + "Tick cost: " + entry.getTickCost() + " ticks");
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            for (String info : entry.getKey().getType().getInformation()) {
+                list.add(EnumChatFormatting.WHITE + info);
+            }
+            List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(KnownDimletConfiguration.dimletToID.get(entry.getKey()));
+            if (extra != null) {
+                for (String info : extra) {
+                    list.add(EnumChatFormatting.YELLOW + info);
+                }
+            }
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
     }
 
     @Override

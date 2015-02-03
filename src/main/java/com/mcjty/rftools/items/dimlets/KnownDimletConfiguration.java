@@ -52,6 +52,9 @@ public class KnownDimletConfiguration {
     // Map the id of a dimlet to a display name.
     public static final Map<Integer,String> idToDisplayName = new HashMap<Integer, String>();
 
+    // Map the id of a dimlet to extra information for the tooltip.
+    public static final Map<Integer,List<String>> idToExtraInformation = new HashMap<Integer, List<String>>();
+
     // All craftable dimlets.
     public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
 
@@ -131,6 +134,7 @@ public class KnownDimletConfiguration {
         remapIdsInMapReversed(mapFromTo, dimletToID);
         remapIdsInMap(mapFromTo, idToDisplayName);
         remapIdsInSet(mapFromTo, craftableDimlets);
+        remapIdsInMap(mapFromTo, idToExtraInformation);
 
         remapIdsInMap(mapFromTo, DimletMapping.idToTerrainType);
         remapIdsInMap(mapFromTo, DimletMapping.idToSpecialType);
@@ -243,6 +247,12 @@ public class KnownDimletConfiguration {
         DimletRandomizer.clean();
     }
 
+    private static void addExtraInformation(int id, String... info) {
+        List<String> extraInfo = new ArrayList<String>();
+        Collections.addAll(extraInfo, info);
+        idToExtraInformation.put(id, extraInfo);
+    }
+
     public static boolean isInitialized() {
         return !idToDimlet.isEmpty();
     }
@@ -277,6 +287,7 @@ public class KnownDimletConfiguration {
         initControllerItem(cfg, mainCfg, idsInConfig, "Magical", ControllerType.CONTROLLER_MAGICAL);
         initControllerItem(cfg, mainCfg, idsInConfig, "Forest", ControllerType.CONTROLLER_FOREST);
         BiomeControllerMapping.setupControllerBiomes();
+        addExtraInformation(idControllerDefault, "The Default controller just uses the same", "biome distribution as the overworld");
 
         int idDigit0 = initDigitItem(cfg, mainCfg, idsInConfig, 0);
         int idDigit1 = initDigitItem(cfg, mainCfg, idsInConfig, 1);
@@ -292,6 +303,7 @@ public class KnownDimletConfiguration {
         int idMaterialNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
         idToDisplayName.put(idMaterialNone, DimletType.DIMLET_MATERIAL.getName() + " None Dimlet");
         DimletMapping.idToBlock.put(idMaterialNone, null);
+        addExtraInformation(idMaterialNone, "Use this material none dimlet to get normal", "biome specific stone generation");
 
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.diamond_block, 0);
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.diamond_ore, 0);
@@ -337,9 +349,12 @@ public class KnownDimletConfiguration {
         int idLiquidNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
         DimletMapping.idToFluid.put(idLiquidNone, null);
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
+        addExtraInformation(idLiquidNone, "Use this liquid none dimlet to get normal", "water generation");
 
-        initSpecialItem(cfg, mainCfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
-        initSpecialItem(cfg, mainCfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
+        int idPeaceful = initSpecialItem(cfg, mainCfg, idsInConfig, "Peaceful", SpecialType.SPECIAL_PEACEFUL);
+        addExtraInformation(idPeaceful, "Normal mob spawning is disabled", "if you use this dimlet");
+        int idEfficiency = initSpecialItem(cfg, mainCfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
+        addExtraInformation(idEfficiency, "Reduce the maintenance RF/tick of the", "generated dimension with 20%", "This is cumulative");
 
         int idDefaultMobs = initMobItem(cfg, mainCfg, idsInConfig, null, "Default", 1, 1, 1, 1);
         initMobItem(cfg, mainCfg, idsInConfig, EntityZombie.class, "Zombie", 100, 8, 8, 60);
@@ -366,6 +381,7 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, mainCfg, idsInConfig, EntitySheep.class, "Sheep", 10, 3, 4, 40);
         initMobItem(cfg, mainCfg, idsInConfig, EntitySquid.class, "Squid", 10, 3, 4, 40);
         initMobItem(cfg, mainCfg, idsInConfig, EntityWolf.class, "Wolf", 10, 3, 4, 20);
+        addExtraInformation(idDefaultMobs, "With this default dimlet you will just get", "the default mob spawning");
 
         int idSkyNormal = initSkyItem(cfg, mainCfg, idsInConfig, "Normal", new SkyDescriptor.Builder().skyType(SkyType.SKY_NORMAL).build(), false);
         int idNormalDay = initSkyItem(cfg, mainCfg, idsInConfig, "Normal Day", new SkyDescriptor.Builder().sunBrightnessFactor(1.0f).build(), false);
@@ -405,6 +421,10 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, mainCfg, idsInConfig, "Body Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_PLANET).build(), true);
         initSkyItem(cfg, mainCfg, idsInConfig, "Body Large Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_LARGEPLANET).build(), true);
 
+        addExtraInformation(idSkyNormal, "A normal type of sky", "(as opposed to ender or inferno)");
+        addExtraInformation(idNormalDay, "Normal brightness level for daytime sky");
+        addExtraInformation(idNormalNight, "Normal brightness level for nighttime sky");
+
         int idStructureNone = initStructureItem(cfg, mainCfg, idsInConfig, "None", StructureType.STRUCTURE_NONE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Village", StructureType.STRUCTURE_VILLAGE);
         initStructureItem(cfg, mainCfg, idsInConfig, "Stronghold", StructureType.STRUCTURE_STRONGHOLD);
@@ -412,6 +432,7 @@ public class KnownDimletConfiguration {
         initStructureItem(cfg, mainCfg, idsInConfig, "Fortress", StructureType.STRUCTURE_FORTRESS);
         initStructureItem(cfg, mainCfg, idsInConfig, "Mineshaft", StructureType.STRUCTURE_MINESHAFT);
         initStructureItem(cfg, mainCfg, idsInConfig, "Scattered", StructureType.STRUCTURE_SCATTERED);
+        addExtraInformation(idStructureNone, "With this none dimlet you can disable", "all normal structure spawning");
 
         int idTerrainVoid = initTerrainItem(cfg, mainCfg, idsInConfig, "Void", TerrainType.TERRAIN_VOID);
         int idTerrainFlat = initTerrainItem(cfg, mainCfg, idsInConfig, "Flat", TerrainType.TERRAIN_FLAT);
@@ -437,6 +458,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, mainCfg, idsInConfig, "Maze", FeatureType.FEATURE_MAZE);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Liquid Orbs", FeatureType.FEATURE_LIQUIDORBS);
         initFeatureItem(cfg, mainCfg, idsInConfig, "Shallow Ocean", FeatureType.FEATURE_SHALLOW_OCEAN);
+        addExtraInformation(idFeatureNone, "With this none dimlet you can disable", "all special features");
 
         int idEffectNone = initEffectItem(cfg, mainCfg, idsInConfig, "None", EffectType.EFFECT_NONE);
         initEffectItem(cfg, mainCfg, idsInConfig, "Poison", EffectType.EFFECT_POISON);
@@ -495,6 +517,7 @@ public class KnownDimletConfiguration {
         initEffectItem(cfg, mainCfg, idsInConfig, "Saturation", EffectType.EFFECT_SATURATION);
         initEffectItem(cfg, mainCfg, idsInConfig, "Saturation II", EffectType.EFFECT_SATURATION2);
         initEffectItem(cfg, mainCfg, idsInConfig, "Saturation III", EffectType.EFFECT_SATURATION3);
+        addExtraInformation(idEffectNone, "With this none dimlet you can disable", "all special effects");
 
         int idNormalTime = initTimeItem(cfg, mainCfg, idsInConfig, "Normal", null, null);
         initTimeItem(cfg, mainCfg, idsInConfig, "Noon", 0.0f, null);
@@ -503,10 +526,10 @@ public class KnownDimletConfiguration {
         initTimeItem(cfg, mainCfg, idsInConfig, "Evening", 0.75f, null);
         initTimeItem(cfg, mainCfg, idsInConfig, "Fast", null, 2.0f);
         initTimeItem(cfg, mainCfg, idsInConfig, "Slow", null, 0.5f);
+        addExtraInformation(idNormalTime, "With this normal dimlet you will get", "default day/night timing");
 
         initBiomeItems(cfg, mainCfg, idsInConfig);
         initLiquidItems(cfg, mainCfg, idsInConfig);
-
 
         craftableDimlets.add(idEffectNone);
         craftableDimlets.add(idFeatureNone);
@@ -517,7 +540,7 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(idControllerSingle);
         craftableDimlets.add(idMaterialNone);
         craftableDimlets.add(idLiquidNone);
-        craftableDimlets.add(idNormalDay);
+        craftableDimlets.add(idSkyNormal);
         craftableDimlets.add(idNormalDay);
         craftableDimlets.add(idNormalNight);
         craftableDimlets.add(idDefaultMobs);
