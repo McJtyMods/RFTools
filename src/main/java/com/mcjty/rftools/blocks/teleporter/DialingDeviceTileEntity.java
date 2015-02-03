@@ -134,6 +134,45 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
 
     @Callback
     @Optional.Method(modid = "OpenComputers")
+    public Object[] getReceiverName(Context context, Arguments args) throws Exception {
+        Map receiver = args.checkTable(0);
+        if (!receiver.containsKey("x") || !receiver.containsKey("y") || !receiver.containsKey("z")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right x,y,z coordinate!");
+        }
+        if (!receiver.containsKey("dim")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right dimension!");
+        }
+        Coordinate recC = new Coordinate(((Double) receiver.get("x")).intValue(), ((Double) receiver.get("y")).intValue(), ((Double) receiver.get("z")).intValue());
+        int recDim = ((Double) receiver.get("dim")).intValue();
+
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestination destination = destinations.getDestination(recC, recDim);
+        if (destination == null) {
+            return null;
+        }
+
+        return new Object[] { destination.getName() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getTransmitterName(Context context, Arguments args) throws Exception {
+        Map transmitter = args.checkTable(0);
+        if (!transmitter.containsKey("x") || !transmitter.containsKey("y") || !transmitter.containsKey("z")) {
+            throw new IllegalArgumentException("Transmitter map doesn't contain the right x,y,z coordinate!");
+        }
+        Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
+
+        for (TransmitterInfo info : searchTransmitters()) {
+            if (transC.equals(info.getCoordinate())) {
+                return new Object[] { info.getName() };
+            }
+        }
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
     public Object[] dial(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);
         Map receiver = args.checkTable(1);
