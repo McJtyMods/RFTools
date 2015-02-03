@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -29,6 +30,14 @@ public class DimensionMonitorBlock extends LogicSlabBlock {
         if (tagCompound != null) {
             int level = tagCompound.getInteger("level");
             list.add(EnumChatFormatting.GREEN + "Level: " + level);
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Send out a redstone signal in case the power");
+            list.add(EnumChatFormatting.WHITE + "level of the current dimension goes below");
+            list.add(EnumChatFormatting.WHITE + "some thresshold.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
     }
 

@@ -16,10 +16,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class EndergenicBlock extends GenericContainerBlock implements Infusable {
 
@@ -35,6 +39,23 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
     @Override
     public int getGuiID() {
         return RFTools.GUI_ENDERGENIC;
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Generate power out of ender pearls. You need at");
+            list.add(EnumChatFormatting.WHITE + "least two generators for this to work and the setup");
+            list.add(EnumChatFormatting.WHITE + "is relatively complicated. Timing is crucial.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased power generation and");
+            list.add(EnumChatFormatting.YELLOW + "reduced powerloss for holding pearls.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
     }
 
     @Override

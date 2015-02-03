@@ -10,8 +10,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class ScreenControllerBlock extends GenericBlock implements Infusable {
 
@@ -25,6 +30,24 @@ public class ScreenControllerBlock extends GenericBlock implements Infusable {
     public int getGuiID() {
         return RFTools.GUI_SCREENCONTROLLER;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Before screens can work they need to get power from");
+            list.add(EnumChatFormatting.WHITE + "this controller. Even a screen that has only modules");
+            list.add(EnumChatFormatting.WHITE + "that require no power will need to have a controller.");
+            list.add(EnumChatFormatting.WHITE + "One controller can power many screens as long as they");
+            list.add(EnumChatFormatting.WHITE + "are in range.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased range for screens.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+    }
+
 
     @Override
     @SideOnly(Side.CLIENT)

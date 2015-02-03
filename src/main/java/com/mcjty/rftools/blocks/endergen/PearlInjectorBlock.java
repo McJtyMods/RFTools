@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -41,6 +42,14 @@ public class PearlInjectorBlock extends GenericContainerBlock {
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             list.add(EnumChatFormatting.GREEN + "Contents: " + bufferTagList.tagCount() + " stacks");
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This will inject an ender pearl in an adjacent");
+            list.add(EnumChatFormatting.WHITE + "endergenic generator when a redstone signal is");
+            list.add(EnumChatFormatting.WHITE + "received.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
     }
 

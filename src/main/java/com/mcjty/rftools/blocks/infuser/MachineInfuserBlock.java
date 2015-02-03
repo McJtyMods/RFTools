@@ -11,8 +11,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class MachineInfuserBlock extends GenericContainerBlock implements Infusable {
 
@@ -48,6 +53,22 @@ public class MachineInfuserBlock extends GenericContainerBlock implements Infusa
             }
         }
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "With this machine you can improve most other machines");
+            list.add(EnumChatFormatting.WHITE + "in RFTools in various ways. This needs dimensional");
+            list.add(EnumChatFormatting.WHITE + "shards.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+    }
+
 
     @Override
     @SideOnly(Side.CLIENT)

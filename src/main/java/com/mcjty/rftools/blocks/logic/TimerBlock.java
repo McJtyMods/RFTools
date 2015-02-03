@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -30,6 +31,15 @@ public class TimerBlock extends LogicSlabBlock {
             int delay = tagCompound.getInteger("delay");
             list.add(EnumChatFormatting.GREEN + "Delay: " + delay);
         }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This logic block emits a redstone pulse");
+            list.add(EnumChatFormatting.WHITE + "after a certain amount of time unless it");
+            list.add(EnumChatFormatting.WHITE + "receives a redstone pulse itself before that.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+
     }
 
     @Override

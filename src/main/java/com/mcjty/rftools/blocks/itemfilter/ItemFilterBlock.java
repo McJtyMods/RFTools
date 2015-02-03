@@ -21,6 +21,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -53,6 +54,14 @@ public class ItemFilterBlock extends GenericContainerBlock {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             list.add(EnumChatFormatting.GREEN + "Contents: " + bufferTagList.tagCount() + " stacks");
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "With this block you can direct items from any side");
+            list.add(EnumChatFormatting.WHITE + "to any other side. This allows you to make item");
+            list.add(EnumChatFormatting.WHITE + "filters for quarries, tree farms, mob farms, ...");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+
     }
 
     @Override

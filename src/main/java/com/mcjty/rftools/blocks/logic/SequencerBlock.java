@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -37,6 +38,14 @@ public class SequencerBlock extends LogicSlabBlock {
 
             list.add(EnumChatFormatting.GREEN + "Bits: " + Long.toHexString(cycleBits));
         }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This logic block emits a series of redstone");
+            list.add(EnumChatFormatting.WHITE + "signals in a pattern that you can set in the GUI.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+
     }
 
     @Override

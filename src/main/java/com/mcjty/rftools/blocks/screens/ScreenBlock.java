@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -164,6 +165,22 @@ public class ScreenBlock extends GenericContainerBlock {
     public int getGuiID() {
         return RFTools.GUI_SCREEN;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
+            list.add(EnumChatFormatting.WHITE + "You must insert modules to control what you can see.");
+            list.add(EnumChatFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
+            list.add(EnumChatFormatting.WHITE + "powered by a nearby Screen Controller.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+    }
+
 
     @Override
     @SideOnly(Side.CLIENT)

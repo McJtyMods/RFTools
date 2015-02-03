@@ -9,7 +9,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class DialingDeviceBlock extends GenericContainerBlock implements Infusable {
 
@@ -23,6 +28,25 @@ public class DialingDeviceBlock extends GenericContainerBlock implements Infusab
     public String getIdentifyingIconName() {
         return "machineDialingDevice";
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "With the dialing device you can 'dial-up' any");
+            list.add(EnumChatFormatting.WHITE + "nearby matter transmitter to any matter receiver");
+            list.add(EnumChatFormatting.WHITE + "in the Minecraft universe. This requires power.");
+            list.add(EnumChatFormatting.WHITE + "If a Destination Analyzer is adjacent to this block");
+            list.add(EnumChatFormatting.WHITE + "you will also be able to check if the destination");
+            list.add(EnumChatFormatting.WHITE + "has enough power to be safe.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+    }
+
 
     @Override
     public int getGuiID() {

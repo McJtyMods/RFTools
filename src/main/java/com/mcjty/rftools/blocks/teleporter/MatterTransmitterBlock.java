@@ -26,6 +26,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -51,6 +52,21 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             if (c != null && c.getY() >= 0) {
                 list.add(EnumChatFormatting.YELLOW + "[DIALED]");
             }
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "If you place this block near a Dialing Device then");
+            list.add(EnumChatFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give");
+            list.add(EnumChatFormatting.WHITE + "it sufficient power!");
+            list.add(EnumChatFormatting.WHITE + "If a Destination Analyzer is adjacent to this block");
+            list.add(EnumChatFormatting.WHITE + "you will also be able to check if the destination");
+            list.add(EnumChatFormatting.WHITE + "has enough power to be safe. The teleportation beam");
+            list.add(EnumChatFormatting.WHITE + "turns red if there is a problem. If the beam is");
+            list.add(EnumChatFormatting.WHITE + "yellow then the status is unknown (usually because");
+            list.add(EnumChatFormatting.WHITE + "the destination dimension is not loaded)");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(EnumChatFormatting.YELLOW + "increased teleportation speed.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
     }
 

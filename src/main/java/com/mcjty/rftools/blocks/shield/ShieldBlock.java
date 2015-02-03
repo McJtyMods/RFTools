@@ -16,7 +16,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class ShieldBlock extends GenericContainerBlock implements Infusable {
 
@@ -37,6 +41,24 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
         ShieldTileEntity shieldTileEntity = (ShieldTileEntity) tileEntity;
         ShieldContainer shieldContainer = new ShieldContainer(entityPlayer, shieldTileEntity);
         return new GuiShield(shieldTileEntity, shieldContainer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This machine can build a shield out of adjacent");
+            list.add(EnumChatFormatting.WHITE + "shield template block. You can add filters for");
+            list.add(EnumChatFormatting.WHITE + "players, mobs, animals, items to control if they");
+            list.add(EnumChatFormatting.WHITE + "should be able to pass or not and if they should");
+            list.add(EnumChatFormatting.WHITE + "get damage.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(EnumChatFormatting.YELLOW + "increased damage.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
     }
 
     @Override

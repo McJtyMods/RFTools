@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -54,6 +55,15 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
             }
 
             list.add(EnumChatFormatting.GREEN + "Recipes: " + rc + " recipes");
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This machine can handle up to 8 recipes");
+            list.add(EnumChatFormatting.WHITE + "at once and allows recipes to use the crafting results");
+            list.add(EnumChatFormatting.WHITE + "of previous steps.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
     }
 

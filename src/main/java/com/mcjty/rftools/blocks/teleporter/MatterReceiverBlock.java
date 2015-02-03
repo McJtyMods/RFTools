@@ -23,6 +23,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -45,6 +46,14 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
             list.add(EnumChatFormatting.GREEN + "Name: " + name);
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "If you place this block anywhere in the world then");
+            list.add(EnumChatFormatting.WHITE + "you can dial to it using a Dialing Device. Before");
+            list.add(EnumChatFormatting.WHITE + "teleporting to this block make sure to give it power!");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
     }
 
