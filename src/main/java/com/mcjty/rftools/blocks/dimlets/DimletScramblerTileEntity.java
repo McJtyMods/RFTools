@@ -105,8 +105,8 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         int rarity1 = KnownDimletConfiguration.idToDimlet.get(id1).getRarity();
         int rarity2 = KnownDimletConfiguration.idToDimlet.get(id2).getRarity();
         int rarity3 = KnownDimletConfiguration.idToDimlet.get(id3).getRarity();
-        float b = (float) (rarity1 + rarity2 + rarity3) / 3.0f;
-        bonus = b / 50.0f;  // An average of rarity 5 will give the best bonus which is 0.1
+        float b = (rarity1 + rarity2 + rarity3) / 3.0f;
+        bonus = (b / 50.0f) * (getInfusedFactor() / 3.0f + 1.0f);  // An average of rarity 5 will give the best bonus which is 0.1
 
         scrambling = 64;
         markDirty();

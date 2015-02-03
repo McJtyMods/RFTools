@@ -64,7 +64,8 @@ public class DimletScramblerBlock extends GenericContainerBlock implements Infus
             list.add(EnumChatFormatting.WHITE + "Insert three known dimlets (of which at least");
             list.add(EnumChatFormatting.WHITE + "two should be non-craftable) and it will return a");
             list.add(EnumChatFormatting.WHITE + "new random dimlet.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(EnumChatFormatting.YELLOW + "increased chance of getting better dimlets.");
         } else {
             list.add(EnumChatFormatting.WHITE + "Press Shift for more");
         }
