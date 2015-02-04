@@ -5,6 +5,8 @@ import com.mcjty.rftools.blocks.crafter.CrafterBlock;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity1;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity2;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
+import com.mcjty.rftools.blocks.dimletconstruction.DimletWorkbenchBlock;
+import com.mcjty.rftools.blocks.dimletconstruction.DimletWorkbenchTileEntity;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
@@ -76,6 +78,7 @@ public final class ModBlocks {
 
     public static DimletResearcherBlock dimletResearcherBlock;
     public static DimletScramblerBlock dimletScramblerBlock;
+    public static DimletWorkbenchBlock dimletWorkbenchBlock;
     public static DimensionEnscriberBlock dimensionEnscriberBlock;
     public static DimensionBuilderBlock dimensionBuilderBlock;
     public static DimensionBuilderBlock creativeDimensionBuilderBlock;
@@ -150,6 +153,10 @@ public final class ModBlocks {
         dimletScramblerBlock = new DimletScramblerBlock();
         GameRegistry.registerBlock(dimletScramblerBlock, GenericItemBlock.class, "dimletScramblerBlock");
         GameRegistry.registerTileEntity(DimletScramblerTileEntity.class, "DimletScramblerTileEntity");
+
+        dimletWorkbenchBlock = new DimletWorkbenchBlock();
+        GameRegistry.registerBlock(dimletWorkbenchBlock, GenericItemBlock.class, "dimletWorkbenchBlock");
+        GameRegistry.registerTileEntity(DimletWorkbenchTileEntity.class, "DimletWorkbenchTileEntity");
 
         dimensionEnscriberBlock = new DimensionEnscriberBlock();
         GameRegistry.registerBlock(dimensionEnscriberBlock, GenericItemBlock.class, "dimensionEnscriberBlock");

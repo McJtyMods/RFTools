@@ -52,6 +52,7 @@ tile.solidShieldBlock.name=护盾方块 10
 tile.shieldTemplateBlock.name=护盾模块
 tile.dimletResearcherBlock.name=信息卡研究器
 tile.dimletScramblerBlock.name=Dimlet Scrambler
+tile.dimletWorkbenchBlock.name=Dimlet Workbench
 tile.dimensionEnscriberBlock.name=信息卡刻录器
 tile.dimensionBuilderBlock.name=世界构建器
 tile.creativeDimensionBuilderBlock.name=Creative Dimension Builder

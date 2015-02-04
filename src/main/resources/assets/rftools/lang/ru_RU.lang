@@ -52,6 +52,7 @@ tile.solidShieldBlock.name=Блок щита 10
 tile.shieldTemplateBlock.name=Шаблон щита
 tile.dimletResearcherBlock.name=Исследователь димлетов
 tile.dimletScramblerBlock.name=Шифратор димлетов
+tile.dimletWorkbenchBlock.name=Dimlet Workbench
 tile.dimensionEnscriberBlock.name=Дешифратор димлетов
 tile.dimensionBuilderBlock.name=Построитель димлетов
 tile.creativeDimensionBuilderBlock.name=Построитель творческих измерений
