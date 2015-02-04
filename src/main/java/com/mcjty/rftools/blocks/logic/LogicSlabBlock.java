@@ -122,7 +122,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
     public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-        if (side == k.getOpposite().ordinal()) {
+        if (side == k.ordinal()) {
             return BlockTools.getRedstoneSignalOut(meta) ? 15 : 0;
         } else {
             return 0;
