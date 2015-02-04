@@ -141,13 +141,13 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity {
             return;
         }
         EnergyTools.EnergyLevel energy = EnergyTools.getEnergyLevel(tileEntity);
-        int maxEnergy = energy.getMaxEnergy();
+        long maxEnergy = (long) energy.getMaxEnergy();
         int ratio = 0;  // Will be set as metadata;
         boolean alarm = false;
 
         if (maxEnergy > 0) {
-            int stored = energy.getEnergy();
-            ratio = 1 + (stored * 5) / maxEnergy;
+            long stored = (long) energy.getEnergy();
+            ratio = (int) (1 + (stored * 5) / maxEnergy);
             if (ratio < 1) {
                 ratio = 1;
             } else if (ratio > 5) {
