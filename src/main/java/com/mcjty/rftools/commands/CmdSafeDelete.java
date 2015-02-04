@@ -1,5 +1,7 @@
 package com.mcjty.rftools.commands;
 
+import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
+import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
@@ -50,6 +52,9 @@ public class CmdSafeDelete extends AbstractRfToolsCommand {
             return;
         }
 
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
+        destinations.removeDestinationsInDimension(dim);
+        destinations.save(player.worldObj);
 
         dimensionManager.removeDimension(dim);
         dimensionManager.reclaimId(dim);

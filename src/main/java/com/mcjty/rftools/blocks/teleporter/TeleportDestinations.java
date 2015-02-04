@@ -126,6 +126,18 @@ public class TeleportDestinations extends WorldSavedData {
         return destinations.get(key);
     }
 
+    public void removeDestinationsInDimension(int dimension) {
+        Set<TeleportDestinationKey> keysToRemove = new HashSet<TeleportDestinationKey>();
+        for (Map.Entry<TeleportDestinationKey, TeleportDestination> entry : destinations.entrySet()) {
+            if (entry.getKey().getDimension() == dimension) {
+                keysToRemove.add(entry.getKey());
+            }
+        }
+        for (TeleportDestinationKey key : keysToRemove) {
+            destinations.remove(key);
+        }
+    }
+
     public void removeDestination(Coordinate coordinate, int dimension) {
         TeleportDestinationKey key = new TeleportDestinationKey(coordinate, dimension);
         destinations.remove(key);
