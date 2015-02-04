@@ -29,6 +29,7 @@ public class DimletConfiguration {
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
+    public static float maintenanceCostPercentage = 0.0f;   // Bonus percentage in the dimlet cost.
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
@@ -89,6 +90,8 @@ public class DimletConfiguration {
                 "RF that the machine infuser needs for one operation").getInt();
         afterCreationCostFactor = (float) cfg.get(CATEGORY_DIMLETS, "afterCreationCostFactor", afterCreationCostFactor,
                 "If the dimension turns out to be more expensive after creation you get a factor of the actual cost extra to the RF/tick maintenance cost. If this is 0 there is no such cost. If this is 1 then you get the full cost").getDouble();
+        maintenanceCostPercentage = (float) cfg.get(CATEGORY_DIMLETS, "maintenanceCostPercentage", maintenanceCostPercentage,
+                "Percentage to add or subtract to the maintenance cost of all dimlets (100 would double the cost, -100 would set the cost to almost zero (complete zero is not allowed))").getDouble();
 
         maxInfuse = cfg.get(CATEGORY_DIMLETS, "maxInfuse", maxInfuse,
                 "The maximum amount of dimensional shards that can be infused in a single machine").getInt();

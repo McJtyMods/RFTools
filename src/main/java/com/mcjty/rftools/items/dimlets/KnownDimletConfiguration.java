@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mcjty.rftools.CommonProxy;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.crafting.KnownDimletShapedRecipe;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.description.SkyDescriptor;
@@ -200,6 +201,14 @@ public class KnownDimletConfiguration {
         int tickCost = checkCostConfig(mainCfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
         int rarity = checkCostConfig(mainCfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
         boolean randomNotAllowed = checkFlagConfig(mainCfg, "expensive.", key, dimletRandomNotAllowed);
+
+        if (rfMaintainCost > 0) {
+            float factor = DimletConfiguration.maintenanceCostPercentage / 100.0f;
+            if (factor < -0.9f) {
+                factor = -0.9f;
+            }
+            rfMaintainCost += rfMaintainCost * factor;
+        }
 
         DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, randomNotAllowed);
         registerDimletEntry(id, entry);
