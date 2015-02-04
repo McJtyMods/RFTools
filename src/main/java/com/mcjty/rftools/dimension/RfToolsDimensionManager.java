@@ -64,8 +64,20 @@ public class RfToolsDimensionManager extends WorldSavedData {
             for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
                 int id = me.getKey();
                 RFTools.log("    Dimension: " + id);
-                DimensionManager.unregisterDimension(id);
-                DimensionManager.unregisterProviderType(id);
+                if (DimensionManager.isDimensionRegistered(id)) {
+                    try {
+                        DimensionManager.unregisterDimension(id);
+                    } catch (Exception e) {
+                        // We ignore this error.
+                        RFTools.log("        Could not unregister dimension: " + id);
+                    }
+                    try {
+                        DimensionManager.unregisterProviderType(id);
+                    } catch (Exception e) {
+                        // We ignore this error.
+                        RFTools.log("        Could not unregister provider: " + id);
+                    }
+                }
             }
             instance.getDimensions().clear();
             instance.dimensionToID.clear();
