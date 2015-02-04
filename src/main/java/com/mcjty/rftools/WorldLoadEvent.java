@@ -28,8 +28,6 @@ public class WorldLoadEvent {
     @SubscribeEvent
     public void unloadEvent(WorldEvent.Unload evt) {
         int d = evt.world.provider.dimensionId;
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WorldLoadEvent.unloadEvent: " + d);
-
         if (d == 0) {
             RfToolsDimensionManager.unregisterDimensions();
             KnownDimletConfiguration.clean();
