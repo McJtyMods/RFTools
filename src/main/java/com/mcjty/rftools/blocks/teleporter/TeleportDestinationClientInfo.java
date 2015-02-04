@@ -40,6 +40,6 @@ public class TeleportDestinationClientInfo extends TeleportDestination implement
         } else if (getDimension() > o.getDimension()) {
             return 1;
         }
-        return dimensionName.compareTo(o.dimensionName);
+        return getName().compareTo(o.getName());
     }
 }
