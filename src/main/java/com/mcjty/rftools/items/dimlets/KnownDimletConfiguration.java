@@ -233,7 +233,7 @@ public class KnownDimletConfiguration {
         return cost;
     }
 
-    private static void clean() {
+    public static void clean() {
         lastId = 0;
 
         idToDimlet.clear();
