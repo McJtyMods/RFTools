@@ -9,7 +9,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -33,6 +35,16 @@ public class DimletControlCircuitItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Every dimlet needs one control circuit. You can get");
+            list.add(EnumChatFormatting.WHITE + "this by deconstructing other dimlets in the Dimlet");
+            list.add(EnumChatFormatting.WHITE + "Workbench. In that same workbench you can also use");
+            list.add(EnumChatFormatting.WHITE + "this item to make new dimlets. Note that you need a");
+            list.add(EnumChatFormatting.WHITE + "control circuit of the right rarity in order to make");
+            list.add(EnumChatFormatting.WHITE + "a dimlet of that rarity.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
     }
 
     @Override

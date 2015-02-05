@@ -8,7 +8,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 
 public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletWorkbenchContainer.factory, DimletWorkbenchContainer.SIZE_BUFFER + 8);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletWorkbenchContainer.factory, DimletWorkbenchContainer.SIZE_BUFFER + 9);
 
     public DimletWorkbenchTileEntity() {
         super(DimletConfiguration.WORKBENCH_MAXENERGY, DimletConfiguration.WORKBENCH_RECEIVEPERTICK);
@@ -16,47 +16,57 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public int[] getAccessibleSlotsFromSide(int p_94128_1_) {
-        return new int[0];
+        return DimletWorkbenchContainer.factory.getAccessibleSlots();
     }
 
     @Override
-    public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_) {
-        return false;
+    public boolean canInsertItem(int index, ItemStack item, int side) {
+        if (index == DimletWorkbenchContainer.SLOT_OUTPUT) {
+            return false;
+        }
+        return DimletWorkbenchContainer.factory.isInputSlot(index) || DimletWorkbenchContainer.factory.isSpecificItemSlot(index);
     }
 
     @Override
-    public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_) {
-        return false;
+    public boolean canExtractItem(int index, ItemStack item, int side) {
+        if (index == DimletWorkbenchContainer.SLOT_INPUT) {
+            return false;
+        }
+        if (index == DimletWorkbenchContainer.SLOT_OUTPUT) {
+            return true;
+        }
+
+        return DimletWorkbenchContainer.factory.isOutputSlot(index);
     }
 
     @Override
     public int getSizeInventory() {
-        return 0;
+        return inventoryHelper.getStacks().length;
     }
 
     @Override
-    public ItemStack getStackInSlot(int p_70301_1_) {
+    public ItemStack getStackInSlot(int index) {
+        return inventoryHelper.getStacks()[index];
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int amount) {
+        return inventoryHelper.decrStackSize(index, amount);
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index) {
         return null;
     }
 
     @Override
-    public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
-        return null;
-    }
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
-        return null;
-    }
-
-    @Override
-    public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
-
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
     @Override
     public String getInventoryName() {
-        return null;
+        return "Workbench Inventory";
     }
 
     @Override
@@ -66,12 +76,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public int getInventoryStackLimit() {
-        return 0;
+        return 64;
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-        return false;
+        return true;
     }
 
     @Override
@@ -85,7 +95,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     @Override
-    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
-        return false;
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return true;
     }
 }

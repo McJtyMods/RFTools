@@ -7,10 +7,7 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
-import com.mcjty.rftools.items.parts.DimletBaseItem;
-import com.mcjty.rftools.items.parts.DimletControlCircuitItem;
-import com.mcjty.rftools.items.parts.DimletEnergyModuleItem;
-import com.mcjty.rftools.items.parts.DimletMemoryUnitItem;
+import com.mcjty.rftools.items.parts.*;
 import com.mcjty.rftools.items.screenmodules.*;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -43,6 +40,7 @@ public final class ModItems {
     public static DimletControlCircuitItem dimletControlCircuitItem;
     public static DimletEnergyModuleItem dimletEnergyModuleItem;
     public static DimletMemoryUnitItem dimletMemoryUnitItem;
+    public static DimletTypeControllerItem dimletTypeControllerItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -101,6 +99,11 @@ public final class ModItems {
         dimletMemoryUnitItem.setUnlocalizedName("DimletMemoryUnit");
         dimletMemoryUnitItem.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(dimletMemoryUnitItem, "dimletMemoryUnitItem");
+
+        dimletTypeControllerItem = new DimletTypeControllerItem();
+        dimletTypeControllerItem.setUnlocalizedName("DimletTypeController");
+        dimletTypeControllerItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(dimletTypeControllerItem, "dimletTypeControllerItem");
     }
 
     private static void initScreenModuleItems() {

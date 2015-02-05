@@ -9,7 +9,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -33,6 +35,16 @@ public class DimletEnergyModuleItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Every dimlet needs an energy module. You can get");
+            list.add(EnumChatFormatting.WHITE + "this by deconstructing other dimlets in the Dimlet");
+            list.add(EnumChatFormatting.WHITE + "Workbench. In that same workbench you can also use");
+            list.add(EnumChatFormatting.WHITE + "this item to make new dimlets. The basic energy module");
+            list.add(EnumChatFormatting.WHITE + "is used for dimlets of rarity 0 and 1, the regular for");
+            list.add(EnumChatFormatting.WHITE + "rarity 2 and 3 and the advanced for the higher rarities.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
     }
 
     @Override
