@@ -13,10 +13,10 @@ import net.minecraft.util.IIcon;
 
 import java.util.List;
 
-public class DimletControlCircuitItem extends Item {
-    private final IIcon[] icons = new IIcon[7];
+public class DimletMemoryUnitItem extends Item {
+    private final IIcon[] icons = new IIcon[3];
 
-    public DimletControlCircuitItem() {
+    public DimletMemoryUnitItem() {
         setMaxStackSize(64);
         setHasSubtypes(true);
         setMaxDamage(0);
@@ -24,8 +24,8 @@ public class DimletControlCircuitItem extends Item {
 
     @Override
     public void registerIcons(IIconRegister iconRegister) {
-        for (int i = 0 ; i < 7 ; i++) {
-            icons[i] = iconRegister.registerIcon(RFTools.MODID + ":parts/dimletControlCircuit" + i);
+        for (int i = 0 ; i < 3 ; i++) {
+            icons[i] = iconRegister.registerIcon(RFTools.MODID + ":parts/dimletMemoryUnit" + i);
         }
     }
 
@@ -47,8 +47,8 @@ public class DimletControlCircuitItem extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (int i = 0 ; i < 7 ; i++) {
-            list.add(new ItemStack(ModItems.dimletControlCircuitItem, 1, i));
+        for (int i = 0 ; i < 3 ; i++) {
+            list.add(new ItemStack(ModItems.dimletMemoryUnitItem, 1, i));
         }
     }
 }

@@ -7,6 +7,10 @@ import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import com.mcjty.rftools.items.parts.DimletBaseItem;
+import com.mcjty.rftools.items.parts.DimletControlCircuitItem;
+import com.mcjty.rftools.items.parts.DimletEnergyModuleItem;
+import com.mcjty.rftools.items.parts.DimletMemoryUnitItem;
 import com.mcjty.rftools.items.screenmodules.*;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -34,6 +38,11 @@ public final class ModItems {
     public static ClockModuleItem clockModuleItem;
     public static FluidModuleItem fluidModuleItem;
     public static FluidPlusModuleItem fluidPlusModuleItem;
+
+    public static DimletBaseItem dimletBaseItem;
+    public static DimletControlCircuitItem dimletControlCircuitItem;
+    public static DimletEnergyModuleItem dimletEnergyModuleItem;
+    public static DimletMemoryUnitItem dimletMemoryUnitItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -68,6 +77,30 @@ public final class ModItems {
 
         initScreenModuleItems();
         initDimensionItems();
+        initDimletPartItems();
+    }
+
+    private static void initDimletPartItems() {
+        dimletBaseItem = new DimletBaseItem();
+        dimletBaseItem.setUnlocalizedName("DimletBase");
+        dimletBaseItem.setCreativeTab(RFTools.tabRfTools);
+        dimletBaseItem.setTextureName(RFTools.MODID + ":parts/dimletBase");
+        GameRegistry.registerItem(dimletBaseItem, "dimletBaseItem");
+
+        dimletControlCircuitItem = new DimletControlCircuitItem();
+        dimletControlCircuitItem.setUnlocalizedName("DimletControlCircuit");
+        dimletControlCircuitItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(dimletControlCircuitItem, "dimletControlCircuitItem");
+
+        dimletEnergyModuleItem = new DimletEnergyModuleItem();
+        dimletEnergyModuleItem.setUnlocalizedName("DimletEnergyModule");
+        dimletEnergyModuleItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(dimletEnergyModuleItem, "dimletEnergyModuleItem");
+
+        dimletMemoryUnitItem = new DimletMemoryUnitItem();
+        dimletMemoryUnitItem.setUnlocalizedName("DimletMemoryUnit");
+        dimletMemoryUnitItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(dimletMemoryUnitItem, "dimletMemoryUnitItem");
     }
 
     private static void initScreenModuleItems() {

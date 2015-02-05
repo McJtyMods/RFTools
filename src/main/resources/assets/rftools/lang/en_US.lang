@@ -19,6 +19,21 @@ item.ClockModule.name=Clock Module
 item.FluidModule.name=Fluid Module
 item.FluidPlusModule.name=Fluid Plus Module
 
+item.DimletBase.name=Dimlet Base Part
+item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0
+item.DimletControlCircuit1.name=Dimlet Control Circuit Rarity 1
+item.DimletControlCircuit2.name=Dimlet Control Circuit Rarity 2
+item.DimletControlCircuit3.name=Dimlet Control Circuit Rarity 3
+item.DimletControlCircuit4.name=Dimlet Control Circuit Rarity 4
+item.DimletControlCircuit5.name=Dimlet Control Circuit Rarity 5
+item.DimletControlCircuit6.name=Dimlet Control Circuit Rarity 6
+item.DimletEnergyModule0.name=Dimlet Basic Energy Module
+item.DimletEnergyModule1.name=Dimlet Regular Energy Module
+item.DimletEnergyModule2.name=Dimlet Advanced Energy Module
+item.DimletMemoryUnit0.name=Dimlet Basic Memory Unit
+item.DimletMemoryUnit1.name=Dimlet Regular Memory Unit
+item.DimletMemoryUnit2.name=Dimlet Advanced Memory Unit
+
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3
