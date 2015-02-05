@@ -9,6 +9,8 @@ public class DimletConfiguration {
     public static int rfResearchOperation = 100;
     public static int SCRAMBLER_MAXENERGY = 32000;
     public static int SCRAMBLER_RECEIVEPERTICK = 80;
+    public static int WORKBENCH_MAXENERGY = 32000;
+    public static int WORKBENCH_RECEIVEPERTICK = 80;
     public static int rfScrambleOperation = 100;
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
@@ -53,6 +55,11 @@ public class DimletConfiguration {
                 "RF per tick that the the dimlet researcher can receive").getInt();
         rfResearchOperation = cfg.get(CATEGORY_DIMLETS, "dimletResearcherRFPerOperation", rfResearchOperation,
                 "RF that the dimlet researcher needs for researching a single unknown dimlet").getInt();
+
+        WORKBENCH_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletWorkbenchMaxRF", WORKBENCH_MAXENERGY,
+                "Maximum RF storage that the dimlet workbench can hold").getInt();
+        WORKBENCH_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimletWorkbenchRFPerTick", WORKBENCH_RECEIVEPERTICK,
+                "RF per tick that the the dimlet workbench can receive").getInt();
 
         SCRAMBLER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletScramblerMaxRF", SCRAMBLER_MAXENERGY,
                 "Maximum RF storage that the dimlet scrambler can hold").getInt();

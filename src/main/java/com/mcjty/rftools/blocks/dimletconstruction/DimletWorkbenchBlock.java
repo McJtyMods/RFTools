@@ -6,9 +6,12 @@ import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -46,8 +49,22 @@ public class DimletWorkbenchBlock extends GenericContainerBlock implements Infus
 
     @Override
     public int getGuiID() {
-        return 0;
+        return RFTools.GUI_DIMLET_WORKBENCH;
     }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        DimletWorkbenchTileEntity dimletWorkbenchTileEntity = (DimletWorkbenchTileEntity) tileEntity;
+        DimletWorkbenchContainer dimletWorkbenchContainer = new DimletWorkbenchContainer(entityPlayer, dimletWorkbenchTileEntity);
+        return new GuiDimletWorkbench(dimletWorkbenchTileEntity, dimletWorkbenchContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new DimletWorkbenchContainer(entityPlayer, (DimletWorkbenchTileEntity) tileEntity);
+    }
+
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
