@@ -91,6 +91,8 @@
         [ "Mob", "Iron Golem", 10000, 5000, 800, 4, 0 ],
         [ "Special", "Peaceful", 70000, 40000, 900, 5, 0 ],
         [ "Special", "Efficiency", 100000, -20, 900, 5, 0 ],
+        [ "Special", "Mediocre Efficiency", 40000, -5, 400, 4, 0 ],
+        [ "Special", "Shelter", 40000, 0, 400, 3, 0 ],
         [ "Effect", "None", 2000, 10, 10, 0, 0 ],
         [ "Effect", "Regeneration", 80000, 35000, 800, 4, 0 ],
         [ "Effect", "Regeneration II", 90000, 40000, 900, 5, 0 ],

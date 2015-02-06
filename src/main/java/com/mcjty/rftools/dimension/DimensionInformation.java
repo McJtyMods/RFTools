@@ -46,6 +46,7 @@ public class DimensionInformation {
 
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
+    private boolean shelter = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private BlockMeta[] extraOregen = new BlockMeta[] {};
@@ -232,6 +233,7 @@ public class DimensionInformation {
         readFluidsFromNBT(tagCompound);
 
         peaceful = tagCompound.getBoolean("peaceful");
+        shelter = tagCompound.getBoolean("shelter");
         if (tagCompound.hasKey("celestialAngle")) {
             celestialAngle = tagCompound.getFloat("celestialAngle");
         } else {
@@ -333,6 +335,7 @@ public class DimensionInformation {
         writeFluidsToNBT(tagCompound);
 
         tagCompound.setBoolean("peaceful", peaceful);
+        tagCompound.setBoolean("shelter", shelter);
         if (celestialAngle != null) {
             tagCompound.setFloat("celestialAngle", celestialAngle);
         }
@@ -488,6 +491,9 @@ public class DimensionInformation {
         if (peaceful) {
             logDebug(player, "    Peaceful mode");
         }
+        if (shelter) {
+            logDebug(player, "    Safe shelter");
+        }
         if (celestialAngle != null) {
             logDebug(player, "    Celestial angle: " + celestialAngle);
         }
@@ -537,6 +543,7 @@ public class DimensionInformation {
         }
 
         buf.writeBoolean(peaceful);
+        buf.writeBoolean(shelter);
         ByteBufTools.writeFloat(buf, celestialAngle);
         ByteBufTools.writeFloat(buf, timeSpeed);
 
@@ -613,6 +620,7 @@ public class DimensionInformation {
         fluidsForLakes = blocks.toArray(new Block[blocks.size()]);
 
         peaceful = buf.readBoolean();
+        shelter = buf.readBoolean();
 
         celestialAngle = ByteBufTools.readFloat(buf);
         timeSpeed = ByteBufTools.readFloat(buf);
@@ -673,8 +681,11 @@ public class DimensionInformation {
     private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_SPECIAL, dimlets);
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-            if (DimletMapping.idToSpecialType.get(dimlet.getLeft().getId()) == SpecialType.SPECIAL_PEACEFUL) {
+            SpecialType specialType = DimletMapping.idToSpecialType.get(dimlet.getLeft().getId());
+            if (specialType == SpecialType.SPECIAL_PEACEFUL) {
                 peaceful = true;
+            } else if (specialType == SpecialType.SPECIAL_SHELTER) {
+                shelter = true;
             }
         }
     }
@@ -1236,6 +1247,10 @@ public class DimensionInformation {
 
     public boolean isPeaceful() {
         return peaceful;
+    }
+
+    public boolean isShelter() {
+        return shelter;
     }
 
     public Float getCelestialAngle() {

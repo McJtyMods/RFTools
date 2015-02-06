@@ -78,14 +78,22 @@ public class GenericWorldGenerator implements IWorldGenerator {
             starty++;           // Go one up
         }
 
-        for (int x = -3 ; x <= 3 ; x++) {
-            for (int z = -3 ; z <= 3 ; z++) {
+        boolean shelter = information.isShelter();
+        int bounds = 3;
+        if (shelter) {
+            bounds = 4;
+        }
+
+        for (int x = -bounds ; x <= bounds ; x++) {
+            for (int z = -bounds ; z <= bounds ; z++) {
                 if (x == 0 && z == 0) {
                     world.setBlock(x+midx, starty, z+midz, ModBlocks.matterReceiverBlock, 0, 2);
                     MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x+midx, starty, z+midz);
                     matterReceiverTileEntity.modifyEnergyStored(TeleportConfiguration.RECEIVER_MAXENERGY);
                     matterReceiverTileEntity.setName(information.getName());
                     matterReceiverTileEntity.markDirty();
+                } else if (x == 0 && (z == 2 || z == -2)) {
+                    world.setBlock(x+midx, starty, z+midz, Blocks.glowstone, 0, 2);
                 } else {
                     world.setBlock(x+midx, starty, z+midz, Blocks.stained_hardened_clay, 3, 2);
                 }
@@ -97,6 +105,42 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     world.setBlock(x+midx, starty+4, z+midz, Blocks.stained_hardened_clay, 3, 2);
                 }
             }
+        }
+
+        if (shelter) {
+            for (int y = 1 ; y <= 3 ; y++) {
+                for (int x = -bounds ; x <= bounds ; x++) {
+                    for (int z = -bounds ; z <= bounds ; z++) {
+                        if (x == -bounds || x == bounds || z == -bounds || z == bounds) {
+                            if (z == 0 && y >= 2 && y <= 3) {
+                                world.setBlock(x+midx, starty+y, z+midz, Blocks.glass_pane, 0, 2);
+                            } else if (x == 0 && y >= 2 && y <= 3 && z == bounds) {
+                                world.setBlock(x+midx, starty+y, z+midz, Blocks.glass_pane, 0, 2);
+                            } else if (x == 0 && y == 1 && z == -bounds) {
+                                world.setBlock(x+midx, starty+y, z+midz, Blocks.iron_door, 1, 2);
+                            } else if (x == 0 && y == 2 && z == -bounds) {
+                                world.setBlock(x+midx, starty+y, z+midz, Blocks.iron_door, 8, 2);
+                            } else {
+                                world.setBlock(x+midx, starty+y, z+midz, Blocks.stained_hardened_clay, 9, 2);
+                            }
+                        }
+                    }
+                }
+            }
+            for (int x = -bounds ; x <= bounds ; x++) {
+                for (int z = -bounds ; z <= bounds ; z++) {
+                    world.setBlock(x+midx, starty+4, z+midz, Blocks.stained_hardened_clay, 9, 2);
+                }
+            }
+            world.setBlock(midx-1, starty+2, midz-bounds-1, Blocks.stone_button, 4, 2);
+            world.setBlock(midx+1, starty+2, midz-bounds+1, Blocks.stone_button, 3, 2);
+
+            world.setBlock(midx+1, starty, midz-bounds-1, Blocks.stained_hardened_clay, 3, 2);
+            world.setBlock(midx, starty, midz-bounds-1, Blocks.stained_hardened_clay, 3, 2);
+            world.setBlock(midx-1, starty, midz-bounds-1, Blocks.stained_hardened_clay, 3, 2);
+            world.setBlock(midx+1, starty, midz-bounds-2, Blocks.stained_hardened_clay, 3, 2);
+            world.setBlock(midx, starty, midz-bounds-2, Blocks.stained_hardened_clay, 3, 2);
+            world.setBlock(midx-1, starty, midz-bounds-2, Blocks.stained_hardened_clay, 3, 2);
         }
 
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);

@@ -1,7 +1,6 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;

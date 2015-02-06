@@ -367,6 +367,10 @@ public class KnownDimletConfiguration {
         addExtraInformation(idPeaceful, "Normal mob spawning is disabled", "if you use this dimlet");
         int idEfficiency = initSpecialItem(cfg, mainCfg, idsInConfig, "Efficiency", SpecialType.SPECIAL_EFFICIENCY);
         addExtraInformation(idEfficiency, "Reduce the maintenance RF/tick of the", "generated dimension with 20%", "This is cumulative");
+        int idEfficiencyLow = initSpecialItem(cfg, mainCfg, idsInConfig, "Mediocre Efficiency", SpecialType.SPECIAL_EFFICIENCY_LOW);
+        addExtraInformation(idEfficiencyLow, "Reduce the maintenance RF/tick of the", "generated dimension with 5%", "This is cumulative");
+        int idShelter = initSpecialItem(cfg, mainCfg, idsInConfig, "Shelter", SpecialType.SPECIAL_SHELTER);
+        addExtraInformation(idShelter, "Generate a better sheltered spawn", "platform in the dimension");
 
         int idDefaultMobs = initMobItem(cfg, mainCfg, idsInConfig, null, "Default", 1, 1, 1, 1);
         initMobItem(cfg, mainCfg, idsInConfig, EntityZombie.class, "Zombie", 100, 8, 8, 60);
