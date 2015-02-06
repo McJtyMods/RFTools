@@ -1,8 +1,8 @@
 package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.world.mapgen.*;
 import com.mcjty.rftools.dimension.world.terrain.*;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
@@ -12,8 +12,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -388,10 +388,9 @@ public class GenericChunkProvider implements IChunkProvider {
             creatures = new ArrayList(creatures);
             for (int i = 0 ; i < extraSpawns.size() ; i++) {
                 Class entityClass = extraSpawns.get(i).entityClass;
-                if (EntityAnimal.class.isAssignableFrom(entityClass)) {
+                if (IAnimals.class.isAssignableFrom(entityClass)) {
                     int count = worldObj.countEntities(entityClass);
                     if (count < extraSpawnsMax.get(i)) {
-//                        System.out.println("ANIMAL:" + entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
                         creatures.add(extraSpawns.get(i));
                     }
                 }
@@ -400,10 +399,9 @@ public class GenericChunkProvider implements IChunkProvider {
             creatures = new ArrayList(creatures);
             for (int i = 0 ; i < extraSpawns.size() ; i++) {
                 Class entityClass = extraSpawns.get(i).entityClass;
-                if (EntityMob.class.isAssignableFrom(entityClass)) {
+                if (IMob.class.isAssignableFrom(entityClass)) {
                     int count = worldObj.countEntities(entityClass);
                     if (count < extraSpawnsMax.get(i)) {
-//                        System.out.println("HOSTILE:" + entityClass + ": count = " + count + " / max = " + extraSpawnsMax.get(i));
                         creatures.add(extraSpawns.get(i));
                     }
                 }
