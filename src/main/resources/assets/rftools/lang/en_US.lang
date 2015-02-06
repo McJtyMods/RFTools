@@ -89,6 +89,7 @@ tile.machineInfuserBlock.name=Machine Infuser
 tile.activityProbeBlock.name=Activity Probe
 tile.screenBlock.name=Screen
 tile.screenControllerBlock.name=Screen Controller
+tile.biomeAbsorberBlock.name=Biome Absorber
 
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.dimensionalBlankBlock.name=Dimensional Blank Block
