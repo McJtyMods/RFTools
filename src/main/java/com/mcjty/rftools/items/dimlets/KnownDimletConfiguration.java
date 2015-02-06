@@ -846,7 +846,16 @@ public class KnownDimletConfiguration {
             if (me.getValue().canBePlacedInWorld()) {
                 int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                 if (id != -1) {
-                    String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
+                    String displayName = null;
+                    try {
+                        displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
+                    } catch (Exception e) {
+                        RFTools.logError("Something went wrong getting the name of a fluid:");
+                        RFTools.logError("Fluid: " + me.getKey());
+                        RFTools.logError("Fluid: " + me.getValue().getUnlocalizedName());
+                        displayName = "<fluid:" + me.getKey() + ">";
+                        e.printStackTrace();
+                    }
                     DimletMapping.idToFluid.put(id, me.getValue().getBlock());
                     idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
                 }
