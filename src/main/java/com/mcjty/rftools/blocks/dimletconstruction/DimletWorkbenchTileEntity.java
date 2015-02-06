@@ -159,19 +159,26 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     private boolean doExtract() {
         int rf = DimletConfiguration.rfExtractOperation;
-        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
-
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough energy.
             return false;
         }
         extractEnergy(ForgeDirection.DOWN, rf, false);
 
+        float factor = getInfusedFactor();
+
         DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(idToExtract);
-        mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletBaseItem));
+
+        if (extractSuccess(factor)) {
+            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletBaseItem));
+        }
+
         int rarity = entry.getRarity();
-        mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletControlCircuitItem, 1, rarity));
-        mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletTypeControllerItem, 1, entry.getKey().getType().ordinal()));
+
+        if (extractSuccess(factor)) {
+            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletTypeControllerItem, 1, entry.getKey().getType().ordinal()));
+        }
+
         int level;
         if (rarity <= 1) {
             level = 0;
@@ -180,13 +187,30 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         } else {
             level = 2;
         }
-        mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletMemoryUnitItem, 1, level));
-        mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletEnergyModuleItem, 1, level));
+        if (extractSuccess(factor)) {
+            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletMemoryUnitItem, 1, level));
+        } else {
+            factor += 0.1f;     // If this failed we increase our chances a bit
+        }
+
+        if (extractSuccess(factor)) {
+            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletEnergyModuleItem, 1, level));
+        } else {
+            factor += 0.1f;     // If this failed we increase our chances a bit
+        }
+
+        if (extractSuccess(factor)) {
+            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletControlCircuitItem, 1, rarity));
+        }
 
         idToExtract = -1;
         markDirty();
 
         return true;
+    }
+
+    private boolean extractSuccess(float factor) {
+        return (worldObj.rand.nextFloat() * (1.0f - factor) + (0.71f * factor)) > 0.7f;
     }
 
     private void mergeItemOrThrowInWorld(ItemStack stack) {
