@@ -2,9 +2,11 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -15,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
@@ -63,6 +66,28 @@ public class DimletWorkbenchBlock extends GenericContainerBlock implements Infus
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return new DimletWorkbenchContainer(entityPlayer, (DimletWorkbenchTileEntity) tileEntity);
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        DimletWorkbenchTileEntity dimletWorkbenchTileEntity = (DimletWorkbenchTileEntity)world.getTileEntity(x, y, z);
+
+        if (dimletWorkbenchTileEntity != null) {
+            BlockTools.emptyInventoryInWorld(world, x, y, z, block, dimletWorkbenchTileEntity);
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+    }
+
+    @Override
+    protected void breakWithWrench(World world, int x, int y, int z) {
+        DimletWorkbenchTileEntity dimletWorkbenchTileEntity = (DimletWorkbenchTileEntity)world.getTileEntity(x, y, z);
+
+        if (dimletWorkbenchTileEntity != null) {
+            for (int i = 0 ; i < dimletWorkbenchTileEntity.getSizeInventory() ; i++) {
+                dimletWorkbenchTileEntity.setInventorySlotContents(i, null);
+            }
+        }
     }
 
 

@@ -53,12 +53,16 @@ public class InventoryHelper {
                     int l = itemstack1.stackSize + itemsToPlace;
 
                     if (l <= result.getMaxStackSize()) {
-                        undo.add(new SlotModifier(k, itemstack1.copy()));
+                        if (undo != null) {
+                            undo.add(new SlotModifier(k, itemstack1.copy()));
+                        }
                         itemsToPlace = 0;
                         itemstack1.stackSize = l;
                         inventory.markDirty();
                     } else if (itemstack1.stackSize < result.getMaxStackSize()) {
-                        undo.add(new SlotModifier(k, itemstack1.copy()));
+                        if (undo != null) {
+                            undo.add(new SlotModifier(k, itemstack1.copy()));
+                        }
                         itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
                         itemstack1.stackSize = result.getMaxStackSize();
                         inventory.markDirty();
@@ -76,7 +80,9 @@ public class InventoryHelper {
                 itemstack1 = inventory.getStackInSlot(k);
 
                 if (itemstack1 == null) {
-                    undo.add(new SlotModifier(k, null));
+                    if (undo != null) {
+                        undo.add(new SlotModifier(k, null));
+                    }
                     inventory.setInventorySlotContents(k, result.copy());
                     inventory.markDirty();
                     itemsToPlace = 0;

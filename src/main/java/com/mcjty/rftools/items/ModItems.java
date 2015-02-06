@@ -75,7 +75,7 @@ public final class ModItems {
 
         initScreenModuleItems();
         initDimensionItems();
-//        initDimletPartItems();
+        initDimletPartItems();
     }
 
     private static void initDimletPartItems() {
