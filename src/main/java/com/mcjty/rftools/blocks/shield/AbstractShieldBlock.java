@@ -39,12 +39,14 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
-        int meta = world.getBlockMetadata(x, y, z);
-        if (meta == 0) {
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
+        int cdData = shieldBlockTileEntity.getCollisionData();
+
+        if (cdData == 0) {
             // No collision for anything.
             return;
         }
-        if ((meta & META_HOSTILE) != 0) {
+        if ((cdData & META_HOSTILE) != 0) {
             if (entity instanceof IMob) {
                 if (checkEntityCD(world, x, y, z, HostileFilter.HOSTILE)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
@@ -52,7 +54,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 return;
             }
         }
-        if ((meta & META_PASSIVE) != 0) {
+        if ((cdData & META_PASSIVE) != 0) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
                 if (checkEntityCD(world, x, y, z, AnimalFilter.ANIMAL)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
@@ -61,14 +63,14 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
             }
         }
         if (entity instanceof EntityItem) {
-            if ((meta & META_ITEMS) != 0) {
+            if ((cdData & META_ITEMS) != 0) {
                 if (checkEntityCD(world, x, y, z, ItemFilter.ITEM)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
                 }
                 return;
             }
         }
-        if ((meta & META_PLAYERS) != 0) {
+        if ((cdData & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
                 if (checkPlayerCD(world, x, y, z, (EntityPlayer) entity)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
@@ -125,8 +127,9 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
         if (entity instanceof EntityItem) {
-            int meta = world.getBlockMetadata(x, y, z);
-            if ((meta & META_ITEMS) == 0) {
+            ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
+            int cdData = shieldBlockTileEntity.getCollisionData();
+            if ((cdData & META_ITEMS) == 0) {
                 // Items should be able to pass through. We just move the entity to below this block.
                 entity.setPosition(entity.posX, entity.posY-1, entity.posZ);
             }
@@ -174,7 +177,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         if (block == null) {
             return icon;
         } else {
-            return block.getIcon(blockAccess, x, y, z, side);
+            if (shieldBlockTileEntity.getHasTe()) {
+                return block.getIcon(side, blockAccess.getBlockMetadata(x, y, z));
+            } else {
+                return block.getIcon(blockAccess, x, y, z, side);
+            }
         }
     }
 

@@ -265,13 +265,17 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         ItemStack stack = stacks[0];
         int camoId = -1;
         int meta = 0;
+        int te = 0;
 
         if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
             Block block = Block.getBlockFromItem(stack.getItem());
             camoId = Block.getIdFromBlock(block);
-            meta = 0;       // @@@ @Todo not right! Mycelium instead of grass!
+            meta = stack.getItemDamage();
+            if (block.hasTileEntity(meta)) {
+                te = 1;
+            }
         }
-        return new int[] { camoId, meta };
+        return new int[] { camoId, meta, te };
     }
 
     private Block calculateShieldBlock() {
@@ -341,24 +345,24 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         return bits;
     }
 
-    private int calculateShieldMeta() {
-        int meta = 0;
+    private int calculateShieldCollisionData() {
+        int cd = 0;
         for (ShieldFilter filter : filters) {
             if ((filter.getAction() & ShieldFilter.ACTION_SOLID) != 0) {
                 if (ItemFilter.ITEM.equals(filter.getFilterName())) {
-                    meta |= AbstractShieldBlock.META_ITEMS;
+                    cd |= AbstractShieldBlock.META_ITEMS;
                 } else if (AnimalFilter.ANIMAL.equals(filter.getFilterName())) {
-                    meta |= AbstractShieldBlock.META_PASSIVE;
+                    cd |= AbstractShieldBlock.META_PASSIVE;
                 } else if (HostileFilter.HOSTILE.equals(filter.getFilterName())) {
-                    meta |= AbstractShieldBlock.META_HOSTILE;
+                    cd |= AbstractShieldBlock.META_HOSTILE;
                 } else if (PlayerFilter.PLAYER.equals(filter.getFilterName())) {
-                    meta |= AbstractShieldBlock.META_PLAYERS;
+                    cd |= AbstractShieldBlock.META_PLAYERS;
                 } else if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
-                    meta |= AbstractShieldBlock.META_ITEMS | AbstractShieldBlock.META_PASSIVE | AbstractShieldBlock.META_HOSTILE | AbstractShieldBlock.META_PLAYERS;
+                    cd |= AbstractShieldBlock.META_ITEMS | AbstractShieldBlock.META_PASSIVE | AbstractShieldBlock.META_HOSTILE | AbstractShieldBlock.META_PLAYERS;
                 }
             }
         }
-        return meta;
+        return cd;
     }
 
     private int calculateRfPerTick() {
@@ -493,19 +497,21 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
     private void updateShield() {
         Coordinate thisCoordinate = new Coordinate(xCoord, yCoord, zCoord);
         int[] camoId = calculateCamoId();
-        int meta = calculateShieldMeta();
+        int cddata = calculateShieldCollisionData();
         Block block = calculateShieldBlock();
         int damageBits = calculateDamageBits();
         for (Coordinate c : shieldBlocks) {
             if (Blocks.air.equals(block)) {
                 worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
             } else {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, meta, 2);
+                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
                 TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
                 if (te instanceof ShieldBlockTileEntity) {
-                    ((ShieldBlockTileEntity)te).setCamoBlock(camoId[0], camoId[1]);
-                    ((ShieldBlockTileEntity)te).setShieldBlock(thisCoordinate);
-                    ((ShieldBlockTileEntity)te).setDamageBits(damageBits);
+                    ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
+                    shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
+                    shieldBlockTileEntity.setShieldBlock(thisCoordinate);
+                    shieldBlockTileEntity.setDamageBits(damageBits);
+                    shieldBlockTileEntity.setCollisionData(cddata);
                 }
             }
         }

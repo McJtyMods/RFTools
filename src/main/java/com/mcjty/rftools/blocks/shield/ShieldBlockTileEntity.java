@@ -13,8 +13,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -22,18 +20,15 @@ public class ShieldBlockTileEntity extends TileEntity {
 
     private Block block;
     private int camoId = -1;
-    private int meta = 0;
+    private int hasTe = 0;
 
     private int damageBits = 0;     // A 4-bit value indicating if a specific type of entity should get damage.
+    private int collisionData = 0;  // A 4-bit value indicating collision detection data.
 
     // Damage timer is not saved with the TE as it is not needed.
     private int damageTimer = 10;
 
     private AxisAlignedBB beamBox = null;
-
-    public int getDamageBits() {
-        return damageBits;
-    }
 
     public void setDamageBits(int damageBits) {
         this.damageBits = damageBits;
@@ -41,20 +36,22 @@ public class ShieldBlockTileEntity extends TileEntity {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    public int getCollisionData() {
+        return collisionData;
+    }
+
+    public void setCollisionData(int collisionData) {
+        this.collisionData = collisionData;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     // Coordinate of the shield block.
     private Coordinate shieldBlock;
 
-    public int getCamoId() {
-        return camoId;
-    }
-
-    public int getMeta() {
-        return meta;
-    }
-
-    public void setCamoBlock(int camoId, int meta) {
+    public void setCamoBlock(int camoId, int hasTe) {
         this.camoId = camoId;
-        this.meta = meta;
+        this.hasTe = hasTe;
         if (camoId == -1) {
             block = null;
         } else {
@@ -150,12 +147,17 @@ public class ShieldBlockTileEntity extends TileEntity {
         return block;
     }
 
+    public boolean getHasTe() {
+        return hasTe != 0;
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("camoId", camoId);
-        tagCompound.setInteger("camoMeta", meta);
+        tagCompound.setInteger("hasTe", hasTe);
         tagCompound.setInteger("damageBits", damageBits);
+        tagCompound.setInteger("collisionData", collisionData);
         if (shieldBlock != null) {
             tagCompound.setInteger("shieldX", shieldBlock.getX());
             tagCompound.setInteger("shieldY", shieldBlock.getY());
@@ -167,13 +169,14 @@ public class ShieldBlockTileEntity extends TileEntity {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         camoId = tagCompound.getInteger("camoId");
-        meta = tagCompound.getInteger("camoMeta");
+        hasTe = tagCompound.getInteger("hasTe");
         if (camoId == -1) {
             block = null;
         } else {
             block = Block.getBlockById(camoId);
         }
         damageBits = tagCompound.getInteger("damageBits");
+        collisionData = tagCompound.getInteger("collisionData");
 
         int sx = tagCompound.getInteger("shieldX");
         int sy = tagCompound.getInteger("shieldY");
