@@ -8,7 +8,7 @@ import java.util.Random;
 public class BiomeAbsorberTileEntity extends GenericTileEntity {
 
     @Override
-    protected void checkStateServer() {
+    protected void checkStateClient() {
         Random rand = worldObj.rand;
 
         double u = rand.nextFloat() * 2.0f - 1.0f;
@@ -16,8 +16,13 @@ public class BiomeAbsorberTileEntity extends GenericTileEntity {
         double x = Math.sqrt(1 - u * u) * Math.cos(v);
         double y = Math.sqrt(1 - u * u) * Math.sin(v);
         double z = u;
+        double r = 1.0f;
 
-        ((WorldServer)worldObj).func_147487_a("portal", xCoord + 0.5f + x * 1.0f, yCoord + 0.5f + y * 1.0f, zCoord + 0.5f + z * 1.0f, 2, -x, -y, -z, 0.1f);
+        worldObj.spawnParticle("portal", xCoord + 0.5f + x * r, yCoord + 0.5f + y * r, zCoord + 0.5f + z * r, -x, -y, -z);
+//        ((WorldServer)worldObj).func_147487_a("portal", xCoord + 0.5f + x * r, yCoord + 0.5f + y * r, zCoord + 0.5f + z * r, 2, -x, -y, -z, 0.1f);
     }
+
+
+
 }
 

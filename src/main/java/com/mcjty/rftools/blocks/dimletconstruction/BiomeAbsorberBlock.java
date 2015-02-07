@@ -40,7 +40,22 @@ public class BiomeAbsorberBlock extends GenericBlock {
     }
 
     @Override
-    public int getGuiID() {
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public int getRenderBlockPass() {
         return 0;
+    }
+
+    @Override
+    public int getGuiID() {
+        return -1;
     }
 }
