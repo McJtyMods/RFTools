@@ -3,18 +3,24 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
+import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -136,6 +142,124 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             }
             markDirty();
         }
+
+        if (!checkDimletCrafting()) {
+            if (inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_OUTPUT] != null) {
+                inventoryHelper.setInventorySlotContents(0, DimletWorkbenchContainer.SLOT_OUTPUT, null);
+            }
+        }
+    }
+
+    private boolean checkDimletCrafting() {
+        ItemStack stackBase = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_BASE];
+        if (stackBase == null) {
+            return false;
+        }
+        ItemStack stackController = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_CONTROLLER];
+        if (stackController == null) {
+            return false;
+        }
+        ItemStack stackTypeController = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_TYPE_CONTROLLER];
+        if (stackTypeController == null) {
+            return false;
+        }
+        ItemStack stackMemory = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_MEMORY];
+        if (stackMemory == null) {
+            return false;
+        }
+        ItemStack stackEnergy = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_ENERGY];
+        if (stackEnergy == null) {
+            return false;
+        }
+        ItemStack stackEssence = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_ESSENCE];
+        if (stackEssence == null) {
+            return false;
+        }
+
+        Block essenceBlock = ((ItemBlock) stackEssence.getItem()).field_150939_a;
+        NBTTagCompound essenceCompound = stackEssence.getTagCompound();
+
+        DimletType type = DimletType.values()[stackTypeController.getItemDamage()];
+        switch (type) {
+            case DIMLET_BIOME:
+                if (!isValidBiomeEssence(essenceBlock, essenceCompound)) return false;
+                int biomeDimlet = findBiomeDimlet(essenceCompound);
+                if (biomeDimlet == -1) {
+                    return false;
+                }
+                if (!matchDimletRecipe(biomeDimlet, stackController, stackMemory, stackEnergy)) {
+                    return false;
+                }
+                inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, biomeDimlet));
+                break;
+            case DIMLET_FOLIAGE:
+            case DIMLET_LIQUID:
+            case DIMLET_MATERIAL:
+            case DIMLET_MOBS:
+            case DIMLET_SKY:
+            case DIMLET_STRUCTURE:
+            case DIMLET_TERRAIN:
+            case DIMLET_FEATURE:
+            case DIMLET_TIME:
+            case DIMLET_DIGIT:
+            case DIMLET_EFFECT:
+            case DIMLET_SPECIAL:
+            case DIMLET_CONTROLLER:
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean matchDimletRecipe(int id, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy) {
+        DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(id);
+        int rarity = dimletEntry.getRarity();
+        System.out.println("rarity = " + rarity);
+        if (stackController.getItemDamage() != rarity) {
+            return false;
+        }
+        int level;
+        if (rarity <= 1) {
+            level = 0;
+        } else if (rarity <= 3) {
+            level = 1;
+        } else {
+            level = 2;
+        }
+        System.out.println("level = " + level);
+        if (stackMemory.getItemDamage() != level) {
+            return false;
+        }
+        if (stackEnergy.getItemDamage() != level) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private int findBiomeDimlet(NBTTagCompound essenceCompound) {
+        int biomeID = essenceCompound.getInteger("biome");
+        for (Map.Entry<Integer, BiomeGenBase> entry : DimletMapping.idToBiome.entrySet()) {
+            if (entry.getValue().biomeID == biomeID) {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
+    private boolean isValidBiomeEssence(Block essenceBlock, NBTTagCompound essenceCompound) {
+        if (essenceBlock != ModBlocks.biomeAbsorberBlock) {
+            return false;
+        }
+        if (essenceCompound == null) {
+            return false;
+        }
+        int absorbing = essenceCompound.getInteger("absorbing");
+        int biome = essenceCompound.getInteger("biome");
+        if (absorbing > 0 || biome == -1) {
+            return false;
+        }
+        return true;
     }
 
     private void startExtracting() {
