@@ -35,6 +35,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     private int extracting = 0;
     private int idToExtract = -1;
+    private int inhibitCrafting = 0;
 
     public int getExtracting() {
         return extracting;
@@ -52,22 +53,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        if (index == DimletWorkbenchContainer.SLOT_OUTPUT) {
-            return false;
-        }
-        return DimletWorkbenchContainer.factory.isInputSlot(index) || DimletWorkbenchContainer.factory.isSpecificItemSlot(index);
+        return index == DimletWorkbenchContainer.SLOT_INPUT;
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        if (index == DimletWorkbenchContainer.SLOT_INPUT) {
-            return false;
-        }
-        if (index == DimletWorkbenchContainer.SLOT_OUTPUT) {
-            return true;
-        }
-
-        return DimletWorkbenchContainer.factory.isOutputSlot(index);
+        return index == DimletWorkbenchContainer.SLOT_OUTPUT;
     }
 
     @Override
@@ -82,7 +73,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        return inventoryHelper.decrStackSize(index, amount);
+        ItemStack s = inventoryHelper.decrStackSize(index, amount);
+        checkCrafting();
+        return s;
     }
 
     @Override
@@ -93,6 +86,21 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        if (index < DimletWorkbenchContainer.SLOT_BASE || index > DimletWorkbenchContainer.SLOT_ESSENCE) {
+            return;
+        }
+
+        checkCrafting();
+    }
+
+    private void checkCrafting() {
+        if (inhibitCrafting == 0) {
+            if (!checkDimletCrafting()) {
+                if (inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_OUTPUT] != null) {
+                    inventoryHelper.setInventorySlotContents(0, DimletWorkbenchContainer.SLOT_OUTPUT, null);
+                }
+            }
+        }
     }
 
     @Override
@@ -143,11 +151,6 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             markDirty();
         }
 
-        if (!checkDimletCrafting()) {
-            if (inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_OUTPUT] != null) {
-                inventoryHelper.setInventorySlotContents(0, DimletWorkbenchContainer.SLOT_OUTPUT, null);
-            }
-        }
     }
 
     private boolean checkDimletCrafting() {
@@ -211,10 +214,21 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
+    public void craftDimlet() {
+        inhibitCrafting++;
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_BASE, 1);
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_CONTROLLER, 1);
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_TYPE_CONTROLLER, 1);
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_ENERGY, 1);
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_MEMORY, 1);
+        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_ESSENCE, 1);
+        inhibitCrafting--;
+        checkCrafting();
+    }
+
     private boolean matchDimletRecipe(int id, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy) {
         DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(id);
         int rarity = dimletEntry.getRarity();
-        System.out.println("rarity = " + rarity);
         if (stackController.getItemDamage() != rarity) {
             return false;
         }
@@ -226,7 +240,6 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         } else {
             level = 2;
         }
-        System.out.println("level = " + level);
         if (stackMemory.getItemDamage() != level) {
             return false;
         }

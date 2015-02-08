@@ -6,14 +6,13 @@ public class SlotDefinition {
     private final SlotType type;
     private final ItemStack itemStack;
 
+    public SlotDefinition(SlotType type) {
+        this(type, null);
+    }
+
     public SlotDefinition(SlotType type, ItemStack itemStack) {
         this.type = type;
         this.itemStack = itemStack;
-    }
-
-    public SlotDefinition(SlotType type) {
-        this.type = type;
-        this.itemStack = null;
     }
 
     public SlotType getType() {

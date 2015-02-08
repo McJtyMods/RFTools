@@ -110,6 +110,10 @@ public class ContainerFactory {
         return getSlotType(index) == SlotType.SLOT_GHOSTOUT;
     }
 
+    public boolean isCraftResultSlot(int index) {
+        return getSlotType(index) == SlotType.SLOT_CRAFTRESULT;
+    }
+
     public boolean isPlayerInventorySlot(int index) {
         return getSlotType(index) == SlotType.SLOT_PLAYERINV;
     }

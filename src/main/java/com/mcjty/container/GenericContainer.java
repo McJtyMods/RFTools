@@ -17,6 +17,7 @@ public class GenericContainer extends Container {
     protected Map<String,IInventory> inventories = new HashMap<String, IInventory>();
     protected EntityPlayer player;
     private ContainerFactory factory;
+    private GenericCrafter crafter = null;
 
     public GenericContainer(ContainerFactory factory, EntityPlayer player) {
         this.factory = factory;
@@ -41,6 +42,14 @@ public class GenericContainer extends Container {
         return factory.getSlotType(index);
     }
 
+    public GenericCrafter getCrafter() {
+        return crafter;
+    }
+
+    public void setCrafter(GenericCrafter crafter) {
+        this.crafter = crafter;
+    }
+
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
@@ -56,6 +65,8 @@ public class GenericContainer extends Container {
                         return itemStack.getItem() == stack.getItem();
                     }
                 };
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_CRAFTRESULT) {
+                slot = new CraftingSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY(), crafter);
             } else {
                 slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             }

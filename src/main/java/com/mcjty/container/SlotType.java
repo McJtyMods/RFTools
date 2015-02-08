@@ -10,4 +10,5 @@ public enum SlotType {
     SLOT_SPECIFICITEM,      // Only a specific item fits in this slot
     SLOT_PLAYERINV,         // Player inventory slot
     SLOT_PLAYERHOTBAR,      // Player hotbar slot
+    SLOT_CRAFTRESULT,       // Crafting result
 }

@@ -73,6 +73,10 @@ public class DimletWorkbenchBlock extends GenericContainerBlock implements Infus
         DimletWorkbenchTileEntity dimletWorkbenchTileEntity = (DimletWorkbenchTileEntity)world.getTileEntity(x, y, z);
 
         if (dimletWorkbenchTileEntity != null) {
+            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
+            // we first clear out the crafting result here.
+            dimletWorkbenchTileEntity.setInventorySlotContents(DimletWorkbenchContainer.SLOT_OUTPUT, null);
+
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, dimletWorkbenchTileEntity);
         }
 
