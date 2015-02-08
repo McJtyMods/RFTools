@@ -91,6 +91,9 @@ public class ContainerFactory {
         return slotDefinition.getType();
     }
 
+    public boolean isContainerSlot(int index) {
+        return getSlotType(index) == SlotType.SLOT_CONTAINER;
+    }
     public boolean isOutputSlot(int index) {
         return getSlotType(index) == SlotType.SLOT_OUTPUT;
     }
