@@ -33,6 +33,7 @@ public class DimletConfiguration {
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
     public static float maintenanceCostPercentage = 0.0f;   // Bonus percentage in the dimlet cost.
+    public static int maxBiomeAbsorbtion = 1000;    // Amount of ticks before a biome absorber is ready
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
@@ -114,6 +115,8 @@ public class DimletConfiguration {
                 "Dimension to respawn in after you get kicked out of an RFTools dimension").getInt();
         cavernHeightLimit = cfg.get(CATEGORY_DIMLETS, "cavernHeightLimit", cavernHeightLimit,
                 "Maximum height of the caverns. 0=64, 1=128, 2=196, 3=256").getInt();
+        maxBiomeAbsorbtion = cfg.get(CATEGORY_DIMLETS, "maxBiomeAbsorbtion", maxBiomeAbsorbtion,
+                "Amount of ticks needed to fully absorbe a biome essence").getInt();
 
         randomFeatureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureChance", randomFeatureChance,
                 "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();
