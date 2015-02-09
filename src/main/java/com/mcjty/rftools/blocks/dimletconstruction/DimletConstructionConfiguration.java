@@ -7,7 +7,8 @@ public class DimletConstructionConfiguration {
     public static int WORKBENCH_MAXENERGY = 32000;
     public static int WORKBENCH_RECEIVEPERTICK = 80;
     public static int rfExtractOperation = 200;
-    public static int maxBiomeAbsorbtion = 1000;    // Amount of ticks before a biome absorber is ready
+    public static int maxBiomeAbsorbtion = 5000;    // Amount of ticks before a biome absorber is ready
+    public static int maxMobInjections = 10;           // Maximum amount of injections we need to do a full mob extraction.
 
     public static void init(Configuration cfg) {
         WORKBENCH_MAXENERGY = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "dimletWorkbenchMaxRF", WORKBENCH_MAXENERGY,
@@ -20,6 +21,7 @@ public class DimletConstructionConfiguration {
         maxBiomeAbsorbtion = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "maxBiomeAbsorbtion", maxBiomeAbsorbtion,
                 "Amount of ticks needed to fully absorbe a biome essence").getInt();
 
-
+        maxMobInjections = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "maxMobInjections", maxMobInjections,
+                "Amount of injections needed to get a fully absorbed mob essence").getInt();
     }
 }

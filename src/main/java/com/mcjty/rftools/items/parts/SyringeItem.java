@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items.parts;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletMapping;
@@ -56,7 +57,8 @@ public class SyringeItem extends Item {
                     }
                 }
                 int level = tagCompound.getInteger("level");
-                RFTools.message(player, EnumChatFormatting.BLUE + "Essence level: " + level);
+                level = level * 100 / DimletConstructionConfiguration.maxMobInjections;
+                RFTools.message(player, EnumChatFormatting.BLUE + "Essence level: " + level + "%");
             }
             return stack;
         }
@@ -66,7 +68,6 @@ public class SyringeItem extends Item {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         int id = findSelectedMobId(entity);
-        System.out.println("id = " + id);
         if (id != -1) {
             int prevId = -1;
             NBTTagCompound tagCompound = stack.getTagCompound();
@@ -81,7 +82,11 @@ public class SyringeItem extends Item {
                 tagCompound.setInteger("level", 1);
             } else {
                 int level = tagCompound.getInteger("level");
-                tagCompound.setInteger("level", level+1);
+                level++;
+                if (level > DimletConstructionConfiguration.maxMobInjections) {
+                    level = DimletConstructionConfiguration.maxMobInjections;
+                }
+                tagCompound.setInteger("level", level);
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
@@ -110,7 +115,8 @@ public class SyringeItem extends Item {
                 }
             }
             int level = tagCompound.getInteger("level");
-            list.add(EnumChatFormatting.BLUE + "Essence level: " + level);
+            level = level * 100 / DimletConstructionConfiguration.maxMobInjections;
+            list.add(EnumChatFormatting.BLUE + "Essence level: " + level + "%");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -130,10 +136,14 @@ public class SyringeItem extends Item {
         if (tagCompound != null) {
             level = tagCompound.getInteger("level");
         }
-        if (level > 5) {
-            level = 5;
+        if (level == 0) {
+            return filledLevel[0];
+        } else if (level == DimletConstructionConfiguration.maxMobInjections) {
+            return filledLevel[5];
+        } else {
+            level = ((level-1) * 4 / (DimletConstructionConfiguration.maxMobInjections-1)) + 1;
+            return filledLevel[level];
         }
-        return filledLevel[level];
     }
 
 
