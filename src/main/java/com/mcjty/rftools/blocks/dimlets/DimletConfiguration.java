@@ -10,9 +10,6 @@ public class DimletConfiguration {
     public static int SCRAMBLER_MAXENERGY = 32000;
     public static int SCRAMBLER_RECEIVEPERTICK = 80;
     public static int rfScrambleOperation = 100;
-    public static int WORKBENCH_MAXENERGY = 32000;
-    public static int WORKBENCH_RECEIVEPERTICK = 80;
-    public static int rfExtractOperation = 200;
     public static int BUILDER_MAXENERGY = 10000000;
     public static int BUILDER_RECEIVEPERTICK = 50000;
     public static int EDITOR_MAXENERGY = 5000000;
@@ -33,7 +30,6 @@ public class DimletConfiguration {
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
     public static float maintenanceCostPercentage = 0.0f;   // Bonus percentage in the dimlet cost.
-    public static int maxBiomeAbsorbtion = 1000;    // Amount of ticks before a biome absorber is ready
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
@@ -57,13 +53,6 @@ public class DimletConfiguration {
                 "RF per tick that the the dimlet researcher can receive").getInt();
         rfResearchOperation = cfg.get(CATEGORY_DIMLETS, "dimletResearcherRFPerOperation", rfResearchOperation,
                 "RF that the dimlet researcher needs for researching a single unknown dimlet").getInt();
-
-        WORKBENCH_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletWorkbenchMaxRF", WORKBENCH_MAXENERGY,
-                "Maximum RF storage that the dimlet workbench can hold").getInt();
-        WORKBENCH_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimletWorkbenchRFPerTick", WORKBENCH_RECEIVEPERTICK,
-                "RF per tick that the the dimlet workbench can receive").getInt();
-        rfExtractOperation = cfg.get(CATEGORY_DIMLETS, "dimletWorkbenchRFPerOperation", rfExtractOperation,
-                "RF that the dimlet workbench needs for extracting one dimlet").getInt();
 
         SCRAMBLER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletScramblerMaxRF", SCRAMBLER_MAXENERGY,
                 "Maximum RF storage that the dimlet scrambler can hold").getInt();
@@ -115,8 +104,6 @@ public class DimletConfiguration {
                 "Dimension to respawn in after you get kicked out of an RFTools dimension").getInt();
         cavernHeightLimit = cfg.get(CATEGORY_DIMLETS, "cavernHeightLimit", cavernHeightLimit,
                 "Maximum height of the caverns. 0=64, 1=128, 2=196, 3=256").getInt();
-        maxBiomeAbsorbtion = cfg.get(CATEGORY_DIMLETS, "maxBiomeAbsorbtion", maxBiomeAbsorbtion,
-                "Amount of ticks needed to fully absorbe a biome essence").getInt();
 
         randomFeatureChance = (float) cfg.get(CATEGORY_DIMLETS, "randomFeatureChance", randomFeatureChance,
                 "The chance that every specific feature gets randomly selected in worldgen (tendrils, caves, lakes, oregen, ...)").getDouble();

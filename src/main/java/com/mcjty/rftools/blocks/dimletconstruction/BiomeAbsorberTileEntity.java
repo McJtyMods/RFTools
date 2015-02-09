@@ -1,9 +1,7 @@
 package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.entity.GenericTileEntity;
-import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import java.util.Random;
@@ -45,7 +43,7 @@ public class BiomeAbsorberTileEntity extends GenericTileEntity {
             absorbing = 0;
         } else if (biomeGenBase.biomeID != biomeID) {
             biomeID = biomeGenBase.biomeID;
-            absorbing = DimletConfiguration.maxBiomeAbsorbtion;
+            absorbing = DimletConstructionConfiguration.maxBiomeAbsorbtion;
         }
         markDirty();
     }

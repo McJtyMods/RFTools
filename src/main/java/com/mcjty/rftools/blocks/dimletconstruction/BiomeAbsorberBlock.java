@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 import com.mcjty.container.GenericBlock;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -22,7 +21,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BiomeAbsorberBlock extends GenericBlock {
@@ -45,7 +43,7 @@ public class BiomeAbsorberBlock extends GenericBlock {
                 if (biome != null) {
                     currenttip.add(EnumChatFormatting.GREEN + "Biome: " + biome.biomeName);
                     int absorbing = tagCompound.getInteger("absorbing");
-                    int pct = ((DimletConfiguration.maxBiomeAbsorbtion - absorbing) * 100) / DimletConfiguration.maxBiomeAbsorbtion;
+                    int pct = ((DimletConstructionConfiguration.maxBiomeAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBiomeAbsorbtion;
                     currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
                 }
             }
@@ -66,7 +64,7 @@ public class BiomeAbsorberBlock extends GenericBlock {
                 if (biome != null) {
                     list.add(EnumChatFormatting.GREEN + "Biome: " + biome.biomeName);
                     int absorbing = tagCompound.getInteger("absorbing");
-                    int pct = ((DimletConfiguration.maxBiomeAbsorbtion - absorbing) * 100) / DimletConfiguration.maxBiomeAbsorbtion;
+                    int pct = ((DimletConstructionConfiguration.maxBiomeAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBiomeAbsorbtion;
                     list.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
                 }
             }

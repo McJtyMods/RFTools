@@ -4,7 +4,6 @@ import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
-import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletMapping;
@@ -47,7 +46,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     public DimletWorkbenchTileEntity() {
-        super(DimletConfiguration.WORKBENCH_MAXENERGY, DimletConfiguration.WORKBENCH_RECEIVEPERTICK);
+        super(DimletConstructionConfiguration.WORKBENCH_MAXENERGY, DimletConstructionConfiguration.WORKBENCH_RECEIVEPERTICK);
     }
 
     @Override
@@ -300,7 +299,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean doExtract() {
-        int rf = DimletConfiguration.rfExtractOperation;
+        int rf = DimletConstructionConfiguration.rfExtractOperation;
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough energy.
             return false;

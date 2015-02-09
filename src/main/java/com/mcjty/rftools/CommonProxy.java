@@ -3,6 +3,7 @@ package com.mcjty.rftools;
 import com.mcjty.rftools.apideps.WrenchChecker;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.crafter.CrafterConfiguration;
+import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import com.mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -66,6 +67,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
             cfg.addCustomCategoryComment(DimletConfiguration.CATEGORY_DIMLETS, "Settings for the dimlet/dimension system");
+            cfg.addCustomCategoryComment(DimletConstructionConfiguration.CATEGORY_DIMLET_CONSTRUCTION, "Settings for the dimlet construction system");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RARITY, "General rarity distribution for dimlet selection");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_DIMLETSETTINGS, "Settings for specific dimlets");
@@ -83,6 +85,7 @@ public class CommonProxy {
             EndergenicConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
             DimletConfiguration.init(cfg);
+            DimletConstructionConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
             DimletRandomizer.initTypeRarity(cfg);
