@@ -30,17 +30,21 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     public static final String CMD_STARTEXTRACT = "startExtract";
     public static final String CMD_GETEXTRACTING = "getExtracting";
     public static final String CLIENTCMD_GETEXTRACTING = "getExtracting";
+    public static final String CMD_SETAUTOEXTRACT = "setAutoExtract";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletWorkbenchContainer.factory, DimletWorkbenchContainer.SIZE_BUFFER + 9);
 
     private int extracting = 0;
     private int idToExtract = -1;
     private int inhibitCrafting = 0;
+    private boolean autoExtract = false;
 
     public int getExtracting() {
         return extracting;
     }
 
+    public boolean isAutoExtract() {return autoExtract;
+    }
 
     public DimletWorkbenchTileEntity() {
         super(DimletConfiguration.WORKBENCH_MAXENERGY, DimletConfiguration.WORKBENCH_RECEIVEPERTICK);
@@ -149,8 +153,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 }
             }
             markDirty();
+        } else if (autoExtract) {
+            startExtracting();
         }
-
     }
 
     private boolean checkDimletCrafting() {
@@ -368,6 +373,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         readBufferFromNBT(tagCompound);
         extracting = tagCompound.getInteger("extracting");
         idToExtract = tagCompound.getInteger("idToExtract");
+        autoExtract = tagCompound.getBoolean("autoExtract");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -389,6 +395,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         writeBufferToNBT(tagCompound);
         tagCompound.setInteger("extracting", extracting);
         tagCompound.setInteger("idToExtract", idToExtract);
+        tagCompound.setBoolean("autoExtract", autoExtract);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -412,6 +419,11 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         }
         if (CMD_STARTEXTRACT.equals(command)) {
             startExtracting();
+            return true;
+        } else if (CMD_SETAUTOEXTRACT.equals(command)) {
+            boolean auto = args.get("auto").getBoolean();
+            autoExtract = auto;
+            markDirty();
             return true;
         }
         return false;

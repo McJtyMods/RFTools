@@ -10,6 +10,7 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -23,6 +24,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
 
     private EnergyBar energyBar;
     private Button extractButton;
+    private ToggleButton autoExtract;
     private ImageLabel progressIcon;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimletworkbench.png");
@@ -44,7 +46,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
         energyBar.setValue(tileEntity.getCurrentRF());
 
         progressIcon = new ImageLabel(mc, this).setImage(iconGuiElements, 4 * 16, 16);
-        progressIcon.setLayoutHint(new PositionalLayout.PositionalHint(100, 6, 16, 16));
+        progressIcon.setLayoutHint(new PositionalLayout.PositionalHint(135, 6, 16, 16));
 
         extractButton = new Button(mc, this).setText("Extract").setLayoutHint(new PositionalLayout.PositionalHint(40, 7, 55, 14)).addButtonEvent(
                 new ButtonEvent() {
@@ -55,10 +57,21 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
                 }
         ).setTooltips("Extract the dimlets out of", "a realized dimension tab");
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(extractButton).addChild(energyBar).addChild(progressIcon);
+        autoExtract = new ToggleButton(mc, this).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 30, 14)).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                setAutoExtract();
+            }
+        }).setTooltips("Automatically extract");
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(extractButton).addChild(energyBar).addChild(progressIcon).addChild(autoExtract);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void setAutoExtract() {
+        sendServerCommand(DimletWorkbenchTileEntity.CMD_SETAUTOEXTRACT, new Argument("auto", autoExtract.isPressed()));
     }
 
     private void extractDimlet() {
