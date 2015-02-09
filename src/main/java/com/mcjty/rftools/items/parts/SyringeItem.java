@@ -3,13 +3,12 @@ package com.mcjty.rftools.items.parts;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
-import com.mcjty.rftools.items.dimlets.DimletEntry;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.dimlets.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -49,12 +48,9 @@ public class SyringeItem extends Item {
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
-                int mobId = tagCompound.getInteger("mobId");
-                if (mobId > 0) {
-                    DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(mobId);
-                    if (entry != null) {
-                        RFTools.message(player, EnumChatFormatting.BLUE + "Mob: " + entry.getKey().getName());
-                    }
+                String mob = tagCompound.getString("mobName");
+                if (mob != null) {
+                    RFTools.message(player, EnumChatFormatting.BLUE + "Mob: " + mob);
                 }
                 int level = tagCompound.getInteger("level");
                 level = level * 100 / DimletConstructionConfiguration.maxMobInjections;
@@ -67,18 +63,18 @@ public class SyringeItem extends Item {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        int id = findSelectedMobId(entity);
-        if (id != -1) {
-            int prevId = -1;
+        String mob = findSelectedMobName(entity);
+        if (mob != null) {
+            String prevMob = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
-                prevId = tagCompound.getInteger("mobId");
+                prevMob = tagCompound.getString("mobName");
             } else {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            if (prevId != id) {
-                tagCompound.setInteger("mobId", id);
+            if (prevMob == null || !prevMob.equals(mob)) {
+                tagCompound.setString("mobName", mob);
                 tagCompound.setInteger("level", 1);
             } else {
                 int level = tagCompound.getInteger("level");
@@ -92,13 +88,15 @@ public class SyringeItem extends Item {
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private int findSelectedMobId(Entity entity) {
+    private String findSelectedMobName(Entity entity) {
         for (Map.Entry<Integer, MobDescriptor> entry : DimletMapping.idtoMob.entrySet()) {
-            if (entry.getValue().getEntityClass().isAssignableFrom(entity.getClass())) {
-                return entry.getKey();
+            Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
+            if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
+                int id = entry.getKey();
+                return KnownDimletConfiguration.idToDimlet.get(id).getKey().getName();
             }
         }
-        return -1;
+        return null;
     }
 
     @SideOnly(Side.CLIENT)
@@ -107,12 +105,9 @@ public class SyringeItem extends Item {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            int mobId = tagCompound.getInteger("mobId");
-            if (mobId > 0) {
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(mobId);
-                if (entry != null) {
-                    list.add(EnumChatFormatting.BLUE + "Mob: " + entry.getKey().getName());
-                }
+            String mob = tagCompound.getString("mobName");
+            if (mob != null) {
+                list.add(EnumChatFormatting.BLUE + "Mob: " + mob);
             }
             int level = tagCompound.getInteger("level");
             level = level * 100 / DimletConstructionConfiguration.maxMobInjections;

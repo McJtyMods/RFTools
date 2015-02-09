@@ -1,13 +1,16 @@
 package com.mcjty.rftools.crafting;
 
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public final class ModCrafting {
     static {
@@ -127,6 +130,26 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.fluidPlusModuleItem), 4));
 
         GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
+
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.peaceEssenceItem),
+                createMobEssenceItemStack("Iron Golem"),
+                createMobEssenceItemStack("Enderman"),
+                createMobEssenceItemStack("Snowman"),
+                createMobEssenceItemStack("Bat"),
+                createMobEssenceItemStack("Ocelot"),
+                createMobEssenceItemStack("Squid"),
+                createMobEssenceItemStack("Wolf"),
+                createMobEssenceItemStack("Zombie Pigman"),
+                createMobEssenceItemStack("Mooshroom")));
+    }
+
+    private static ItemStack createMobEssenceItemStack(String mobName) {
+        ItemStack syringeIronGolem = new ItemStack(ModItems.syringeItem);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
+        tagCompound.setString("mobName", mobName);
+        syringeIronGolem.setTagCompound(tagCompound);
+        return syringeIronGolem;
     }
 
 }

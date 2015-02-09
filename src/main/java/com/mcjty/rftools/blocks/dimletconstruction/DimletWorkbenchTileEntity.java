@@ -197,7 +197,8 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 break;
             case DIMLET_MOBS:
                 if (!isValidMobEssence(stackEssence, essenceCompound)) return false;
-                int mobDimlet = essenceCompound.getInteger("mobId");
+                String mob = essenceCompound.getString("mobName");
+                int mobDimlet = KnownDimletConfiguration.dimletToID.get(new DimletKey(DimletType.DIMLET_MOBS, mob));
                 if (!matchDimletRecipe(mobDimlet, stackController, stackMemory, stackEnergy)) {
                     return false;
                 }
@@ -278,7 +279,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean isValidBiomeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = ((ItemBlock) stackEssence.getItem()).field_150939_a;
+        Block essenceBlock = getBlock(stackEssence);
 
         if (essenceBlock != ModBlocks.biomeAbsorberBlock) {
             return false;
@@ -294,6 +295,14 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
+    private Block getBlock(ItemStack stackEssence) {
+        if (stackEssence.getItem() instanceof ItemBlock) {
+            return ((ItemBlock) stackEssence.getItem()).field_150939_a;
+        } else {
+            return null;
+        }
+    }
+
     private boolean isValidMobEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
         if (stackEssence.getItem() != ModItems.syringeItem) {
             return false;
@@ -302,8 +311,8 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             return false;
         }
         int level = essenceCompound.getInteger("level");
-        int mobId = essenceCompound.getInteger("mobId");
-        if (level < DimletConstructionConfiguration.maxMobInjections || mobId <= 0) {
+        String mob = essenceCompound.getString("mobName");
+        if (level < DimletConstructionConfiguration.maxMobInjections || mob == null) {
             return false;
         }
         return true;
