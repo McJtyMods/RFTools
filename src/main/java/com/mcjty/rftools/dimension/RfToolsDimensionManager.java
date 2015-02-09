@@ -127,6 +127,10 @@ public class RfToolsDimensionManager extends WorldSavedData {
      * Here the information from the server arrives. This code is executed on the client.
      */
     public void checkDimletConfigFromServer(Map<Integer, DimletKey> dimlets) {
+        if (!KnownDimletConfiguration.isInitialized()) {
+            KnownDimletConfiguration.init();
+        }
+
         Map<Integer,Integer> mapFromTo = new HashMap<Integer, Integer>();
 
         for (Map.Entry<Integer, DimletKey> entry : dimlets.entrySet()) {
