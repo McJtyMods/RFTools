@@ -40,12 +40,13 @@ item.DimletTypeControllerController.name=Dimlet Controller Type Controller
 item.DimletTypeControllerEffect.name=Dimlet Effect Type Controller
 item.DimletTypeControllerLiquid.name=Dimlet Liquid Type Controller
 item.DimletTypeControllerMaterial.name=Dimlet Material Type Controller
-item.DimletTypeControllerMobs.name=Dimlet Mobs Type Controller
+item.DimletTypeControllerMob.name=Dimlet Mob Type Controller
 item.DimletTypeControllerStructure.name=Dimlet Structure Type Controller
 item.DimletTypeControllerSpecial.name=Dimlet Special Type Controller
 item.DimletTypeControllerTerrain.name=Dimlet Terrain Type Controller
 item.DimletTypeControllerTime.name=Dimlet Time Type Controller
 item.SyringeItem.name=Syringe
+item.PeaceEssence.name=Peace Essence
 
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2

@@ -42,6 +42,7 @@ public final class ModItems {
     public static DimletMemoryUnitItem dimletMemoryUnitItem;
     public static DimletTypeControllerItem dimletTypeControllerItem;
     public static SyringeItem syringeItem;
+    public static PeaceEssenceItem peaceEssenceItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -110,6 +111,12 @@ public final class ModItems {
         syringeItem.setUnlocalizedName("SyringeItem");
         syringeItem.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(syringeItem, "syringeItem");
+
+        peaceEssenceItem = new PeaceEssenceItem();
+        peaceEssenceItem.setUnlocalizedName("PeaceEssence");
+        peaceEssenceItem.setCreativeTab(RFTools.tabRfTools);
+        peaceEssenceItem.setTextureName(RFTools.MODID + ":parts/peaceEssence");
+        GameRegistry.registerItem(peaceEssenceItem, "peaceEssenceItem");
     }
 
     private static void initScreenModuleItems() {

@@ -5,10 +5,7 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.dimlets.DimletEntry;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
-import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -206,6 +203,17 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 }
                 inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, mobDimlet));
                 break;
+            case DIMLET_SPECIAL:
+                if (!isValidSpecialEssence(stackEssence, essenceCompound)) return false;
+                int specialDimlet = findSpecialDimlet(stackEssence);
+                if (specialDimlet == -1) {
+                    return false;
+                }
+                if (!matchDimletRecipe(specialDimlet, stackController, stackMemory, stackEnergy)) {
+                    return false;
+                }
+                inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, specialDimlet));
+                break;
             case DIMLET_FOLIAGE:
             case DIMLET_LIQUID:
             case DIMLET_MATERIAL:
@@ -216,7 +224,6 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             case DIMLET_TIME:
             case DIMLET_DIGIT:
             case DIMLET_EFFECT:
-            case DIMLET_SPECIAL:
             case DIMLET_CONTROLLER:
                 return false;
         }
@@ -242,14 +249,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         if (stackController.getItemDamage() != rarity) {
             return false;
         }
-        int level;
-        if (rarity <= 1) {
-            level = 0;
-        } else if (rarity <= 3) {
-            level = 1;
-        } else {
-            level = 2;
-        }
+        int level = calculateItemLevelFromRarity(rarity);
         if (stackMemory.getItemDamage() != level) {
             return false;
         }
@@ -258,6 +258,13 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         }
 
         return true;
+    }
+
+    private int findSpecialDimlet(ItemStack stackEssence) {
+        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
+            return KnownDimletConfiguration.dimletToID.get(new DimletKey(DimletType.DIMLET_SPECIAL, "Peaceful"));
+        }
+        return -1;
     }
 
     private int findBiomeDimlet(NBTTagCompound essenceCompound) {
@@ -302,6 +309,14 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
+    private boolean isValidSpecialEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
+            return true;
+        }
+
+        return false;
+    }
+
     private void startExtracting() {
         if (extracting > 0) {
             // Already extracting
@@ -343,14 +358,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletTypeControllerItem, 1, entry.getKey().getType().ordinal()));
         }
 
-        int level;
-        if (rarity <= 1) {
-            level = 0;
-        } else if (rarity <= 3) {
-            level = 1;
-        } else {
-            level = 2;
-        }
+        int level = calculateItemLevelFromRarity(rarity);
         if (extractSuccess(factor)) {
             mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletMemoryUnitItem, 1, level));
         } else {
@@ -371,6 +379,18 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         markDirty();
 
         return true;
+    }
+
+    private int calculateItemLevelFromRarity(int rarity) {
+        int level;
+        if (rarity <= 1) {
+            level = 0;
+        } else if (rarity <= 3) {
+            level = 1;
+        } else {
+            level = 2;
+        }
+        return level;
     }
 
     private boolean extractSuccess(float factor) {
