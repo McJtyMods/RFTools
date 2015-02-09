@@ -134,6 +134,9 @@ public class KnownDimletConfiguration {
      * the server and the client. Here this will be corrected.
      */
     public static void remapIds(Map<Integer,Integer> mapFromTo) {
+        if (!isInitialized()) {
+            return; // Nothing to do.
+        }
         remapIdsInMap(mapFromTo, idToDimlet);
         remapIdsInMapReversed(mapFromTo, dimletToID);
         remapIdsInMap(mapFromTo, idToDisplayName);
@@ -157,13 +160,27 @@ public class KnownDimletConfiguration {
         remapIdsInSet(mapFromTo, DimletMapping.celestialBodies);
 
         remapIdsInList(mapFromTo, DimletRandomizer.dimletIds);
-        DimletRandomizer.randomDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomMaterialDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomLiquidDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomMobDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomStructureDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomEffectDimlets.remapValues(mapFromTo);
-        DimletRandomizer.randomFeatureDimlets.remapValues(mapFromTo);
+        if (DimletRandomizer.randomDimlets != null) {
+            DimletRandomizer.randomDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomMaterialDimlets != null) {
+            DimletRandomizer.randomMaterialDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomLiquidDimlets != null) {
+            DimletRandomizer.randomLiquidDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomMobDimlets != null) {
+            DimletRandomizer.randomMobDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomStructureDimlets != null) {
+            DimletRandomizer.randomStructureDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomEffectDimlets != null) {
+            DimletRandomizer.randomEffectDimlets.remapValues(mapFromTo);
+        }
+        if (DimletRandomizer.randomFeatureDimlets != null) {
+            DimletRandomizer.randomFeatureDimlets.remapValues(mapFromTo);
+        }
         
         initCrafting();
     }
