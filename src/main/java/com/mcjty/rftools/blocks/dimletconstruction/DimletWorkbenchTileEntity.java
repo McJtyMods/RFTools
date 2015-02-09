@@ -374,7 +374,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean extractSuccess(float factor) {
-        return (worldObj.rand.nextFloat() * (1.0f - factor) + (0.71f * factor)) > 0.7f;
+        return worldObj.rand.nextFloat() <= (0.61f + factor * 0.4f);
     }
 
     private void mergeItemOrThrowInWorld(ItemStack stack) {
