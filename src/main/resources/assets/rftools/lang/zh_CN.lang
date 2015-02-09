@@ -45,6 +45,7 @@ item.DimletTypeControllerStructure.name=Dimlet Structure Type Controller
 item.DimletTypeControllerSpecial.name=Dimlet Special Type Controller
 item.DimletTypeControllerTerrain.name=Dimlet Terrain Type Controller
 item.DimletTypeControllerTime.name=Dimlet Time Type Controller
+item.SyringeItem.name=Syringe
 
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>

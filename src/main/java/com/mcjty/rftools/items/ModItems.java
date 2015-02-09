@@ -41,6 +41,7 @@ public final class ModItems {
     public static DimletEnergyModuleItem dimletEnergyModuleItem;
     public static DimletMemoryUnitItem dimletMemoryUnitItem;
     public static DimletTypeControllerItem dimletTypeControllerItem;
+    public static SyringeItem syringeItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -104,6 +105,11 @@ public final class ModItems {
         dimletTypeControllerItem.setUnlocalizedName("DimletTypeController");
         dimletTypeControllerItem.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(dimletTypeControllerItem, "dimletTypeControllerItem");
+
+        syringeItem = new SyringeItem();
+        syringeItem.setUnlocalizedName("SyringeItem");
+        syringeItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(syringeItem, "syringeItem");
     }
 
     private static void initScreenModuleItems() {
