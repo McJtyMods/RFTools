@@ -119,26 +119,35 @@ public class GenericContainer extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (factory.isOutputSlot(index) || factory.isInputSlot(index) || factory.isSpecificItemSlot(index) || factory.isContainerSlot(index)) {
+            if (factory.isSpecificItemSlot(index)) {
                 if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, true)) {
                     if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
                         return null;
                     }
                 }
                 slot.onSlotChange(itemstack1, itemstack);
+            } else if (factory.isOutputSlot(index) || factory.isInputSlot(index) || factory.isSpecificItemSlot(index) || factory.isContainerSlot(index)) {
+                if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
+                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, true)) {
+                        if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
+                            return null;
+                        }
+                    }
+                }
+                slot.onSlotChange(itemstack1, itemstack);
             } else if (factory.isGhostSlot(index) || factory.isGhostOutputSlot(index)) {
                 return null; // @@@ Right?
             } else if (factory.isPlayerInventorySlot(index)) {
-                if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
-                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
+                if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
+                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
                         if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERHOTBAR, false)) {
                             return null;
                         }
                     }
                 }
             } else if (factory.isPlayerHotbarSlot(index)) {
-                if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
-                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
+                if (!mergeItemStacks(itemstack1, SlotType.SLOT_SPECIFICITEM, false)) {
+                    if (!mergeItemStacks(itemstack1, SlotType.SLOT_INPUT, false)) {
                         if (!mergeItemStacks(itemstack1, SlotType.SLOT_PLAYERINV, false)) {
                             return null;
                         }

@@ -50,25 +50,8 @@ public class DimletWorkbenchContainer extends GenericContainer {
         generateSlots();
     }
 
-//    @Override
-//    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
-//        if (factory.isGhostOutputSlot(index)) {
-//            Slot slot = getSlot(index);
-//            if (slot.getHasStack()) {
-//                ItemStack result = slot.getStack().copy();
-//                getSlot(SLOT_BASE).decrStackSize(1);
-//                getSlot(SLOT_CONTROLLER).decrStackSize(1);
-//                getSlot(SLOT_TYPE_CONTROLLER).decrStackSize(1);
-//                getSlot(SLOT_ENERGY).decrStackSize(1);
-//                getSlot(SLOT_MEMORY).decrStackSize(1);
-//                getSlot(SLOT_ESSENCE).decrStackSize(1);
-////                slot.putStack(null);
-//                return result;
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            return super.slotClick(index, button, mode, player);
-//        }
-//    }
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        return super.transferStackInSlot(player, index);
+    }
 }
