@@ -183,13 +183,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             return false;
         }
 
-        Block essenceBlock = ((ItemBlock) stackEssence.getItem()).field_150939_a;
         NBTTagCompound essenceCompound = stackEssence.getTagCompound();
 
         DimletType type = DimletType.values()[stackTypeController.getItemDamage()];
         switch (type) {
             case DIMLET_BIOME:
-                if (!isValidBiomeEssence(essenceBlock, essenceCompound)) return false;
+                if (!isValidBiomeEssence(stackEssence, essenceCompound)) return false;
                 int biomeDimlet = findBiomeDimlet(essenceCompound);
                 if (biomeDimlet == -1) {
                     return false;
@@ -199,10 +198,17 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 }
                 inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, biomeDimlet));
                 break;
+            case DIMLET_MOBS:
+                if (!isValidMobEssence(stackEssence, essenceCompound)) return false;
+                int mobDimlet = essenceCompound.getInteger("mobId");
+                if (!matchDimletRecipe(mobDimlet, stackController, stackMemory, stackEnergy)) {
+                    return false;
+                }
+                inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, mobDimlet));
+                break;
             case DIMLET_FOLIAGE:
             case DIMLET_LIQUID:
             case DIMLET_MATERIAL:
-            case DIMLET_MOBS:
             case DIMLET_SKY:
             case DIMLET_STRUCTURE:
             case DIMLET_TERRAIN:
@@ -264,7 +270,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return -1;
     }
 
-    private boolean isValidBiomeEssence(Block essenceBlock, NBTTagCompound essenceCompound) {
+    private boolean isValidBiomeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+        Block essenceBlock = ((ItemBlock) stackEssence.getItem()).field_150939_a;
+
         if (essenceBlock != ModBlocks.biomeAbsorberBlock) {
             return false;
         }
@@ -274,6 +282,21 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         int absorbing = essenceCompound.getInteger("absorbing");
         int biome = essenceCompound.getInteger("biome");
         if (absorbing > 0 || biome == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidMobEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+        if (stackEssence.getItem() != ModItems.syringeItem) {
+            return false;
+        }
+        if (essenceCompound == null) {
+            return false;
+        }
+        int level = essenceCompound.getInteger("level");
+        int mobId = essenceCompound.getInteger("mobId");
+        if (level < DimletConstructionConfiguration.maxMobInjections || mobId <= 0) {
             return false;
         }
         return true;

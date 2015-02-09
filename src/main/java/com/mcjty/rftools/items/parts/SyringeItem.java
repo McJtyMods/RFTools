@@ -136,9 +136,9 @@ public class SyringeItem extends Item {
         if (tagCompound != null) {
             level = tagCompound.getInteger("level");
         }
-        if (level == 0) {
+        if (level <= 0) {
             return filledLevel[0];
-        } else if (level == DimletConstructionConfiguration.maxMobInjections) {
+        } else if (level >= DimletConstructionConfiguration.maxMobInjections) {
             return filledLevel[5];
         } else {
             level = ((level-1) * 4 / (DimletConstructionConfiguration.maxMobInjections-1)) + 1;
