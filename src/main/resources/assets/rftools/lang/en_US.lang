@@ -92,6 +92,7 @@ tile.activityProbeBlock.name=Activity Probe
 tile.screenBlock.name=Screen
 tile.screenControllerBlock.name=Screen Controller
 tile.biomeAbsorberBlock.name=Biome Absorber
+tile.materialAbsorberBlock.name=Material Absorber
 
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.dimensionalBlankBlock.name=Dimensional Blank Block

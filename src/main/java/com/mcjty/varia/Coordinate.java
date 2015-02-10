@@ -3,6 +3,7 @@ package com.mcjty.varia;
 import com.mcjty.rftools.network.ByteBufConverter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class Coordinate implements ByteBufConverter {
     private final int x, y, z;
@@ -28,6 +29,10 @@ public class Coordinate implements ByteBufConverter {
 
     public boolean isValid() {
         return y >= 0;
+    }
+
+    public Coordinate addDirection(ForgeDirection direction) {
+        return new Coordinate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
     }
 
     @Override

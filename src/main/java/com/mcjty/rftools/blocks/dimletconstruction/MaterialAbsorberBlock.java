@@ -1,0 +1,134 @@
+package com.mcjty.rftools.blocks.dimletconstruction;
+
+import com.mcjty.container.GenericBlock;
+import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.RFTools;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MaterialAbsorberBlock extends GenericBlock {
+
+    public MaterialAbsorberBlock() {
+        super(Material.iron, MaterialAbsorberTileEntity.class);
+        setBlockName("materialAbsorberBlock");
+        setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            int blockID = tagCompound.getInteger("block");
+            if (blockID != -1) {
+                Block block = (Block) Block.blockRegistry.getObjectById(blockID);
+                if (block != null) {
+                    currenttip.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block).getDisplayName());
+                    int absorbing = tagCompound.getInteger("absorbing");
+                    int pct = ((DimletConstructionConfiguration.maxBlockAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBlockAbsorbtion;
+                    currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                }
+            }
+        }
+        return currenttip;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            int blockID = tagCompound.getInteger("block");
+            if (blockID != -1) {
+                Block block = (Block) Block.blockRegistry.getObjectById(blockID);
+                if (block != null) {
+                    list.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block).getDisplayName());
+                    int absorbing = tagCompound.getInteger("absorbing");
+                    int pct = ((DimletConstructionConfiguration.maxBlockAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBlockAbsorbtion;
+                    list.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                }
+            }
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Place this block on top of another block and it will");
+            list.add(EnumChatFormatting.WHITE + "gradually absorb all identical blocks in the area.");
+            list.add(EnumChatFormatting.WHITE + "You can use the end result in the Dimlet Workbench.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        // We don't want what GenericContainerBlock does.
+        restoreBlockFromNBT(world, x, y, z, itemStack);
+        if (!world.isRemote) {
+            MaterialAbsorberTileEntity materialAbsorberTileEntity = (MaterialAbsorberTileEntity) world.getTileEntity(x, y, z);
+            materialAbsorberTileEntity.placeDown();
+        }
+    }
+
+    @Override
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+        return new ArrayList<ItemStack>();
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        ItemStack stack = new ItemStack(block);
+        if (te instanceof GenericTileEntity) {
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            ((GenericTileEntity)te).writeRestorableToNBT(tagCompound);
+            stack.setTagCompound(tagCompound);
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+        world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
+    }
+
+    @Override
+    public String getSideIconName() {
+        return "materialAbsorber";
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public int getRenderBlockPass() {
+        return 0;
+    }
+
+    @Override
+    public int getGuiID() {
+        return -1;
+    }
+}

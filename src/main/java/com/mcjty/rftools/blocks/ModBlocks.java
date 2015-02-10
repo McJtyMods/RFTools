@@ -5,10 +5,7 @@ import com.mcjty.rftools.blocks.crafter.CrafterBlock;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity1;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity2;
 import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
-import com.mcjty.rftools.blocks.dimletconstruction.BiomeAbsorberBlock;
-import com.mcjty.rftools.blocks.dimletconstruction.BiomeAbsorberTileEntity;
-import com.mcjty.rftools.blocks.dimletconstruction.DimletWorkbenchBlock;
-import com.mcjty.rftools.blocks.dimletconstruction.DimletWorkbenchTileEntity;
+import com.mcjty.rftools.blocks.dimletconstruction.*;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
@@ -88,6 +85,7 @@ public final class ModBlocks {
     public static DimensionMonitorBlock dimensionMonitorBlock;
 
     public static BiomeAbsorberBlock biomeAbsorberBlock;
+    public static MaterialAbsorberBlock materialAbsorberBlock;
 
     public static DimensionalShardBlock dimensionalShardBlock;
     public static DimensionalBlankBlock dimensionalBlankBlock;
@@ -204,6 +202,10 @@ public final class ModBlocks {
         biomeAbsorberBlock = new BiomeAbsorberBlock();
         GameRegistry.registerBlock(biomeAbsorberBlock, GenericItemBlock.class, "biomeAbsorberBlock");
         GameRegistry.registerTileEntity(BiomeAbsorberTileEntity.class, "BiomeAbsorberTileEntity");
+
+        materialAbsorberBlock = new MaterialAbsorberBlock();
+        GameRegistry.registerBlock(materialAbsorberBlock, GenericItemBlock.class, "materialAbsorberBlock");
+        GameRegistry.registerTileEntity(MaterialAbsorberTileEntity.class, "MaterialAbsorberTileEntity");
     }
 
     private static void initCrafterBlocks() {
