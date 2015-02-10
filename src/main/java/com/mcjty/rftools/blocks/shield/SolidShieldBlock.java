@@ -13,10 +13,10 @@ public class SolidShieldBlock extends AbstractShieldBlock {
         setBlockName("solidShieldBlock");
     }
 
-//    @Override
-//    public boolean isOpaqueCube() {
-//        return false;
-//    }
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 //
 //    @Override
 //    public boolean renderAsNormalBlock() {
