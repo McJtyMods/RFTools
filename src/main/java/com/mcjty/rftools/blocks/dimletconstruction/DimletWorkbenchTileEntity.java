@@ -207,9 +207,22 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
+    private boolean attemptLiquidDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+        if (!isValidLiquidEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        int liquidDimlet = findLiquidDimlet(stackEssence.getTagCompound());
+        if (liquidDimlet == -1) {
+            return false;
+        }
+        if (!matchDimletRecipe(liquidDimlet, stackController, stackMemory, stackEnergy)) {
+            return false;
+        }
+        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, liquidDimlet));
+        return true;
+    }
+
     private boolean attemptMaterialDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
         if (!isValidMaterialEssence(stackEssence, stackEssence.getTagCompound())) return false;
-        int materialDimlet = findBiomeDimlet(stackEssence.getTagCompound());
+        int materialDimlet = findMaterialDimlet(stackEssence.getTagCompound());
         if (materialDimlet == -1) {
             return false;
         }
@@ -316,6 +329,19 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return -1;
     }
 
+    private int findLiquidDimlet(NBTTagCompound essenceCompound) {
+        int blockID = essenceCompound.getInteger("liquid");
+        for (Map.Entry<Integer, Block> entry : DimletMapping.idToFluid.entrySet()) {
+            if (entry.getValue() != null) {
+                int id = Block.blockRegistry.getIDForObject(entry.getValue());
+                if (blockID == id) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return -1;
+    }
+
     private boolean isValidBiomeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
         Block essenceBlock = getBlock(stackEssence);
 
@@ -328,6 +354,23 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         int absorbing = essenceCompound.getInteger("absorbing");
         int biome = essenceCompound.getInteger("biome");
         if (absorbing > 0 || biome == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidLiquidEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+        Block essenceBlock = getBlock(stackEssence);
+
+        if (essenceBlock != ModBlocks.liquidAbsorberBlock) {
+            return false;
+        }
+        if (essenceCompound == null) {
+            return false;
+        }
+        int absorbing = essenceCompound.getInteger("absorbing");
+        int blockID = essenceCompound.getInteger("liquid");
+        if (absorbing > 0 || blockID == -1) {
             return false;
         }
         return true;
