@@ -58,7 +58,15 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This machine can handle up to 8 recipes");
+            int amount;
+            if (tileEntityClass.equals(CrafterBlockTileEntity1.class)) {
+                amount = 2;
+            } else if (tileEntityClass.equals(CrafterBlockTileEntity2.class)) {
+                amount = 4;
+            } else {
+                amount = 8;
+            }
+            list.add(EnumChatFormatting.WHITE + "This machine can handle up to " + amount + " recipes");
             list.add(EnumChatFormatting.WHITE + "at once and allows recipes to use the crafting results");
             list.add(EnumChatFormatting.WHITE + "of previous steps.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
