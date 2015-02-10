@@ -4,8 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 
 public class ShieldConfiguration {
     public static final String CATEGORY_SHIELD = "shield";
-    public static int MAXENERGY = 100000;
-    public static int RECEIVEPERTICK = 1000;
+    public static int MAXENERGY = 200000;
+    public static int RECEIVEPERTICK = 5000;
     // The amount of rf to use as a base per block in the shield.
     public static int rfBase = 8;
     // This amount is added for a camo block.
