@@ -24,6 +24,7 @@ import java.util.List;
 public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     protected IIcon icon;
+    protected IIcon[] icons = new IIcon[4];
 
     public static final int META_ITEMS = 1;             // If set then blocked for items
     public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs
@@ -140,7 +141,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        icon = iconRegister.registerIcon(RFTools.MODID + ":" + "shieldtexture");
+        icon = iconRegister.registerIcon(RFTools.MODID + ":shieldtexture");
+        icons[0] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield0");
+        icons[1] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield1");
+        icons[2] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield2");
+        icons[3] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield3");
     }
 
     // Subclasses can call this to override the slightly more expensive version in this class.
@@ -170,12 +175,13 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) blockAccess.getTileEntity(x, y, z);
         if (shieldBlockTileEntity == null) {
-            return icon;
+            return icons[(x+y+z)&0x3];
+//            return icon;
         }
 
         Block block = shieldBlockTileEntity.getBlock();
         if (block == null) {
-            return icon;
+            return icons[(x+y+z)&0x3];
         } else {
             if (shieldBlockTileEntity.getHasTe()) {
                 return block.getIcon(side, blockAccess.getBlockMetadata(x, y, z));

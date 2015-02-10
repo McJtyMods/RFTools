@@ -286,7 +286,7 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
             return ModBlocks.invisibleShieldBlock;
         }
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            return ModBlocks.shieldBlockNOpaquePass1;
+            return ModBlocks.solidShieldBlock;
         }
 
         Block camoBlock = calculateCamoBlock();
