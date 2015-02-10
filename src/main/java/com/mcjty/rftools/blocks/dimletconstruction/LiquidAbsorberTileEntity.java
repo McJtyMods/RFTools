@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class MaterialAbsorberTileEntity extends GenericTileEntity {
+public class LiquidAbsorberTileEntity extends GenericTileEntity {
     private static final int ABSORB_SPEED = 5;
 
     private int absorbing = 0;
@@ -120,11 +120,11 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
 
         int id = Block.blockRegistry.getIDForObject(block);
         if (id != blockID) {
-            boolean ok = isValidDimletBlock(block);
+            boolean ok = isValidDimletLiquid(block);
 
             if (ok) {
                 blockID = id;
-                absorbing = DimletConstructionConfiguration.maxBlockAbsorbtion;
+                absorbing = DimletConstructionConfiguration.maxLiquidAbsorbtion;
                 timer = ABSORB_SPEED;
                 toscan.clear();
                 toscan.add(new Coordinate(xCoord, yCoord-1, zCoord));
@@ -136,10 +136,10 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         }
     }
 
-    private boolean isValidDimletBlock(Block block) {
+    private boolean isValidDimletLiquid(Block block) {
         boolean ok = false;
-        for (Map.Entry<Integer, BlockMeta> entry : DimletMapping.idToBlock.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().getBlock() == block) {
+        for (Map.Entry<Integer, Block> entry : DimletMapping.idToFluid.entrySet()) {
+            if (entry.getValue() == block) {
                 ok = true;
                 break;
             }
@@ -169,7 +169,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("absorbing", absorbing);
-        tagCompound.setInteger("block", blockID);
+        tagCompound.setInteger("liquid", blockID);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         absorbing = tagCompound.getInteger("absorbing");
-        blockID = tagCompound.getInteger("block");
+        blockID = tagCompound.getInteger("liquid");
     }
 
 

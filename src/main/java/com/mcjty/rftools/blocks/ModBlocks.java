@@ -86,6 +86,7 @@ public final class ModBlocks {
 
     public static BiomeAbsorberBlock biomeAbsorberBlock;
     public static MaterialAbsorberBlock materialAbsorberBlock;
+    public static LiquidAbsorberBlock liquidAbsorberBlock;
 
     public static DimensionalShardBlock dimensionalShardBlock;
     public static DimensionalBlankBlock dimensionalBlankBlock;
@@ -206,6 +207,10 @@ public final class ModBlocks {
         materialAbsorberBlock = new MaterialAbsorberBlock();
         GameRegistry.registerBlock(materialAbsorberBlock, GenericItemBlock.class, "materialAbsorberBlock");
         GameRegistry.registerTileEntity(MaterialAbsorberTileEntity.class, "MaterialAbsorberTileEntity");
+
+        liquidAbsorberBlock = new LiquidAbsorberBlock();
+        GameRegistry.registerBlock(liquidAbsorberBlock, GenericItemBlock.class, "liquidAbsorberBlock");
+        GameRegistry.registerTileEntity(LiquidAbsorberTileEntity.class, "LiquidAbsorberTileEntity");
     }
 
     private static void initCrafterBlocks() {
