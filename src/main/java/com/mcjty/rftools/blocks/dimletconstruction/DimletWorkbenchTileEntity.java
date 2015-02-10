@@ -191,8 +191,8 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 return attemptSpecialDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
             case DIMLET_MATERIAL:
                 return attemptMaterialDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_FOLIAGE:
             case DIMLET_LIQUID:
+            case DIMLET_FOLIAGE:
             case DIMLET_SKY:
             case DIMLET_STRUCTURE:
             case DIMLET_TERRAIN:
