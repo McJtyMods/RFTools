@@ -7,7 +7,7 @@ public class StorageScannerConfiguration {
     public static int MAXENERGY = 100000;
     public static int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;
-    public static int scansPerOperation = 10;
+    public static int scansPerOperation = 20;
     public static int hilightTime = 5;
 
     public static void init(Configuration cfg) {
