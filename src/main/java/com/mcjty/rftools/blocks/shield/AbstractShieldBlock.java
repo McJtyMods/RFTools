@@ -38,6 +38,10 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         setCreativeTab(RFTools.tabRfTools);
     }
 
+    public IIcon[] getIcons() {
+        return icons;
+    }
+
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);

@@ -49,8 +49,8 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
     private static final Quad quads[] = new Quad[] {
             new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
             new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
-            new Quad(new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1), new Vt(0, 0, 1)),       // NORTH
-            new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // SOUTH
+            new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // NORTH
+            new Quad(new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1), new Vt(0, 0, 1)),       // SOUTH
             new Quad(new Vt(0, 0, 1), new Vt(0, 1, 1), new Vt(0, 1, 0), new Vt(0, 0, 0)),       // WEST
             new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
     };
@@ -69,6 +69,16 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
 
     public static void addSide(Block block, Tessellator tessellator, int side, int meta) {
         IIcon c = block.getIcon(side, meta);
+        addSide(tessellator, side, c);
+    }
+
+    public static void addSideConditionally(IBlockAccess world, int x, int y, int z, Block block, Tessellator tessellator, IIcon icon, ForgeDirection direction) {
+        if (block.shouldSideBeRendered(world, x+direction.offsetX, y+direction.offsetY, z+direction.offsetZ, direction.ordinal())) {
+            addSide(tessellator, direction.ordinal(), icon);
+        }
+    }
+
+    public static void addSide(Tessellator tessellator, int side, IIcon c) {
         float u1 = c.getMinU();
         float v1 = c.getMinV();
         float u2 = c.getMaxU();

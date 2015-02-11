@@ -8,6 +8,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class SolidShieldBlock extends AbstractShieldBlock {
 
+    public static int RENDERID_SHIELDBLOCK;
+
+
     public SolidShieldBlock() {
         super();
         setBlockName("solidShieldBlock");
@@ -17,12 +20,17 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     public boolean isOpaqueCube() {
         return false;
     }
-//
-//    @Override
-//    public boolean renderAsNormalBlock() {
-//        return false;
-//    }
-//
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public int getRenderType() {
+        return RENDERID_SHIELDBLOCK;
+    }
+
 
     @SideOnly(Side.CLIENT)
     @Override

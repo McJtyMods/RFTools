@@ -28,8 +28,8 @@ public class BeamRenderer extends DefaultISBRH {
             meta = world.getBlockMetadata(x, y, z);
         }
 
-        addSideHeightWithRotation(block, tessellator, Constants.SIDE_NORTH, meta, 4, ForgeDirection.NORTH);
-        addSideHeightWithRotation(block, tessellator, Constants.SIDE_SOUTH, meta, 4, ForgeDirection.SOUTH);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_NORTH, meta, 4, ForgeDirection.SOUTH);
+        addSideHeightWithRotation(block, tessellator, Constants.SIDE_SOUTH, meta, 4, ForgeDirection.NORTH);
         addSideHeightWithRotation(block, tessellator, Constants.SIDE_WEST, meta, 4, ForgeDirection.NORTH);
         addSideHeightWithRotation(block, tessellator, Constants.SIDE_EAST, meta, 4, ForgeDirection.NORTH);
 
