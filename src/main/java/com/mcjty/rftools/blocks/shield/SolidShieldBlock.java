@@ -40,9 +40,6 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
-//        int thisx = x - ForgeDirection.values()[side].offsetX;
-//        int thisy = y - ForgeDirection.values()[side].offsetY;
-//        int thisz = z - ForgeDirection.values()[side].offsetZ;
         if (world.getBlock(x, y, z) == ModBlocks.solidShieldBlock) {
             return false;
         }
