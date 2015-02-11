@@ -4,6 +4,7 @@ import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.events.ChoiceEvent;
+import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.DefaultSelectionEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
@@ -102,6 +103,15 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 applyCamoToShield();
             }
         });
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this).addColors(0x96ffc8, 0x4698ff, 0xff6030, 0x55a0a0, 0xa055a0, 0xffffff).
+                setLayoutHint(new PositionalLayout.PositionalHint(51, 186, 28, 16)).
+                addChoiceEvent(new ColorChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, Integer newColor) {
+                sendServerCommand(ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor));
+            }
+        });
+        colorSelector.setCurrentColor(tileEntity.getShieldColor());
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(new PositionalLayout.PositionalHint(170, 44, 80, 14));
 
@@ -136,7 +146,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterList).addChild(filterSlider).addChild(actionOptions).
-                addChild(typeOptions).addChild(player).addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter).addChild(damageType);
+                addChild(typeOptions).addChild(player).addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter).addChild(damageType).
+                addChild(colorSelector);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

@@ -21,6 +21,7 @@ public class ShieldBlockTileEntity extends TileEntity {
     private Block block;
     private int camoId = -1;
     private int hasTe = 0;
+    private int shieldColor;
 
     private int damageBits = 0;     // A 4-bit value indicating if a specific type of entity should get damage.
     private int collisionData = 0;  // A 4-bit value indicating collision detection data.
@@ -48,6 +49,16 @@ public class ShieldBlockTileEntity extends TileEntity {
 
     // Coordinate of the shield block.
     private Coordinate shieldBlock;
+
+    public int getShieldColor() {
+        return shieldColor;
+    }
+
+    public void setShieldColor(int shieldColor) {
+        this.shieldColor = shieldColor;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
     public void setCamoBlock(int camoId, int hasTe) {
         this.camoId = camoId;
@@ -158,6 +169,7 @@ public class ShieldBlockTileEntity extends TileEntity {
         tagCompound.setInteger("hasTe", hasTe);
         tagCompound.setInteger("damageBits", damageBits);
         tagCompound.setInteger("collisionData", collisionData);
+        tagCompound.setInteger("shieldColor", shieldColor);
         if (shieldBlock != null) {
             tagCompound.setInteger("shieldX", shieldBlock.getX());
             tagCompound.setInteger("shieldY", shieldBlock.getY());
@@ -177,6 +189,10 @@ public class ShieldBlockTileEntity extends TileEntity {
         }
         damageBits = tagCompound.getInteger("damageBits");
         collisionData = tagCompound.getInteger("collisionData");
+        shieldColor = tagCompound.getInteger("shieldColor");
+        if (shieldColor == 0) {
+            shieldColor = 0x96ffc8;
+        }
 
         int sx = tagCompound.getInteger("shieldX");
         int sy = tagCompound.getInteger("shieldY");

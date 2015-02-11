@@ -19,16 +19,17 @@ public class SolidShieldBlockRenderer extends DefaultISBRH {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
         Block camoBlock = shieldBlockTileEntity.getBlock();
         if (camoBlock == null) {
-            renderShield(world, x, y, z, block);
+            renderShield(world, x, y, z, block, shieldBlockTileEntity);
         } else {
             renderer.renderBlockByRenderType(camoBlock, x, y, z);
         }
         return true;
     }
 
-    private void renderShield(IBlockAccess world, int x, int y, int z, Block block) {
+    private void renderShield(IBlockAccess world, int x, int y, int z, Block block, ShieldBlockTileEntity shieldBlockTileEntity) {
         Tessellator tessellator = Tessellator.instance;
-        tessellator.setColorRGBA(150, 255, 200, 180);
+        tessellator.setColorRGBA_I(shieldBlockTileEntity.getShieldColor(), 180);
+//        tessellator.setColorRGBA(150, 255, 200, 180);
         tessellator.addTranslation(x, y, z);
         tessellator.setBrightness(240);
 

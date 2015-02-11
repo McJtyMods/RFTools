@@ -43,6 +43,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     public static final String CMD_UPFILTER = "upFilter";
     public static final String CMD_DOWNFILTER = "downFilter";
     public static final String CMD_GETFILTERS = "getFilters";
+    public static final String CMD_SETCOLOR = "setColor";
     public static final String CLIENTCMD_GETFILTERS = "getFilters";
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
@@ -54,6 +55,8 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
     private int powerTimeout = 0;
+
+    private int shieldColor;
 
     // Render pass for the camo block.
     private int camoRenderPass = 0;
@@ -186,6 +189,16 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
 
     public List<ShieldFilter> getFilters() {
         return filters;
+    }
+
+    public int getShieldColor() {
+        return shieldColor;
+    }
+
+    public void setShieldColor(int shieldColor) {
+        this.shieldColor = shieldColor;
+        updateShield();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     private void delFilter(int selected) {
@@ -474,6 +487,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
                     shieldBlockTileEntity.setShieldBlock(thisCoordinate);
                     shieldBlockTileEntity.setDamageBits(damageBits);
                     shieldBlockTileEntity.setCollisionData(cddata);
+                    shieldBlockTileEntity.setShieldColor(shieldColor);
                 }
             }
         }
@@ -549,6 +563,11 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
 
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
+        shieldColor = tagCompound.getInteger("shieldColor");
+        if (shieldColor == 0) {
+            shieldColor = 0x96ffc8;
+        }
+
         readFiltersFromNBT(tagCompound);
     }
 
@@ -589,6 +608,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
         tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
+        tagCompound.setInteger("shieldColor", shieldColor);
 
         writeFiltersToNBT(tagCompound);
     }
@@ -655,6 +675,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
         } else if (CMD_DAMAGEMODE.equals(command)) {
             String m = args.get("mode").getString();
             setDamageMode(DamageTypeMode.getMode(m));
+            return true;
+        } else if (CMD_SETCOLOR.equals(command)) {
+            int color = args.get("color").getInteger();
+            setShieldColor(color);
             return true;
         }
 
