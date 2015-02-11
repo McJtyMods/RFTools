@@ -62,14 +62,6 @@ public final class ModBlocks {
 
     public static ShieldBlock shieldBlock;
     public static InvisibleShieldBlock invisibleShieldBlock;
-    public static ShieldBlockNOpaquePass1 shieldBlockNOpaquePass1;
-    public static ShieldBlockNOpaquePass0 shieldBlockNOpaquePass0;
-    public static ShieldBlockOpaquePass1 shieldBlockOpaquePass1;
-    public static ShieldBlockOpaquePass0 shieldBlockOpaquePass0;
-    public static ShieldBlockNOpaquePass1NN shieldBlockNOpaquePass1NN;
-    public static ShieldBlockNOpaquePass0NN shieldBlockNOpaquePass0NN;
-    public static ShieldBlockOpaquePass1NN shieldBlockOpaquePass1NN;
-    public static ShieldBlockOpaquePass0NN shieldBlockOpaquePass0NN;
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
@@ -232,23 +224,6 @@ public final class ModBlocks {
 
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
-
-        shieldBlockNOpaquePass1 = new ShieldBlockNOpaquePass1();
-        GameRegistry.registerBlock(shieldBlockNOpaquePass1, "shieldBlockNOpaquePass1");
-        shieldBlockNOpaquePass0 = new ShieldBlockNOpaquePass0();
-        GameRegistry.registerBlock(shieldBlockNOpaquePass0, "shieldBlockNOpaquePass0");
-        shieldBlockOpaquePass1 = new ShieldBlockOpaquePass1();
-        GameRegistry.registerBlock(shieldBlockOpaquePass1, "shieldBlockOpaquePass1");
-        shieldBlockOpaquePass0 = new ShieldBlockOpaquePass0();
-        GameRegistry.registerBlock(shieldBlockOpaquePass0, "shieldBlockOpaquePass0");
-        shieldBlockNOpaquePass1NN = new ShieldBlockNOpaquePass1NN();
-        GameRegistry.registerBlock(shieldBlockNOpaquePass1NN, "shieldBlockNOpaquePass1NN");
-        shieldBlockNOpaquePass0NN = new ShieldBlockNOpaquePass0NN();
-        GameRegistry.registerBlock(shieldBlockNOpaquePass0NN, "shieldBlockNOpaquePass0NN");
-        shieldBlockOpaquePass1NN = new ShieldBlockOpaquePass1NN();
-        GameRegistry.registerBlock(shieldBlockOpaquePass1NN, "shieldBlockOpaquePass1NN");
-        shieldBlockOpaquePass0NN = new ShieldBlockOpaquePass0NN();
-        GameRegistry.registerBlock(shieldBlockOpaquePass0NN, "shieldBlockOpaquePass0NN");
 
         solidShieldBlock = new SolidShieldBlock();
         GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");

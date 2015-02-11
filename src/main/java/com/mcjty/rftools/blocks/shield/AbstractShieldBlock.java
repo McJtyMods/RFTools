@@ -177,22 +177,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) blockAccess.getTileEntity(x, y, z);
-        if (shieldBlockTileEntity == null) {
-            return icons[(x+y+z)&0x3];
-//            return icon;
-        }
-
-        Block block = shieldBlockTileEntity.getBlock();
-        if (block == null) {
-            return icons[(x+y+z)&0x3];
-        } else {
-            if (shieldBlockTileEntity.getHasTe()) {
-                return block.getIcon(side, blockAccess.getBlockMetadata(x, y, z));
-            } else {
-                return block.getIcon(blockAccess, x, y, z, side);
-            }
-        }
+        return icon;
     }
 
     @Override

@@ -253,14 +253,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    private Block calculateCamoBlock() {
-        ItemStack stack = stacks[0];
-        if (stack != null && stack.getItem() != null) {
-            return Block.getBlockFromItem(stack.getItem());
-        }
-        return null;
-    }
-
     private int[] calculateCamoId() {
         ItemStack stack = stacks[0];
         int camoId = -1;
@@ -284,42 +276,6 @@ public class ShieldTileEntity extends GenericEnergyHandlerTileEntity implements 
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             return ModBlocks.invisibleShieldBlock;
-        }
-        if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            return ModBlocks.solidShieldBlock;
-        }
-
-        Block camoBlock = calculateCamoBlock();
-        if (camoBlock != null) {
-            if (camoBlock.isOpaqueCube()) {
-                if (camoRenderPass == 1) {
-                    if (camoBlock.renderAsNormalBlock()) {
-                        return ModBlocks.shieldBlockOpaquePass1;
-                    } else {
-                        return ModBlocks.shieldBlockOpaquePass1NN;
-                    }
-                } else {
-                    if (camoBlock.renderAsNormalBlock()) {
-                        return ModBlocks.shieldBlockOpaquePass0;
-                    } else {
-                        return ModBlocks.shieldBlockOpaquePass0NN;
-                    }
-                }
-            } else {
-                if (camoRenderPass == 1) {
-                    if (camoBlock.renderAsNormalBlock()) {
-                        return ModBlocks.shieldBlockNOpaquePass1;
-                    } else {
-                        return ModBlocks.shieldBlockNOpaquePass1NN;
-                    }
-                } else {
-                    if (camoBlock.renderAsNormalBlock()) {
-                        return ModBlocks.shieldBlockNOpaquePass0;
-                    } else {
-                        return ModBlocks.shieldBlockNOpaquePass0NN;
-                    }
-                }
-            }
         }
 
         return ModBlocks.solidShieldBlock;

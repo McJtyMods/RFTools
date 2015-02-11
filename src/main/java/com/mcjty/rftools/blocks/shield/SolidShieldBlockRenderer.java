@@ -16,17 +16,21 @@ public class SolidShieldBlockRenderer extends DefaultISBRH {
 
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+        ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
+        Block camoBlock = shieldBlockTileEntity.getBlock();
+        if (camoBlock == null) {
+            renderShield(world, x, y, z, block);
+        } else {
+            renderer.renderBlockByRenderType(camoBlock, x, y, z);
+        }
+        return true;
+    }
+
+    private void renderShield(IBlockAccess world, int x, int y, int z, Block block) {
         Tessellator tessellator = Tessellator.instance;
-//        tessellator.setColorOpaque(255, 255, 255);
         tessellator.setColorRGBA(150, 255, 200, 180);
         tessellator.addTranslation(x, y, z);
-//        tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
         tessellator.setBrightness(240);
-
-//        int meta = 0;
-//        if (world != null) {
-//            meta = world.getBlockMetadata(x, y, z);
-//        }
 
         IIcon[] icons = ((SolidShieldBlock) block).getIcons();
         IIcon icon;
@@ -42,7 +46,6 @@ public class SolidShieldBlockRenderer extends DefaultISBRH {
         addSideConditionally(world, x, y, z, block, tessellator, icon, ForgeDirection.EAST);
 
         tessellator.addTranslation(-x, -y, -z);
-        return true;
     }
 
 }
