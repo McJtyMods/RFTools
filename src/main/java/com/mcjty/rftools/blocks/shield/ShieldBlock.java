@@ -24,9 +24,9 @@ import java.util.List;
 
 public class ShieldBlock extends GenericContainerBlock implements Infusable {
 
-    public ShieldBlock() {
-        super(Material.iron, ShieldTileEntity.class);
-        setBlockName("shieldBlock");
+    public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz) {
+        super(Material.iron, clazz);
+        setBlockName(blockName);
         setCreativeTab(RFTools.tabRfTools);
     }
 
@@ -38,7 +38,7 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        ShieldTileEntity shieldTileEntity = (ShieldTileEntity) tileEntity;
+        ShieldTEBase shieldTileEntity = (ShieldTEBase) tileEntity;
         ShieldContainer shieldContainer = new ShieldContainer(entityPlayer, shieldTileEntity);
         return new GuiShield(shieldTileEntity, shieldContainer);
     }
@@ -63,7 +63,7 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new ShieldContainer(entityPlayer, (ShieldTileEntity) tileEntity);
+        return new ShieldContainer(entityPlayer, (ShieldTEBase) tileEntity);
     }
 
     @Override
@@ -88,8 +88,8 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     private void composeDecomposeShield(World world, int x, int y, int z) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof ShieldTileEntity) {
-                ((ShieldTileEntity)te).composeDecomposeShield();
+            if (te instanceof ShieldTEBase) {
+                ((ShieldTEBase)te).composeDecomposeShield();
             }
         }
     }
@@ -97,8 +97,8 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     @Override
     protected void breakWithWrench(World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof ShieldTileEntity) {
-            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+        if (te instanceof ShieldTEBase) {
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
             shieldTileEntity.setInventorySlotContents(0, null);
         }
     }
@@ -106,8 +106,8 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof ShieldTileEntity) {
-            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) te;
+        if (te instanceof ShieldTEBase) {
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, shieldTileEntity);
 
             if (!world.isRemote) {

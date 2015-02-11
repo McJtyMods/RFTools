@@ -61,6 +61,7 @@ public final class ModBlocks {
     public static TimerBlock timerBlock;
 
     public static ShieldBlock shieldBlock;
+    public static ShieldBlock shieldBlock2;
     public static InvisibleShieldBlock invisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
@@ -208,19 +209,25 @@ public final class ModBlocks {
     private static void initCrafterBlocks() {
         crafterBlock1 = new CrafterBlock("crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
         GameRegistry.registerBlock(crafterBlock1, GenericItemBlock.class, "crafterBlock1");
+        GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
+
         crafterBlock2 = new CrafterBlock("crafterBlock2", "machineCrafter2", CrafterBlockTileEntity2.class);
         GameRegistry.registerBlock(crafterBlock2, GenericItemBlock.class, "crafterBlock2");
+        GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
+
         crafterBlock3 = new CrafterBlock("crafterBlock3", "machineCrafter3", CrafterBlockTileEntity3.class);
         GameRegistry.registerBlock(crafterBlock3, GenericItemBlock.class, "crafterBlock3");
-        GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
-        GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
         GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");
     }
 
     private static void initShieldBlocks() {
-        shieldBlock = new ShieldBlock();
+        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class);
         GameRegistry.registerBlock(shieldBlock, GenericItemBlock.class, "shieldBlock");
         GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
+
+        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class);
+        GameRegistry.registerBlock(shieldBlock2, GenericItemBlock.class, "shieldBlock2");
+        GameRegistry.registerTileEntity(ShieldTileEntity2.class, "ShieldTileEntity2");
 
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");

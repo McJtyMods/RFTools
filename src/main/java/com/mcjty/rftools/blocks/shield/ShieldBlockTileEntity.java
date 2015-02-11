@@ -81,7 +81,7 @@ public class ShieldBlockTileEntity extends TileEntity {
         }
 
         if (shieldBlock != null) {
-            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) worldObj.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) worldObj.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
             if (shieldTileEntity != null) {
                 List<Entity> l = worldObj.getEntitiesWithinAABB(Entity.class, beamBox);
                 for (Entity entity : l) {
@@ -103,7 +103,7 @@ public class ShieldBlockTileEntity extends TileEntity {
         }
     }
 
-    private boolean checkEntityDamage(ShieldTileEntity shieldTileEntity, String filterName) {
+    private boolean checkEntityDamage(ShieldTEBase shieldTileEntity, String filterName) {
         List<ShieldFilter> filters = shieldTileEntity.getFilters();
         for (ShieldFilter filter : filters) {
             if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {
@@ -115,7 +115,7 @@ public class ShieldBlockTileEntity extends TileEntity {
         return false;
     }
 
-    private boolean checkPlayerDamage(ShieldTileEntity shieldTileEntity, EntityPlayer entity) {
+    private boolean checkPlayerDamage(ShieldTEBase shieldTileEntity, EntityPlayer entity) {
         List<ShieldFilter> filters = shieldTileEntity.getFilters();
         for (ShieldFilter filter : filters) {
             if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {

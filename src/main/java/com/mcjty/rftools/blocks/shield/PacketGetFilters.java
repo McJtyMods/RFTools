@@ -11,11 +11,11 @@ public class PacketGetFilters extends PacketRequestListFromServer<ShieldFilter, 
     }
 
     public PacketGetFilters(int x, int y, int z) {
-        super(x, y, z, ShieldTileEntity.CMD_GETFILTERS);
+        super(x, y, z, ShieldTEBase.CMD_GETFILTERS);
     }
 
     @Override
     protected PacketFiltersReady createMessageToClient(int x, int y, int z, List<ShieldFilter> result) {
-        return new PacketFiltersReady(x, y, z, ShieldTileEntity.CLIENTCMD_GETFILTERS, result);
+        return new PacketFiltersReady(x, y, z, ShieldTEBase.CLIENTCMD_GETFILTERS, result);
     }
 }

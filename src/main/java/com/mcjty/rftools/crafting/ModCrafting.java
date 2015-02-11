@@ -77,6 +77,7 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
                 'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock2), "ss ", "ss ", "   ", 's', ModBlocks.shieldBlock);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldTemplateBlock, 8), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
 
         GameRegistry.addSmelting(ModBlocks.dimensionalShardBlock, new ItemStack(ModItems.dimensionalShard, 4), 1.0f);

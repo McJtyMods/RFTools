@@ -27,7 +27,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
+public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     public static final int SHIELD_WIDTH = 256;
     public static final int SHIELD_HEIGHT = 224;
 
@@ -64,7 +64,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/shieldprojector.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiShield(ShieldTileEntity shieldTileEntity, ShieldContainer container) {
+    public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
         super(shieldTileEntity, container);
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
@@ -233,12 +233,12 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
     }
 
     private void moveFilterUp() {
-        sendServerCommand(ShieldTileEntity.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(ShieldTEBase.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
     private void moveFilterDown() {
-        sendServerCommand(ShieldTileEntity.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(ShieldTEBase.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
@@ -272,14 +272,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
         String playerName = player.getText();
         int selected = filterList.getSelected();
 
-        sendServerCommand(ShieldTileEntity.CMD_ADDFILTER,
+        sendServerCommand(ShieldTEBase.CMD_ADDFILTER,
                 new Argument("action", action), new Argument("type", type), new Argument("player", playerName),
                 new Argument("selected", selected));
         listDirty = 0;
     }
 
     private void removeSelectedFilter() {
-        sendServerCommand(ShieldTileEntity.CMD_DELFILTER,
+        sendServerCommand(ShieldTEBase.CMD_DELFILTER,
                 new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
@@ -301,7 +301,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
-        sendServerCommand(ShieldTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
+        sendServerCommand(ShieldTEBase.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
     }
 
     private void initVisibilityMode() {
@@ -356,14 +356,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
 
     private void changeDamageType() {
         tileEntity.setDamageMode(DamageTypeMode.getMode(damageType.getCurrentChoice()));
-        sendServerCommand(ShieldTileEntity.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
+        sendServerCommand(ShieldTEBase.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
 
     }
 
     private void changeVisibilityMode() {
         ShieldRenderingMode newMode = ShieldRenderingMode.getMode(visibilityOptions.getCurrentChoice());
         tileEntity.setShieldRenderingMode(newMode);
-        sendServerCommand(ShieldTileEntity.CMD_SHIELDVISMODE,
+        sendServerCommand(ShieldTEBase.CMD_SHIELDVISMODE,
                 new Argument("mode", newMode.getDescription()));
     }
 
@@ -377,7 +377,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTileEntity> {
                 pass = block.getRenderBlockPass();
             }
         }
-        sendServerCommand(ShieldTileEntity.CMD_APPLYCAMO, new Argument("pass", pass));
+        sendServerCommand(ShieldTEBase.CMD_APPLYCAMO, new Argument("pass", pass));
     }
 
     private void enableButtons() {

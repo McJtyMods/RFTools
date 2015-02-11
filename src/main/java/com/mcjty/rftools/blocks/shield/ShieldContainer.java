@@ -23,7 +23,7 @@ public class ShieldContainer extends GenericContainer {
     };
 
 
-    public ShieldContainer(EntityPlayer player, ShieldTileEntity containerInventory) {
+    public ShieldContainer(EntityPlayer player, ShieldTEBase containerInventory) {
         super(factory, player);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

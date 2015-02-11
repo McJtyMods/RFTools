@@ -27,7 +27,7 @@ public class ShieldConfiguration {
         RECEIVEPERTICK = cfg.get(CATEGORY_SHIELD, "shieldRFPerTick", RECEIVEPERTICK,
                 "RF per tick that the shield block can receive").getInt();
         maxShieldSize = cfg.get(CATEGORY_SHIELD, "shieldMaxSize", maxShieldSize,
-                "Maximum size (in blocks) of a shield").getInt();
+                "Maximum size (in blocks) of a tier 1 shield").getInt();
         rfBase = cfg.get(CATEGORY_SHIELD, "shieldRfBase", rfBase,
                 "Base amount of RF/tick for every block in the shield (while active)").getInt();
         rfCamo = cfg.get(CATEGORY_SHIELD, "shieldRfCamo", rfCamo,

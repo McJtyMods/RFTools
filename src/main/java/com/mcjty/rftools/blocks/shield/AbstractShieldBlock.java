@@ -88,7 +88,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
         Coordinate shieldBlock = shieldBlockTileEntity.getShieldBlock();
         if (shieldBlock != null) {
-            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
             if (shieldTileEntity != null) {
                 List<ShieldFilter> filters = shieldTileEntity.getFilters();
                 for (ShieldFilter filter : filters) {
@@ -108,7 +108,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
         ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
         Coordinate shieldBlock = shieldBlockTileEntity.getShieldBlock();
         if (shieldBlock != null) {
-            ShieldTileEntity shieldTileEntity = (ShieldTileEntity) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) world.getTileEntity(shieldBlock.getX(), shieldBlock.getY(), shieldBlock.getZ());
             if (shieldTileEntity != null) {
                 List<ShieldFilter> filters = shieldTileEntity.getFilters();
                 for (ShieldFilter filter : filters) {
