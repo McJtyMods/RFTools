@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.*;
 
 public class MaterialAbsorberTileEntity extends GenericTileEntity {
-    private static final int ABSORB_SPEED = 5;
+    private static final int ABSORB_SPEED = 2;
 
     private int absorbing = 0;
     private int blockID = -1;
