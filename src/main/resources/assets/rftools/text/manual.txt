@@ -5,7 +5,7 @@ Table of contents:
 {l:netmon}RF Network Monitor Item
 {l:base}Base Ingredients
 {l:logic}Logic Gates
-{l:rfmoni}RF Monitor
+{l:monitor}Contents Monitors
 {l:stomon}Storage Scanner
 {l:filter}Item Filter
 {/}
@@ -106,7 +106,7 @@ Note that the redstone signal outputs on the red dot side and this
 has to face away from the Endergenic Generator.
 {-------------------------------------------------------------}
 {b}RF Monitor
-{n:rfmoni}
+{n:monitor}
 {rb:rfMonitorBlock}
 The RF Monitor is a block that you place in the world and that
 can examine a nearby (3x3x3 area around the monitor) block and
@@ -116,6 +116,11 @@ the monitored block is too low or too high. You can use this
 redstone signal with the Power Relay (see below) to control
 parts of your RF network.
 {-------------------------------------------------------------} 
+{b}Liquid Monitor
+{rb:liquidMonitorBlock}
+The Liquid Monitor is a block that works like the RF Monitor except
+that it can examine the contents of a nearby liquid tank.
+{-------------------------------------------------------------}
 {b}Storage Scanner
 {n:stomon}
 {rb:storageScannerBlock}
