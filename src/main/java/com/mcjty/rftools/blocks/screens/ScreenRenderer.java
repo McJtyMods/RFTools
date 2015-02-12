@@ -136,7 +136,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
                     }
 
                     module.render(fontrenderer, currenty, screenData.get(moduleIndex));
-                    currenty += height * factor;
+                    currenty += height;
                 }
             }
             moduleIndex++;
