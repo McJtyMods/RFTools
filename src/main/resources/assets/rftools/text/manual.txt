@@ -58,6 +58,7 @@ The machine base is the base ingredient for a few other machines.
 
 {l:sequencer}Sequencer
 {l:timer}Timer
+{l:counter}Counter
 {l:endermon}Ender Monitor
 {-------------------------------------------------------------} 
 {b}Sequencer
@@ -91,6 +92,14 @@ What is special about this timer is that it restart when it itself
 receives a redstone pulse at its input. So given timely input pulses
 this block will never output a pulse itself. By using this feature this
 block can be used as a way to detect that a certain activity is overdue.
+{-------------------------------------------------------------}
+{b}Counter
+{n:counter}
+{rb:counterBlock}
+The counter is a simple block that will count redstone pulses and
+emit a redstone pulse when it reaches a certain amount. Then it
+starts over. You can see in the GUI how many redstone pulses it
+already got.
 {-------------------------------------------------------------}
 {b}Ender Monitor
 {n:endermon}
