@@ -43,7 +43,7 @@ public class DialingDeviceBlock extends GenericContainerBlock implements Infusab
             list.add(EnumChatFormatting.WHITE + "has enough power to be safe.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

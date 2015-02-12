@@ -54,7 +54,7 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased power generation and");
             list.add(EnumChatFormatting.YELLOW + "reduced powerloss for holding pearls.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

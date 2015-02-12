@@ -45,7 +45,7 @@ public class DimletWorkbenchBlock extends GenericContainerBlock implements Infus
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased chance of getting");
             list.add(EnumChatFormatting.YELLOW + "all parts out of the deconstructed dimlet.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

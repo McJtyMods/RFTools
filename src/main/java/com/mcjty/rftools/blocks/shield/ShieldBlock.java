@@ -57,7 +57,7 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "increased damage.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

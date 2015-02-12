@@ -177,7 +177,7 @@ public class ScreenBlock extends GenericContainerBlock {
             list.add(EnumChatFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
             list.add(EnumChatFormatting.WHITE + "powered by a nearby Screen Controller.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

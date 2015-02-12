@@ -74,6 +74,8 @@ public class RFTools {
         }
     };
 
+    public static final String SHIFT_MESSAGE = "<Press Shift>";
+
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
     public static final int GUI_RF_MONITOR = modGuiIndex++;

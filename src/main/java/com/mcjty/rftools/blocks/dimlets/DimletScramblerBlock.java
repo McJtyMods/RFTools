@@ -67,7 +67,7 @@ public class DimletScramblerBlock extends GenericContainerBlock implements Infus
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "increased chance of getting better dimlets.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

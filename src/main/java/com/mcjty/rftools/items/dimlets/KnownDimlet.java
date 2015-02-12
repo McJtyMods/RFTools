@@ -64,7 +64,7 @@ public class KnownDimlet extends Item {
                 }
             }
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

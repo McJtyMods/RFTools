@@ -37,7 +37,7 @@ public class TimerBlock extends LogicSlabBlock {
             list.add(EnumChatFormatting.WHITE + "after a certain amount of time unless it");
             list.add(EnumChatFormatting.WHITE + "receives a redstone pulse itself before that.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
 
     }

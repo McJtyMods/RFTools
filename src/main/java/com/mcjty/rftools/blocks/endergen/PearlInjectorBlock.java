@@ -49,7 +49,7 @@ public class PearlInjectorBlock extends GenericContainerBlock {
             list.add(EnumChatFormatting.WHITE + "endergenic generator when a redstone signal is");
             list.add(EnumChatFormatting.WHITE + "received.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

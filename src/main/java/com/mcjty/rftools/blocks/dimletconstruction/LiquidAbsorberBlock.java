@@ -79,7 +79,7 @@ public class LiquidAbsorberBlock extends GenericBlock {
             list.add(EnumChatFormatting.WHITE + "gradually absorb all this liquid in the area.");
             list.add(EnumChatFormatting.WHITE + "You can use the end result in the Dimlet Workbench.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

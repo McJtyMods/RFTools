@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.parts;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +26,7 @@ public class DimletBaseItem extends Item {
             list.add(EnumChatFormatting.WHITE + "Workbench. In that same workbench you can also use");
             list.add(EnumChatFormatting.WHITE + "this item to make new dimlets.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

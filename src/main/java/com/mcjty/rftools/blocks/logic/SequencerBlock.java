@@ -43,7 +43,7 @@ public class SequencerBlock extends LogicSlabBlock {
             list.add(EnumChatFormatting.WHITE + "This logic block emits a series of redstone");
             list.add(EnumChatFormatting.WHITE + "signals in a pattern that you can set in the GUI.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
 
     }

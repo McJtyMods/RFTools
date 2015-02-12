@@ -41,7 +41,7 @@ public class StorageScannerBlock extends GenericContainerBlock implements Infusa
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "increased scanning speed.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

@@ -53,7 +53,7 @@ public class DimletTypeControllerItem extends Item {
             list.add(EnumChatFormatting.WHITE + "Workbench. In that same workbench you can also use");
             list.add(EnumChatFormatting.WHITE + "this item to make new dimlets.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

@@ -66,7 +66,7 @@ public class DimletResearcherBlock extends GenericContainerBlock implements Infu
             list.add(EnumChatFormatting.WHITE + "return a random known dimlet.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

@@ -43,7 +43,7 @@ public class DimletMemoryUnitItem extends Item {
             list.add(EnumChatFormatting.WHITE + "is used for dimlets of rarity 0 and 1, the regular for");
             list.add(EnumChatFormatting.WHITE + "rarity 2 and 3 and the advanced for the higher rarities.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

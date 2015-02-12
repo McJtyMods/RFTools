@@ -44,7 +44,7 @@ public class ScreenControllerBlock extends GenericBlock implements Infusable {
             list.add(EnumChatFormatting.WHITE + "are in range.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased range for screens.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

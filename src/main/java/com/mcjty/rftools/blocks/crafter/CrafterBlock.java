@@ -71,7 +71,7 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
             list.add(EnumChatFormatting.WHITE + "of previous steps.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

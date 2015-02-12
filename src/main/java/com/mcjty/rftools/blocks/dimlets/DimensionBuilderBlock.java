@@ -87,7 +87,7 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "faster dimension creation speed.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

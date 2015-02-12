@@ -43,7 +43,7 @@ public class DimletControlCircuitItem extends Item {
             list.add(EnumChatFormatting.WHITE + "control circuit of the right rarity in order to make");
             list.add(EnumChatFormatting.WHITE + "a dimlet of that rarity.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

@@ -71,7 +71,7 @@ public class RelayBlock extends GenericBlock {
             list.add(EnumChatFormatting.WHITE + "you can throttle down (or even disable) a number of");
             list.add(EnumChatFormatting.WHITE + "machines in case power is low.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

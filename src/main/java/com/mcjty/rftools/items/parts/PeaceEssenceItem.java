@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.parts;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +25,7 @@ public class PeaceEssenceItem extends Item {
             list.add(EnumChatFormatting.WHITE + "the peaceful dimlet in the Dimlet Workbench.");
             list.add(EnumChatFormatting.WHITE + "Getting this essence is somewhat harder though.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

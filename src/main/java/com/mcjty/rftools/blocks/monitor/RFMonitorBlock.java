@@ -88,7 +88,7 @@ public class RFMonitorBlock extends GenericBlock {
             list.add(EnumChatFormatting.WHITE + "out a redstone signal if the power goes above or below");
             list.add(EnumChatFormatting.WHITE + "some value.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

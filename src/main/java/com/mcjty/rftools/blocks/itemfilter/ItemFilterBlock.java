@@ -59,7 +59,7 @@ public class ItemFilterBlock extends GenericContainerBlock {
             list.add(EnumChatFormatting.WHITE + "to any other side. This allows you to make item");
             list.add(EnumChatFormatting.WHITE + "filters for quarries, tree farms, mob farms, ...");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
 
     }

@@ -37,7 +37,7 @@ public class DimensionMonitorBlock extends LogicSlabBlock {
             list.add(EnumChatFormatting.WHITE + "level of the current dimension goes below");
             list.add(EnumChatFormatting.WHITE + "some thresshold.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

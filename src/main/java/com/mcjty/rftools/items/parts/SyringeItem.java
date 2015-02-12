@@ -119,7 +119,7 @@ public class SyringeItem extends Item {
             list.add(EnumChatFormatting.WHITE + "essence can then be used in the Dimlet");
             list.add(EnumChatFormatting.WHITE + "Workbench. Be careful!");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

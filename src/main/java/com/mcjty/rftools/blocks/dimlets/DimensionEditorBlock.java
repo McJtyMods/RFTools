@@ -60,7 +60,7 @@ public class DimensionEditorBlock extends GenericContainerBlock implements Infus
             list.add(EnumChatFormatting.WHITE + "be undone and the dimlet is lost so be careful!");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

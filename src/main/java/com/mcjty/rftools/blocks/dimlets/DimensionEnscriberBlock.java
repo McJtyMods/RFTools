@@ -69,7 +69,7 @@ public class DimensionEnscriberBlock extends GenericContainerBlock {
             list.add(EnumChatFormatting.WHITE + "tab. You can also deconstruct dimension tabs to get the");
             list.add(EnumChatFormatting.WHITE + "original dimlets back.");
         } else {
-            list.add(EnumChatFormatting.WHITE + "Press Shift for more");
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
