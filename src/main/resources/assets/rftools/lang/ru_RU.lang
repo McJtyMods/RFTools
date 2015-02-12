@@ -66,6 +66,7 @@ tile.teleportBeamBlock.name=Маяк телепорта
 tile.endergenicBlock.name=Энд-генератор
 tile.pearlInjectorBlock.name=Жемчужный инжектор
 tile.sequencerBlock.name=Секвенсор
+tile.counterBlock.name=Counter
 tile.timerBlock.name=Таймер
 tile.enderMonitorBlock.name=Энд-монитор
 tile.shieldBlock.name=Shield Projector Tier 1

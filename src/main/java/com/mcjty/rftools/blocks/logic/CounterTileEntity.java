@@ -2,36 +2,44 @@ package com.mcjty.rftools.blocks.logic;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
 
-public class TimerTileEntity extends GenericTileEntity {
+public class CounterTileEntity extends GenericTileEntity {
 
-    public static final String CMD_SETDELAY = "setDelay";
-    public static final String CMD_SETCURRENT = "setDelay";
+    public static final String CMD_SETCOUNTER = "setCounter";
+    public static final String CMD_SETCURRENT = "setCurrent";
 
     // For pulse detection.
     private boolean prevIn = false;
 
-    private int delay = 1;
-    private int timer = 0;
+    private int counter = 1;
+    private int current = 0;
     private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
 
-    public TimerTileEntity() {
+    public CounterTileEntity() {
         registerSyncedObject(redstoneOut);
     }
 
-    public int getDelay() {
-        return delay;
+    public int getCounter() {
+        return counter;
     }
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-        timer = delay;
+    public int getCurrent() {
+        return current;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+        current = 0;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void setCurrent(int current) {
+        this.current = current;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -44,21 +52,17 @@ public class TimerTileEntity extends GenericTileEntity {
         boolean pulse = newvalue && !prevIn;
         prevIn = newvalue;
 
-        markDirty();
+        boolean newout = false;
 
         if (pulse) {
-            timer = delay;
+            current++;
+            if (current >= counter) {
+                current = 0;
+                newout = true;
+            }
         }
 
-        boolean newout;
-
-        timer--;
-        if (timer <= 0) {
-            timer = delay;
-            newout = true;
-        } else {
-            newout = false;
-        }
+        markDirty();
 
         if (newout != redstoneOut.getValue()) {
             redstoneOut.setValue(newout);
@@ -78,13 +82,16 @@ public class TimerTileEntity extends GenericTileEntity {
         super.readFromNBT(tagCompound);
         redstoneOut.setValue(tagCompound.getBoolean("rs"));
         prevIn = tagCompound.getBoolean("prevIn");
-        timer = tagCompound.getInteger("timer");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        delay = tagCompound.getInteger("delay");
+        counter = tagCompound.getInteger("counter");
+        if (counter == 0) {
+            counter = 1;
+        }
+        current = tagCompound.getInteger("current");
     }
 
     @Override
@@ -93,13 +100,13 @@ public class TimerTileEntity extends GenericTileEntity {
         Boolean value = redstoneOut.getValue();
         tagCompound.setBoolean("rs", value == null ? false : value);
         tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setInteger("timer", timer);
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("delay", delay);
+        tagCompound.setInteger("counter", counter);
+        tagCompound.setInteger("current", current);
     }
 
     @Override
@@ -108,8 +115,11 @@ public class TimerTileEntity extends GenericTileEntity {
         if (rc) {
             return true;
         }
-        if (CMD_SETDELAY.equals(command)) {
-            setDelay(args.get("delay").getInteger());
+        if (CMD_SETCOUNTER.equals(command)) {
+            setCounter(args.get("counter").getInteger());
+            return true;
+        } else if (CMD_SETCURRENT.equals(command)) {
+            setCurrent(args.get("current").getInteger());
             return true;
         }
         return false;

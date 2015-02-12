@@ -66,6 +66,7 @@ tile.teleportBeamBlock.name=传输激光
 tile.endergenicBlock.name=末影能发电机
 tile.pearlInjectorBlock.name=末影珍珠填充器
 tile.sequencerBlock.name=音序器
+tile.counterBlock.name=Counter
 tile.timerBlock.name=定时器
 tile.enderMonitorBlock.name=末影显示器
 tile.shieldBlock.name=Shield Projector Tier 1

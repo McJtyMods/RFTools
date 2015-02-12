@@ -12,10 +12,7 @@ import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
 import com.mcjty.rftools.blocks.itemfilter.ItemFilterBlock;
 import com.mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity;
-import com.mcjty.rftools.blocks.logic.SequencerBlock;
-import com.mcjty.rftools.blocks.logic.SequencerTileEntity;
-import com.mcjty.rftools.blocks.logic.TimerBlock;
-import com.mcjty.rftools.blocks.logic.TimerTileEntity;
+import com.mcjty.rftools.blocks.logic.*;
 import com.mcjty.rftools.blocks.monitor.LiquidMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.LiquidMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
@@ -59,6 +56,7 @@ public final class ModBlocks {
 
     public static SequencerBlock sequencerBlock;
     public static TimerBlock timerBlock;
+    public static CounterBlock counterBlock;
 
     public static ShieldBlock shieldBlock;
     public static ShieldBlock shieldBlock2;
@@ -258,6 +256,10 @@ public final class ModBlocks {
         timerBlock = new TimerBlock();
         GameRegistry.registerBlock(timerBlock, GenericItemBlock.class, "timerBlock");
         GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
+
+        counterBlock = new CounterBlock();
+        GameRegistry.registerBlock(counterBlock, GenericItemBlock.class, "counterBlock");
+        GameRegistry.registerTileEntity(CounterTileEntity.class, "CounterTileEntity");
     }
 
     private static void initEndergenicBlocks() {
