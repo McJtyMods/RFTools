@@ -110,6 +110,38 @@ public final class ModCrafting {
         ItemStack bonemealStack = new ItemStack(Items.dye, 1, 15);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionalPattern2Block, 7), "bxb", "bbb", "bxb", 'b', ModBlocks.dimensionalBlankBlock, 'x', bonemealStack);
 
+        initScreenCrafting();
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
+
+        initDimletConstructionCrafting();
+    }
+
+    private static void initDimletConstructionCrafting() {
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.peaceEssenceItem),
+                createMobEssenceItemStack("Iron Golem"),
+                createMobEssenceItemStack("Enderman"),
+                createMobEssenceItemStack("Snowman"),
+                createMobEssenceItemStack("Bat"),
+                createMobEssenceItemStack("Ocelot"),
+                createMobEssenceItemStack("Squid"),
+                createMobEssenceItemStack("Wolf"),
+                createMobEssenceItemStack("Zombie Pigman"),
+                createMobEssenceItemStack("Mooshroom")));
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletWorkbenchBlock), "gug", "cMc", "grg", 'M', ModBlocks.machineFrame, 'u', ModItems.unknownDimlet, 'c', Blocks.crafting_table,
+                'r', Items.redstone, 'g', Items.gold_nugget);
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.biomeAbsorberBlock), "dws", "wMw", "swd", 'M', ModBlocks.machineFrame, 'd', Blocks.dirt, 's', Blocks.sapling, 'w', Blocks.wool);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.materialAbsorberBlock), "dwc", "wMw", "swg", 'M', ModBlocks.machineFrame, 'd', Blocks.dirt, 'c', Blocks.cobblestone, 's', Blocks.sand,
+                'g', Blocks.gravel, 'w', Blocks.wool);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), "bwb", "wMw", "bwb", 'M', ModBlocks.machineFrame, 'b', Items.bucket, 'w', Blocks.wool);
+        GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
+    }
+
+    private static void initScreenCrafting() {
+        Object inkSac = Item.itemRegistry.getObjectById(351);
+
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenControllerBlock), "ror", "gMg", "rgr", 'r', Items.redstone, 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
                 'g', Blocks.glass);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
@@ -149,19 +181,6 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null,
                 new ItemStack(Items.gold_ingot), new ItemStack(ModItems.fluidModuleItem), new ItemStack(Items.gold_ingot),
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.fluidPlusModuleItem), 4));
-
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
-
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.peaceEssenceItem),
-                createMobEssenceItemStack("Iron Golem"),
-                createMobEssenceItemStack("Enderman"),
-                createMobEssenceItemStack("Snowman"),
-                createMobEssenceItemStack("Bat"),
-                createMobEssenceItemStack("Ocelot"),
-                createMobEssenceItemStack("Squid"),
-                createMobEssenceItemStack("Wolf"),
-                createMobEssenceItemStack("Zombie Pigman"),
-                createMobEssenceItemStack("Mooshroom")));
     }
 
     private static ItemStack createMobEssenceItemStack(String mobName) {

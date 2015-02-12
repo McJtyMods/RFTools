@@ -42,6 +42,9 @@ can use this item to help debug RF related network problems.
 {-------------------------------------------------------------}
 Doubleclick on a line in the list of blocks will close the window and
 the block will be hilighted for 5 seconds (configurable).
+
+You can toggle the display between RF/tick or RF and you can also
+filter the output.
 {-------------------------------------------------------------}
 {b}Base Ingredients
 {n:base}
@@ -380,6 +383,7 @@ connected Shield Template Blocks. Then you put a Shield Block next
 to one of these templates and you give it power.
 
 By default there is a maximum of 256 blocks in a single shield.
+A tier 2 shield can go up to 1024 blocks.
 
 To compose the shield you then need to right click the shield block with
 a wrench. The shield block will compose the shield in the specified shape.
@@ -418,23 +422,10 @@ by the player.
 {n:filter}
 {rb:itemFilterBlock}
 The Item Filter allows controlled input/output from any side of the
-block. It has six storage slots that can be configured to only hold
-a specific type of item. Each of the six storage slots corresponds
-with one of the six sides of the block from which an item conduit
-can extract items.
-{-------------------------------------------------------------}
-Every side of the block can be configured in five different modes:
-
-    Disabled: no input or output from this side
-    Input: items can come from this side and they will go into
-           any matching slot (for which the configured block
-           matches)
-    Input Exact: items can come from this side and they will
-           only go into the slot corresponding with this side
-    Output: items can be extracted from this side and they will
-           come from any of the six internal slots
-    Output Exact: items can be extracted from this side but they
-           will only come out of the matching slot
+block. It has nine storage slots that can be configured to only hold
+a specific type of item. For each of these storage slots you can
+control from which side it can receive items and to which side
+other machines can extract items.
 {-------------------------------------------------------------}
 {b}Modular Screens
 {n:screens}
@@ -446,6 +437,10 @@ you various bits of information like energy in a machine,
 the amount of fluids in a tank, the time of the day, simple text,
 the amount of RF left in a dimension and so on. More modules
 are planned for the future.
+
+There are large and transparent screens variations of the
+screen. You can get those by putting your screen in the crafting
+grid together with three iron ingots or three glass blocks.
 {-------------------------------------------------------------}
 Screens are not directly powered but get power from a Screen
 Controller that you can craft as follows:

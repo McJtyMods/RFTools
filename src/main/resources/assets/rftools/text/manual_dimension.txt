@@ -18,6 +18,7 @@ Table of contents:
 {l:probe}Activity Probe
 {l:editor}Dimension Editor
 {l:monitor}Dimension Monitor
+{l:create}Dimlet Crafting
 {-------------------------------------------------------------}
 {b}Introduction
 {n:intro}
@@ -387,4 +388,43 @@ block which sends out a redstone signal as soon as the power in
 the current dimension goes below a certain level. It can be
 crafted as follows:
 {rb:dimensionMonitorBlock}
+{-------------------------------------------------------------}
+{b}Dimlet Crafting
+{n:create}
+
+Dimlet Crafting is a subject for the experienced dimension builder.
+Using the Dimlet Workbench you can deconstruct dimlets into their
+technical components and then reconstruct them into new dimlets.
+
+The workbench can be crafted as follows:
+{rb:dimletWorkbenchBlock}
+{-------------------------------------------------------------}
+Every dimlet is made out of six parts:
+    - Dimlet Base item
+    - Dimlet Control Circuit
+    - Dimlet Energy Module
+    - Dimlet Memory Module
+    - Dimlet Type Controller
+    - Essence item
+
+You need the right tier of every part to make a dimlet.
+There is one control circuit for every rarity (0 to 6) and there
+are three levels of the energy and memory modules.
+{-------------------------------------------------------------}
+When extracting dimlets into parts there is a 40% chance for
+every part that you get nothing. To avoid this it is recommended
+that you infuse the workbench. A maximum infused workbench will
+guarantee that you get all parts back.
+
+Extracting a dimlet will never give you an essence item. You
+always have to make that.
+{-------------------------------------------------------------}
+There are various kinds of essence items depending on the type
+of dimlet that you want to make:
+    - Biome Absorber for biome dimlets
+    - Material Absorber for material dimlets
+    - Liquid Absorber for liquid dimlets
+    - Syringe for mob dimlets
+    - Peaceful essence (made out of 9 filled syringes of a
+      specific type) for the peaceful dimlet
 {-------------------------------------------------------------}
