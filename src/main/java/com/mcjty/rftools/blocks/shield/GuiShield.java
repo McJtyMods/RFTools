@@ -104,6 +104,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
             }
         });
         ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this).addColors(0x96ffc8, 0x4698ff, 0xff6030, 0x55a0a0, 0xa055a0, 0xffffff).
+                setTooltips("Color for the shield").
                 setLayoutHint(new PositionalLayout.PositionalHint(51, 186, 28, 16)).
                 addChoiceEvent(new ColorChoiceEvent() {
             @Override
