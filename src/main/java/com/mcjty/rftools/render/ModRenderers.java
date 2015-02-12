@@ -5,7 +5,7 @@ import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import com.mcjty.rftools.blocks.logic.LogicSlabBlock;
 import com.mcjty.rftools.blocks.logic.LogicSlabRenderer;
 import com.mcjty.rftools.blocks.screens.ScreenRenderer;
-import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
+import com.mcjty.rftools.blocks.screens.ScreenTEBase;
 import com.mcjty.rftools.blocks.shield.SolidShieldBlock;
 import com.mcjty.rftools.blocks.shield.SolidShieldBlockRenderer;
 import com.mcjty.rftools.blocks.teleporter.BeamRenderer;
@@ -26,6 +26,6 @@ public final class ModRenderers {
         RenderingRegistry.registerBlockHandler(SolidShieldBlock.RENDERID_SHIELDBLOCK, new SolidShieldBlockRenderer());
 
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(ScreenTileEntity.class, new ScreenRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(ScreenTEBase.class, new ScreenRenderer());
     }
 }

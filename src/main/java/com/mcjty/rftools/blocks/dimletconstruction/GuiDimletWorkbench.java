@@ -62,7 +62,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
             public void buttonClicked(Widget parent) {
                 setAutoExtract();
             }
-        }).setTooltips("Automatically extract");
+        }).setTooltips("Automatically extract").setCheckMarker(true);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(extractButton).addChild(energyBar).addChild(progressIcon).addChild(autoExtract);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

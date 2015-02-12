@@ -25,12 +25,12 @@ import java.util.List;
 
 public class ScreenBlock extends GenericContainerBlock {
 
-    public ScreenBlock() {
-        super(Material.iron, ScreenTileEntity.class);
+    public ScreenBlock(String blockName, Class<? extends ScreenTEBase> clazz) {
+        super(Material.iron, clazz);
         float width = 0.5F;
         float height = 1.0F;
         this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
-        setBlockName("screenBlock");
+        setBlockName(blockName);
         setCreativeTab(RFTools.tabRfTools);
     }
 
@@ -48,7 +48,7 @@ public class ScreenBlock extends GenericContainerBlock {
             if (power) {
                 currenttip.add(EnumChatFormatting.YELLOW + "[POWER]");
             }
-            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+            int rfPerTick = ((ScreenTEBase) accessor.getTileEntity()).getTotalRfPerTick();
             currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
         }
         return currenttip;
@@ -56,7 +56,7 @@ public class ScreenBlock extends GenericContainerBlock {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
+        ScreenTEBase screenTileEntity = (ScreenTEBase)world.getTileEntity(x, y, z);
 
         if (screenTileEntity != null) {
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, screenTileEntity);
@@ -67,7 +67,7 @@ public class ScreenBlock extends GenericContainerBlock {
 
     @Override
     protected void breakWithWrench(World world, int x, int y, int z) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
+        ScreenTEBase screenTileEntity = (ScreenTEBase)world.getTileEntity(x, y, z);
 
         if (screenTileEntity != null) {
             for (int i = 0 ; i < screenTileEntity.getSizeInventory() ; i++) {
@@ -185,14 +185,14 @@ public class ScreenBlock extends GenericContainerBlock {
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
+        ScreenTEBase screenTileEntity = (ScreenTEBase) tileEntity;
         ScreenContainer screenContainer = new ScreenContainer(entityPlayer, screenTileEntity);
         return new GuiScreen(screenTileEntity, screenContainer);
     }
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new ScreenContainer(entityPlayer, (ScreenTileEntity) tileEntity);
+        return new ScreenContainer(entityPlayer, (ScreenTEBase) tileEntity);
     }
 
 }

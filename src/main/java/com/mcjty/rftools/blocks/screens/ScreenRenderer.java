@@ -22,7 +22,8 @@ import java.util.Map;
 public class ScreenRenderer extends TileEntitySpecialRenderer {
 
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
-    private final ModelScreen screenModel = new ModelScreen();
+    private final ModelScreen screenModel = new ModelScreen(false);
+    private final ModelScreen screenModelLarge = new ModelScreen(true);
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
@@ -48,9 +49,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glRotatef(-f3, 0.0F, 1.0F, 0.0F);
         GL11.glTranslatef(0.0F, -0.2500F, -0.4375F);
 
-        renderScreenBoard();
+        ScreenTEBase screenTileEntity = (ScreenTEBase) tileEntity;
 
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
+        if (!screenTileEntity.isTransparent()) {
+            renderScreenBoard(screenTileEntity.isLarge());
+        }
 
         if (screenTileEntity.isPowerOn()) {
             FontRenderer fontrenderer = this.func_147498_b();
@@ -63,7 +66,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             Map<Integer, String[]> screenData = updateScreenData(screenTileEntity);
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
-            renderModules(fontrenderer, mode, modules, screenData);
+            renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.isLarge());
 
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
@@ -72,22 +75,27 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String[]> updateScreenData(ScreenTileEntity screenTileEntity) {
+    private Map<Integer, String[]> updateScreenData(ScreenTEBase screenTileEntity) {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
-        Map<Integer,String[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
+        Map<Integer,String[]> screenData = ScreenTEBase.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
         return screenData;
     }
 
-    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String[]> screenData) {
-        float f3;
+    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String[]> screenData, boolean large) {
+        float f3, factor;
+        if (large) {
+            factor = 2.0f;
+        } else {
+            factor = 1.0f;
+        }
         int currenty = 7;
         int moduleIndex = 0;
         for (ClientScreenModule module : modules) {
@@ -106,21 +114,21 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
                             case TEXT:
                                 GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F;
-                                GL11.glScalef(f3, -f3, f3);
+                                GL11.glScalef(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
                                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case TEXTLARGE:
                                 GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F * 2;
-                                GL11.glScalef(f3, -f3, f3);
+                                GL11.glScalef(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
                                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case ITEM:
                                 f3 = 0.0075F;
                                 GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                                GL11.glScalef(f3, -f3, -0.0001f);
+                                GL11.glScalef(f3 * factor, -f3 * factor, -0.0001f);
                                 break;
                             default:
                                 break;
@@ -128,7 +136,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
                     }
 
                     module.render(fontrenderer, currenty, screenData.get(moduleIndex));
-                    currenty += height;
+                    currenty += height * factor;
                 }
             }
             moduleIndex++;
@@ -139,20 +147,30 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         }
     }
 
-    private void renderScreenBoard() {
+    private void renderScreenBoard(boolean large) {
         this.bindTexture(texture);
         GL11.glPushMatrix();
         GL11.glScalef(1, -1, -1);
-        this.screenModel.render();
+        if (large) {
+            this.screenModelLarge.render();
+        } else {
+            this.screenModel.render();
+        }
 
         GL11.glDepthMask(false);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
         tessellator.setBrightness(240);
         tessellator.setColorOpaque(0, 0, 0);
-        tessellator.addVertex(-.46f, .46f, -0.08f);
-        tessellator.addVertex(.46f, .46f, -0.08f);
-        tessellator.addVertex(.46f, -.46f, -0.08f);
+        float r;
+        if (large) {
+            r = 1.46f;
+        } else {
+            r = .46f;
+        }
+        tessellator.addVertex(-.46f, r, -0.08f);
+        tessellator.addVertex(r, r, -0.08f);
+        tessellator.addVertex(r, -.46f, -0.08f);
         tessellator.addVertex(-.46f, -.46f, -0.08f);
         tessellator.draw();
 

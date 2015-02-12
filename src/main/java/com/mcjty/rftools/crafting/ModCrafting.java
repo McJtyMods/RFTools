@@ -110,6 +110,32 @@ public final class ModCrafting {
                 'g', Blocks.glass);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
                 'g', Blocks.glass, 'i', Items.iron_ingot);
+        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlock), new ItemStack(Items.iron_ingot),
+                new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
+        }, new ItemStack(ModBlocks.screenBlockLarge), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlock), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
+        }, new ItemStack(ModBlocks.screenBlockTransparent), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlockLarge), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
+        }, new ItemStack(ModBlocks.screenBlockTransparentLarge), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlockTransparent), new ItemStack(Items.iron_ingot),
+                new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
+        }, new ItemStack(ModBlocks.screenBlockTransparentLarge), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlockTransparent)
+        }, new ItemStack(ModBlocks.screenBlock), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlockLarge)
+        }, new ItemStack(ModBlocks.screenBlock), 0));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
+                new ItemStack(ModBlocks.screenBlockTransparentLarge)
+        }, new ItemStack(ModBlocks.screenBlock), 0));
+
         GameRegistry.addRecipe(new ItemStack(ModItems.textModuleItem), " p ", "rir", " b ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.clockModuleItem), " c ", "rir", " b ", 'c', Items.clock, 'r', Items.redstone, 'i', Items.iron_ingot,

@@ -18,7 +18,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
-public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
+public class GuiScreen  extends GenericGuiContainer<ScreenTEBase> {
     public static final int SCREEN_WIDTH = 256;
     public static final int SCREEN_HEIGHT = 224;
 
@@ -31,7 +31,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
 
     private int selected = -1;
 
-    public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
+    public GuiScreen(ScreenTEBase screenTileEntity, ScreenContainer container) {
         super(screenTileEntity, container);
 
         xSize = SCREEN_WIDTH;

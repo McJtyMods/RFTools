@@ -10,8 +10,12 @@ public class ModelScreen extends ModelBase {
 
     public ModelRenderer renderer = new ModelRenderer(this, 0, 0);
 
-    public ModelScreen() {
-        this.renderer.addBox(-8.0F, -8.0F, -1.0F, 16, 16, 2, 0.0F);
+    public ModelScreen(boolean large) {
+        if (large) {
+            this.renderer.addBox(-8.0F, -8.0F, -1.0F, 32, 32, 2, 0.0F);
+        } else {
+            this.renderer.addBox(-8.0F, -8.0F, -1.0F, 16, 16, 2, 0.0F);
+        }
         this.renderer.setTextureSize(16, 16);
     }
 

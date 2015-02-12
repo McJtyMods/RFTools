@@ -1,6 +1,6 @@
 package com.mcjty.rftools.blocks.screens.network;
 
-import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
+import com.mcjty.rftools.blocks.screens.ScreenTEBase;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -46,12 +46,12 @@ public class PacketGetScreenData implements IMessage,IMessageHandler<PacketGetSc
     public PacketReturnScreenData onMessage(PacketGetScreenData message, MessageContext ctx) {
         World world = ctx.getServerHandler().playerEntity.worldObj;
         TileEntity te = world.getTileEntity(message.x, message.y, message.z);
-        if(!(te instanceof ScreenTileEntity)) {
+        if(!(te instanceof ScreenTEBase)) {
             // @Todo better logging
             System.out.println("PacketGetScreenData: TileEntity is not a SimpleScreenTileEntity!");
             return null;
         }
-        Map<Integer, String[]> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
+        Map<Integer, String[]> screenData = ((ScreenTEBase) te).getScreenData(message.millis);
         return new PacketReturnScreenData(message.x, message.y, message.z, screenData);
     }
 
