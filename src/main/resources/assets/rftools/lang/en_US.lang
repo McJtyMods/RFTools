@@ -55,6 +55,7 @@ tile.relayBlock.name=Power Relay
 tile.itemFilterBlock.name=Item Filter
 tile.storageScannerBlock.name=Storage Scanner
 tile.rfMonitorBlock.name=RF Monitor
+tile.liquidMonitorBlock.name=Liquid Monitor
 tile.machineFrame.name=Machine Frame
 tile.machineBase.name=Machine Base
 tile.matterTransmitterBlock.name=Matter Transmitter

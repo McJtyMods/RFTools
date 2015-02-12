@@ -55,6 +55,7 @@ tile.relayBlock.name=Ретранслятор энергии
 tile.itemFilterBlock.name=Предметный фильтр
 tile.storageScannerBlock.name=Сканер хранилища
 tile.rfMonitorBlock.name=RF Монитор
+tile.liquidMonitorBlock.name=Liquid Monitor
 tile.machineFrame.name=Рамка RF-механизма
 tile.machineBase.name=Корпус RF-механизма
 tile.matterTransmitterBlock.name=Передатчик материи

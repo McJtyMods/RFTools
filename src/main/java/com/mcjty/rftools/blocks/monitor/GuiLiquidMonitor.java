@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> {
+public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTileEntity> {
     private WidgetList list;
     private ChoiceLabel alarmModeChoiceLabel;
     private ScrollableLabel alarmLabel;
@@ -36,8 +36,8 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
     public static List<Coordinate> fromServer_clientAdjacentBlocks = null;
 
 
-    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
-        super(monitorBlockTileEntity, container);
+    public GuiLiquidMonitor(LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity, Container container) {
+        super(liquidMonitorBlockTileEntity, container);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         window = new Window(this, toplevel);
 
         fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>();
-        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentTankBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void changeAlarmMode(RFMonitorMode mode) {

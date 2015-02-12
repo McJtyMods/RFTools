@@ -16,6 +16,8 @@ import com.mcjty.rftools.blocks.logic.SequencerBlock;
 import com.mcjty.rftools.blocks.logic.SequencerTileEntity;
 import com.mcjty.rftools.blocks.logic.TimerBlock;
 import com.mcjty.rftools.blocks.logic.TimerTileEntity;
+import com.mcjty.rftools.blocks.monitor.LiquidMonitorBlock;
+import com.mcjty.rftools.blocks.monitor.LiquidMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlock;
 import com.mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import com.mcjty.rftools.blocks.relay.RelayBlock;
@@ -33,6 +35,7 @@ public final class ModBlocks {
     public static MachineBase machineBase;
 
     public static RFMonitorBlock monitorBlock;
+    public static LiquidMonitorBlock liquidMonitorBlock;
 
     public static CrafterBlock crafterBlock1;
     public static CrafterBlock crafterBlock2;
@@ -95,6 +98,10 @@ public final class ModBlocks {
         monitorBlock = new RFMonitorBlock();
         GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
         GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
+
+        liquidMonitorBlock = new LiquidMonitorBlock();
+        GameRegistry.registerBlock(liquidMonitorBlock, GenericItemBlock.class, "liquidMonitorBlock");
+        GameRegistry.registerTileEntity(LiquidMonitorBlockTileEntity.class, "LiquidMonitorBlockTileEntity");
 
         initCrafterBlocks();
 

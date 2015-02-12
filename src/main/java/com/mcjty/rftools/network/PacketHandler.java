@@ -1,9 +1,7 @@
 package com.mcjty.rftools.network;
 
 import com.mcjty.rftools.blocks.crafter.PacketCrafter;
-import com.mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
-import com.mcjty.rftools.blocks.monitor.PacketGetAdjacentBlocks;
-import com.mcjty.rftools.blocks.monitor.PacketRFMonitor;
+import com.mcjty.rftools.blocks.monitor.*;
 import com.mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import com.mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import com.mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
@@ -40,8 +38,9 @@ public class PacketHandler {
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("rftools");
 
         // Server side
-        INSTANCE.registerMessage(PacketRFMonitor.class, PacketRFMonitor.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketContentsMonitor.class, PacketContentsMonitor.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetAdjacentBlocks.class, PacketGetAdjacentBlocks.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetAdjacentTankBlocks.class, PacketGetAdjacentTankBlocks.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCrafter.class, PacketCrafter.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetInventory.class, PacketGetInventory.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketSearchItems.class, PacketSearchItems.class, nextID(), Side.SERVER);
@@ -63,6 +62,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSearchReady.class, PacketSearchReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketAdjacentBlocksReady.class, PacketAdjacentBlocksReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketAdjacentTankBlocksReady.class, PacketAdjacentTankBlocksReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketConnectedBlocksReady.class, PacketConnectedBlocksReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketTransmittersReady.class, PacketTransmittersReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReceiversReady.class, PacketReceiversReady.class, nextID(), Side.CLIENT);

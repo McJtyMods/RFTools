@@ -79,6 +79,7 @@ public class RFTools {
     /** Set our custom inventory Gui index to the next available Gui index */
     public static final int GUI_LIST_BLOCKS = modGuiIndex++;
     public static final int GUI_RF_MONITOR = modGuiIndex++;
+    public static final int GUI_LIQUID_MONITOR = modGuiIndex++;
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_STORAGE_SCANNER = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;
