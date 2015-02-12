@@ -22,6 +22,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
+    FormatStyle format = FormatStyle.MODE_FULL;
 
     @Override
     public TransformMode getTransformMode() {
@@ -44,7 +45,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
             xoffset = 7;
         }
 
-        ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
+        ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300, format);
     }
 
     @Override
@@ -117,6 +118,9 @@ public class DimensionClientScreenModule implements ClientScreenModule {
         ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "RF", currentData, moduleGuiChanged);
         optionPanel.addChild(modeButton);
 
+        ChoiceLabel formatButton = ClientScreenModuleHelper.setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
+        optionPanel.addChild(formatButton);
+
         if (currentData != null) {
             barButton.setPressed(!currentData.getBoolean("hidebar"));
         } else {
@@ -175,6 +179,8 @@ public class DimensionClientScreenModule implements ClientScreenModule {
             hidetext = tagCompound.getBoolean("hidetext");
             showdiff = tagCompound.getBoolean("showdiff");
             showpct = tagCompound.getBoolean("showpct");
+
+            format = FormatStyle.values()[tagCompound.getInteger("format")];
         }
     }
 

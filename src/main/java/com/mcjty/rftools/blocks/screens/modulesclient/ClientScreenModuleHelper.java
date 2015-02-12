@@ -10,11 +10,13 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.text.DecimalFormat;
+
 public class ClientScreenModuleHelper {
 
     public static void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, String[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                                    int poscolor, int negcolor,
-                                   int gradient1, int gradient2) {
+                                   int gradient1, int gradient2, FormatStyle formatStyle) {
         if (screenData == null) {
             return;
         }
@@ -53,10 +55,52 @@ public class ClientScreenModuleHelper {
                     }
                     fontRenderer.drawString(value + "%", xoffset, currenty, poscolor);
                 } else {
-                    fontRenderer.drawString(screenData[0] + label, xoffset, currenty, poscolor);
+                    fontRenderer.drawString(format(screenData[0], formatStyle) + label, xoffset, currenty, poscolor);
                 }
             }
         }
+    }
+
+    private static DecimalFormat dfCommas = new DecimalFormat("###,###");
+
+    public static String format(String in, FormatStyle style) {
+        switch (style) {
+            case MODE_FULL:
+                return in;
+            case MODE_COMPACT: {
+                long contents = Long.parseLong(in);
+                int unit = 1000;
+                if (contents < unit) return in;
+                int exp = (int) (Math.log(contents) / Math.log(unit));
+                char pre = "KMGTP".charAt(exp-1);
+                return String.format("%.1f %s", contents / Math.pow(unit, exp), pre);
+            }
+            case MODE_COMMAS:
+                return dfCommas.format(Long.parseLong(in));
+        }
+        return in;
+    }
+
+    public static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+        final String mode_full = FormatStyle.MODE_FULL.getName();
+        final String mode_compact = FormatStyle.MODE_COMPACT.getName();
+        final String mode_commas = FormatStyle.MODE_COMMAS.getName();
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(mode_full, mode_compact, mode_commas).
+                setChoiceTooltip(mode_full, "Full format: 3123555").
+                setChoiceTooltip(mode_compact, "Compact format: 3.1M").
+                setChoiceTooltip(mode_commas, "Comma format: 3,123,555").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        currentData.setInteger("format", FormatStyle.getStyle(newChoice).ordinal());
+                        moduleGuiChanged.updateData();
+                    }
+                });
+
+        FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger("format")];
+        modeButton.setChoice(currentFormat.getName());
+
+        return modeButton;
     }
 
     public static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {

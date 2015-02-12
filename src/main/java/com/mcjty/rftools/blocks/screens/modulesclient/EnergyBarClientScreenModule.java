@@ -28,6 +28,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
+    FormatStyle format = FormatStyle.MODE_FULL;
     protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -52,7 +53,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300);
+            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300, format);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
@@ -95,6 +96,9 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
 
         ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "RF", currentData, moduleGuiChanged);
         optionPanel.addChild(modeButton);
+
+        ChoiceLabel formatButton = ClientScreenModuleHelper.setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
+        optionPanel.addChild(formatButton);
 
         barButton.setPressed(!currentData.getBoolean("hidebar"));
 
@@ -179,6 +183,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
             hidetext = tagCompound.getBoolean("hidetext");
             showdiff = tagCompound.getBoolean("showdiff");
             showpct = tagCompound.getBoolean("showpct");
+            format = FormatStyle.values()[tagCompound.getInteger("format")];
 
             setupCoordinateFromNBT(tagCompound, dim, x, y, z);
         }

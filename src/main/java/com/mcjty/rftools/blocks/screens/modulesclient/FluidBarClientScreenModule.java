@@ -28,6 +28,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
+    FormatStyle format = FormatStyle.MODE_FULL;
     protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -52,7 +53,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor_neg, 0xff0088ff, 0xff003333);
+            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor_neg, 0xff0088ff, 0xff003333, format);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
@@ -95,6 +96,9 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
 
         ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "mb", currentData, moduleGuiChanged);
         optionPanel.addChild(modeButton);
+
+        ChoiceLabel formatButton = ClientScreenModuleHelper.setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
+        optionPanel.addChild(formatButton);
 
         barButton.setPressed(!currentData.getBoolean("hidebar"));
 
@@ -175,6 +179,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
             hidetext = tagCompound.getBoolean("hidetext");
             showdiff = tagCompound.getBoolean("showdiff");
             showpct = tagCompound.getBoolean("showpct");
+            format = FormatStyle.values()[tagCompound.getInteger("format")];
 
             setupCoordinateFromNBT(tagCompound, dim, x, y, z);
         }
