@@ -12,6 +12,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class ModCrafting {
     static {
         RecipeSorter.register("rftools:shapedpreserving", PreservingShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
@@ -110,31 +114,21 @@ public final class ModCrafting {
                 'g', Blocks.glass);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
                 'g', Blocks.glass, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
+
+        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[]{
                 new ItemStack(ModBlocks.screenBlock), new ItemStack(Items.iron_ingot),
                 new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
-        }, new ItemStack(ModBlocks.screenBlockLarge), 0));
+        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("large", Boolean.TRUE)));
         GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
                 new ItemStack(ModBlocks.screenBlock), new ItemStack(Blocks.glass),
                 new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
-        }, new ItemStack(ModBlocks.screenBlockTransparent), 0));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlockLarge), new ItemStack(Blocks.glass),
-                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
-        }, new ItemStack(ModBlocks.screenBlockTransparentLarge), 0));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlockTransparent), new ItemStack(Items.iron_ingot),
-                new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
-        }, new ItemStack(ModBlocks.screenBlockTransparentLarge), 0));
+        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("transparent", Boolean.TRUE)));
+        Map<String,Object> flags = new HashMap<String, Object>();
+        flags.put("large", Boolean.FALSE);
+        flags.put("transparent", Boolean.FALSE);
         GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlockTransparent)
-        }, new ItemStack(ModBlocks.screenBlock), 0));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlockLarge)
-        }, new ItemStack(ModBlocks.screenBlock), 0));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlockTransparentLarge)
-        }, new ItemStack(ModBlocks.screenBlock), 0));
+                new ItemStack(ModBlocks.screenBlock)
+        }, new ItemStack(ModBlocks.screenBlock), 0, flags));
 
         GameRegistry.addRecipe(new ItemStack(ModItems.textModuleItem), " p ", "rir", " b ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);

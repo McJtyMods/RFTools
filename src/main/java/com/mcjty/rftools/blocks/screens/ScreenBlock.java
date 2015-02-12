@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ScreenBlock extends GenericContainerBlock {
 
-    public ScreenBlock(String blockName, Class<? extends ScreenTEBase> clazz) {
+    public ScreenBlock(String blockName, Class<? extends ScreenTileEntity> clazz) {
         super(Material.iron, clazz);
         float width = 0.5F;
         float height = 1.0F;
@@ -48,7 +48,7 @@ public class ScreenBlock extends GenericContainerBlock {
             if (power) {
                 currenttip.add(EnumChatFormatting.YELLOW + "[POWER]");
             }
-            int rfPerTick = ((ScreenTEBase) accessor.getTileEntity()).getTotalRfPerTick();
+            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
             currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
         }
         return currenttip;
@@ -56,7 +56,7 @@ public class ScreenBlock extends GenericContainerBlock {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        ScreenTEBase screenTileEntity = (ScreenTEBase)world.getTileEntity(x, y, z);
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
 
         if (screenTileEntity != null) {
             BlockTools.emptyInventoryInWorld(world, x, y, z, block, screenTileEntity);
@@ -67,7 +67,7 @@ public class ScreenBlock extends GenericContainerBlock {
 
     @Override
     protected void breakWithWrench(World world, int x, int y, int z) {
-        ScreenTEBase screenTileEntity = (ScreenTEBase)world.getTileEntity(x, y, z);
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
 
         if (screenTileEntity != null) {
             for (int i = 0 ; i < screenTileEntity.getSizeInventory() ; i++) {
@@ -171,6 +171,17 @@ public class ScreenBlock extends GenericContainerBlock {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
+        if (itemStack.getTagCompound() != null) {
+            boolean large = itemStack.getTagCompound().getBoolean("large");
+            boolean transparent = itemStack.getTagCompound().getBoolean("transparent");
+            if (large) {
+                list.add(EnumChatFormatting.BLUE + "Large screen.");
+            }
+            if (transparent) {
+                list.add(EnumChatFormatting.BLUE + "Transparent screen.");
+            }
+        }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
             list.add(EnumChatFormatting.WHITE + "You must insert modules to control what you can see.");
@@ -185,14 +196,14 @@ public class ScreenBlock extends GenericContainerBlock {
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        ScreenTEBase screenTileEntity = (ScreenTEBase) tileEntity;
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
         ScreenContainer screenContainer = new ScreenContainer(entityPlayer, screenTileEntity);
         return new GuiScreen(screenTileEntity, screenContainer);
     }
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new ScreenContainer(entityPlayer, (ScreenTEBase) tileEntity);
+        return new ScreenContainer(entityPlayer, (ScreenTileEntity) tileEntity);
     }
 
 }

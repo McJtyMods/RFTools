@@ -89,9 +89,6 @@ public final class ModBlocks {
     public static ActivityProbeBlock activityProbeBlock;
 
     public static ScreenBlock screenBlock;
-    public static ScreenBlock screenBlockLarge;
-    public static ScreenBlock screenBlockTransparent;
-    public static ScreenBlock screenBlockTransparentLarge;
     public static ScreenControllerBlock screenControllerBlock;
 
     public static void init() {
@@ -117,32 +114,23 @@ public final class ModBlocks {
         GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
 
-        screenBlock = new ScreenBlock("screenBlock", ScreenTileEntity.class);
-        GameRegistry.registerBlock(screenBlock, GenericItemBlock.class, "screenBlock");
-        GameRegistry.registerTileEntity(ScreenTileEntity.class, "ScreenTileEntity");
-
-        screenBlockLarge = new ScreenBlock("screenBlockLarge", ScreenTileEntityLarge.class);
-        GameRegistry.registerBlock(screenBlockLarge, GenericItemBlock.class, "screenBlockLarge");
-        GameRegistry.registerTileEntity(ScreenTileEntityLarge.class, "ScreenTileEntityLarge");
-
-        screenBlockTransparent = new ScreenBlock("screenBlockTransparent", ScreenTileEntityTransparent.class);
-        GameRegistry.registerBlock(screenBlockTransparent, GenericItemBlock.class, "screenBlockTransparent");
-        GameRegistry.registerTileEntity(ScreenTileEntityTransparent.class, "ScreenTileEntityTransparent");
-
-        screenBlockTransparentLarge = new ScreenBlock("screenBlockTransparentLarge", ScreenTileEntityTransparentLarge.class);
-        GameRegistry.registerBlock(screenBlockTransparentLarge, GenericItemBlock.class, "screenBlockTransparentLarge");
-        GameRegistry.registerTileEntity(ScreenTileEntityTransparentLarge.class, "ScreenTileEntityTransparentLarge");
-
-        screenControllerBlock = new ScreenControllerBlock();
-        GameRegistry.registerBlock(screenControllerBlock, GenericItemBlock.class, "screenControllerBlock");
-        GameRegistry.registerTileEntity(ScreenControllerTileEntity.class, "ScreenControllerTileEntity");
-
+        initScreenBlocks();
         initDimletBlocks();
         initTeleporterBlocks();
         initEndergenicBlocks();
         initLogicBlocks();
         initShieldBlocks();
         initBaseBlocks();
+    }
+
+    private static void initScreenBlocks() {
+        screenBlock = new ScreenBlock("screenBlock", ScreenTileEntity.class);
+        GameRegistry.registerBlock(screenBlock, GenericItemBlock.class, "screenBlock");
+        GameRegistry.registerTileEntity(ScreenTileEntity.class, "ScreenTileEntity");
+
+        screenControllerBlock = new ScreenControllerBlock();
+        GameRegistry.registerBlock(screenControllerBlock, GenericItemBlock.class, "screenControllerBlock");
+        GameRegistry.registerTileEntity(ScreenControllerTileEntity.class, "ScreenControllerTileEntity");
     }
 
     private static void initBaseBlocks() {

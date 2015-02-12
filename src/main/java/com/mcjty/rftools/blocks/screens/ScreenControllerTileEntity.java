@@ -74,8 +74,8 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
         boolean fixesAreNeeded = false;
         for (Coordinate c : connectedScreens) {
             TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (te instanceof ScreenTEBase) {
-                ScreenTEBase screenTileEntity = (ScreenTEBase) te;
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
 
                 if (rfModule > rf) {
@@ -97,7 +97,7 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
             List<Coordinate> newScreens = new ArrayList<Coordinate>();
             for (Coordinate c : connectedScreens) {
                 TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof ScreenTEBase) {
+                if (te instanceof ScreenTileEntity) {
                     newScreens.add(c);
                 }
             }
@@ -116,10 +116,10 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
                 for (int x = xCoord - radius; x <= xCoord + radius; x++) {
                     for (int z = zCoord - radius; z <= zCoord + radius; z++) {
                         TileEntity te = worldObj.getTileEntity(x, y, z);
-                        if (te instanceof ScreenTEBase) {
-                            if (!((ScreenTEBase) te).isConnected()) {
+                        if (te instanceof ScreenTileEntity) {
+                            if (!((ScreenTileEntity) te).isConnected()) {
                                 connectedScreens.add(new Coordinate(x, y, z));
-                                ((ScreenTEBase) te).setConnected(true);
+                                ((ScreenTileEntity) te).setConnected(true);
                             }
                         }
                     }
@@ -133,9 +133,9 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     public void detach() {
         for (Coordinate c : connectedScreens) {
             TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-            if (te instanceof ScreenTEBase) {
-                ((ScreenTEBase) te).setPower(false);
-                ((ScreenTEBase) te).setConnected(false);
+            if (te instanceof ScreenTileEntity) {
+                ((ScreenTileEntity) te).setPower(false);
+                ((ScreenTileEntity) te).setConnected(false);
             }
         }
 

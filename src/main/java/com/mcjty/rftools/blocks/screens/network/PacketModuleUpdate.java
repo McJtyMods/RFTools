@@ -1,6 +1,6 @@
 package com.mcjty.rftools.blocks.screens.network;
 
-import com.mcjty.rftools.blocks.screens.ScreenTEBase;
+import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -61,12 +61,12 @@ public class PacketModuleUpdate implements IMessage, IMessageHandler<PacketModul
     @Override
     public IMessage onMessage(PacketModuleUpdate message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
-        if(!(te instanceof ScreenTEBase)) {
+        if(!(te instanceof ScreenTileEntity)) {
             // @Todo better logging
             System.out.println("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
             return null;
         }
-        ((ScreenTEBase) te).updateModuleData(message.slotIndex, message.tagCompound);
+        ((ScreenTileEntity) te).updateModuleData(message.slotIndex, message.tagCompound);
         return null;
     }
 

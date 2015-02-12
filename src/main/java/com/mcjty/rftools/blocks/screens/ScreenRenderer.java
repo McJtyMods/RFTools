@@ -49,7 +49,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glRotatef(-f3, 0.0F, 1.0F, 0.0F);
         GL11.glTranslatef(0.0F, -0.2500F, -0.4375F);
 
-        ScreenTEBase screenTileEntity = (ScreenTEBase) tileEntity;
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
         if (!screenTileEntity.isTransparent()) {
             renderScreenBoard(screenTileEntity.isLarge());
@@ -75,14 +75,14 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String[]> updateScreenData(ScreenTEBase screenTileEntity) {
+    private Map<Integer, String[]> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
-        Map<Integer,String[]> screenData = ScreenTEBase.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
+        Map<Integer,String[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
