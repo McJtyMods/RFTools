@@ -2,11 +2,11 @@ package com.mcjty.rftools.items.manual;
 
 import com.mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBook;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class RFToolsManualItem extends ItemBook {
+public class RFToolsManualItem extends Item {
 
     public RFToolsManualItem() {
         setMaxStackSize(1);
