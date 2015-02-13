@@ -26,10 +26,10 @@ public class WailaCompatibility implements IWailaDataProvider {
         registrar.registerTailProvider(INSTANCE, GenericBlock.class);
     }
 
-//    @Override
-//    public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, int x, int y, int z) {
-//        return tag;
-//    }
+    @Override
+    public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, int x, int y, int z) {
+        return tag;
+    }
 
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config) {
