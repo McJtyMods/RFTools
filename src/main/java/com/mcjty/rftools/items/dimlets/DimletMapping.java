@@ -67,7 +67,9 @@ public class DimletMapping extends WorldSavedData {
         int[] types = tagCompound.getIntArray("types");
         for (int i = 0 ; i < ids.length ; i++) {
             String s = tagCompound.getString("n" + i);
-            idToDimlet.put(ids[i], new DimletKey(DimletType.values()[types[i]], s));
+            DimletKey key = new DimletKey(DimletType.values()[types[i]], s);
+            idToDimlet.put(ids[i], key);
+            dimletToID.put(key, ids[i]);
         }
     }
 

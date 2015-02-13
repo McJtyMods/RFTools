@@ -84,6 +84,7 @@ public class KnownDimletConfiguration {
         String k = "dimlet." + key.getType().getName() + "." + key.getName();
 
         Integer id = mapping.getId(key);
+
         // Check blacklist but not if we are on a client connecting to a server.
         if (cfg != null && dimletBlackList.contains(key)) {
             id = -1;

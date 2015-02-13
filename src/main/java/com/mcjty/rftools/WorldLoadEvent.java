@@ -12,17 +12,22 @@ public class WorldLoadEvent {
     @SubscribeEvent
     public void loadEvent(WorldEvent.Load evt) {
         if (evt.world.isRemote) {
-            if (Minecraft.getMinecraft().isSingleplayer()) {
-                if (!KnownDimletConfiguration.isInitialized()) {
-                    RFTools.log("Clientside World Load Event: initialize dimlets");
-                    KnownDimletConfiguration.initClient(evt.world);
-                    KnownDimletConfiguration.initCrafting(evt.world);
-                }
-            }
-        } else if (MinecraftServer.getServer().isDedicatedServer()) {
+            // Do nothing on client.
+            return;
+        }
+
+        if (MinecraftServer.getServer().isDedicatedServer()) {
+            // If we are on a server then we initialize here.
             if (evt.world.provider.dimensionId == 0 && !KnownDimletConfiguration.isInitialized()) {
                 RFTools.log("Serverside World Load Event: initialize dimlets");
                 KnownDimletConfiguration.initServer(evt.world);
+                KnownDimletConfiguration.initCrafting(evt.world);
+            }
+        } else {
+            // If we are on a single player client then we connect here.
+            if (!KnownDimletConfiguration.isInitialized()) {
+                RFTools.log("Single player World Load Event: initialize dimlets");
+                KnownDimletConfiguration.initClient(evt.world);
                 KnownDimletConfiguration.initCrafting(evt.world);
             }
         }
