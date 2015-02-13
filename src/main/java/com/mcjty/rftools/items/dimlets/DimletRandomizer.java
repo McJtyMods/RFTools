@@ -92,7 +92,7 @@ public class DimletRandomizer {
         randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
 
-        for (Map.Entry<Integer, DimletEntry> entry : mapping.getEntries()) {
+        for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimletEntry.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
             if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
                 // Don't add the 'null' material.
@@ -133,25 +133,25 @@ public class DimletRandomizer {
         return randomMobDimlets.select(random);
     }
 
-    public static int getRandomEffect(Random random, boolean allowRandom, DimletMapping mapping) {
+    public static int getRandomEffect(Random random, boolean allowRandom) {
         Integer id = randomEffectDimlets.select(random);
-        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
             id = randomEffectDimlets.select(random);
         }
         return id;
     }
 
-    public static int getRandomFeature(Random random, boolean allowRandom, DimletMapping mapping) {
+    public static int getRandomFeature(Random random, boolean allowRandom) {
         Integer id = randomFeatureDimlets.select(random);
-        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
             id = randomFeatureDimlets.select(random);
         }
         return id;
     }
 
-    public static int getRandomStructure(Random random, boolean allowRandom, DimletMapping mapping) {
+    public static int getRandomStructure(Random random, boolean allowRandom) {
         Integer id = randomStructureDimlets.select(random);
-        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
             id = randomStructureDimlets.select(random);
         }
         return id;
@@ -161,9 +161,9 @@ public class DimletRandomizer {
         return randomLiquidDimlets.select(random);
     }
 
-    public static int getRandomMaterialBlock(Random random, boolean allowRandom, DimletMapping mapping) {
+    public static int getRandomMaterialBlock(Random random, boolean allowRandom) {
         Integer id = randomMaterialDimlets.select(random);
-        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
             id = randomMaterialDimlets.select(random);
         }
         return id;
@@ -221,7 +221,7 @@ public class DimletRandomizer {
             int count = entry.getKey();
             int id = entry.getValue();
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + mapping.getEntry(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + mapping.getKey(id).getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 
@@ -251,7 +251,7 @@ public class DimletRandomizer {
             int count = entry.getKey();
             int id = entry.getValue();
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + mapping.getEntry(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + mapping.getKey(id).getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 }

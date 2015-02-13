@@ -5,7 +5,7 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -189,8 +189,8 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
                 int dimletId = stack.getItemDamage();
-                DimletEntry entry = mapping.getEntry(dimletId);
-                descriptors.add(new DimensionDescriptor.DimletDescriptor(entry.getKey().getType(), dimletId));
+                DimletKey key = mapping.getKey(dimletId);
+                descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), dimletId));
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }

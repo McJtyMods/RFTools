@@ -95,7 +95,7 @@ public class SyringeItem extends Item {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
                 int id = entry.getKey();
-                return mapping.getEntry(id).getKey().getName();
+                return mapping.getKey(id).getName();
             }
         }
         return null;

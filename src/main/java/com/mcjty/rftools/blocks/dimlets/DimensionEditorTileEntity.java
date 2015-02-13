@@ -5,10 +5,7 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
-import com.mcjty.rftools.items.dimlets.DimletCosts;
-import com.mcjty.rftools.items.dimlets.DimletEntry;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
-import com.mcjty.rftools.items.dimlets.DimletType;
+import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -50,7 +47,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletEntry dimletEntry = mapping.getEntry(dimletItemStack.getItemDamage());
+            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(dimletItemStack.getItemDamage());
             ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
             ticksLeft = ticksCost;
             rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
@@ -97,7 +94,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
         }
 
         DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-        DimletType type = mapping.getEntry(itemStack.getItemDamage()).getKey().getType();
+        DimletType type = mapping.getKey(itemStack.getItemDamage()).getType();
         switch (type) {
             case DIMLET_MOBS:
             case DIMLET_SKY:

@@ -39,7 +39,7 @@ public class KnownDimlet extends Item {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         DimletMapping mapping = DimletMapping.getDimletMapping(player.worldObj);
-        DimletEntry entry = mapping.getEntry(itemStack.getItemDamage());
+        DimletEntry entry = KnownDimletConfiguration.getEntry(itemStack.getItemDamage());
         if (entry == null) {
             // Safety. Should not occur.
             list.add(EnumChatFormatting.RED + "Something is wrong!");
@@ -73,12 +73,12 @@ public class KnownDimlet extends Item {
 
     @Override
     public IIcon getIconFromDamage(int damage) {
-        DimletEntry entry = DimletMapping.getInstance().getEntry(damage);
-        if (entry == null) {
+        DimletKey key = DimletMapping.getInstance().getKey(damage);
+        if (key == null) {
             // Safety. Should not occur.
             return null;
         }
-        DimletType type = entry.getKey().getType();
+        DimletType type = key.getType();
         return icons.get(type);
     }
 
@@ -94,8 +94,11 @@ public class KnownDimlet extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (Map.Entry<Integer,DimletEntry> me : DimletMapping.getInstance().getEntries()) {
-            list.add(new ItemStack(ModItems.knownDimlet, 1, me.getKey()));
+        DimletMapping mapping = DimletMapping.getInstance();
+        if (mapping != null) {
+            for (Integer key : mapping.getKeys()) {
+                list.add(new ItemStack(ModItems.knownDimlet, 1, key));
+            }
         }
     }
 

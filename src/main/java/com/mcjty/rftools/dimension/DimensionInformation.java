@@ -108,7 +108,7 @@ public class DimensionInformation {
     }
 
     public void injectDimlet(int id, DimletMapping mapping) {
-        DimletType type = mapping.getEntry(id).getKey().getType();
+        DimletType type = mapping.getKey(id).getType();
         switch (type) {
             case DIMLET_BIOME:
             case DIMLET_FOLIAGE:
@@ -122,33 +122,33 @@ public class DimensionInformation {
                 // Not supported
                 return;
             case DIMLET_MOBS:
-                injectMobDimlet(id, mapping);
+                injectMobDimlet(id);
                 break;
             case DIMLET_SKY:
-                injectSkyDimlet(id, mapping);
+                injectSkyDimlet(id);
                 break;
             case DIMLET_TIME:
-                injectTimeDimlet(id, mapping);
+                injectTimeDimlet(id);
                 break;
             case DIMLET_SPECIAL:
-                injectSpecialDimlet(id, mapping);
+                injectSpecialDimlet(id);
                 break;
             case DIMLET_EFFECT:
-                injectEffectDimlet(id, mapping);
+                injectEffectDimlet(id);
                 break;
         }
     }
 
-    private void injectMobDimlet(int id, DimletMapping mapping) {
-        addToCost(id, mapping);
+    private void injectMobDimlet(int id) {
+        addToCost(id);
         MobDescriptor mobDescriptor = DimletObjectMapping.idtoMob.get(id);
         if (mobDescriptor != null && mobDescriptor.getEntityClass() != null) {
             extraMobs.add(mobDescriptor);
         }
     }
 
-    private void injectSkyDimlet(int id, DimletMapping mapping) {
-        addToCost(id, mapping);
+    private void injectSkyDimlet(int id) {
+        addToCost(id);
         SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
         builder.combine(skyDescriptor);
         SkyDescriptor newDescriptor = DimletObjectMapping.idToSkyDescriptor.get(id);
@@ -163,19 +163,19 @@ public class DimensionInformation {
         calculateCelestialBodyDescriptors();
     }
 
-    private void injectTimeDimlet(int id, DimletMapping mapping) {
-        addToCost(id, mapping);
+    private void injectTimeDimlet(int id) {
+        addToCost(id);
         celestialAngle = DimletObjectMapping.idToCelestialAngle.get(id);
         timeSpeed = DimletObjectMapping.idToSpeed.get(id);
     }
 
-    private void injectEffectDimlet(int id, DimletMapping mapping) {
-        addToCost(id, mapping);
+    private void injectEffectDimlet(int id) {
+        addToCost(id);
         effectTypes.add(DimletObjectMapping.idToEffectType.get(id));
     }
 
-    private void injectSpecialDimlet(int id, DimletMapping mapping) {
-        addToCost(id, mapping);
+    private void injectSpecialDimlet(int id) {
+        addToCost(id);
         if (DimletObjectMapping.idToSpecialType.get(id) == SpecialType.SPECIAL_PEACEFUL) {
             peaceful = true;
         }
@@ -697,7 +697,7 @@ public class DimensionInformation {
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomExtraMobsChance) {
                 int id = DimletRandomizer.getRandomMob(random);
-                actualRfCost += calculateCostFactor(id, mapping);
+                actualRfCost += calculateCostFactor(id);
                 extraMobs.add(DimletObjectMapping.idtoMob.get(id));
             }
         } else {
@@ -727,10 +727,10 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_EFFECT, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomEffectChance) {
-                int id = DimletRandomizer.getRandomEffect(random, false, mapping);
+                int id = DimletRandomizer.getRandomEffect(random, false);
                 EffectType effectType = DimletObjectMapping.idToEffectType.get(id);
                 if (!effectTypes.contains(effectType)) {
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     effectTypes.add(effectType);
                 }
             }
@@ -834,7 +834,7 @@ public class DimensionInformation {
             // dimlets so we always get the same random value for these dimlets.
             ArrayList<Integer> idList = new ArrayList<Integer>(DimletObjectMapping.idToTerrainType.keySet());
             int id = idList.get(random.nextInt(idList.size()));
-            actualRfCost += calculateCostFactor(id, mapping);
+            actualRfCost += calculateCostFactor(id);
             terrainType = DimletObjectMapping.idToTerrainType.get(id);
             modifiers = Collections.emptyList();
         } else {
@@ -856,8 +856,8 @@ public class DimensionInformation {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
             // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
             if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
-                int id = DimletRandomizer.getRandomMaterialBlock(random, false, mapping);
-                actualRfCost += calculateCostFactor(id, mapping);
+                int id = DimletRandomizer.getRandomMaterialBlock(random, false);
+                actualRfCost += calculateCostFactor(id);
                 baseBlockForTerrain = DimletObjectMapping.idToBlock.get(id);
             } else {
                 baseBlockForTerrain = new BlockMeta(Blocks.stone, 0);
@@ -872,7 +872,7 @@ public class DimensionInformation {
         } else {
             if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
                 int id = DimletRandomizer.getRandomFluidBlock(random);
-                actualRfCost += calculateCostFactor(id, mapping);
+                actualRfCost += calculateCostFactor(id);
                 fluidForTerrain = DimletObjectMapping.idToFluid.get(id);
             } else {
                 fluidForTerrain = Blocks.water;
@@ -880,8 +880,8 @@ public class DimensionInformation {
         }
     }
 
-    private int calculateCostFactor(int id, DimletMapping mapping) {
-        DimletEntry dimletEntry = mapping.getEntry(id);
+    private int calculateCostFactor(int id) {
+        DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(id);
         if (dimletEntry == null) {
             RFTools.logError("Something went wrong for id: "+id);
             return 0;
@@ -889,8 +889,8 @@ public class DimensionInformation {
         return (int) (dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor);
     }
 
-    private void addToCost(int id, DimletMapping mapping) {
-        DimletEntry dimletEntry = mapping.getEntry(id);
+    private void addToCost(int id) {
+        DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(id);
         int rfMaintainCost = dimletEntry.getRfMaintainCost();
 
         if (rfMaintainCost < 0) {
@@ -921,10 +921,10 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_FEATURE, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
-                int id = DimletRandomizer.getRandomFeature(random, false, mapping);
+                int id = DimletRandomizer.getRandomFeature(random, false);
                 FeatureType featureType = DimletObjectMapping.idToFeatureType.get(id);
                 if (!featureTypes.contains(featureType) && featureType.isTerrainSupported(terrainType)) {
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     featureTypes.add(featureType);
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
                     // @todo randomize those?
@@ -949,7 +949,7 @@ public class DimensionInformation {
             if (fluids.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
                     int id = DimletRandomizer.getRandomFluidBlock(random);
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     fluids.add(DimletObjectMapping.idToFluid.get(id));
                 }
             } else if (fluids.size() == 1 && fluids.get(0) == null) {
@@ -969,7 +969,7 @@ public class DimensionInformation {
             if (fluids.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
                     int id = DimletRandomizer.getRandomFluidBlock(random);
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     fluids.add(DimletObjectMapping.idToFluid.get(id));
                 }
             } else if (fluids.size() == 1 && fluids.get(0) == null) {
@@ -1002,8 +1002,8 @@ public class DimensionInformation {
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < DimletConfiguration.randomFeatureMaterialChance) {
-                    int id = DimletRandomizer.getRandomMaterialBlock(random, true, mapping);
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    int id = DimletRandomizer.getRandomMaterialBlock(random, true);
+                    actualRfCost += calculateCostFactor(id);
                     block = DimletObjectMapping.idToBlock.get(id);
                 } else {
                     block = new BlockMeta(Blocks.stone, 0);
@@ -1031,7 +1031,7 @@ public class DimensionInformation {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < DimletConfiguration.randomOrbFluidChance) {
                     int id = DimletRandomizer.getRandomFluidBlock(random);
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     block = DimletObjectMapping.idToFluid.get(id);
                 } else {
                     block = Blocks.water;
@@ -1049,10 +1049,10 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_STRUCTURE, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
-                int id = DimletRandomizer.getRandomStructure(random, false, mapping);
+                int id = DimletRandomizer.getRandomStructure(random, false);
                 StructureType structureType = DimletObjectMapping.idToStructureType.get(id);
                 if (!structureTypes.contains(structureType)) {
-                    actualRfCost += calculateCostFactor(id, mapping);
+                    actualRfCost += calculateCostFactor(id);
                     structureTypes.add(structureType);
                 }
             }

@@ -13,65 +13,12 @@ public class DimletMapping extends WorldSavedData {
     public static final String DIMLETMAPPING_NAME = "RFToolsDimletMapping";
     private static DimletMapping instance = null;
 
-
     // This map keeps track of all known dimlets by id. Also the reverse map.
-    private final Map<Integer, DimletEntry> idToDimlet = new HashMap<Integer, DimletEntry>();
+    private final Map<Integer, DimletKey> idToDimlet = new HashMap<Integer, DimletKey>();
     private final Map<DimletKey, Integer> dimletToID = new HashMap<DimletKey, Integer>();
 
     public DimletMapping(String identifier) {
         super(identifier);
-    }
-
-    public static <T> void remapIdsInMap(Map<Integer, Integer> mapFromTo, Map<Integer,T> baseMap) {
-        Map<Integer,T> oldMap = new HashMap<Integer, T>(baseMap);
-        baseMap.clear();
-        for (Map.Entry<Integer, T> entry : oldMap.entrySet()) {
-            Integer id = entry.getKey();
-            T de = entry.getValue();
-            if (mapFromTo.containsKey(id)) {
-                baseMap.put(mapFromTo.get(id), de);
-            } else {
-                baseMap.put(id, de);
-            }
-        }
-    }
-
-    public static <T> void remapIdsInMapReversed(Map<Integer, Integer> mapFromTo, Map<T,Integer> baseMap) {
-        Map<T,Integer> oldMap = new HashMap<T,Integer>(baseMap);
-        baseMap.clear();
-        for (Map.Entry<T, Integer> entry : oldMap.entrySet()) {
-            Integer id = entry.getValue();
-            T de = entry.getKey();
-            if (mapFromTo.containsKey(id)) {
-                baseMap.put(de, mapFromTo.get(id));
-            } else {
-                baseMap.put(de, id);
-            }
-        }
-    }
-
-    public static void remapIdsInSet(Map<Integer, Integer> mapFromTo, Set<Integer> baseSet) {
-        Set<Integer> oldSet = new HashSet<Integer>(baseSet);
-        baseSet.clear();
-        for (Integer id : oldSet) {
-            if (mapFromTo.containsKey(id)) {
-                baseSet.add(mapFromTo.get(id));
-            } else {
-                baseSet.add(id);
-            }
-        }
-    }
-
-    public static void remapIdsInList(Map<Integer, Integer> mapFromTo, List<Integer> baseList) {
-        List<Integer> oldList = new ArrayList<Integer>(baseList);
-        baseList.clear();
-        for (Integer id : oldList) {
-            if (mapFromTo.containsKey(id)) {
-                baseList.add(mapFromTo.get(id));
-            } else {
-                baseList.add(id);
-            }
-        }
     }
 
     public void save(World world) {
@@ -114,41 +61,70 @@ public class DimletMapping extends WorldSavedData {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-
+        idToDimlet.clear();
+        dimletToID.clear();
+        int[] ids = tagCompound.getIntArray("ids");
+        int[] types = tagCompound.getIntArray("types");
+        for (int i = 0 ; i < ids.length ; i++) {
+            String s = tagCompound.getString("n" + i);
+            idToDimlet.put(ids[i], new DimletKey(DimletType.values()[types[i]], s));
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
-
+        int[] ids = new int[idToDimlet.size()];
+        int[] types = new int[idToDimlet.size()];
+        int idx = 0;
+        for (Map.Entry<Integer, DimletKey> entry : idToDimlet.entrySet()) {
+            ids[idx] = entry.getKey();
+            types[idx] = entry.getValue().getType().ordinal();
+            tagCompound.setString("n" + idx, entry.getValue().getName());
+            idx++;
+        }
+        tagCompound.setIntArray("ids", ids);
+        tagCompound.setIntArray("types", types);
     }
 
-    public void remapIds(Map<Integer, Integer> mapFromTo) {
-        remapIdsInMap(mapFromTo, idToDimlet);
-        remapIdsInMapReversed(mapFromTo, dimletToID);
-    }
-
-    public void registerDimletEntry(int id, DimletEntry dimletEntry) {
-        idToDimlet.put(id, dimletEntry);
-        dimletToID.put(dimletEntry.getKey(), id);
+    public void registerDimletKey(int id, DimletKey key) {
+        idToDimlet.put(id, key);
+        dimletToID.put(key, id);
     }
 
     public int getId(DimletType type, String name) {
         return dimletToID.get(new DimletKey(type, name));
     }
 
-    public int getId(DimletKey key) {
+    public Integer getId(DimletKey key) {
         return dimletToID.get(key);
     }
 
-    public DimletEntry getEntry(int id) {
+    public DimletKey getKey(int id) {
         return idToDimlet.get(id);
     }
 
-    public Set<Map.Entry<Integer, DimletEntry>> getEntries() {
+    public void removeId(int id) {
+        DimletKey key = idToDimlet.get(id);
+        if (key != null) {
+            idToDimlet.remove(key);
+        }
+        idToDimlet.remove(id);
+    }
+
+    public Set<Map.Entry<Integer, DimletKey>> getEntries() {
         return idToDimlet.entrySet();
     }
 
     public Set<Integer> getKeys() {
         return idToDimlet.keySet();
+    }
+
+    public void overrideServerMapping(Map<Integer, DimletKey> dimlets) {
+        idToDimlet.clear();
+        dimletToID.clear();
+        for (Map.Entry<Integer, DimletKey> entry : dimlets.entrySet()) {
+            idToDimlet.put(entry.getKey(), entry.getValue());
+            dimletToID.put(entry.getValue(), entry.getKey());
+        }
     }
 }
