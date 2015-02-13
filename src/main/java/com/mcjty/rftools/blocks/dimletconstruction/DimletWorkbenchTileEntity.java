@@ -309,7 +309,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     private int findBiomeDimlet(NBTTagCompound essenceCompound) {
         int biomeID = essenceCompound.getInteger("biome");
-        for (Map.Entry<Integer, BiomeGenBase> entry : DimletMapping.idToBiome.entrySet()) {
+        for (Map.Entry<Integer, BiomeGenBase> entry : DimletObjectMapping.idToBiome.entrySet()) {
             if (entry.getValue().biomeID == biomeID) {
                 return entry.getKey();
             }
@@ -319,7 +319,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     private int findMaterialDimlet(NBTTagCompound essenceCompound) {
         int blockID = essenceCompound.getInteger("block");
-        for (Map.Entry<Integer, BlockMeta> entry : DimletMapping.idToBlock.entrySet()) {
+        for (Map.Entry<Integer, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
             if (entry.getValue() != null) {
                 int id = Block.blockRegistry.getIDForObject(entry.getValue().getBlock());
                 if (blockID == id) {
@@ -332,7 +332,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
     private int findLiquidDimlet(NBTTagCompound essenceCompound) {
         int blockID = essenceCompound.getInteger("liquid");
-        for (Map.Entry<Integer, Block> entry : DimletMapping.idToFluid.entrySet()) {
+        for (Map.Entry<Integer, Block> entry : DimletObjectMapping.idToFluid.entrySet()) {
             if (entry.getValue() != null) {
                 int id = Block.blockRegistry.getIDForObject(entry.getValue());
                 if (blockID == id) {

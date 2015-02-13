@@ -143,21 +143,21 @@ public class KnownDimletConfiguration {
         remapIdsInSet(mapFromTo, craftableDimlets);
         remapIdsInMap(mapFromTo, idToExtraInformation);
 
-        remapIdsInMap(mapFromTo, DimletMapping.idToTerrainType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToSpecialType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToFeatureType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToControllerType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToEffectType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToStructureType);
-        remapIdsInMap(mapFromTo, DimletMapping.idToBiome);
-        remapIdsInMap(mapFromTo, DimletMapping.idToDigit);
-        remapIdsInMap(mapFromTo, DimletMapping.idToBlock);
-        remapIdsInMap(mapFromTo, DimletMapping.idToFluid);
-        remapIdsInMap(mapFromTo, DimletMapping.idToSkyDescriptor);
-        remapIdsInMap(mapFromTo, DimletMapping.idtoMob);
-        remapIdsInMap(mapFromTo, DimletMapping.idToCelestialAngle);
-        remapIdsInMap(mapFromTo, DimletMapping.idToSpeed);
-        remapIdsInSet(mapFromTo, DimletMapping.celestialBodies);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToTerrainType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToSpecialType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToFeatureType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToControllerType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToEffectType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToStructureType);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToBiome);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToDigit);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToBlock);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToFluid);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToSkyDescriptor);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idtoMob);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToCelestialAngle);
+        remapIdsInMap(mapFromTo, DimletObjectMapping.idToSpeed);
+        remapIdsInSet(mapFromTo, DimletObjectMapping.celestialBodies);
 
         remapIdsInList(mapFromTo, DimletRandomizer.dimletIds);
         if (DimletRandomizer.randomDimlets != null) {
@@ -272,7 +272,7 @@ public class KnownDimletConfiguration {
         dimletBlackList.clear();
         dimletRandomNotAllowed.clear();
 
-        DimletMapping.clean();
+        DimletObjectMapping.clean();
         DimletRandomizer.clean();
     }
 
@@ -331,7 +331,7 @@ public class KnownDimletConfiguration {
 
         int idMaterialNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_MATERIAL, "None"));
         idToDisplayName.put(idMaterialNone, DimletType.DIMLET_MATERIAL.getName() + " None Dimlet");
-        DimletMapping.idToBlock.put(idMaterialNone, null);
+        DimletObjectMapping.idToBlock.put(idMaterialNone, null);
         addExtraInformation(idMaterialNone, "Use this material none dimlet to get normal", "biome specific stone generation");
 
         initMaterialItem(cfg, mainCfg, idsInConfig, Blocks.diamond_block, 0);
@@ -376,7 +376,7 @@ public class KnownDimletConfiguration {
         initFoliageItem(cfg, mainCfg, idsInConfig);
 
         int idLiquidNone = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, "None"));
-        DimletMapping.idToFluid.put(idLiquidNone, null);
+        DimletObjectMapping.idToFluid.put(idLiquidNone, null);
         idToDisplayName.put(idLiquidNone, DimletType.DIMLET_LIQUID.getName() + " None Dimlet");
         addExtraInformation(idLiquidNone, "Use this liquid none dimlet to get normal", "water generation");
 
@@ -694,7 +694,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_DIGIT, "" + digit));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_DIGIT.getName() + " " + digit + " Dimlet");
-            DimletMapping.idToDigit.put(id, String.valueOf(digit));
+            DimletObjectMapping.idToDigit.put(id, String.valueOf(digit));
         }
         return id;
     }
@@ -708,7 +708,7 @@ public class KnownDimletConfiguration {
         if (id != -1) {
             ItemStack stack = new ItemStack(block, 1, meta);
             idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
-            DimletMapping.idToBlock.put(id, new BlockMeta(block, (byte)meta));
+            DimletObjectMapping.idToBlock.put(id, new BlockMeta(block, (byte)meta));
         }
         return id;
     }
@@ -830,7 +830,7 @@ public class KnownDimletConfiguration {
     private static int initControllerItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, ControllerType type) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_CONTROLLER, name));
         if (id != -1) {
-            DimletMapping.idToControllerType.put(id, type);
+            DimletObjectMapping.idToControllerType.put(id, type);
             idToDisplayName.put(id, DimletType.DIMLET_CONTROLLER.getName() + " " + name + " Dimlet");
         }
         return -1;
@@ -843,7 +843,7 @@ public class KnownDimletConfiguration {
                 String name = biome.biomeName;
                 int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_BIOME, name));
                 if (id != -1) {
-                    DimletMapping.idToBiome.put(id, biome);
+                    DimletObjectMapping.idToBiome.put(id, biome);
                     idToDisplayName.put(id, DimletType.DIMLET_BIOME.getName() + " " + name + " Dimlet");
                 }
             }
@@ -865,7 +865,7 @@ public class KnownDimletConfiguration {
                     String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
                     int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_LIQUID, me.getKey()));
                     if (id != -1) {
-                        DimletMapping.idToFluid.put(id, me.getValue().getBlock());
+                        DimletObjectMapping.idToFluid.put(id, me.getValue().getBlock());
                         idToDisplayName.put(id, DimletType.DIMLET_LIQUID.getName() + " " + displayName + " Dimlet");
                     }
                 } catch (Exception e) {
@@ -880,7 +880,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_SPECIAL, name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_SPECIAL.getName() + " " + name + " Dimlet");
-            DimletMapping.idToSpecialType.put(id, specialType);
+            DimletObjectMapping.idToSpecialType.put(id, specialType);
         }
         return id;
     }
@@ -894,7 +894,7 @@ public class KnownDimletConfiguration {
             mingroup = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
             maxgroup = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
             maxentity = mainCfg.get(CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
-            DimletMapping.idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
+            DimletObjectMapping.idtoMob.put(id, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
         }
         return id;
     }
@@ -902,10 +902,10 @@ public class KnownDimletConfiguration {
     private static int initSkyItem(Configuration cfg, Configuration mainCfg, Map<DimletKey, Integer> idsInConfig, String name, SkyDescriptor skyDescriptor, boolean isbody) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_SKY, name));
         if (id != -1) {
-            DimletMapping.idToSkyDescriptor.put(id, skyDescriptor);
+            DimletObjectMapping.idToSkyDescriptor.put(id, skyDescriptor);
             idToDisplayName.put(id, DimletType.DIMLET_SKY.getName() + " " + name + " Dimlet");
             if (isbody) {
-                DimletMapping.celestialBodies.add(id);
+                DimletObjectMapping.celestialBodies.add(id);
             }
         }
         return id;
@@ -914,7 +914,7 @@ public class KnownDimletConfiguration {
     private static int initStructureItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, StructureType structureType) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_STRUCTURE, name));
         if (id != -1) {
-            DimletMapping.idToStructureType.put(id, structureType);
+            DimletObjectMapping.idToStructureType.put(id, structureType);
             idToDisplayName.put(id, DimletType.DIMLET_STRUCTURE.getName() + " " + name + " Dimlet");
         }
         return id;
@@ -923,7 +923,7 @@ public class KnownDimletConfiguration {
     private static int initTerrainItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, TerrainType terrainType) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_TERRAIN, name));
         if (id != -1) {
-            DimletMapping.idToTerrainType.put(id, terrainType);
+            DimletObjectMapping.idToTerrainType.put(id, terrainType);
             idToDisplayName.put(id, DimletType.DIMLET_TERRAIN.getName() + " " + name + " Dimlet");
         }
         return id;
@@ -933,7 +933,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_EFFECT, "" + name));
         if (id != -1) {
             idToDisplayName.put(id, DimletType.DIMLET_EFFECT.getName() + " " + name + " Dimlet");
-            DimletMapping.idToEffectType.put(id, effectType);
+            DimletObjectMapping.idToEffectType.put(id, effectType);
         }
         return id;
     }
@@ -941,7 +941,7 @@ public class KnownDimletConfiguration {
     private static int initFeatureItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, FeatureType featureType) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_FEATURE, name));
         if (id != -1) {
-            DimletMapping.idToFeatureType.put(id, featureType);
+            DimletObjectMapping.idToFeatureType.put(id, featureType);
             idToDisplayName.put(id, DimletType.DIMLET_FEATURE.getName() + " " + name + " Dimlet");
         }
         return id;
@@ -950,8 +950,8 @@ public class KnownDimletConfiguration {
     private static int initTimeItem(Configuration cfg, Configuration mainCfg, Map<DimletKey,Integer> idsInConfig, String name, Float angle, Float speed) {
         int id = registerDimlet(cfg, mainCfg, idsInConfig, new DimletKey(DimletType.DIMLET_TIME, name));
         if (id != -1) {
-            DimletMapping.idToCelestialAngle.put(id, angle);
-            DimletMapping.idToSpeed.put(id, speed);
+            DimletObjectMapping.idToCelestialAngle.put(id, angle);
+            DimletObjectMapping.idToSpeed.put(id, speed);
             idToDisplayName.put(id, DimletType.DIMLET_TIME.getName() + " " + name + " Dimlet");
         }
         return id;

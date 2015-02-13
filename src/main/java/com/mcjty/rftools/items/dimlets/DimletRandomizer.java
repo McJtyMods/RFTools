@@ -95,33 +95,33 @@ public class DimletRandomizer {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
             if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
                 // Don't add the 'null' material.
-                if (DimletMapping.idToBlock.get(entry.getKey()) != null) {
+                if (DimletObjectMapping.idToBlock.get(entry.getKey()) != null) {
                     randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
                 // Don't add the 'null' fluid.
-                if (DimletMapping.idToFluid.get(entry.getKey()) != null) {
+                if (DimletObjectMapping.idToFluid.get(entry.getKey()) != null) {
                     randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_MOBS) {
                 // Don't add the 'null' mob.
-                MobDescriptor descriptor = DimletMapping.idtoMob.get(entry.getKey());
+                MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(entry.getKey());
                 if (descriptor != null && descriptor.getEntityClass() != null) {
                     randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_EFFECT) {
                 // Don't add the 'null' effect.
-                if (DimletMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
+                if (DimletObjectMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
                     randomEffectDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_FEATURE) {
                 // Don't add the 'null' feature.
-                if (DimletMapping.idToFeatureType.get(entry.getKey()) != FeatureType.FEATURE_NONE) {
+                if (DimletObjectMapping.idToFeatureType.get(entry.getKey()) != FeatureType.FEATURE_NONE) {
                     randomFeatureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_STRUCTURE) {
                 // Don't add the 'null' structure.
-                if (DimletMapping.idToStructureType.get(entry.getKey()) != StructureType.STRUCTURE_NONE) {
+                if (DimletObjectMapping.idToStructureType.get(entry.getKey()) != StructureType.STRUCTURE_NONE) {
                     randomStructureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             }
@@ -227,7 +227,7 @@ public class DimletRandomizer {
         Random random = new Random();
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
 
-        for (Integer id : DimletMapping.idToBlock.keySet()) {
+        for (Integer id : DimletObjectMapping.idToBlock.keySet()) {
             counter.put(id, 0);
         }
 

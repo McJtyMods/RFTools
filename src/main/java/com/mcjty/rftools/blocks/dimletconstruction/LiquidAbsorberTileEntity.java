@@ -1,8 +1,7 @@
 package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.entity.GenericTileEntity;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
-import com.mcjty.varia.BlockMeta;
+import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -138,7 +137,7 @@ public class LiquidAbsorberTileEntity extends GenericTileEntity {
 
     private boolean isValidDimletLiquid(Block block) {
         boolean ok = false;
-        for (Map.Entry<Integer, Block> entry : DimletMapping.idToFluid.entrySet()) {
+        for (Map.Entry<Integer, Block> entry : DimletObjectMapping.idToFluid.entrySet()) {
             if (entry.getValue() == block) {
                 ok = true;
                 break;

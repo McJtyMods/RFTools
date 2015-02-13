@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DimletMapping {
+public class DimletObjectMapping {
     public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
     public static final Map<Integer,SpecialType> idToSpecialType = new HashMap<Integer, SpecialType>();
     public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();

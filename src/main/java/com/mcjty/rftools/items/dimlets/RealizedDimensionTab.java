@@ -111,7 +111,7 @@ public class RealizedDimensionTab extends Item {
                 if (type == DimletType.DIMLET_DIGIT) {
                     String digitString = "";
                     for (int id : ids) {
-                        digitString += DimletMapping.idToDigit.get(id);
+                        digitString += DimletObjectMapping.idToDigit.get(id);
                     }
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {

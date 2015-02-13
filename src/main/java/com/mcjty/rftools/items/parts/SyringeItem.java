@@ -89,7 +89,7 @@ public class SyringeItem extends Item {
     }
 
     private String findSelectedMobName(Entity entity) {
-        for (Map.Entry<Integer, MobDescriptor> entry : DimletMapping.idtoMob.entrySet()) {
+        for (Map.Entry<Integer, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
                 int id = entry.getKey();
