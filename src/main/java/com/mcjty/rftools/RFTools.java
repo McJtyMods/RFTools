@@ -9,6 +9,7 @@ import com.mcjty.rftools.dimension.ModDimensions;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletDropsEvent;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.network.DimensionSyncChannelHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -176,6 +177,7 @@ public class RFTools {
         TeleportDestinations.clearInstance();
         RfToolsDimensionManager.clearInstance();
         DimensionStorage.clearInstance();
+        DimletMapping.clearInstance();
     }
 
     /**

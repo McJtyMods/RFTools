@@ -3,7 +3,8 @@ package com.mcjty.rftools.items.parts;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
-import com.mcjty.rftools.items.dimlets.*;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
+import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -89,11 +90,12 @@ public class SyringeItem extends Item {
     }
 
     private String findSelectedMobName(Entity entity) {
+        DimletMapping mapping = DimletMapping.getDimletMapping(entity.worldObj);
         for (Map.Entry<Integer, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
                 int id = entry.getKey();
-                return KnownDimletConfiguration.idToDimlet.get(id).getKey().getName();
+                return mapping.getEntry(id).getKey().getName();
             }
         }
         return null;

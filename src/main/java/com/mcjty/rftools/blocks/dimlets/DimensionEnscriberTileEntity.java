@@ -2,11 +2,11 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
-import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -183,16 +183,18 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     private DimensionDescriptor convertToDimensionDescriptor() {
         List<DimensionDescriptor.DimletDescriptor> descriptors = new ArrayList<DimensionDescriptor.DimletDescriptor>();
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
                 int dimletId = stack.getItemDamage();
-                DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(dimletId);
+                DimletEntry entry = mapping.getEntry(dimletId);
                 descriptors.add(new DimensionDescriptor.DimletDescriptor(entry.getKey().getType(), dimletId));
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }
-        return new DimensionDescriptor(descriptors);
+        return new DimensionDescriptor(descriptors, worldObj);
     }
 
     private void extractDimlets() {

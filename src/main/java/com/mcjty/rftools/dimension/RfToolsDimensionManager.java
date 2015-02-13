@@ -7,6 +7,7 @@ import com.mcjty.rftools.dimension.network.PacketSyncDimensionInfo;
 import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletKey;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRegisterDimensions;
@@ -105,17 +106,18 @@ public class RfToolsDimensionManager extends WorldSavedData {
         if (!player.getEntityWorld().isRemote) {
             // Send over dimlet configuration to the client so that the client can check that the id's match.
             RFTools.log("Send validation data to the client");
+            DimletMapping mapping = DimletMapping.getDimletMapping(player.getEntityWorld());
             Map<Integer, DimletKey> dimlets = new HashMap<Integer, DimletKey>();
-            for (Integer id : KnownDimletConfiguration.idToDimlet.keySet()) {
-                dimlets.put(id, KnownDimletConfiguration.idToDimlet.get(id).getKey());
+            for (Integer id : mapping.getKeys()) {
+                dimlets.put(id, mapping.getEntry(id).getKey());
             }
 
             PacketHandler.INSTANCE.sendTo(new PacketCheckDimletConfig(dimlets), (EntityPlayerMP) player);
         }
     }
 
-    private Integer findClientDimletId(DimletKey key) {
-        for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
+    private Integer findClientDimletId(DimletKey key, DimletMapping mapping) {
+        for (Map.Entry<Integer, DimletEntry> entry : mapping.getEntries()) {
             if (entry.getValue().getKey().equals(key)) {
                 return entry.getKey();
             }
@@ -126,19 +128,20 @@ public class RfToolsDimensionManager extends WorldSavedData {
     /**
      * Here the information from the server arrives. This code is executed on the client.
      */
-    public void checkDimletConfigFromServer(Map<Integer, DimletKey> dimlets) {
+    public void checkDimletConfigFromServer(Map<Integer, DimletKey> dimlets, World world) {
         if (!KnownDimletConfiguration.isInitialized()) {
-            KnownDimletConfiguration.init();
+            KnownDimletConfiguration.initClient(world);
         }
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
         Map<Integer,Integer> mapFromTo = new HashMap<Integer, Integer>();
 
         for (Map.Entry<Integer, DimletKey> entry : dimlets.entrySet()) {
             Integer id = entry.getKey();
             DimletKey key = entry.getValue();
-            DimletEntry clientEntry = KnownDimletConfiguration.idToDimlet.get(id);
+            DimletEntry clientEntry = mapping.getEntry(id);
             if (clientEntry == null || !clientEntry.getKey().equals(key)) {
-                Integer clientId = findClientDimletId(key);
+                Integer clientId = findClientDimletId(key, mapping);
                 if (clientId == null) {
                     // Serious error. This dimlet is completely missing on the client.
                     RFTools.logError("Dimlet id " + id + " (" + key.getName() + ") is missing on the client!");
@@ -247,7 +250,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
 
-        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world.getSeed());
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world);
         dimensionInformation.put(id, dimensionInfo);
 
         save(world);

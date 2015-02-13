@@ -7,8 +7,8 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.dimlets.DimletCosts;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -46,9 +46,11 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
         ItemStack dimensionItemStack = validateDimensionItemStack();
         if (dimensionItemStack == null) return;
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletEntry dimletEntry = KnownDimletConfiguration.idToDimlet.get(dimletItemStack.getItemDamage());
+            DimletEntry dimletEntry = mapping.getEntry(dimletItemStack.getItemDamage());
             ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
             ticksLeft = ticksCost;
             rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
@@ -73,7 +75,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                     int dimletId = dimletStack.getItemDamage();
 
                     DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    information.injectDimlet(dimletId);
+                    information.injectDimlet(dimletId, mapping);
                     dimensionManager.save(worldObj);
 
                     inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_DIMLETINPUT, 1);
@@ -94,7 +96,8 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             return null;
         }
 
-        DimletType type = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage()).getKey().getType();
+        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+        DimletType type = mapping.getEntry(itemStack.getItemDamage()).getKey().getType();
         switch (type) {
             case DIMLET_MOBS:
             case DIMLET_SKY:

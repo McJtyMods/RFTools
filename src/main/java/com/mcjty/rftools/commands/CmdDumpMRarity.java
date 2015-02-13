@@ -16,7 +16,7 @@ public class CmdDumpMRarity extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        DimletRandomizer.dumpMaterialRarityDistribution();
+        DimletRandomizer.dumpMaterialRarityDistribution(sender.getEntityWorld());
     }
 
     @Override

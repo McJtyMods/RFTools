@@ -6,6 +6,7 @@ import com.mcjty.rftools.dimension.world.types.EffectType;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.varia.WeightedRandomSelector;
+import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -67,7 +68,7 @@ public class DimletRandomizer {
         randomFeatureDimlets = null;
     }
 
-    static void setupWeightedRandomList(Configuration cfg) {
+    static void setupWeightedRandomList(Configuration cfg, DimletMapping mapping) {
         float rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 500.0f).getDouble();
         float rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 250.0f).getDouble();
         float rarity2 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level2", 150.0f).getDouble();
@@ -91,7 +92,7 @@ public class DimletRandomizer {
         randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
         setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
 
-        for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimlet.entrySet()) {
+        for (Map.Entry<Integer, DimletEntry> entry : mapping.getEntries()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
             if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
                 // Don't add the 'null' material.
@@ -132,25 +133,25 @@ public class DimletRandomizer {
         return randomMobDimlets.select(random);
     }
 
-    public static int getRandomEffect(Random random, boolean allowRandom) {
+    public static int getRandomEffect(Random random, boolean allowRandom, DimletMapping mapping) {
         Integer id = randomEffectDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
             id = randomEffectDimlets.select(random);
         }
         return id;
     }
 
-    public static int getRandomFeature(Random random, boolean allowRandom) {
+    public static int getRandomFeature(Random random, boolean allowRandom, DimletMapping mapping) {
         Integer id = randomFeatureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
             id = randomFeatureDimlets.select(random);
         }
         return id;
     }
 
-    public static int getRandomStructure(Random random, boolean allowRandom) {
+    public static int getRandomStructure(Random random, boolean allowRandom, DimletMapping mapping) {
         Integer id = randomStructureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
             id = randomStructureDimlets.select(random);
         }
         return id;
@@ -160,9 +161,9 @@ public class DimletRandomizer {
         return randomLiquidDimlets.select(random);
     }
 
-    public static int getRandomMaterialBlock(Random random, boolean allowRandom) {
+    public static int getRandomMaterialBlock(Random random, boolean allowRandom, DimletMapping mapping) {
         Integer id = randomMaterialDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.idToDimlet.get(id).isRandomNotAllowed()) {
+        while ((!allowRandom) && mapping.getEntry(id).isRandomNotAllowed()) {
             id = randomMaterialDimlets.select(random);
         }
         return id;
@@ -193,7 +194,7 @@ public class DimletRandomizer {
         return randomDimlets.select(distribution, random);
     }
 
-    public static void dumpRarityDistribution(float bonus) {
+    public static void dumpRarityDistribution(float bonus, World world) {
         Random random = new Random();
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
         WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
@@ -215,15 +216,16 @@ public class DimletRandomizer {
         }
         Collections.sort(sortedCounters);
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
         for (Pair<Integer, Integer> entry : sortedCounters) {
             int count = entry.getKey();
             int id = entry.getValue();
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + KnownDimletConfiguration.idToDimlet.get(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + mapping.getEntry(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 
-    public static void dumpMaterialRarityDistribution() {
+    public static void dumpMaterialRarityDistribution(World world) {
         Random random = new Random();
         Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
 
@@ -244,11 +246,12 @@ public class DimletRandomizer {
         }
         Collections.sort(sortedCounters);
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
         for (Pair<Integer, Integer> entry : sortedCounters) {
             int count = entry.getKey();
             int id = entry.getValue();
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + KnownDimletConfiguration.idToDimlet.get(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + mapping.getEntry(id).getKey().getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 }

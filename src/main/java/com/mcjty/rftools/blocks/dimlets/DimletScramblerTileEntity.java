@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
@@ -102,9 +103,10 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             input[2] = null;
         }
 
-        int rarity1 = KnownDimletConfiguration.idToDimlet.get(id1).getRarity();
-        int rarity2 = KnownDimletConfiguration.idToDimlet.get(id2).getRarity();
-        int rarity3 = KnownDimletConfiguration.idToDimlet.get(id3).getRarity();
+        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+        int rarity1 = mapping.getEntry(id1).getRarity();
+        int rarity2 = mapping.getEntry(id2).getRarity();
+        int rarity3 = mapping.getEntry(id3).getRarity();
         float b = (rarity1 + rarity2 + rarity3) / 3.0f;
         bonus = (b / 50.0f) * (getInfusedFactor() / 3.0f + 1.0f);  // An average of rarity 5 will give the best bonus which is 0.1
 

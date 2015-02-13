@@ -13,7 +13,9 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import org.lwjgl.input.Keyboard;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
@@ -36,7 +38,8 @@ public class KnownDimlet extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(itemStack.getItemDamage());
+        DimletMapping mapping = DimletMapping.getDimletMapping(player.worldObj);
+        DimletEntry entry = mapping.getEntry(itemStack.getItemDamage());
         if (entry == null) {
             // Safety. Should not occur.
             list.add(EnumChatFormatting.RED + "Something is wrong!");
@@ -57,7 +60,7 @@ public class KnownDimlet extends Item {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
             }
-            List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(KnownDimletConfiguration.dimletToID.get(entry.getKey()));
+            List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(mapping.getId(entry.getKey()));
             if (extra != null) {
                 for (String info : extra) {
                     list.add(EnumChatFormatting.YELLOW + info);
@@ -70,7 +73,7 @@ public class KnownDimlet extends Item {
 
     @Override
     public IIcon getIconFromDamage(int damage) {
-        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(damage);
+        DimletEntry entry = DimletMapping.getInstance().getEntry(damage);
         if (entry == null) {
             // Safety. Should not occur.
             return null;
@@ -91,7 +94,7 @@ public class KnownDimlet extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (Map.Entry<Integer,DimletEntry> me : KnownDimletConfiguration.idToDimlet.entrySet()) {
+        for (Map.Entry<Integer,DimletEntry> me : DimletMapping.getInstance().getEntries()) {
             list.add(new ItemStack(ModItems.knownDimlet, 1, me.getKey()));
         }
     }

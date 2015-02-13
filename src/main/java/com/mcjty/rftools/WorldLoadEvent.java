@@ -3,7 +3,6 @@ package com.mcjty.rftools;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -14,14 +13,14 @@ public class WorldLoadEvent {
         if (evt.world.isRemote) {
             if (!KnownDimletConfiguration.isInitialized()) {
                 RFTools.log("Clientside World Load Event: initialize dimlets");
-                KnownDimletConfiguration.init();
-                KnownDimletConfiguration.initCrafting();
+                KnownDimletConfiguration.initClient(evt.world);
+                KnownDimletConfiguration.initCrafting(evt.world);
             }
         } else if (MinecraftServer.getServer().isDedicatedServer()) {
             if (evt.world.provider.dimensionId == 0 && !KnownDimletConfiguration.isInitialized()) {
                 RFTools.log("Serverside World Load Event: initialize dimlets");
-                KnownDimletConfiguration.init();
-                KnownDimletConfiguration.initCrafting();
+                KnownDimletConfiguration.initServer(evt.world);
+                KnownDimletConfiguration.initCrafting(evt.world);
             }
         }
     }

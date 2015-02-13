@@ -3,9 +3,10 @@ package com.mcjty.rftools.dimension.description;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.items.dimlets.DimletCosts;
 import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class DimensionDescriptor {
     private final int rfMaintainCost;
     private final int tickCost;
 
-    public DimensionDescriptor(List<DimletDescriptor> descriptors) {
+    public DimensionDescriptor(List<DimletDescriptor> descriptors, World world) {
         StringBuilder s = new StringBuilder();
 
         // List of all non-modifier dimlets with all associated modifiers.
@@ -31,16 +32,17 @@ public class DimensionDescriptor {
         List<DimletDescriptor> currentModifiers = new ArrayList<DimletDescriptor>();
 
         groupDimletsAndModifiers(descriptors, dimlets, currentModifiers);
-        constructDescriptionString(s, dimlets, currentModifiers);
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
+        constructDescriptionString(s, dimlets, currentModifiers, mapping);
 
         descriptionString = s.toString();
 
-        tickCost = calculateTickCost(dimlets);
-        rfCreateCost = calculateCreationRfCost(dimlets, currentModifiers, tickCost);
-        rfMaintainCost = calculateMaintenanceRfCost(dimlets);
+        tickCost = calculateTickCost(dimlets, mapping);
+        rfCreateCost = calculateCreationRfCost(dimlets, currentModifiers, tickCost, mapping);
+        rfMaintainCost = calculateMaintenanceRfCost(dimlets, mapping);
     }
 
-    private void constructDescriptionString(StringBuilder s, List<Pair<Integer,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> currentModifiers) {
+    private void constructDescriptionString(StringBuilder s, List<Pair<Integer,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> currentModifiers, DimletMapping mapping) {
         for (Pair<Integer, List<DimletDescriptor>> dimletWithModifiers : dimlets) {
             int id = dimletWithModifiers.getLeft();
             List<DimletDescriptor> mods = dimletWithModifiers.getRight();
@@ -55,7 +57,7 @@ public class DimensionDescriptor {
             if (s.length() > 0) {
                 s.append(',');
             }
-            s.append(KnownDimletConfiguration.idToDimlet.get(id).getKey().getType().getOpcode()).append(id);
+            s.append(mapping.getEntry(id).getKey().getType().getOpcode()).append(id);
         }
 
         // Now add all unused modifiers to the end.
@@ -217,9 +219,9 @@ public class DimensionDescriptor {
         return multiplier;
     }
 
-    private int getCreationCost(DimletType type, int id) {
+    private int getCreationCost(DimletType type, int id, DimletMapping mapping) {
         int cost = 0;
-        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        DimletEntry entry = mapping.getEntry(id);
         if (entry != null) {
             cost = entry.getRfCreateCost();
             if (cost == -1) {
@@ -229,26 +231,26 @@ public class DimensionDescriptor {
         return cost;
     }
 
-    private int calculateCreationRfCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> unusedModifiers, int tickCost) {
+    private int calculateCreationRfCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> unusedModifiers, int tickCost, DimletMapping mapping) {
         int rf = DimletCosts.baseDimensionCreationCost;
 
         for (Pair<Integer, List<DimletDescriptor>> dimletWithModifier : dimlets) {
             int id = dimletWithModifier.getLeft();
-            DimletType type = KnownDimletConfiguration.idToDimlet.get(id).getKey().getType();
+            DimletType type = mapping.getEntry(id).getKey().getType();
 
             List<DimletDescriptor> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletDescriptor modifier : list) {
                     int mult = getModifierMultiplier(DimletCosts.rfCreateModifierMultiplier, modifier.getType(), type);
-                    rf += getCreationCost(modifier.getType(), modifier.getId()) * mult;
+                    rf += getCreationCost(modifier.getType(), modifier.getId(), mapping) * mult;
                 }
             }
 
-            rf += getCreationCost(type, id);
+            rf += getCreationCost(type, id, mapping);
         }
 
         for (DimletDescriptor modifier : unusedModifiers) {
-            rf += getCreationCost(modifier.getType(), modifier.getId());
+            rf += getCreationCost(modifier.getType(), modifier.getId(), mapping);
         }
 
         // Compensate createCost for the cost to fill the matter receiver at the destination end.
@@ -257,9 +259,9 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int getMaintenanceCost(DimletType type, int id) {
+    private int getMaintenanceCost(DimletType type, int id, DimletMapping mapping) {
         int cost = 0;
-        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        DimletEntry entry = mapping.getEntry(id);
         if (entry != null) {
             cost = entry.getRfMaintainCost();
             if (cost == -1) {
@@ -269,23 +271,23 @@ public class DimensionDescriptor {
         return cost;
     }
 
-    private int calculateMaintenanceRfCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets) {
+    private int calculateMaintenanceRfCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets, DimletMapping mapping) {
         int rf = DimletCosts.baseDimensionMaintenanceCost;
         int rfGain = 0;
 
         for (Pair<Integer, List<DimletDescriptor>> dimletWithModifier : dimlets) {
             int id = dimletWithModifier.getLeft();
-            DimletType type = KnownDimletConfiguration.idToDimlet.get(id).getKey().getType();
+            DimletType type = mapping.getEntry(id).getKey().getType();
 
             List<DimletDescriptor> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletDescriptor modifier : list) {
                     int mult = getModifierMultiplier(DimletCosts.rfMaintainModifierMultiplier, modifier.getType(), type);
-                    rf += getMaintenanceCost(modifier.getType(), modifier.getId()) * mult;
+                    rf += getMaintenanceCost(modifier.getType(), modifier.getId(), mapping) * mult;
                 }
             }
 
-            int c = getMaintenanceCost(type, id);
+            int c = getMaintenanceCost(type, id, mapping);
             if (c < 0) {
                 rfGain -= c;        // This dimlet gives a bonus in cost. This value is a percentage.
             } else {
@@ -303,9 +305,9 @@ public class DimensionDescriptor {
         return rf;
     }
 
-    private int getTickCost(DimletType type, int id) {
+    private int getTickCost(DimletType type, int id, DimletMapping mapping) {
         int cost = 0;
-        DimletEntry entry = KnownDimletConfiguration.idToDimlet.get(id);
+        DimletEntry entry = mapping.getEntry(id);
         if (entry != null) {
             cost = entry.getTickCost();
             if (cost == -1) {
@@ -315,22 +317,22 @@ public class DimensionDescriptor {
         return cost;
     }
 
-    private int calculateTickCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets) {
+    private int calculateTickCost(List<Pair<Integer,List<DimletDescriptor>>> dimlets, DimletMapping mapping) {
         int ticks = DimletCosts.baseDimensionTickCost;
 
         for (Pair<Integer, List<DimletDescriptor>> dimletWithModifier : dimlets) {
             int id = dimletWithModifier.getLeft();
-            DimletType type = KnownDimletConfiguration.idToDimlet.get(id).getKey().getType();
+            DimletType type = mapping.getEntry(id).getKey().getType();
 
             List<DimletDescriptor> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletDescriptor modifier : list) {
                     int mult = getModifierMultiplier(DimletCosts.tickCostModifierMultiplier, modifier.getType(), type);
-                    ticks += getTickCost(modifier.getType(), modifier.getId()) * mult;
+                    ticks += getTickCost(modifier.getType(), modifier.getId(), mapping) * mult;
                 }
             }
 
-            ticks += getTickCost(type, id);
+            ticks += getTickCost(type, id, mapping);
         }
 
         return ticks;
