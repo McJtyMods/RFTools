@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,11 +36,21 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
     public AbstractShieldBlock() {
         super(Material.portal);
         setBlockUnbreakable();
+        setResistance(6000000.0F);
         setCreativeTab(RFTools.tabRfTools);
     }
 
     public IIcon[] getIcons() {
         return icons;
+    }
+
+    @Override
+    public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity entity) {
+        return false;
+    }
+
+    @Override
+    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion) {
     }
 
     @Override
