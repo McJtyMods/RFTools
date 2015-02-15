@@ -12,6 +12,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
+import java.util.Random;
 
 public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
@@ -51,6 +53,11 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onBlockExploded(World world, int x, int y, int z, Explosion explosion) {
+    }
+
+    @Override
+    public int quantityDropped(Random random) {
+        return 0;
     }
 
     @Override

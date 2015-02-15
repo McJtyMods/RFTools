@@ -4,13 +4,17 @@ import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Random;
 
 public class TeleportBeamBlock extends Block {
 
@@ -29,7 +33,23 @@ public class TeleportBeamBlock extends Block {
         super(Material.portal);
         setBlockName("teleportBeamBlock");
         setBlockUnbreakable();
+        setResistance(6000000.0F);
     }
+
+    @Override
+    public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity entity) {
+        return false;
+    }
+
+    @Override
+    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion) {
+    }
+
+    @Override
+    public int quantityDropped(Random random) {
+        return 0;
+    }
+
 
     @Override
     public boolean isOpaqueCube() {
