@@ -18,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -279,7 +280,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
         int te = 0;
 
         if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
-            Block block = Block.getBlockFromItem(stack.getItem());
+            if (!(stack.getItem() instanceof ItemBlock)) {
+                return new int[] { camoId, meta, te };
+            }
+            Block block = ((ItemBlock) stack.getItem()).field_150939_a;
             camoId = Block.getIdFromBlock(block);
             meta = stack.getItemDamage();
             if (block.hasTileEntity(meta)) {
