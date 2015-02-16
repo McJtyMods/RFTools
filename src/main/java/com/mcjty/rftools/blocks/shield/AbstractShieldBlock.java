@@ -8,6 +8,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
@@ -85,19 +86,19 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
                 return;
             }
         }
-        if (entity instanceof EntityItem) {
-            if ((cdData & META_ITEMS) != 0) {
-                if (checkEntityCD(world, x, y, z, ItemFilter.ITEM)) {
-                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
-                }
-                return;
-            }
-        }
         if ((cdData & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
                 if (checkPlayerCD(world, x, y, z, (EntityPlayer) entity)) {
                     super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
                 }
+            }
+        }
+        if ((cdData & META_ITEMS) != 0) {
+            if (!(entity instanceof EntityLivingBase)) {
+                if (checkEntityCD(world, x, y, z, ItemFilter.ITEM)) {
+                    super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+                }
+                return;
             }
         }
     }
@@ -149,7 +150,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        if (entity instanceof EntityItem) {
+        if (!(entity instanceof EntityLivingBase)) {
             ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) world.getTileEntity(x, y, z);
             int cdData = shieldBlockTileEntity.getCollisionData();
             if ((cdData & META_ITEMS) == 0) {
