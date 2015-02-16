@@ -22,9 +22,10 @@ public class SolidShieldBlockRenderer extends DefaultISBRH {
             renderShield(world, x, y, z, block, shieldBlockTileEntity);
         } else {
             try {
-                renderer.renderBlockByRenderType(camoBlock, x, y, z);
+                return renderer.renderBlockByRenderType(camoBlock, x, y, z);
             } catch (Exception e) {
                 // Ignore this error. Nothing is rendered  in this case.
+                return false;
             }
         }
         return true;
