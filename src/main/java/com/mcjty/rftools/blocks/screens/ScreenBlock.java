@@ -14,11 +14,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -171,15 +173,28 @@ public class ScreenBlock extends GenericContainerBlock {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
-        if (itemStack.getTagCompound() != null) {
-            boolean large = itemStack.getTagCompound().getBoolean("large");
-            boolean transparent = itemStack.getTagCompound().getBoolean("transparent");
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            boolean large = tagCompound.getBoolean("large");
+            boolean transparent = tagCompound.getBoolean("transparent");
             if (large) {
                 list.add(EnumChatFormatting.BLUE + "Large screen.");
             }
             if (transparent) {
                 list.add(EnumChatFormatting.BLUE + "Transparent screen.");
             }
+            int rc = 0;
+            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                NBTTagCompound tag = bufferTagList.getCompoundTagAt(i);
+                if (tag != null) {
+                    ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
+                    if (stack != null) {
+                        rc++;
+                    }
+                }
+            }
+            list.add(EnumChatFormatting.BLUE + String.valueOf(rc) + " modules");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
