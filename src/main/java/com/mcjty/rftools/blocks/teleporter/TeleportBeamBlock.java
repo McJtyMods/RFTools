@@ -50,6 +50,10 @@ public class TeleportBeamBlock extends Block {
         return 0;
     }
 
+    @Override
+    public int getMobilityFlag() {
+        return 2;
+    }
 
     @Override
     public boolean isOpaqueCube() {
