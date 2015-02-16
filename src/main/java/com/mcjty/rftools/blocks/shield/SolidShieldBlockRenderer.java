@@ -22,7 +22,13 @@ public class SolidShieldBlockRenderer extends DefaultISBRH {
             renderShield(world, x, y, z, block, shieldBlockTileEntity);
         } else {
             try {
-                return renderer.renderBlockByRenderType(camoBlock, x, y, z);
+                int addedVertices = TesseleratorAccessHelper.getAddedVertices(Tessellator.instance);
+                boolean rc = renderer.renderBlockByRenderType(camoBlock, x, y, z);
+                if (!rc) {
+                    return false;
+                }
+                int newAddedVertices = TesseleratorAccessHelper.getAddedVertices(Tessellator.instance);
+                return addedVertices != newAddedVertices;
             } catch (Exception e) {
                 // Ignore this error. Nothing is rendered  in this case.
                 return false;
