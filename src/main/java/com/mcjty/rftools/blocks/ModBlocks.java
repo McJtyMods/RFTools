@@ -237,11 +237,13 @@ public final class ModBlocks {
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
 
-        solidShieldBlock = new SolidShieldBlock();
-        GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
-        GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
-        shieldTemplateBlock = new ShieldTemplateBlock();
-        GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+            solidShieldBlock = new SolidShieldBlock();
+            GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
+            GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
+            shieldTemplateBlock = new ShieldTemplateBlock();
+            GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
+        }
     }
 
     private static void initLogicBlocks() {

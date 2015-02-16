@@ -21,6 +21,9 @@ public class ShieldConfiguration {
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 256;
 
+    // Set to true to temporarily remove the shield blocks to make your world loadable again.
+    public static boolean disableShieldBlocksToUncorruptWorld = false;
+
     public static void init(Configuration cfg) {
         MAXENERGY = cfg.get(CATEGORY_SHIELD, "shieldMaxRF", MAXENERGY,
                 "Maximum RF storage that the shield block can hold").getInt();
@@ -40,5 +43,7 @@ public class ShieldConfiguration {
                 "The amount of RF to consume for a single spike of damage for one entity (used in case of player-type damage)").getInt();
         damage = (float) cfg.get(CATEGORY_SHIELD, "shieldDamage", damage,
                 "The amount of damage to do for a single spike on one entity").getDouble();
+        disableShieldBlocksToUncorruptWorld = cfg.get(CATEGORY_SHIELD, "disableShieldBlocksToUncorruptWorld", disableShieldBlocksToUncorruptWorld,
+                "Set this to true if you have a corrupted world due to a bad camo block in the shield system. Load your world, remove the offending block from the shield, exit MC and then set this back to false").getBoolean();
     }
 }
