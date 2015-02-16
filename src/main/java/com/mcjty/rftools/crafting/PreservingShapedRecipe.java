@@ -1,6 +1,8 @@
 package com.mcjty.rftools.crafting;
 
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,12 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PreservingShapedRecipe extends ShapedRecipes {
-    private int takeNBTFromSlot;
+    private Object objectToInheritFrom;
     private Map<String,Object> extraNBT = null;
 
     public PreservingShapedRecipe(int width, int height, ItemStack[] items, ItemStack output, int takeNBTFromSlot) {
         super(width, height, items, output);
-        this.takeNBTFromSlot = takeNBTFromSlot;
+        Item item = items[takeNBTFromSlot].getItem();
+        objectToInheritFrom = getObjectFromStack(item);
+    }
+
+    private Object getObjectFromStack(Item item) {
+        if (item instanceof ItemBlock) {
+            return ((ItemBlock) item).field_150939_a;
+        } else {
+            return item;
+        }
     }
 
 
@@ -23,11 +34,24 @@ public class PreservingShapedRecipe extends ShapedRecipes {
         this.extraNBT = new HashMap<String, Object>(extraNBT);
     }
 
+    private NBTTagCompound getNBTFromObject(InventoryCrafting inventoryCrafting) {
+        for (int i = 0 ; i < inventoryCrafting.getSizeInventory() ; i++) {
+            ItemStack stack = inventoryCrafting.getStackInSlot(i);
+            if (stack != null && stack.getItem() != null) {
+                Object o = getObjectFromStack(stack.getItem());
+                if (objectToInheritFrom.equals(o)) {
+                    return stack.getTagCompound();
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
         ItemStack stack = super.getCraftingResult(inventoryCrafting);
         if (stack != null) {
-            NBTTagCompound tagCompound = inventoryCrafting.getStackInSlot(takeNBTFromSlot).getTagCompound();
+            NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting);
             if (extraNBT != null) {
                 if (tagCompound == null) {
                     tagCompound = new NBTTagCompound();
