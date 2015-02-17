@@ -184,6 +184,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         List<DimensionDescriptor.DimletDescriptor> descriptors = new ArrayList<DimensionDescriptor.DimletDescriptor>();
 
         DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+        long forcedSeed = 0;
 
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
@@ -191,10 +192,14 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
                 int dimletId = stack.getItemDamage();
                 DimletKey key = mapping.getKey(dimletId);
                 descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), dimletId));
+                NBTTagCompound tagCompound = stack.getTagCompound();
+                if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
+                    forcedSeed = tagCompound.getLong("forcedSeed");
+                }
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }
-        return new DimensionDescriptor(descriptors, worldObj);
+        return new DimensionDescriptor(descriptors, worldObj, forcedSeed);
     }
 
     private void extractDimlets() {

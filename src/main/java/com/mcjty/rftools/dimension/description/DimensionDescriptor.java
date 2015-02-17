@@ -18,8 +18,11 @@ public class DimensionDescriptor {
     private final int rfCreateCost;
     private final int rfMaintainCost;
     private final int tickCost;
+    private final long forcedSeed;
 
-    public DimensionDescriptor(List<DimletDescriptor> descriptors, World world) {
+    public DimensionDescriptor(List<DimletDescriptor> descriptors, World world, long forcedSeed) {
+        this.forcedSeed = forcedSeed;
+
         StringBuilder s = new StringBuilder();
 
         // List of all non-modifier dimlets with all associated modifiers.
@@ -96,6 +99,7 @@ public class DimensionDescriptor {
         rfCreateCost = tagCompound.getInteger("rfCreateCost");
         rfMaintainCost = tagCompound.getInteger("rfMaintainCost");
         tickCost = tagCompound.getInteger("tickCost");
+        forcedSeed = tagCompound.getLong("forcedSeed");
     }
 
     public List<Pair<DimletDescriptor,List<DimletDescriptor>>> getDimletsWithModifiers() {
@@ -200,12 +204,17 @@ public class DimensionDescriptor {
         return tickCost;
     }
 
+    public long getForcedSeed() {
+        return forcedSeed;
+    }
+
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setString("descriptionString", descriptionString);
         tagCompound.setInteger("rfCreateCost", rfCreateCost);
         tagCompound.setInteger("rfMaintainCost", rfMaintainCost);
         tagCompound.setInteger("tickCost", tickCost);
         tagCompound.setInteger("ticksLeft", tickCost);
+        tagCompound.setLong("forcedSeed", forcedSeed);
     }
 
     private int getModifierMultiplier(Map<Pair<DimletType,DimletType>,Integer> modifierMap, DimletType type1, DimletType type2) {

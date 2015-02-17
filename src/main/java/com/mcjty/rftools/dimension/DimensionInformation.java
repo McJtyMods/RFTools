@@ -36,6 +36,12 @@ public class DimensionInformation {
 
     private int probeCounter = 0;
 
+    private long forcedDimensionSeed = 0;
+
+    private int worldVersion = VERSION_OLD;             // Used for compatilibity checking between generated worlds.
+    public static final int VERSION_OLD = 0;            // Old version of worlds. Seed is incorrect.
+    public static final int VERSION_CORRECTSEED = 1;    // New version of worlds. Seed is correct.
+
     private TerrainType terrainType = TerrainType.TERRAIN_VOID;
     private BlockMeta baseBlockForTerrain = null;
     private Block fluidForTerrain = null;
@@ -74,6 +80,9 @@ public class DimensionInformation {
     public DimensionInformation(String name, DimensionDescriptor descriptor, World world) {
         this.name = name;
         this.descriptor = descriptor;
+
+        this.forcedDimensionSeed = descriptor.getForcedSeed();
+        worldVersion = VERSION_CORRECTSEED;
 
         DimletMapping mapping = DimletMapping.getDimletMapping(world);
         setupFromDescriptor(world.getSeed(), mapping);
@@ -223,6 +232,9 @@ public class DimensionInformation {
 
         digitString = tagCompound.getString("digits");
 
+        forcedDimensionSeed = tagCompound.getLong("forcedSeed");
+        worldVersion = tagCompound.getInteger("worldVersion");
+
         baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
         tendrilBlock = getBlockMeta(tagCompound, "tendrilBlock");
         sphereBlock = getBlockMeta(tagCompound, "sphereBlock");
@@ -325,6 +337,9 @@ public class DimensionInformation {
         tagCompound.setInteger("controller", controllerType == null ? ControllerType.CONTROLLER_DEFAULT.ordinal() : controllerType.ordinal());
         tagCompound.setString("digits", digitString);
 
+        tagCompound.setLong("forcedSeed", forcedDimensionSeed);
+        tagCompound.setInteger("worldVersion", worldVersion);
+
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
         setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
         setBlockMeta(tagCompound, sphereBlock, "sphereBlock");
@@ -423,6 +438,10 @@ public class DimensionInformation {
         if (!digits.isEmpty()) {
             logDebug(player, "    Digits: " + digits);
         }
+        if (forcedDimensionSeed != 0) {
+            logDebug(player, "    Forced seed: " + forcedDimensionSeed);
+        }
+        logDebug(player, "    World version: " + worldVersion);
         TerrainType terrainType = getTerrainType();
         logDebug(player, "    Terrain: " + terrainType.toString());
         logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain.getBlock(), 1, baseBlockForTerrain.getMeta()).getDisplayName());
@@ -520,6 +539,8 @@ public class DimensionInformation {
         ByteBufTools.writeEnum(buf, controllerType, ControllerType.CONTROLLER_DEFAULT);
 
         ByteBufTools.writeString(buf, digitString);
+        buf.writeLong(forcedDimensionSeed);
+        buf.writeInt(worldVersion);
 
         buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain.getBlock()));
         buf.writeInt(baseBlockForTerrain.getMeta());
@@ -584,6 +605,9 @@ public class DimensionInformation {
         }
         controllerType = ByteBufTools.readEnum(buf, ControllerType.values());
         digitString = ByteBufTools.readString(buf);
+
+        forcedDimensionSeed = buf.readLong();
+        worldVersion = buf.readInt();
 
         Block block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         int meta = buf.readInt();
@@ -1284,5 +1308,13 @@ public class DimensionInformation {
 
     public int getActualRfCost() {
         return actualRfCost;
+    }
+
+    public long getForcedDimensionSeed() {
+        return forcedDimensionSeed;
+    }
+
+    public int getWorldVersion() {
+        return worldVersion;
     }
 }

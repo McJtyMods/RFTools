@@ -1,6 +1,9 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.world.GenericWorldProvider;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -9,8 +12,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashMap;
@@ -32,6 +37,47 @@ public class KnownDimlet extends Item {
             IIcon icon = iconRegister.registerIcon(RFTools.MODID + ":dimlets/" + type.getTextureName());
             icons.put(type, icon);
         }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (world.isRemote) {
+            return stack;
+        }
+
+        DimletEntry entry = KnownDimletConfiguration.getEntry(stack.getItemDamage());
+        if (entry != null) {
+            if (isSeedDimlet(entry)) {
+                NBTTagCompound tagCompound = stack.getTagCompound();
+                if (tagCompound == null) {
+                    tagCompound = new NBTTagCompound();
+                }
+
+                boolean locked = tagCompound.getBoolean("locked");
+                if (locked) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "This seed dimlet is locked. You cannot modify it!");
+                    return stack;
+                }
+
+                long forcedSeed = tagCompound.getLong("forcedSeed");
+                if (player.isSneaking()) {
+                    if (forcedSeed == 0) {
+                        RFTools.message(player, EnumChatFormatting.YELLOW + "This dimlet has no seed. You cannot lock it!");
+                        return stack;
+                    }
+                    tagCompound.setBoolean("locked", true);
+                    RFTools.message(player, "Dimlet locked!");
+                } else {
+                    long seed = world.getSeed();
+                    tagCompound.setLong("forcedSeed", seed);
+                    RFTools.message(player, "Seed set to: " + seed);
+                }
+
+                stack.setTagCompound(tagCompound);
+            }
+        }
+
+        return stack;
     }
 
     @SideOnly(Side.CLIENT)
@@ -56,6 +102,19 @@ public class KnownDimlet extends Item {
             list.add(EnumChatFormatting.YELLOW + "Maintain cost: " + maintainCost + " RF/tick");
         }
         list.add(EnumChatFormatting.YELLOW + "Tick cost: " + entry.getTickCost() + " ticks");
+
+        if (isSeedDimlet(entry)) {
+            NBTTagCompound tagCompound = itemStack.getTagCompound();
+            if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
+                long forcedSeed = tagCompound.getLong("forcedSeed");
+                boolean locked = tagCompound.getBoolean("locked");
+                list.add(EnumChatFormatting.BLUE + "Forced seed: " + forcedSeed + (locked ? " [LOCKED]" : ""));
+            } else {
+                list.add(EnumChatFormatting.BLUE + "Right click to copy seed from dimension.");
+                list.add(EnumChatFormatting.BLUE + "Shift-Right click to lock copied seed.");
+            }
+        }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
@@ -69,6 +128,10 @@ public class KnownDimlet extends Item {
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    private boolean isSeedDimlet(DimletEntry entry) {
+        return entry.getKey().getType() == DimletType.DIMLET_SPECIAL && "Seed".equals(entry.getKey().getName());
     }
 
     @Override

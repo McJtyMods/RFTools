@@ -27,6 +27,15 @@ public class GenericWorldProvider extends WorldProvider {
         return dim * 13L + seed;
     }
 
+    @Override
+    public long getSeed() {
+        if (dimensionInformation == null || dimensionInformation.getWorldVersion() < DimensionInformation.VERSION_CORRECTSEED) {
+            return super.getSeed();
+        } else {
+            return seed;
+        }
+    }
+
     private DimensionInformation getDimensionInformation() {
         if (dimensionInformation == null) {
             int dim = worldObj.provider.dimensionId;
@@ -34,6 +43,11 @@ public class GenericWorldProvider extends WorldProvider {
             if (dimensionInformation == null) {
                 RFTools.log("Dimension information for dimension " + dim + " is missing!");
             } else {
+                long forcedSeed = dimensionInformation.getForcedDimensionSeed();
+                if (forcedSeed != 0) {
+                    RFTools.log("Forced seed for dimension " + dim + ": " + forcedSeed);
+                    seed = forcedSeed;
+                }
                 setupProviderInfo();
             }
         }

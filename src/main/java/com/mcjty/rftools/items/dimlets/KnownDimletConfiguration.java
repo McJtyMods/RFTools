@@ -312,6 +312,8 @@ public class KnownDimletConfiguration {
         addExtraInformation(idEfficiencyLow, "Reduce the maintenance RF/tick of the", "generated dimension with 5%", "This is cumulative");
         int idShelter = initSpecialItem(cfg, mainCfg, "Shelter", SpecialType.SPECIAL_SHELTER, mapping);
         addExtraInformation(idShelter, "Generate a better sheltered spawn", "platform in the dimension");
+        int idSeed = initSpecialItem(cfg, mainCfg, "Seed", SpecialType.SPECIAL_SEED, mapping);
+        addExtraInformation(idSeed, "Force a specific seed for a dimension.", "Right click in dimension to store seed.", "Shift-right click to lock seed");
 
         int idDefaultMobs = initMobItem(cfg, mainCfg, null, "Default", mapping, 1, 1, 1, 1);
         initMobItem(cfg, mainCfg, EntityZombie.class, "Zombie", mapping, 100, 8, 8, 60);
