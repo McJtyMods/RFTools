@@ -1,3 +1,24 @@
+achievement.theFirstStep=Small Step to a Big World
+achievement.theFirstStep.desc=Find your first unknown dimlet
+achievement.researching=Doctor Dimlet!
+achievement.researching.desc=Research an unknown dimlet
+achievement.scrambled=Scrambled!
+achievement.scrambled.desc=Scramble three dimlets
+achievement.dimletMaster=Dimlet Master!
+achievement.dimletMaster.desc=Construct a new dimlet out of parts
+achievement.smallBits=All Those Parts!
+achievement.smallBits.desc=Deconstruct a dimlet into parts
+achievement.firstDimension=A New World Awaits
+achievement.firstDimension.desc=Build a new dimension
+achievement.firstTeleport=The World Moved!
+achievement.firstTeleport.desc=Teleport to a new location
+achievement.hardPower=Advanced Power!
+achievement.hardPower.desc=Build an Endergenic Generator
+achievement.clearVision=You Vision Clears!
+achievement.clearVision.desc=Place a modular screen
+achievement.specialOres=Exotic Miner!
+achievement.specialOres.desc=Mine dimensional shards
+
 item.NetworkMonitor.name=RF网络监视仪
 item.TeleportProbe.name=传输调试仪
 item.RFToolsManual.name=RF工具指南
