@@ -233,7 +233,7 @@ public class DimensionTickEvent {
                 List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
                 if (DimletConfiguration.dimensionDifficulty >= 1) {
                     for (EntityPlayer player : players) {
-                        player.attackEntityFrom(DamageSource.generic, 1000.0f);
+                        player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000.0f);
                     }
                 } else {
                     Random random = new Random();

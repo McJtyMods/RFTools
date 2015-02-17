@@ -19,6 +19,7 @@ achievement.clearVision.desc=Place a modular screen
 achievement.specialOres=Exotic Miner!
 achievement.specialOres.desc=Mine dimensional shards
 
+death.dimension.powerfailure=%s dies in a collapsing world!
 
 item.NetworkMonitor.name=RF Network Monitor
 item.TeleportProbe.name=Teleporter Probe
