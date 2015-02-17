@@ -4,6 +4,8 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -139,6 +141,19 @@ public final class ModCrafting {
                 'g', Blocks.gravel, 'w', Blocks.wool);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), "bwb", "wMw", "bwb", 'M', ModBlocks.machineFrame, 'b', Items.bucket, 'w', Blocks.wool);
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
+
+        ItemStack diamondPick = new ItemStack(Items.diamond_pickaxe);
+        Map efficiency3 = new HashMap();
+        efficiency3.put(Enchantment.efficiency.effectId, 3);
+        EnchantmentHelper.setEnchantments(efficiency3, diamondPick);
+        GameRegistry.addRecipe(new ItemStack(ModItems.efficiencyEssenceItem), " p ", "ese", " e ", 'p', diamondPick, 's', Items.nether_star, 'e', Items.ender_eye);
+
+        ItemStack ironPick = new ItemStack(Items.iron_pickaxe);
+        Map efficiency2 = new HashMap();
+        efficiency2.put(Enchantment.efficiency.effectId, 2);
+        EnchantmentHelper.setEnchantments(efficiency2, ironPick);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.mediocreEfficiencyEssenceItem), " p ", "ese", " e ", 'p', ironPick, 's', Items.ghast_tear, 'e', Items.ender_eye);
     }
 
     private static void initScreenCrafting() {

@@ -43,6 +43,8 @@ public final class ModItems {
     public static DimletTypeControllerItem dimletTypeControllerItem;
     public static SyringeItem syringeItem;
     public static PeaceEssenceItem peaceEssenceItem;
+    public static EfficiencyEssenceItem efficiencyEssenceItem;
+    public static MediocreEfficiencyEssenceItem mediocreEfficiencyEssenceItem;
 
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
@@ -117,6 +119,18 @@ public final class ModItems {
         peaceEssenceItem.setCreativeTab(RFTools.tabRfTools);
         peaceEssenceItem.setTextureName(RFTools.MODID + ":parts/peaceEssence");
         GameRegistry.registerItem(peaceEssenceItem, "peaceEssenceItem");
+
+        efficiencyEssenceItem = new EfficiencyEssenceItem();
+        efficiencyEssenceItem.setUnlocalizedName("EfficiencyEssence");
+        efficiencyEssenceItem.setCreativeTab(RFTools.tabRfTools);
+        efficiencyEssenceItem.setTextureName(RFTools.MODID + ":parts/efficiencyEssence");
+        GameRegistry.registerItem(efficiencyEssenceItem, "efficiencyEssenceItem");
+
+        mediocreEfficiencyEssenceItem = new MediocreEfficiencyEssenceItem();
+        mediocreEfficiencyEssenceItem.setUnlocalizedName("MediocreEfficiencyEssence");
+        mediocreEfficiencyEssenceItem.setCreativeTab(RFTools.tabRfTools);
+        mediocreEfficiencyEssenceItem.setTextureName(RFTools.MODID + ":parts/mediocreEfficiencyEssence");
+        GameRegistry.registerItem(mediocreEfficiencyEssenceItem, "mediocreEfficiencyEssenceItem");
     }
 
     private static void initScreenModuleItems() {

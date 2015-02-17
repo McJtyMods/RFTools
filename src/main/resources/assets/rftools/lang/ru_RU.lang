@@ -47,6 +47,8 @@ item.DimletTypeControllerTerrain.name=Dimlet Terrain Type Controller
 item.DimletTypeControllerTime.name=Dimlet Time Type Controller
 item.SyringeItem.name=Syringe
 item.PeaceEssence.name=Peace Essence
+item.EfficiencyEssence.name=Efficiency Essence
+item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 
 tile.crafterBlock1.name=Мастер (Уровень 1)
 tile.crafterBlock2.name=Мастер (Уровень 2)

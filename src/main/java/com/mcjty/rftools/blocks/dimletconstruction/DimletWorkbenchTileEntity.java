@@ -304,6 +304,10 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     private int findSpecialDimlet(ItemStack stackEssence, DimletMapping mapping) {
         if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
             return mapping.getId(DimletType.DIMLET_SPECIAL, "Peaceful");
+        } else if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
+            return mapping.getId(DimletType.DIMLET_SPECIAL, "Efficiency");
+        } else if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
+            return mapping.getId(DimletType.DIMLET_SPECIAL, "Mediocre Efficiency");
         }
         return -1;
     }
