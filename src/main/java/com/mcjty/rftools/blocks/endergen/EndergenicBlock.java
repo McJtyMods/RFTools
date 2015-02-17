@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.endergen;
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
+import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.rftools.blocks.ModBlocks;
@@ -76,6 +77,9 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         checkForMonitor4Sides(world, x, y, z);
+        if (entityLivingBase instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.hardPower);
+        }
     }
 
     private void checkForMonitor4Sides(World world, int x, int y, int z) {

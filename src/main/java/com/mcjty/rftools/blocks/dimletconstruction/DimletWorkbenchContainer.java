@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.container.*;
+import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -53,5 +54,13 @@ public class DimletWorkbenchContainer extends GenericContainer {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         return super.transferStackInSlot(player, index);
+    }
+
+    @Override
+    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+        if (index == SLOT_OUTPUT) {
+            Achievements.trigger(player, Achievements.dimletMaster);
+        }
+        return super.slotClick(index, button, mode, player);
     }
 }

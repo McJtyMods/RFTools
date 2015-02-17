@@ -7,10 +7,12 @@ import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Panel;
+import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -81,6 +83,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
             if (ModItems.knownDimlet.equals(itemStack.getItem())) {
                 int id = itemStack.getItemDamage();
                 if (!KnownDimletConfiguration.craftableDimlets.contains(id)) {
+                    Achievements.trigger(Minecraft.getMinecraft().thePlayer, Achievements.smallBits);
                     sendServerCommand(DimletWorkbenchTileEntity.CMD_STARTEXTRACT);
                 }
             }

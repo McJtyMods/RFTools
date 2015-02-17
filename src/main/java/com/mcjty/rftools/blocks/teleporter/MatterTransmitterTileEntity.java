@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionStorage;
@@ -517,6 +518,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
 
         RFTools.message(teleportingPlayer, "Whoosh!");
+        Achievements.trigger(teleportingPlayer, Achievements.firstTeleport);
 
         int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
         if (!applyBadEffectIfNeeded(severity)) {

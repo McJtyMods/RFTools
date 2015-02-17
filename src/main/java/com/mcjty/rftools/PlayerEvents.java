@@ -1,7 +1,8 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.network.DimensionSyncPacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -10,10 +11,42 @@ import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.MinecraftServer;
 
-public class PlayerLoginEvent {
+public class PlayerEvents {
+
+    @SubscribeEvent
+    public void onItemPickupEvent(PlayerEvent.ItemPickupEvent event) {
+        if (event.pickedUp != null) {
+            ItemStack stack = event.pickedUp.getEntityItem();
+            if (stack != null) {
+                Item item = stack.getItem();
+                if (item == ModItems.unknownDimlet) {
+                    Achievements.trigger(event.player, Achievements.theFirstStep);
+                } else if (item == ModItems.dimensionalShard) {
+                    Achievements.trigger(event.player, Achievements.specialOres);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemCraftedEvent(PlayerEvent.ItemCraftedEvent event) {
+        if (event.crafting != null) {
+            Item item = event.crafting.getItem();
+            if (item instanceof ItemBlock) {
+                ItemBlock itemBlock = (ItemBlock) item;
+                if (itemBlock.field_150939_a == ModBlocks.endergenicBlock) {
+                    Achievements.trigger(event.player, Achievements.hardPower);
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (MinecraftServer.getServer().isDedicatedServer()) {

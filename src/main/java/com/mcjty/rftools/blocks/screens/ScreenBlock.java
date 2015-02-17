@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.GenericContainerBlock;
+import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
@@ -10,6 +11,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -207,6 +209,13 @@ public class ScreenBlock extends GenericContainerBlock {
         }
     }
 
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+        if (entityLivingBase instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
+        }
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
