@@ -140,8 +140,8 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
                 int l = 255 - k << 16 | k << 8;
                 int i1 = (255 - k) / 4 << 16 | 16128;
                 renderQuad(tessellator, x + 2, y + 13, 13, 2, 0, 0.0D);
-                renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.01D);
-                renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.02D);
+                renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.02D);
+                renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.04D);
                 //GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down the line.
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
