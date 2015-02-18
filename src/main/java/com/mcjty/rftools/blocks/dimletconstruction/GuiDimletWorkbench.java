@@ -57,7 +57,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
                         extractDimlet();
                     }
                 }
-        ).setTooltips("Extract the dimlets out of", "a realized dimension tab");
+        ).setTooltips("Deconstruct a dimlet into its parts");
 
         autoExtract = new ToggleButton(mc, this).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 30, 14)).addButtonEvent(new ButtonEvent() {
             @Override
