@@ -21,7 +21,7 @@ public interface ClientScreenModule {
 
     int getHeight();
 
-    void render(FontRenderer fontRenderer, int currenty, Object[] screenData);
+    void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor);
 
     Panel createGui(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged);
 

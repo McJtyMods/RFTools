@@ -1,18 +1,24 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
+import com.mcjty.rftools.network.NetworkTools;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 
 public enum ScreenDataType {
+    TYPE_NULL,
     TYPE_BYTE,
     TYPE_INT,
     TYPE_LONG,
     TYPE_DOUBLE,
     TYPE_FLOAT,
     TYPE_STRING,
-    TYPE_BOOLEAN;
+    TYPE_BOOLEAN,
+    TYPE_ITEMSTACK;
 
     public Object readObject(ByteBuf buf) {
         switch (this) {
+            case TYPE_NULL:
+                return null;
             case TYPE_BYTE:
                 return buf.readByte();
             case TYPE_INT:
@@ -29,12 +35,16 @@ public enum ScreenDataType {
                 byte[] dst = new byte[buf.readInt()];
                 buf.readBytes(dst);
                 return new String(dst);
+            case TYPE_ITEMSTACK:
+                return NetworkTools.readItemStack(buf);
         }
         return null;
     }
 
     public static void writeObject(ByteBuf buf, Object obj) {
-        if (obj instanceof Long) {
+        if (obj == null) {
+            buf.writeByte(TYPE_NULL.ordinal());
+        } else if (obj instanceof Long) {
             buf.writeByte(TYPE_LONG.ordinal());
             buf.writeLong((Long) obj);
         } else if (obj instanceof Integer) {
@@ -57,6 +67,9 @@ public enum ScreenDataType {
             String s  = (String) obj;
             buf.writeInt(s.length());
             buf.writeBytes(s.getBytes());
+        } else if (obj instanceof ItemStack) {
+            buf.writeByte(TYPE_ITEMSTACK.ordinal());
+            NetworkTools.writeItemStack(buf, (ItemStack) obj);
         } else {
             System.out.println("Weird? Unknown type!");
         }

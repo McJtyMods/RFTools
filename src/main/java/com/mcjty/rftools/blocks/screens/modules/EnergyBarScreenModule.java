@@ -52,7 +52,6 @@ public class EnergyBarScreenModule implements ScreenModule {
                 }
             }
         }
-
     }
 
     @Override

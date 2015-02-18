@@ -157,8 +157,6 @@ public final class ModCrafting {
     }
 
     private static void initScreenCrafting() {
-        Object inkSac = Item.itemRegistry.getObjectById(351);
-
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenControllerBlock), "ror", "gMg", "rgr", 'r', Items.redstone, 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
                 'g', Blocks.glass);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
@@ -179,6 +177,12 @@ public final class ModCrafting {
                 new ItemStack(ModBlocks.screenBlock)
         }, new ItemStack(ModBlocks.screenBlock), 0, flags));
 
+        initScreenModuleCrafting();
+    }
+
+    private static void initScreenModuleCrafting() {
+        Object inkSac = Item.itemRegistry.getObjectById(351);
+
         GameRegistry.addRecipe(new ItemStack(ModItems.textModuleItem), " p ", "rir", " b ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.clockModuleItem), " c ", "rir", " b ", 'c', Items.clock, 'r', Items.redstone, 'i', Items.iron_ingot,
@@ -189,6 +193,8 @@ public final class ModCrafting {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.fluidModuleItem), " c ", "rir", " b ", 'c', Items.bucket, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.inventoryModuleItem), " c ", "rir", " b ", 'c', Blocks.chest, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,
@@ -198,6 +204,10 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null,
                 new ItemStack(Items.gold_ingot), new ItemStack(ModItems.fluidModuleItem), new ItemStack(Items.gold_ingot),
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.fluidPlusModuleItem), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack(Items.ender_pearl), null,
+                new ItemStack(Items.gold_ingot), new ItemStack(ModItems.inventoryModuleItem), new ItemStack(Items.gold_ingot),
+                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.inventoryPlusModuleItem), 4));
     }
 
     private static ItemStack createMobEssenceItemStack(String mobName) {

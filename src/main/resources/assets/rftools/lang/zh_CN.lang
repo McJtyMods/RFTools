@@ -38,6 +38,7 @@ item.EnergyModule.name=Energy Module
 item.EnergyPlusModule.name=Energy Plus Module
 item.DimensionModule.name=Dimension Module
 item.InventoryModule.name=Inventory Module
+item.InventoryPlusModule.name=Inventory Plus Module
 item.ClockModule.name=Clock Module
 item.FluidModule.name=Fluid Module
 item.FluidPlusModule.name=Fluid Plus Module

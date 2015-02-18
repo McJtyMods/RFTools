@@ -126,16 +126,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
                                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case ITEM:
-                                f3 = 0.0075F;
-                                GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
-                                GL11.glScalef(f3 * factor, -f3 * factor, -0.0001f);
                                 break;
                             default:
                                 break;
                         }
                     }
 
-                    module.render(fontrenderer, currenty, screenData.get(moduleIndex));
+                    module.render(fontrenderer, currenty, screenData.get(moduleIndex), factor);
                     currenty += height;
                 }
             }

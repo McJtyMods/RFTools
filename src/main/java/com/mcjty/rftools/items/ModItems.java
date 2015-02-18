@@ -32,6 +32,7 @@ public final class ModItems {
     public static EnergyPlusModuleItem energyPlusModuleItem;
     public static DimensionModuleItem dimensionModuleItem;
     public static InventoryModuleItem inventoryModuleItem;
+    public static InventoryPlusModuleItem inventoryPlusModuleItem;
     public static ClockModuleItem clockModuleItem;
     public static FluidModuleItem fluidModuleItem;
     public static FluidPlusModuleItem fluidPlusModuleItem;
@@ -145,6 +146,12 @@ public final class ModItems {
         inventoryModuleItem.setCreativeTab(RFTools.tabRfTools);
         inventoryModuleItem.setTextureName(RFTools.MODID + ":modules/inventoryModuleItem");
         GameRegistry.registerItem(inventoryModuleItem, "inventoryModuleItem");
+
+        inventoryPlusModuleItem = new InventoryPlusModuleItem();
+        inventoryPlusModuleItem.setUnlocalizedName("InventoryPlusModule");
+        inventoryPlusModuleItem.setCreativeTab(RFTools.tabRfTools);
+        inventoryPlusModuleItem.setTextureName(RFTools.MODID + ":modules/inventoryPlusModuleItem");
+        GameRegistry.registerItem(inventoryPlusModuleItem, "inventoryPlusModuleItem");
 
         energyModuleItem = new EnergyModuleItem();
         energyModuleItem.setUnlocalizedName("EnergyModule");

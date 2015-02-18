@@ -38,6 +38,7 @@ item.EnergyModule.name=Модуль "Энергия"
 item.EnergyPlusModule.name=Модуль "Энергия+"
 item.DimensionModule.name=Модуль "Измерение"
 item.InventoryModule.name=Модуль "Инвентарь"
+item.InventoryPlusModule.name=Inventory Plus Module
 item.ClockModule.name=Модуль "Часы"
 item.FluidModule.name=Модуль "Жидкости"
 item.FluidPlusModule.name=Модуль "Жидкости+"

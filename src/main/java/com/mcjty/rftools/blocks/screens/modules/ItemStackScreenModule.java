@@ -9,11 +9,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class ItemStackScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 0;
-    private int slotIndex = 0;
+    public static final int RFPERTICK = 4;
+    private int slot1 = -1;
+    private int slot2 = -1;
+    private int slot3 = -1;
+    private int slot4 = -1;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
-    protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
 
     @Override
@@ -32,17 +34,57 @@ public class ItemStackScreenModule implements ScreenModule {
             return null;
         }
         IInventory inventory = (IInventory) te;
-        ItemStack stack = inventory.getStackInSlot(slotIndex);
-        if (stack == null) {
-            return new Object[] { 0 };
+        ItemStack stack1 = getItemStack(inventory, slot1);
+        ItemStack stack2 = getItemStack(inventory, slot2);
+        ItemStack stack3 = getItemStack(inventory, slot3);
+        ItemStack stack4 = getItemStack(inventory, slot4);
+        return new Object[] { stack1, stack2, stack3, stack4 };
+    }
+
+    private ItemStack getItemStack(IInventory inventory, int slot) {
+        if (slot == -1) {
+            return null;
+        }
+        if (slot < inventory.getSizeInventory()) {
+            return inventory.getStackInSlot(slot);
         } else {
-            return new Object[] { stack.stackSize };
+            return null;
         }
     }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+        if (tagCompound != null) {
+            setupCoordinateFromNBT(tagCompound, dim, x, y, z);
+            if (tagCompound.hasKey("slot1")) {
+                slot1 = tagCompound.getInteger("slot1");
+            }
+            if (tagCompound.hasKey("slot2")) {
+                slot2 = tagCompound.getInteger("slot2");
+            }
+            if (tagCompound.hasKey("slot3")) {
+                slot3 = tagCompound.getInteger("slot3");
+            }
+            if (tagCompound.hasKey("slot4")) {
+                slot4 = tagCompound.getInteger("slot4");
+            }
+        }
+    }
 
+    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+        coordinate = Coordinate.INVALID;
+        if (tagCompound.hasKey("monitorx")) {
+            this.dim = tagCompound.getInteger("dim");
+            if (dim == this.dim) {
+                Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                int dx = Math.abs(c.getX() - x);
+                int dy = Math.abs(c.getY() - y);
+                int dz = Math.abs(c.getZ() - z);
+                if (dx <= 64 && dy <= 64 && dz <= 64) {
+                    coordinate = c;
+                }
+            }
+        }
     }
 
     @Override
