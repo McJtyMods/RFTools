@@ -14,7 +14,7 @@ public class EnergyBarScreenModule implements ScreenModule {
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
-    public String[] getData(long millis) {
+    public Object[] getData(long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;

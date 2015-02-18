@@ -17,7 +17,7 @@ public class ItemStackScreenModule implements ScreenModule {
 
 
     @Override
-    public String[] getData(long millis) {
+    public Object[] getData(long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -34,9 +34,9 @@ public class ItemStackScreenModule implements ScreenModule {
         IInventory inventory = (IInventory) te;
         ItemStack stack = inventory.getStackInSlot(slotIndex);
         if (stack == null) {
-            return new String[] { "?" };
+            return new Object[] { 0 };
         } else {
-            return new String[] { Integer.toString(stack.stackSize) };
+            return new Object[] { stack.stackSize };
         }
     }
 

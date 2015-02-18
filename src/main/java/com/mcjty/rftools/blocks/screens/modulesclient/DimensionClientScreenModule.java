@@ -35,7 +35,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData) {
         GL11.glDisable(GL11.GL_LIGHTING);
         int xoffset;
         if (!line.isEmpty()) {

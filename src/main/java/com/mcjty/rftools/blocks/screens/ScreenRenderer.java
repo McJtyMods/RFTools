@@ -63,7 +63,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
 
 
-            Map<Integer, String[]> screenData = updateScreenData(screenTileEntity);
+            Map<Integer, Object[]> screenData = updateScreenData(screenTileEntity);
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.isLarge());
@@ -75,21 +75,21 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private Map<Integer, String[]> updateScreenData(ScreenTileEntity screenTileEntity) {
+    private Map<Integer, Object[]> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
-        Map<Integer,String[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
+        Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
         return screenData;
     }
 
-    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, String[]> screenData, boolean large) {
+    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, Object[]> screenData, boolean large) {
         float f3, factor;
         if (large) {
             factor = 2.0f;

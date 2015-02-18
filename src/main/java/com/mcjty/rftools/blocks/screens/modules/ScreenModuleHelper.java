@@ -5,12 +5,12 @@ public class ScreenModuleHelper {
     private long prevMillis = 0;
     private long prevContents = 0;
 
-    public String[] getContentsValue(long millis, long contents, long maxContents) {
+    public Object[] getContentsValue(long millis, long contents, long maxContents) {
         if (showdiff) {
             if (prevMillis == 0 || millis <= prevMillis) {
                 prevMillis = millis;
                 prevContents = contents;
-                return new String[] { String.valueOf(contents), String.valueOf(maxContents), "0" };
+                return new Object[] { contents, maxContents, 0L };
             } else {
                 long diff = millis - prevMillis;
                 int ticks = (int) (diff * 20 / 1000);
@@ -20,10 +20,10 @@ public class ScreenModuleHelper {
                 long diffEnergy = contents - prevContents;
                 prevMillis = millis;
                 prevContents = contents;
-                return new String[] { String.valueOf(contents), String.valueOf(maxContents), String.valueOf(diffEnergy / ticks) };
+                return new Object[] { contents, maxContents, diffEnergy / ticks };
             }
         } else {
-            return new String[] { String.valueOf(contents), String.valueOf(maxContents), "0" };
+            return new Object[] { contents, maxContents, 0L };
         }
     }
 

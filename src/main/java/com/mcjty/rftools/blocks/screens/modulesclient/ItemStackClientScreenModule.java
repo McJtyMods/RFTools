@@ -31,7 +31,7 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, String[] screenData) {
+    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData) {
         short short1 = 240;
         short short2 = 240;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

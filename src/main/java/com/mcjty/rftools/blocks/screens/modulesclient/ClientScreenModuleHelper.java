@@ -14,17 +14,17 @@ import java.text.DecimalFormat;
 
 public class ClientScreenModuleHelper {
 
-    public static void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, String[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
+    public static void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, Object[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                                    int poscolor, int negcolor,
                                    int gradient1, int gradient2, FormatStyle formatStyle) {
         if (screenData == null) {
             return;
         }
 
-        long maxContents = Long.parseLong(screenData[1]);
+        long maxContents = (Long) screenData[1];
         if (maxContents > 0) {
             if (!hidebar) {
-                long contents = Long.parseLong(screenData[0]);
+                long contents = (Long) screenData[0];
 
                 int width = 80 - xoffset + 7 + 40;
                 long value = contents * width / maxContents;
@@ -38,15 +38,16 @@ public class ClientScreenModuleHelper {
         }
         if (!hidetext) {
             if (showdiff) {
-                if (screenData[2].startsWith("-")) {
-                    fontRenderer.drawString(screenData[2] + " " + label + "/t", xoffset, currenty, negcolor);
+                long diff = (Long) screenData[2];
+                if (diff < 0) {
+                    fontRenderer.drawString(diff + " " + label + "/t", xoffset, currenty, negcolor);
                 } else {
-                    fontRenderer.drawString("+" + screenData[2] + " " + label + "/t", xoffset, currenty, poscolor);
+                    fontRenderer.drawString("+" + diff + " " + label + "/t", xoffset, currenty, poscolor);
                 }
 
             } else if (maxContents > 0) {
+                long contents = (Long) screenData[0];
                 if (showpct) {
-                    long contents = Long.parseLong(screenData[0]);
                     long value = contents * 100 / maxContents;
                     if (value < 0) {
                         value = 0;
@@ -55,7 +56,7 @@ public class ClientScreenModuleHelper {
                     }
                     fontRenderer.drawString(value + "%", xoffset, currenty, poscolor);
                 } else {
-                    fontRenderer.drawString(format(screenData[0], formatStyle) + label, xoffset, currenty, poscolor);
+                    fontRenderer.drawString(format(String.valueOf(contents), formatStyle) + label, xoffset, currenty, poscolor);
                 }
             }
         }
