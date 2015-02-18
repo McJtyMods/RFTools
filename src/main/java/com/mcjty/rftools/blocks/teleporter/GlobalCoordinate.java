@@ -2,11 +2,11 @@ package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.varia.Coordinate;
 
-public class TeleportDestinationKey {
+public class GlobalCoordinate {
     private final Coordinate coordinate;
     private final int dimension;
 
-    public TeleportDestinationKey(Coordinate coordinate, int dimension) {
+    public GlobalCoordinate(Coordinate coordinate, int dimension) {
         this.coordinate = coordinate;
         this.dimension = dimension;
     }
@@ -24,7 +24,7 @@ public class TeleportDestinationKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TeleportDestinationKey that = (TeleportDestinationKey) o;
+        GlobalCoordinate that = (GlobalCoordinate) o;
 
         if (dimension != that.dimension) return false;
         if (!coordinate.equals(that.coordinate)) return false;

@@ -45,7 +45,6 @@ public class SequencerBlock extends LogicSlabBlock {
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-
     }
 
     @Override

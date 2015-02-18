@@ -1,5 +1,6 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.blocks.logic.RedstoneChannels;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.commands.CommandRftDb;
 import com.mcjty.rftools.commands.CommandRftDim;
@@ -181,6 +182,7 @@ public class RFTools {
         RfToolsDimensionManager.clearInstance();
         DimensionStorage.clearInstance();
         DimletMapping.clearInstance();
+        RedstoneChannels.clearInstance();
     }
 
     /**

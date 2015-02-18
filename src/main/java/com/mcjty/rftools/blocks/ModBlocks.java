@@ -57,6 +57,8 @@ public final class ModBlocks {
     public static SequencerBlock sequencerBlock;
     public static TimerBlock timerBlock;
     public static CounterBlock counterBlock;
+    public static RedstoneTransmitterBlock redstoneTransmitterBlock;
+    public static RedstoneReceiverBlock redstoneReceiverBlock;
 
     public static ShieldBlock shieldBlock;
     public static ShieldBlock shieldBlock2;
@@ -262,6 +264,14 @@ public final class ModBlocks {
         counterBlock = new CounterBlock();
         GameRegistry.registerBlock(counterBlock, GenericItemBlock.class, "counterBlock");
         GameRegistry.registerTileEntity(CounterTileEntity.class, "CounterTileEntity");
+
+        redstoneTransmitterBlock = new RedstoneTransmitterBlock();
+        GameRegistry.registerBlock(redstoneTransmitterBlock, GenericItemBlock.class, "redstoneTransmitterBlock");
+        GameRegistry.registerTileEntity(RedstoneTransmitterTileEntity.class, "RedstoneTransmitterTileEntity");
+
+        redstoneReceiverBlock = new RedstoneReceiverBlock();
+        GameRegistry.registerBlock(redstoneReceiverBlock, RedstoneReceiverItemBlock.class, "redstoneReceiverBlock");
+        GameRegistry.registerTileEntity(RedstoneReceiverTileEntity.class, "RedstoneReceiverTileEntity");
     }
 
     private static void initEndergenicBlocks() {

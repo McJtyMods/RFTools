@@ -17,7 +17,7 @@ public class TeleportDestinations extends WorldSavedData {
     public static final String TPDESTINATIONS_NAME = "TPDestinations";
     private static TeleportDestinations instance = null;
 
-    private final Map<TeleportDestinationKey,TeleportDestination> destinations = new HashMap<TeleportDestinationKey,TeleportDestination>();
+    private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<GlobalCoordinate,TeleportDestination>();
 
     public TeleportDestinations(String identifier) {
         super(identifier);
@@ -36,8 +36,8 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void cleanupInvalid(World world) {
-        Set<TeleportDestinationKey> keys = new HashSet<TeleportDestinationKey>(destinations.keySet());
-        for (TeleportDestinationKey key : keys) {
+        Set<GlobalCoordinate> keys = new HashSet<GlobalCoordinate>(destinations.keySet());
+        for (GlobalCoordinate key : keys) {
             World transWorld = RfToolsDimensionManager.getDimensionManager(world).getWorldForDimension(key.getDimension());
             boolean removed = false;
             if (transWorld == null) {
@@ -113,12 +113,12 @@ public class TeleportDestinations extends WorldSavedData {
      * @return
      */
     public boolean isDestinationValid(TeleportDestination destination) {
-        TeleportDestinationKey key = new TeleportDestinationKey(destination.getCoordinate(), destination.getDimension());
+        GlobalCoordinate key = new GlobalCoordinate(destination.getCoordinate(), destination.getDimension());
         return destinations.containsKey(key);
     }
 
     public TeleportDestination addDestination(Coordinate coordinate, int dimension) {
-        TeleportDestinationKey key = new TeleportDestinationKey(coordinate, dimension);
+        GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
         if (!destinations.containsKey(key)) {
             TeleportDestination teleportDestination = new TeleportDestination(coordinate, dimension);
             destinations.put(key, teleportDestination);
@@ -127,24 +127,24 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void removeDestinationsInDimension(int dimension) {
-        Set<TeleportDestinationKey> keysToRemove = new HashSet<TeleportDestinationKey>();
-        for (Map.Entry<TeleportDestinationKey, TeleportDestination> entry : destinations.entrySet()) {
+        Set<GlobalCoordinate> keysToRemove = new HashSet<GlobalCoordinate>();
+        for (Map.Entry<GlobalCoordinate, TeleportDestination> entry : destinations.entrySet()) {
             if (entry.getKey().getDimension() == dimension) {
                 keysToRemove.add(entry.getKey());
             }
         }
-        for (TeleportDestinationKey key : keysToRemove) {
+        for (GlobalCoordinate key : keysToRemove) {
             destinations.remove(key);
         }
     }
 
     public void removeDestination(Coordinate coordinate, int dimension) {
-        TeleportDestinationKey key = new TeleportDestinationKey(coordinate, dimension);
+        GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
         destinations.remove(key);
     }
 
     public TeleportDestination getDestination(Coordinate coordinate, int dimension) {
-        return destinations.get(new TeleportDestinationKey(coordinate, dimension));
+        return destinations.get(new GlobalCoordinate(coordinate, dimension));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class TeleportDestinations extends WorldSavedData {
 
             TeleportDestination destination = new TeleportDestination(c, dim);
             destination.setName(name);
-            destinations.put(new TeleportDestinationKey(c, dim), destination);
+            destinations.put(new GlobalCoordinate(c, dim), destination);
         }
     }
 
