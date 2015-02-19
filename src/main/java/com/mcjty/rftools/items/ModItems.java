@@ -4,6 +4,8 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
 import com.mcjty.rftools.items.dimlets.*;
+import com.mcjty.rftools.items.envmodules.RegenerationEModuleItem;
+import com.mcjty.rftools.items.envmodules.SpeedEModuleItem;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -39,6 +41,9 @@ public final class ModItems {
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
     public static RedstoneModuleItem redstoneModuleItem;
+
+    public static RegenerationEModuleItem regenerationEModuleItem;
+    public static SpeedEModuleItem speedEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -81,6 +86,7 @@ public final class ModItems {
         developersDelightItem.setTextureName(RFTools.MODID + ":developersDelightItem");
         GameRegistry.registerItem(developersDelightItem, "developersDelightItem");
 
+        initEnvironmentModuleItems();
         initScreenModuleItems();
         initDimensionItems();
         initDimletPartItems();
@@ -135,6 +141,20 @@ public final class ModItems {
         mediocreEfficiencyEssenceItem.setCreativeTab(RFTools.tabRfTools);
         mediocreEfficiencyEssenceItem.setTextureName(RFTools.MODID + ":parts/mediocreEfficiencyEssence");
         GameRegistry.registerItem(mediocreEfficiencyEssenceItem, "mediocreEfficiencyEssenceItem");
+    }
+
+    private static void initEnvironmentModuleItems() {
+        regenerationEModuleItem = new RegenerationEModuleItem();
+        regenerationEModuleItem.setUnlocalizedName("RegenerationEModule");
+        regenerationEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        regenerationEModuleItem.setTextureName(RFTools.MODID + ":envmodules/regenerationEModuleItem");
+        GameRegistry.registerItem(regenerationEModuleItem, "regenerationEModuleItem");
+
+        speedEModuleItem = new SpeedEModuleItem();
+        speedEModuleItem.setUnlocalizedName("SpeedEModule");
+        speedEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        speedEModuleItem.setTextureName(RFTools.MODID + ":envmodules/speedEModuleItem");
+        GameRegistry.registerItem(speedEModuleItem, "speedEModuleItem");
     }
 
     private static void initScreenModuleItems() {

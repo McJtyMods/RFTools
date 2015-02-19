@@ -46,6 +46,9 @@ item.CounterModule.name=Counter Module
 item.CounterPlusModule.name=Counter Plus Module
 item.RedstoneModule.name=Redstone Module
 
+item.RegenerationEModule.name=Regeneration Module
+item.SpeedEModule.name=Speed Module
+
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0
 item.DimletControlCircuit1.name=Dimlet Control Circuit Rarity 1
@@ -120,6 +123,7 @@ tile.screenControllerBlock.name=Экранный контроллер
 tile.biomeAbsorberBlock.name=Biome Absorber
 tile.materialAbsorberBlock.name=Material Absorber
 tile.liquidAbsorberBlock.name=Liquid Absorber
+tile.environmentalControllerBlock.name=Environmental Controller
 
 tile.dimensionalShardBlock.name=Осколок руды измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения

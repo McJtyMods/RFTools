@@ -8,6 +8,8 @@ import com.mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
 import com.mcjty.rftools.blocks.dimletconstruction.*;
 import com.mcjty.rftools.blocks.dimlets.*;
 import com.mcjty.rftools.blocks.endergen.*;
+import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerBlock;
+import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
 import com.mcjty.rftools.blocks.itemfilter.ItemFilterBlock;
@@ -94,6 +96,8 @@ public final class ModBlocks {
     public static ScreenBlock screenBlock;
     public static ScreenControllerBlock screenControllerBlock;
 
+    public static EnvironmentalControllerBlock environmentalControllerBlock;
+
     public static void init() {
         monitorBlock = new RFMonitorBlock();
         GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
@@ -120,6 +124,10 @@ public final class ModBlocks {
         machineInfuserBlock = new MachineInfuserBlock();
         GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
         GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
+
+        environmentalControllerBlock = new EnvironmentalControllerBlock();
+        GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
+        GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
 
         initScreenBlocks();
         initDimletBlocks();

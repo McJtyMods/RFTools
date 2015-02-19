@@ -2,6 +2,8 @@ package com.mcjty.rftools.render;
 
 import com.mcjty.rftools.blocks.endergen.EndergenicRenderer;
 import com.mcjty.rftools.blocks.endergen.EndergenicTileEntity;
+import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerRenderer;
+import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import com.mcjty.rftools.blocks.logic.LogicSlabBlock;
 import com.mcjty.rftools.blocks.logic.LogicSlabRenderer;
 import com.mcjty.rftools.blocks.screens.ScreenRenderer;
@@ -27,5 +29,6 @@ public final class ModRenderers {
 
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScreenTileEntity.class, new ScreenRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalControllerRenderer());
     }
 }
