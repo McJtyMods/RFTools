@@ -4,8 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 
 public class CrafterConfiguration {
     public static final String CATEGORY_CRAFTER = "crafter";
-    public static int MAXENERGY = 32000;
-    public static int RECEIVEPERTICK = 80;
+    public static int MAXENERGY = 50000;
+    public static int RECEIVEPERTICK = 500;
     public static int rfPerOperation = 100;
     public static int speedOperations = 5;
 
