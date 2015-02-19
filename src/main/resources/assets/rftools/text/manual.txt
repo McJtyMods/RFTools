@@ -60,6 +60,8 @@ The machine base is the base ingredient for a few other machines.
 {l:timer}Timer
 {l:counter}Counter
 {l:endermon}Ender Monitor
+{l:redtrans}Redstone Transmitter
+{l:redrec}Redstone Receiver
 {-------------------------------------------------------------} 
 {b}Sequencer
 {n:sequencer}
@@ -97,7 +99,7 @@ block can be used as a way to detect that a certain activity is overdue.
 {n:counter}
 {rb:counterBlock}
 The counter is a simple block that will count redstone pulses and
-emit a redstone pulse when it reaches a certain amount. Then it
+emit a redstone signal when it reaches a certain amount. Then it
 starts over. You can see in the GUI how many redstone pulses it
 already got.
 {-------------------------------------------------------------}
@@ -113,6 +115,21 @@ Generator. It will send a pulse based on three different conditions:
 
 Note that the redstone signal outputs on the red dot side and this
 has to face away from the Endergenic Generator.
+{-------------------------------------------------------------}
+{b}Redstone Transmitter
+{n:redtrans}
+{rb:redstoneTransmitterBlock}
+This block will wirelessly send out a redstone signal on a
+specific channel when it gets a redstone signal. Use this in
+combination with the redstone receiver block.
+{-------------------------------------------------------------}
+{b}Redstone Receiver
+{n:redrec}
+{rb:redstoneReceiverBlock}
+This block will receive a redstone signal from a linked
+redstone transmitter. To link this receiver with a transmitter
+right-select the transmitter (or another linked receiver) with
+this block.
 {-------------------------------------------------------------}
 {b}RF Monitor
 {n:monitor}
@@ -481,11 +498,14 @@ The following screen modules are currently supported:
     - Energy: monitor the RF energy level of a machine
     - Dimension: monitor the RF energy level of a dimension
     - Fluid: monitor the amount of fluids in a tank
+    - Inventory: monitor up to 4 slots in an inventory
+    - Counter: show the current value of a counter gate
 
-Some modules (like energy and fluid modules) require that you first
-shift-right click on the machine/tank that you want to monitor. After
-that insert them in the screen. The maximum distance between
-the screen and the monitored block is 64.
+Some modules (like energy, fluid, inventory, and counter modules)
+require that you first shift-right click on the machine/tank that
+you want to monitor. After that insert them in the screen. The
+maximum distance between the screen and the monitored block is 64.
+The 'Plus' versions of the modules have no limits.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
