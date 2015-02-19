@@ -34,6 +34,10 @@ public class RedstoneChannels extends WorldSavedData {
         }
     }
 
+    public static RedstoneChannels getChannels() {
+        return instance;
+    }
+
     public static RedstoneChannels getChannels(World world) {
         if (world.isRemote) {
             return null;

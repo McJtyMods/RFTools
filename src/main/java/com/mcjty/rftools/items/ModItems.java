@@ -38,6 +38,7 @@ public final class ModItems {
     public static FluidPlusModuleItem fluidPlusModuleItem;
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
+    public static RedstoneModuleItem redstoneModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -202,6 +203,12 @@ public final class ModItems {
         counterPlusModuleItem.setCreativeTab(RFTools.tabRfTools);
         counterPlusModuleItem.setTextureName(RFTools.MODID + ":modules/counterPlusModuleItem");
         GameRegistry.registerItem(counterPlusModuleItem, "counterPlusModuleItem");
+
+        redstoneModuleItem = new RedstoneModuleItem();
+        redstoneModuleItem.setUnlocalizedName("RedstoneModule");
+        redstoneModuleItem.setCreativeTab(RFTools.tabRfTools);
+        redstoneModuleItem.setTextureName(RFTools.MODID + ":modules/redstoneModuleItem");
+        GameRegistry.registerItem(redstoneModuleItem, "redstoneModuleItem");
     }
 
     private static void initDimensionItems() {

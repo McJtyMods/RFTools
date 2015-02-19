@@ -500,7 +500,8 @@ The following screen modules are currently supported:
     - Fluid: monitor the amount of fluids in a tank
     - Inventory: monitor up to 4 slots in an inventory
     - Counter: show the current value of a counter gate
-
+    - Redstone: show yes/no text depending on wireless redstone
+{-------------------------------------------------------------}
 Some modules (like energy, fluid, inventory, and counter modules)
 require that you first shift-right click on the machine/tank that
 you want to monitor. After that insert them in the screen. The
