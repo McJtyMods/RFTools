@@ -22,6 +22,11 @@ public class RedstoneTransmitterTileEntity extends GenericTileEntity {
     }
 
     @Override
+    public boolean canUpdate() {
+        return false;
+    }
+
+    @Override
     protected void checkStateServer() {
         super.checkStateServer();
 
@@ -34,7 +39,7 @@ public class RedstoneTransmitterTileEntity extends GenericTileEntity {
         if (newvalue != prevValue) {
             prevValue = newvalue;
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
-            RedstoneChannels.RedstoneChannel ch = channels.getChannel(channel);
+            RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
             ch.setValue(newvalue == 1 ? 15 : 0);
             channels.save(worldObj);
         }

@@ -48,13 +48,21 @@ public class RedstoneChannels extends WorldSavedData {
         return instance;
     }
 
-    public RedstoneChannel getChannel(int id) {
+    public RedstoneChannel getOrCreateChannel(int id) {
         RedstoneChannel channel = channels.get(id);
         if (channel == null) {
             channel = new RedstoneChannel();
             channels.put(id, channel);
         }
         return channel;
+    }
+
+    public RedstoneChannel getChannel(int id) {
+        return channels.get(id);
+    }
+
+    public void deleteChannel(int id) {
+        channels.remove(id);
     }
 
     public int newChannel() {

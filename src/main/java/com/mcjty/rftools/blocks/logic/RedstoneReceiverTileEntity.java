@@ -30,7 +30,10 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity {
         if (channel != -1) {
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
             RedstoneChannels.RedstoneChannel ch = channels.getChannel(channel);
-            boolean newout = ch.getValue() != 0;
+            boolean newout = false;
+            if (ch != null) {
+                newout = ch.getValue() != 0;
+            }
 
             if (newout != redstoneOut.getValue()) {
                 redstoneOut.setValue(newout);

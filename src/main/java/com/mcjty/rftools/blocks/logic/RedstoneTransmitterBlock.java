@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
@@ -54,6 +55,13 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock {
     }
 
     @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        super.onNeighborBlockChange(world, x, y, z, block);
+        TileEntity te = world.getTileEntity(x, y, z);
+        te.updateEntity();
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         if (!world.isRemote) {
@@ -64,6 +72,7 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock {
                 te.setChannel(id);
                 redstoneChannels.save(world);
             }
+            onNeighborBlockChange(world, x, y, z, this);
         }
     }
 
@@ -73,7 +82,7 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock {
             RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
             RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(x, y, z);
             if (te.getChannel() != -1) {
-                redstoneChannels.getChannel(te.getChannel()).setValue(0);
+                redstoneChannels.deleteChannel(te.getChannel());
                 redstoneChannels.save(world);
             }
         }
