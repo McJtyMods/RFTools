@@ -44,6 +44,13 @@ public class CounterTileEntity extends GenericTileEntity {
     }
 
     @Override
+    public boolean canUpdate() {
+        return false;
+    }
+
+
+
+    @Override
     protected void checkStateServer() {
         super.checkStateServer();
 
@@ -60,13 +67,13 @@ public class CounterTileEntity extends GenericTileEntity {
                 current = 0;
                 newout = true;
             }
-        }
 
-        markDirty();
+            markDirty();
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
-            notifyBlockUpdate();
+            if (newout != redstoneOut.getValue()) {
+                redstoneOut.setValue(newout);
+                notifyBlockUpdate();
+            }
         }
     }
 
