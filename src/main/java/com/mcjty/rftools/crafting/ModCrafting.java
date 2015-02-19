@@ -217,6 +217,10 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null,
                 new ItemStack(Items.gold_ingot), new ItemStack(ModItems.inventoryModuleItem), new ItemStack(Items.gold_ingot),
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.inventoryPlusModuleItem), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack(Items.ender_pearl), null,
+                new ItemStack(Items.gold_ingot), new ItemStack(ModItems.counterModuleItem), new ItemStack(Items.gold_ingot),
+                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.counterPlusModuleItem), 4));
     }
 
     private static ItemStack createMobEssenceItemStack(String mobName) {

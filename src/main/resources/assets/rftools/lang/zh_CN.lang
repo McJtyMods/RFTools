@@ -43,6 +43,7 @@ item.ClockModule.name=Clock Module
 item.FluidModule.name=Fluid Module
 item.FluidPlusModule.name=Fluid Plus Module
 item.CounterModule.name=Counter Module
+item.CounterPlusModule.name=Counter Plus Module
 
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0

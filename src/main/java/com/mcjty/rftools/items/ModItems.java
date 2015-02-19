@@ -37,6 +37,7 @@ public final class ModItems {
     public static FluidModuleItem fluidModuleItem;
     public static FluidPlusModuleItem fluidPlusModuleItem;
     public static CounterModuleItem counterModuleItem;
+    public static CounterPlusModuleItem counterPlusModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -195,6 +196,12 @@ public final class ModItems {
         counterModuleItem.setCreativeTab(RFTools.tabRfTools);
         counterModuleItem.setTextureName(RFTools.MODID + ":modules/counterModuleItem");
         GameRegistry.registerItem(counterModuleItem, "counterModuleItem");
+
+        counterPlusModuleItem = new CounterPlusModuleItem();
+        counterPlusModuleItem.setUnlocalizedName("CounterPlusModule");
+        counterPlusModuleItem.setCreativeTab(RFTools.tabRfTools);
+        counterPlusModuleItem.setTextureName(RFTools.MODID + ":modules/counterPlusModuleItem");
+        GameRegistry.registerItem(counterPlusModuleItem, "counterPlusModuleItem");
     }
 
     private static void initDimensionItems() {

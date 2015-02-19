@@ -42,6 +42,8 @@ item.InventoryPlusModule.name=Inventory Plus Module
 item.ClockModule.name=Модуль "Часы"
 item.FluidModule.name=Модуль "Жидкости"
 item.FluidPlusModule.name=Модуль "Жидкости+"
+item.CounterModule.name=Counter Module
+item.CounterPlusModule.name=Counter Plus Module
 
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0
