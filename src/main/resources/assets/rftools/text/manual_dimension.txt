@@ -218,7 +218,7 @@ generated. The same goes for many other dimlet types.
 {-------------------------------------------------------------}
 An important thing to realize is that the dimlets that you insert into a
 dimension tab makes the 'signature' of that dimension. That means that if
-you create another dimension tab and insert exactly the same dimlets then
+you create another dimensionf tab and insert exactly the same dimlets then
 it will refer to exactly the same dimension. This can be handy in case
 you want to power a dimension from multiple places (more on that in the
 Dimension Builder section) which can be handy for very expensive
@@ -342,11 +342,11 @@ recommended way is to use a Matter Transmitter that you bring with you.
 There are two options:
 
 Put the matter transmitter in your main base, fully power it and dial
-it to a matter receiver also in your base. Then pick it up with a wrench. It
-will keep the settings and when you put it down in the other dimension it
-will have power and you will be able to get back with it. Keep in mind that
-power in that transmitter goes down a lot so you will have to be careful
-next time you go in the dimension.
+it to a nearby matter receiver. Then pick it up with a wrench. It
+will keep the settings so when you put it down in the other dimension it
+will still have power and you will be able to get back with it. Keep in mind 
+that power in that transmitter is drained with every teleport, so you will 
+have to be careful next time you go into the dimension.
 {-------------------------------------------------------------}
 Best is to bring along a battery or generator as well.
 Otherwise take some power, the matter transmitter and another
