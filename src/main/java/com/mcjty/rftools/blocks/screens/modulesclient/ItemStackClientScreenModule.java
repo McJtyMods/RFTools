@@ -94,7 +94,12 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     private int renderSlot(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
         if (slot != -1) {
-            ItemStack itm = (ItemStack) screenData[index];
+            ItemStack itm = null;
+            try {
+                itm = (ItemStack) screenData[index];
+            } catch (Exception e) {
+                // Ignore this.
+            }
             if (itm != null) {
                 itemRender.renderItemAndEffectIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
             }
@@ -105,7 +110,12 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
         if (slot != -1) {
-            ItemStack itm = (ItemStack) screenData[index];
+            ItemStack itm = null;
+            try {
+                itm = (ItemStack) screenData[index];
+            } catch (Exception e) {
+                // Ignore this.
+            }
             if (itm != null) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
                 renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);

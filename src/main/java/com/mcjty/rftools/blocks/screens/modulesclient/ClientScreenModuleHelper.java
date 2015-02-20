@@ -21,7 +21,12 @@ public class ClientScreenModuleHelper {
             return;
         }
 
-        long maxContents = (Long) screenData[1];
+        long maxContents = 0;
+        try {
+            maxContents = (Long) screenData[1];
+        } catch (Exception e) {
+            return;
+        }
         if (maxContents > 0) {
             if (!hidebar) {
                 long contents = (Long) screenData[0];
