@@ -517,8 +517,8 @@ Using the environmental controller you can improve the area
 around it in various ways. There are modules to give you saturation,
 regeneration, and so on. Every module requires power so this doesn't
 come free. A single controller can affect an cylindrical area
-of radius 100 from bottom to top of the world (if you're prepared
-to consume that much power).
+with a maximum radius of 100 from bottom to top of the world
+(if you're prepared to consume that much power).
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
