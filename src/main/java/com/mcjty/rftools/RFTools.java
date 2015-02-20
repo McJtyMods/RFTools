@@ -37,10 +37,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.EnumMap;
 
-@Mod(modid = RFTools.MODID, version = RFTools.VERSION)
+@Mod(modid = RFTools.MODID, name="RFTools", dependencies = "required-after:Forge@["+RFTools.MIN_FORGE_VER+",);required-after:CoFHCore@["+RFTools.MIN_COFHCORE_VER+",)", version = RFTools.VERSION)
 public class RFTools {
     public static final String MODID = "rftools";
     public static final String VERSION = "2.50";
+    public static final String MIN_FORGE_VER = "10.13.0.1230";
+    public static final String MIN_COFHCORE_VER = "1.7.10R3.0.0B9";
 
     @SidedProxy(clientSide="com.mcjty.rftools.ClientProxy", serverSide="com.mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
