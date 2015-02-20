@@ -2,11 +2,11 @@ package com.mcjty.rftools.blocks.environmental.modules;
 
 import net.minecraft.potion.Potion;
 
-public class SpeedEModule extends PotionEffectModule {
-    public static final float RFPERTICK = 0.002f;
+public class HastePlusEModule extends PotionEffectModule {
+    public static final float RFPERTICK = 0.01f;
 
-    public SpeedEModule() {
-        super(Potion.moveSpeed.getId(), 0);
+    public HastePlusEModule() {
+        super(Potion.digSpeed.getId(), 2);
     }
 
     @Override

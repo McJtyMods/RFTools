@@ -22,6 +22,8 @@ public class SpeedEModuleItem extends Item implements EnvModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        list.add("This module gives speed bonus when");
+        list.add("used in the environmental controller.");
         list.add(EnumChatFormatting.GREEN + "Uses " + SpeedEModule.RFPERTICK + " RF/tick (per cubic block)");
     }
 

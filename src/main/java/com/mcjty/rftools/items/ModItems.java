@@ -4,8 +4,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
 import com.mcjty.rftools.items.dimlets.*;
-import com.mcjty.rftools.items.envmodules.RegenerationEModuleItem;
-import com.mcjty.rftools.items.envmodules.SpeedEModuleItem;
+import com.mcjty.rftools.items.envmodules.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -43,7 +42,13 @@ public final class ModItems {
     public static RedstoneModuleItem redstoneModuleItem;
 
     public static RegenerationEModuleItem regenerationEModuleItem;
+    public static RegenerationPlusEModuleItem regenerationPlusEModuleItem;
     public static SpeedEModuleItem speedEModuleItem;
+    public static SpeedPlusEModuleItem speedPlusEModuleItem;
+    public static HasteEModuleItem hasteEModuleItem;
+    public static HastePlusEModuleItem hastePlusEModuleItem;
+    public static SaturationEModuleItem saturationEModuleItem;
+    public static SaturationPlusEModuleItem saturationPlusEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -150,11 +155,47 @@ public final class ModItems {
         regenerationEModuleItem.setTextureName(RFTools.MODID + ":envmodules/regenerationEModuleItem");
         GameRegistry.registerItem(regenerationEModuleItem, "regenerationEModuleItem");
 
+        regenerationPlusEModuleItem = new RegenerationPlusEModuleItem();
+        regenerationPlusEModuleItem.setUnlocalizedName("RegenerationPlusEModule");
+        regenerationPlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        regenerationPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/regenerationPlusEModuleItem");
+        GameRegistry.registerItem(regenerationPlusEModuleItem, "regenerationPlusEModuleItem");
+
         speedEModuleItem = new SpeedEModuleItem();
         speedEModuleItem.setUnlocalizedName("SpeedEModule");
         speedEModuleItem.setCreativeTab(RFTools.tabRfTools);
         speedEModuleItem.setTextureName(RFTools.MODID + ":envmodules/speedEModuleItem");
         GameRegistry.registerItem(speedEModuleItem, "speedEModuleItem");
+
+        speedPlusEModuleItem = new SpeedPlusEModuleItem();
+        speedPlusEModuleItem.setUnlocalizedName("SpeedPlusEModule");
+        speedPlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        speedPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/speedPlusEModuleItem");
+        GameRegistry.registerItem(speedPlusEModuleItem, "speedPlusEModuleItem");
+
+        hasteEModuleItem = new HasteEModuleItem();
+        hasteEModuleItem.setUnlocalizedName("HasteEModule");
+        hasteEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        hasteEModuleItem.setTextureName(RFTools.MODID + ":envmodules/hasteEModuleItem");
+        GameRegistry.registerItem(hasteEModuleItem, "hasteEModuleItem");
+
+        hastePlusEModuleItem = new HastePlusEModuleItem();
+        hastePlusEModuleItem.setUnlocalizedName("HastePlusEModule");
+        hastePlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        hastePlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/hastePlusEModuleItem");
+        GameRegistry.registerItem(hastePlusEModuleItem, "hastePlusEModuleItem");
+
+        saturationEModuleItem = new SaturationEModuleItem();
+        saturationEModuleItem.setUnlocalizedName("SaturationEModule");
+        saturationEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        saturationEModuleItem.setTextureName(RFTools.MODID + ":envmodules/saturationEModuleItem");
+        GameRegistry.registerItem(saturationEModuleItem, "saturationEModuleItem");
+
+        saturationPlusEModuleItem = new SaturationPlusEModuleItem();
+        saturationPlusEModuleItem.setUnlocalizedName("SaturationPlusEModule");
+        saturationPlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        saturationPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/saturationPlusEModuleItem");
+        GameRegistry.registerItem(saturationPlusEModuleItem, "saturationPlusEModuleItem");
     }
 
     private static void initScreenModuleItems() {

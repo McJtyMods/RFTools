@@ -1,15 +1,12 @@
 package com.mcjty.rftools.blocks.environmental.modules;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 
-public class RegenerationEModule implements EnvironmentModule {
+public class RegenerationEModule extends PotionEffectModule {
+    public static final float RFPERTICK = 0.003f;
 
-    public static final float RFPERTICK = 0.001f;
-
-
-    @Override
-    public void setupFromNBT(NBTTagCompound tagCompound) {
-
+    public RegenerationEModule() {
+        super(Potion.regeneration.getId(), 0);
     }
 
     @Override

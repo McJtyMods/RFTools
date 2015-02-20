@@ -1,9 +1,11 @@
 package com.mcjty.rftools.blocks.environmental.modules;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public interface EnvironmentModule {
-    void setupFromNBT(NBTTagCompound tagCompound);
-
     float getRfPerTick();
+
+    void tick(World world, int x, int y, int z, int radius, int miny, int maxy);
+
+    void activate(boolean a);
 }

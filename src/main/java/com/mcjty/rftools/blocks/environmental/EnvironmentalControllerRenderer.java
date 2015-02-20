@@ -24,13 +24,10 @@ public class EnvironmentalControllerRenderer extends TileEntitySpecialRenderer {
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 1.0F, (float) z + 0.5F);
         GL11.glRotatef(t * 360.0f, 0.0F, 1.0F, 0.0F);
-//        GL11.glTranslatef(0.0F, -0.2500F, -0.4375F);
-//        GL11.glScalef(1, -1, -1);
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDepthMask(false);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
 
         this.bindTexture(texture);
 

@@ -47,7 +47,13 @@ item.CounterPlusModule.name=Counter Plus Module
 item.RedstoneModule.name=Redstone Module
 
 item.RegenerationEModule.name=Regeneration Module
+item.RegenerationPlusEModule.name=Regeneration Plus Module
 item.SpeedEModule.name=Speed Module
+item.SpeedPlusEModule.name=Speed Plus Module
+item.HasteEModule.name=Haste Module
+item.HastePlusEModule.name=Haste Plus Module
+item.SaturationEModule.name=Saturation Module
+item.SaturationPlusEModule.name=Saturation Plus Module
 
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0

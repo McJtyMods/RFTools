@@ -123,11 +123,25 @@ public final class ModCrafting {
     private static void initEnvModuleCrafting() {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.regenerationEModuleItem), " p ", "rgr", " b ", 'p', createMobSyringe("Iron Golem"), 'r', Items.redstone, 'g', Items.gold_ingot,
+        ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
+        ItemStack horseSyringe = createMobSyringe("Horse");
+        ItemStack zombieSyringe = createMobSyringe("Zombie");
+        ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.regenerationEModuleItem), " p ", "rgr", " b ", 'p', ironGolemSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
                 'b', inkSac);
-        GameRegistry.addRecipe(new ItemStack(ModItems.speedEModuleItem), " p ", "rgr", " b ", 'p', createMobSyringe("Horse"), 'r', Items.redstone, 'g', Items.gold_ingot,
+        GameRegistry.addRecipe(new ItemStack(ModItems.speedEModuleItem), " p ", "rgr", " b ", 'p', horseSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
                 'b', inkSac);
 
+        GameRegistry.addRecipe(new ItemStack(ModItems.hasteEModuleItem), " p ", "rgr", " b ", 'p', diamondPick, 'r', Items.redstone, 'g', Items.gold_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.saturationEModuleItem), " p ", "rgr", " b ", 'p', zombieSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
+                'b', inkSac);
+
+        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.regenerationPlusEModuleItem), ironGolemSyringe, ironGolemSyringe, new ItemStack(ModItems.regenerationEModuleItem));
+        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.speedPlusEModuleItem), horseSyringe, horseSyringe, new ItemStack(ModItems.speedEModuleItem));
+        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.hastePlusEModuleItem), diamondPick, new ItemStack(ModItems.hasteEModuleItem));
+        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.saturationPlusEModuleItem), zombieSyringe, zombieSyringe, new ItemStack(ModItems.saturationEModuleItem));
     }
 
     private static ItemStack createMobSyringe(String mobName) {
@@ -173,18 +187,19 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), "bwb", "wMw", "bwb", 'M', ModBlocks.machineFrame, 'b', Items.bucket, 'w', Blocks.wool);
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
 
-        ItemStack diamondPick = new ItemStack(Items.diamond_pickaxe);
-        Map efficiency3 = new HashMap();
-        efficiency3.put(Enchantment.efficiency.effectId, 3);
-        EnchantmentHelper.setEnchantments(efficiency3, diamondPick);
+        ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
         GameRegistry.addRecipe(new ItemStack(ModItems.efficiencyEssenceItem), " p ", "ese", " e ", 'p', diamondPick, 's', Items.nether_star, 'e', Items.ender_eye);
 
-        ItemStack ironPick = new ItemStack(Items.iron_pickaxe);
-        Map efficiency2 = new HashMap();
-        efficiency2.put(Enchantment.efficiency.effectId, 2);
-        EnchantmentHelper.setEnchantments(efficiency2, ironPick);
-
+        ItemStack ironPick = createEnchantedItem(Items.iron_pickaxe, Enchantment.efficiency.effectId, 2);
         GameRegistry.addRecipe(new ItemStack(ModItems.mediocreEfficiencyEssenceItem), " p ", "ese", " e ", 'p', ironPick, 's', Items.ghast_tear, 'e', Items.ender_eye);
+    }
+
+    private static ItemStack createEnchantedItem(Item item, int effectId, int amount) {
+        ItemStack stack = new ItemStack(item);
+        Map enchant = new HashMap();
+        enchant.put(effectId, amount);
+        EnchantmentHelper.setEnchantments(enchant, stack);
+        return stack;
     }
 
     private static void initScreenCrafting() {

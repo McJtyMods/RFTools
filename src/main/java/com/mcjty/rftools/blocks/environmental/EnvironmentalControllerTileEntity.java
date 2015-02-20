@@ -3,23 +3,35 @@ package com.mcjty.rftools.blocks.environmental;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+
+    public static final String CMD_SETRADIUS = "setRadius";
+    public static final String CMD_SETBOUNDS = "setBounds";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
 
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
+    private int radius = 50;
+    private int miny = 30;
+    private int maxy = 70;
+    private int volume = -1;
+
+    private int powerTimeout = 0;
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
@@ -29,20 +41,88 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         if (environmentModules == null) {
             getEnvironmentModules();
         }
-        return totalRfPerTick;
+        return (int) (totalRfPerTick * (4.0f - getInfusedFactor()) / 4.0f);
+    }
+
+    public int getVolume() {
+        if (volume == -1) {
+            volume = (int) ((radius * 2.0f * Math.PI) * (maxy-miny + 1));
+        }
+        return volume;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+        volume = -1;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getMiny() {
+        return miny;
+    }
+
+    public void setMiny(int miny) {
+        this.miny = miny;
+        volume = -1;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getMaxy() {
+        return maxy;
+    }
+
+    public void setMaxy(int maxy) {
+        this.maxy = maxy;
+        volume = -1;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    @Override
+    protected void checkStateServer() {
+        if (powerTimeout > 0) {
+            powerTimeout--;
+            return;
+        }
+
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+
+        getEnvironmentModules();
+
+        int rfNeeded = getTotalRfPerTick();
+        if (rfNeeded > rf) {
+            for (EnvironmentModule module : environmentModules) {
+                module.activate(false);
+            }
+            powerTimeout = 20;
+        } else {
+            extractEnergy(ForgeDirection.DOWN, rfNeeded, false);
+            for (EnvironmentModule module : environmentModules) {
+                module.activate(true);
+                module.tick(worldObj, xCoord, yCoord, zCoord, radius, miny, maxy);
+            }
+        }
     }
 
     // This is called server side.
     public List<EnvironmentModule> getEnvironmentModules() {
         if (environmentModules == null) {
+            int volume = getVolume();
             totalRfPerTick = 0;
             environmentModules = new ArrayList<EnvironmentModule>();
             for (ItemStack itemStack : inventoryHelper.getStacks()) {
                 if (itemStack != null && itemStack.getItem() instanceof EnvModuleProvider) {
                     EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
+                    Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
                     EnvironmentModule environmentModule;
                     try {
-                        environmentModule = moduleProvider.getServerEnvironmentModule().newInstance();
+                        environmentModule = moduleClass.newInstance();
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                         continue;
@@ -50,11 +130,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
                         e.printStackTrace();
                         continue;
                     }
-                    environmentModule.setupFromNBT(itemStack.getTagCompound());
                     environmentModules.add(environmentModule);
-                    totalRfPerTick += environmentModule.getRfPerTick();
-                } else {
-                    environmentModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
+                    totalRfPerTick += (int) (environmentModule.getRfPerTick() * volume);
                 }
             }
 
@@ -149,6 +226,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
+        radius = tagCompound.getInteger("radius");
+        miny = tagCompound.getInteger("miny");
+        maxy = tagCompound.getInteger("maxy");
+        volume = -1;
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -170,6 +251,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        tagCompound.setInteger("radius", radius);
+        tagCompound.setInteger("miny", miny);
+        tagCompound.setInteger("maxy", maxy);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -185,6 +269,22 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         tagCompound.setTag("Items", bufferTagList);
     }
 
-
-
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETRADIUS.equals(command)) {
+            setRadius(args.get("radius").getInteger());
+            return true;
+        } else if (CMD_SETBOUNDS.equals(command)) {
+            int miny = args.get("miny").getInteger();
+            int maxy = args.get("maxy").getInteger();
+            setMiny(miny);
+            setMaxy(maxy);
+            return true;
+        }
+        return false;
+    }
 }

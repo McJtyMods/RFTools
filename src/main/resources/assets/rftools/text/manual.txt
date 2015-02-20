@@ -8,16 +8,17 @@ Table of contents:
 {l:monitor}Contents Monitors
 {l:stomon}Storage Scanner
 {l:filter}Item Filter
+{l:crafte}Automatic Crafter
 {/}
 
 
 
-{l:crafte}Automatic Crafter
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
 {l:power}Power Generator
 {l:shield}Shield System
 {l:screens}Modular Screens
+{l:envctrl}Environmental Control
 {l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
@@ -507,6 +508,17 @@ require that you first shift-right click on the machine/tank that
 you want to monitor. After that insert them in the screen. The
 maximum distance between the screen and the monitored block is 64.
 The 'Plus' versions of the modules have no limits.
+{-------------------------------------------------------------}
+{b}Environmental Controller
+{n:envctrl}
+{rb:environmentalControllerBlock}
+
+Using the environmental controller you can improve the area
+around it in various ways. There are modules to give you saturation,
+regeneration, and so on. Every module requires power so this doesn't
+come free. A single controller can affect an cylindrical area
+of radius 100 from bottom to top of the world (if you're prepared
+to consume that much power).
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}

@@ -2,11 +2,7 @@ package com.mcjty.rftools.items.envmodules;
 
 import com.mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import com.mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import com.mcjty.rftools.blocks.environmental.modules.RegenerationEModule;
-import com.mcjty.rftools.blocks.screens.modules.ClockScreenModule;
-import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
-import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
-import com.mcjty.rftools.blocks.screens.modulesclient.ClockClientScreenModule;
+import com.mcjty.rftools.blocks.environmental.modules.SaturationEModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,9 +12,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
-public class RegenerationEModuleItem extends Item implements EnvModuleProvider {
+public class SaturationEModuleItem extends Item implements EnvModuleProvider {
 
-    public RegenerationEModuleItem() {
+    public SaturationEModuleItem() {
         setMaxStackSize(16);
     }
 
@@ -26,9 +22,9 @@ public class RegenerationEModuleItem extends Item implements EnvModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add("This module gives regeneration bonus when");
+        list.add("This module gives saturation bonus when");
         list.add("used in the environmental controller.");
-        list.add(EnumChatFormatting.GREEN + "Uses " + RegenerationEModule.RFPERTICK + " RF/tick (per cubic block)");
+        list.add(EnumChatFormatting.GREEN + "Uses " + SaturationEModule.RFPERTICK + " RF/tick (per cubic block)");
     }
 
     @Override
@@ -38,11 +34,11 @@ public class RegenerationEModuleItem extends Item implements EnvModuleProvider {
 
     @Override
     public Class<? extends EnvironmentModule> getServerEnvironmentModule() {
-        return RegenerationEModule.class;
+        return SaturationEModule.class;
     }
 
     @Override
     public String getName() {
-        return "Regen";
+        return "Saturation";
     }
 }

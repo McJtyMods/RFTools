@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -33,10 +34,39 @@ public class EnvironmentalControllerBlock extends GenericContainerBlock implemen
         super.getWailaBody(itemStack, currenttip, accessor, config);
         NBTTagCompound tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
-            int rfPerTick = ((EnvironmentalControllerTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+            EnvironmentalControllerTileEntity tileEntity = (EnvironmentalControllerTileEntity) accessor.getTileEntity();
+            int rfPerTick = tileEntity.getTotalRfPerTick();
             currenttip.add(EnumChatFormatting.GREEN + "Consuming " + rfPerTick + " RF/tick");
+            int radius = tileEntity.getRadius();
+            int miny = tileEntity.getMiny();
+            int maxy = tileEntity.getMaxy();
+            currenttip.add(EnumChatFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+            int volume = tileEntity.getVolume();
+            currenttip.add(EnumChatFormatting.GREEN + "Volume " + volume + " blocks");
         }
         return currenttip;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            int radius = tagCompound.getInteger("radius");
+            int miny = tagCompound.getInteger("miny");
+            int maxy = tagCompound.getInteger("maxy");
+            list.add(EnumChatFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Control the environment around you with various");
+            list.add(EnumChatFormatting.WHITE + "modules. There are modules for things like regeneration,");
+            list.add(EnumChatFormatting.WHITE + "speed...");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
     }
 
     @Override
