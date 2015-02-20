@@ -218,7 +218,7 @@ generated. The same goes for many other dimlet types.
 {-------------------------------------------------------------}
 An important thing to realize is that the dimlets that you insert into a
 dimension tab makes the 'signature' of that dimension. That means that if
-you create another dimensionf tab and insert exactly the same dimlets then
+you create another dimension tab and insert exactly the same dimlets then
 it will refer to exactly the same dimension. This can be handy in case
 you want to power a dimension from multiple places (more on that in the
 Dimension Builder section) which can be handy for very expensive
