@@ -28,6 +28,10 @@ public class EnvironmentalControllerRenderer extends TileEntitySpecialRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDepthMask(false);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+        if (!depthTest) {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+        }
 
         this.bindTexture(texture);
 
@@ -64,6 +68,9 @@ public class EnvironmentalControllerRenderer extends TileEntitySpecialRenderer {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDepthMask(true);
 //        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+        if (!depthTest) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
 
         GL11.glPopMatrix();
     }
