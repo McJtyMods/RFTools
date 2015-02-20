@@ -30,11 +30,16 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     private int miny = 30;
     private int maxy = 70;
     private int volume = -1;
+    private boolean active = false;
 
     private int powerTimeout = 0;
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public int getTotalRfPerTick() {
@@ -101,11 +106,21 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
                 module.activate(false);
             }
             powerTimeout = 20;
+            if (active) {
+                active = false;
+                markDirty();
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            }
         } else {
             extractEnergy(ForgeDirection.DOWN, rfNeeded, false);
             for (EnvironmentModule module : environmentModules) {
                 module.activate(true);
                 module.tick(worldObj, xCoord, yCoord, zCoord, radius, miny, maxy);
+            }
+            if (!active) {
+                active = true;
+                markDirty();
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             }
         }
     }
@@ -220,6 +235,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         totalRfPerTick = tagCompound.getInteger("rfPerTick");
+        active = tagCompound.getBoolean("active");
     }
 
     @Override
@@ -245,6 +261,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
+        tagCompound.setBoolean("active", active);
     }
 
     @Override

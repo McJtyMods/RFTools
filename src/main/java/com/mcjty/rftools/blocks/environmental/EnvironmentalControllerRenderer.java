@@ -18,6 +18,12 @@ public class EnvironmentalControllerRenderer extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
+        EnvironmentalControllerTileEntity environmentalControllerTileEntity = (EnvironmentalControllerTileEntity) tileEntity;
+
+        if (!environmentalControllerTileEntity.isActive()) {
+            return;
+        }
+
         GL11.glPushMatrix();
 
         float t = (System.currentTimeMillis() % 10000) / 10000.0f;
