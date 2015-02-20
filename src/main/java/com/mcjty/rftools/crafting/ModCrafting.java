@@ -117,7 +117,28 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
 
         initDimletConstructionCrafting();
+        initEnvModuleCrafting();
     }
+
+    private static void initEnvModuleCrafting() {
+        Object inkSac = Item.itemRegistry.getObjectById(351);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.regenerationEModuleItem), " p ", "rgr", " b ", 'p', createMobSyringe("Iron Golem"), 'r', Items.redstone, 'g', Items.gold_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.speedEModuleItem), " p ", "rgr", " b ", 'p', createMobSyringe("Horse"), 'r', Items.redstone, 'g', Items.gold_ingot,
+                'b', inkSac);
+
+    }
+
+    private static ItemStack createMobSyringe(String mobName) {
+        ItemStack syringe = new ItemStack(ModItems.syringeItem);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setString("mobName", mobName);
+        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
+        syringe.setTagCompound(tagCompound);
+        return syringe;
+    }
+
 
     private static void initLogicBlockCrafting() {
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
