@@ -164,7 +164,7 @@ To craft this you actually need dimensional shards.
     Special dimlets: these are special dimlets that are usually
         extremely rare.
 
-{b}There are currently two special dimlets:
+{b}There are currently five special dimlets:
 
     Peaceful Dimlet: This dimlet prevents hostile mobs from
         spawning in your dimension (except for mobs that you
@@ -174,6 +174,7 @@ To craft this you actually need dimensional shards.
     Efficiency Dimlet: If you add this rare dimlet to your
         dimension tab then the dimension will consume 20% less
         energy per tick. This effect is cumulative.
+{-------------------------------------------------------------}
     Mediocre Efficiency Dimlet: This dimlet functions as a
         somewhat inferior version of the Effeciency Dimlet.
         It is easier to obtain, but does not add quite the
@@ -181,6 +182,8 @@ To craft this you actually need dimensional shards.
     Shelter Dimlet: A dimlet for dimensions that may be
         excessively hostile, this dimlet creates a much
         safer spot for teleporting in.
+    Seed Dimlet: A very specialized dimlet to control the seed
+        of the random world generation for a dimension.
 {-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}
@@ -264,9 +267,7 @@ some time to actually construct the dimension. If there is not enough
 power present the building will be delayed. You can also take out your
 dimension tab if you want to temporarily stop building the dimension (if
 you need power for something else for example). The dimension tab will
-remember the current progress. The dimension builder also has a neat
-orb that will give you some idea of how far along the dimension has
-progressed.
+remember the current progress.
 {-------------------------------------------------------------}
 As soon as the dimension is ready the tooltip on the dimension tab
 will change indicating the status and current power. You will also
