@@ -650,29 +650,14 @@ public class KnownDimletConfiguration {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(br);
-            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-                if ("material".equals(entry.getKey())) {
-                    JsonElement value = entry.getValue();
-                    JsonArray array = value.getAsJsonArray();
-                    String modid = array.get(0).getAsString();
-                    String name = array.get(1).getAsString();
-                    Integer meta = array.get(2).getAsInt();
-                    Integer rfcreate = array.get(3).getAsInt();
-                    Integer rfmaintain = array.get(4).getAsInt();
-                    Integer tickCost = array.get(5).getAsInt();
-                    Integer rarity = array.get(6).getAsInt();
-                    Integer expensive = array.get(7).getAsInt();
-                    int id = initModMaterialItem(cfg, mainCfg, modid, name, meta, mapping);
-                    if (id != -1) {
-                        DimletKey key = mapping.getKey(id);
-                        DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
-                        DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
-                        DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
-                        DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
-                        if (expensive != 0) {
-                            dimletRandomNotAllowed.add(key);
-                        }
-                    }
+            for (JsonElement entry : element.getAsJsonArray()) {
+                JsonArray array = entry.getAsJsonArray();
+                String type = array.get(0).getAsString();
+                if ("material".equals(type)) {
+                    String modid = array.get(1).getAsString();
+                    String name = array.get(2).getAsString();
+                    Integer meta = array.get(3).getAsInt();
+                    initModMaterialItem(cfg, mainCfg, modid, name, meta, mapping);
                 }
             }
         } catch (IOException e) {
