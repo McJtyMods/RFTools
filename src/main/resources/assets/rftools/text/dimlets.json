@@ -3,6 +3,7 @@
         [ "Liquid", "glowstone" ],
         [ "Liquid", "honey" ],
         [ "Liquid", "ic2constructionfoam" ],
+        [ "Liquid", "mana" ],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
