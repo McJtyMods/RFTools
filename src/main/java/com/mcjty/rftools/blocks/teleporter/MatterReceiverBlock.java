@@ -45,7 +45,8 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
-            list.add(EnumChatFormatting.GREEN + "Name: " + name);
+            int id = tagCompound.getInteger("destinationId");
+            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "If you place this block anywhere in the world then");
@@ -61,10 +62,18 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            String name = tagCompound.getString("tpName");
-            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name);
+//        NBTTagCompound tagCompound = accessor.getNBTData();
+//        if (tagCompound != null) {
+//            String name = tagCompound.getString("tpName");
+//            int id = tagCompound.getInteger("destinationId");
+//            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+//        }
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof MatterReceiverTileEntity) {
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+            String name = matterReceiverTileEntity.getName();
+            int id = matterReceiverTileEntity.getId();
+            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
         }
         return currenttip;
     }
@@ -94,8 +103,13 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
             return rc;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        destinations.addDestination(new Coordinate(x, y, z), world.provider.dimensionId);
+
+        GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId);
+
+        destinations.getNewId(gc);
+        destinations.addDestination(gc);
         destinations.save(world);
+
         return rc;
     }
 
@@ -106,6 +120,15 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
         restoreBlockFromNBT(world, x, y, z, itemStack);
         if (!world.isRemote) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x, y, z);
+            int id = matterReceiverTileEntity.getId();
+            if (id == -1) {
+                TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+                GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId);
+                id = destinations.getNewId(gc);
+
+                destinations.save(world);
+                matterReceiverTileEntity.setId(id);
+            }
             matterReceiverTileEntity.updateDestination();
         }
     }

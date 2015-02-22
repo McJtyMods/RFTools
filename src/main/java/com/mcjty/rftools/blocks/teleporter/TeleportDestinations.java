@@ -18,6 +18,9 @@ public class TeleportDestinations extends WorldSavedData {
     private static TeleportDestinations instance = null;
 
     private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<GlobalCoordinate,TeleportDestination>();
+    private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<Integer, GlobalCoordinate>();
+    private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<GlobalCoordinate, Integer>();
+    private int lastId = 0;
 
     public TeleportDestinations(String identifier) {
         super(identifier);
@@ -31,6 +34,8 @@ public class TeleportDestinations extends WorldSavedData {
     public static void clearInstance() {
         if (instance != null) {
             instance.destinations.clear();
+            instance.destinationById.clear();
+            instance.destinationIdByCoordinate.clear();
             instance = null;
         }
     }
@@ -117,10 +122,19 @@ public class TeleportDestinations extends WorldSavedData {
         return destinations.containsKey(key);
     }
 
-    public TeleportDestination addDestination(Coordinate coordinate, int dimension) {
-        GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
+    public int getNewId(GlobalCoordinate key) {
+        if (destinationIdByCoordinate.containsKey(key)) {
+            return destinationIdByCoordinate.get(key);
+        }
+        lastId++;
+        destinationById.put(lastId, key);
+        destinationIdByCoordinate.put(key, lastId);
+        return lastId;
+    }
+
+    public TeleportDestination addDestination(GlobalCoordinate key) {
         if (!destinations.containsKey(key)) {
-            TeleportDestination teleportDestination = new TeleportDestination(coordinate, dimension);
+            TeleportDestination teleportDestination = new TeleportDestination(key.getCoordinate(), key.getDimension());
             destinations.put(key, teleportDestination);
         }
         return destinations.get(key);
@@ -134,13 +148,18 @@ public class TeleportDestinations extends WorldSavedData {
             }
         }
         for (GlobalCoordinate key : keysToRemove) {
-            destinations.remove(key);
+            removeDestination(key.getCoordinate(), key.getDimension());
         }
     }
 
     public void removeDestination(Coordinate coordinate, int dimension) {
         GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
         destinations.remove(key);
+        Integer id = destinationIdByCoordinate.get(key);
+        if (id != null) {
+            destinationById.remove(id);
+            destinationIdByCoordinate.remove(key);
+        }
     }
 
     public TeleportDestination getDestination(Coordinate coordinate, int dimension) {
@@ -150,6 +169,9 @@ public class TeleportDestinations extends WorldSavedData {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         destinations.clear();
+        destinationById.clear();
+        destinationIdByCoordinate.clear();
+        lastId = tagCompound.getInteger("lastId");
         NBTTagList lst = tagCompound.getTagList("destinations", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
@@ -159,7 +181,15 @@ public class TeleportDestinations extends WorldSavedData {
 
             TeleportDestination destination = new TeleportDestination(c, dim);
             destination.setName(name);
-            destinations.put(new GlobalCoordinate(c, dim), destination);
+            GlobalCoordinate gc = new GlobalCoordinate(c, dim);
+            destinations.put(gc, destination);
+
+            int id;
+            if (tc.hasKey("id")) {
+                id = tc.getInteger("id");
+                destinationById.put(id, gc);
+                destinationIdByCoordinate.put(gc, id);
+            }
         }
     }
 
@@ -168,13 +198,19 @@ public class TeleportDestinations extends WorldSavedData {
         NBTTagList lst = new NBTTagList();
         for (TeleportDestination destination : destinations.values()) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setInteger("x", destination.getCoordinate().getX());
-            tc.setInteger("y", destination.getCoordinate().getY());
-            tc.setInteger("z", destination.getCoordinate().getZ());
+            Coordinate c = destination.getCoordinate();
+            tc.setInteger("x", c.getX());
+            tc.setInteger("y", c.getY());
+            tc.setInteger("z", c.getZ());
             tc.setInteger("dim", destination.getDimension());
             tc.setString("name", destination.getName());
+            Integer id = destinationIdByCoordinate.get(new GlobalCoordinate(c, destination.getDimension()));
+            if (id != null) {
+                tc.setInteger("id", id);
+            }
             lst.appendTag(tc);
         }
         tagCompound.setTag("destinations", lst);
+        tagCompound.setInteger("lastId", lastId);
     }
 }

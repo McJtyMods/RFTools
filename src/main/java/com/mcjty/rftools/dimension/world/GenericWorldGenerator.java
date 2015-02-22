@@ -2,16 +2,13 @@ package com.mcjty.rftools.dimension.world;
 
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import com.mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity;
-import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.items.ModItems;
-import com.mcjty.varia.BlockMeta;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
+import com.mcjty.varia.BlockMeta;
 import com.mcjty.varia.Coordinate;
 import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.IWorldGenerator;
@@ -145,7 +142,8 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         Coordinate spawnPoint = new Coordinate(midx, starty, midz);
-        TeleportDestination destination = destinations.addDestination(spawnPoint, world.provider.dimensionId);
+        GlobalCoordinate gc = new GlobalCoordinate(spawnPoint, world.provider.dimensionId);
+        TeleportDestination destination = destinations.addDestination(gc);
         destination.setName(information.getName());
         destinations.save(world);
 
