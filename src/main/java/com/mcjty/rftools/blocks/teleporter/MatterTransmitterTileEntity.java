@@ -275,8 +275,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 this.teleportId = id;
             }
         }
-        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     /**

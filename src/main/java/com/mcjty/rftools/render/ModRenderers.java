@@ -11,7 +11,9 @@ import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
 import com.mcjty.rftools.blocks.shield.SolidShieldBlock;
 import com.mcjty.rftools.blocks.shield.SolidShieldBlockRenderer;
 import com.mcjty.rftools.blocks.teleporter.BeamRenderer;
+import com.mcjty.rftools.blocks.teleporter.BeamRenderer2;
 import com.mcjty.rftools.blocks.teleporter.MatterTransmitterBlock;
+import com.mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -30,5 +32,6 @@ public final class ModRenderers {
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScreenTileEntity.class, new ScreenRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalControllerRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(MatterTransmitterTileEntity.class, new BeamRenderer2());
     }
 }
