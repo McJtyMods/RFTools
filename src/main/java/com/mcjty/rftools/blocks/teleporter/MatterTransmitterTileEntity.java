@@ -38,6 +38,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_WARN = 1;
+    public static final int STATUS_UNKNOWN = 2;
+
     // Server side: current dialing destination. Old system.
     private TeleportDestination teleportDestination = null;
     // Server side: current dialing destination. New system.
@@ -46,6 +50,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private String name = null;
     private boolean privateAccess = false;
     private Set<String> allowedPlayers = new HashSet<String>();
+    private int status = STATUS_OK;
 
     // Server side: the player we're currently teleporting.
     private EntityPlayer teleportingPlayer = null;
@@ -86,6 +91,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             return true;
         }
         return allowedPlayers.contains(player);
+    }
+
+    public int getStatus() {
+        return status;
     }
 
     public List<PlayerName> getAllowedPlayers() {
@@ -166,6 +175,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         } else {
             teleportingPlayer = null;
         }
+        status = tagCompound.getInteger("status");
     }
 
     @Override
@@ -207,6 +217,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (teleportingPlayer != null) {
             tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
         }
+        tagCompound.setInteger("status", status);
     }
 
     @Override
@@ -235,6 +246,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         tagCompound.setTag("players", playerTagList);
     }
 
+    public boolean isDialed() {
+        return teleportId != null || teleportDestination != null;
+    }
+
     public TeleportDestination getTeleportDestination() {
         if (teleportId != null) {
             TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(worldObj);
@@ -261,6 +276,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             }
         }
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     /**
@@ -350,11 +366,16 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             checkReceiverStatusCounter--;
             if (checkReceiverStatusCounter <= 0) {
                 checkReceiverStatusCounter = 20;
+                int newstatus;
                 if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, xCoord, yCoord, zCoord)) {
-                    int meta = checkReceiverStatus();
-                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, meta, 2);
+                    newstatus = checkReceiverStatus();
                 } else {
-                    worldObj.setBlockMetadataWithNotify(xCoord, yCoord+1, zCoord, TeleportBeamBlock.META_OK, 2);
+                    newstatus = STATUS_OK;
+                }
+                if (newstatus != status) {
+                    status = newstatus;
+                    markDirty();
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
                 }
             }
         }
@@ -405,7 +426,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
             int energyLevel = dimensionStorage.getEnergyLevel(dimension);
             if (energyLevel < DimletConfiguration.DIMPOWER_WARN_TP) {
-                return TeleportBeamBlock.META_WARN;
+                return STATUS_WARN;
             }
         }
 
@@ -414,7 +435,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         // By default we will not check if the dimension is not loaded. Can be changed in config.
         if (w == null) {
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
-                return TeleportBeamBlock.META_UNKNOWN;
+                return STATUS_UNKNOWN;
             } else {
                 w = MinecraftServer.getServer().worldServerForDimension(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
@@ -425,7 +446,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
         if (!exists) {
             if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
-                return TeleportBeamBlock.META_UNKNOWN;
+                return STATUS_UNKNOWN;
             } else {
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadChunk;
             }
@@ -433,13 +454,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return TeleportBeamBlock.META_WARN;
+            return STATUS_WARN;
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
 
         int status = matterReceiverTileEntity.checkStatus();
-        return (status == DialingDeviceTileEntity.DIAL_OK) ? TeleportBeamBlock.META_OK : TeleportBeamBlock.META_WARN;
+        return (status == DialingDeviceTileEntity.DIAL_OK) ? STATUS_OK : STATUS_WARN;
     }
 
     private void clearTeleport(int cooldown) {

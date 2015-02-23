@@ -292,10 +292,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
     }
 
     private void clearBeam(Coordinate c, World world) {
-        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
-        if (ModBlocks.teleportBeamBlock.equals(b)) {
-            world.setBlockToAir(c.getX(), c.getY()+1, c.getZ());
-        }
+        // @todo
     }
 
 
@@ -303,7 +300,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
     public static boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
             Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
-            if ((!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) && !ModBlocks.teleportBeamBlock.equals(b)) {
+            if (!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) {
                 if (dy <= errory) {
                     // Everything below errory must be free.
                     return false;
@@ -313,10 +310,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
                 }
             }
         }
-        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
-        if (b.isAir(world, c.getX(), c.getY()+1, c.getZ()) || ModBlocks.teleportBeamBlock.equals(b)) {
-            world.setBlock(c.getX(), c.getY()+1, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
-        }
+        // @todo
         return true;
     }
 

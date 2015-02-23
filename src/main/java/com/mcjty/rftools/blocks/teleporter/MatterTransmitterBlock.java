@@ -32,7 +32,12 @@ import java.util.List;
 
 public class MatterTransmitterBlock extends GenericContainerBlock implements Infusable {
 
+    public static int RENDERID_BEAM;
+
     private IIcon iconTop;
+    public IIcon iconBeam;
+    public IIcon iconWarn;
+    public IIcon iconUnknown;
 
     public MatterTransmitterBlock() {
         super(Material.iron, MatterTransmitterTileEntity.class);
@@ -87,15 +92,6 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        super.breakBlock(world, x, y, z, block, meta);
-        Block b = world.getBlock(x, y+1, z);
-        if (ModBlocks.teleportBeamBlock.equals(b)) {
-            world.setBlockToAir(x, y+1, z);
-        }
-    }
-
-    @Override
     public int getGuiID() {
         return RFTools.GUI_MATTER_TRANSMITTER;
     }
@@ -124,6 +120,33 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTransmitter");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+
+        iconBeam = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporter");
+        iconWarn = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporterWarn");
+        iconUnknown = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTeleporterUnknown");
+    }
+
+    public static int currentPass = 0;
+
+    @Override
+    public boolean canRenderInPass(int pass) {
+        currentPass = pass;
+        return pass == 0 || pass == 1;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public int getRenderType() {
+        return MatterTransmitterBlock.RENDERID_BEAM;
     }
 
     @Override
