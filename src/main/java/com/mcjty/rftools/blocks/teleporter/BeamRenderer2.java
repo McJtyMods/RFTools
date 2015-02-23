@@ -27,16 +27,17 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
             if (!blendEnabled) {
                 GL11.glEnable(GL11.GL_BLEND);
             }
-//            GL11.glDepthMask(false);
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            GL11.glDepthMask(false);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+
             boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
             if (!depthTest) {
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
             }
 
-            tessellator.setBrightness(190);
             tessellator.startDrawingQuads();
+            tessellator.setBrightness(240);
 
             int status = matterTransmitterTileEntity.getStatus();
             ResourceLocation beamIcon = null;
@@ -50,6 +51,8 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
             long ticks = (System.currentTimeMillis() / 100) % 10;
             float i1 = ticks / 10.0f;
             float i2 = i1 + .1f;
+
+            tessellator.setColorRGBA_F(1.0f, 1.0f, 1.0f, 1.0f);
 
             tessellator.addVertexWithUV(0, 4, 0, 1, i1);
             tessellator.addVertexWithUV(1, 4, 0, 1, i2);
@@ -76,8 +79,9 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
             if (!blendEnabled) {
                 GL11.glDisable(GL11.GL_BLEND);
             }
-//            GL11.glDepthMask(true);
-//        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+            GL11.glDepthMask(true);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+
             if (!depthTest) {
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
             }
