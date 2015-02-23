@@ -38,8 +38,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
-    // Server side: current dialing destination
+    // Server side: current dialing destination. Old system.
     private TeleportDestination teleportDestination = null;
+    // Server side: current dialing destination. New system.
+    private Integer teleportId = null;
 
     private String name = null;
     private boolean privateAccess = false;
@@ -177,6 +179,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             int dim = tagCompound.getInteger("dim");
             teleportDestination = new TeleportDestination(c, dim);
         }
+        if (tagCompound.hasKey("destId")) {
+            teleportId = tagCompound.getInteger("destId");
+        } else {
+            teleportId = null;
+        }
         privateAccess = tagCompound.getBoolean("private");
 
         allowedPlayers.clear();
@@ -215,6 +222,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 tagCompound.setInteger("dim", teleportDestination.getDimension());
             }
         }
+        if (teleportId != null) {
+            tagCompound.setInteger("destId", teleportId);
+        }
 
         tagCompound.setBoolean("private", privateAccess);
 
@@ -226,11 +236,30 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     public TeleportDestination getTeleportDestination() {
+        if (teleportId != null) {
+            TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(worldObj);
+            GlobalCoordinate gc = teleportDestinations.getCoordinateForId(teleportId);
+            if (gc == null) {
+                return null;
+            } else {
+                return teleportDestinations.getDestination(gc.getCoordinate(), gc.getDimension());
+            }
+        }
         return teleportDestination;
     }
 
     public void setTeleportDestination(TeleportDestination teleportDestination) {
-        this.teleportDestination = teleportDestination;
+        this.teleportDestination = null;
+        this.teleportId = null;
+        if (teleportDestination != null) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            Integer id = destinations.getIdForCoordinate(new GlobalCoordinate(teleportDestination.getCoordinate(), teleportDestination.getDimension()));
+            if (id == null) {
+                this.teleportDestination = teleportDestination;
+            } else {
+                this.teleportId = id;
+            }
+        }
         markDirty();
     }
 
@@ -309,9 +338,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     @Override
     public void updateEntity() {
-        if (RFTools.debugMode) {
-            RFTools.log("MatterTransmitterTileEntity: updateEntity (dim:" + worldObj.provider.dimensionId + ")");
-        }
         super.updateEntity();
     }
 
@@ -319,13 +345,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     protected void checkStateServer() {
         super.checkStateServer();
 
-        if (RFTools.debugMode) {
-            RFTools.log("MatterTransmitterTileEntity.checkStateServer: AAAAA (dim:" + worldObj.provider.dimensionId + ")");
-        }
-
-
         // Every few times we check if the receiver is ok (if we're dialed).
-        if (teleportDestination != null) {
+        if (teleportDestination != null || teleportId != null) {
             checkReceiverStatusCounter--;
             if (checkReceiverStatusCounter <= 0) {
                 checkReceiverStatusCounter = 20;
@@ -338,25 +359,15 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             }
         }
 
-        if (RFTools.debugMode) {
-            RFTools.log("MatterTransmitterTileEntity.checkStateServer: BBBBB (dim:" + worldObj.provider.dimensionId + ")");
-        }
-
         if (isCoolingDown()) {
             // We're still in cooldown. Do nothing.
-            if (RFTools.debugMode) {
-                RFTools.log("MatterTransmitterTileEntity.checkStateServer: we are in cooldown:" + cooldownTimer + " (dim:" + worldObj.provider.dimensionId + ")");
-            }
             return;
         } else if (teleportingPlayer == null) {
-            if (RFTools.debugMode) {
-                RFTools.log("MatterTransmitterTileEntity.checkStateServer: looking for player (dim:" + worldObj.provider.dimensionId + ")");
-            }
             // If we have a valid destination we check here if there is a player on this transmitter.
             if (isDestinationValid()) {
                 searchForNearestPlayer();
             }
-        } else if (teleportDestination == null) {
+        } else if (teleportDestination == null && teleportId == null) {
             // We were teleporting a player but for some reason the destination went away. Interrupt.
             RFTools.warn(teleportingPlayer, "The destination vanished! Aborting.");
             clearTeleport(80);
@@ -386,7 +397,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     // Server side only
     private int checkReceiverStatus() {
-        int dimension = teleportDestination.getDimension();
+        int dimension = getTeleportDestination().getDimension();
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
         if (dimensionManager.getDimensionInformation(dimension) != null) {
@@ -409,7 +420,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
-        Coordinate c = teleportDestination.getCoordinate();
+        Coordinate c = getTeleportDestination().getCoordinate();
 
         boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
         if (!exists) {
@@ -439,7 +450,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private boolean isDestinationValid() {
-        return teleportDestination != null && teleportDestination.isValid();
+        return teleportId != null || (teleportDestination != null && teleportDestination.isValid());
     }
 
     private boolean isCoolingDown() {
@@ -462,9 +473,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         Entity nearestPlayer = findNearestPlayer(l);
 
         if (nearestPlayer == null) {
-            if (RFTools.debugMode) {
-                RFTools.log("No player found: l.size=" + l.size() + " (dim:" + worldObj.provider.dimensionId + ")");
-            }
             cooldownTimer = 5;
             return;
         }
@@ -472,9 +480,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (playerBB.intersectsWith(beamBox)) {
             startTeleportation(nearestPlayer);
         } else {
-            if (RFTools.debugMode) {
-                RFTools.log("No intersection! (dim:" + worldObj.provider.dimensionId + ")");
-            }
             cooldownTimer = 5;
         }
     }
@@ -506,12 +511,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             return;
         }
 
-        Coordinate c = teleportDestination.getCoordinate();
+        TeleportDestination dest = getTeleportDestination();
+        Coordinate c = dest.getCoordinate();
 
         int currentId = teleportingPlayer.worldObj.provider.dimensionId;
-        if (currentId != teleportDestination.getDimension()) {
-            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, teleportDestination.getDimension(),
+        if (currentId != dest.getDimension()) {
+            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(dest.getDimension());
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, dest.getDimension(),
                     new RfToolsTeleporter(worldServerForDimension, c.getX()+0.5, c.getY()+1.5, c.getZ()+0.5));
         } else {
             teleportingPlayer.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
@@ -520,7 +526,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         RFTools.message(teleportingPlayer, "Whoosh!");
         Achievements.trigger(teleportingPlayer, Achievements.firstTeleport);
 
-        int severity = consumeReceiverEnergy(c, teleportDestination.getDimension());
+        int severity = consumeReceiverEnergy(c, dest.getDimension());
         if (!applyBadEffectIfNeeded(severity)) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
                 worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
@@ -530,7 +536,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     private boolean isDestinationStillValid() {
-        return TeleportDestinations.getDestinations(worldObj).isDestinationValid(teleportDestination);
+        TeleportDestination dest = getTeleportDestination();
+        return TeleportDestinations.getDestinations(worldObj).isDestinationValid(dest);
     }
 
     private void handleEnergyShortage() {
@@ -595,9 +602,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         EntityPlayer player = (EntityPlayer) entity;
 
-        if (teleportDestination != null) {
+        if (teleportDestination != null || teleportId != null) {
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
-            int cost = calculateRFCost(worldObj, cthis, teleportDestination);
+            int cost = calculateRFCost(worldObj, cthis, getTeleportDestination());
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
@@ -609,7 +616,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
-            teleportTimer = calculateTime(worldObj, cthis, teleportDestination);
+            teleportTimer = calculateTime(worldObj, cthis, getTeleportDestination());
             teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
 
             totalTicks = teleportTimer;

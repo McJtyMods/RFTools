@@ -358,6 +358,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+        matterReceiverTileEntity.updateDestination();       // Make sure destination is ok.
         if (player != null && !matterReceiverTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }

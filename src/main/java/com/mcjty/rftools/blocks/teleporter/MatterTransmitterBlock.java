@@ -74,15 +74,6 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null) {
-//            String name = tagCompound.getString("tpName");
-//            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name);
-//            Coordinate c = Coordinate.readFromNBT(tagCompound, "dest");
-//            if (c != null && c.getY() >= 0) {
-//                currenttip.add(EnumChatFormatting.YELLOW + "[DIALED]");
-//            }
-//        }
         TileEntity te = accessor.getTileEntity();
         if (te instanceof MatterTransmitterTileEntity) {
             MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;

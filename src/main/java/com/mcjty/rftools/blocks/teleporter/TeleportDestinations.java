@@ -122,6 +122,12 @@ public class TeleportDestinations extends WorldSavedData {
         return destinations.containsKey(key);
     }
 
+    // Set an old id to a new position (after moving a receiver).
+    public void assignId(GlobalCoordinate key, int id) {
+        destinationById.put(id, key);
+        destinationIdByCoordinate.put(key, id);
+    }
+
     public int getNewId(GlobalCoordinate key) {
         if (destinationIdByCoordinate.containsKey(key)) {
             return destinationIdByCoordinate.get(key);
@@ -130,6 +136,15 @@ public class TeleportDestinations extends WorldSavedData {
         destinationById.put(lastId, key);
         destinationIdByCoordinate.put(key, lastId);
         return lastId;
+    }
+
+    // Get the id from a coordinate.
+    public Integer getIdForCoordinate(GlobalCoordinate key) {
+        return destinationIdByCoordinate.get(key);
+    }
+
+    public GlobalCoordinate getCoordinateForId(int id) {
+        return destinationById.get(id);
     }
 
     public TeleportDestination addDestination(GlobalCoordinate key) {

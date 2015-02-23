@@ -64,9 +64,24 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     protected void checkStateServer() {
         if (cachedX != xCoord || cachedY != yCoord || cachedZ != zCoord) {
             RFTools.log("Coordinate changed!");
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+
+            destinations.removeDestination(new Coordinate(cachedX, cachedY, cachedZ), worldObj.provider.dimensionId);
+
             cachedX = xCoord;
             cachedY = yCoord;
             cachedZ = zCoord;
+
+            GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+
+            if (id == -1) {
+                id = destinations.getNewId(gc);
+            } else {
+                destinations.assignId(gc, id);
+            }
+            destinations.addDestination(gc);
+            destinations.save(worldObj);
+
             markDirty();
         }
     }
@@ -78,9 +93,18 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     public void updateDestination() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
 
-        TeleportDestination destination = destinations.getDestination(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+        GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+        TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());
         if (destination != null) {
             destination.setName(name);
+
+            if (id == -1) {
+                id = destinations.getNewId(gc);
+                markDirty();
+            } else {
+                destinations.assignId(gc, id);
+            }
+
             destinations.save(worldObj);
         }
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);

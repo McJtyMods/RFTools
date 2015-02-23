@@ -62,12 +62,6 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null) {
-//            String name = tagCompound.getString("tpName");
-//            int id = tagCompound.getInteger("destinationId");
-//            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-//        }
         TileEntity te = accessor.getTileEntity();
         if (te instanceof MatterReceiverTileEntity) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
