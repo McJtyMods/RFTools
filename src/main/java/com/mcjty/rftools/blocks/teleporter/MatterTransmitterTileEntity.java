@@ -418,7 +418,12 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     // Server side only
     private int checkReceiverStatus() {
-        int dimension = getTeleportDestination().getDimension();
+        TeleportDestination destination = getTeleportDestination();
+        if (destination == null) {
+            return STATUS_WARN;
+        }
+
+        int dimension = destination.getDimension();
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
         if (dimensionManager.getDimensionInformation(dimension) != null) {
@@ -441,7 +446,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
-        Coordinate c = getTeleportDestination().getCoordinate();
+        Coordinate c = destination.getCoordinate();
 
         boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
         if (!exists) {
