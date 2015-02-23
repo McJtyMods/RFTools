@@ -291,13 +291,8 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         return transmitters;
     }
 
-    private void clearBeam(Coordinate c, World world) {
-        // @todo
-    }
-
-
-    // Make a beam on top of a given coordinate.
-    public static boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
+    // Check if there is room for a beam.
+    public static boolean checkBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
             Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
             if (!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) {
@@ -310,7 +305,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
                 }
             }
         }
-        // @todo
         return true;
     }
 
@@ -327,7 +321,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         }
 
         if (coordinate == null) {
-            clearBeam(transmitter, transWorld);
             transmitterTileEntity.setTeleportDestination(null);
             return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
@@ -364,7 +357,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
 
-        if (!makeBeam(transmitter, transWorld, 1, 4, 2)) {
+        if (!checkBeam(transmitter, transWorld, 1, 4, 2)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
         }
 
