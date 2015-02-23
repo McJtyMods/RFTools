@@ -28,6 +28,7 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
                 GL11.glEnable(GL11.GL_BLEND);
             }
 //            GL11.glDepthMask(false);
+            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
             if (!depthTest) {
@@ -47,8 +48,7 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
             bindTexture(beamIcon);
 
             long ticks = (System.currentTimeMillis() / 100) % 10;
-            float i = ticks;
-            float i1 = i / 10.0f;
+            float i1 = ticks / 10.0f;
             float i2 = i1 + .1f;
 
             tessellator.addVertexWithUV(0, 4, 0, 1, i1);

@@ -304,4 +304,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         }
         return false;
     }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
 }

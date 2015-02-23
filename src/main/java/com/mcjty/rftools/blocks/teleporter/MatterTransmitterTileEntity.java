@@ -699,4 +699,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         return false;
     }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
 }
