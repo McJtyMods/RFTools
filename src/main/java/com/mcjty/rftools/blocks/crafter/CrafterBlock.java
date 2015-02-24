@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.crafter;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -72,36 +71,6 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
-        }
-    }
-
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE)world.getTileEntity(x, y, z);
-
-        if (crafterBlockTileEntity != null) {
-            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
-            // we first clear out the crafting grid here.
-            for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i <= CrafterContainer.SLOT_CRAFTOUTPUT ; i++) {
-                crafterBlockTileEntity.setInventorySlotContents(i, null);
-            }
-
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, crafterBlockTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        // To avoid the inventory being dropped all over the place when wrenching we clear it first.
-        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE)world.getTileEntity(x, y, z);
-
-        if (crafterBlockTileEntity != null) {
-            for (int i = 0 ; i < crafterBlockTileEntity.getSizeInventory() ; i++) {
-                crafterBlockTileEntity.setInventorySlotContents(i, null);
-            }
         }
     }
 

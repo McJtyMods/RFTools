@@ -51,7 +51,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
 
     public int getVolume() {
         if (volume == -1) {
-            volume = (int) ((radius * 2.0f * Math.PI) * (maxy-miny + 1));
+            volume = (int) ((radius * radius * Math.PI) * (maxy-miny + 1));
         }
         return volume;
     }
@@ -303,5 +303,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
     }
 }

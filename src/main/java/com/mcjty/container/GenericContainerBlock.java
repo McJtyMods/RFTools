@@ -1,21 +1,24 @@
 package com.mcjty.container;
 
+import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.Infusable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 public abstract class GenericContainerBlock extends GenericBlock {
 
     protected GenericContainerBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material, tileEntityClass);
         this.isBlockContainer = true;
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        super.breakBlock(world, x, y, z, block, meta);
-        world.removeTileEntity(x, y, z);
     }
 
     @Override

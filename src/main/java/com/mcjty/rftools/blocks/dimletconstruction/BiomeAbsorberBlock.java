@@ -95,20 +95,6 @@ public class BiomeAbsorberBlock extends GenericBlock {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        ItemStack stack = new ItemStack(block);
-        if (te instanceof GenericTileEntity) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            ((GenericTileEntity)te).writeRestorableToNBT(tagCompound);
-            stack.setTagCompound(tagCompound);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-        world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
-    }
-
-    @Override
     public String getSideIconName() {
         return "biomeAbsorber";
     }

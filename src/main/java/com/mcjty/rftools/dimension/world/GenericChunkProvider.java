@@ -33,7 +33,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
@@ -47,23 +50,7 @@ public class GenericChunkProvider implements IChunkProvider {
     private List<BiomeGenBase.SpawnListEntry> extraSpawns;
     private List<Integer> extraSpawnsMax;
 
-    private static final Map<TerrainType,BaseTerrainGenerator> terrainGeneratorMap = new HashMap<TerrainType, BaseTerrainGenerator>();
-
-    static {
-        terrainGeneratorMap.put(TerrainType.TERRAIN_VOID, new VoidTerrainGenerator());
-        terrainGeneratorMap.put(TerrainType.TERRAIN_FLAT, new FlatTerrainGenerator());
-        terrainGeneratorMap.put(TerrainType.TERRAIN_NORMAL, new NormalTerrainGenerator());
-        terrainGeneratorMap.put(TerrainType.TERRAIN_AMPLIFIED, new AmplifiedTerrainGenerator());
-        terrainGeneratorMap.put(TerrainType.TERRAIN_CAVERN_OLD, new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_256));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_ISLAND, new IslandTerrainGenerator(IslandTerrainGenerator.NORMAL));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_ISLANDS, new IslandTerrainGenerator(IslandTerrainGenerator.ISLANDS));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_CHAOTIC, new IslandTerrainGenerator(IslandTerrainGenerator.CHAOTIC));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_PLATEAUS, new IslandTerrainGenerator(IslandTerrainGenerator.PLATEAUS));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_GRID, new GridTerrainGenerator());
-        terrainGeneratorMap.put(TerrainType.TERRAIN_CAVERN, new CavernTerrainGenerator(null));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_LOW_CAVERN, new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128));
-        terrainGeneratorMap.put(TerrainType.TERRAIN_FLOODED_CAVERN, new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128));
-    }
+    private final BaseTerrainGenerator terrainGenerator;
 
     // Are map structures going to be generated (e.g. strongholds)
     public WorldType worldType;
@@ -126,7 +113,52 @@ public class GenericChunkProvider implements IChunkProvider {
         this.seed = seed;
         this.rand = new Random((seed + 516) * 314);
 
-        terrainGeneratorMap.get(dimensionInformation.getTerrainType()).setup(world, this);
+        switch (dimensionInformation.getTerrainType()) {
+            case TERRAIN_VOID:
+                terrainGenerator = new VoidTerrainGenerator();
+                break;
+            case TERRAIN_FLAT:
+                terrainGenerator = new FlatTerrainGenerator();
+                break;
+            case TERRAIN_AMPLIFIED:
+                terrainGenerator = new AmplifiedTerrainGenerator();
+                break;
+            case TERRAIN_NORMAL:
+                terrainGenerator = new NormalTerrainGenerator();
+                break;
+            case TERRAIN_CAVERN_OLD:
+                terrainGenerator = new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_256);
+                break;
+            case TERRAIN_ISLAND:
+                terrainGenerator = new IslandTerrainGenerator(IslandTerrainGenerator.NORMAL);
+                break;
+            case TERRAIN_ISLANDS:
+                terrainGenerator = new IslandTerrainGenerator(IslandTerrainGenerator.ISLANDS);
+                break;
+            case TERRAIN_CHAOTIC:
+                terrainGenerator = new IslandTerrainGenerator(IslandTerrainGenerator.CHAOTIC);
+                break;
+            case TERRAIN_PLATEAUS:
+                terrainGenerator = new IslandTerrainGenerator(IslandTerrainGenerator.PLATEAUS);
+                break;
+            case TERRAIN_GRID:
+                terrainGenerator = new GridTerrainGenerator();
+                break;
+            case TERRAIN_CAVERN:
+                terrainGenerator = new CavernTerrainGenerator(null);
+                break;
+            case TERRAIN_LOW_CAVERN:
+                terrainGenerator = new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128);
+                break;
+            case TERRAIN_FLOODED_CAVERN:
+                terrainGenerator = new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128);
+                break;
+            default:
+                terrainGenerator = new VoidTerrainGenerator();
+                break;
+        }
+
+        terrainGenerator.setup(world, this);
 
         extraSpawns = new ArrayList<BiomeGenBase.SpawnListEntry>();
         extraSpawnsMax = new ArrayList<Integer>();
@@ -157,8 +189,6 @@ public class GenericChunkProvider implements IChunkProvider {
         this.rand.setSeed(chunkX * 341873128712L + chunkZ * 132897987541L + 123456);
         Block[] ablock = new Block[65536];
         byte[] abyte = new byte[65536];
-
-        BaseTerrainGenerator terrainGenerator = terrainGeneratorMap.get(dimensionInformation.getTerrainType());
 
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
 

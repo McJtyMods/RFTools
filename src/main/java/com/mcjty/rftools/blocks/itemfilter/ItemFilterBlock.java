@@ -2,10 +2,8 @@ package com.mcjty.rftools.blocks.itemfilter;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -18,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -80,35 +77,6 @@ public class ItemFilterBlock extends GenericContainerBlock {
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return new ItemFilterContainer(entityPlayer, (ItemFilterTileEntity) tileEntity);
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        ItemFilterTileEntity itemFilterTileEntity = (ItemFilterTileEntity)world.getTileEntity(x, y, z);
-
-        if (itemFilterTileEntity != null) {
-            // To avoid the ghost items being dropped in the world (which would give easy item duplication)
-            // we first clear out the crafting grid here.
-            for (int i = ItemFilterContainer.SLOT_GHOST ; i < (ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE); i++) {
-                itemFilterTileEntity.setInventorySlotContents(i, null);
-            }
-
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, itemFilterTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        // To avoid the inventory being dropped all over the place when wrenching we clear it first.
-        ItemFilterTileEntity itemFilterTileEntity = (ItemFilterTileEntity)world.getTileEntity(x, y, z);
-
-        if (itemFilterTileEntity != null) {
-            for (int i = 0 ; i < itemFilterTileEntity.getSizeInventory() ; i++) {
-                itemFilterTileEntity.setInventorySlotContents(i, null);
-            }
-        }
     }
 
     @Override

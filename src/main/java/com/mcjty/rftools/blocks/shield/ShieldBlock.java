@@ -95,15 +95,6 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     }
 
     @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof ShieldTEBase) {
-            ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
-            shieldTileEntity.setInventorySlotContents(0, null);
-        }
-    }
-
-    @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof ShieldTEBase) {

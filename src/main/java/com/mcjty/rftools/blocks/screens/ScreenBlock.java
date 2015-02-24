@@ -3,12 +3,10 @@ package com.mcjty.rftools.blocks.screens;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,28 +54,6 @@ public class ScreenBlock extends GenericContainerBlock {
             currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
         }
         return currenttip;
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
-
-        if (screenTileEntity != null) {
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, screenTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity)world.getTileEntity(x, y, z);
-
-        if (screenTileEntity != null) {
-            for (int i = 0 ; i < screenTileEntity.getSizeInventory() ; i++) {
-                screenTileEntity.setInventorySlotContents(i, null);
-            }
-        }
     }
 
 

@@ -291,19 +291,11 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         return transmitters;
     }
 
-    private void clearBeam(Coordinate c, World world) {
-        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
-        if (ModBlocks.teleportBeamBlock.equals(b)) {
-            world.setBlockToAir(c.getX(), c.getY()+1, c.getZ());
-        }
-    }
-
-
-    // Make a beam on top of a given coordinate.
-    public static boolean makeBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
+    // Check if there is room for a beam.
+    public static boolean checkBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
             Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
-            if ((!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) && !ModBlocks.teleportBeamBlock.equals(b)) {
+            if (!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) {
                 if (dy <= errory) {
                     // Everything below errory must be free.
                     return false;
@@ -312,10 +304,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
                     break;
                 }
             }
-        }
-        Block b = world.getBlock(c.getX(), c.getY()+1, c.getZ());
-        if (b.isAir(world, c.getX(), c.getY()+1, c.getZ()) || ModBlocks.teleportBeamBlock.equals(b)) {
-            world.setBlock(c.getX(), c.getY()+1, c.getZ(), ModBlocks.teleportBeamBlock, 0, 2);
         }
         return true;
     }
@@ -333,7 +321,6 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         }
 
         if (coordinate == null) {
-            clearBeam(transmitter, transWorld);
             transmitterTileEntity.setTeleportDestination(null);
             return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
@@ -358,6 +345,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
+        matterReceiverTileEntity.updateDestination();       // Make sure destination is ok.
         if (player != null && !matterReceiverTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
         }
@@ -369,7 +357,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
 
-        if (!makeBeam(transmitter, transWorld, 1, 4, 2)) {
+        if (!checkBeam(transmitter, transWorld, 1, 4, 2)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
         }
 

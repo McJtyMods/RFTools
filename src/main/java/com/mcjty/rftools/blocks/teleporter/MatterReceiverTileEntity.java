@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -22,6 +23,11 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     private String name = null;
     private boolean privateAccess = false;
     private Set<String> allowedPlayers = new HashSet<String>();
+    private int id = -1;
+
+    private int cachedX;
+    private int cachedY;
+    private int cachedZ;
 
     public MatterReceiverTileEntity() {
         super(TeleportConfiguration.RECEIVER_MAXENERGY, TeleportConfiguration.RECEIVER_RECEIVEPERTICK);
@@ -29,6 +35,16 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
 
     public String getName() {
         return name == null ? "" : name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     public void setName(String name) {
@@ -41,6 +57,32 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    @Override
+    protected void checkStateServer() {
+        if (cachedX != xCoord || cachedY != yCoord || cachedZ != zCoord) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+
+            destinations.removeDestination(new Coordinate(cachedX, cachedY, cachedZ), worldObj.provider.dimensionId);
+
+            cachedX = xCoord;
+            cachedY = yCoord;
+            cachedZ = zCoord;
+
+            GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+
+            if (id == -1) {
+                id = destinations.getNewId(gc);
+            } else {
+                destinations.assignId(gc, id);
+            }
+            destinations.addDestination(gc);
+            destinations.save(worldObj);
+
+            markDirty();
+        }
     }
 
     /**
@@ -49,9 +91,19 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
      */
     public void updateDestination() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination destination = destinations.getDestination(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+
+        GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+        TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());
         if (destination != null) {
             destination.setName(name);
+
+            if (id == -1) {
+                id = destinations.getNewId(gc);
+                markDirty();
+            } else {
+                destinations.assignId(gc, id);
+            }
+
             destinations.save(worldObj);
         }
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -115,6 +167,9 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        cachedX = tagCompound.getInteger("cachedX");
+        cachedY = tagCompound.getInteger("cachedY");
+        cachedZ = tagCompound.getInteger("cachedZ");
     }
 
     @Override
@@ -132,11 +187,19 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
                 allowedPlayers.add(player);
             }
         }
+        if (tagCompound.hasKey("destinationId")) {
+            id = tagCompound.getInteger("destinationId");
+        } else {
+            id = -1;
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setInteger("cachedX", cachedX);
+        tagCompound.setInteger("cachedY", cachedY);
+        tagCompound.setInteger("cachedZ", cachedZ);
     }
 
     @Override
@@ -153,6 +216,7 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
             playerTagList.appendTag(new NBTTagString(player));
         }
         tagCompound.setTag("players", playerTagList);
+        tagCompound.setInteger("destinationId", id);
     }
 
     @Override

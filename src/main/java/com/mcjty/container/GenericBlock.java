@@ -20,6 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,6 +31,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GenericBlock extends Block implements ITileEntityProvider {
@@ -72,9 +74,10 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         Block block = accessor.getBlock();
         if (block instanceof Infusable) {
-            NBTTagCompound tagCompound = accessor.getNBTData();
-            if (tagCompound != null) {
-                int infused = tagCompound.getInteger("infused");
+            TileEntity tileEntity = accessor.getTileEntity();
+            if (tileEntity instanceof GenericTileEntity) {
+                GenericTileEntity genericTileEntity = (GenericTileEntity) tileEntity;
+                int infused = genericTileEntity.getInfused();
                 int pct = infused * 100 / DimletConfiguration.maxInfuse;
                 currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
@@ -97,6 +100,30 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
                 list.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
         }
+    }
+
+    @Override
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+        return new ArrayList<ItemStack>();
+    }
+
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+
+        if (tileEntity instanceof GenericTileEntity) {
+            ItemStack stack = new ItemStack(block);
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            ((GenericTileEntity)tileEntity).writeRestorableToNBT(tagCompound);
+
+            stack.setTagCompound(tagCompound);
+            world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
+        }
+
+
+        super.breakBlock(world, x, y, z, block, meta);
+        world.removeTileEntity(x, y, z);
     }
 
     @Override
@@ -250,13 +277,6 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     }
 
     /**
-     * Override this method if you want to get notified right before this block is
-     * broken with a wrench (possibly to avoid spilling contents since it will be remembered).
-     */
-    protected void breakWithWrench(World world, int x, int y, int z) {
-    }
-
-    /**
      * Break a block in the world, convert it to an entity and remember all the settings
      * for this block in the itemstack.
      * @param world
@@ -266,17 +286,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
      */
     protected void breakAndRemember(World world, int x, int y, int z) {
         if (!world.isRemote) {
-            Block block = world.getBlock(x, y, z);
-            TileEntity te = world.getTileEntity(x, y, z);
-            ItemStack stack = new ItemStack(block);
-            if (te instanceof GenericTileEntity) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                ((GenericTileEntity)te).writeRestorableToNBT(tagCompound);
-                stack.setTagCompound(tagCompound);
-            }
-            breakWithWrench(world, x, y, z);
             world.setBlockToAir(x, y, z);
-            world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
         }
     }
 

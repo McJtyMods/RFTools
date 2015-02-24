@@ -118,6 +118,10 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
 
     public static void addSideHeightWithRotation(Block block, Tessellator tessellator, int side, int meta, double height, ForgeDirection rotation) {
         IIcon c = block.getIcon(side, meta);
+        addSideHeightWithRotation(tessellator, side, height, rotation, c);
+    }
+
+    public static void addSideHeightWithRotation(Tessellator tessellator, int side, double height, ForgeDirection rotation, IIcon c) {
         float u1 = c.getMinU();
         float v1 = c.getMinV();
         float u2 = c.getMaxU();

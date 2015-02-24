@@ -6,7 +6,6 @@ import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -17,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
@@ -52,28 +50,6 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
         }
         iconFront_busy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy1");
         iconFront_busy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy2");
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        DimensionBuilderTileEntity dimensionBuilderTileEntity = (DimensionBuilderTileEntity)world.getTileEntity(x, y, z);
-
-        if (dimensionBuilderTileEntity != null) {
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, dimensionBuilderTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        DimensionBuilderTileEntity dimensionBuilderTileEntity = (DimensionBuilderTileEntity)world.getTileEntity(x, y, z);
-
-        if (dimensionBuilderTileEntity != null) {
-            for (int i = 0 ; i < dimensionBuilderTileEntity.getSizeInventory() ; i++) {
-                dimensionBuilderTileEntity.setInventorySlotContents(i, null);
-            }
-        }
     }
 
     @SideOnly(Side.CLIENT)
