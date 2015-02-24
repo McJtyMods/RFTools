@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class BeamRenderer2 extends TileEntitySpecialRenderer {
+public class BeamRenderer extends TileEntitySpecialRenderer {
     private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporter.png");
     private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
     private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
@@ -28,7 +28,9 @@ public class BeamRenderer2 extends TileEntitySpecialRenderer {
                 GL11.glEnable(GL11.GL_BLEND);
             }
             GL11.glDepthMask(false);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
 
             boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
