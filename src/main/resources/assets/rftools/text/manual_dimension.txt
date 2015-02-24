@@ -1,13 +1,13 @@
 {b}RFTools Dimension Manual
 
 Table of contents:
-{l:intro}Introduction
-{l:unknown}Unknown dimlets
-{l:shards}Dimensional Shards
+{l:intro}Introduction to Dimension Building
+{l:theory}Dimension Theory
+{l:unknown}Dimlets - Coding the World
+{l:shards}Shards of the World
 {l:infuser}Machine Infuser
 {l:researcher}Dimlet Researcher
 {l:scrambler}Dimlet Scrambler
-{l:types}Dimlet Types
 {/}
 
 
@@ -20,15 +20,15 @@ Table of contents:
 {l:monitor}Dimension Monitor
 {l:create}Dimlet Crafting
 {-------------------------------------------------------------}
-{b}Introduction
+{b}Introduction to Dimension Building
 {n:intro}
 Always wanted to create your own worlds? Explore uncharted areas and
 create magnificent buildings in fabulous worlds? With the Dimension
 Builder you create your own dimensions with all kinds of special
 features. Make void worlds, mining ages, floating islands, ...
 
-There is one catch though. Dimensions require power to run (RF). Simple
-dimensions like a void age don't require a lot of power (10-200 RF/tick)
+There is one catch, though. Dimensions require power to run (RF). Simple
+dimensions like a void world don't require a lot of power (10-200 RF/tick)
 but very complex dimensions can easily go above millions RF/tick. So if
 you want a world made out of diamond blocks you're either going to have
 to be very lucky or else be prepared for a hefty power generation system.
@@ -36,34 +36,122 @@ to be very lucky or else be prepared for a hefty power generation system.
 RFTools generates dimensions with random features you can make things
 more deterministic by specifying every type of dimlet.
 {-------------------------------------------------------------}
-{b}Unknown Dimlets
+{b}Dimension Theory
+{n:theory}
+Before embarking on the adventure of forming your own worlds, it is
+important to understand how the dimensions work.
+
+The first thing that is important to understand is that worlds you
+create are not necessarily unique. If a pattern of code is used to
+create one world, using the same pattern of code will create the
+same world again. In fact, when you enter the first world and make
+changes, the changes will appear in the second as well!
+
+This allows you to disassemble dimensions, but enter the same exact
+ones later with the changes you've made still there, provided
+you used the exact same code.
+{-------------------------------------------------------------}
+{b}Dimlets - Coding the World
 {n:unknown}
-You don't need any dimlets to create a dimension. You can just specify
-no dimlets and generate a totally random world. Maybe you get lucky?
+Dimensions, when created normally, will be completely random. You have
+no way of knowing whether it will be a floating sky world or a huge
+cave, or whether it's midnight or mid-day. Although you have a chance
+of creating a good world, chances are it won't work out in your favour.
 
-However, to have any kind of control you will need dimlets. Scattered
-throughout the world, in dungeons and other chests, you have a chance
-of finding 'unknown dimlets'. These small items were made a long time
-ago with long forgotten technology. There is also a small chance that
-you can get an unknown dimlet from killing an enderman. However, the
-best place to find dimlets is in RFTools dimensions. You could go
-ahead, create a random dimension and go find an RFTools dungeon.
+However, you can control your world with objects called Dimlets.
+Scattered throughout the world, in dungeons and other chests, or just
+obtained by killing Endermen, you have a chance of finding 'Unknown
+Dimlets.' These small items were made a long time ago with forgotten
+technology. These dimlets are similar to code - imagine each dimlet
+as it's own line of code. Modifying the next dimlet or defining
+something about the world.
+{-------------------------------------------------------------}
+Dimlets are complicated devices, filled with advanced circuitry
+and powerful essences. These things can literally define how a
+world works. Most of the work you will be doing with dimensions
+will involve these dimlets.
 
-What do you do with these unknown dimlets? You put them in the
-'Dimlet Researcher' machine.
+If you ever find yourself running low on dimlets, there is a
+higher chance of finding them within your custom dimensions.
+So, when nearly out of dimlets, create a couple random worlds
+and look around for interesting structures - you may find some
+very valuable dimlets in there.
+{-------------------------------------------------------------}
+{b}There are currently 12 types of dimlets that have been discovered:
+    Terrain Dimlets: These are used to define what a world looks
+        like. Some examples include a normal world, a flat world,
+        or a skylands world.
+    Digit Dimlets: Digit Dimlets are lines of code that can be used
+        to create different dimensions. This allows you to create
+        new, unique worlds, except with exactly the same dimlets.
+    Biome Dimlets: These control what biomes appear in a dimension.
+        How many biomes are supported depends on the controller.
+    Biome Controller: These Determine how many and which type of 
+        Biomes are selected. For instance, you could define it
+        so that there is only one biome, or a checkerboard of
+        biomes.
+{-------------------------------------------------------------}
+    Material Dimlets: These dimlets are used to define what a feature is
+        made out of. For instance, these can be used to make sure a world
+        is made out of Glowstone or a tendril is made out of Netherrack.
+    Liquid Dimlets: Similar to Material Dimlets, these only differ in
+        the fact that they define a liquid instead of a solid material.
+    Mob dimlets: using these dimlets you can specify additional mobs that
+        should spawn in your world (in addition to normal mob spawning!).
+        If you use the 'Mob Default Dimlet' then you just get default mobs.
+    Sky dimlets: with these dimlets you can control the color and light
+        level of your sky.
+    Time dimlets: with these dimlets you can control the time of the day.
+        It can be set to either a fixed time (morning, evening, midnight,
+        noon) or else you can get slow or faster time.
+{-------------------------------------------------------------}
+    Structure dimlets: use these to control various structure generation
+        (villages, nether fortresses, ...). If you specify the 'Structure
+        None Dimlet' you don't get any structure like that.
+    Feature dimlets: various features of world generation can be
+        controlled with this. Like caves, tendrils, canyons, ... Use
+        'Feature None Dimlet' if you don't want any special worldgen
+        feature. Some of these features use liquid (in case of lake
+        feature) or material (in case of tendril, canyon, oregen, ...
+        features) modifiers.
+    
+    Digit dimlets: use digit dimlets to make new unique worlds using exactly
+        the same dimlets as another world you just created.
+{-------------------------------------------------------------}
+    Special dimlets: these are special dimlets that are usually
+        extremely rare.
+
+{b}There are currently five special dimlets:
+
+    Peaceful Dimlet: This dimlet prevents hostile mobs from
+        spawning in your dimension (except for mobs that you
+        manually add using mob dimlets). It is an expensive
+        dimlet though and it will also never be randomly
+        generated in dimensions that you create.
+    Efficiency Dimlet: If you add this rare dimlet to your
+        dimension tab then the dimension will consume 20% less
+        energy per tick. This effect is cumulative.
+{-------------------------------------------------------------}
+    Mediocre Efficiency Dimlet: This dimlet functions as a
+        somewhat inferior version of the Effeciency Dimlet.
+        It is easier to obtain, but does not add quite the
+        effects the normal Effeciency Dimlet does.
+    Shelter Dimlet: A dimlet for dimensions that may be
+        excessively hostile, this dimlet creates a much
+        safer spot for teleporting in.
+    Seed Dimlet: A very specialized dimlet to control the seed
+        of the random world generation for a dimension.
 {-------------------------------------------------------------}
 {b}Dimensional Shards
 {n:shards}
-Some items and machines in RFTools require Dimensional Shards. This is
-a special material that you can only find in RFTools dimensions (below
-level 40). The best way to get this is to make a random dimension, hope
-there is some stone there (or else make a 'Flat Terrain' dimlet and be
-sure of a flat world) and go mine some with a fortune pickaxe. Or you
-can just melt the ore if you picked it up using silk touch.
+Certain machines and items require an odd essence called "Dimensional
+Shards." Probably produced as a byproduct of the energy fueled into
+these dimensions. Generating below level 40, these shards will appear
+in any RFTools Dimension. This ore can be mined with a pickaxe to
+return the shards, which can then be used for all manner of things.
 
 {b}Dimensional Shards have several uses:
-    First you require dimensional shards to create the dimlet template item.
-        And this item in turn is required to craft some of the basic dimlets.
+    Firstly, shards required to craft some of the basic dimlets.
     You also need some shards to craft the 'Machine Infuser,' 'Activity
     Probe', and 'Dimlet Templates.'
     And finally you can use them to 'infuse' almost all RFTools machines to
@@ -119,71 +207,7 @@ follows:
 {ri:dimletTemplate}
 
 To craft this you actually need dimensional shards.
-{-------------------------------------------------------------}
-{b}These are the current types of dimlets that you can find:
-{n:types}
 
-    Biome dimlets: these control what biomes you can have in a dimension.
-        How many biomes are supported depends on the controller.
-    Biome controller: determine how many and which type of biomes
-        are selected.
-    Foliage dimlets: currently not implemented.
-    Liquid dimlets: this is a modifier dimlet that can be used in
-        combination with the Terrain dimlets and the Lake feature. It
-        lets you control what kind of liquids will be used. If you use the
-        'Liquid None Dimlet' then you just get the defaults (water and lava).
-{-------------------------------------------------------------}
-    Material dimlets: this is a modifier dimlet that can be used in
-        combination with the Terrain dimlets and some of the feature dimlets
-        (canyons, tendrils, oregen, ...). If you use the 'Material None
-        Dimlet' then you just get the defaults (stone).
-    Mob dimlets: using these dimlets you can specify additional mobs that
-        should spawn in your world (in addition to normal mob spawning!).
-        If you use the 'Mob Default Dimlet' then you just get default mobs.
-    Sky dimlets: with these dimlets you can control the color and light
-        level of your sky.
-    Time dimlets: with these dimlets you can control the time of the day.
-        It can be set to either a fixed time (morning, evening, midnight,
-        noon) or else you can get slow or faster time.
-{-------------------------------------------------------------}
-    Structure dimlets: use these to control various structure generation
-        (villages, nether fortresses, ...). If you specify the 'Structure
-        None Dimlet' you don't get any structure like that.
-    Feature dimlets: various features of world generation can be
-        controlled with this. Like caves, tendrils, canyons, ... Use
-        'Feature None Dimlet' if you don't want any special worldgen
-        feature. Some of these features use liquid (in case of lake
-        feature) or material (in case of tendril, canyon, oregen, ...
-        features) modifiers.
-    Terrain dimlets: these are used to control the overall form of the
-        terrain. Void and flat are craftable but you can also get island,
-        islands, normal, amplified, chaotic, plateaus, or grid.
-    Digit dimlets: use digit dimlets to make new unique worlds using exactly
-        the same dimlets as another world you just created.
-{-------------------------------------------------------------}
-    Special dimlets: these are special dimlets that are usually
-        extremely rare.
-
-{b}There are currently five special dimlets:
-
-    Peaceful Dimlet: This dimlet prevents hostile mobs from
-        spawning in your dimension (except for mobs that you
-        manually add using mob dimlets). It is an expensive
-        dimlet though and it will also never be randomly
-        generated in dimensions that you create.
-    Efficiency Dimlet: If you add this rare dimlet to your
-        dimension tab then the dimension will consume 20% less
-        energy per tick. This effect is cumulative.
-{-------------------------------------------------------------}
-    Mediocre Efficiency Dimlet: This dimlet functions as a
-        somewhat inferior version of the Effeciency Dimlet.
-        It is easier to obtain, but does not add quite the
-        effects the normal Effeciency Dimlet does.
-    Shelter Dimlet: A dimlet for dimensions that may be
-        excessively hostile, this dimlet creates a much
-        safer spot for teleporting in.
-    Seed Dimlet: A very specialized dimlet to control the seed
-        of the random world generation for a dimension.
 {-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}
