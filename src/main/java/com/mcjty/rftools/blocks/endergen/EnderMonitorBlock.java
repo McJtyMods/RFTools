@@ -58,6 +58,17 @@ public class EnderMonitorBlock extends LogicSlabBlock {
     }
 
     @Override
+    protected void rotateBlock(World world, int x, int y, int z) {
+        if (!world.isRemote) {
+            unregisterFromEndergenic(world, x, y, z);
+        }
+        super.rotateBlock(world, x, y, z);
+        if (!world.isRemote) {
+            registerWithEndergenic(world, x, y, z);
+        }
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         if (!world.isRemote) {
@@ -77,13 +88,18 @@ public class EnderMonitorBlock extends LogicSlabBlock {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        unregisterFromEndergenic(world, x, y, z);
+        super.breakBlock(world, x, y, z, block, meta);
+    }
+
+    private void unregisterFromEndergenic(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientationHoriz(meta);
         TileEntity te = world.getTileEntity(x + k.offsetX, y + k.offsetY, z + k.offsetZ);
         if (te instanceof EndergenicTileEntity) {
             EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
             endergenicTileEntity.removeMonitor(new Coordinate(x, y, z));
         }
-        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override
