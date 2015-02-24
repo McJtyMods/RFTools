@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import cpw.mods.fml.common.eventhandler.Event;
@@ -92,6 +93,11 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
             if (rand.nextFloat() < .2f) {
                 elevated = !elevated;
             }
+        }
+
+        if (provider.biomesForGeneration == null) {
+            RFTools.log("Dimension " + world.provider.dimensionId + " has a problem! Ignoring for now.");
+            return;
         }
 
         for (int j1 = 0; j1 < 5; ++j1) {
