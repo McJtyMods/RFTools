@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.BlockTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -69,28 +68,6 @@ public class PearlInjectorBlock extends GenericContainerBlock {
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return new PearlInjectorContainer(entityPlayer, (PearlInjectorTileEntity) tileEntity);
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity)world.getTileEntity(x, y, z);
-
-        if (pearlInjectorTileEntity != null) {
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, pearlInjectorTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        PearlInjectorTileEntity pearlInjectorTileEntity = (PearlInjectorTileEntity)world.getTileEntity(x, y, z);
-
-        if (pearlInjectorTileEntity != null) {
-            for (int i = 0 ; i < pearlInjectorTileEntity.getSizeInventory() ; i++) {
-                pearlInjectorTileEntity.setInventorySlotContents(i, null);
-            }
-        }
     }
 
     @Override

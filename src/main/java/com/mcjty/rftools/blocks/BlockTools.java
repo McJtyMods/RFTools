@@ -111,6 +111,7 @@ public class BlockTools {
         for (int i = 0; i < inventory.getSizeInventory(); ++i) {
             ItemStack itemstack = inventory.getStackInSlot(i);
             spawnItemStack(world, x, y, z, itemstack);
+            inventory.setInventorySlotContents(i, null);
         }
 
         world.func_147453_f(x, y, z, block);

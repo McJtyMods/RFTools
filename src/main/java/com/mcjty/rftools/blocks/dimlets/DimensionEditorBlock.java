@@ -6,7 +6,6 @@ import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -17,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
@@ -61,28 +59,6 @@ public class DimensionEditorBlock extends GenericContainerBlock implements Infus
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
-        }
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        DimensionEditorTileEntity dimensionEditorTileEntity = (DimensionEditorTileEntity)world.getTileEntity(x, y, z);
-
-        if (dimensionEditorTileEntity != null) {
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, dimensionEditorTileEntity);
-        }
-
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    @Override
-    protected void breakWithWrench(World world, int x, int y, int z) {
-        DimensionEditorTileEntity dimensionEditorTileEntity = (DimensionEditorTileEntity)world.getTileEntity(x, y, z);
-
-        if (dimensionEditorTileEntity != null) {
-            for (int i = 0 ; i < dimensionEditorTileEntity.getSizeInventory() ; i++) {
-                dimensionEditorTileEntity.setInventorySlotContents(i, null);
-            }
         }
     }
 
