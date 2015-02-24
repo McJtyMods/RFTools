@@ -4,17 +4,16 @@ Table of contents:
 {l:intro}Introduction to Dimension Building
 {l:theory}Dimension Theory
 {l:unknown}Dimlets - Coding the World
-{l:shards}Shards of the World
-{l:infuser}Machine Infuser
-{l:researcher}Dimlet Researcher
-{l:scrambler}Dimlet Scrambler
+{l:researcher}Dimlet Researcher - Revealing your Dimlets
+{l:enscriber}Enscriber - Coding your Dimension
+{l:builder}Builder - Creating your Dimension
+{l:teleport}Getting there
 {/}
 
 
-
-{l:enscriber}Dimension Enscriber
-{l:builder}Dimension Builder
-{l:teleport}Getting there
+{l:shards}Shards of the World
+{l:infuser}Machine Infuser
+{l:scrambler}Dimlet Scrambler
 {l:probe}Activity Probe
 {l:editor}Dimension Editor
 {l:monitor}Dimension Monitor
@@ -96,27 +95,20 @@ very valuable dimlets in there.
         is made out of Glowstone or a tendril is made out of Netherrack.
     Liquid Dimlets: Similar to Material Dimlets, these only differ in
         the fact that they define a liquid instead of a solid material.
+    Feature Dimlets: These dimlets define what features appear in the
+        world, such as floating ores filled with liquids, increased
+        ore generation, or even tendrils of various substances.
+    Structure Dimlets: These define if certain structures will appear in
+        the world, such as strongholds, villages, or Mineshafts.
+{-------------------------------------------------------------}
     Mob dimlets: using these dimlets you can specify additional mobs that
         should spawn in your world (in addition to normal mob spawning!).
-        If you use the 'Mob Default Dimlet' then you just get default mobs.
-    Sky dimlets: with these dimlets you can control the color and light
-        level of your sky.
+    Sky Dimlets: These allow you to define the colours, sizes, or even
+        existance of various objects in the sky, such as planets, moons,
+        suns, sky colour, fog colour, and more.
     Time dimlets: with these dimlets you can control the time of the day.
         It can be set to either a fixed time (morning, evening, midnight,
         noon) or else you can get slow or faster time.
-{-------------------------------------------------------------}
-    Structure dimlets: use these to control various structure generation
-        (villages, nether fortresses, ...). If you specify the 'Structure
-        None Dimlet' you don't get any structure like that.
-    Feature dimlets: various features of world generation can be
-        controlled with this. Like caves, tendrils, canyons, ... Use
-        'Feature None Dimlet' if you don't want any special worldgen
-        feature. Some of these features use liquid (in case of lake
-        feature) or material (in case of tendril, canyon, oregen, ...
-        features) modifiers.
-    
-    Digit dimlets: use digit dimlets to make new unique worlds using exactly
-        the same dimlets as another world you just created.
 {-------------------------------------------------------------}
     Special dimlets: these are special dimlets that are usually
         extremely rare.
@@ -130,7 +122,9 @@ very valuable dimlets in there.
         generated in dimensions that you create.
     Efficiency Dimlet: If you add this rare dimlet to your
         dimension tab then the dimension will consume 20% less
-        energy per tick. This effect is cumulative.
+        energy per tick. This effect is cumulative. However,
+        it will add a much increased creation time and
+        creation cost.
 {-------------------------------------------------------------}
     Mediocre Efficiency Dimlet: This dimlet functions as a
         somewhat inferior version of the Effeciency Dimlet.
@@ -141,6 +135,25 @@ very valuable dimlets in there.
         safer spot for teleporting in.
     Seed Dimlet: A very specialized dimlet to control the seed
         of the random world generation for a dimension.
+{-------------------------------------------------------------}
+{b}Dimlet Researcher - Revealing your Dimlets
+{n:researcher}
+Now that you know what each type of dimlets do, the next step will be to
+determine what type your Unknown Dimlets are. For that, you'll need
+a Dimlet Researcher.
+{rb:dimletResearcherBlock}
+
+Simply place the Unknown Dimlet into the slot on the left, and, when it
+is provided with power, it will be turned into a usable dimlet on the
+right.
+
+Certain dimlets are more valuable and rare than others, so it is likely
+you will not obtain the dimlet you want right away. Just keep on
+researching, and you'll find this way.
+
+Most dimlets require you to research them or use another machine to
+find them, but certain simpler dimlets can be easily crafted in any
+table.
 {-------------------------------------------------------------}
 {b}Dimensional Shards
 {n:shards}
@@ -176,18 +189,6 @@ the shield block, auto crafter, and so on will benefit from this.
 It is also very useful to infuse your Matter Transmitter and Matter
 Receiver blocks as that way they will work faster and use a lot less
 energy (making them safer to use).
-{-------------------------------------------------------------}
-{b}Dimlet Researcher
-{n:researcher}
-The Dimlet Researcher uses RF to examine your unknown dimlets, changing
-them to a random knonwn dimlet. It is crafted as follows:
-{rb:dimletResearcherBlock}
-
-Note that some dimlets are more rare then others so it may take
-a while for your dimlet of choice to appear.
-
-Most dimlets can only be obtained this way as they cannot be crafted. There
-are some exceptions. Some very basic and simple dimlets can be crafted.
 {-------------------------------------------------------------}
 {b}Dimlet Scrambler
 {n:scrambler}
