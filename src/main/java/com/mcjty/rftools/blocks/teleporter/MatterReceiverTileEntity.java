@@ -63,7 +63,6 @@ public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
     @Override
     protected void checkStateServer() {
         if (cachedX != xCoord || cachedY != yCoord || cachedZ != zCoord) {
-            RFTools.log("Coordinate changed!");
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
 
             destinations.removeDestination(new Coordinate(cachedX, cachedY, cachedZ), worldObj.provider.dimensionId);

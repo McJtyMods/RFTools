@@ -8,6 +8,8 @@ import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -703,5 +705,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     @Override
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 4, zCoord + 1);
     }
 }
