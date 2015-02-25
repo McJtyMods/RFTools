@@ -197,7 +197,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
-        RFTools.message(mc.thePlayer, "The receiver is now hilghtighted");
+        RFTools.message(mc.thePlayer, "The receiver is now highlighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
