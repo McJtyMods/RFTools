@@ -93,6 +93,9 @@ very valuable dimlets in there.
     Material Dimlets: These dimlets are used to define what a feature is
         made out of. For instance, these can be used to make sure a world
         is made out of Glowstone or a tendril is made out of Netherrack.
+        When used as a modifier for a another dimlet, the cost of
+        these dimlets will drastically increase, same as the liquid
+        dimlets.
     Liquid Dimlets: Similar to Material Dimlets, these only differ in
         the fact that they define a liquid instead of a solid material.
     Feature Dimlets: These dimlets define what features appear in the
@@ -146,7 +149,7 @@ a Dimlet Researcher.
 Simply place the Unknown Dimlet into the slot on the left, and, when it
 is provided with power, it will be turned into a usable dimlet on the
 right.
-
+{-------------------------------------------------------------}
 Certain dimlets are more valuable and rare than others, so it is likely
 you will not obtain the dimlet you want right away. Just keep on
 researching, and you'll find this way.
