@@ -171,16 +171,6 @@ public final class ModCrafting {
         }, new ItemStack(ModItems.saturationPlusEModuleItem)));
     }
 
-    private static ItemStack createMobSyringe(String mobName) {
-        ItemStack syringe = new ItemStack(ModItems.syringeItem);
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setString("mobName", mobName);
-        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
-        syringe.setTagCompound(tagCompound);
-        return syringe;
-    }
-
-
     private static void initLogicBlockCrafting() {
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new ItemStack(ModBlocks.sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
@@ -194,16 +184,17 @@ public final class ModCrafting {
     }
 
     private static void initDimletConstructionCrafting() {
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.peaceEssenceItem),
-                createMobEssenceItemStack("Iron Golem"),
-                createMobEssenceItemStack("Enderman"),
-                createMobEssenceItemStack("Snowman"),
-                createMobEssenceItemStack("Bat"),
-                createMobEssenceItemStack("Ocelot"),
-                createMobEssenceItemStack("Squid"),
-                createMobEssenceItemStack("Wolf"),
-                createMobEssenceItemStack("Zombie Pigman"),
-                createMobEssenceItemStack("Mooshroom")));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                createMobSyringe("Iron Golem"),
+                createMobSyringe("Enderman"),
+                createMobSyringe("Snowman"),
+                createMobSyringe("Bat"),
+                createMobSyringe("Ocelot"),
+                createMobSyringe("Squid"),
+                createMobSyringe("Wolf"),
+                createMobSyringe("Zombie Pigman"),
+                createMobSyringe("Mooshroom")
+        }, new ItemStack(ModItems.peaceEssenceItem)));
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletWorkbenchBlock), "gug", "cMc", "grg", 'M', ModBlocks.machineFrame, 'u', ModItems.unknownDimlet, 'c', Blocks.crafting_table,
                 'r', Items.redstone, 'g', Items.gold_nugget);
@@ -302,13 +293,14 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.counterPlusModuleItem), 4));
     }
 
-    private static ItemStack createMobEssenceItemStack(String mobName) {
-        ItemStack syringeIronGolem = new ItemStack(ModItems.syringeItem);
+    private static ItemStack createMobSyringe(String mobName) {
+        ItemStack syringe = new ItemStack(ModItems.syringeItem);
         NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
         tagCompound.setString("mobName", mobName);
-        syringeIronGolem.setTagCompound(tagCompound);
-        return syringeIronGolem;
+        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
+        syringe.setTagCompound(tagCompound);
+        return syringe;
     }
+
 
 }
