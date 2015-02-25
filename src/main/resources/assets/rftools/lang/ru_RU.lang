@@ -31,6 +31,7 @@ item.KnownDimlet.name=Известный димлет
 item.EmptyDimensionTab.name=Вкладка пустых измерений
 item.RealizedDimensionTab.name=Вкладка созданных измерений
 item.DimensionMonitor.name=Монитор измерений
+item.PhasedFieldGenerator.name=Phased Field Generator
 item.DimensionalShard.name=Осколок измерения
 item.DimletTemplate.name=Шаблон димлета
 item.TextModule.name=Модуль «Текст»

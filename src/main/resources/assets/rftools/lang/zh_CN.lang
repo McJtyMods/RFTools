@@ -31,6 +31,7 @@ item.KnownDimlet.name=世界信息卡
 item.EmptyDimensionTab.name=空白世界构建模板
 item.RealizedDimensionTab.name=刻录世界构建模板
 item.DimensionMonitor.name=Dimension Monitor
+item.PhasedFieldGenerator.name=Phased Field Generator
 item.DimensionalShard.name=Dimensional Shard
 item.DimletTemplate.name=Dimlet Template
 item.TextModule.name=Text Module

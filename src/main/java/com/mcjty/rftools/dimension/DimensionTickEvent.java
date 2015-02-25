@@ -4,10 +4,13 @@ import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.world.types.EffectType;
+import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -225,6 +228,17 @@ public class DimensionTickEvent {
         }
     }
 
+    private boolean checkValidPhasedFieldGenerator(EntityPlayer player) {
+        InventoryPlayer inventory = player.inventory;
+        for (int i = 0 ; i < inventory.getHotbarSize() ; i++) {
+            ItemStack slot = inventory.getStackInSlot(i);
+            if (slot != null && slot.getItem() == ModItems.phasedFieldGeneratorItem) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void handleLowPower(Integer id, int power) {
         if (power <= 0) {
             // We ran out of power!
@@ -233,21 +247,33 @@ public class DimensionTickEvent {
                 List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
                 if (DimletConfiguration.dimensionDifficulty >= 1) {
                     for (EntityPlayer player : players) {
-                        player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000.0f);
+                        if (!checkValidPhasedFieldGenerator(player)) {
+                            player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000.0f);
+                        } else {
+                            player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                            player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                            player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
+                        }
                     }
                 } else {
                     Random random = new Random();
                     for (EntityPlayer player : players) {
-                        WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(DimletConfiguration.spawnDimension);
-                        int x = random.nextInt(2000) - 1000;
-                        int z = random.nextInt(2000) - 1000;
-                        int y = worldServerForDimension.getTopSolidOrLiquidBlock(x, z);
-                        if (y == -1) {
-                            y = 63;
-                        }
+                        if (!checkValidPhasedFieldGenerator(player)) {
+                            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(DimletConfiguration.spawnDimension);
+                            int x = random.nextInt(2000) - 1000;
+                            int z = random.nextInt(2000) - 1000;
+                            int y = worldServerForDimension.getTopSolidOrLiquidBlock(x, z);
+                            if (y == -1) {
+                                y = 63;
+                            }
 
-                        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension,
-                                new RfToolsTeleporter(worldServerForDimension, x, y, z));
+                            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension,
+                                    new RfToolsTeleporter(worldServerForDimension, x, y, z));
+                        } else {
+                            player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                            player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX*MAXTICKS, 4, true));
+                            player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX*MAXTICKS, 2, true));
+                        }
                     }
                 }
             }
