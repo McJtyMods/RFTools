@@ -22,6 +22,7 @@ public final class ModCrafting {
     static {
         RecipeSorter.register("rftools:shapedpreserving", PreservingShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:shapedknowndimlet", KnownDimletShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
     }
 
     public static void init() {
@@ -127,21 +128,47 @@ public final class ModCrafting {
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
+        ItemStack reds = new ItemStack(Items.redstone);
+        ItemStack gold = new ItemStack(Items.gold_ingot);
+        ItemStack ink = new ItemStack((Item) inkSac);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.regenerationEModuleItem), " p ", "rgr", " b ", 'p', ironGolemSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-        GameRegistry.addRecipe(new ItemStack(ModItems.speedEModuleItem), " p ", "rgr", " b ", 'p', horseSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, ironGolemSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.regenerationEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, horseSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.speedEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, diamondPick, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.hasteEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, zombieSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.saturationEModuleItem)));
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.hasteEModuleItem), " p ", "rgr", " b ", 'p', diamondPick, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-        GameRegistry.addRecipe(new ItemStack(ModItems.saturationEModuleItem), " p ", "rgr", " b ", 'p', zombieSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.regenerationPlusEModuleItem), ironGolemSyringe, ironGolemSyringe, new ItemStack(ModItems.regenerationEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.speedPlusEModuleItem), horseSyringe, horseSyringe, new ItemStack(ModItems.speedEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.hastePlusEModuleItem), diamondPick, new ItemStack(ModItems.hasteEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.saturationPlusEModuleItem), zombieSyringe, zombieSyringe, new ItemStack(ModItems.saturationEModuleItem));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.regenerationEModuleItem), ironGolemSyringe,
+                ironGolemSyringe, null
+        }, new ItemStack(ModItems.regenerationPlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.speedEModuleItem), horseSyringe,
+                horseSyringe, null
+        }, new ItemStack(ModItems.speedPlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.hasteEModuleItem), diamondPick,
+                null, null
+        }, new ItemStack(ModItems.hastePlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.saturationEModuleItem), zombieSyringe,
+                zombieSyringe, null
+        }, new ItemStack(ModItems.saturationPlusEModuleItem)));
     }
 
     private static ItemStack createMobSyringe(String mobName) {
@@ -191,10 +218,18 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
 
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
-        GameRegistry.addRecipe(new ItemStack(ModItems.efficiencyEssenceItem), " p ", "ese", " e ", 'p', diamondPick, 's', Items.nether_star, 'e', Items.ender_eye);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, diamondPick, null,
+                new ItemStack(Items.ender_eye), new ItemStack(Items.nether_star), new ItemStack(Items.ender_eye),
+                null, new ItemStack(Items.ender_eye), null
+        }, new ItemStack(ModItems.efficiencyEssenceItem)));
 
         ItemStack ironPick = createEnchantedItem(Items.iron_pickaxe, Enchantment.efficiency.effectId, 2);
-        GameRegistry.addRecipe(new ItemStack(ModItems.mediocreEfficiencyEssenceItem), " p ", "ese", " e ", 'p', ironPick, 's', Items.ghast_tear, 'e', Items.ender_eye);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, ironPick, null,
+                new ItemStack(Items.ender_eye), new ItemStack(Items.ghast_tear), new ItemStack(Items.ender_eye),
+                null, new ItemStack(Items.ender_eye), null
+        }, new ItemStack(ModItems.mediocreEfficiencyEssenceItem)));
     }
 
     private static ItemStack createEnchantedItem(Item item, int effectId, int amount) {
