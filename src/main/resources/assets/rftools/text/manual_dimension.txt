@@ -155,61 +155,6 @@ Most dimlets require you to research them or use another machine to
 find them, but certain simpler dimlets can be easily crafted in any
 table.
 {-------------------------------------------------------------}
-{b}Dimensional Shards
-{n:shards}
-Certain machines and items require an odd essence called "Dimensional
-Shards." Probably produced as a byproduct of the energy fueled into
-these dimensions. Generating below level 40, these shards will appear
-in any RFTools Dimension. This ore can be mined with a pickaxe to
-return the shards, which can then be used for all manner of things.
-
-{b}Dimensional Shards have several uses:
-    Firstly, shards required to craft some of the basic dimlets.
-    You also need some shards to craft the 'Machine Infuser,' 'Activity
-    Probe', and 'Dimlet Templates.'
-    And finally you can use them to 'infuse' almost all RFTools machines to
-    make them more effecient or give them special abilities.
-{-------------------------------------------------------------}
-{b}Machine Infuser
-{n:infuser}
-RFTools has the 'Machine Infuser' which is crafted as follows:
-{rb:machineInfuserBlock}
-
-With this machines you can inject dimensional shards into almost all other
-RFTools machines. Just pick up any RFTools machine with a wrench and put
-it in the left slot of the machine. You can infuse up to 256 shards into a 
-single machine. Infused machines work more efficiently or faster. The benefits 
-vary depending on the machine but in almost all cases it will need a lot less
-power to operate and in some cases speed will go up a lot.
-{-------------------------------------------------------------}
-One particular use case is the Dimension Builder. A fully infused Dimension
-Builder will create dimensions a lot faster and use less energy. But also
-the shield block, auto crafter, and so on will benefit from this.
-
-It is also very useful to infuse your Matter Transmitter and Matter
-Receiver blocks as that way they will work faster and use a lot less
-energy (making them safer to use).
-{-------------------------------------------------------------}
-{b}Dimlet Scrambler
-{n:scrambler}
-Sometimes you collect a lot of dimlets that you don't find particularly
-useful. In that case the dimlet scrambler may be a useful machine for you.
-You can craft it as follows:
-{rb:dimletScramblerBlock}
-
-This machine takes three dimlets (two should be non-craftable) of any type
-and recyles their components to create a new random dimlet. In contrast
-with the dimlet researcher this machine has a better chance of giving back
-rare dimlets. This depends on the rarity of the dimlets that you scramble.
-{-------------------------------------------------------------}
-You may notice that some of these craftable dimlets require a
-weird item. This is a Dimlet Template which can be crafted as
-follows:
-{ri:dimletTemplate}
-
-To craft this you actually need dimensional shards.
-
-{-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}
 This machine is where you actually describe your dimensions.
@@ -388,6 +333,60 @@ and that's the Dimension Monitor that you can craft like this:
 Right clicking with this tool will show you the amount of power
 still left in the dimension. The tool also gives a visual indication
 of the current amount of power.
+{-------------------------------------------------------------}
+{b}Dimensional Shards
+{n:shards}
+Certain machines and items require an odd essence called "Dimensional
+Shards." Probably produced as a byproduct of the energy fueled into
+these dimensions. Generating below level 40, these shards will appear
+in any RFTools Dimension. This ore can be mined with a pickaxe to
+return the shards, which can then be used for all manner of things.
+
+{b}Dimensional Shards have several uses:
+    Firstly, shards required to craft some of the basic dimlets.
+    You also need some shards to craft the 'Machine Infuser,' 'Activity
+    Probe', and 'Dimlet Templates.'
+    And finally you can use them to 'infuse' almost all RFTools machines to
+    make them more effecient or give them special abilities.
+{-------------------------------------------------------------}
+{b}Machine Infuser
+{n:infuser}
+RFTools has the 'Machine Infuser' which is crafted as follows:
+{rb:machineInfuserBlock}
+
+With this machines you can inject dimensional shards into almost all other
+RFTools machines. Just pick up any RFTools machine with a wrench and put
+it in the left slot of the machine. You can infuse up to 256 shards into a 
+single machine. Infused machines work more efficiently or faster. The benefits 
+vary depending on the machine but in almost all cases it will need a lot less
+power to operate and in some cases speed will go up a lot.
+{-------------------------------------------------------------}
+One particular use case is the Dimension Builder. A fully infused Dimension
+Builder will create dimensions a lot faster and use less energy. But also
+the shield block, auto crafter, and so on will benefit from this.
+
+It is also very useful to infuse your Matter Transmitter and Matter
+Receiver blocks as that way they will work faster and use a lot less
+energy (making them safer to use).
+{-------------------------------------------------------------}
+{b}Dimlet Scrambler
+{n:scrambler}
+Sometimes you collect a lot of dimlets that you don't find particularly
+useful. In that case the dimlet scrambler may be a useful machine for you.
+You can craft it as follows:
+{rb:dimletScramblerBlock}
+
+This machine takes three dimlets (two should be non-craftable) of any type
+and recyles their components to create a new random dimlet. In contrast
+with the dimlet researcher this machine has a better chance of giving back
+rare dimlets. This depends on the rarity of the dimlets that you scramble.
+{-------------------------------------------------------------}
+You may notice that some of these craftable dimlets require a
+weird item. This is a Dimlet Template which can be crafted as
+follows:
+{ri:dimletTemplate}
+
+To craft this you actually need dimensional shards.
 {-------------------------------------------------------------}
 {b}Activity Probe
 {n:probe}
