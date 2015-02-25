@@ -91,6 +91,17 @@ public class SyringeItem extends Item {
 
     private String findSelectedMobName(Entity entity) {
         DimletMapping mapping = DimletMapping.getDimletMapping(entity.worldObj);
+
+        // First try to find an exact matching class.
+        for (Map.Entry<Integer, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
+            Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
+            if (entityClass != null && entityClass.equals(entity.getClass())) {
+                int id = entry.getKey();
+                return mapping.getKey(id).getName();
+            }
+        }
+
+        // See if we can find subclasses that match.
         for (Map.Entry<Integer, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
