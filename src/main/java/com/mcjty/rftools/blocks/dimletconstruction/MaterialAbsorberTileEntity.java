@@ -73,13 +73,35 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         }
     }
 
+    private Block isValidSourceBlock(Coordinate coordinate) {
+        Block block = worldObj.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+        if (block == null || block.getMaterial() == Material.air) {
+            return null;
+        }
+        boolean ok = isValidDimletBlock(block);
+        return ok ? block : null;
+    }
+
 
     @Override
     protected void checkStateServer() {
-        if (absorbing > 0) {
+        if (absorbing > 0 || blockID == -1) {
             timer--;
             if (timer <= 0) {
                 timer = ABSORB_SPEED;
+                Block b = isValidSourceBlock(new Coordinate(xCoord, yCoord - 1, zCoord));
+                if (b != null) {
+                    int id = Block.blockRegistry.getIDForObject(b);
+                    if (blockID == -1) {
+                        absorbing = DimletConstructionConfiguration.maxBlockAbsorbtion;
+                        blockID = id;
+                        toscan.clear();
+                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
+                    } else if (id == blockID) {
+                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
+                    }
+                }
+
                 if (!toscan.isEmpty()) {
                     int r = worldObj.rand.nextInt(toscan.size());
                     Iterator<Coordinate> iterator = toscan.iterator();
@@ -104,34 +126,6 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
                     }
                 }
             }
-            markDirty();
-        }
-    }
-
-    public void placeDown() {
-        Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
-        if (block == null || block.isAir(worldObj, xCoord, yCoord-1, zCoord)) {
-            blockID = -1;
-            absorbing = 0;
-            toscan.clear();
-            markDirty();
-            return;
-        }
-
-        int id = Block.blockRegistry.getIDForObject(block);
-        if (id != blockID) {
-            boolean ok = isValidDimletBlock(block);
-
-            if (ok) {
-                blockID = id;
-                absorbing = DimletConstructionConfiguration.maxBlockAbsorbtion;
-                timer = ABSORB_SPEED;
-                toscan.clear();
-                toscan.add(new Coordinate(xCoord, yCoord-1, zCoord));
-                markDirty();
-            }
-        } else {
-            toscan.add(new Coordinate(xCoord, yCoord-1, zCoord));
             markDirty();
         }
     }

@@ -10,6 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.*;
 
@@ -46,12 +48,23 @@ public class LiquidAbsorberTileEntity extends GenericTileEntity {
     }
 
     private Block blockMatches(Coordinate c2) {
-        Block block = worldObj.getBlock(c2.getX(), c2.getY(), c2.getZ());
+        Block block = isValidSourceBlock(c2);
+        if (block == null) return null;
+        int id = Block.blockRegistry.getIDForObject(block);
+        return id == blockID ? block : null;
+    }
+
+    private Block isValidSourceBlock(Coordinate coordinate) {
+        Block block = worldObj.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
         if (block == null || block.getMaterial() == Material.air) {
             return null;
         }
-        int id = Block.blockRegistry.getIDForObject(block);
-        return id == blockID ? block : null;
+        int meta = worldObj.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+        if (meta != 0) {
+            return null;
+        }
+        boolean ok = isValidDimletLiquid(block);
+        return ok ? block : null;
     }
 
     // Server side: play a sound to all nearby players
@@ -75,10 +88,23 @@ public class LiquidAbsorberTileEntity extends GenericTileEntity {
 
     @Override
     protected void checkStateServer() {
-        if (absorbing > 0) {
+        if (absorbing > 0 || blockID == -1) {
             timer--;
             if (timer <= 0) {
                 timer = ABSORB_SPEED;
+                Block b = isValidSourceBlock(new Coordinate(xCoord, yCoord - 1, zCoord));
+                if (b != null) {
+                    int id = Block.blockRegistry.getIDForObject(b);
+                    if (blockID == -1) {
+                        absorbing = DimletConstructionConfiguration.maxLiquidAbsorbtion;
+                        blockID = id;
+                        toscan.clear();
+                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
+                    } else if (id == blockID) {
+                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
+                    }
+                }
+
                 if (!toscan.isEmpty()) {
                     int r = worldObj.rand.nextInt(toscan.size());
                     Iterator<Coordinate> iterator = toscan.iterator();
@@ -103,34 +129,6 @@ public class LiquidAbsorberTileEntity extends GenericTileEntity {
                     }
                 }
             }
-            markDirty();
-        }
-    }
-
-    public void placeDown() {
-        Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
-        if (block == null || block.isAir(worldObj, xCoord, yCoord-1, zCoord)) {
-            blockID = -1;
-            absorbing = 0;
-            toscan.clear();
-            markDirty();
-            return;
-        }
-
-        int id = Block.blockRegistry.getIDForObject(block);
-        if (id != blockID) {
-            boolean ok = isValidDimletLiquid(block);
-
-            if (ok) {
-                blockID = id;
-                absorbing = DimletConstructionConfiguration.maxLiquidAbsorbtion;
-                timer = ABSORB_SPEED;
-                toscan.clear();
-                toscan.add(new Coordinate(xCoord, yCoord-1, zCoord));
-                markDirty();
-            }
-        } else {
-            toscan.add(new Coordinate(xCoord, yCoord-1, zCoord));
             markDirty();
         }
     }

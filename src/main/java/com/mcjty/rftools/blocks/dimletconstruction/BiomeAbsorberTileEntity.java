@@ -31,6 +31,11 @@ public class BiomeAbsorberTileEntity extends GenericTileEntity {
     @Override
     protected void checkStateServer() {
         if (absorbing > 0) {
+            BiomeGenBase biomeGenBase = worldObj.getBiomeGenForCoords(xCoord, zCoord);
+            if (biomeGenBase == null || biomeGenBase.biomeID != biomeID) {
+                return;
+            }
+
             absorbing--;
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -38,15 +43,17 @@ public class BiomeAbsorberTileEntity extends GenericTileEntity {
     }
 
     public void placeDown() {
-        BiomeGenBase biomeGenBase = worldObj.getBiomeGenForCoords(xCoord, zCoord);
-        if (biomeGenBase == null) {
-            biomeID = -1;
-            absorbing = 0;
-        } else if (biomeGenBase.biomeID != biomeID) {
-            biomeID = biomeGenBase.biomeID;
-            absorbing = DimletConstructionConfiguration.maxBiomeAbsorbtion;
+        if (biomeID == -1) {
+            BiomeGenBase biomeGenBase = worldObj.getBiomeGenForCoords(xCoord, zCoord);
+            if (biomeGenBase == null) {
+                biomeID = -1;
+                absorbing = 0;
+            } else if (biomeGenBase.biomeID != biomeID) {
+                biomeID = biomeGenBase.biomeID;
+                absorbing = DimletConstructionConfiguration.maxBiomeAbsorbtion;
+            }
+            markDirty();
         }
-        markDirty();
     }
 
     @Override
