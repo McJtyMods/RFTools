@@ -4,7 +4,7 @@ Table of contents:
 {l:intro}Introduction to Dimension Building
 {l:theory}Dimension Theory
 {l:unknown}Dimlets - Coding the World
-{l:researcher}Dimlet Researcher - Revealing your Dimlets
+{l:researcher}Dimlet Researcher - Revealing Dimlets
 {l:enscriber}Enscriber - Coding your Dimension
 {l:builder}Builder - Creating your Dimension
 {l:teleport}Getting there
@@ -76,7 +76,7 @@ So, when nearly out of dimlets, create a couple random worlds
 and look around for interesting structures - you may find some
 very valuable dimlets in there.
 {-------------------------------------------------------------}
-{b}There are currently 12 types of dimlets that have been discovered:
+{b}There are currently 12 types of dimlets discovered:
     Terrain Dimlets: These are used to define what a world looks
         like. Some examples include a normal world, a flat world,
         or a skylands world.
