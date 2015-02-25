@@ -22,6 +22,7 @@ public final class ModCrafting {
     static {
         RecipeSorter.register("rftools:shapedpreserving", PreservingShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:shapedknowndimlet", KnownDimletShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
     }
 
     public static void init() {
@@ -102,6 +103,7 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone);
         GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator);
+        GameRegistry.addRecipe(new ItemStack(ModItems.phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', ModItems.dimensionalShard);
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimensionalBlankBlock, 8), "bbb", "b*b", "bbb", 'b', Blocks.stone, '*', ModItems.dimensionalShard);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.dimensionalBlock), new ItemStack(ModBlocks.dimensionalBlankBlock));
@@ -127,32 +129,48 @@ public final class ModCrafting {
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
+        ItemStack reds = new ItemStack(Items.redstone);
+        ItemStack gold = new ItemStack(Items.gold_ingot);
+        ItemStack ink = new ItemStack((Item) inkSac);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.regenerationEModuleItem), " p ", "rgr", " b ", 'p', ironGolemSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-        GameRegistry.addRecipe(new ItemStack(ModItems.speedEModuleItem), " p ", "rgr", " b ", 'p', horseSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, ironGolemSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.regenerationEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, horseSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.speedEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, diamondPick, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.hasteEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, zombieSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.saturationEModuleItem)));
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.hasteEModuleItem), " p ", "rgr", " b ", 'p', diamondPick, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-        GameRegistry.addRecipe(new ItemStack(ModItems.saturationEModuleItem), " p ", "rgr", " b ", 'p', zombieSyringe, 'r', Items.redstone, 'g', Items.gold_ingot,
-                'b', inkSac);
-
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.regenerationPlusEModuleItem), ironGolemSyringe, ironGolemSyringe, new ItemStack(ModItems.regenerationEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.speedPlusEModuleItem), horseSyringe, horseSyringe, new ItemStack(ModItems.speedEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.hastePlusEModuleItem), diamondPick, new ItemStack(ModItems.hasteEModuleItem));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.saturationPlusEModuleItem), zombieSyringe, zombieSyringe, new ItemStack(ModItems.saturationEModuleItem));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.regenerationEModuleItem), ironGolemSyringe,
+                ironGolemSyringe, null
+        }, new ItemStack(ModItems.regenerationPlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.speedEModuleItem), horseSyringe,
+                horseSyringe, null
+        }, new ItemStack(ModItems.speedPlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.hasteEModuleItem), diamondPick,
+                null, null
+        }, new ItemStack(ModItems.hastePlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.saturationEModuleItem), zombieSyringe,
+                zombieSyringe, null
+        }, new ItemStack(ModItems.saturationPlusEModuleItem)));
     }
-
-    private static ItemStack createMobSyringe(String mobName) {
-        ItemStack syringe = new ItemStack(ModItems.syringeItem);
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setString("mobName", mobName);
-        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
-        syringe.setTagCompound(tagCompound);
-        return syringe;
-    }
-
 
     private static void initLogicBlockCrafting() {
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
@@ -167,31 +185,43 @@ public final class ModCrafting {
     }
 
     private static void initDimletConstructionCrafting() {
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.peaceEssenceItem),
-                createMobEssenceItemStack("Iron Golem"),
-                createMobEssenceItemStack("Enderman"),
-                createMobEssenceItemStack("Snowman"),
-                createMobEssenceItemStack("Bat"),
-                createMobEssenceItemStack("Ocelot"),
-                createMobEssenceItemStack("Squid"),
-                createMobEssenceItemStack("Wolf"),
-                createMobEssenceItemStack("Zombie Pigman"),
-                createMobEssenceItemStack("Mooshroom")));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                createMobSyringe("Iron Golem"),
+                createMobSyringe("Enderman"),
+                createMobSyringe("Snowman"),
+                createMobSyringe("Bat"),
+                createMobSyringe("Ocelot"),
+                createMobSyringe("Squid"),
+                createMobSyringe("Wolf"),
+                createMobSyringe("Zombie Pigman"),
+                createMobSyringe("Mooshroom")
+        }, new ItemStack(ModItems.peaceEssenceItem)));
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletWorkbenchBlock), "gug", "cMc", "grg", 'M', ModBlocks.machineFrame, 'u', ModItems.unknownDimlet, 'c', Blocks.crafting_table,
                 'r', Items.redstone, 'g', Items.gold_nugget);
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.biomeAbsorberBlock), "dws", "wMw", "swd", 'M', ModBlocks.machineFrame, 'd', Blocks.dirt, 's', Blocks.sapling, 'w', Blocks.wool);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.biomeAbsorberBlock), new ItemStack(ModBlocks.biomeAbsorberBlock));
         GameRegistry.addRecipe(new ItemStack(ModBlocks.materialAbsorberBlock), "dwc", "wMw", "swg", 'M', ModBlocks.machineFrame, 'd', Blocks.dirt, 'c', Blocks.cobblestone, 's', Blocks.sand,
                 'g', Blocks.gravel, 'w', Blocks.wool);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.materialAbsorberBlock), new ItemStack(ModBlocks.materialAbsorberBlock));
         GameRegistry.addRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), "bwb", "wMw", "bwb", 'M', ModBlocks.machineFrame, 'b', Items.bucket, 'w', Blocks.wool);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), new ItemStack(ModBlocks.liquidAbsorberBlock));
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
 
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
-        GameRegistry.addRecipe(new ItemStack(ModItems.efficiencyEssenceItem), " p ", "ese", " e ", 'p', diamondPick, 's', Items.nether_star, 'e', Items.ender_eye);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, diamondPick, null,
+                new ItemStack(Items.ender_eye), new ItemStack(Items.nether_star), new ItemStack(Items.ender_eye),
+                null, new ItemStack(Items.ender_eye), null
+        }, new ItemStack(ModItems.efficiencyEssenceItem)));
 
         ItemStack ironPick = createEnchantedItem(Items.iron_pickaxe, Enchantment.efficiency.effectId, 2);
-        GameRegistry.addRecipe(new ItemStack(ModItems.mediocreEfficiencyEssenceItem), " p ", "ese", " e ", 'p', ironPick, 's', Items.ghast_tear, 'e', Items.ender_eye);
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, ironPick, null,
+                new ItemStack(Items.ender_eye), new ItemStack(Items.ghast_tear), new ItemStack(Items.ender_eye),
+                null, new ItemStack(Items.ender_eye), null
+        }, new ItemStack(ModItems.mediocreEfficiencyEssenceItem)));
     }
 
     private static ItemStack createEnchantedItem(Item item, int effectId, int amount) {
@@ -264,13 +294,14 @@ public final class ModCrafting {
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(ModItems.counterPlusModuleItem), 4));
     }
 
-    private static ItemStack createMobEssenceItemStack(String mobName) {
-        ItemStack syringeIronGolem = new ItemStack(ModItems.syringeItem);
+    private static ItemStack createMobSyringe(String mobName) {
+        ItemStack syringe = new ItemStack(ModItems.syringeItem);
         NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
         tagCompound.setString("mobName", mobName);
-        syringeIronGolem.setTagCompound(tagCompound);
-        return syringeIronGolem;
+        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
+        syringe.setTagCompound(tagCompound);
+        return syringe;
     }
+
 
 }

@@ -31,6 +31,10 @@ public class DimletConfiguration {
     public static float afterCreationCostFactor = 0.1f;
     public static float maintenanceCostPercentage = 0.0f;   // Bonus percentage in the dimlet cost.
 
+    public static int PHASEDFIELD_MAXENERGY = 1000000;
+    public static int PHASEDFIELD_RECEIVEPERTICK = 1000;
+    public static int PHASEDFIELD_CONSUMEPERTICK = 100;
+
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
     public static float randomOrbFluidChance = 0.2f;
@@ -47,6 +51,13 @@ public class DimletConfiguration {
 
 
     public static void init(Configuration cfg) {
+        PHASEDFIELD_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "phasedFieldMaxRF", PHASEDFIELD_MAXENERGY,
+                "Maximum RF storage that the phased field generator item can hold").getInt();
+        PHASEDFIELD_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldRFPerTick", PHASEDFIELD_RECEIVEPERTICK,
+                "RF per tick that the the phased field generator item can receive").getInt();
+        PHASEDFIELD_CONSUMEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldConsumePerTick", PHASEDFIELD_CONSUMEPERTICK,
+                "RF per tick that the the phased field generator item will consume").getInt();
+
         RESEARCHER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletResearcherMaxRF", RESEARCHER_MAXENERGY,
                 "Maximum RF storage that the dimlet researcher can hold").getInt();
         RESEARCHER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimletResearcherRFPerTick", RESEARCHER_RECEIVEPERTICK,

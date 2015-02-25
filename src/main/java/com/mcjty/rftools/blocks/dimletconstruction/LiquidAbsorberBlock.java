@@ -84,21 +84,6 @@ public class LiquidAbsorberBlock extends GenericBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
-        restoreBlockFromNBT(world, x, y, z, itemStack);
-        if (!world.isRemote) {
-            LiquidAbsorberTileEntity liquidAbsorberTileEntity = (LiquidAbsorberTileEntity) world.getTileEntity(x, y, z);
-            liquidAbsorberTileEntity.placeDown();
-        }
-    }
-
-    @Override
-    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-        return new ArrayList<ItemStack>();
-    }
-
-    @Override
     public String getSideIconName() {
         return "liquidAbsorber";
     }

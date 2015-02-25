@@ -21,6 +21,7 @@ public class DimensionalShardBlock extends Block {
         super(Material.rock);
         setHardness(3.0f);
         setResistance(5.0f);
+        setHarvestLevel("pickaxe", 2);
         setBlockName("dimensionalShardBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

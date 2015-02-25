@@ -3,6 +3,7 @@ package com.mcjty.rftools.items;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
+import com.mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.envmodules.*;
 import com.mcjty.rftools.items.manual.RFToolsManualDimensionItem;
@@ -26,6 +27,7 @@ public final class ModItems {
     public static EmptyDimensionTab emptyDimensionTab;
     public static RealizedDimensionTab realizedDimensionTab;
     public static DimensionMonitorItem dimensionMonitorItem;
+    public static PhasedFieldGeneratorItem phasedFieldGeneratorItem;
     public static DimensionalShard dimensionalShard;
 
     public static TextModuleItem textModuleItem;
@@ -306,6 +308,11 @@ public final class ModItems {
         dimensionMonitorItem.setUnlocalizedName("DimensionMonitor");
         dimensionMonitorItem.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(dimensionMonitorItem, "dimensionMonitorItem");
+
+        phasedFieldGeneratorItem = new PhasedFieldGeneratorItem();
+        phasedFieldGeneratorItem.setUnlocalizedName("PhasedFieldGenerator");
+        phasedFieldGeneratorItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(phasedFieldGeneratorItem, "phasedFieldGeneratorItem");
 
         dimensionalShard = new DimensionalShard();
         dimensionalShard.setUnlocalizedName("DimensionalShard");

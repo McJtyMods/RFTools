@@ -49,33 +49,28 @@ public class PlayerEvents {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (MinecraftServer.getServer().isDedicatedServer()) {
-            RFTools.log("SMP: Player logged in: Sync diminfo to clients");
-            EntityPlayer player = event.player;
-            RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
-            manager.syncDimInfoToClients(player.getEntityWorld());
-            manager.checkDimletConfig(player);
-        }
+        RFTools.log("SMP: Player logged in: Sync diminfo to clients");
+        EntityPlayer player = event.player;
+        RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
+        manager.syncDimInfoToClients(player.getEntityWorld());
+        manager.checkDimletConfig(player);
     }
 
     @SubscribeEvent
     public void onConnectionCreated(FMLNetworkEvent.ServerConnectionFromClientEvent event) {
+        RFTools.log("SMP: Sync dimensions to client");
+        DimensionSyncPacket packet = new DimensionSyncPacket();
 
-        if (MinecraftServer.getServer().isDedicatedServer()) {
-            RFTools.log("SMP: Sync dimensions to client");
-            DimensionSyncPacket packet = new DimensionSyncPacket();
-
-            EntityPlayer player = ((NetHandlerPlayServer) event.handler).playerEntity;
-            RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
-            for (Integer id : manager.getDimensions().keySet()) {
-                RFTools.log("Sending over dimension " + id + " to the client");
-                packet.addDimension(id);
-            }
-
-            RFTools.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DISPATCHER);
-            RFTools.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(event.manager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
-            RFTools.channels.get(Side.SERVER).writeOutbound(packet);
+        EntityPlayer player = ((NetHandlerPlayServer) event.handler).playerEntity;
+        RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
+        for (Integer id : manager.getDimensions().keySet()) {
+            RFTools.log("Sending over dimension " + id + " to the client");
+            packet.addDimension(id);
         }
+
+        RFTools.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DISPATCHER);
+        RFTools.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(event.manager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
+        RFTools.channels.get(Side.SERVER).writeOutbound(packet);
     }
 
 
