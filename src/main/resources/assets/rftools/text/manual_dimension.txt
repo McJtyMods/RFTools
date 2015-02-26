@@ -8,7 +8,9 @@ Table of contents:
 {l:enscriber}Enscriber - Coding your Dimension
 {l:builder}Builder - Creating your Dimension
 {l:teleport}Getting there
+{l:failure}Major Failure!
 {/}
+
 
 
 {l:shards}Shards of the World
@@ -336,6 +338,19 @@ and that's the Dimension Monitor that you can craft like this:
 Right clicking with this tool will show you the amount of power
 still left in the dimension. The tool also gives a visual indication
 of the current amount of power.
+{-------------------------------------------------------------}
+{b}Major Failure!
+{n:failure}
+What if you just died in an unpowered dimension? How can you get your
+stuff back? Sometimes you really need to go back to a dimension that
+has no power. The Phased Field Generator allows you to do just that:
+
+{ri:phasedFieldGeneratorItem}
+
+This item has be charged first. While it has enough power it will protect you
+from the hazards of an unpowered dimension. But be fast (as fast as you can
+with the slowness you will get) because power runs out quickly!
+This item has to be in your hotbar to work. Do *not* remove it!
 {-------------------------------------------------------------}
 {b}Dimensional Shards
 {n:shards}
