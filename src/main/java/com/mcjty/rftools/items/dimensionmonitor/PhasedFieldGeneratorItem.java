@@ -3,6 +3,7 @@ package com.mcjty.rftools.items.dimensionmonitor;
 import cofh.api.energy.IEnergyContainerItem;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.dimension.DimensionTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -28,7 +29,7 @@ public class PhasedFieldGeneratorItem extends Item implements IEnergyContainerIt
 
         capacity = DimletConfiguration.PHASEDFIELD_MAXENERGY;
         maxReceive = DimletConfiguration.PHASEDFIELD_RECEIVEPERTICK;
-        maxExtract = DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
+        maxExtract = DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK * DimensionTickEvent.MAXTICKS;
     }
 
     @Override
