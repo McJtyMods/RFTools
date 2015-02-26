@@ -1,7 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
-import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionStorage;
@@ -12,19 +11,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -40,10 +33,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
-    public static final int STATUS_OK = 0;
-    public static final int STATUS_WARN = 1;
-    public static final int STATUS_UNKNOWN = 2;
-
     // Server side: current dialing destination. Old system.
     private TeleportDestination teleportDestination = null;
     // Server side: current dialing destination. New system.
@@ -52,7 +41,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private String name = null;
     private boolean privateAccess = false;
     private Set<String> allowedPlayers = new HashSet<String>();
-    private int status = STATUS_OK;
+    private int status = TeleportationTools.STATUS_OK;
 
     // Server side: the player we're currently teleporting.
     private EntityPlayer teleportingPlayer = null;
@@ -118,48 +107,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         if (allowedPlayers.contains(player)) {
             allowedPlayers.remove(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
-    }
-
-    /**
-     * Calculate the cost of doing a dial between a transmitter and a destination.
-     * @param world
-     * @param c1 the start coordinate
-     * @param teleportDestination
-     * @return
-     */
-    public static int calculateRFCost(World world, Coordinate c1, TeleportDestination teleportDestination) {
-        if (world.provider.dimensionId != teleportDestination.getDimension()) {
-            return TeleportConfiguration.rfStartTeleportBaseDim;
-        } else {
-            Coordinate c2 = teleportDestination.getCoordinate();
-            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int rf = TeleportConfiguration.rfStartTeleportBaseLocal + (int)(TeleportConfiguration.rfStartTeleportDist * dist);
-            if (rf > TeleportConfiguration.rfStartTeleportBaseDim) {
-                rf = TeleportConfiguration.rfStartTeleportBaseDim;
-            }
-            return rf;
-        }
-    }
-
-    /**
-     * Calculate the time in ticks of doing a dial between a transmitter and a destination.
-     * @param world
-     * @param c1 the start coordinate
-     * @param teleportDestination
-     * @return
-     */
-    public static int calculateTime(World world, Coordinate c1, TeleportDestination teleportDestination) {
-        if (world.provider.dimensionId != teleportDestination.getDimension()) {
-            return TeleportConfiguration.timeTeleportBaseDim;
-        } else {
-            Coordinate c2 = teleportDestination.getCoordinate();
-            double dist = Vec3.createVectorHelper(c1.getX(), c1.getY(), c1.getZ()).distanceTo(Vec3.createVectorHelper(c2.getX(), c2.getY(), c2.getZ()));
-            int time = TeleportConfiguration.timeTeleportBaseLocal + (int)(TeleportConfiguration.timeTeleportDist * dist / 1000);
-            if (time > TeleportConfiguration.timeTeleportBaseDim) {
-                time = TeleportConfiguration.timeTeleportBaseDim;
-            }
-            return time;
         }
     }
 
@@ -281,84 +228,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         markDirty();
     }
 
-    /**
-     * Return a number between 0 and 10 indicating the severity of the teleportation.
-     * @return
-     */
-    private int calculateSeverity() {
-        int severity = badTicks * 10 / totalTicks;
-        if (mustInterrupt()) {
-            // If an interrupt was done then severity is worse.
-            severity += 2;
-        }
-        if (severity > 10) {
-            severity = 10;
-        }
-        return severity;
-    }
-
-    private boolean applyBadEffectIfNeeded(int severity) {
-        severity += calculateSeverity();
-        if (severity > 10) {
-            severity = 10;
-        }
-        if (severity <= 0) {
-            return false;
-        }
-
-        if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
-            worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_error", TeleportConfiguration.teleportErrorVolume, 1.0f);
-        }
-
-        switch (severity) {
-            case 2:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
-                break;
-            case 3:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 0.5f);
-                break;
-            case 4:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 0.5f);
-                break;
-            case 5:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 1.0f);
-                break;
-            case 6:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 1.0f);
-                break;
-            case 7:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 200));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 2.0f);
-                break;
-            case 8:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 300));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 2.0f);
-                break;
-            case 9:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 400));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 3.0f);
-                break;
-            case 10:
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.harm.getId(), 500));
-                teleportingPlayer.addPotionEffect(new PotionEffect(Potion.wither.getId(), 500));
-                teleportingPlayer.attackEntityFrom(DamageSource.generic, 3.0f);
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void updateEntity() {
-        super.updateEntity();
-    }
-
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
@@ -372,7 +241,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, xCoord, yCoord, zCoord)) {
                     newstatus = checkReceiverStatus();
                 } else {
-                    newstatus = STATUS_OK;
+                    newstatus = TeleportationTools.STATUS_OK;
                 }
                 if (newstatus != status) {
                     status = newstatus;
@@ -422,7 +291,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private int checkReceiverStatus() {
         TeleportDestination destination = getTeleportDestination();
         if (destination == null) {
-            return STATUS_WARN;
+            return TeleportationTools.STATUS_WARN;
         }
 
         int dimension = destination.getDimension();
@@ -433,7 +302,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
             int energyLevel = dimensionStorage.getEnergyLevel(dimension);
             if (energyLevel < DimletConfiguration.DIMPOWER_WARN_TP) {
-                return STATUS_WARN;
+                return TeleportationTools.STATUS_WARN;
             }
         }
 
@@ -442,7 +311,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         // By default we will not check if the dimension is not loaded. Can be changed in config.
         if (w == null) {
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
-                return STATUS_UNKNOWN;
+                return TeleportationTools.STATUS_UNKNOWN;
             } else {
                 w = MinecraftServer.getServer().worldServerForDimension(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
@@ -453,7 +322,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
         if (!exists) {
             if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
-                return STATUS_UNKNOWN;
+                return TeleportationTools.STATUS_UNKNOWN;
             } else {
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadChunk;
             }
@@ -461,18 +330,18 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return STATUS_WARN;
+            return TeleportationTools.STATUS_WARN;
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
 
         int status = matterReceiverTileEntity.checkStatus();
-        return (status == DialingDeviceTileEntity.DIAL_OK) ? STATUS_OK : STATUS_WARN;
+        return (status == DialingDeviceTileEntity.DIAL_OK) ? TeleportationTools.STATUS_OK : TeleportationTools.STATUS_WARN;
     }
 
     private void clearTeleport(int cooldown) {
         markDirty();
-        applyBadEffectIfNeeded(0);
+        TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 0, badTicks, totalTicks);
         cooldownTimer = cooldown;
         teleportingPlayer = null;
     }
@@ -533,33 +402,15 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private void performTeleport() {
         // First check if the destination is still valid.
         if (!isDestinationStillValid()) {
-            applyBadEffectIfNeeded(10);
+            TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 10, badTicks, totalTicks);
             RFTools.warn(teleportingPlayer, "Missing destination!");
             clearTeleport(200);
             return;
         }
 
         TeleportDestination dest = getTeleportDestination();
-        Coordinate c = dest.getCoordinate();
+        TeleportationTools.performTeleport(teleportingPlayer, dest, badTicks, totalTicks);
 
-        int currentId = teleportingPlayer.worldObj.provider.dimensionId;
-        if (currentId != dest.getDimension()) {
-            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(dest.getDimension());
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) teleportingPlayer, dest.getDimension(),
-                    new RfToolsTeleporter(worldServerForDimension, c.getX()+0.5, c.getY()+1.5, c.getZ()+0.5));
-        } else {
-            teleportingPlayer.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
-        }
-
-        RFTools.message(teleportingPlayer, "Whoosh!");
-        Achievements.trigger(teleportingPlayer, Achievements.firstTeleport);
-
-        int severity = consumeReceiverEnergy(c, dest.getDimension());
-        if (!applyBadEffectIfNeeded(severity)) {
-            if (TeleportConfiguration.teleportVolume >= 0.01) {
-                worldObj.playSoundAtEntity(teleportingPlayer, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
-            }
-        }
         teleportingPlayer = null;
     }
 
@@ -572,7 +423,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         markDirty();
         // Not enough energy. This is a bad tick.
         badTicks++;
-        if (mustInterrupt()) {
+        if (TeleportationTools.mustInterrupt(badTicks, totalTicks)) {
             // Too many bad ticks. Total failure!
             RFTools.warn(teleportingPlayer, "Power failure during transit!");
             clearTeleport(200);
@@ -587,33 +438,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             return true;
         }
         return false;
-    }
-
-    /**
-     * Consume energy on the receiving side and return a number indicating how good this went.
-     *
-     * @param c
-     * @param dimension
-     * @return 0 in case of success. 10 in case of severe failure
-     */
-    private int consumeReceiverEnergy(Coordinate c, int dimension) {
-        World world = DimensionManager.getWorld(dimension);
-        TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!(te instanceof MatterReceiverTileEntity)) {
-            RFTools.warn(teleportingPlayer, "Something went wrong with the destination!");
-            return 0;
-        }
-
-        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-        int rf = TeleportConfiguration.rfPerTeleportReceiver;
-        rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
-
-        int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, rf, false);
-        return 10 - (extracted * 10 / rf);
-    }
-
-    private boolean mustInterrupt() {
-        return badTicks > (totalTicks / 2);
     }
 
     public void startTeleportation(Entity entity) {
@@ -632,7 +456,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
         if (teleportDestination != null || teleportId != null) {
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
-            int cost = calculateRFCost(worldObj, cthis, getTeleportDestination());
+            int cost = TeleportationTools.calculateRFCost(worldObj, cthis, getTeleportDestination());
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
@@ -644,7 +468,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
-            teleportTimer = calculateTime(worldObj, cthis, getTeleportDestination());
+            teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, getTeleportDestination());
             teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
 
             totalTicks = teleportTimer;

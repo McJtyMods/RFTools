@@ -72,6 +72,7 @@ public final class ModCrafting {
                 'T', redstoneTorch);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.destinationAnalyzerBlock), "o o", " M ", "o o", 'M', ModBlocks.machineFrame,
                 'o', Items.ender_pearl);
+        GameRegistry.addRecipe(new ItemStack(ModItems.chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
 
         initLogicBlockCrafting();
 

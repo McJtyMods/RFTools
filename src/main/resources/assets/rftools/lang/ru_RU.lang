@@ -23,6 +23,7 @@ death.dimension.powerfailure=%s умер в разрушающемся мире!
 
 item.NetworkMonitor.name=Монитор RF-сети
 item.TeleportProbe.name=Зонд-телепорт
+item.ChargedPorter.name=Charged Porter
 item.RFToolsManual.name=Общее руководство пр RFTools
 item.RFToolsManualDimension.name=Руководство по измерениям RFTools
 item.DevelopersDelight.name=Восхищение разработчика

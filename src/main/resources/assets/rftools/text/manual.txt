@@ -249,6 +249,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {l:tpdialer}Dialing Device
 {l:tpdestcheck}Destination Analyzer
 {l:tpaccess}Access Control
+{l:porter}Charged Porter Item
 {-------------------------------------------------------------} 
 {b}Matter Transmitter
 {n:tptransmitter}
@@ -314,6 +315,17 @@ In case of a receiver an unauthorized player can not dial to that
 receiver but he/she can teleport to it if there is an authorized
 transmitter already dialed to that receiver.
 {-------------------------------------------------------------} 
+{b}Charged Porter
+{n:porter}
+The Charged Porter is an item that you set to some target (a matter
+receiver) and charge up. Right clicking the item will teleport you to
+the preset receiver. Note that this requires 50% more RF then you would
+normally use with a matter transmitter. Also note that the receiver
+still needs power! Sneak-right click on a receiver to set target.
+To craft this use:
+
+{ri:chargedPorterItem}
+{-------------------------------------------------------------}
 {b}Power Generator
 {n:power}
 
