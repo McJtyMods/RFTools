@@ -44,8 +44,8 @@ public class BeamRenderer extends TileEntitySpecialRenderer {
             int status = matterTransmitterTileEntity.getStatus();
             ResourceLocation beamIcon = null;
             switch (status) {
-                case MatterTransmitterTileEntity.STATUS_OK: beamIcon = textureOk; break;
-                case MatterTransmitterTileEntity.STATUS_WARN: beamIcon = textureWarn; break;
+                case TeleportationTools.STATUS_OK: beamIcon = textureOk; break;
+                case TeleportationTools.STATUS_WARN: beamIcon = textureWarn; break;
                 default: beamIcon = textureUnknown; break;
             }
             bindTexture(beamIcon);

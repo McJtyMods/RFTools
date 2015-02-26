@@ -11,12 +11,14 @@ import com.mcjty.rftools.items.manual.RFToolsManualItem;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import com.mcjty.rftools.items.parts.*;
 import com.mcjty.rftools.items.screenmodules.*;
+import com.mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import com.mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ModItems {
     public static NetworkMonitorItem networkMonitorItem;
     public static TeleportProbeItem teleportProbeItem;
+    public static ChargedPorterItem chargedPorterItem;
     public static RFToolsManualItem rfToolsManualItem;
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
@@ -74,6 +76,11 @@ public final class ModItems {
         teleportProbeItem.setCreativeTab(RFTools.tabRfTools);
         teleportProbeItem.setTextureName(RFTools.MODID + ":teleportProbeItem");
         GameRegistry.registerItem(teleportProbeItem, "teleportProbeItem");
+
+        chargedPorterItem = new ChargedPorterItem();
+        chargedPorterItem.setUnlocalizedName("ChargedPorter");
+        chargedPorterItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(chargedPorterItem, "chargedPorterItem");
 
         rfToolsManualItem = new RFToolsManualItem();
         rfToolsManualItem.setUnlocalizedName("RFToolsManual");

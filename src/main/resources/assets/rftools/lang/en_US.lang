@@ -23,6 +23,7 @@ death.dimension.powerfailure=%s dies in a collapsing world!
 
 item.NetworkMonitor.name=RF Network Monitor
 item.TeleportProbe.name=Teleporter Probe
+item.ChargedPorter.name=Charged Porter
 item.RFToolsManual.name=RFTools Manual
 item.RFToolsManualDimension.name=RFTools Dimension Manual
 item.DevelopersDelight.name=Developers Delight

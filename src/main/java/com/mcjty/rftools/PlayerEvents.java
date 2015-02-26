@@ -3,21 +3,36 @@ package com.mcjty.rftools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.teleportprobe.ChargedPorterItem;
+import com.mcjty.rftools.items.teleportprobe.TimedTeleportationProperties;
 import com.mcjty.rftools.network.DimensionSyncPacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.event.entity.EntityEvent;
 
 public class PlayerEvents {
+
+    @SubscribeEvent
+    public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
+        IExtendedEntityProperties properties = event.player.getExtendedProperties(TimedTeleportationProperties.ID);
+        if (properties instanceof TimedTeleportationProperties) {
+            TimedTeleportationProperties timedTeleportationProperties = (TimedTeleportationProperties) properties;
+            timedTeleportationProperties.tick();
+        }
+    }
 
     @SubscribeEvent
     public void onItemPickupEvent(PlayerEvent.ItemPickupEvent event) {

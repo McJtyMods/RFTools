@@ -177,6 +177,10 @@ public class TeleportDestinations extends WorldSavedData {
         }
     }
 
+    public TeleportDestination getDestination(GlobalCoordinate coordinate) {
+        return destinations.get(coordinate);
+    }
+
     public TeleportDestination getDestination(Coordinate coordinate, int dimension) {
         return destinations.get(new GlobalCoordinate(coordinate, dimension));
     }
