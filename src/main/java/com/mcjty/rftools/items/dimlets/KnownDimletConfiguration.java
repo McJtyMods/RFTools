@@ -21,6 +21,7 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.ShapedRecipes;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.*;
 import java.util.*;
@@ -152,6 +154,9 @@ public class KnownDimletConfiguration {
     private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, Map<DimletType,Integer> typeDefaults) {
         String k;
         k = prefix + key.getType().getName() + "." + key.getName();
+        System.out.println("key.getType().getName() = " + key.getType().getName());
+        System.out.println("key.getName() = " + key.getName());
+        System.out.println("k = " + k);
         Integer defaultValue = builtinDefaults.get(key);
         if (defaultValue == null) {
             defaultValue = typeDefaults.get(key.getType());
@@ -293,6 +298,8 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, mainCfg, Blocks.clay, 0, mapping);
         initMaterialItem(cfg, mainCfg, Blocks.hardened_clay, 0, mapping);
         initMaterialItem(cfg, mainCfg, ModBlocks.dimensionalShardBlock, 0, mapping);
+
+        initOreDictionaryDimlets(cfg, mapping, mainCfg);
 
         initModMaterialItem(cfg, mainCfg, "chisel", "marble", 0, mapping);
         initModMaterialItem(cfg, mainCfg, "chisel", "limestone", 0, mapping);
@@ -525,6 +532,39 @@ public class KnownDimletConfiguration {
         }
 
         mapping.save(world);
+    }
+
+    private static void initOreDictionaryDimlets(Configuration cfg, DimletMapping mapping, Configuration mainCfg) {
+        for (String oreName : OreDictionary.getOreNames()) {
+            ArrayList<ItemStack> stacks = OreDictionary.getOres(oreName);
+            if (!stacks.isEmpty() && oreName.startsWith("ore")) {
+                ItemStack itemStack = null;
+                for (ItemStack stack : stacks) {
+                    if (stack.getTagCompound() == null) {
+                        itemStack = stack;
+                        break;
+                    }
+                }
+
+                if (itemStack != null) {
+                    Item item = itemStack.getItem();
+                    if (item instanceof ItemBlock) {
+                        ItemBlock itemBlock = (ItemBlock) item;
+                        Block block = itemBlock.field_150939_a;
+                        String unlocalizedName = block.getUnlocalizedName();
+                        System.out.println("unlocalizedName = " + unlocalizedName);
+                        int meta = itemStack.getItemDamage();
+                        if (meta != 0) {
+                            unlocalizedName += meta;
+                        }
+                        DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
+                        if (mapping.getId(key) == null || !idToDimletEntry.containsKey(key)) {
+                            initMaterialItem(cfg, mainCfg, itemBlock.field_150939_a, meta, mapping);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void initDigitCrafting(String from, String to, DimletMapping mapping) {
