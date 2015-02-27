@@ -127,6 +127,7 @@ public final class ModCrafting {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
         ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
+        ItemStack chickenSyringe = createMobSyringe("Chicken");
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
@@ -134,6 +135,11 @@ public final class ModCrafting {
         ItemStack gold = new ItemStack(Items.gold_ingot);
         ItemStack ink = new ItemStack((Item) inkSac);
 
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, chickenSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.featherFallingEModuleItem)));
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
                 null, ironGolemSyringe, null,
                 reds, gold, reds,

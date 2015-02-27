@@ -55,6 +55,7 @@ item.SpeedPlusEModule.name=Speed Plus Module
 item.HasteEModule.name=Haste Module
 item.HastePlusEModule.name=Haste Plus Module
 item.SaturationEModule.name=Saturation Module
+item.FeatherFallingEModule.name=Feather Falling Module
 
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0

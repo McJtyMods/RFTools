@@ -53,6 +53,7 @@ public final class ModItems {
     public static HastePlusEModuleItem hastePlusEModuleItem;
     public static SaturationEModuleItem saturationEModuleItem;
     public static SaturationPlusEModuleItem saturationPlusEModuleItem;
+    public static FeatherFallingEModuleItem featherFallingEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -205,6 +206,12 @@ public final class ModItems {
         saturationPlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
         saturationPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/saturationPlusEModuleItem");
         GameRegistry.registerItem(saturationPlusEModuleItem, "saturationPlusEModuleItem");
+
+        featherFallingEModuleItem = new FeatherFallingEModuleItem();
+        featherFallingEModuleItem.setUnlocalizedName("FeatherFallingEModule");
+        featherFallingEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        featherFallingEModuleItem.setTextureName(RFTools.MODID + ":envmodules/featherFallingEModuleItem");
+        GameRegistry.registerItem(featherFallingEModuleItem, "featherFallingEModuleItem");
     }
 
     private static void initScreenModuleItems() {
