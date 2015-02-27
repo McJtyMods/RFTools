@@ -239,21 +239,6 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
                 'g', Blocks.glass, 'i', Items.iron_ingot);
 
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[]{
-                new ItemStack(ModBlocks.screenBlock), new ItemStack(Items.iron_ingot),
-                new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
-        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("large", Boolean.TRUE)));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlock), new ItemStack(Blocks.glass),
-                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
-        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("transparent", Boolean.TRUE)));
-        Map<String,Object> flags = new HashMap<String, Object>();
-        flags.put("large", Boolean.FALSE);
-        flags.put("transparent", Boolean.FALSE);
-        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlock)
-        }, new ItemStack(ModBlocks.screenBlock), 0, flags));
-
         initScreenModuleCrafting();
     }
 

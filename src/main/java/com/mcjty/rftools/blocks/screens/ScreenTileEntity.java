@@ -184,6 +184,18 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         tagCompound.setTag("Items", bufferTagList);
     }
 
+    public void setLarge(boolean large) {
+        this.large = large;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void setTransparent(boolean transparent) {
+        this.transparent = transparent;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     public boolean isLarge() {
         return large;
     }
