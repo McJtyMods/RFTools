@@ -49,6 +49,8 @@ public class DimletConfiguration {
     public static float randomSpecialTimeChance = 0.5f;
     public static float randomControllerChance = 0.4f;
 
+    public static int bedrockLayer = 1;
+
 
     public static void init(Configuration cfg) {
         PHASEDFIELD_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "phasedFieldMaxRF", PHASEDFIELD_MAXENERGY,
@@ -143,6 +145,8 @@ public class DimletConfiguration {
         randomControllerChance = (float) cfg.get(CATEGORY_DIMLETS, "randomControllerChance", randomControllerChance,
                 "The chance that a random biome controller is selected").getDouble();
 
+        bedrockLayer = cfg.get(CATEGORY_DIMLETS, "bedrockLayer", bedrockLayer,
+                "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
     }
 
 }

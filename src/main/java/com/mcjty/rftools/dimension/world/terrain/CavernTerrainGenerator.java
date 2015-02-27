@@ -278,7 +278,9 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                 for (int k1 = 255; k1 >= 0; --k1) {
                     int l1 = (l * 16 + k) * 256 + k1;
 
-                    if (k1 < 255 - provider.rand.nextInt(5) && k1 > provider.rand.nextInt(5)) {
+                    if (k1 < DimletConfiguration.bedrockLayer) {
+                        aBlock[l1] = Blocks.bedrock;
+                    } else if (k1 < 255 - provider.rand.nextInt(5) && k1 > provider.rand.nextInt(5)) {
                         Block block2 = aBlock[l1];
 
                         if (block2 != null && block2.getMaterial() != Material.air) {
