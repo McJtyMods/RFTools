@@ -154,9 +154,9 @@ public class KnownDimletConfiguration {
     private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, Map<DimletType,Integer> typeDefaults) {
         String k;
         k = prefix + key.getType().getName() + "." + key.getName();
-        System.out.println("key.getType().getName() = " + key.getType().getName());
-        System.out.println("key.getName() = " + key.getName());
-        System.out.println("k = " + k);
+        if (key.getType().equals(DimletType.DIMLET_MATERIAL)) {
+            System.out.println("k = " + k);
+        }
         Integer defaultValue = builtinDefaults.get(key);
         if (defaultValue == null) {
             defaultValue = typeDefaults.get(key.getType());
@@ -263,46 +263,7 @@ public class KnownDimletConfiguration {
         DimletObjectMapping.idToBlock.put(idMaterialNone, null);
         addExtraInformation(idMaterialNone, "Use this material none dimlet to get normal", "biome specific stone generation");
 
-        initMaterialItem(cfg, mainCfg, Blocks.diamond_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.diamond_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.emerald_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.emerald_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.quartz_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.quartz_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.gold_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.gold_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.iron_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.iron_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.coal_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.lapis_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.lapis_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.coal_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.redstone_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.redstone_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.dirt, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.sandstone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.end_stone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.netherrack, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.cobblestone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.obsidian, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.soul_sand, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.glass, 0, mapping);
-        for (int i = 0 ; i < 16 ; i++) {
-            initMaterialItem(cfg, mainCfg, Blocks.stained_glass, i, mapping);
-            initMaterialItem(cfg, mainCfg, Blocks.stained_hardened_clay, i, mapping);
-        }
-        initMaterialItem(cfg, mainCfg, Blocks.glowstone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.mossy_cobblestone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.ice, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.packed_ice, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.clay, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.hardened_clay, 0, mapping);
-        initMaterialItem(cfg, mainCfg, ModBlocks.dimensionalShardBlock, 0, mapping);
-
-        initOreDictionaryDimlets(cfg, mapping, mainCfg);
-
-        initModMaterialItem(cfg, mainCfg, "chisel", "marble", 0, mapping);
-        initModMaterialItem(cfg, mainCfg, "chisel", "limestone", 0, mapping);
+        initMaterialDimlets(cfg, mapping, mainCfg);
 
         initFoliageItem(cfg, mainCfg, mapping);
 
@@ -534,9 +495,52 @@ public class KnownDimletConfiguration {
         mapping.save(world);
     }
 
+    private static void initMaterialDimlets(Configuration cfg, DimletMapping mapping, Configuration mainCfg) {
+        initMaterialItem(cfg, mainCfg, Blocks.diamond_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.diamond_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.emerald_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.emerald_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.quartz_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.quartz_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.gold_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.gold_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.iron_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.iron_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.coal_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.lapis_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.lapis_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.coal_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.redstone_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.redstone_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.dirt, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.sandstone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.end_stone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.netherrack, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.cobblestone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.obsidian, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.soul_sand, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.glass, 0, mapping);
+        for (int i = 0 ; i < 16 ; i++) {
+            initMaterialItem(cfg, mainCfg, Blocks.stained_glass, i, mapping);
+            initMaterialItem(cfg, mainCfg, Blocks.stained_hardened_clay, i, mapping);
+        }
+        initMaterialItem(cfg, mainCfg, Blocks.glowstone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.mossy_cobblestone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.ice, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.packed_ice, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.clay, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.hardened_clay, 0, mapping);
+        initMaterialItem(cfg, mainCfg, ModBlocks.dimensionalShardBlock, 0, mapping);
+
+        initOreDictionaryDimlets(cfg, mapping, mainCfg);
+
+        initModMaterialItem(cfg, mainCfg, "chisel", "marble", 0, mapping);
+        initModMaterialItem(cfg, mainCfg, "chisel", "limestone", 0, mapping);
+    }
+
     private static void initOreDictionaryDimlets(Configuration cfg, DimletMapping mapping, Configuration mainCfg) {
         for (String oreName : OreDictionary.getOreNames()) {
-            ArrayList<ItemStack> stacks = OreDictionary.getOres(oreName);
+            List<ItemStack> stacks = OreDictionary.getOres(oreName);
             if (!stacks.isEmpty() && oreName.startsWith("ore")) {
                 ItemStack itemStack = null;
                 for (ItemStack stack : stacks) {
@@ -552,14 +556,15 @@ public class KnownDimletConfiguration {
                         ItemBlock itemBlock = (ItemBlock) item;
                         Block block = itemBlock.field_150939_a;
                         String unlocalizedName = block.getUnlocalizedName();
-                        System.out.println("unlocalizedName = " + unlocalizedName);
                         int meta = itemStack.getItemDamage();
                         if (meta != 0) {
                             unlocalizedName += meta;
                         }
                         DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
-                        if (mapping.getId(key) == null || !idToDimletEntry.containsKey(key)) {
-                            initMaterialItem(cfg, mainCfg, itemBlock.field_150939_a, meta, mapping);
+                        Integer id = mapping.getId(key);
+
+                        if (id == null || !idToDimletEntry.containsKey(id)) {
+                            initMaterialItem(cfg, mainCfg, block, meta, mapping);
                         }
                     }
                 }
@@ -674,6 +679,7 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName), mapping);
         if (id != -1) {
             ItemStack stack = new ItemStack(block, 1, meta);
+            System.out.println("stack.getDisplayName() = " + stack.getDisplayName());
             idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
             DimletObjectMapping.idToBlock.put(id, new BlockMeta(block, (byte)meta));
         }
