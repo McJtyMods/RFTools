@@ -154,9 +154,6 @@ public class KnownDimletConfiguration {
     private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, Map<DimletType,Integer> typeDefaults) {
         String k;
         k = prefix + key.getType().getName() + "." + key.getName();
-        if (key.getType().equals(DimletType.DIMLET_MATERIAL)) {
-            System.out.println("k = " + k);
-        }
         Integer defaultValue = builtinDefaults.get(key);
         if (defaultValue == null) {
             defaultValue = typeDefaults.get(key.getType());
@@ -679,7 +676,6 @@ public class KnownDimletConfiguration {
         int id = registerDimlet(cfg, mainCfg, new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName), mapping);
         if (id != -1) {
             ItemStack stack = new ItemStack(block, 1, meta);
-            System.out.println("stack.getDisplayName() = " + stack.getDisplayName());
             idToDisplayName.put(id, DimletType.DIMLET_MATERIAL.getName() + " " + stack.getDisplayName() + " Dimlet");
             DimletObjectMapping.idToBlock.put(id, new BlockMeta(block, (byte)meta));
         }
