@@ -101,7 +101,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         getEnvironmentModules();
 
         int rfNeeded = getTotalRfPerTick();
-        if (rfNeeded > rf && environmentModules.isEmpty()) {
+        if (rfNeeded > rf || environmentModules.isEmpty()) {
             for (EnvironmentModule module : environmentModules) {
                 module.activate(false);
             }
