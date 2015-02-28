@@ -4,8 +4,11 @@ import com.mcjty.rftools.blocks.teleporter.GlobalCoordinate;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.blocks.teleporter.TeleportationTools;
+import com.mcjty.rftools.network.PacketHandler;
+import com.mcjty.rftools.network.PacketSendBuffsToClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -35,6 +38,10 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         return target != -1 && teleportTimeout >= 0;
     }
 
+    private void syncBuffs() {
+        PacketHandler.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), (EntityPlayerMP) entity);
+    }
+
     public static PlayerExtendedProperties getProperties(EntityPlayer player) {
         IExtendedEntityProperties properties = player.getExtendedProperties(ID);
         return (PlayerExtendedProperties) properties;
@@ -49,6 +56,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     public void addBuff(PlayerBuff buff, int ticks) {
         //. We add a bit to the ticks to make sure we can live long enough.
         buffs.put(buff, ticks + BUFF_MAXTICKS - buffTimeout + 1);
+        syncBuffs();
     }
 
     public Map<PlayerBuff, Integer> getBuffs() {
@@ -84,6 +92,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
                     buffs.put(entry.getKey(), timeout);
                 } else {
                     System.out.println("Removing buff: " + entry.getKey());
+                    syncBuffs();
                 }
             }
         }
