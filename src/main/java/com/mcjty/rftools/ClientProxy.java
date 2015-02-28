@@ -8,10 +8,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -33,6 +37,26 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent evt) {
+        renderHilightedBlock(evt);
+//        renderBuffs(evt);
+    }
+
+    private void renderBuffs(RenderWorldLastEvent evt) {
+        // @todo: not yet working!
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.thePlayer;
+
+        PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(player);
+        Map<PlayerBuff, Integer> buffs = properties.getBuffs();
+        if (buffs.isEmpty()) {
+            return;
+        }
+
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        fontRenderer.drawString("BUFF", 4, 4, 0x0066ff);
+    }
+
+    private void renderHilightedBlock(RenderWorldLastEvent evt) {
         Coordinate c = RFTools.instance.clientInfo.getHilightedBlock();
         if (c == null) {
             return;

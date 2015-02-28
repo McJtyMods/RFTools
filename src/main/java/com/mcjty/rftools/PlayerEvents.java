@@ -23,9 +23,11 @@ public class PlayerEvents {
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         IExtendedEntityProperties properties = event.player.getExtendedProperties(PlayerExtendedProperties.ID);
-        if (properties instanceof PlayerExtendedProperties) {
-            PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
-            playerExtendedProperties.tick();
+        if (event.phase == TickEvent.Phase.START) {
+            if (properties instanceof PlayerExtendedProperties) {
+                PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
+                playerExtendedProperties.tick();
+            }
         }
     }
 

@@ -210,7 +210,7 @@ public final class ModItems {
         featherFallingEModuleItem = new FeatherFallingEModuleItem();
         featherFallingEModuleItem.setUnlocalizedName("FeatherFallingEModule");
         featherFallingEModuleItem.setCreativeTab(RFTools.tabRfTools);
-        featherFallingEModuleItem.setTextureName(RFTools.MODID + ":envmodules/featherFallingEModuleItem");
+        featherFallingEModuleItem.setTextureName(RFTools.MODID + ":envmodules/featherfallingEModuleItem");
         GameRegistry.registerItem(featherFallingEModuleItem, "featherFallingEModuleItem");
     }
 

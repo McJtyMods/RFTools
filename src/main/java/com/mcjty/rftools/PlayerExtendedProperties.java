@@ -47,9 +47,12 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     }
 
     public void addBuff(PlayerBuff buff, int ticks) {
-        //. We add buffTimeout the ticks to make sure that when the next buffTimeout expires we don't
-        // subtract everything at once.
+        //. We add a bit to the ticks to make sure we can live long enough.
         buffs.put(buff, ticks + BUFF_MAXTICKS - buffTimeout + 1);
+    }
+
+    public Map<PlayerBuff, Integer> getBuffs() {
+        return buffs;
     }
 
     public boolean hasBuff(PlayerBuff buff) {
@@ -80,7 +83,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
                 if (timeout > 0) {
                     buffs.put(entry.getKey(), timeout);
                 } else {
-                    System.out.println("Removing buff");
+                    System.out.println("Removing buff: " + entry.getKey());
                 }
             }
         }
