@@ -57,7 +57,7 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public void registerWorldChunkManager() {
         int dim = worldObj.provider.dimensionId;
-        seed = calculateSeed(worldObj.getSeed(), dim);
+		seed = DimletConfiguration.randomizeSeed ? calculateSeed(worldObj.getSeed(), dim) : calculateSeed((long) (Math.random() * 10000 + 1), dim);
 
         getDimensionInformation();
         storage = DimensionStorage.getDimensionStorage(worldObj);
@@ -145,7 +145,7 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public IChunkProvider createChunkGenerator() {
         int dim = worldObj.provider.dimensionId;
-        long seed = calculateSeed(worldObj.getSeed(), dim);
+        long seed = DimletConfiguration.randomizeSeed ? calculateSeed(worldObj.getSeed(), dim) : calculateSeed((long) (Math.random() * 10000 + 1), dim);
         return new GenericChunkProvider(worldObj, seed);
     }
 

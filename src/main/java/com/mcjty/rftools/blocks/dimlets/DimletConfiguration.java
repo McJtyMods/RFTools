@@ -51,8 +51,11 @@ public class DimletConfiguration {
 
     public static int bedrockLayer = 1;
 
+	public static boolean randomizeSeed = false;
 
-    public static void init(Configuration cfg) {
+
+
+	public static void init(Configuration cfg) {
         PHASEDFIELD_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "phasedFieldMaxRF", PHASEDFIELD_MAXENERGY,
                 "Maximum RF storage that the phased field generator item can hold").getInt();
         PHASEDFIELD_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldRFPerTick", PHASEDFIELD_RECEIVEPERTICK,
@@ -147,6 +150,9 @@ public class DimletConfiguration {
 
         bedrockLayer = cfg.get(CATEGORY_DIMLETS, "bedrockLayer", bedrockLayer,
                 "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
+
+		randomizeSeed = cfg.get(CATEGORY_DIMLETS, "randomizeSeed", randomizeSeed,
+			"Randomize the seed when the dimlet is created").getBoolean();
     }
 
 }
