@@ -5,6 +5,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -29,6 +30,11 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent evt) {
         RenderWorldLastEventHandler.tick(evt);
+    }
+
+    @SubscribeEvent
+    public void renderGameOverlayEvent(RenderGameOverlayEvent evt) {
+        RenderGameOverlayEventHandler.onRender(evt);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.environmental.modules;
 
+import com.mcjty.rftools.PlayerBuff;
 import net.minecraft.potion.Potion;
 
 public class RegenerationPlusEModule extends PotionEffectModule {
@@ -12,5 +13,10 @@ public class RegenerationPlusEModule extends PotionEffectModule {
     @Override
     public float getRfPerTick() {
         return RFPERTICK;
+    }
+
+    @Override
+    protected PlayerBuff getBuff() {
+        return PlayerBuff.BUFF_REGENERATIONPLUS;
     }
 }

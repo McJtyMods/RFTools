@@ -190,4 +190,21 @@ public class RenderHelper {
         Gui.drawRect(x2-thickness, y1, x2, y2-1, botrightcolor);
         Gui.drawRect(x1, y2-thickness, x2, y2, botrightcolor);
     }
+
+    /**
+     * Draws a textured rectangle at the stored z-value. Args: x, y, u, v, width, height
+     */
+    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height) {
+        float zLevel = 0.01f;
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + height), (double)zLevel, (double)((float)(u + 0) * f), (double)((float)(v + height) * f1));
+        tessellator.addVertexWithUV((double)(x + width), (double)(y + height), (double)zLevel, (double)((float)(u + width) * f), (double)((float)(v + height) * f1));
+        tessellator.addVertexWithUV((double)(x + width), (double)(y + 0), (double)zLevel, (double)((float)(u + width) * f), (double)((float)(v + 0) * f1));
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), (double)zLevel, (double)((float)(u + 0) * f), (double)((float)(v + 0) * f1));
+        tessellator.draw();
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.mcjty.rftools.blocks.environmental.modules;
 
+import com.mcjty.rftools.PlayerBuff;
+import com.mcjty.rftools.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -21,6 +23,8 @@ public abstract class PotionEffectModule implements EnvironmentModule {
         this.potionEffect = potionEffect;
         this.amplifier = amplifier;
     }
+
+    protected abstract PlayerBuff getBuff();
 
     @Override
     public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
@@ -44,6 +48,10 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
                     player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS, amplifier, true));
+                    PlayerBuff buff = getBuff();
+                    if (buff != null) {
+                        PlayerExtendedProperties.addBuff(player, buff, MAXTICKS);
+                    }
                 }
             }
         }

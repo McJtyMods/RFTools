@@ -5,34 +5,16 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
-import java.util.List;
-
 @SideOnly(Side.CLIENT)
 public class RenderWorldLastEventHandler {
-    public static List<PlayerBuff> buffs = null;
+
 
     public static void tick(RenderWorldLastEvent evt) {
         renderHilightedBlock(evt);
-        renderBuffs(evt);
-    }
-
-    private static void renderBuffs(RenderWorldLastEvent evt) {
-        if (buffs == null || buffs.isEmpty()) {
-            return;
-        }
-
-        GL11.glPushMatrix();
-        GL11.glTranslatef(100, 100, 0);
-
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        fontRenderer.drawString("BUFF", 4, 4, 0x0066ff);
-
-        GL11.glPopMatrix();
     }
 
     private static void renderHilightedBlock(RenderWorldLastEvent evt) {
