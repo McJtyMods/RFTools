@@ -1,6 +1,7 @@
 package com.mcjty.rftools.items.teleportprobe;
 
 import cofh.api.energy.IEnergyContainerItem;
+import com.mcjty.rftools.PlayerExtendedProperties;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.varia.Coordinate;
@@ -8,7 +9,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -94,9 +94,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         }
 
         if (!world.isRemote) {
-            IExtendedEntityProperties properties = player.getExtendedProperties(TimedTeleportationProperties.ID);
-            TimedTeleportationProperties timedTeleportationProperties = (TimedTeleportationProperties) properties;
-            if (timedTeleportationProperties.isTeleporting()) {
+            IExtendedEntityProperties properties = player.getExtendedProperties(PlayerExtendedProperties.ID);
+            PlayerExtendedProperties PlayerExtendedProperties = (PlayerExtendedProperties) properties;
+            if (PlayerExtendedProperties.isTeleporting()) {
                 RFTools.message(player, EnumChatFormatting.RED + "Already teleporting!");
                 return;
             }
@@ -122,7 +122,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             extractEnergyNoMax(stack, cost, false);
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
-            timedTeleportationProperties.startTeleport(target, ticks);
+            PlayerExtendedProperties.startTeleport(target, ticks);
             RFTools.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
         }
     }

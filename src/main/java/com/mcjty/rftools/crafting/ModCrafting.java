@@ -127,6 +127,7 @@ public final class ModCrafting {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
         ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
+        ItemStack chickenSyringe = createMobSyringe("Chicken");
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
@@ -134,6 +135,11 @@ public final class ModCrafting {
         ItemStack gold = new ItemStack(Items.gold_ingot);
         ItemStack ink = new ItemStack((Item) inkSac);
 
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, chickenSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.featherFallingEModuleItem)));
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
                 null, ironGolemSyringe, null,
                 reds, gold, reds,
@@ -238,21 +244,6 @@ public final class ModCrafting {
                 'g', Blocks.glass);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
                 'g', Blocks.glass, 'i', Items.iron_ingot);
-
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[]{
-                new ItemStack(ModBlocks.screenBlock), new ItemStack(Items.iron_ingot),
-                new ItemStack(Items.iron_ingot), new ItemStack(Items.iron_ingot)
-        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("large", Boolean.TRUE)));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(2, 2, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlock), new ItemStack(Blocks.glass),
-                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
-        }, new ItemStack(ModBlocks.screenBlock), 0, Collections.<String, Object>singletonMap("transparent", Boolean.TRUE)));
-        Map<String,Object> flags = new HashMap<String, Object>();
-        flags.put("large", Boolean.FALSE);
-        flags.put("transparent", Boolean.FALSE);
-        GameRegistry.addRecipe(new PreservingShapedRecipe(1, 1, new ItemStack[] {
-                new ItemStack(ModBlocks.screenBlock)
-        }, new ItemStack(ModBlocks.screenBlock), 0, flags));
 
         initScreenModuleCrafting();
     }

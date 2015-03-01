@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world.terrain;
 
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -35,6 +36,11 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 int height = 0;
+                while (height < DimletConfiguration.bedrockLayer) {
+                    aBlock[index] = Blocks.bedrock;
+                    abyte[index++] = 0;
+                    height++;
+                }
                 while (height < waterLevel) {
                     aBlock[index] = baseBlock;
                     abyte[index++] = baseMeta;

@@ -56,6 +56,7 @@ item.HasteEModule.name=Модуль «Спешка»
 item.HastePlusEModule.name=Модуль «Спешка+»
 item.SaturationEModule.name=Модуль «Насыщение»
 item.SaturationPlusEModule.name=Модуль «Насыщение+»
+item.FeatherFallingEModule.name=Feather Falling Module
 
 item.DimletBase.name=Основая деталь димлета
 item.DimletControlCircuit0.name=Схема управления редкостью димлета 0

@@ -21,6 +21,7 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.ShapedRecipes;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.*;
 import java.util.*;
@@ -258,44 +260,7 @@ public class KnownDimletConfiguration {
         DimletObjectMapping.idToBlock.put(idMaterialNone, null);
         addExtraInformation(idMaterialNone, "Use this material none dimlet to get normal", "biome specific stone generation");
 
-        initMaterialItem(cfg, mainCfg, Blocks.diamond_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.diamond_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.emerald_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.emerald_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.quartz_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.quartz_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.gold_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.gold_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.iron_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.iron_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.coal_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.lapis_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.lapis_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.coal_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.redstone_block, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.redstone_ore, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.dirt, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.sandstone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.end_stone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.netherrack, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.cobblestone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.obsidian, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.soul_sand, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.glass, 0, mapping);
-        for (int i = 0 ; i < 16 ; i++) {
-            initMaterialItem(cfg, mainCfg, Blocks.stained_glass, i, mapping);
-            initMaterialItem(cfg, mainCfg, Blocks.stained_hardened_clay, i, mapping);
-        }
-        initMaterialItem(cfg, mainCfg, Blocks.glowstone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.mossy_cobblestone, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.ice, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.packed_ice, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.clay, 0, mapping);
-        initMaterialItem(cfg, mainCfg, Blocks.hardened_clay, 0, mapping);
-        initMaterialItem(cfg, mainCfg, ModBlocks.dimensionalShardBlock, 0, mapping);
-
-        initModMaterialItem(cfg, mainCfg, "chisel", "marble", 0, mapping);
-        initModMaterialItem(cfg, mainCfg, "chisel", "limestone", 0, mapping);
+        initMaterialDimlets(cfg, mapping, mainCfg);
 
         initFoliageItem(cfg, mainCfg, mapping);
 
@@ -525,6 +490,83 @@ public class KnownDimletConfiguration {
         }
 
         mapping.save(world);
+    }
+
+    private static void initMaterialDimlets(Configuration cfg, DimletMapping mapping, Configuration mainCfg) {
+        initMaterialItem(cfg, mainCfg, Blocks.diamond_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.diamond_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.emerald_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.emerald_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.quartz_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.quartz_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.gold_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.gold_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.iron_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.iron_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.coal_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.lapis_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.lapis_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.coal_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.redstone_block, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.redstone_ore, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.dirt, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.sandstone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.end_stone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.netherrack, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.cobblestone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.obsidian, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.soul_sand, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.glass, 0, mapping);
+        for (int i = 0 ; i < 16 ; i++) {
+            initMaterialItem(cfg, mainCfg, Blocks.stained_glass, i, mapping);
+            initMaterialItem(cfg, mainCfg, Blocks.stained_hardened_clay, i, mapping);
+        }
+        initMaterialItem(cfg, mainCfg, Blocks.glowstone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.mossy_cobblestone, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.ice, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.packed_ice, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.clay, 0, mapping);
+        initMaterialItem(cfg, mainCfg, Blocks.hardened_clay, 0, mapping);
+        initMaterialItem(cfg, mainCfg, ModBlocks.dimensionalShardBlock, 0, mapping);
+
+        initOreDictionaryDimlets(cfg, mapping, mainCfg);
+
+        initModMaterialItem(cfg, mainCfg, "chisel", "marble", 0, mapping);
+        initModMaterialItem(cfg, mainCfg, "chisel", "limestone", 0, mapping);
+    }
+
+    private static void initOreDictionaryDimlets(Configuration cfg, DimletMapping mapping, Configuration mainCfg) {
+        for (String oreName : OreDictionary.getOreNames()) {
+            List<ItemStack> stacks = OreDictionary.getOres(oreName);
+            if (!stacks.isEmpty() && oreName.startsWith("ore")) {
+                ItemStack itemStack = null;
+                for (ItemStack stack : stacks) {
+                    if (stack.getTagCompound() == null) {
+                        itemStack = stack;
+                        break;
+                    }
+                }
+
+                if (itemStack != null) {
+                    Item item = itemStack.getItem();
+                    if (item instanceof ItemBlock) {
+                        ItemBlock itemBlock = (ItemBlock) item;
+                        Block block = itemBlock.field_150939_a;
+                        String unlocalizedName = block.getUnlocalizedName();
+                        int meta = itemStack.getItemDamage();
+                        if (meta != 0) {
+                            unlocalizedName += meta;
+                        }
+                        DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
+                        Integer id = mapping.getId(key);
+
+                        if (id == null || !idToDimletEntry.containsKey(id)) {
+                            initMaterialItem(cfg, mainCfg, block, meta, mapping);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void initDigitCrafting(String from, String to, DimletMapping mapping) {

@@ -228,7 +228,9 @@ public class TextPage extends AbstractWidget<TextPage> {
                 }
                 for (int i = 0 ; i < 3 ; i++) {
                     for (int j = 0 ; j < 3 ; j++) {
-                        RenderHelper.renderObject(mc, 26 + x+i*18, 1 + y+j*18, shapedRecipes.recipeItems[i+j*3], false);
+                        if (i < shapedRecipes.recipeWidth && j < shapedRecipes.recipeHeight) {
+                            RenderHelper.renderObject(mc, 26 + x + i * 18, 1 + y + j * 18, shapedRecipes.recipeItems[i + j * 3], false);
+                        }
                     }
                 }
                 if (arrowImage != null) {

@@ -3,28 +3,26 @@ package com.mcjty.rftools.blocks.environmental.modules;
 import com.mcjty.rftools.PlayerBuff;
 import com.mcjty.rftools.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PotionEffectModule implements EnvironmentModule {
+public class FeatherFallingEModule implements EnvironmentModule {
     public static final int MAXTICKS = 180;
 
-    private final int potionEffect;
-    private final int amplifier;
+    public static final float RFPERTICK = 0.001f;
 
     private boolean active = false;
     private int ticks = MAXTICKS;
 
-    public PotionEffectModule(int potionEffect, int amplifier) {
-        this.potionEffect = potionEffect;
-        this.amplifier = amplifier;
+    public FeatherFallingEModule() {
     }
 
-    protected abstract PlayerBuff getBuff();
+    @Override
+    public float getRfPerTick() {
+        return RFPERTICK;
+    }
 
     @Override
     public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
@@ -47,14 +45,11 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double pz = player.posZ;
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
-                    player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS, amplifier, true));
-                    PlayerBuff buff = getBuff();
-                    if (buff != null) {
-                        PlayerExtendedProperties.addBuff(player, buff, MAXTICKS);
-                    }
+                    PlayerExtendedProperties.addBuff(player, PlayerBuff.BUFF_FEATHERFALLING, MAXTICKS);
                 }
             }
         }
+
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.GenericContainerBlock;
+import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
@@ -54,6 +55,29 @@ public class ScreenBlock extends GenericContainerBlock {
             currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
         }
         return currenttip;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
+        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
+        if (wrenchUsed == WrenchUsage.NORMAL) {
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
+            if (screenTileEntity.isTransparent() && screenTileEntity.isLarge()) {
+                screenTileEntity.setTransparent(false);
+            } else if (screenTileEntity.isLarge()) {
+                screenTileEntity.setLarge(false);
+            } else if (screenTileEntity.isTransparent()) {
+                screenTileEntity.setLarge(true);
+            } else {
+                screenTileEntity.setTransparent(true);
+            }
+            return true;
+        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
+            breakAndRemember(world, x, y, z);
+            return true;
+        } else {
+            return openGui(world, x, y, z, player);
+        }
     }
 
 

@@ -76,5 +76,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketReturnEnergyHandler.class, PacketReturnEnergy.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReturnScreenDataHandler.class, PacketReturnScreenData.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketRegisterDimensionsHandler.class, PacketRegisterDimensions.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketSendBuffsToClientHandler.class, PacketSendBuffsToClient.class, nextID(), Side.CLIENT);
     }
 }

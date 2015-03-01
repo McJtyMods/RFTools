@@ -1,19 +1,32 @@
 package com.mcjty.rftools;
 
-import com.mcjty.rftools.items.teleportprobe.TimedTeleportationProperties;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 
 public class EntityEvents {
 
     @SubscribeEvent
     public void onEntityConstructingEvent(EntityEvent.EntityConstructing event) {
         if (event.entity instanceof EntityPlayer) {
-            TimedTeleportationProperties properties = new TimedTeleportationProperties();
-            event.entity.registerExtendedProperties(TimedTeleportationProperties.ID, properties);
+            PlayerExtendedProperties properties = new PlayerExtendedProperties();
+            event.entity.registerExtendedProperties(PlayerExtendedProperties.ID, properties);
         }
     }
 
+    @SubscribeEvent
+    public void onLivingFallEvent(LivingFallEvent event) {
+        System.out.println("EntityEvents.onLivingFallEvent");
+        if (event.entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.entity;
+            PlayerExtendedProperties playerExtendedProperties = PlayerExtendedProperties.getProperties(player);
+            if (!player.worldObj.isRemote) {
+                if (playerExtendedProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
+                    event.distance /= 2.0f;
+                }
+            }
+        }
+    }
 
 }
