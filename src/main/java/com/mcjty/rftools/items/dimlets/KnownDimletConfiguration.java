@@ -61,7 +61,7 @@ public class KnownDimletConfiguration {
     // All craftable dimlets.
     public static final Set<Integer> craftableDimlets = new HashSet<Integer>();
 
-    private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>();
+    private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>(); // Note, the keys here can contain wildcards
     private static final Set<DimletKey> dimletRandomNotAllowed = new HashSet<DimletKey>();
 
     private static int lastId = 0;
@@ -82,13 +82,32 @@ public class KnownDimletConfiguration {
         idToDimletEntry.put(id, dimletEntry);
     }
 
+    private static boolean isBlacklistedKey(DimletKey key) {
+        if (dimletBlackList.contains(key)) {
+            return true;
+        }
+
+        for (DimletKey blackKey : dimletBlackList) {
+            if (key.getType() == blackKey.getType()) {
+                String blackName = blackKey.getName();
+                if (blackName.endsWith("*")) {
+                    if (key.getName().startsWith(blackName.substring(0, blackName.length()-1))) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static int registerDimlet(Configuration cfg, Configuration mainCfg, DimletKey key, DimletMapping mapping) {
         String k = "dimlet." + key.getType().getName() + "." + key.getName();
 
         Integer id = mapping.getId(key);
 
         // Check blacklist but not if we are on a client connecting to a server.
-        if (cfg != null && dimletBlackList.contains(key)) {
+        if (cfg != null && isBlacklistedKey(key)) {
             id = -1;
         } else if (id == null) {
             // We don't have this key in world data.

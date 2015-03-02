@@ -7,6 +7,7 @@
         [ "Liquid", "steam" ],
         [ "Liquid", "tower" ],
         [ "Material", "tile.thermalfoundation.ore6"],
+        [ "Material", "gt.blockores*"],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
