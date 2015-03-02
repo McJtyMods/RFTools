@@ -99,6 +99,7 @@
         [ "Mob", "Ghast", 4000, 2000, 600, 3, 0 ],
         [ "Mob", "Iron Golem", 10000, 5000, 800, 4, 0 ],
         [ "Mob", "Villager", 10000, 7000, 800, 5, 0 ],
+        [ "Mob", "Wither", 10000, 10000, 900, 6, 0 ],
         [ "Special", "Peaceful", 70000, 40000, 900, 5, 0 ],
         [ "Special", "Efficiency", 100000, -20, 900, 5, 0 ],
         [ "Special", "Mediocre Efficiency", 40000, -5, 400, 4, 0 ],
