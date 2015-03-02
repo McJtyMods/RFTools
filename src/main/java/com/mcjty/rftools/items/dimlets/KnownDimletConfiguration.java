@@ -16,6 +16,7 @@ import com.mcjty.varia.BlockMeta;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
@@ -327,6 +328,7 @@ public class KnownDimletConfiguration {
         initMobItem(cfg, mainCfg, EntityWolf.class, "Wolf", mapping, 10, 3, 4, 20);
         initMobItem(cfg, mainCfg, EntityVillager.class, "Villager", mapping, 10, 3, 4, 20);
         initMobItem(cfg, mainCfg, EntityWither.class, "Wither", mapping, 5, 1, 2, 5);
+        initMobItem(cfg, mainCfg, EntityDragon.class, "Dragon", mapping, 4, 1, 2, 4);
         addExtraInformation(idDefaultMobs, "With this default dimlet you will just get", "the default mob spawning");
 
         int idSkyNormal = initSkyItem(cfg, mainCfg, "Normal", new SkyDescriptor.Builder().skyType(SkyType.SKY_NORMAL).build(), false, mapping);

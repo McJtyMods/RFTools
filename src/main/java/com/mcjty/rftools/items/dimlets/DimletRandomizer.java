@@ -129,8 +129,12 @@ public class DimletRandomizer {
         }
     }
 
-    public static int getRandomMob(Random random) {
-        return randomMobDimlets.select(random);
+    public static int getRandomMob(Random random, boolean allowRandom) {
+        Integer id = randomMobDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
+            id = randomMobDimlets.select(random);
+        }
+        return id;
     }
 
     public static int getRandomEffect(Random random, boolean allowRandom) {

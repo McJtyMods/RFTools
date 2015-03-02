@@ -720,7 +720,7 @@ public class DimensionInformation {
         dimlets = extractType(DimletType.DIMLET_MOBS, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomExtraMobsChance) {
-                int id = DimletRandomizer.getRandomMob(random);
+                int id = DimletRandomizer.getRandomMob(random, false);
                 actualRfCost += calculateCostFactor(id);
                 extraMobs.add(DimletObjectMapping.idtoMob.get(id));
             }
