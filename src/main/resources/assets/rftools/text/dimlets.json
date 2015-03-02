@@ -4,7 +4,9 @@
         [ "Liquid", "honey" ],
         [ "Liquid", "ic2constructionfoam" ],
         [ "Liquid", "mana" ],
+        [ "Liquid", "steam" ],
         [ "Liquid", "tower" ],
+        [ "Material", "tile.thermalfoundation.ore6"],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
@@ -25,7 +27,6 @@
         [ "Material", "tile.thermalfoundation.ore3", 10000, 2000, 400, 3, 0 ],
         [ "Material", "tile.thermalfoundation.ore4", 14000, 3000, 500, 3, 0 ],
         [ "Material", "tile.thermalfoundation.ore5", 20000, 5000, 600, 4, 0 ],
-        [ "Material", "tile.thermalfoundation.ore6", 15000, 4000, 500, 4, 0 ],
         [ "Material", "tile.oreLapis", 10000, 3000, 600, 3, 0 ],
         [ "Material", "tile.oreCoal", 6000, 1500, 500, 3, 0 ],
         [ "Material", "tile.oreRedstone", 10000, 5000, 800, 3, 0 ],
@@ -60,9 +61,7 @@
         [ "Liquid", "ender", 40000, 12000, 1000, 5, 0 ],
         [ "Liquid", "lava", 15000, 2000, 250, 3, 0 ],
         [ "Liquid", "water", 150, 1, 10, 1, 0 ],
-        [ "Liquid", "mana", 25000, 12000, 500, 5, 0 ],
         [ "Liquid", "coal", 25000, 12000, 500, 5, 0 ],
-        [ "Liquid", "steam", 25000, 12000, 500, 4, 0 ],
         [ "Liquid", "rocket_fuel", 20000, 4000, 300, 3, 0 ],
         [ "Liquid", "biofuel", 20000, 4000, 300, 3, 0 ],
         [ "Liquid", "yellorium", 20000, 4000, 300, 3, 0 ],

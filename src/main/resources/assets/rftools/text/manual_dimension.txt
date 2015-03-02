@@ -154,7 +154,7 @@ right.
 {-------------------------------------------------------------}
 Certain dimlets are more valuable and rare than others, so it is likely
 you will not obtain the dimlet you want right away. Just keep on
-researching, and you'll find this way.
+researching, and you'll find them eventually.
 
 Most dimlets require you to research them or use another machine to
 find them, but certain simpler dimlets can be easily crafted in any
@@ -162,79 +162,60 @@ table.
 {-------------------------------------------------------------}
 {b}Dimension Enscriber
 {n:enscriber}
-This machine is where you actually describe your dimensions.
-It is crafted as follows:
+The Dimension Enscriber is what is used to actually code your dimensions.
 {rb:dimensionEnscriberBlock}
-{-------------------------------------------------------------}
-To use it you first have to insert an Empty Dimension Tab which
-is crafted as follows:
+As well, you will also need a Empty Dimension Tab
 {ri:emptyDimensionTab}
+{-------------------------------------------------------------}
+To use the Dimension Enscriber, you must first insert the Empty
+Dimension Tab into the slot on the lower left. To make a completely
+random world (with no dimlets included), you can simply click
+"Store" and the dimlets included will be randomly selected.
 
-This will be the item in which we will insert all dimlets and create a
-'Realized Dimension Tab' that describes our dimension.
+However, if you would like to actually control your dimension, you
+need to insert dimlets. These can be inserted into the slots on
+the top of the device. Hitting store will create a realised tab
+that leads to the world you've just created.
+{-------------------------------------------------------------}
+The order of the dimlets inserted affects the dimension. If a material
+dimlet is placed before a terrain dimlet, it will create a world made
+out of that material. If it is inserted before a Feature dimlet, it will
+make the feature out of that material.
 
-If you just want a random world then this is all you need to do. You can
-just press 'Store' and pick a name for your dimension (input field at
-the bottom-left) and you will get a totally random dimension.
+The descriptions of each type of dimlet and what they do can be found in the
+{l:unknown}Dimlet Page.
 {-------------------------------------------------------------}
-Otherwise, if you want a little bit more control you have to insert dimlets
-in the top grid. The order of these dimlets matters. Modifier dimlets
-(material and liquid) have to go before the dimlet that they affect. Unused
-modifier dimlets are simply ignored. You can insert as many dimlets as you
-want but note that not all combinations are useful (i.e. if you put in a
-'Void' and 'Flat' terrain dimlet then only one will be used) and the cost
-of the dimension is calculated from the dimlets that are inserted. Not from
-the dimlets that are actually used! So inserting too many dimlets will make
-your dimension more expensive.
+When you create a dimension, the dimlets placed into that dimension form
+the signature of the dimension. Any tabs created with those exact dimlets
+will lead to that world. Dimension Tabs can be extracted in the Enscriber
+to return the dimlets used. If access to that dimension is needed again,
+the same dimlets can be re-formed into a Dimension to lead to that exact
+dimension, with any changes you've made still there.
+
+Further information about the theory behind dimensions can be found on the
+{l:theory}Dimension Theory page.
 {-------------------------------------------------------------}
-If you don't specify a certain type of dimlet then you will get a random
-selection of that dimlet type. For example, if you don't specify any
-structure dimlet then you might get a selection of random structures (like
-village, nether fortress, ...). If you don't want that you have to insert
-a 'Structure None Dimlet' which will prevent structures from being
-generated. The same goes for many other dimlet types.
+However, some people may wish to create new dimensions with the same
+set of dimlets. This can be easily done using Digit Dimlets. These
+have no power cost, and allow you to infinitely vary your dimensions,
+just based on the digit dimlets included. Digit Dimlets can be easily
+crafted and cycled between, so it is easy to vary your worlds.
 {-------------------------------------------------------------}
-An important thing to realize is that the dimlets that you insert into a
-dimension tab makes the 'signature' of that dimension. That means that if
-you create another dimension tab and insert exactly the same dimlets then
-it will refer to exactly the same dimension. This can be handy in case
-you want to power a dimension from multiple places (more on that in the
-Dimension Builder section) which can be handy for very expensive
-dimensions.
-{-------------------------------------------------------------}
-Note that with this dimension enscriber you can also deconstruct a realized
-dimension tab into its original dimlets and the empty dimension tab. The
-dimension will not be removed (if you created one) and can still be
-accessed if you have a teleporter to it. However, it can no longer be
-powered unless you have another realized dimension tab sitting in a
-Dimension Builder somewhere. If you accidentally deconstructed a
-realized dimension tab into its dimlets you can simply construct it
-again and it will refer to the original dimension (without having to
-build it again).
-{-------------------------------------------------------------}
-This means that if you want to generate another dimension with exactly the
-same features as before you will need to add some dimlets to change the
-signature. The best way to do that is by using 'digit' dimlets. These
-dimlets don't do anything special to the dimension but they do change
-the signature allowing you to make multiple dimensions with identical
-features (although randomly generated features may and will differ if
-you didn't specify them).
-{-------------------------------------------------------------}
-Note that when you make a realized dimension tab you can see how much
-RF/tick will be consumed by this dimension when it made. But be aware
-that random features that are selected during creation of the dimension
-will also contribute for 10%. So if you got 'lucky' and get a diamond
-block world randomly (you didn't specify a diamond block) then the
-RF/tick will still be increased by 10% of the cost of the diamond block
-dimlet. This is a serious discount but this can still make the dimension
-unusable for you. If that's the case, just extract the dimension tab
-again and make a new dimension (put in some digit dimlets to make a new
-unique dimension) and hope the next world will not be as expensive.
+Each dimlet has a certain Maintenance, Creation, and Tick cost shown
+in the tooltip. These represent how much power a dimension created
+with those dimlets will be. The Creation Cost represents how much
+power the dimlet will need per tick when creating the dimension.
+The Tick cost represents how many ticks that dimlet will add to the
+creation of the dimlet. The Maintenance cost is simply how much the
+dimlet will cost per tick after the world is created.
+
+The maintenance cost can be lowered using Effeciency Dimlets, making
+it easier to maintain an already created world.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:builder}
-The Dimension Builder is the device that you need to actually create
-dimensions. It can be crafted as follows:
+The Dimension Builder is what is used to create dimensions and maintain
+them based on the Realised Tab
 {rb:dimensionBuilderBlock}
 
 Depending on the complexity of the dimension it will use power and need
