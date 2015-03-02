@@ -127,6 +127,7 @@ public final class ModCrafting {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
         ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
+        ItemStack ghastSyringe = createMobSyringe("Ghast");
         ItemStack chickenSyringe = createMobSyringe("Chicken");
         ItemStack batSyringe = createMobSyringe("Bat");
         ItemStack horseSyringe = createMobSyringe("Horse");
@@ -161,6 +162,11 @@ public final class ModCrafting {
                 reds, gold, reds,
                 null, ink, null
         }, new ItemStack(ModItems.saturationEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {
+                null, ghastSyringe, null,
+                reds, gold, reds,
+                null, ink, null
+        }, new ItemStack(ModItems.flightEModuleItem)));
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
                 new ItemStack(ModItems.regenerationEModuleItem), ironGolemSyringe,

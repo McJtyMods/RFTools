@@ -44,6 +44,26 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         PacketHandler.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), (EntityPlayerMP) entity);
     }
 
+    private void performBuffs() {
+        // Perform all buffs that we can perform here (not potion effects and also not
+        // passive effects like feather falling.
+        EntityPlayer player = (EntityPlayer) entity;
+        boolean oldAllowFlying = player.capabilities.allowFlying;
+        player.capabilities.allowFlying = false;
+        for (PlayerBuff buff : buffs.keySet()) {
+            if (buff == PlayerBuff.BUFF_FLIGHT) {
+                player.capabilities.allowFlying = true;
+            }
+        }
+
+        if (player.capabilities.allowFlying != oldAllowFlying) {
+            if (!player.capabilities.allowFlying) {
+                player.capabilities.isFlying = false;
+            }
+            player.sendPlayerAbilities();
+        }
+    }
+
     public static PlayerExtendedProperties getProperties(EntityPlayer player) {
         IExtendedEntityProperties properties = player.getExtendedProperties(ID);
         return (PlayerExtendedProperties) properties;
@@ -59,6 +79,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         //. We add a bit to the ticks to make sure we can live long enough.
         buffs.put(buff, ticks + 5);
         syncBuffs();
+        performBuffs();
     }
 
     public Map<PlayerBuff, Integer> getBuffs() {
@@ -99,6 +120,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
             }
             if (syncNeeded) {
                 syncBuffs();
+                performBuffs();
                 globalSyncNeeded = false;
             }
         }
@@ -106,6 +128,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         if (globalSyncNeeded) {
             globalSyncNeeded = false;
             syncBuffs();
+            performBuffs();
         }
     }
 
@@ -167,13 +190,16 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         int[] buffArray = compound.getIntArray("buffs");
         int[] timeoutArray = compound.getIntArray("buffTimeouts");
         buffs.clear();
-        for (int idx : buffArray) {
-            buffs.put(PlayerBuff.values()[idx], timeoutArray[idx]);
+        for (int i = 0 ; i < buffArray.length ; i++) {
+            int buffIdx = buffArray[i];
+            buffs.put(PlayerBuff.values()[buffIdx], timeoutArray[i]);
         }
+        globalSyncNeeded = true;
     }
 
     @Override
     public void init(Entity entity, World world) {
         this.entity = entity;
+        globalSyncNeeded = true;
     }
 }

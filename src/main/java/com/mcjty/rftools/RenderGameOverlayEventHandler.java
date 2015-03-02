@@ -77,6 +77,9 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_SPEEDPLUS:
                     item = ModItems.speedPlusEModuleItem;
                     break;
+                case BUFF_FLIGHT:
+                    item = ModItems.flightEModuleItem;
+                    break;
                 default:
                     item = null;
             }
