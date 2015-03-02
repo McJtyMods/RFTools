@@ -50,6 +50,9 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_FEATHERFALLING:
                     item = ModItems.featherFallingEModuleItem;
                     break;
+                case BUFF_FEATHERFALLINGPLUS:
+                    item = ModItems.featherFallingPlusEModuleItem;
+                    break;
                 case BUFF_HASTE:
                     item = ModItems.hasteEModuleItem;
                     break;

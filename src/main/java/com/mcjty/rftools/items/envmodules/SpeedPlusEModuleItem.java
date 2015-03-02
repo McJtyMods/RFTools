@@ -39,6 +39,6 @@ public class SpeedPlusEModuleItem extends Item implements EnvModuleProvider {
 
     @Override
     public String getName() {
-        return "Speed";
+        return "Speed+";
     }
 }

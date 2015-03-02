@@ -39,6 +39,6 @@ public class SaturationPlusEModuleItem extends Item implements EnvModuleProvider
 
     @Override
     public String getName() {
-        return "Saturation";
+        return "Saturation+";
     }
 }

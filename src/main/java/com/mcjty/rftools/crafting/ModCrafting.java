@@ -128,6 +128,7 @@ public final class ModCrafting {
 
         ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
         ItemStack chickenSyringe = createMobSyringe("Chicken");
+        ItemStack batSyringe = createMobSyringe("Bat");
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
@@ -177,6 +178,10 @@ public final class ModCrafting {
                 new ItemStack(ModItems.saturationEModuleItem), zombieSyringe,
                 zombieSyringe, null
         }, new ItemStack(ModItems.saturationPlusEModuleItem)));
+        GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2, new ItemStack[]{
+                new ItemStack(ModItems.featherFallingEModuleItem), chickenSyringe,
+                batSyringe, null
+        }, new ItemStack(ModItems.featherFallingPlusEModuleItem)));
     }
 
     private static void initLogicBlockCrafting() {

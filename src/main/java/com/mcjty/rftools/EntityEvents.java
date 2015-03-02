@@ -17,13 +17,14 @@ public class EntityEvents {
 
     @SubscribeEvent
     public void onLivingFallEvent(LivingFallEvent event) {
-        System.out.println("EntityEvents.onLivingFallEvent");
         if (event.entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.entity;
             PlayerExtendedProperties playerExtendedProperties = PlayerExtendedProperties.getProperties(player);
             if (!player.worldObj.isRemote) {
                 if (playerExtendedProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
                     event.distance /= 2.0f;
+                } else if (playerExtendedProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
+                    event.distance /= 8.0f;
                 }
             }
         }

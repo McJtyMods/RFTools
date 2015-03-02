@@ -39,6 +39,6 @@ public class RegenerationPlusEModuleItem extends Item implements EnvModuleProvid
 
     @Override
     public String getName() {
-        return "Regen";
+        return "Regen+";
     }
 }
