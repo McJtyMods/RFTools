@@ -20,6 +20,11 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         float bonus = fetchFloat(sender, args, 1, 0.0f);
 

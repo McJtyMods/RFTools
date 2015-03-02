@@ -25,6 +25,11 @@ public class CmdListEffects extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;

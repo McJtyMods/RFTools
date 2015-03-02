@@ -25,6 +25,11 @@ public class CmdInfo extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         int dim = 0;
 

@@ -24,6 +24,11 @@ public class CmdListReceivers extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(sender.getEntityWorld());
 

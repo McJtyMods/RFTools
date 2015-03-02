@@ -40,6 +40,11 @@ public abstract class DefaultCommand implements ICommand {
         }
 
         @Override
+        public boolean isClientSide() {
+            return false;
+        }
+
+        @Override
         public String getCommand() {
             return "help";
         }
@@ -63,14 +68,24 @@ public abstract class DefaultCommand implements ICommand {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         World world = sender.getEntityWorld();
-        if (!world.isRemote) {
-            if (args.length <= 0) {
+        if (args.length <= 0) {
+            if (!world.isRemote) {
                 showHelp(sender);
-            } else {
-                RfToolsCommand command = commands.get(args[0]);
-                if (command == null) {
+            }
+        } else {
+            RfToolsCommand command = commands.get(args[0]);
+            if (command == null) {
+                if (!world.isRemote) {
                     sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown RfTools command: " + args[0]));
+                }
+            } else {
+                if (world.isRemote) {
+                    // We are client-side. Only do client-side commands.
+                    if (command.isClientSide()) {
+                        command.execute(sender, args);
+                    }
                 } else {
+                    // Server-side.
                     if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
                         sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Command is not allowed!"));
                     } else {

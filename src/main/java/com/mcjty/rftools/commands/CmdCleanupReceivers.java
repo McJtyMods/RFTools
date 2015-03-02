@@ -21,6 +21,11 @@ public class CmdCleanupReceivers extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         World world = sender.getEntityWorld();
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);

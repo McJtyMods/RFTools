@@ -27,6 +27,11 @@ public class CmdSetPower extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 2) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));

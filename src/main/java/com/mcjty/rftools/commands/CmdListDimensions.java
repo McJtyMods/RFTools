@@ -28,6 +28,11 @@ public class CmdListDimensions extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         WorldServer[] worlds = DimensionManager.getWorlds();
         for (WorldServer world : worlds) {

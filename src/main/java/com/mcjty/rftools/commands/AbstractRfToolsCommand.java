@@ -39,4 +39,9 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         }
         return value;
     }
+
+    @Override
+    public boolean isClientSide() {
+        return false;
+    }
 }

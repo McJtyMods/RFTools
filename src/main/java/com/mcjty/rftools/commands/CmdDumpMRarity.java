@@ -23,4 +23,9 @@ public class CmdDumpMRarity extends AbstractRfToolsCommand {
     public int getPermissionLevel() {
         return 0;
     }
+
+    @Override
+    public boolean isClientSide() {
+        return false;
+    }
 }

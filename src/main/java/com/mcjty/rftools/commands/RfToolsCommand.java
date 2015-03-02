@@ -11,6 +11,11 @@ public interface RfToolsCommand {
      */
     public int getPermissionLevel();
 
+    /**
+     * @return true if this is a client-side command.
+     */
+    public boolean isClientSide();
+
     public String getCommand();
 
     public void execute(ICommandSender sender, String[] args);

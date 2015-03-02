@@ -20,6 +20,11 @@ public class CmdRefreshWorld extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         WorldRefresher.refreshChunks(sender.getEntityWorld());
     }

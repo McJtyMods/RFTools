@@ -2,6 +2,7 @@ package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.logic.RedstoneChannels;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import com.mcjty.rftools.commands.CommandRftCfg;
 import com.mcjty.rftools.commands.CommandRftDb;
 import com.mcjty.rftools.commands.CommandRftDim;
 import com.mcjty.rftools.commands.CommandRftTp;
@@ -169,6 +170,7 @@ public class RFTools {
         event.registerServerCommand(new CommandRftDim());
         event.registerServerCommand(new CommandRftTp());
         event.registerServerCommand(new CommandRftDb());
+        event.registerServerCommand(new CommandRftCfg());
     }
 
     @EventHandler

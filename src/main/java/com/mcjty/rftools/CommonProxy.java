@@ -44,7 +44,7 @@ public class CommonProxy {
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
         dimletConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "dimlets.cfg"));
-        dimletConfig.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration. Do not delete this config on an existing world!");
+        dimletConfig.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
 
         readMainConfig();
 

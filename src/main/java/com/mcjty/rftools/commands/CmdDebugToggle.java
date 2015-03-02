@@ -22,6 +22,11 @@ public class CmdDebugToggle extends AbstractRfToolsCommand {
     }
 
     @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
     public void execute(ICommandSender sender, String[] args) {
         RFTools.debugMode = !RFTools.debugMode;
         if (RFTools.debugMode) {
