@@ -22,8 +22,8 @@ public class PlayerEvents {
 
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
-        IExtendedEntityProperties properties = event.player.getExtendedProperties(PlayerExtendedProperties.ID);
-        if (event.phase == TickEvent.Phase.START) {
+        if (event.phase == TickEvent.Phase.START && !event.player.worldObj.isRemote) {
+            IExtendedEntityProperties properties = event.player.getExtendedProperties(PlayerExtendedProperties.ID);
             if (properties instanceof PlayerExtendedProperties) {
                 PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
                 playerExtendedProperties.tick();

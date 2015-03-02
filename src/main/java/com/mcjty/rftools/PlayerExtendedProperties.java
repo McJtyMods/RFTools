@@ -25,6 +25,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     private int target;
     private int teleportTimeout;
     private Entity entity = null;
+    private boolean globalSyncNeeded = true;
 
     private final Map<PlayerBuff,Integer> buffs = new HashMap<PlayerBuff, Integer>();
 
@@ -32,6 +33,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         target = -1;
         teleportTimeout = -1;
         buffTimeout = 0;
+        globalSyncNeeded = true;
     }
 
     public boolean isTeleporting() {
@@ -55,7 +57,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
 
     public void addBuff(PlayerBuff buff, int ticks) {
         //. We add a bit to the ticks to make sure we can live long enough.
-        buffs.put(buff, ticks + BUFF_MAXTICKS - buffTimeout + 1);
+        buffs.put(buff, ticks + 5);
         syncBuffs();
     }
 
@@ -85,16 +87,25 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
             Map<PlayerBuff,Integer> copyBuffs = new HashMap<PlayerBuff, Integer>(buffs);
             buffs.clear();
 
+            boolean syncNeeded = false;
             for (Map.Entry<PlayerBuff, Integer> entry : copyBuffs.entrySet()) {
                 int timeout = entry.getValue();
                 timeout -= BUFF_MAXTICKS;
                 if (timeout > 0) {
                     buffs.put(entry.getKey(), timeout);
                 } else {
-                    System.out.println("Removing buff: " + entry.getKey());
-                    syncBuffs();
+                    syncNeeded = true;
                 }
             }
+            if (syncNeeded) {
+                syncBuffs();
+                globalSyncNeeded = false;
+            }
+        }
+
+        if (globalSyncNeeded) {
+            globalSyncNeeded = false;
+            syncBuffs();
         }
     }
 
