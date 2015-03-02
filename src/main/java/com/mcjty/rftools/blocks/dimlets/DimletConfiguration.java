@@ -152,7 +152,7 @@ public class DimletConfiguration {
                 "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
 
 		randomizeSeed = cfg.get(CATEGORY_DIMLETS, "randomizeSeed", randomizeSeed,
-			"Randomize the seed when the dimlet is created").getBoolean();
+			"Randomize the seed when the dimension is created").getBoolean();
     }
 
 }
