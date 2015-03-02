@@ -6,7 +6,7 @@
         [ "Liquid", "mana" ],
         [ "Liquid", "steam" ],
         [ "Liquid", "tower" ],
-        [ "Material", "tile.thermalfoundation.ore6"]
+        [ "Material", "tile.thermalfoundation.ore6"],
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
