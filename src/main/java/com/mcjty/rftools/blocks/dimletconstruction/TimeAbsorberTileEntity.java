@@ -3,18 +3,10 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
-import com.mcjty.varia.BlockMeta;
-import com.mcjty.varia.Coordinate;
-import com.sun.java.browser.plugin2.DOM;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.S29PacketSoundEffect;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Random;
 
 public class TimeAbsorberTileEntity extends GenericTileEntity {
     private int absorbing = 0;
