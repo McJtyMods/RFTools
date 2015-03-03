@@ -27,6 +27,10 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     private Entity entity = null;
     private boolean globalSyncNeeded = true;
 
+    // Here we mirror the flags out of capabilities so that we can restore them.
+    private boolean oldAllowFlying = false;
+    private boolean allowFlying = false;
+
     private final Map<PlayerBuff,Integer> buffs = new HashMap<PlayerBuff, Integer>();
 
     public PlayerExtendedProperties() {
@@ -48,15 +52,34 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         // Perform all buffs that we can perform here (not potion effects and also not
         // passive effects like feather falling.
         EntityPlayer player = (EntityPlayer) entity;
-        boolean oldAllowFlying = player.capabilities.allowFlying;
-        player.capabilities.allowFlying = false;
+        boolean enableFlight = false;
         for (PlayerBuff buff : buffs.keySet()) {
             if (buff == PlayerBuff.BUFF_FLIGHT) {
-                player.capabilities.allowFlying = true;
+                enableFlight = true;
             }
         }
 
-        if (player.capabilities.allowFlying != oldAllowFlying) {
+        boolean oldAllow = player.capabilities.allowFlying;
+
+        if (enableFlight) {
+            if (!allowFlying) {
+                // We were not already allowing flying.
+                oldAllowFlying = player.capabilities.allowFlying;
+                allowFlying = true;
+            }
+            player.capabilities.allowFlying = true;
+        } else {
+            if (allowFlying) {
+                // We were flying before.
+                player.capabilities.allowFlying = oldAllowFlying;
+                if (player.capabilities.isCreativeMode) {
+                    player.capabilities.allowFlying = true;
+                }
+                allowFlying = false;
+            }
+        }
+
+        if (player.capabilities.allowFlying != oldAllow) {
             if (!player.capabilities.allowFlying) {
                 player.capabilities.isFlying = false;
             }
@@ -161,6 +184,8 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         compound.setInteger("target", target);
         compound.setInteger("ticks", teleportTimeout);
         compound.setInteger("buffTicks", buffTimeout);
+        compound.setBoolean("allowFlying", allowFlying);
+        compound.setBoolean("oldAllowFlying", oldAllowFlying);
         int[] buffArray = new int[buffs.size()];
         int[] timeoutArray = new int[buffs.size()];
         int idx = 0;
@@ -194,6 +219,8 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
             int buffIdx = buffArray[i];
             buffs.put(PlayerBuff.values()[buffIdx], timeoutArray[i]);
         }
+        allowFlying = compound.getBoolean("allowFlying");
+        oldAllowFlying = compound.getBoolean("oldAllowFlying");
         globalSyncNeeded = true;
     }
 
