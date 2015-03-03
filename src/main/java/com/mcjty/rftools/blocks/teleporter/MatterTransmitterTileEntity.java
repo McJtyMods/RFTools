@@ -454,9 +454,14 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         EntityPlayer player = (EntityPlayer) entity;
 
-        if (teleportDestination != null || teleportId != null) {
+        TeleportDestination dest = teleportDestination;
+        if (teleportId != null) {
+            dest = getTeleportDestination();
+        }
+
+        if (dest != null) {
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
-            int cost = TeleportationTools.calculateRFCost(worldObj, cthis, getTeleportDestination());
+            int cost = TeleportationTools.calculateRFCost(worldObj, cthis, dest);
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
@@ -468,7 +473,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
-            teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, getTeleportDestination());
+            teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, dest);
             teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
 
             totalTicks = teleportTimer;
