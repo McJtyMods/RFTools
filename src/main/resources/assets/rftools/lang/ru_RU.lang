@@ -133,6 +133,7 @@ tile.screenControllerBlock.name=Экранный контроллер
 tile.biomeAbsorberBlock.name=Поглотитель биомов
 tile.materialAbsorberBlock.name=Материальный поглотитель
 tile.liquidAbsorberBlock.name=Поглотитель жидкостей
+tile.timeAbsorberBlock.name=Time Absorber
 tile.environmentalControllerBlock.name=Контроллер окружающей среды
 
 tile.dimensionalShardBlock.name=Руда осколков измерения

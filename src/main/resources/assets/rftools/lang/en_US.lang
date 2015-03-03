@@ -133,6 +133,7 @@ tile.screenControllerBlock.name=Screen Controller
 tile.biomeAbsorberBlock.name=Biome Absorber
 tile.materialAbsorberBlock.name=Material Absorber
 tile.liquidAbsorberBlock.name=Liquid Absorber
+tile.timeAbsorberBlock.name=Time Absorber
 tile.environmentalControllerBlock.name=Environmental Controller
 
 tile.dimensionalShardBlock.name=Dimensional Shard Ore

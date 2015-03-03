@@ -194,11 +194,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 return attemptMaterialDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
             case DIMLET_LIQUID:
                 return attemptLiquidDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
+            case DIMLET_TIME:
+                return attemptTimeDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
             case DIMLET_SKY:
             case DIMLET_STRUCTURE:
             case DIMLET_TERRAIN:
             case DIMLET_FEATURE:
-            case DIMLET_TIME:
             case DIMLET_EFFECT:
             case DIMLET_CONTROLLER:
             case DIMLET_DIGIT:
@@ -206,6 +207,19 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
                 return false;
         }
 
+        return true;
+    }
+
+    private boolean attemptTimeDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+        if (!isValidTimeEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        int timeDimlet = findTimeDimlet(stackEssence);
+        if (timeDimlet == -1) {
+            return false;
+        }
+        if (!matchDimletRecipe(timeDimlet, stackController, stackMemory, stackEnergy)) {
+            return false;
+        }
+        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, new ItemStack(ModItems.knownDimlet, 1, timeDimlet));
         return true;
     }
 
@@ -301,6 +315,11 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
+    private int findTimeDimlet(ItemStack stackEssence) {
+        float angle = stackEssence.getTagCompound().getFloat("angle");
+        return TimeAbsorberTileEntity.findBestTimeDimlet(angle);
+    }
+
     private int findSpecialDimlet(ItemStack stackEssence, DimletMapping mapping) {
         if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
             return mapping.getId(DimletType.DIMLET_SPECIAL, "Peaceful");
@@ -360,6 +379,23 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         int absorbing = essenceCompound.getInteger("absorbing");
         int biome = essenceCompound.getInteger("biome");
         if (absorbing > 0 || biome == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidTimeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+        Block essenceBlock = getBlock(stackEssence);
+
+        if (essenceBlock != ModBlocks.timeAbsorberBlock) {
+            return false;
+        }
+        if (essenceCompound == null) {
+            return false;
+        }
+        int absorbing = essenceCompound.getInteger("absorbing");
+        float angle = essenceCompound.getFloat("angle");
+        if (absorbing > 0 || angle < -0.01f) {
             return false;
         }
         return true;

@@ -226,7 +226,11 @@ public final class ModCrafting {
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.materialAbsorberBlock), new ItemStack(ModBlocks.materialAbsorberBlock));
         GameRegistry.addRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), "bwb", "wMw", "bwb", 'M', ModBlocks.machineFrame, 'b', Items.bucket, 'w', Blocks.wool);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.liquidAbsorberBlock), new ItemStack(ModBlocks.liquidAbsorberBlock));
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.timeAbsorberBlock), "cwc", "wMw", "cwc", 'M', ModBlocks.machineFrame, 'c', Items.clock, 'w', Blocks.wool);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.timeAbsorberBlock), new ItemStack(ModBlocks.timeAbsorberBlock));
+
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
+
 
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
