@@ -426,6 +426,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
             return true;
         }
+        if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
+            return true;
+        }
+        if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
+            return true;
+        }
 
         return false;
     }
