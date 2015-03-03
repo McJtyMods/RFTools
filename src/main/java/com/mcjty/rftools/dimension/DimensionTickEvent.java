@@ -30,6 +30,9 @@ public class DimensionTickEvent {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent evt) {
+        if (evt.phase == TickEvent.Phase.START) {
+            return;
+        }
         counter--;
         if (counter <= 0) {
             counter = MAXTICKS;
