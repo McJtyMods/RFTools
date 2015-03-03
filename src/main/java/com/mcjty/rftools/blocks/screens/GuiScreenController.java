@@ -4,14 +4,15 @@ import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
 import com.mcjty.gui.events.ButtonEvent;
 import com.mcjty.gui.layout.PositionalLayout;
+import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.*;
+import com.mcjty.gui.widgets.Label;
+import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class GuiScreenController extends GenericGuiContainer<ScreenControllerTileEntity> {
     public static final int CONTROLLER_WIDTH = 180;

@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.entity.SyncedValue;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.network.Argument;

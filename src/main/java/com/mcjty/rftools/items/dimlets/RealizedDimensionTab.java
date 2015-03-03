@@ -1,7 +1,9 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.dimension.*;
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.DimensionStorage;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import com.mcjty.rftools.network.PacketHandler;
@@ -14,7 +16,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RealizedDimensionTab extends Item {
     private static long lastTime = 0;

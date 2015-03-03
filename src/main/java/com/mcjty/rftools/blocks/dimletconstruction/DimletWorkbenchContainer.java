@@ -4,7 +4,6 @@ import com.mcjty.container.*;
 import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class DimletWorkbenchContainer extends GenericContainer {

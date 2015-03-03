@@ -2,7 +2,6 @@ package com.mcjty.rftools.blocks.endergen;
 
 import com.mcjty.container.EmptyContainer;
 import com.mcjty.container.GenericGuiContainer;
-import com.mcjty.gui.Window;
 import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
@@ -12,9 +11,7 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 

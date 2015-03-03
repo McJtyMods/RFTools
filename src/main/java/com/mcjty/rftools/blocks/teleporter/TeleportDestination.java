@@ -4,9 +4,6 @@ import com.mcjty.rftools.network.ByteBufConverter;
 import com.mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class TeleportDestination implements ByteBufConverter {
     private final Coordinate coordinate;
     private final int dimension;

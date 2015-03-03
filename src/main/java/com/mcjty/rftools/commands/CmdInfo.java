@@ -2,7 +2,6 @@ package com.mcjty.rftools.commands;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
-import com.mcjty.rftools.dimension.world.types.EffectType;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;

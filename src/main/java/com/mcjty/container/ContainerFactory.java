@@ -1,6 +1,9 @@
 package com.mcjty.container;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ContainerFactory {
     private Map<Integer,SlotDefinition> indexToType = new HashMap<Integer, SlotDefinition>();

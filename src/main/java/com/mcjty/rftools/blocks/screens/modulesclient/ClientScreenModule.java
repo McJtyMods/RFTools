@@ -7,8 +7,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Map;
-
 public interface ClientScreenModule {
     public enum TransformMode {
         NONE,

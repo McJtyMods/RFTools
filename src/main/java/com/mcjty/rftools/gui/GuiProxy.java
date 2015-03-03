@@ -8,7 +8,6 @@ import com.mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
 import com.mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

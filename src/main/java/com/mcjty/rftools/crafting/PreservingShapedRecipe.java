@@ -7,9 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PreservingShapedRecipe extends ShapedRecipes {
     private Object objectToInheritFrom;
 

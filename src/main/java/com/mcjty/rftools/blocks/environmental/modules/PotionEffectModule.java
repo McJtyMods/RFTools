@@ -3,7 +3,6 @@ package com.mcjty.rftools.blocks.environmental.modules;
 import com.mcjty.rftools.PlayerBuff;
 import com.mcjty.rftools.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 

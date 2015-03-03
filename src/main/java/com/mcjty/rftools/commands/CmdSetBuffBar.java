@@ -1,15 +1,9 @@
 package com.mcjty.rftools.commands;
 
 import com.mcjty.rftools.Preferences;
-import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
-import com.mcjty.rftools.dimension.DimensionStorage;
-import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class CmdSetBuffBar extends AbstractRfToolsCommand {
     @Override

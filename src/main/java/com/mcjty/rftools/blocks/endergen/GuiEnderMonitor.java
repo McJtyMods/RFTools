@@ -10,8 +10,6 @@ import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.Widget;
 import com.mcjty.rftools.network.Argument;
-import com.mcjty.rftools.network.PacketHandler;
-import com.mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Mouse;
 

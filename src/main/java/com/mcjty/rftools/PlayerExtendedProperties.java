@@ -14,7 +14,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerExtendedProperties implements IExtendedEntityProperties {
     public static final String ID = "rftoolsTimedTeleport";

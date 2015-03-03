@@ -1,16 +1,12 @@
 package com.mcjty.rftools.commands;
 
-import com.mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.EffectType;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.WorldServer;
 
 public class CmdAddEffect extends AbstractRfToolsCommand {
     @Override

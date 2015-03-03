@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscriberTileEntity> {
     public static final int ENSCRIBER_WIDTH = 256;

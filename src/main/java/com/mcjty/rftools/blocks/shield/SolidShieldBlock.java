@@ -4,7 +4,6 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class SolidShieldBlock extends AbstractShieldBlock {
 

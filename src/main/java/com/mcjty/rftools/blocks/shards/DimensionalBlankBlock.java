@@ -1,17 +1,11 @@
 package com.mcjty.rftools.blocks.shards;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class DimensionalBlankBlock extends Block {
 

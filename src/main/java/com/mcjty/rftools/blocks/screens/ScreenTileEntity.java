@@ -4,7 +4,6 @@ import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
-import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
