@@ -460,13 +460,19 @@ of dimlet that you want to make:
     - Biome Absorber for biome dimlets
     - Material Absorber for material dimlets
     - Liquid Absorber for liquid dimlets
+    - Time Absorber for time dimlets
     - Syringe for mob dimlets
     - Peaceful essence (made out of 9 filled syringes of a
       specific type) for the peaceful dimlet
+{-------------------------------------------------------------}
 So, if you wanted to create a Biome: Forest dimlet, you would
 place the Biome Absorber within a Forest Biome. Slowly, the
 Biome Absorber will fill up with the essence of the Forest Biome.
 You can then place it in the last slot of the Dimlet Workbench
 along with the other pieces of the dimlet to build your Biome:
 Forest dimlet, now ready to be used in any dimensions!
+
+For the Time Absorber you need to give the absorber a redstone
+signal at approximatelly the right time. This has to be done
+10 times before it has fully absorbed the time.
 {-------------------------------------------------------------}
