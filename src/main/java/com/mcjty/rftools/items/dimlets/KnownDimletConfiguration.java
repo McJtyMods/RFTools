@@ -27,6 +27,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -937,5 +938,46 @@ public class KnownDimletConfiguration {
 
     public static DimletEntry getEntry(int id) {
         return idToDimletEntry.get(id);
+    }
+
+    /**
+     * Get the unique dimletkey out of a known dimlet.
+     */
+    public static String getDimletKey(ItemStack dimletStack) {
+        NBTTagCompound tagCompound = dimletStack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("dimletKey")) {
+            return tagCompound.getString("dimletKey");
+        }
+        return null;
+    }
+
+    /**
+     * Take an ItemStack containing a known dimlet and (if needed) convert it
+     * to the new ID system. i.e. instead of using damage as a unique ID,
+     * use a unique string in the NBT.
+     * @param dimletStack
+     */
+    public static void correctDimletKey(ItemStack dimletStack) {
+        NBTTagCompound tagCompound = dimletStack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+        }
+
+        if (tagCompound.hasKey("dimletKey")) {
+            // We have a key already. Check if the damage is still correct.
+        } else {
+            int oldId = dimletStack.getItemDamage();
+            DimletEntry entry = idToDimletEntry.get(oldId);
+            if (entry == null) {
+                // Something is very wrong. This should not be possible. We can't fix anything here.
+                tagCompound.setString("dimletKey", "?");
+            } else {
+                String newId = entry.getKey().getType().getOpcode() + entry.getKey().getName();
+                // @todo, not correct yet.
+                tagCompound.setString("dimletKey", newId);
+            }
+        }
+
+        dimletStack.setTagCompound(tagCompound);
     }
 }

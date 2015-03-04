@@ -112,7 +112,12 @@ public class KnownDimlet extends Item {
             }
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+            String dimletKey = KnownDimletConfiguration.getDimletKey(itemStack);
+            if (dimletKey != null) {
+                list.add(EnumChatFormatting.AQUA + "Dimlet key: " + dimletKey);
+            }
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
             }
