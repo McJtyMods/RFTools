@@ -34,14 +34,27 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     private final Set<Integer> reclaimedIds = new HashSet<Integer>();
 
-    public void syncFromServer(Map<Integer, DimensionDescriptor> dimensions, Map<DimensionDescriptor, Integer> dimensionToID, Map<Integer, DimensionInformation> dimensionInformation) {
+    public void syncFromServer(Map<Integer, DimensionDescriptor> dims, Map<Integer, DimensionInformation> dimInfo) {
         System.out.println("RfToolsDimensionManager.syncFromServer");
-        this.dimensions.clear();
-        this.dimensions.putAll(dimensions);
-        this.dimensionToID.clear();
-        this.dimensionToID.putAll(dimensionToID);
-        this.dimensionInformation.clear();
-        this.dimensionInformation.putAll(dimensionInformation);
+        if (dims.isEmpty() || dimInfo.isEmpty()) {
+            RFTools.log("This should not happen! Dimension information from server is empty? Trying to adapt...");
+        }
+
+        for (Map.Entry<Integer, DimensionDescriptor> entry : dims.entrySet()) {
+            int id = entry.getKey();
+            DimensionDescriptor descriptor = entry.getValue();
+            if (dimensions.containsKey(id)) {
+                dimensionToID.remove(dimensions.get(id));
+            }
+            dimensions.put(id, descriptor);
+            dimensionToID.put(descriptor, id);
+        }
+
+        for (Map.Entry<Integer, DimensionInformation> entry : dimInfo.entrySet()) {
+            int id = entry.getKey();
+            DimensionInformation info = entry.getValue();
+            dimensionInformation.put(id, info);
+        }
     }
 
     public RfToolsDimensionManager(String identifier) {
@@ -132,7 +145,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         if (!world.isRemote) {
             // Sync to clients.
             RFTools.log("Sync dimension info to clients!");
-            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionToID, dimensionInformation));
+            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionInformation));
         }
     }
 

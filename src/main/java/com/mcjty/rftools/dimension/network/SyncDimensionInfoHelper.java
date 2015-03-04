@@ -15,7 +15,7 @@ public class SyncDimensionInfoHelper {
         System.out.println("SYNC DIMENSION STUFF: world.isRemote = " + world.isRemote);
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
 
-        dimensionManager.syncFromServer(message.dimensions, message.dimensionToID, message.dimensionInformation);
+        dimensionManager.syncFromServer(message.dimensions, message.dimensionInformation);
         dimensionManager.save(world);
     }
 
