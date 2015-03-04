@@ -218,7 +218,7 @@ public final class ModItems {
         featherFallingPlusEModuleItem = new FeatherFallingPlusEModuleItem();
         featherFallingPlusEModuleItem.setUnlocalizedName("FeatherFallingPlusEModule");
         featherFallingPlusEModuleItem.setCreativeTab(RFTools.tabRfTools);
-        featherFallingPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/featherFallingPlusEModuleItem");
+        featherFallingPlusEModuleItem.setTextureName(RFTools.MODID + ":envmodules/featherfallingPlusEModuleItem");
         GameRegistry.registerItem(featherFallingPlusEModuleItem, "featherFallingPlusEModuleItem");
 
         flightEModuleItem = new FlightEModuleItem();
