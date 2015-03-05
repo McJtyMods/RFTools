@@ -216,6 +216,21 @@ public class RfToolsDimensionManager extends WorldSavedData {
         DimensionManager.unregisterProviderType(id);
     }
 
+    public void recoverDimension(World world, int id, DimensionDescriptor descriptor, String name) {
+        if (!DimensionManager.isDimensionRegistered(id)) {
+            registerDimensionToServerAndClient(id);
+        }
+
+        dimensions.put(id, descriptor);
+        dimensionToID.put(descriptor, id);
+
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world);
+        dimensionInformation.put(id, dimensionInfo);
+
+        save(world);
+        touchSpawnChunk(id);
+    }
+
     public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
         int id = 0;
         while (!reclaimedIds.isEmpty()) {
@@ -241,6 +256,11 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
         save(world);
 
+        touchSpawnChunk(id);
+        return id;
+    }
+
+    private void touchSpawnChunk(int id) {
         // Make sure world generation kicks in for at least one chunk so that our matter receiver
         // is generated and registered.
         WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(id);
@@ -256,8 +276,6 @@ public class RfToolsDimensionManager extends WorldSavedData {
                 // We catch this exception to make sure our dimension tab is at least ok.
             }
         }
-
-        return id;
     }
 
     @Override
