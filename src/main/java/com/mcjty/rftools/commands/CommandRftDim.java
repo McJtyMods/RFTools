@@ -17,6 +17,8 @@ public class CommandRftDim extends DefaultCommand {
         registerCommand(new CmdReclaim());
         registerCommand(new CmdSafeDelete());
         registerCommand(new CmdRecover());
+        registerCommand(new CmdSaveDim());
+        registerCommand(new CmdLoadDim());
     }
 
     @Override

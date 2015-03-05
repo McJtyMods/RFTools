@@ -1,5 +1,7 @@
 package com.mcjty.rftools.dimension;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.description.CelestialBodyDescriptor;
@@ -26,6 +28,10 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class DimensionInformation {
@@ -116,6 +122,400 @@ public class DimensionInformation {
         actualRfCost += descriptor.getRfMaintainCost();
     }
 
+    public String loadFromJson(String filename) {
+        FileReader reader;
+        try {
+            reader = new FileReader(filename);
+        } catch (FileNotFoundException e) {
+            return "Error reading file!";
+        }
+
+        Gson gson = new Gson();
+        Map<String,Object> data = gson.fromJson(reader, HashMap.class);
+
+        if (data.containsKey("forcedDimensionSeed")) {
+            forcedDimensionSeed = ((Double)data.get("forcedDimensionSeed")).longValue();
+        }
+        if (data.containsKey("worldVersion")) {
+            worldVersion = ((Double)data.get("worldVersion")).intValue();
+        }
+        if (data.containsKey("terrainType")) {
+            String tt = (String) data.get("terrainType");
+            try {
+                terrainType = TerrainType.valueOf(tt);
+            } catch (IllegalArgumentException e) {
+                return "Illegal terrainType!";
+            }
+        }
+
+        if (data.containsKey("baseBlockForTerrain")) {
+            baseBlockForTerrain = getBlockFromJson(data, "baseBlockForTerrain");
+        }
+        if (data.containsKey("tendrilBlock")) {
+            tendrilBlock = getBlockFromJson(data, "tendrilBlock");
+        }
+        if (data.containsKey("canyonBlock")) {
+            canyonBlock = getBlockFromJson(data, "canyonBlock");
+        }
+        if (data.containsKey("sphereBlock")) {
+            sphereBlock = getBlockFromJson(data, "sphereBlock");
+        }
+        if (data.containsKey("liquidSphereBlock")) {
+            liquidSphereBlock = getBlockFromJson(data, "liquidSphereBlock");
+        }
+        if (data.containsKey("fluidForTerrain")) {
+            fluidForTerrain = getFluidFromJson(data, "fluidForTerrain");
+        }
+        if (data.containsKey("liquidSphereFluid")) {
+            liquidSphereFluid = getFluidFromJson(data, "liquidSphereFluid");
+        }
+
+        if (data.containsKey("mobs")) {
+            extraMobs.clear();
+            List mobs = (List) data.get("mobs");
+            for (Object mob : mobs) {
+                Map<String,Object> o = (Map<String,Object>) mob;
+                try {
+                    Class<? extends EntityLiving> c = (Class<? extends EntityLiving>) Class.forName((String) o.get("class"));
+                    int chance = ((Double) o.get("spawnChance")).intValue();
+                    int minGroup = ((Double) o.get("minGroup")).intValue();
+                    int maxGroup = ((Double) o.get("maxGroup")).intValue();
+                    int maxLoaded = ((Double) o.get("maxLoaded")).intValue();
+                    MobDescriptor descriptor = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
+                    extraMobs.add(descriptor);
+                } catch (ClassNotFoundException e) {
+                    return "Error adding mob!";
+                }
+            }
+        }
+
+        if (data.containsKey("peaceful")) {
+            peaceful = (Boolean) data.get("peaceful");
+        }
+        if (data.containsKey("shelter")) {
+            shelter = (Boolean) data.get("shelter");
+        }
+
+        if (data.containsKey("featureTypes")) {
+            List ft = (List) data.get("featureTypes");
+            featureTypes.clear();
+
+            for (Object o : ft) {
+                String tt = (String) o;
+                try {
+                    FeatureType featureType = FeatureType.valueOf(tt);
+                    featureTypes.add(featureType);
+                } catch (IllegalArgumentException e) {
+                    return "Illegal featureTypes!";
+                }
+            }
+        }
+
+        if (data.containsKey("extraOregen")) {
+            List ft = (List) data.get("extraOregen");
+            extraOregen = new BlockMeta[ft.size()];
+            for (int i = 0 ; i < ft.size() ; i++) {
+                Map<String,Object> o = (Map<String,Object>) ft.get(i);
+                int id = ((Double) o.get("block")).intValue();
+                int meta = ((Double) o.get("blockMeta")).intValue();
+                Block block = (Block) Block.blockRegistry.getObjectById(id);
+                if (block == null) {
+                    return "Invalid extraOregen block!";
+                }
+                extraOregen[i] = new BlockMeta(block, meta);
+            }
+        }
+
+        if (data.containsKey("fluidsForLakes")) {
+            List ft = (List) data.get("fluidsForLakes");
+            fluidsForLakes = new Block[ft.size()];
+            for (int i = 0 ; i < ft.size() ; i++) {
+                Map<String,Object> o = (Map<String,Object>) ft.get(i);
+                int id = ((Double) o.get("block")).intValue();
+                Block block = (Block) Block.blockRegistry.getObjectById(id);
+                if (block == null) {
+                    return "Invalid fluidsForLakes block!";
+                }
+                fluidsForLakes[i] = block;
+            }
+        }
+
+        if (data.containsKey("structureTypes")) {
+            List ft = (List) data.get("structureTypes");
+            structureTypes.clear();
+
+            for (Object o : ft) {
+                String tt = (String) o;
+                try {
+                    StructureType structureType = StructureType.valueOf(tt);
+                    structureTypes.add(structureType);
+                } catch (IllegalArgumentException e) {
+                    return "Illegal structureTypes!";
+                }
+            }
+        }
+
+        if (data.containsKey("effectTypes")) {
+            List ft = (List) data.get("effectTypes");
+            effectTypes.clear();
+
+            for (Object o : ft) {
+                String tt = (String) o;
+                try {
+                    EffectType effectType = EffectType.valueOf(tt);
+                    effectTypes.add(effectType);
+                } catch (IllegalArgumentException e) {
+                    return "Illegal effectTypes!";
+                }
+            }
+        }
+
+        if (data.containsKey("controllerType")) {
+            String tt = (String) data.get("controllerType");
+            try {
+                controllerType = ControllerType.valueOf(tt);
+            } catch (IllegalArgumentException e) {
+                return "Illegal controllerType!";
+            }
+        }
+
+        if (data.containsKey("biomes")) {
+            List ft = (List) data.get("biomes");
+            biomes.clear();
+            for (Object o : ft) {
+                String biomeName = (String) o;
+                BiomeGenBase biome = null;
+                for (BiomeGenBase biomeGenBase : BiomeGenBase.getBiomeGenArray()) {
+                    if (biomeName.equals(biomeGenBase.biomeName)) {
+                        biome = biomeGenBase;
+                        break;
+                    }
+                }
+                if (biome == null) {
+                    return "Can't find biome '" + biomeName + "'!";
+                }
+                biomes.add(biome);
+            }
+        }
+
+        if (data.containsKey("digitString")) {
+            digitString = (String) data.get("digitString");
+        }
+        if (data.containsKey("celestialAngle")) {
+            celestialAngle = ((Double) data.get("celestialAngle")).floatValue();
+        }
+        if (data.containsKey("timeSpeed")) {
+            timeSpeed = ((Double) data.get("timeSpeed")).floatValue();
+        }
+
+        if (data.containsKey("skyDescriptor")) {
+            Map<String,Object> o = (Map<String,Object>) data.get("skyDescriptor");
+            SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
+
+            if (o.containsKey("sunBrightnessFactor")) {
+                builder.sunBrightnessFactor(((Double) o.get("sunBrightnessFactor")).floatValue());
+            }
+            if (o.containsKey("starBrightnessFactor")) {
+                builder.starBrightnessFactor(((Double) o.get("starBrightnessFactor")).floatValue());
+            }
+            if (o.containsKey("skyColorFactorR")) {
+                builder.skyColorFactor(((Double) o.get("skyColorFactorR")).floatValue(),
+                        ((Double) o.get("skyColorFactorG")).floatValue(),
+                        ((Double) o.get("skyColorFactorB")).floatValue());
+            }
+            if (o.containsKey("fogColorFactorR")) {
+                builder.fogColorFactor(((Double) o.get("fogColorFactorR")).floatValue(),
+                        ((Double) o.get("fogColorFactorG")).floatValue(),
+                        ((Double) o.get("fogColorFactorB")).floatValue());
+            }
+            if (o.containsKey("skyType")) {
+                SkyType skyType = SkyType.valueOf((String) o.get("skyType"));
+                builder.skyType(skyType);
+            }
+
+            if (o.containsKey("celestialBodies")) {
+                List lst = (List) o.get("celestialBodies");
+                for (Object cb : lst) {
+                    CelestialBodyType celestialBodyType = CelestialBodyType.valueOf((String) cb);
+                    builder.addBody(celestialBodyType);
+                }
+            }
+
+            skyDescriptor = builder.build();
+        }
+
+        if (data.containsKey("celestialBodyDescriptors")) {
+            List ft = (List) data.get("celestialBodyDescriptors");
+            celestialBodyDescriptors.clear();
+
+            for (Object o : ft) {
+                Map<String,Object> d = (Map<String,Object>) o;
+                CelestialBodyType type = CelestialBodyType.BODY_NONE;
+                float timeOffset = 0.0f;
+                float timeFactor = 1.0f;
+                float yAngle = 0.0f;
+
+                if (d.containsKey("type")) {
+                    String tt = (String) o;
+                    try {
+                        type = CelestialBodyType.valueOf(tt);
+                    } catch (IllegalArgumentException e) {
+                        return "Illegal celestial body type!";
+                    }
+                }
+                if (d.containsKey("timeOffset")) {
+                    timeOffset = ((Double) d.get("timeOffset")).floatValue();
+                }
+                if (d.containsKey("timeFactor")) {
+                    timeFactor = ((Double) d.get("timeFactor")).floatValue();
+                }
+                if (d.containsKey("yAngle")) {
+                    yAngle = ((Double) d.get("yAngle")).floatValue();
+                }
+                celestialBodyDescriptors.add(new CelestialBodyDescriptor(type,
+                        timeOffset, timeFactor, yAngle));
+            }
+        }
+
+        if (data.containsKey("actualRfCost")) {
+            actualRfCost = ((Double) data.get("actualRfCost")).intValue();
+        }
+
+        return null;
+    }
+
+    private static BlockMeta getBlockFromJson(Map<String,Object> data, String name) {
+        int id = ((Double) data.get(name)).intValue();
+        if (id == -1) {
+            return null;
+        }
+        Block block = (Block) Block.blockRegistry.getObjectById(id);
+        if (block == null) {
+            return null;
+        }
+        int meta = ((Double) data.get(name + "Meta")).intValue();
+        return new BlockMeta(block, meta);
+    }
+
+    private static Block getFluidFromJson(Map<String,Object> data, String name) {
+        int id = ((Double) data.get(name)).intValue();
+        if (id == -1) {
+            return null;
+        }
+        Block block = (Block) Block.blockRegistry.getObjectById(id);
+        return block;
+    }
+
+    public String buildJson(String filename) {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        Map<String,Object> data = new HashMap<String, Object>();
+//        data.put("name", name);
+//        data.put("descriptor", descriptor);
+//        data.put("probeCounter", probeCounter);
+//        data.put("forcedDimensionSeed", forcedDimensionSeed);
+//        data.put("worldVersion", worldVersion);
+//        data.put("terrainType", terrainType);
+//
+//        addBlockForJson(data, baseBlockForTerrain, "baseBlockForTerrain");
+//        addBlockForJson(data, tendrilBlock, "tendrilBlock");
+//        addBlockForJson(data, canyonBlock, "canyonBlock");
+//        addBlockForJson(data, sphereBlock, "sphereBlock");
+//        addBlockForJson(data, liquidSphereBlock, "liquidSphereBlock");
+//
+//        addFluidForJson(data, fluidForTerrain, "fluidForTerrain");
+//        addFluidForJson(data, liquidSphereFluid, "liquidSphereFluid");
+//
+//        List<Object> mobs = new ArrayList<Object>();
+//        for (MobDescriptor mob : extraMobs) {
+//            Map<String,Object> o = new HashMap<String, Object>();
+//            o.put("class", mob.getEntityClass().getName());
+//            o.put("spawnChance", mob.getSpawnChance());
+//            o.put("minGroup", mob.getMinGroup());
+//            o.put("maxGroup", mob.getMaxGroup());
+//            o.put("maxLoaded", mob.getMaxLoaded());
+//            mobs.add(o);
+//        }
+//        data.put("mobs", mobs);
+//
+//        data.put("peaceful", peaceful);
+//        data.put("shelter", shelter);
+//
+//        data.put("featureTypes", featureTypes);
+//
+//        List<Object> oregenList = new ArrayList<Object>();
+//        for (BlockMeta block : extraOregen) {
+//            int id = Block.blockRegistry.getIDForObject(block.getBlock());
+//            Map<String,Object> o = new HashMap<String, Object>();
+//            o.put("block", id);
+//            o.put("blockMeta", block.getMeta());
+//            oregenList.add(o);
+//        }
+//        data.put("extraOregen", oregenList);
+//
+//        List<Object> fluidList = new ArrayList<Object>();
+//        for (Block block : fluidsForLakes) {
+//            int id = Block.blockRegistry.getIDForObject(block);
+//            Map<String,Object> o = new HashMap<String, Object>();
+//            o.put("block", id);
+//            fluidList.add(o);
+//        }
+//        data.put("fluidsForLakes", fluidList);
+//
+//        data.put("structureTypes", structureTypes);
+//        data.put("effectTypes", effectTypes);
+//        data.put("controllerType", controllerType);
+//
+//        List<Object> biomeList = new ArrayList<Object>();
+//        for (BiomeGenBase biome : biomes) {
+//            biomeList.add(biome.biomeName);
+//        }
+//        data.put("biomes", biomeList);
+//
+//        data.put("digitString", digitString);
+//        data.put("celestialAngle", celestialAngle);
+//        data.put("timeSpeed", timeSpeed);
+//        data.put("skyDescriptor", skyDescriptor);
+//
+//        data.put("celestialBodyDescriptors", celestialBodyDescriptors);
+//
+//        data.put("actualRfCost", actualRfCost);
+//
+//        String json = gson.toJson(data);
+
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        writeToNBT(tagCompound);
+        String json = tagCompound.toString();
+
+        try {
+            FileWriter writer = new FileWriter(filename);
+            writer.write(json);
+            writer.close();
+        } catch (IOException e) {
+            return "Error writing file!";
+        }
+
+        return null;
+    }
+
+    private static void addFluidForJson(Map<String, Object> data, Block fluid, String name) {
+        if (fluid != null) {
+            int id = Block.blockRegistry.getIDForObject(fluid);
+            data.put(name, id);
+        } else {
+            data.put(name, -1);
+        }
+    }
+
+    private static void addBlockForJson(Map<String, Object> data, BlockMeta block, String name) {
+        if (block != null) {
+            int id = Block.blockRegistry.getIDForObject(block.getBlock());
+            data.put(name, id);
+            data.put(name + "Meta", block.getMeta());
+        } else {
+            data.put(name, -1);
+        }
+    }
+
     public void injectDimlet(int id, DimletMapping mapping) {
         DimletType type = mapping.getKey(id).getType();
         switch (type) {
@@ -200,7 +600,7 @@ public class DimensionInformation {
         int version = tagCompound.getInteger("version");
         if (version == 1) {
             // This version of the dimension information has the random information persisted.
-            readFromNBT(tagCompound);
+            setupFromNBT(tagCompound);
         } else {
             // This is an older version. Here we have to calculate the random information again.
             setupFromDescriptor(1, DimletMapping.getInstance());
@@ -209,7 +609,15 @@ public class DimensionInformation {
         setupBiomeMapping();
     }
 
-    private void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
+        setProbeCounter(tagCompound.getInteger("probeCounter"));
+        setupFromNBT(tagCompound);
+
+        setupBiomeMapping();
+    }
+
+    private void setupFromNBT(NBTTagCompound tagCompound) {
         terrainType = TerrainType.values()[tagCompound.getInteger("terrain")];
         featureTypes = toEnumSet(tagCompound.getIntArray("features"), FeatureType.values());
         structureTypes = toEnumSet(tagCompound.getIntArray("structures"), StructureType.values());

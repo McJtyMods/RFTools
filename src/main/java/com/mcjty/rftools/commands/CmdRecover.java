@@ -1,8 +1,6 @@
 package com.mcjty.rftools.commands;
 
-import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.dimension.DimensionInformation;
-import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
@@ -12,8 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class CmdRecover extends AbstractRfToolsCommand {
     @Override
