@@ -51,13 +51,11 @@ public class CmdLoadDim extends AbstractRfToolsCommand {
         }
 
         DimensionInformation information = dimensionManager.getDimensionInformation(dim);
-        NBTTagCompound backup = new NBTTagCompound();
-        information.writeToNBT(backup);
-
         String error = information.loadFromJson(filename);
         if (error != null) {
-            information.readFromNBT(backup);
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Error: "+ error));
+        } else {
+            dimensionManager.save(player.worldObj);
         }
     }
 }

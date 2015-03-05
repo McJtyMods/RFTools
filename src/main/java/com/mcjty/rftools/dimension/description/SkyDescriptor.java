@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.description;
 
+import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.world.types.CelestialBodyType;
 import com.mcjty.rftools.dimension.world.types.SkyType;
 import io.netty.buffer.ByteBuf;
@@ -240,7 +241,7 @@ public class SkyDescriptor {
                 skyType = null;
             }
 
-            int[] bodies = compound.getIntArray("celestialBodies");
+            int[] bodies = DimensionInformation.getIntArraySafe(compound, "celestialBodies");
             celestialBodies.clear();
             for (int body : bodies) {
                 celestialBodies.add(CelestialBodyType.values()[body]);
