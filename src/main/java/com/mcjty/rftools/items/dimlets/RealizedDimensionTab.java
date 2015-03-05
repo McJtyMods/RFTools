@@ -68,23 +68,27 @@ public class RealizedDimensionTab extends Item {
             Integer ticksLeft = tagCompound.getInteger("ticksLeft");
             if (ticksLeft == 0) {
                 DimensionInformation information = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld()).getDimensionInformation(id);
-                list.add(EnumChatFormatting.BLUE + "Dimension ready!");
-                int maintainCost = tagCompound.getInteger("rfMaintainCost");
-                int actualCost = information.getActualRfCost();
-                if (actualCost == maintainCost || actualCost == 0) {
-                    list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                if (information == null) {
+                    list.add(EnumChatFormatting.RED + "Dimension information Missing!");
                 } else {
-                    list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + actualCost + " RF/tick (Specified: " + maintainCost + " RF/tick)");
-                }
-                if (id != 0) {
-                    if (System.currentTimeMillis() - lastTime > 500) {
-                        lastTime = System.currentTimeMillis();
-                        PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
+                    list.add(EnumChatFormatting.BLUE + "Dimension ready!");
+                    int maintainCost = tagCompound.getInteger("rfMaintainCost");
+                    int actualCost = information.getActualRfCost();
+                    if (actualCost == maintainCost || actualCost == 0) {
+                        list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + maintainCost + " RF/tick");
+                    } else {
+                        list.add(EnumChatFormatting.YELLOW + "    Maintenance cost: " + actualCost + " RF/tick (Specified: " + maintainCost + " RF/tick)");
                     }
+                    if (id != 0) {
+                        if (System.currentTimeMillis() - lastTime > 500) {
+                            lastTime = System.currentTimeMillis();
+                            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
+                        }
 
-                    DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
-                    int power = storage.getEnergyLevel(id);
-                    list.add(EnumChatFormatting.YELLOW + "    Current power: " + power + " RF");
+                        DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
+                        int power = storage.getEnergyLevel(id);
+                        list.add(EnumChatFormatting.YELLOW + "    Current power: " + power + " RF");
+                    }
                 }
             } else {
                 int createCost = tagCompound.getInteger("rfCreateCost");
