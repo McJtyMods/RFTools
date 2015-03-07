@@ -10,11 +10,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.DimensionManager;
 
 public class CmdRecover extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
-        return "";
+        return "[<dimension>]";
     }
 
     @Override
@@ -34,7 +35,7 @@ public class CmdRecover extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        if (args.length > 1) {
+        if (args.length > 2) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));
             return;
         }
@@ -47,11 +48,21 @@ public class CmdRecover extends AbstractRfToolsCommand {
             return;
         }
 
+        int specifiedDim = -1;
+        if (args.length == 2) {
+            specifiedDim = fetchInt(sender, args, 1, -1);
+        }
+
         NBTTagCompound tagCompound = heldItem.getTagCompound();
         int dim = tagCompound.getInteger("id");
         if ((!tagCompound.hasKey("id")) || dim == 0 || dim == -1) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension id is missing from the tab!"));
-            return;
+            if (specifiedDim == -1) {
+                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension id is missing from the tab!"));
+                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "You can specify a dimension id manually"));
+                return;
+            } else {
+                dim = specifiedDim;
+            }
         }
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
@@ -59,6 +70,11 @@ public class CmdRecover extends AbstractRfToolsCommand {
 
         if (information != null) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension information is already present!"));
+            return;
+        }
+
+        if (DimensionManager.isDimensionRegistered(dim)) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This dimension is already registered!"));
             return;
         }
 
