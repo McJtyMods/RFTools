@@ -45,22 +45,30 @@ public class GenericWorldProvider extends WorldProvider {
             if (dimensionInformation == null) {
                 RFTools.log("Dimension information for dimension " + dim + " is missing!");
             } else {
-                long forcedSeed = dimensionInformation.getForcedDimensionSeed();
-                if (forcedSeed != 0) {
-                    RFTools.log("Forced seed for dimension " + dim + ": " + forcedSeed);
-                    seed = forcedSeed;
-                }
+                setSeed(dim);
                 setupProviderInfo();
             }
         }
         return dimensionInformation;
     }
 
+    private void setSeed(int dim) {
+        long forcedSeed = dimensionInformation.getForcedDimensionSeed();
+        if (forcedSeed != 0) {
+            RFTools.log("Forced seed for dimension " + dim + ": " + forcedSeed);
+            seed = forcedSeed;
+        } else {
+            long baseSeed = dimensionInformation.getBaseSeed();
+            if (baseSeed != 0) {
+                seed = calculateSeed(baseSeed, dim) ;
+            } else {
+                seed = calculateSeed(worldObj.getSeed(), dim) ;
+            }
+        }
+    }
+
     @Override
     public void registerWorldChunkManager() {
-        int dim = worldObj.provider.dimensionId;
-		seed = DimletConfiguration.randomizeSeed ? calculateSeed((long) (Math.random() * 10000 + 1), dim) : calculateSeed(worldObj.getSeed(), dim) ;
-
         getDimensionInformation();
         storage = DimensionStorage.getDimensionStorage(worldObj);
 
@@ -147,7 +155,7 @@ public class GenericWorldProvider extends WorldProvider {
     @Override
     public IChunkProvider createChunkGenerator() {
         int dim = worldObj.provider.dimensionId;
-		long seed = DimletConfiguration.randomizeSeed ? calculateSeed((long) (Math.random() * 10000 + 1), dim) : calculateSeed(worldObj.getSeed(), dim) ;
+        setSeed(dim);
         return new GenericChunkProvider(worldObj, seed);
     }
 

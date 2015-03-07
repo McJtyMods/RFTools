@@ -39,7 +39,8 @@ public class DimensionInformation {
 
     private int probeCounter = 0;
 
-    private long forcedDimensionSeed = 0;
+    private long forcedDimensionSeed = 0;               // Seed was forced using a seed dimlet.
+    private long baseSeed = 0;                          // World seed we start to generate own seed from.
 
     private int worldVersion = VERSION_OLD;             // Used for compatilibity checking between generated worlds.
     public static final int VERSION_OLD = 0;            // Old version of worlds. Seed is incorrect.
@@ -85,6 +86,12 @@ public class DimensionInformation {
         this.descriptor = descriptor;
 
         this.forcedDimensionSeed = descriptor.getForcedSeed();
+        if (DimletConfiguration.randomizeSeed) {
+            baseSeed = (long) (Math.random() * 10000 + 1);
+        } else {
+            baseSeed = world.getSeed();
+        }
+
         worldVersion = VERSION_CORRECTSEED;
 
         DimletMapping mapping = DimletMapping.getDimletMapping(world);
@@ -342,6 +349,7 @@ public class DimensionInformation {
         digitString = tagCompound.getString("digits");
 
         forcedDimensionSeed = tagCompound.getLong("forcedSeed");
+        baseSeed = tagCompound.getLong("baseSeed");
         worldVersion = tagCompound.getInteger("worldVersion");
 
         baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
@@ -447,6 +455,7 @@ public class DimensionInformation {
         tagCompound.setString("digits", digitString);
 
         tagCompound.setLong("forcedSeed", forcedDimensionSeed);
+        tagCompound.setLong("baseSeed", baseSeed);
         tagCompound.setInteger("worldVersion", worldVersion);
 
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
@@ -550,6 +559,9 @@ public class DimensionInformation {
         if (forcedDimensionSeed != 0) {
             logDebug(player, "    Forced seed: " + forcedDimensionSeed);
         }
+        if (baseSeed != 0) {
+            logDebug(player, "    Base seed: " + baseSeed);
+        }
         logDebug(player, "    World version: " + worldVersion);
         TerrainType terrainType = getTerrainType();
         logDebug(player, "    Terrain: " + terrainType.toString());
@@ -649,6 +661,7 @@ public class DimensionInformation {
 
         ByteBufTools.writeString(buf, digitString);
         buf.writeLong(forcedDimensionSeed);
+        buf.writeLong(baseSeed);
         buf.writeInt(worldVersion);
 
         buf.writeInt(Block.blockRegistry.getIDForObject(baseBlockForTerrain.getBlock()));
@@ -716,6 +729,7 @@ public class DimensionInformation {
         digitString = ByteBufTools.readString(buf);
 
         forcedDimensionSeed = buf.readLong();
+        baseSeed = buf.readLong();
         worldVersion = buf.readInt();
 
         Block block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
@@ -1421,6 +1435,10 @@ public class DimensionInformation {
 
     public long getForcedDimensionSeed() {
         return forcedDimensionSeed;
+    }
+
+    public long getBaseSeed() {
+        return baseSeed;
     }
 
     public int getWorldVersion() {
