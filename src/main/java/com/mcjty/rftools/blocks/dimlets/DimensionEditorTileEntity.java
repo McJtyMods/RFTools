@@ -101,6 +101,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             case DIMLET_TIME:
             case DIMLET_SPECIAL:
             case DIMLET_EFFECT:
+            case DIMLET_WEATHER:
                 return itemStack;
             default:
                 return null;
