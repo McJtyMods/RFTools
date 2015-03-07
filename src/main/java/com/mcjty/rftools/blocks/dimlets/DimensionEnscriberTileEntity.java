@@ -7,6 +7,7 @@ import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletMapping;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -189,9 +190,8 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
-                int dimletId = stack.getItemDamage();
-                DimletKey key = mapping.getKey(dimletId);
-                descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), dimletId));
+                DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
+                descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), mapping.getId(key)));
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
                     forcedSeed = tagCompound.getLong("forcedSeed");

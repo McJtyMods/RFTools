@@ -990,12 +990,16 @@ public class KnownDimletConfiguration {
     /**
      * Get the unique dimletkey out of a known dimlet.
      */
-    public static String getDimletKey(ItemStack dimletStack) {
+    public static DimletKey getDimletKey(ItemStack dimletStack, World world) {
         NBTTagCompound tagCompound = dimletStack.getTagCompound();
-        if (tagCompound != null && tagCompound.hasKey("dimletKey")) {
-            return tagCompound.getString("dimletKey");
+        if (tagCompound != null && tagCompound.hasKey("dkey")) {
+            DimletType type = DimletType.getTypeByOpcode(tagCompound.getString("ktype"));
+            return new DimletKey(type, tagCompound.getString("dkey"));
+        } else {
+            int damage = dimletStack.getItemDamage();
+            DimletMapping mapping = world == null ? DimletMapping.getInstance() : DimletMapping.getDimletMapping(world);
+            return mapping.getKey(damage);
         }
-        return null;
     }
 
     /**

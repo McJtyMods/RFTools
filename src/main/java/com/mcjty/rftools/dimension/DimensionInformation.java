@@ -212,7 +212,7 @@ public class DimensionInformation {
         return null;
     }
 
-    public void injectDimlet(DimletKey key, DimletMapping mapping) {
+    public void injectDimlet(DimletKey key) {
         DimletType type = key.getType();
         switch (type) {
             case DIMLET_BIOME:

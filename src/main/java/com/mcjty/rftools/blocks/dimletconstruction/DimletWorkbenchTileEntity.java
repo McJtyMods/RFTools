@@ -32,7 +32,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletWorkbenchContainer.factory, DimletWorkbenchContainer.SIZE_BUFFER + 9);
 
     private int extracting = 0;
-    private int idToExtract = -1;
+    private DimletKey idToExtract = null;
     private int inhibitCrafting = 0;
     private boolean autoExtract = false;
 
@@ -485,11 +485,10 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         ItemStack stack = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_INPUT];
         if (stack != null) {
             if (ModItems.knownDimlet.equals(stack.getItem())) {
-                int id = stack.getItemDamage();
-                DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-                if (!KnownDimletConfiguration.craftableDimlets.contains(mapping.getKey(id))) {
+                DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
+                if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
                     extracting = 64;
-                    idToExtract = id;
+                    idToExtract = key;
                     inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_INPUT, 1);
                     markDirty();
                 }
@@ -507,8 +506,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
 
         float factor = getInfusedFactor();
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-        DimletEntry entry = KnownDimletConfiguration.getEntry(mapping.getKey(idToExtract));
+        DimletEntry entry = KnownDimletConfiguration.getEntry(idToExtract);
 
         if (extractSuccess(factor)) {
             mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletBaseItem));
@@ -537,7 +535,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletControlCircuitItem, 1, rarity));
         }
 
-        idToExtract = -1;
+        idToExtract = null;
         markDirty();
 
         return true;
@@ -576,7 +574,13 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         extracting = tagCompound.getInteger("extracting");
-        idToExtract = tagCompound.getInteger("idToExtract");
+        int id = tagCompound.getInteger("idToExtract");
+        if (id == -1) {
+            idToExtract = null;
+        } else {
+            DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+            idToExtract = mapping.getKey(id);
+        }
         autoExtract = tagCompound.getBoolean("autoExtract");
     }
 
@@ -597,8 +601,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
         tagCompound.setInteger("extracting", extracting);
-        tagCompound.setInteger("idToExtract", idToExtract);
+        tagCompound.setInteger("idToExtract", idToExtract == null ? -1 : mapping.getId(idToExtract));
         tagCompound.setBoolean("autoExtract", autoExtract);
     }
 

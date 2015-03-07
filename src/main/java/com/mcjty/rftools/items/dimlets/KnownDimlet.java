@@ -83,8 +83,7 @@ public class KnownDimlet extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        DimletMapping mapping = DimletMapping.getInstance();
-        DimletKey key = mapping.getKey(itemStack.getItemDamage());
+        DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, null);
         DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry == null) {
             // Safety. Should not occur.
@@ -116,10 +115,7 @@ public class KnownDimlet extends Item {
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
-            String dimletKey = KnownDimletConfiguration.getDimletKey(itemStack);
-            if (dimletKey != null) {
-                list.add(EnumChatFormatting.AQUA + "Dimlet key: " + dimletKey);
-            }
+            list.add(EnumChatFormatting.AQUA + "Dimlet key: " + key);
         } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);

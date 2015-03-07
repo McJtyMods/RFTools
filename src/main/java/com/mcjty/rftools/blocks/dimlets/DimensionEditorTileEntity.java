@@ -43,11 +43,10 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
         ItemStack dimensionItemStack = validateDimensionItemStack();
         if (dimensionItemStack == null) return;
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(mapping.getKey(dimletItemStack.getItemDamage()));
+            DimletKey key = KnownDimletConfiguration.getDimletKey(dimletItemStack, worldObj);
+            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(key);
             ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
             ticksLeft = ticksCost;
             rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
@@ -69,10 +68,10 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                     int id = tagCompound.getInteger("id");
 
                     ItemStack dimletStack = validateDimletItemStack();
-                    int dimletId = dimletStack.getItemDamage();
+                    DimletKey key = KnownDimletConfiguration.getDimletKey(dimletStack, worldObj);
 
                     DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    information.injectDimlet(mapping.getKey(dimletId), mapping);
+                    information.injectDimlet(key);
                     dimensionManager.save(worldObj);
 
                     inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_DIMLETINPUT, 1);
@@ -93,8 +92,8 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
             return null;
         }
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-        DimletType type = mapping.getKey(itemStack.getItemDamage()).getType();
+        DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, worldObj);
+        DimletType type = key.getType();
         switch (type) {
             case DIMLET_MOBS:
             case DIMLET_SKY:

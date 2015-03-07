@@ -68,13 +68,9 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
         if (input1.getItem() != ModItems.knownDimlet || input2.getItem() != ModItems.knownDimlet || input3.getItem() != ModItems.knownDimlet) {
             return false;
         }
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-        int id1 = input1.getItemDamage();
-        int id2 = input2.getItemDamage();
-        int id3 = input3.getItemDamage();
-        DimletKey key1 =  mapping.getKey(id1);
-        DimletKey key2 =  mapping.getKey(id2);
-        DimletKey key3 =  mapping.getKey(id3);
+        DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input1, worldObj);
+        DimletKey key2 =  KnownDimletConfiguration.getDimletKey(input2, worldObj);
+        DimletKey key3 =  KnownDimletConfiguration.getDimletKey(input3, worldObj);
         int cntCraftable = (KnownDimletConfiguration.craftableDimlets.contains(key1) ? 1 : 0) +
                 (KnownDimletConfiguration.craftableDimlets.contains(key2) ? 1 : 0) +
                 (KnownDimletConfiguration.craftableDimlets.contains(key3) ? 1 : 0);
@@ -93,9 +89,9 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
 
         ItemStack[] input = inventoryHelper.getStacks();
 
-        int id1 = input[0].getItemDamage();
-        int id2 = input[1].getItemDamage();
-        int id3 = input[2].getItemDamage();
+        DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input[0], worldObj);
+        DimletKey key2 =  KnownDimletConfiguration.getDimletKey(input[1], worldObj);
+        DimletKey key3 =  KnownDimletConfiguration.getDimletKey(input[2], worldObj);
 
         input[0].splitStack(1);
         if (input[0].stackSize == 0) {
@@ -110,10 +106,9 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             input[2] = null;
         }
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-        int rarity1 = KnownDimletConfiguration.getEntry(mapping.getKey(id1)).getRarity();
-        int rarity2 = KnownDimletConfiguration.getEntry(mapping.getKey(id2)).getRarity();
-        int rarity3 = KnownDimletConfiguration.getEntry(mapping.getKey(id3)).getRarity();
+        int rarity1 = KnownDimletConfiguration.getEntry(key1).getRarity();
+        int rarity2 = KnownDimletConfiguration.getEntry(key2).getRarity();
+        int rarity3 = KnownDimletConfiguration.getEntry(key3).getRarity();
         float b = (rarity1 + rarity2 + rarity3) / 3.0f;
         bonus = (b / 50.0f) * (getInfusedFactor() / 3.0f + 1.0f);  // An average of rarity 5 will give the best bonus which is 0.1
 
