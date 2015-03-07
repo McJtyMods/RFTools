@@ -1,13 +1,8 @@
 package com.mcjty.rftools.dimension;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import com.mcjty.rftools.dimension.description.CelestialBodyDescriptor;
-import com.mcjty.rftools.dimension.description.DimensionDescriptor;
-import com.mcjty.rftools.dimension.description.MobDescriptor;
-import com.mcjty.rftools.dimension.description.SkyDescriptor;
+import com.mcjty.rftools.dimension.description.*;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.network.ByteBufTools;
@@ -28,7 +23,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class DimensionInformation {
@@ -78,6 +75,8 @@ public class DimensionInformation {
     private SkyDescriptor skyDescriptor;
     private List<CelestialBodyDescriptor> celestialBodyDescriptors;
 
+    private WeatherDescriptor weatherDescriptor;
+
     // The actual RF cost after taking into account the features we got in our world.
     private int actualRfCost;
 
@@ -122,6 +121,7 @@ public class DimensionInformation {
         calculateSpecial(dimlets, random);
         calculateTime(dimlets, random);
         calculateEffects(dimlets, random, mapping);
+        calculateWeather(dimlets, random, mapping);
 
         actualRfCost += descriptor.getRfMaintainCost();
     }
@@ -241,6 +241,9 @@ public class DimensionInformation {
             case DIMLET_EFFECT:
                 injectEffectDimlet(id);
                 break;
+            case DIMLET_WEATHER:
+                injectWeatherDimlet(id);
+                break;
         }
     }
 
@@ -272,6 +275,15 @@ public class DimensionInformation {
         addToCost(id);
         celestialAngle = DimletObjectMapping.idToCelestialAngle.get(id);
         timeSpeed = DimletObjectMapping.idToSpeed.get(id);
+    }
+
+    private void injectWeatherDimlet(int id) {
+        addToCost(id);
+        WeatherDescriptor.Builder builder = new WeatherDescriptor.Builder();
+        builder.combine(weatherDescriptor);
+        WeatherDescriptor newDescriptor = DimletObjectMapping.idToWeatherDescriptor.get(id);
+        builder.combine(newDescriptor);
+        weatherDescriptor = builder.build();
     }
 
     private void injectEffectDimlet(int id) {
@@ -381,6 +393,8 @@ public class DimensionInformation {
         skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
         calculateCelestialBodyDescriptors();
 
+        weatherDescriptor = new WeatherDescriptor.Builder().fromNBT(tagCompound).build();
+
         extraMobs.clear();
         NBTTagList list = tagCompound.getTagList("mobs", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
@@ -481,6 +495,7 @@ public class DimensionInformation {
         tagCompound.setInteger("actualCost", actualRfCost);
 
         skyDescriptor.writeToNBT(tagCompound);
+        weatherDescriptor.writeToNBT(tagCompound);
 
         NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
@@ -620,6 +635,13 @@ public class DimensionInformation {
             logDebug(player, "    Sky body: " + bodyType.name());
         }
 
+        if (weatherDescriptor.getRainStrength() > -0.5f) {
+            logDebug(player, "    Weather rain: " + weatherDescriptor.getRainStrength());
+        }
+        if (weatherDescriptor.getThunderStrength() > -0.5f) {
+            logDebug(player, "    Weather thunder " + weatherDescriptor.getThunderStrength());
+        }
+
 
         for (MobDescriptor mob : extraMobs) {
             if (mob != null) {
@@ -696,6 +718,7 @@ public class DimensionInformation {
         buf.writeInt(actualRfCost);
 
         skyDescriptor.toBytes(buf);
+        weatherDescriptor.toBytes(buf);
 
         buf.writeInt(extraMobs.size());
         for (MobDescriptor mob : extraMobs) {
@@ -780,6 +803,8 @@ public class DimensionInformation {
         skyDescriptor = new SkyDescriptor.Builder().fromBytes(buf).build();
         calculateCelestialBodyDescriptors();
 
+        weatherDescriptor = new WeatherDescriptor.Builder().fromBytes(buf).build();
+
         extraMobs.clear();
         size = buf.readInt();
         for (int i = 0 ; i < size ; i++) {
@@ -825,6 +850,24 @@ public class DimensionInformation {
             celestialAngle = DimletObjectMapping.idToCelestialAngle.get(id);
             timeSpeed = DimletObjectMapping.idToSpeed.get(id);
         }
+    }
+
+    private void calculateWeather(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+        dimlets = extractType(DimletType.DIMLET_WEATHER, dimlets);
+        WeatherDescriptor.Builder builder = new WeatherDescriptor.Builder();
+        if (dimlets.isEmpty()) {
+            while (random.nextFloat() > DimletConfiguration.randomWeatherChance) {
+                List<Integer> keys = new ArrayList<Integer>(DimletObjectMapping.idToWeatherDescriptor.keySet());
+                int id = keys.get(random.nextInt(keys.size()));
+                builder.combine(DimletObjectMapping.idToWeatherDescriptor.get(id));
+            }
+        } else {
+            for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
+                int id = dimlet.getKey().getId();
+                builder.combine(DimletObjectMapping.idToWeatherDescriptor.get(id));
+            }
+        }
+        weatherDescriptor = builder.build();
     }
 
     private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
@@ -1384,6 +1427,10 @@ public class DimensionInformation {
 
     public SkyDescriptor getSkyDescriptor() {
         return skyDescriptor;
+    }
+
+    public WeatherDescriptor getWeatherDescriptor() {
+        return weatherDescriptor;
     }
 
     public List<CelestialBodyDescriptor> getCelestialBodyDescriptors() {

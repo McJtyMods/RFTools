@@ -5,6 +5,7 @@ import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.description.WeatherDescriptor;
 import com.mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.dimension.world.types.SkyType;
@@ -262,6 +263,26 @@ public class GenericWorldProvider extends WorldProvider {
             return super.getStarBrightness(par1);
         }
         return super.getStarBrightness(par1) * dimensionInformation.getSkyDescriptor().getStarBrightnessFactor();
+    }
+
+    @Override
+    public void updateWeather() {
+        super.updateWeather();
+        if (!worldObj.isRemote) {
+            getDimensionInformation();
+            if (dimensionInformation != null) {
+                WeatherDescriptor descriptor = dimensionInformation.getWeatherDescriptor();
+                float rs = descriptor.getRainStrength();
+                if (rs > -0.5f) {
+                    worldObj.rainingStrength = rs;
+                }
+
+                float ts = descriptor.getThunderStrength();
+                if (ts > -0.5f) {
+                    worldObj.thunderingStrength = ts;
+                }
+            }
+        }
     }
 
     @Override

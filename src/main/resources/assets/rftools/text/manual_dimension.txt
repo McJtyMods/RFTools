@@ -78,7 +78,7 @@ So, when nearly out of dimlets, create a couple random worlds
 and look around for interesting structures - you may find some
 very valuable dimlets in there.
 {-------------------------------------------------------------}
-{b}There are currently 12 types of dimlets discovered:
+{b}There are currently 14 types of dimlets discovered:
     Terrain Dimlets: These are used to define what a world looks
         like. Some examples include a normal world, a flat world,
         or a skylands world.
@@ -106,14 +106,18 @@ very valuable dimlets in there.
     Structure Dimlets: These define if certain structures will appear in
         the world, such as strongholds, villages, or Mineshafts.
 {-------------------------------------------------------------}
-    Mob dimlets: using these dimlets you can specify additional mobs that
+    Mob Dimlets: using these dimlets you can specify additional mobs that
         should spawn in your world (in addition to normal mob spawning!).
     Sky Dimlets: These allow you to define the colours, sizes, or even
         existance of various objects in the sky, such as planets, moons,
         suns, sky colour, fog colour, and more.
-    Time dimlets: with these dimlets you can control the time of the day.
+    Time Dimlets: with these dimlets you can control the time of the day.
         It can be set to either a fixed time (morning, evening, midnight,
         noon) or else you can get slow or faster time.
+    Weather Dimlets: control the weather in your dimension with these
+        dimlets.
+    Effect Dimlets: various special effects. Negative effects
+        generally help reduce maintenance power.
 {-------------------------------------------------------------}
     Special dimlets: these are special dimlets that are usually
         extremely rare.

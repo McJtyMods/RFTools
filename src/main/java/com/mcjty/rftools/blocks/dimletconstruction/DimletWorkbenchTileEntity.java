@@ -197,6 +197,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             case DIMLET_TIME:
                 return attemptTimeDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
             case DIMLET_SKY:
+            case DIMLET_WEATHER:
             case DIMLET_STRUCTURE:
             case DIMLET_TERRAIN:
             case DIMLET_FEATURE:

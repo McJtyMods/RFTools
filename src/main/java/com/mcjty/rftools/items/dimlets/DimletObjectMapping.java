@@ -2,6 +2,7 @@ package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.description.SkyDescriptor;
+import com.mcjty.rftools.dimension.description.WeatherDescriptor;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
@@ -24,6 +25,7 @@ public class DimletObjectMapping {
     public static final Map<Integer,BlockMeta> idToBlock = new HashMap<Integer, BlockMeta>();
     public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
     public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
+    public static final Map<Integer,WeatherDescriptor> idToWeatherDescriptor = new HashMap<Integer, WeatherDescriptor>();
     public static final Map<Integer,MobDescriptor> idtoMob = new HashMap<Integer, MobDescriptor>();
     public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
     public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
@@ -42,6 +44,7 @@ public class DimletObjectMapping {
         idToBlock.clear();
         idToFluid.clear();
         idToSkyDescriptor.clear();
+        idToWeatherDescriptor.clear();
         idtoMob.clear();
         idToCelestialAngle.clear();
         idToSpeed.clear();

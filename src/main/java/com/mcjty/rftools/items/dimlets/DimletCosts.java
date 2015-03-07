@@ -40,6 +40,7 @@ public class DimletCosts {
         initTypeRfCreateCost(cfg, DimletType.DIMLET_EFFECT, 200);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
         initTypeRfCreateCost(cfg, DimletType.DIMLET_CONTROLLER, 100);
+        initTypeRfCreateCost(cfg, DimletType.DIMLET_WEATHER, 100);
 
         rfCreateModifierMultiplier.clear();
         initRfCreateModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 5);
@@ -71,6 +72,7 @@ public class DimletCosts {
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_EFFECT, 0);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
         initTypeRfMaintainCost(cfg, DimletType.DIMLET_CONTROLLER, 0);
+        initTypeRfMaintainCost(cfg, DimletType.DIMLET_WEATHER, 50);
 
         rfMaintainModifierMultiplier.clear();
         initRfMaintainModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 5);
@@ -102,6 +104,7 @@ public class DimletCosts {
         initTypeTickCost(cfg, DimletType.DIMLET_EFFECT, 100);
         initTypeTickCost(cfg, DimletType.DIMLET_SPECIAL, 1000);
         initTypeTickCost(cfg, DimletType.DIMLET_CONTROLLER, 1);
+        initTypeTickCost(cfg, DimletType.DIMLET_WEATHER, 10);
 
         tickCostModifierMultiplier.clear();
         initTickCostModifierMultiplier(cfg, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_TERRAIN, 2);

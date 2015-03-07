@@ -16,7 +16,8 @@ public enum DimletType {
     DIMLET_DIGIT("digitDimlet", "Digit", "d", false, null, "This dimlet has no effect on the dimension", "but can be used to get new unique dimensions", "with exactly the same dimlets."),
     DIMLET_EFFECT("effectDimlet", "Effect", "e", false, null, "Control various environmental effects", "in the dimension."),
     DIMLET_SPECIAL("specialDimlet", "Special", "X", false, null, "Special dimlets with various features."),
-    DIMLET_CONTROLLER("controllerDimlet", "Controller", "C", false, null, "A biome controller will affect how biomes", "are used in this dimension.");
+    DIMLET_CONTROLLER("controllerDimlet", "Controller", "C", false, null, "A biome controller will affect how biomes", "are used in this dimension."),
+    DIMLET_WEATHER("weatherDimlet", "Weather", "W", false, null, "A weather dimlet affects the weather", "in a dimension.");
 
     private final String textureName;
     private final String name;

@@ -10,6 +10,7 @@ import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.crafting.KnownDimletShapedRecipe;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.description.SkyDescriptor;
+import com.mcjty.rftools.dimension.description.WeatherDescriptor;
 import com.mcjty.rftools.dimension.world.types.*;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.varia.BlockMeta;
@@ -374,6 +375,16 @@ public class KnownDimletConfiguration {
         addExtraInformation(idNormalDay, "Normal brightness level for daytime sky");
         addExtraInformation(idNormalNight, "Normal brightness level for nighttime sky");
 
+        int idWeatherDefault = initWeatherItem(cfg, mainCfg, "Default", new WeatherDescriptor.Builder().build(), mapping);
+        initWeatherItem(cfg, mainCfg, "No Rain", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_NORAIN).build(), mapping);
+        initWeatherItem(cfg, mainCfg, "Light Rain", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_LIGHTRAIN).build(), mapping);
+        initWeatherItem(cfg, mainCfg, "Hard Rain", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_HARDRAIN).build(), mapping);
+        initWeatherItem(cfg, mainCfg, "No Thunder", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_NOTHUNDER).build(), mapping);
+        initWeatherItem(cfg, mainCfg, "Light Thunder", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_LIGHTTHUNDER).build(), mapping);
+        initWeatherItem(cfg, mainCfg, "Hard Thunder", new WeatherDescriptor.Builder().weatherType(WeatherType.WEATHER_HARDTHUNDER).build(), mapping);
+
+        addExtraInformation(idWeatherDefault, "Normal default weather");
+
         int idStructureNone = initStructureItem(cfg, mainCfg, "None", StructureType.STRUCTURE_NONE, mapping);
         initStructureItem(cfg, mainCfg, "Village", StructureType.STRUCTURE_VILLAGE, mapping);
         initStructureItem(cfg, mainCfg, "Stronghold", StructureType.STRUCTURE_STRONGHOLD, mapping);
@@ -480,6 +491,7 @@ public class KnownDimletConfiguration {
         initBiomeItems(cfg, mainCfg, mapping);
         initLiquidItems(cfg, mainCfg, mapping);
 
+        craftableDimlets.add(idWeatherDefault);
         craftableDimlets.add(idEffectNone);
         craftableDimlets.add(idFeatureNone);
         craftableDimlets.add(idStructureNone);
@@ -645,6 +657,7 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_SKY, "Normal Night"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.coal, 'p', Items.paper));
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_MOBS, "Default"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.rotten_flesh, 'p', ModItems.dimletTemplate));
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_TIME, "Normal"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.clock, 'p', ModItems.dimletTemplate));
+        GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_WEATHER, "Default"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.snowball, 'p', Items.paper));
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_DIGIT, "0"), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper));
     }
 
@@ -886,6 +899,15 @@ public class KnownDimletConfiguration {
             if (isbody) {
                 DimletObjectMapping.celestialBodies.add(id);
             }
+        }
+        return id;
+    }
+
+    private static int initWeatherItem(Configuration cfg, Configuration mainCfg, String name, WeatherDescriptor weatherDescriptor, DimletMapping mapping) {
+        int id = registerDimlet(cfg, mainCfg, new DimletKey(DimletType.DIMLET_WEATHER, name), mapping);
+        if (id != -1) {
+            DimletObjectMapping.idToWeatherDescriptor.put(id, weatherDescriptor);
+            idToDisplayName.put(id, DimletType.DIMLET_WEATHER.getName() + " " + name + " Dimlet");
         }
         return id;
     }

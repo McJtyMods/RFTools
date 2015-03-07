@@ -52,6 +52,7 @@ public class DimletRandomizer {
         initRarity(cfg, DimletType.DIMLET_EFFECT, RARITY_3);
         initRarity(cfg, DimletType.DIMLET_SPECIAL, RARITY_5);
         initRarity(cfg, DimletType.DIMLET_CONTROLLER, RARITY_1);
+        initRarity(cfg, DimletType.DIMLET_WEATHER, RARITY_1);
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {

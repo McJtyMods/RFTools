@@ -52,7 +52,6 @@ public class SkyDescriptor {
         for (CelestialBodyType body : celestialBodies) {
             buf.writeInt(body.ordinal());
         }
-
     }
 
     public void writeToNBT(NBTTagCompound compound) {
