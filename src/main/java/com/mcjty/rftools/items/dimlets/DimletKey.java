@@ -27,8 +27,8 @@ public class DimletKey {
 
         DimletKey dimletKey = (DimletKey) o;
 
-        if (!name.equals(dimletKey.name)) return false;
         if (type != dimletKey.type) return false;
+        if (!name.equals(dimletKey.name)) return false;
 
         return true;
     }

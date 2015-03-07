@@ -113,6 +113,7 @@ public class RealizedDimensionTab extends Item {
             dimletTypeListMap.get(descriptor.getType()).add(descriptor.getId());
         }
 
+        DimletMapping mapping = DimletMapping.getInstance();
         for (Map.Entry<DimletType, List<Integer>> entry : dimletTypeListMap.entrySet()) {
             DimletType type = entry.getKey();
             List<Integer> ids = entry.getValue();
@@ -120,7 +121,7 @@ public class RealizedDimensionTab extends Item {
                 if (type == DimletType.DIMLET_DIGIT) {
                     String digitString = "";
                     for (int id : ids) {
-                        digitString += DimletObjectMapping.idToDigit.get(id);
+                        digitString += DimletObjectMapping.idToDigit.get(mapping.getKey(id));
                     }
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {

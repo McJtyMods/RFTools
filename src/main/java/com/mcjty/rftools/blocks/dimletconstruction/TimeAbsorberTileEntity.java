@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -66,7 +67,7 @@ public class TimeAbsorberTileEntity extends GenericTileEntity {
     private void registerTime() {
         if (worldObj.canBlockSeeTheSky(xCoord, yCoord, zCoord)) {
             float a = worldObj.getCelestialAngle(1.0f);
-            int bestDimlet = findBestTimeDimlet(a);
+            DimletKey bestDimlet = findBestTimeDimlet(a);
             float besta = DimletObjectMapping.idToCelestialAngle.get(bestDimlet);
 
             if (angle < -0.001f) {
@@ -82,10 +83,10 @@ public class TimeAbsorberTileEntity extends GenericTileEntity {
         }
     }
 
-    public static int findBestTimeDimlet(float a) {
+    public static DimletKey findBestTimeDimlet(float a) {
         float bestDiff = 10000.0f;
-        int bestDimlet = -1;
-        for (Map.Entry<Integer, Float> entry : DimletObjectMapping.idToCelestialAngle.entrySet()) {
+        DimletKey bestDimlet = null;
+        for (Map.Entry<DimletKey, Float> entry : DimletObjectMapping.idToCelestialAngle.entrySet()) {
             Float celangle = entry.getValue();
             if (celangle != null) {
                 float diff = Math.abs(a - celangle);

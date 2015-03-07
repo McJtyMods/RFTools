@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import com.mcjty.varia.BlockMeta;
 import com.mcjty.varia.Coordinate;
@@ -132,7 +133,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
 
     private boolean isValidDimletBlock(Block block) {
         boolean ok = false;
-        for (Map.Entry<Integer, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
+        for (Map.Entry<DimletKey, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
             if (entry.getValue() != null && entry.getValue().getBlock() == block) {
                 ok = true;
                 break;

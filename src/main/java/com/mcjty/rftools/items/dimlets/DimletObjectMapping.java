@@ -14,23 +14,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class DimletObjectMapping {
-    public static final Map<Integer,TerrainType> idToTerrainType = new HashMap<Integer, TerrainType>();
-    public static final Map<Integer,SpecialType> idToSpecialType = new HashMap<Integer, SpecialType>();
-    public static final Map<Integer,FeatureType> idToFeatureType = new HashMap<Integer, FeatureType>();
-    public static final Map<Integer,ControllerType> idToControllerType = new HashMap<Integer, ControllerType>();
-    public static final Map<Integer,EffectType> idToEffectType = new HashMap<Integer, EffectType>();
-    public static final Map<Integer,StructureType> idToStructureType = new HashMap<Integer, StructureType>();
-    public static final Map<Integer,BiomeGenBase> idToBiome = new HashMap<Integer, BiomeGenBase>();
-    public static final Map<Integer,String> idToDigit = new HashMap<Integer, String>();
-    public static final Map<Integer,BlockMeta> idToBlock = new HashMap<Integer, BlockMeta>();
-    public static final Map<Integer,Block> idToFluid = new HashMap<Integer, Block>();
-    public static final Map<Integer,SkyDescriptor> idToSkyDescriptor = new HashMap<Integer, SkyDescriptor>();
-    public static final Map<Integer,WeatherDescriptor> idToWeatherDescriptor = new HashMap<Integer, WeatherDescriptor>();
-    public static final Map<Integer,MobDescriptor> idtoMob = new HashMap<Integer, MobDescriptor>();
-    public static final Map<Integer,Float> idToCelestialAngle = new HashMap<Integer, Float>();
-    public static final Map<Integer,Float> idToSpeed = new HashMap<Integer, Float>();
+    public static final Map<DimletKey,TerrainType> idToTerrainType = new HashMap<DimletKey, TerrainType>();
+    public static final Map<DimletKey,SpecialType> idToSpecialType = new HashMap<DimletKey, SpecialType>();
+    public static final Map<DimletKey,FeatureType> idToFeatureType = new HashMap<DimletKey, FeatureType>();
+    public static final Map<DimletKey,ControllerType> idToControllerType = new HashMap<DimletKey, ControllerType>();
+    public static final Map<DimletKey,EffectType> idToEffectType = new HashMap<DimletKey, EffectType>();
+    public static final Map<DimletKey,StructureType> idToStructureType = new HashMap<DimletKey, StructureType>();
+    public static final Map<DimletKey,BiomeGenBase> idToBiome = new HashMap<DimletKey, BiomeGenBase>();
+    public static final Map<DimletKey,String> idToDigit = new HashMap<DimletKey, String>();
+    public static final Map<DimletKey,BlockMeta> idToBlock = new HashMap<DimletKey, BlockMeta>();
+    public static final Map<DimletKey,Block> idToFluid = new HashMap<DimletKey, Block>();
+    public static final Map<DimletKey,SkyDescriptor> idToSkyDescriptor = new HashMap<DimletKey, SkyDescriptor>();
+    public static final Map<DimletKey,WeatherDescriptor> idToWeatherDescriptor = new HashMap<DimletKey, WeatherDescriptor>();
+    public static final Map<DimletKey,MobDescriptor> idtoMob = new HashMap<DimletKey, MobDescriptor>();
+    public static final Map<DimletKey,Float> idToCelestialAngle = new HashMap<DimletKey, Float>();
+    public static final Map<DimletKey,Float> idToSpeed = new HashMap<DimletKey, Float>();
 
-    public static final Set<Integer> celestialBodies = new HashSet<Integer>();
+    public static final Set<DimletKey> celestialBodies = new HashSet<DimletKey>();
 
     public static void clean() {
         idToTerrainType.clear();

@@ -42,7 +42,9 @@ public class KnownDimlet extends Item {
             return stack;
         }
 
-        DimletEntry entry = KnownDimletConfiguration.getEntry(stack.getItemDamage());
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
+        DimletKey key = mapping.getKey(stack.getItemDamage());
+        DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry != null) {
             if (isSeedDimlet(entry)) {
                 NBTTagCompound tagCompound = stack.getTagCompound();
@@ -81,8 +83,9 @@ public class KnownDimlet extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        DimletMapping mapping = DimletMapping.getDimletMapping(player.worldObj);
-        DimletEntry entry = KnownDimletConfiguration.getEntry(itemStack.getItemDamage());
+        DimletMapping mapping = DimletMapping.getInstance();
+        DimletKey key = mapping.getKey(itemStack.getItemDamage());
+        DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry == null) {
             // Safety. Should not occur.
             list.add(EnumChatFormatting.RED + "Something is wrong!");
@@ -90,7 +93,7 @@ public class KnownDimlet extends Item {
             return;
         }
 
-        list.add(EnumChatFormatting.BLUE + "Rarity: " + entry.getRarity() + (KnownDimletConfiguration.craftableDimlets.contains(itemStack.getItemDamage()) ? " (craftable)" : ""));
+        list.add(EnumChatFormatting.BLUE + "Rarity: " + entry.getRarity() + (KnownDimletConfiguration.craftableDimlets.contains(key) ? " (craftable)" : ""));
         list.add(EnumChatFormatting.YELLOW + "Create cost: " + entry.getRfCreateCost() + " RF/tick");
         int maintainCost = entry.getRfMaintainCost();
         if (maintainCost < 0) {
@@ -121,7 +124,7 @@ public class KnownDimlet extends Item {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
             }
-            List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(mapping.getId(entry.getKey()));
+            List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(entry.getKey());
             if (extra != null) {
                 for (String info : extra) {
                     list.add(EnumChatFormatting.YELLOW + info);
@@ -149,7 +152,9 @@ public class KnownDimlet extends Item {
 
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
-        String name = KnownDimletConfiguration.idToDisplayName.get(itemStack.getItemDamage());
+        DimletMapping mapping = DimletMapping.getInstance();
+        int id = itemStack.getItemDamage();
+        String name = KnownDimletConfiguration.idToDisplayName.get(mapping.getKey(id));
         if (name == null) {
             return "<unknown dimlet>";
         }

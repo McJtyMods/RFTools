@@ -10,6 +10,7 @@ import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.client.Minecraft;
@@ -82,7 +83,8 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
             ItemStack itemStack = slot.getStack();
             if (ModItems.knownDimlet.equals(itemStack.getItem())) {
                 int id = itemStack.getItemDamage();
-                if (!KnownDimletConfiguration.craftableDimlets.contains(id)) {
+                DimletMapping mapping = DimletMapping.getDimletMapping(Minecraft.getMinecraft().theWorld);
+                if (!KnownDimletConfiguration.craftableDimlets.contains(mapping.getKey(id))) {
                     Achievements.trigger(Minecraft.getMinecraft().thePlayer, Achievements.smallBits);
                     sendServerCommand(DimletWorkbenchTileEntity.CMD_STARTEXTRACT);
                 }
@@ -97,7 +99,8 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
             ItemStack itemStack = slot.getStack();
             if (ModItems.knownDimlet.equals(itemStack.getItem())) {
                 int id = itemStack.getItemDamage();
-                if (!KnownDimletConfiguration.craftableDimlets.contains(id)) {
+                DimletMapping mapping = DimletMapping.getDimletMapping(Minecraft.getMinecraft().theWorld);
+                if (!KnownDimletConfiguration.craftableDimlets.contains(mapping.getKey(id))) {
                     enabled = true;
                 }
             }

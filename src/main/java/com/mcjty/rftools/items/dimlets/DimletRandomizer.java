@@ -24,17 +24,17 @@ public class DimletRandomizer {
 
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
     // Used for randomly generating dimlets.
-    public static final List<Integer> dimletIds = new ArrayList<Integer>();
+    public static final List<DimletKey> dimletIds = new ArrayList<DimletKey>();
     static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
 
     // All dimlet ids in a weighted random selector based on rarity.
-    public static WeightedRandomSelector<Integer,Integer> randomDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomMaterialDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomLiquidDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomMobDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomStructureDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomEffectDimlets;
-    public static WeightedRandomSelector<Integer,Integer> randomFeatureDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomMaterialDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomLiquidDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomMobDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomStructureDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomEffectDimlets;
+    public static WeightedRandomSelector<Integer,DimletKey> randomFeatureDimlets;
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
@@ -78,103 +78,104 @@ public class DimletRandomizer {
         float rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 20.0f).getDouble();
         float rarity6 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level6", 1.0f).getDouble();
 
-        randomDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomMaterialDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomMaterialDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomMaterialDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomLiquidDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomLiquidDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomLiquidDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomMobDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomMobDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomMobDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomStructureDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomStructureDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomStructureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomEffectDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomEffectDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomEffectDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
-        randomFeatureDimlets = new WeightedRandomSelector<Integer, Integer>();
+        randomFeatureDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomFeatureDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
 
-        for (Map.Entry<Integer, DimletEntry> entry : KnownDimletConfiguration.idToDimletEntry.entrySet()) {
+        for (Map.Entry<DimletKey, DimletEntry> entry : KnownDimletConfiguration.idToDimletEntry.entrySet()) {
             randomDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
-            if (entry.getValue().getKey().getType() == DimletType.DIMLET_MATERIAL) {
+            DimletKey key = entry.getValue().getKey();
+            if (key.getType() == DimletType.DIMLET_MATERIAL) {
                 // Don't add the 'null' material.
-                if (DimletObjectMapping.idToBlock.get(entry.getKey()) != null) {
+                if (DimletObjectMapping.idToBlock.get(key) != null) {
                     randomMaterialDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_LIQUID) {
+            } else if (key.getType() == DimletType.DIMLET_LIQUID) {
                 // Don't add the 'null' fluid.
-                if (DimletObjectMapping.idToFluid.get(entry.getKey()) != null) {
+                if (DimletObjectMapping.idToFluid.get(key) != null) {
                     randomLiquidDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_MOBS) {
+            } else if (key.getType() == DimletType.DIMLET_MOBS) {
                 // Don't add the 'null' mob.
-                MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(entry.getKey());
+                MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(key);
                 if (descriptor != null && descriptor.getEntityClass() != null) {
                     randomMobDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_EFFECT) {
+            } else if (key.getType() == DimletType.DIMLET_EFFECT) {
                 // Don't add the 'null' effect.
-                if (DimletObjectMapping.idToEffectType.get(entry.getKey()) != EffectType.EFFECT_NONE) {
+                if (DimletObjectMapping.idToEffectType.get(key) != EffectType.EFFECT_NONE) {
                     randomEffectDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_FEATURE) {
+            } else if (key.getType() == DimletType.DIMLET_FEATURE) {
                 // Don't add the 'null' feature.
-                if (DimletObjectMapping.idToFeatureType.get(entry.getKey()) != FeatureType.FEATURE_NONE) {
+                if (DimletObjectMapping.idToFeatureType.get(key) != FeatureType.FEATURE_NONE) {
                     randomFeatureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
-            } else if (entry.getValue().getKey().getType() == DimletType.DIMLET_STRUCTURE) {
+            } else if (key.getType() == DimletType.DIMLET_STRUCTURE) {
                 // Don't add the 'null' structure.
-                if (DimletObjectMapping.idToStructureType.get(entry.getKey()) != StructureType.STRUCTURE_NONE) {
+                if (DimletObjectMapping.idToStructureType.get(key) != StructureType.STRUCTURE_NONE) {
                     randomStructureDimlets.addItem(entry.getValue().getRarity(), entry.getKey());
                 }
             }
         }
     }
 
-    public static int getRandomMob(Random random, boolean allowRandom) {
-        Integer id = randomMobDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
-            id = randomMobDimlets.select(random);
+    public static DimletKey getRandomMob(Random random, boolean allowRandom) {
+        DimletKey key = randomMobDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomMobDimlets.select(random);
         }
-        return id;
+        return key;
     }
 
-    public static int getRandomEffect(Random random, boolean allowRandom) {
-        Integer id = randomEffectDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
-            id = randomEffectDimlets.select(random);
+    public static DimletKey getRandomEffect(Random random, boolean allowRandom) {
+        DimletKey key = randomEffectDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomEffectDimlets.select(random);
         }
-        return id;
+        return key;
     }
 
-    public static int getRandomFeature(Random random, boolean allowRandom) {
-        Integer id = randomFeatureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
-            id = randomFeatureDimlets.select(random);
+    public static DimletKey getRandomFeature(Random random, boolean allowRandom) {
+        DimletKey key = randomFeatureDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomFeatureDimlets.select(random);
         }
-        return id;
+        return key;
     }
 
-    public static int getRandomStructure(Random random, boolean allowRandom) {
-        Integer id = randomStructureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
-            id = randomStructureDimlets.select(random);
+    public static DimletKey getRandomStructure(Random random, boolean allowRandom) {
+        DimletKey key = randomStructureDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomStructureDimlets.select(random);
         }
-        return id;
+        return key;
     }
 
-    public static int getRandomFluidBlock(Random random) {
+    public static DimletKey getRandomFluidBlock(Random random) {
         return randomLiquidDimlets.select(random);
     }
 
-    public static int getRandomMaterialBlock(Random random, boolean allowRandom) {
-        Integer id = randomMaterialDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(id).isRandomNotAllowed()) {
-            id = randomMaterialDimlets.select(random);
+    public static DimletKey getRandomMaterialBlock(Random random, boolean allowRandom) {
+        DimletKey key = randomMaterialDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomMaterialDimlets.select(random);
         }
-        return id;
+        return key;
     }
 
-    private static void setupRarity(WeightedRandomSelector<Integer,Integer> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5, float rarity6) {
+    private static void setupRarity(WeightedRandomSelector<Integer,DimletKey> randomDimlets, float rarity0, float rarity1, float rarity2, float rarity3, float rarity4, float rarity5, float rarity6) {
         randomDimlets.addRarity(RARITY_0, rarity0);
         randomDimlets.addRarity(RARITY_1, rarity1);
         randomDimlets.addRarity(RARITY_2, rarity2);
@@ -185,78 +186,81 @@ public class DimletRandomizer {
     }
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
-    public static int getRandomDimlet(float bonus, Random random) {
+    public static DimletKey getRandomDimlet(float bonus, Random random) {
         return randomDimlets.select(randomDimlets.createDistribution(bonus), random);
     }
 
     // Get a random dimlet with no bonus.
-    public static int getRandomDimlet(Random random) {
+    public static DimletKey getRandomDimlet(Random random) {
         return randomDimlets.select(random);
     }
 
     // Get a random dimlet with the given distribution.
-    public static int getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution, Random random) {
+    public static DimletKey getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution, Random random) {
         return randomDimlets.select(distribution, random);
     }
 
     public static void dumpRarityDistribution(float bonus, World world) {
         Random random = new Random();
-        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
+        Map<DimletKey,Integer> counter = new HashMap<DimletKey, Integer>();
         WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
 
-        for (Integer id : dimletIds) {
-            counter.put(id, 0);
+        DimletMapping mapping = DimletMapping.getInstance();
+        for (DimletKey key : dimletIds) {
+            counter.put(key, 0);
         }
 
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = randomDimlets.select(distribution, random);
+            DimletKey id = randomDimlets.select(distribution, random);
             counter.put(id, counter.get(id)+1);
         }
 
         RFTools.log("#### Dumping with bonus=" + bonus);
-        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
-        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
+        List<Pair<Integer,DimletKey>> sortedCounters = new ArrayList<Pair<Integer, DimletKey>>();
+        for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
         }
         Collections.sort(sortedCounters);
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(world);
-        for (Pair<Integer, Integer> entry : sortedCounters) {
+        for (Pair<Integer, DimletKey> entry : sortedCounters) {
             int count = entry.getKey();
-            int id = entry.getValue();
+            DimletKey key = entry.getValue();
+            int id = mapping.getId(key);
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + mapping.getKey(id).getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + key.getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(key)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 
     public static void dumpMaterialRarityDistribution(World world) {
         Random random = new Random();
-        Map<Integer,Integer> counter = new HashMap<Integer, Integer>();
+        Map<DimletKey,Integer> counter = new HashMap<DimletKey, Integer>();
 
-        for (Integer id : DimletObjectMapping.idToBlock.keySet()) {
+        for (DimletKey id : DimletObjectMapping.idToBlock.keySet()) {
             counter.put(id, 0);
         }
 
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
+
         final int total = 10000000;
         for (int i = 0 ; i < total ; i++) {
-            int id = randomMaterialDimlets.select(random);
-            counter.put(id, counter.get(id)+1);
+            DimletKey key = randomMaterialDimlets.select(random);
+            counter.put(key, counter.get(key)+1);
         }
 
         RFTools.log("#### Dumping material distribution");
-        List<Pair<Integer,Integer>> sortedCounters = new ArrayList<Pair<Integer, Integer>>();
-        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
+        List<Pair<Integer,DimletKey>> sortedCounters = new ArrayList<Pair<Integer,DimletKey>>();
+        for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
         }
         Collections.sort(sortedCounters);
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(world);
-        for (Pair<Integer, Integer> entry : sortedCounters) {
+        for (Pair<Integer, DimletKey> entry : sortedCounters) {
             int count = entry.getKey();
-            int id = entry.getValue();
+            DimletKey key = entry.getValue();
+            int id = mapping.getId(key);
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + mapping.getKey(id).getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(id)+"\",    count:"+ count + ", "+percentage+"%");
+            RFTools.log("Id:"+id + ",    key:\"" + key.getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(key)+"\",    count:"+ count + ", "+percentage+"%");
         }
     }
 }

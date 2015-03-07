@@ -2,6 +2,8 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 
 import com.mcjty.container.GenericBlock;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.items.dimlets.DimletKey;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,8 +45,8 @@ public class TimeAbsorberBlock extends GenericBlock {
             TimeAbsorberTileEntity timeAbsorberTileEntity = (TimeAbsorberTileEntity) te;
             float angle = timeAbsorberTileEntity.getAngle();
             if (angle >= -0.01f) {
-                int id = TimeAbsorberTileEntity.findBestTimeDimlet(angle);
-                String name = KnownDimletConfiguration.idToDisplayName.get(id);
+                DimletKey key = TimeAbsorberTileEntity.findBestTimeDimlet(angle);
+                String name = KnownDimletConfiguration.idToDisplayName.get(key);
                 if (name == null) {
                     name = "<unknown>";
                 }
@@ -66,8 +68,8 @@ public class TimeAbsorberBlock extends GenericBlock {
         if (tagCompound != null) {
             if (tagCompound.hasKey("angle") && tagCompound.getFloat("angle") > -0.001f) {
                 float angle = tagCompound.getFloat("angle");
-                int id = TimeAbsorberTileEntity.findBestTimeDimlet(angle);
-                String name = KnownDimletConfiguration.idToDisplayName.get(id);
+                DimletKey key = TimeAbsorberTileEntity.findBestTimeDimlet(angle);
+                String name = KnownDimletConfiguration.idToDisplayName.get(key);
                 if (name == null) {
                     name = "<unknown>";
                 }

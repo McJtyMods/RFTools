@@ -7,6 +7,8 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletKey;
+import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.varia.BlockMeta;
 import com.mcjty.varia.Coordinate;
@@ -152,6 +154,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
     }
 
     private void generateDungeon(World world, Random random, int midx, int starty, int midz) {
+        DimletMapping mapping = DimletMapping.getDimletMapping(world);
         boolean do_small_antenna = random.nextInt(4) == 0;
         boolean do_extra_feature = random.nextInt(4) == 0;
 
@@ -273,16 +276,20 @@ public class GenericWorldGenerator implements IWorldGenerator {
         }
         WeightedRandomSelector.Distribution<Integer> goodDistribution = DimletRandomizer.randomDimlets.createDistribution(0.01f);
         for (int i = 0 ; i < random.nextInt(2)+1 ; i++) {
-            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(ModItems.knownDimlet, 1, DimletRandomizer.getRandomDimlet(goodDistribution, random)));
+            DimletKey randomDimlet = DimletRandomizer.getRandomDimlet(goodDistribution, random);
+            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(ModItems.knownDimlet, 1, mapping.getId(randomDimlet)));
         }
 
         WeightedRandomSelector.Distribution<Integer> bestDistribution = DimletRandomizer.randomDimlets.createDistribution(0.15f);
         EntityItemFrame frame1 = spawnItemFrame(world, midx - 1, starty + 2, midz + 2);
-        frame1.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, DimletRandomizer.getRandomDimlet(bestDistribution, random)));
+        DimletKey rd1 = DimletRandomizer.getRandomDimlet(bestDistribution, random);
+        frame1.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, mapping.getId(rd1)));
         EntityItemFrame frame2 = spawnItemFrame(world, midx, starty + 2, midz + 2);
-        frame2.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, DimletRandomizer.getRandomDimlet(bestDistribution, random)));
+        DimletKey rd2 = DimletRandomizer.getRandomDimlet(bestDistribution, random);
+        frame2.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, mapping.getId(rd2)));
         EntityItemFrame frame3 = spawnItemFrame(world, midx + 1, starty + 2, midz + 2);
-        frame3.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, DimletRandomizer.getRandomDimlet(bestDistribution, random)));
+        DimletKey rd3 = DimletRandomizer.getRandomDimlet(bestDistribution, random);
+        frame3.setDisplayedItem(new ItemStack(ModItems.knownDimlet, 1, mapping.getId(rd3)));
     }
 
     private EntityItemFrame spawnItemFrame(World world, int x, int y, int z) {

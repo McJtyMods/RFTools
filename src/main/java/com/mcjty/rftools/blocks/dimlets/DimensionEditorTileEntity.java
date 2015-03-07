@@ -47,7 +47,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(dimletItemStack.getItemDamage());
+            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(mapping.getKey(dimletItemStack.getItemDamage()));
             ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
             ticksLeft = ticksCost;
             rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
@@ -72,7 +72,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                     int dimletId = dimletStack.getItemDamage();
 
                     DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    information.injectDimlet(dimletId, mapping);
+                    information.injectDimlet(mapping.getKey(dimletId), mapping);
                     dimensionManager.save(worldObj);
 
                     inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_DIMLETINPUT, 1);
