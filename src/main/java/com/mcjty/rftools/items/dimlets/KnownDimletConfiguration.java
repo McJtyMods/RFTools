@@ -616,15 +616,13 @@ public class KnownDimletConfiguration {
         }
     }
 
-    private static void initDigitCrafting(String from, String to, DimletMapping mapping) {
-        int idFrom = mapping.getId(DimletType.DIMLET_DIGIT, from);
-        int idTo = mapping.getId(DimletType.DIMLET_DIGIT, to);
-        GameRegistry.addRecipe(new ItemStack(ModItems.knownDimlet, 1, idTo), "   ", " 9 ", "   ", '9', new ItemStack(ModItems.knownDimlet, 1, idFrom));
+    private static void initDigitCrafting(String from, String to, World world) {
+        DimletKey keyFrom = new DimletKey(DimletType.DIMLET_DIGIT, from);
+        DimletKey keyTo = new DimletKey(DimletType.DIMLET_DIGIT, to);
+        GameRegistry.addRecipe(makeKnownDimlet(keyTo, world), "   ", " 9 ", "   ", '9', makeKnownDimlet(keyFrom, world));
     }
 
     public static void initCrafting(World world) {
-        DimletMapping mapping = DimletMapping.getDimletMapping(world);
-
         List recipeList = CraftingManager.getInstance().getRecipeList();
         int i = 0;
         while (i < recipeList.size()) {
@@ -641,16 +639,16 @@ public class KnownDimletConfiguration {
             i++;
         }
 
-        initDigitCrafting("0", "1", mapping);
-        initDigitCrafting("1", "2", mapping);
-        initDigitCrafting("2", "3", mapping);
-        initDigitCrafting("3", "4", mapping);
-        initDigitCrafting("4", "5", mapping);
-        initDigitCrafting("5", "6", mapping);
-        initDigitCrafting("6", "7", mapping);
-        initDigitCrafting("7", "8", mapping);
-        initDigitCrafting("8", "9", mapping);
-        initDigitCrafting("9", "0", mapping);
+        initDigitCrafting("0", "1", world);
+        initDigitCrafting("1", "2", world);
+        initDigitCrafting("2", "3", world);
+        initDigitCrafting("3", "4", world);
+        initDigitCrafting("4", "5", world);
+        initDigitCrafting("5", "6", world);
+        initDigitCrafting("6", "7", world);
+        initDigitCrafting("7", "8", world);
+        initDigitCrafting("8", "9", world);
+        initDigitCrafting("9", "0", world);
 
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_EFFECT, "None"), " r ", "rwr", "ppp", 'r', Items.redstone, 'w', Items.apple, 'p', Items.paper));
@@ -988,6 +986,14 @@ public class KnownDimletConfiguration {
     }
 
     /**
+     * Return true if this dimlet is represented in the new way (NBT data).
+     */
+    public static boolean isNewKnownDimlet(ItemStack dimletStack) {
+        NBTTagCompound tagCompound = dimletStack.getTagCompound();
+        return tagCompound != null && tagCompound.hasKey("dkey");
+    }
+
+    /**
      * Get the unique dimletkey out of a known dimlet.
      */
     public static DimletKey getDimletKey(ItemStack dimletStack, World world) {
@@ -1013,7 +1019,12 @@ public class KnownDimletConfiguration {
             mapping = DimletMapping.getDimletMapping(world);
         }
         int id = mapping.getId(key);
-        return new ItemStack(ModItems.knownDimlet, 1, id);
+        ItemStack itemStack = new ItemStack(ModItems.knownDimlet, 1, id);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setString("ktype", key.getType().getOpcode());
+        tagCompound.setString("dkey", key.getName());
+        itemStack.setTagCompound(tagCompound);
+        return itemStack;
     }
 
     /**

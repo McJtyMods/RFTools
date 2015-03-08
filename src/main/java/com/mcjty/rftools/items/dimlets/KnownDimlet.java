@@ -83,12 +83,12 @@ public class KnownDimlet extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, null);
+        DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, player.getEntityWorld());
         DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry == null) {
             // Safety. Should not occur.
             list.add(EnumChatFormatting.RED + "Something is wrong!");
-            list.add(EnumChatFormatting.RED + "Dimlet with id " + itemStack.getItemDamage() + " is missing!");
+            list.add(EnumChatFormatting.RED + "Dimlet with key " + key + " (id " + itemStack.getItemDamage() + ") is missing!");
             return;
         }
 
@@ -116,6 +116,11 @@ public class KnownDimlet extends Item {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
             list.add(EnumChatFormatting.AQUA + "Dimlet key: " + key);
+            if (KnownDimletConfiguration.isNewKnownDimlet(itemStack)) {
+                list.add(EnumChatFormatting.AQUA + "This dimlet uses a new key");
+            } else {
+                list.add(EnumChatFormatting.AQUA + "This dimlet uses an old key");
+            }
         } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             for (String info : entry.getKey().getType().getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
@@ -166,8 +171,9 @@ public class KnownDimlet extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            for (Integer key : mapping.getKeys()) {
-                list.add(new ItemStack(ModItems.knownDimlet, 1, key));
+            for (Integer id : mapping.getKeys()) {
+//                list.add(new ItemStack(ModItems.knownDimlet, 1, key));
+                list.add(KnownDimletConfiguration.makeKnownDimlet(mapping.getKey(id), null));
             }
         }
     }

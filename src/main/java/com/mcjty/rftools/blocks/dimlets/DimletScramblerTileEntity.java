@@ -4,7 +4,6 @@ import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletKey;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
@@ -45,9 +44,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             scrambling--;
             if (scrambling == 0) {
                 DimletKey key = DimletRandomizer.getRandomDimlet(bonus, worldObj.rand);
-                DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-                int id = mapping.getId(key);
-                InventoryHelper.mergeItemStack(this, new ItemStack(ModItems.knownDimlet, 1, id), 3, 4, new ArrayList<InventoryHelper.SlotModifier>());
+                InventoryHelper.mergeItemStack(this, KnownDimletConfiguration.makeKnownDimlet(key, worldObj), 3, 4, new ArrayList<InventoryHelper.SlotModifier>());
             }
             markDirty();
         } else {
