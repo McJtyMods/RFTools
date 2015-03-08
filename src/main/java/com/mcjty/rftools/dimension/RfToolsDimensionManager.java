@@ -120,7 +120,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             RFTools.log("Send validation data to the client");
             DimletMapping mapping = DimletMapping.getDimletMapping(player.getEntityWorld());
             Map<Integer, DimletKey> dimlets = new HashMap<Integer, DimletKey>();
-            for (Integer id : mapping.getKeys()) {
+            for (Integer id : mapping.getIds()) {
                 dimlets.put(id, mapping.getKey(id));
             }
 

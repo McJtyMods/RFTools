@@ -119,8 +119,12 @@ public class DimletMapping extends WorldSavedData {
         return idToDimlet.entrySet();
     }
 
-    public Set<Integer> getKeys() {
+    public Set<Integer> getIds() {
         return idToDimlet.keySet();
+    }
+
+    public Set<DimletKey> getKeys() {
+        return dimletToID.keySet();
     }
 
     public void overrideServerMapping(Map<Integer, DimletKey> dimlets) {

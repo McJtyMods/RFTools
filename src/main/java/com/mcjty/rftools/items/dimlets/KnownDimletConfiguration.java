@@ -698,7 +698,7 @@ public class KnownDimletConfiguration {
             }
         }
 
-        for (Integer id : mapping.getKeys()) {
+        for (Integer id : mapping.getIds()) {
             if (id > lastId) {
                 lastId = id;
             }

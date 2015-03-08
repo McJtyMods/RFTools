@@ -569,12 +569,19 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         extracting = tagCompound.getInteger("extracting");
-        int id = tagCompound.getInteger("idToExtract");
-        if (id == -1) {
-            idToExtract = null;
+        idToExtract = null;
+        if (tagCompound.hasKey("extDkey")) {
+            DimletType type = DimletType.getTypeByOpcode(tagCompound.getString("extKtype"));
+            idToExtract = new DimletKey(type, tagCompound.getString("extDkey"));
         } else {
-            DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
-            idToExtract = mapping.getKey(id);
+            if (tagCompound.hasKey("idToExtract")) {
+                // Compatibility with old system.
+                int id = tagCompound.getInteger("idToExtract");
+                if (id != -1) {
+                    DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
+                    idToExtract = mapping.getKey(id);
+                }
+            }
         }
         autoExtract = tagCompound.getBoolean("autoExtract");
     }
@@ -596,9 +603,11 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
         tagCompound.setInteger("extracting", extracting);
-        tagCompound.setInteger("idToExtract", idToExtract == null ? -1 : mapping.getId(idToExtract));
+        if (idToExtract != null) {
+            tagCompound.setString("extKtype", idToExtract.getType().getOpcode());
+            tagCompound.setString("extDkey", idToExtract.getName());
+        }
         tagCompound.setBoolean("autoExtract", autoExtract);
     }
 

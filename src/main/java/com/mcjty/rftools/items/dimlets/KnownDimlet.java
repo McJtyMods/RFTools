@@ -1,7 +1,6 @@
 package com.mcjty.rftools.items.dimlets;
 
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.items.ModItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -42,8 +41,7 @@ public class KnownDimlet extends Item {
             return stack;
         }
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(world);
-        DimletKey key = mapping.getKey(stack.getItemDamage());
+        DimletKey key = KnownDimletConfiguration.getDimletKey(stack, world);
         DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry != null) {
             if (isSeedDimlet(entry)) {
@@ -153,9 +151,8 @@ public class KnownDimlet extends Item {
 
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
-        DimletMapping mapping = DimletMapping.getInstance();
-        int id = itemStack.getItemDamage();
-        String name = KnownDimletConfiguration.idToDisplayName.get(mapping.getKey(id));
+        DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, null);
+        String name = KnownDimletConfiguration.idToDisplayName.get(key);
         if (name == null) {
             return "<unknown dimlet>";
         }
@@ -171,9 +168,8 @@ public class KnownDimlet extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            for (Integer id : mapping.getKeys()) {
-//                list.add(new ItemStack(ModItems.knownDimlet, 1, key));
-                list.add(KnownDimletConfiguration.makeKnownDimlet(mapping.getKey(id), null));
+            for (DimletKey key : mapping.getKeys()) {
+                list.add(KnownDimletConfiguration.makeKnownDimlet(key, null));
             }
         }
     }
