@@ -93,35 +93,34 @@ public class DimensionInformation {
 
         worldVersion = VERSION_CORRECTSEED;
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(world);
-        setupFromDescriptor(world.getSeed(), mapping);
+        setupFromDescriptor(world.getSeed());
         setupBiomeMapping();
 
         dump(null);
     }
 
-    private void setupFromDescriptor(long seed, DimletMapping mapping) {
+    private void setupFromDescriptor(long seed) {
         List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets = descriptor.getDimletsWithModifiers();
 
         Random random = new Random(descriptor.calculateSeed(seed));
 
         actualRfCost = 0;
 
-        calculateTerrainType(dimlets, random, mapping);
+        calculateTerrainType(dimlets, random);
 
-        calculateFeatureType(dimlets, random, mapping);
+        calculateFeatureType(dimlets, random);
 
-        calculateStructureType(dimlets, random, mapping);
-        calculateBiomes(dimlets, random, mapping);
-        calculateDigitString(dimlets, mapping);
+        calculateStructureType(dimlets, random);
+        calculateBiomes(dimlets, random);
+        calculateDigitString(dimlets);
 
-        calculateSky(dimlets, random, mapping);
+        calculateSky(dimlets, random);
 
-        calculateMobs(dimlets, random, mapping);
-        calculateSpecial(dimlets, random, mapping);
-        calculateTime(dimlets, random, mapping);
-        calculateEffects(dimlets, random, mapping);
-        calculateWeather(dimlets, random, mapping);
+        calculateMobs(dimlets, random);
+        calculateSpecial(dimlets, random);
+        calculateTime(dimlets, random);
+        calculateEffects(dimlets, random);
+        calculateWeather(dimlets, random);
 
         actualRfCost += descriptor.getRfMaintainCost();
     }
@@ -311,7 +310,7 @@ public class DimensionInformation {
             setupFromNBT(tagCompound);
         } else {
             // This is an older version. Here we have to calculate the random information again.
-            setupFromDescriptor(1, DimletMapping.getInstance());
+            setupFromDescriptor(1);
         }
 
         setupBiomeMapping();
@@ -833,7 +832,7 @@ public class DimensionInformation {
         this.spawnPoint = spawnPoint;
     }
 
-    private void calculateTime(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateTime(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_TIME, dimlets);
         if (dimlets.isEmpty()) {
             if (random.nextFloat() < DimletConfiguration.randomSpecialTimeChance) {
@@ -846,14 +845,13 @@ public class DimensionInformation {
                 timeSpeed = DimletObjectMapping.idToSpeed.get(key);
             }
         } else {
-            int id = dimlets.get(random.nextInt(dimlets.size())).getKey().getId();
-            DimletKey key = mapping.getKey(id);
+            DimletKey key = dimlets.get(random.nextInt(dimlets.size())).getKey().getKey();
             celestialAngle = DimletObjectMapping.idToCelestialAngle.get(key);
             timeSpeed = DimletObjectMapping.idToSpeed.get(key);
         }
     }
 
-    private void calculateWeather(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateWeather(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_WEATHER, dimlets);
         WeatherDescriptor.Builder builder = new WeatherDescriptor.Builder();
         if (dimlets.isEmpty()) {
@@ -864,18 +862,17 @@ public class DimensionInformation {
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-                int id = dimlet.getKey().getId();
-                builder.combine(DimletObjectMapping.idToWeatherDescriptor.get(mapping.getKey(id)));
+                DimletKey key = dimlet.getKey().getKey();
+                builder.combine(DimletObjectMapping.idToWeatherDescriptor.get(key));
             }
         }
         weatherDescriptor = builder.build();
     }
 
-    private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_SPECIAL, dimlets);
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-            Integer id = dimlet.getLeft().getId();
-            DimletKey key = mapping.getKey(id);
+            DimletKey key = dimlet.getLeft().getKey();
             SpecialType specialType = DimletObjectMapping.idToSpecialType.get(key);
             if (specialType == SpecialType.SPECIAL_PEACEFUL) {
                 peaceful = true;
@@ -885,7 +882,7 @@ public class DimensionInformation {
         }
     }
 
-    private void calculateMobs(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateMobs(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_MOBS, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomExtraMobsChance) {
@@ -894,13 +891,13 @@ public class DimensionInformation {
                 extraMobs.add(DimletObjectMapping.idtoMob.get(key));
             }
         } else {
-            Integer id = dimlets.get(0).getLeft().getId();
-            if (dimlets.size() == 1 && DimletObjectMapping.idtoMob.get(mapping.getKey(id)).getEntityClass() == null) {
+            DimletKey key = dimlets.get(0).getLeft().getKey();
+            if (dimlets.size() == 1 && DimletObjectMapping.idtoMob.get(key).getEntityClass() == null) {
                 // Just default.
             } else {
                 for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
-                    Integer modifierId = dimletWithModifiers.getLeft().getId();
-                    MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(mapping.getKey(modifierId));
+                    DimletKey modifierKey = dimletWithModifiers.getLeft().getKey();
+                    MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(modifierKey);
                     if (descriptor.getEntityClass() != null) {
                         extraMobs.add(descriptor);
                     }
@@ -909,16 +906,16 @@ public class DimensionInformation {
         }
     }
 
-    private void calculateDigitString(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, DimletMapping mapping) {
+    private void calculateDigitString(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets) {
         dimlets = extractType(DimletType.DIMLET_DIGIT, dimlets);
         digitString = "";
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
-            int id = dimletWithModifiers.getKey().getId();
-            digitString += DimletObjectMapping.idToDigit.get(mapping.getKey(id));
+            DimletKey key = dimletWithModifiers.getKey().getKey();
+            digitString += DimletObjectMapping.idToDigit.get(key);
         }
     }
 
-    private void calculateEffects(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateEffects(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_EFFECT, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomEffectChance) {
@@ -931,8 +928,8 @@ public class DimensionInformation {
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
-                Integer id = dimletWithModifier.getLeft().getId();
-                EffectType effectType = DimletObjectMapping.idToEffectType.get(mapping.getKey(id));
+                DimletKey key = dimletWithModifier.getLeft().getKey();
+                EffectType effectType = DimletObjectMapping.idToEffectType.get(key);
                 if (effectType != EffectType.EFFECT_NONE) {
                     effectTypes.add(effectType);
                 }
@@ -940,7 +937,7 @@ public class DimensionInformation {
         }
     }
 
-    private void calculateSky(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateSky(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_SKY, dimlets);
         if (dimlets.isEmpty()) {
             if (random.nextFloat() < DimletConfiguration.randomSpecialSkyChance) {
@@ -949,7 +946,7 @@ public class DimensionInformation {
                 for (int i = 0 ; i < 1+random.nextInt(3) ; i++) {
                     DimletKey key = skyIds.get(random.nextInt(skyIds.size()));
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
-                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY, mapping.getId(key)), modifiers));
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY, key), modifiers));
                 }
             }
 
@@ -964,15 +961,15 @@ public class DimensionInformation {
                 for (int i = 0 ; i < random.nextInt(3) ; i++) {
                     DimletKey key = bodyKeys.get(random.nextInt(bodyKeys.size()));
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
-                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY,mapping.getId(key)), modifiers));
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_SKY, key), modifiers));
                 }
             }
         }
 
         SkyDescriptor.Builder builder = new SkyDescriptor.Builder();
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : dimlets) {
-            int id = dimletWithModifiers.getKey().getId();
-            builder.combine(DimletObjectMapping.idToSkyDescriptor.get(mapping.getKey(id)));
+            DimletKey key = dimletWithModifiers.getKey().getKey();
+            builder.combine(DimletObjectMapping.idToSkyDescriptor.get(key));
         }
         skyDescriptor = builder.build();
         calculateCelestialBodyDescriptors();
@@ -1021,7 +1018,7 @@ public class DimensionInformation {
         return result;
     }
 
-    private void calculateTerrainType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateTerrainType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_TERRAIN, dimlets);
         List<DimensionDescriptor.DimletDescriptor> modifiers;
         terrainType = TerrainType.TERRAIN_VOID;
@@ -1035,14 +1032,14 @@ public class DimensionInformation {
             modifiers = Collections.emptyList();
         } else {
             int index = random.nextInt(dimlets.size());
-            Integer id = dimlets.get(index).getLeft().getId();
-            terrainType = DimletObjectMapping.idToTerrainType.get(mapping.getKey(id));
+            DimletKey key = dimlets.get(index).getLeft().getKey();
+            terrainType = DimletObjectMapping.idToTerrainType.get(key);
             modifiers = dimlets.get(index).getRight();
         }
 
         List<BlockMeta> blocks = new ArrayList<BlockMeta>();
         List<Block> fluids = new ArrayList<Block>();
-        getMaterialAndFluidModifiers(modifiers, blocks, fluids, mapping);
+        getMaterialAndFluidModifiers(modifiers, blocks, fluids);
 
         if (!blocks.isEmpty()) {
             baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
@@ -1100,11 +1097,10 @@ public class DimensionInformation {
         }
     }
 
-    private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<BlockMeta> blocks, List<Block> fluids, DimletMapping mapping) {
+    private void getMaterialAndFluidModifiers(List<DimensionDescriptor.DimletDescriptor> modifiers, List<BlockMeta> blocks, List<Block> fluids) {
         if (modifiers != null) {
             for (DimensionDescriptor.DimletDescriptor modifier : modifiers) {
-                Integer modifierId = modifier.getId();
-                DimletKey key = mapping.getKey(modifierId);
+                DimletKey key = modifier.getKey();
                 if (modifier.getType() == DimletType.DIMLET_MATERIAL) {
                     BlockMeta block = DimletObjectMapping.idToBlock.get(key);
                     blocks.add(block);
@@ -1116,7 +1112,7 @@ public class DimensionInformation {
         }
     }
 
-    private void calculateFeatureType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateFeatureType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_FEATURE, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomFeatureChance) {
@@ -1127,15 +1123,15 @@ public class DimensionInformation {
                     featureTypes.add(featureType);
                     List<DimensionDescriptor.DimletDescriptor> modifiers = Collections.emptyList();
                     // @todo randomize those?
-                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_FEATURE, mapping.getId(key)), modifiers));
+                    dimlets.add(Pair.of(new DimensionDescriptor.DimletDescriptor(DimletType.DIMLET_FEATURE, key), modifiers));
                 }
             }
         }
 
         Map<FeatureType,List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature = new HashMap<FeatureType, List<DimensionDescriptor.DimletDescriptor>>();
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
-            Integer id = dimlet.getLeft().getId();
-            FeatureType featureType = DimletObjectMapping.idToFeatureType.get(mapping.getKey(id));
+            DimletKey key = dimlet.getLeft().getKey();
+            FeatureType featureType = DimletObjectMapping.idToFeatureType.get(key);
             featureTypes.add(featureType);
             modifiersForFeature.put(featureType, dimlet.getRight());
         }
@@ -1143,7 +1139,7 @@ public class DimensionInformation {
         if (featureTypes.contains(FeatureType.FEATURE_LAKES)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids, mapping);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids);
 
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
@@ -1163,7 +1159,7 @@ public class DimensionInformation {
         if (featureTypes.contains(FeatureType.FEATURE_LAKES)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids, mapping);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids);
 
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
@@ -1180,19 +1176,19 @@ public class DimensionInformation {
             fluidsForLakes = new Block[0];
         }
 
-        tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS, mapping);
-        sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_ORBS, mapping);
-        liquidSphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, mapping);
-        liquidSphereFluid = getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, mapping);
-        canyonBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS, mapping);
+        tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS);
+        sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_ORBS);
+        liquidSphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS);
+        liquidSphereFluid = getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS);
+        canyonBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS);
     }
 
-    private BlockMeta getFeatureBlock(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType, DimletMapping mapping) {
+    private BlockMeta getFeatureBlock(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
         BlockMeta block;
         if (featureTypes.contains(featureType)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids, mapping);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
 
             if (!blocks.isEmpty()) {
                 block = blocks.get(random.nextInt(blocks.size()));
@@ -1215,12 +1211,12 @@ public class DimensionInformation {
         return block;
     }
 
-    private Block getFeatureLiquid(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType, DimletMapping mapping) {
+    private Block getFeatureLiquid(Random random, Map<FeatureType, List<DimensionDescriptor.DimletDescriptor>> modifiersForFeature, FeatureType featureType) {
         Block block;
         if (featureTypes.contains(featureType)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids, mapping);
+            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
 
             if (!fluids.isEmpty()) {
                 block = fluids.get(random.nextInt(fluids.size()));
@@ -1245,7 +1241,7 @@ public class DimensionInformation {
 
 
 
-    private void calculateStructureType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateStructureType(List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         dimlets = extractType(DimletType.DIMLET_STRUCTURE, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
@@ -1258,13 +1254,13 @@ public class DimensionInformation {
             }
         } else {
             for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifier : dimlets) {
-                Integer id = dimletWithModifier.getLeft().getId();
-                structureTypes.add(DimletObjectMapping.idToStructureType.get(mapping.getKey(id)));
+                DimletKey key = dimletWithModifier.getLeft().getKey();
+                structureTypes.add(DimletObjectMapping.idToStructureType.get(key));
             }
         }
     }
 
-    private void calculateBiomes(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random, DimletMapping mapping) {
+    private void calculateBiomes(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
         Set<DimletKey> biomeKeys = new HashSet<DimletKey>();
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> biomeDimlets = extractType(DimletType.DIMLET_BIOME, dimlets);
         List<Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>>> controllerDimlets = extractType(DimletType.DIMLET_CONTROLLER, dimlets);
@@ -1285,14 +1281,14 @@ public class DimensionInformation {
                 }
             }
         } else {
-            int id = controllerDimlets.get(random.nextInt(controllerDimlets.size())).getLeft().getId();
-            controllerType = DimletObjectMapping.idToControllerType.get(mapping.getKey(id));
+            DimletKey key = controllerDimlets.get(random.nextInt(controllerDimlets.size())).getLeft().getKey();
+            controllerType = DimletObjectMapping.idToControllerType.get(key);
         }
 
         // Now see if we have to add or randomize biomes.
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimletWithModifiers : biomeDimlets) {
-            int id = dimletWithModifiers.getKey().getId();
-            biomeKeys.add(mapping.getKey(id));
+            DimletKey key = dimletWithModifiers.getKey().getKey();
+            biomeKeys.add(key);
         }
 
         int neededBiomes = controllerType.getNeededBiomes();

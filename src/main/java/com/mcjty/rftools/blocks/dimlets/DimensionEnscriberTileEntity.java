@@ -191,7 +191,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
-                descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), mapping.getId(key)));
+                descriptors.add(new DimensionDescriptor.DimletDescriptor(key.getType(), key));
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
                     forcedSeed = tagCompound.getLong("forcedSeed");
@@ -209,7 +209,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
             String descriptionString = tagCompound.getString("descriptionString");
             for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
-                inventoryHelper.getStacks()[idx++] = new ItemStack(ModItems.knownDimlet, 1, descriptor.getId());
+                inventoryHelper.getStacks()[idx++] = KnownDimletConfiguration.makeKnownDimlet(descriptor.getKey(), worldObj);
             }
         }
 

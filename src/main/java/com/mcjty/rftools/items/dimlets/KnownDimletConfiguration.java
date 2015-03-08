@@ -1003,6 +1003,20 @@ public class KnownDimletConfiguration {
     }
 
     /**
+     * Make a known dimlet itemstack.
+     */
+    public static ItemStack makeKnownDimlet(DimletKey key, World world) {
+        DimletMapping mapping;
+        if (world == null) {
+            mapping = DimletMapping.getInstance();
+        } else {
+            mapping = DimletMapping.getDimletMapping(world);
+        }
+        int id = mapping.getId(key);
+        return new ItemStack(ModItems.knownDimlet, 1, id);
+    }
+
+    /**
      * Take an ItemStack containing a known dimlet and (if needed) convert it
      * to the new ID system. i.e. instead of using damage as a unique ID,
      * use a unique string in the NBT.
@@ -1014,7 +1028,7 @@ public class KnownDimletConfiguration {
             tagCompound = new NBTTagCompound();
         }
 
-        if (tagCompound.hasKey("dimletKey")) {
+        if (tagCompound.hasKey("dkey")) {
             // We have a key already. Check if the damage is still correct.
         } else {
             int oldId = dimletStack.getItemDamage();

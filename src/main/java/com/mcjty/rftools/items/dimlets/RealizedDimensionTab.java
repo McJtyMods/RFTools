@@ -104,31 +104,30 @@ public class RealizedDimensionTab extends Item {
     }
 
     private void constructDescriptionHelp(List list, String descriptionString) {
-        Map<DimletType,List<Integer>> dimletTypeListMap = new HashMap<DimletType, List<Integer>>();
+        Map<DimletType,List<DimletKey>> dimletTypeListMap = new HashMap<DimletType, List<DimletKey>>();
         for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
             DimletType type = descriptor.getType();
             if (!dimletTypeListMap.containsKey(type)) {
-                dimletTypeListMap.put(type, new ArrayList<Integer>());
+                dimletTypeListMap.put(type, new ArrayList<DimletKey>());
             }
-            dimletTypeListMap.get(descriptor.getType()).add(descriptor.getId());
+            dimletTypeListMap.get(descriptor.getType()).add(descriptor.getKey());
         }
 
-        DimletMapping mapping = DimletMapping.getInstance();
-        for (Map.Entry<DimletType, List<Integer>> entry : dimletTypeListMap.entrySet()) {
+        for (Map.Entry<DimletType, List<DimletKey>> entry : dimletTypeListMap.entrySet()) {
             DimletType type = entry.getKey();
-            List<Integer> ids = entry.getValue();
-            if (ids != null && !ids.isEmpty()) {
+            List<DimletKey> keys = entry.getValue();
+            if (keys != null && !keys.isEmpty()) {
                 if (type == DimletType.DIMLET_DIGIT) {
                     String digitString = "";
-                    for (int id : ids) {
-                        digitString += DimletObjectMapping.idToDigit.get(mapping.getKey(id));
+                    for (DimletKey key : keys) {
+                        digitString += DimletObjectMapping.idToDigit.get(key);
                     }
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {
-                    if (ids.size() == 1) {
+                    if (keys.size() == 1) {
                         list.add(EnumChatFormatting.GREEN + type.getName() + " 1 dimlet");
                     } else {
-                        list.add(EnumChatFormatting.GREEN + type.getName() + " " + ids.size() + " dimlets");
+                        list.add(EnumChatFormatting.GREEN + type.getName() + " " + keys.size() + " dimlets");
                     }
                 }
             }
