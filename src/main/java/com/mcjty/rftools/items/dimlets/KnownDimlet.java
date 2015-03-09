@@ -167,17 +167,18 @@ public class KnownDimlet extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            ArrayList<DimletKey> sortedKeys = new ArrayList<DimletKey>(mapping.getKeys());
-            sortedKeys.sort(new Comparator<DimletKey>() {
-                @Override
-                public int compare(DimletKey o1, DimletKey o2) {
-                    if (o1.getType() == o2.getType()) {
-                        return o1.getName().compareTo(o2.getName());
-                    } else {
-                        return o1.getType().compareTo(o2.getType());
-                    }
-                }
-            });
+            List<DimletKey> sortedKeys = new ArrayList<DimletKey>(mapping.getKeys());
+            Collections.sort(sortedKeys,
+                    new Comparator<DimletKey>() {
+                        @Override
+                        public int compare(DimletKey o1, DimletKey o2) {
+                            if (o1.getType() == o2.getType()) {
+                                return o1.getName().compareTo(o2.getName());
+                            } else {
+                                return o1.getType().compareTo(o2.getType());
+                            }
+                        }
+                    });
             for (DimletKey key : sortedKeys) {
                 list.add(KnownDimletConfiguration.makeKnownDimlet(key, null));
             }
