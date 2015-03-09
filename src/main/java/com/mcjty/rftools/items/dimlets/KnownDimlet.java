@@ -14,9 +14,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
@@ -138,9 +136,10 @@ public class KnownDimlet extends Item {
         return entry.getKey().getType() == DimletType.DIMLET_SPECIAL && "Seed".equals(entry.getKey().getName());
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIconFromDamage(int damage) {
-        DimletKey key = DimletMapping.getInstance().getKey(damage);
+    public IIcon getIconIndex(ItemStack stack) {
+        DimletKey key = KnownDimletConfiguration.getDimletKey(stack, null);
         if (key == null) {
             // Safety. Should not occur.
             return icons.get(DimletType.DIMLET_SPECIAL);
@@ -168,7 +167,18 @@ public class KnownDimlet extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            for (DimletKey key : mapping.getKeys()) {
+            List<DimletKey> sortedKeys = new ArrayList<DimletKey>(mapping.getKeys());
+            sortedKeys.sort(new Comparator<DimletKey>() {
+                @Override
+                public int compare(DimletKey o1, DimletKey o2) {
+                    if (o1.getType() == o2.getType()) {
+                        return o1.getName().compareTo(o2.getName());
+                    } else {
+                        return o1.getType().compareTo(o2.getType());
+                    }
+                }
+            });
+            for (DimletKey key : sortedKeys) {
                 list.add(KnownDimletConfiguration.makeKnownDimlet(key, null));
             }
         }

@@ -184,7 +184,6 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     private DimensionDescriptor convertToDimensionDescriptor() {
         List<DimensionDescriptor.DimletDescriptor> descriptors = new ArrayList<DimensionDescriptor.DimletDescriptor>();
 
-        DimletMapping mapping = DimletMapping.getDimletMapping(worldObj);
         long forcedSeed = 0;
 
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {

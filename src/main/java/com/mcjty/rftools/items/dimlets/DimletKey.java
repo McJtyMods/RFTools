@@ -44,4 +44,10 @@ public class DimletKey {
     public String toString() {
         return type.getOpcode() + name;
     }
+
+    public static DimletKey parseKey(String skey) {
+        String opcode = skey.substring(0, 1);
+        String name = skey.substring(1);
+        return new DimletKey(DimletType.getTypeByOpcode(opcode), name);
+    }
 }
