@@ -2,7 +2,7 @@ package com.mcjty.rftools.crafting;
 
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletKey;
-import com.mcjty.rftools.items.dimlets.DimletMapping;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -18,20 +18,14 @@ public class KnownDimletShapedRecipe extends ShapedOreRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         ItemStack stack = super.getRecipeOutput().copy();
-        Integer id = DimletMapping.getInstance().getId(destDimletKey);
-        if (id != null) {
-            stack.setItemDamage(id);
-        }
+        KnownDimletConfiguration.setDimletKey(destDimletKey, stack);
         return stack;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
         ItemStack stack = super.getCraftingResult(inventoryCrafting);
-        Integer id = DimletMapping.getInstance().getId(destDimletKey);
-        if (id != null) {
-            stack.setItemDamage(id);
-        }
+        KnownDimletConfiguration.setDimletKey(destDimletKey, stack);
         return stack;
     }
 }

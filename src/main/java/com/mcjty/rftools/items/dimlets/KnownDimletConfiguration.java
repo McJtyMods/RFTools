@@ -1009,6 +1009,19 @@ public class KnownDimletConfiguration {
     }
 
     /**
+     * Set the dimlet key on a known dimlet item.
+     */
+    public static void setDimletKey(DimletKey key, ItemStack itemStack) {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setString("ktype", key.getType().getOpcode());
+        tagCompound.setString("dkey", key.getName());
+        itemStack.setTagCompound(tagCompound);
+
+        DimletMapping mapping = DimletMapping.getInstance();
+        itemStack.setItemDamage(mapping.getId(key));
+    }
+
+    /**
      * Make a known dimlet itemstack.
      */
     public static ItemStack makeKnownDimlet(DimletKey key, World world) {
@@ -1020,10 +1033,7 @@ public class KnownDimletConfiguration {
         }
         int id = mapping.getId(key);
         ItemStack itemStack = new ItemStack(ModItems.knownDimlet, 1, id);
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setString("ktype", key.getType().getOpcode());
-        tagCompound.setString("dkey", key.getName());
-        itemStack.setTagCompound(tagCompound);
+        setDimletKey(key, itemStack);
         return itemStack;
     }
 
@@ -1034,6 +1044,8 @@ public class KnownDimletConfiguration {
      * @param dimletStack
      */
     public static void correctDimletKey(ItemStack dimletStack) {
+        DimletMapping mapping = DimletMapping.getInstance();
+
         NBTTagCompound tagCompound = dimletStack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -1041,19 +1053,23 @@ public class KnownDimletConfiguration {
 
         if (tagCompound.hasKey("dkey")) {
             // We have a key already. Check if the damage is still correct.
+            DimletType type = DimletType.getTypeByOpcode(tagCompound.getString("ktype"));
+            DimletKey key = new DimletKey(type, tagCompound.getString("dkey"));
+            Integer id = mapping.getId(key);
+            if (id != null && id != dimletStack.getItemDamage()) {
+                dimletStack.setItemDamage(id);
+            }
+            return;
         } else {
             int oldId = dimletStack.getItemDamage();
-            DimletEntry entry = idToDimletEntry.get(oldId);
-            if (entry == null) {
+            DimletKey key = mapping.getKey(oldId);
+            if (key == null) {
                 // Something is very wrong. This should not be possible. We can't fix anything here.
-                tagCompound.setString("dimletKey", "?");
             } else {
-                String newId = entry.getKey().getType().getOpcode() + entry.getKey().getName();
-                // @todo, not correct yet.
-                tagCompound.setString("dimletKey", newId);
+                tagCompound.setString("ktype", key.getType().getOpcode());
+                tagCompound.setString("dkey", key.getName());
+                dimletStack.setTagCompound(tagCompound);
             }
         }
-
-        dimletStack.setTagCompound(tagCompound);
     }
 }
