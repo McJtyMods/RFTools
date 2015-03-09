@@ -167,7 +167,7 @@ public class KnownDimlet extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            List<DimletKey> sortedKeys = new ArrayList<DimletKey>(mapping.getKeys());
+            ArrayList<DimletKey> sortedKeys = new ArrayList<DimletKey>(mapping.getKeys());
             sortedKeys.sort(new Comparator<DimletKey>() {
                 @Override
                 public int compare(DimletKey o1, DimletKey o2) {
