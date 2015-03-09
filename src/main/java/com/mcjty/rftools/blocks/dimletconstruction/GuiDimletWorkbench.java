@@ -98,7 +98,6 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
         if (slot.getStack() != null) {
             ItemStack itemStack = slot.getStack();
             if (ModItems.knownDimlet.equals(itemStack.getItem())) {
-                int id = itemStack.getItemDamage();
                 DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, Minecraft.getMinecraft().theWorld);
                 if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
                     enabled = true;
