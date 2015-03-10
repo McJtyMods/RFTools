@@ -248,6 +248,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {l:tpreceiver}Matter Receiver
 {l:tpdialer}Dialing Device
 {l:tpdestcheck}Destination Analyzer
+{l:tpbooster}Matter Booster
 {l:tpaccess}Access Control
 {l:porter}Charged Porter Item
 {-------------------------------------------------------------} 
@@ -300,7 +301,18 @@ You can also place a destination analyzer next to a transmitter. In
 that case the transmitter will show a red colored teleportation beam
 if there is something wrong on the receiving end. You can check the
 actual problem in the dialing device.
-{-------------------------------------------------------------} 
+{-------------------------------------------------------------}
+{b}Matter Booster
+{n:tpbooster}
+{rb:matterBoosterBlock}
+This is another passive block that you can place next to a matter
+transmitter. If this block is present it gives the transmitter the
+capability to teleport the user to an unpowered receiver. This does
+use more energy so if not enough energy is available in the transmitter
+this will not work. Note that this block does not avoid all
+negative effects. You will still get hurt slightly and you end
+up rather confused. But it is still way better then dieing.
+{-------------------------------------------------------------}
 {b}Access Control
 {n:tpaccess}
 Both the transmitter and the receiver can be set in public mode (default)
