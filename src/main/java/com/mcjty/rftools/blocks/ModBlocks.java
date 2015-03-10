@@ -53,6 +53,7 @@ public final class ModBlocks {
     public static MatterReceiverBlock matterReceiverBlock;
     public static DialingDeviceBlock dialingDeviceBlock;
     public static DestinationAnalyzerBlock destinationAnalyzerBlock;
+    public static MatterBoosterBlock matterBoosterBlock;
 
     public static EndergenicBlock endergenicBlock;
     public static PearlInjectorBlock pearlInjectorBlock;
@@ -314,5 +315,8 @@ public final class ModBlocks {
 
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
+
+        matterBoosterBlock = new MatterBoosterBlock();
+        GameRegistry.registerBlock(matterBoosterBlock, "matterBoosterBlock");
     }
 }

@@ -21,8 +21,14 @@ public class TeleportationTools {
     public static final int STATUS_WARN = 1;
     public static final int STATUS_UNKNOWN = 2;
 
-    public static void applyEffectForSeverity(EntityPlayer player, int severity) {
+    public static void applyEffectForSeverity(EntityPlayer player, int severity, boolean boostNeeded) {
         switch (severity) {
+            case 1:
+                if (boostNeeded) {
+                    player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 100));
+                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 5));
+                }
+                break;
             case 2:
                 player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
                 break;
@@ -107,7 +113,8 @@ public class TeleportationTools {
         }
     }
 
-    public static void performTeleport(EntityPlayer player, TeleportDestination dest, int bad, int good) {
+    // Return true if we needed a boost.
+    public static boolean performTeleport(EntityPlayer player, TeleportDestination dest, int bad, int good, boolean boosted) {
         Coordinate c = dest.getCoordinate();
 
         int currentId = player.worldObj.provider.dimensionId;
@@ -122,12 +129,19 @@ public class TeleportationTools {
         RFTools.message(player, "Whoosh!");
         Achievements.trigger(player, Achievements.firstTeleport);
 
+        boolean boostNeeded = false;
         int severity = consumeReceiverEnergy(player, dest.getCoordinate(), dest.getDimension());
-        if (!applyBadEffectIfNeeded(player, severity, bad, good)) {
+        if (severity > 0 && boosted) {
+            boostNeeded = true;
+            severity = 1;
+        }
+
+        if (!applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded)) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
                 ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
             }
         }
+        return boostNeeded;
     }
 
     /**
@@ -169,7 +183,7 @@ public class TeleportationTools {
         return severity;
     }
 
-    public static boolean applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total) {
+    public static boolean applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total, boolean boostNeeded) {
         severity += calculateSeverity(bad, total);
         if (severity > 10) {
             severity = 10;
@@ -182,7 +196,7 @@ public class TeleportationTools {
             player.worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_error", TeleportConfiguration.teleportErrorVolume, 1.0f);
         }
 
-        applyEffectForSeverity(player, severity);
+        applyEffectForSeverity(player, severity, boostNeeded);
         return true;
     }
 

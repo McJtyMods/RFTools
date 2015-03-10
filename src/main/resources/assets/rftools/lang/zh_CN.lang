@@ -104,6 +104,7 @@ tile.matterTransmitterBlock.name=物质传输器
 tile.matterReceiverBlock.name=物质接收器
 tile.dialingDeviceBlock.name=传输控制器
 tile.destinationAnalyzerBlock.name=接收控制器
+tile.matterBoosterBlock.name=Matter Booster
 tile.endergenicBlock.name=末影能发电机
 tile.pearlInjectorBlock.name=末影珍珠填充器
 tile.sequencerBlock.name=音序器

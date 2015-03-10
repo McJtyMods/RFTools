@@ -169,11 +169,11 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
                 RFTools.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
-                TeleportationTools.applyEffectForSeverity(player, 3);
+                TeleportationTools.applyEffectForSeverity(player, 3, false);
                 return;
             }
             TeleportDestination destination = destinations.getDestination(coordinate);
-            TeleportationTools.performTeleport((EntityPlayer) entity, destination, 0, 10);
+            TeleportationTools.performTeleport((EntityPlayer) entity, destination, 0, 10, false);
 
             teleportTimeout = -1;
             target = -1;

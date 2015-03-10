@@ -28,6 +28,7 @@ public class TeleportConfiguration {
     public static int rfStartTeleportDist = 10;             // RF per distance unit when starting a teleport
     public static int rfTeleportPerTick = 500;              // During the time the teleport is busy this RF is used per tick on the transmitter
     public static int rfPerTeleportReceiver = 5000;         // On the receiver side we need this amount of power
+    public static int rfBoostedTeleport = 20000;            // The RF needed to do a boosted teleportation
 
     // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
     // the power usage above with regards to local/dimensional teleport.
@@ -87,6 +88,8 @@ public class TeleportConfiguration {
 
         rfPerTeleportReceiver = cfg.get(CATEGORY_TELEPORTER, "rfPerTeleportReceiver", rfPerTeleportReceiver,
                 "This is the amount of RF that is consumed at the receiving side for every teleport. This RF is only consumed when the teleportation actually happens").getInt();
+        rfBoostedTeleport = cfg.get(CATEGORY_TELEPORTER, "rfBoostedTeleport", rfBoostedTeleport,
+                "This is the amount of RF that is consumed at a boosted transmitter in case the receiver doesn't have enough power").getInt();
 
         timeTeleportBaseLocal = cfg.get(CATEGORY_TELEPORTER, "timeTeleportBaseLocal", timeTeleportBaseLocal,
                 "The base time used for a teleportation for a local teleport. The 'timeTeleportDist' value is added per distance traveled").getInt();

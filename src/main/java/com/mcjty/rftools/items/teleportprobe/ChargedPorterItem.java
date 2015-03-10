@@ -107,7 +107,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
                 RFTools.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
-                TeleportationTools.applyEffectForSeverity(player, 3);
+                TeleportationTools.applyEffectForSeverity(player, 3, false);
                 return;
             }
             TeleportDestination destination = destinations.getDestination(coordinate);

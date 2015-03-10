@@ -105,6 +105,7 @@ tile.matterTransmitterBlock.name=Передатчик материи
 tile.matterReceiverBlock.name=Приёмник материи
 tile.dialingDeviceBlock.name=Модем
 tile.destinationAnalyzerBlock.name=Анализатор целей
+tile.matterBoosterBlock.name=Matter Booster
 tile.endergenicBlock.name=Генератор Края
 tile.pearlInjectorBlock.name=Инжектор жемчуга
 tile.sequencerBlock.name=Секвенсор

@@ -105,6 +105,7 @@ tile.matterTransmitterBlock.name=Matter Transmitter
 tile.matterReceiverBlock.name=Matter Receiver
 tile.dialingDeviceBlock.name=Dialing Device
 tile.destinationAnalyzerBlock.name=Destination Analyzer
+tile.matterBoosterBlock.name=Matter Booster
 tile.endergenicBlock.name=Endergenic Generator
 tile.pearlInjectorBlock.name=Pearl Injector
 tile.sequencerBlock.name=Sequencer

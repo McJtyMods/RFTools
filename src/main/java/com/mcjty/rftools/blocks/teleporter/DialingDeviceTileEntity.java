@@ -71,6 +71,29 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         }
     }
 
+    public static boolean isMatterBoosterAvailable(World world, int x, int y, int z) {
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x + 1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x - 1, y, z))) {
+            return true;
+        }
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y + 1, z))) {
+            return true;
+        }
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y - 1, z))) {
+            return true;
+        }
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y, z + 1))) {
+            return true;
+        }
+        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y, z - 1))) {
+            return true;
+        }
+        return false;
+    }
+
+
     public static boolean isDestinationAnalyzerAvailable(World world, int x, int y, int z) {
         if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x + 1, y, z))) {
             return true;

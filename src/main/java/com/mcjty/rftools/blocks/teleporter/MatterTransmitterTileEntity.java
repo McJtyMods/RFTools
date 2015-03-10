@@ -341,7 +341,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
 
     private void clearTeleport(int cooldown) {
         markDirty();
-        TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 0, badTicks, totalTicks);
+        TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 0, badTicks, totalTicks, false);
         cooldownTimer = cooldown;
         teleportingPlayer = null;
     }
@@ -402,14 +402,23 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private void performTeleport() {
         // First check if the destination is still valid.
         if (!isDestinationStillValid()) {
-            TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 10, badTicks, totalTicks);
+            TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 10, badTicks, totalTicks, false);
             RFTools.warn(teleportingPlayer, "Missing destination!");
             clearTeleport(200);
             return;
         }
 
         TeleportDestination dest = getTeleportDestination();
-        TeleportationTools.performTeleport(teleportingPlayer, dest, badTicks, totalTicks);
+
+        boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(worldObj, xCoord, yCoord, zCoord);
+        if (boosted && getEnergyStored(ForgeDirection.DOWN) < TeleportConfiguration.rfBoostedTeleport) {
+            // Not enough energy. We cannot do a boosted teleport.
+            boosted = false;
+        }
+        boolean boostNeeded = TeleportationTools.performTeleport(teleportingPlayer, dest, badTicks, totalTicks, boosted);
+        if (boostNeeded) {
+            extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfBoostedTeleport, false);
+        }
 
         teleportingPlayer = null;
     }

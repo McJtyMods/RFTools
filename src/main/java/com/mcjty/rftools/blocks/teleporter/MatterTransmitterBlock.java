@@ -63,12 +63,11 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             list.add(EnumChatFormatting.WHITE + "If you place this block near a Dialing Device then");
             list.add(EnumChatFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give");
             list.add(EnumChatFormatting.WHITE + "it sufficient power!");
-            list.add(EnumChatFormatting.WHITE + "If a Destination Analyzer is adjacent to this block");
-            list.add(EnumChatFormatting.WHITE + "you will also be able to check if the destination");
-            list.add(EnumChatFormatting.WHITE + "has enough power to be safe. The teleportation beam");
-            list.add(EnumChatFormatting.WHITE + "turns red if there is a problem. If the beam is");
-            list.add(EnumChatFormatting.WHITE + "yellow then the status is unknown (usually because");
-            list.add(EnumChatFormatting.WHITE + "the destination dimension is not loaded)");
+            list.add(EnumChatFormatting.WHITE + "Use a Destination Analyzer adjacent to this block");
+            list.add(EnumChatFormatting.WHITE + "to check destination status (red is bad, green ok,");
+            list.add(EnumChatFormatting.WHITE + "yellow is unknown).");
+            list.add(EnumChatFormatting.WHITE + "Use a  Matter Booster adjacent to this block");
+            list.add(EnumChatFormatting.WHITE + "to be able to teleport to unpowered receivers.");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "increased teleportation speed.");
         } else {
