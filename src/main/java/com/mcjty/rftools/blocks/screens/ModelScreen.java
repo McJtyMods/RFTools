@@ -8,7 +8,7 @@ import net.minecraft.client.model.ModelRenderer;
 @SideOnly(Side.CLIENT)
 public class ModelScreen extends ModelBase {
 
-    public ModelRenderer renderer = new ModelRenderer(this, 0, 0);
+    private ModelRenderer renderer = new ModelRenderer(this, 0, 0);
 
     public ModelScreen(boolean large) {
         if (large) {

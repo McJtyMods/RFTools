@@ -14,9 +14,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class AbstractDirectionalBlock extends Block {
 
-    protected IIcon iconSideHoriz;
-    protected IIcon iconSideVert;
-    protected IIcon iconTop;
+    private IIcon iconSideHoriz;
+    private IIcon iconSideVert;
+    private IIcon iconTop;
 
     public AbstractDirectionalBlock() {
         super(Material.rock);

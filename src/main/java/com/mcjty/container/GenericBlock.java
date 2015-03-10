@@ -42,7 +42,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     private boolean creative;
 
     // Set this to true in case horizontal rotation is used (2 bits rotation as opposed to 3).
-    protected boolean horizRotation = false;
+    private boolean horizRotation = false;
 
     public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
         super(material);
@@ -368,5 +368,13 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         } else {
             return iconSide;
         }
+    }
+
+    public IIcon getIconInd() {
+        return iconInd;
+    }
+
+    public IIcon getIconSide() {
+        return iconSide;
     }
 }

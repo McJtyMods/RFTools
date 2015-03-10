@@ -36,13 +36,12 @@ public class ClockClientScreenModule implements ClientScreenModule {
 
         if (minecraft.theWorld != null && minecraft.thePlayer != null) {
             if (minecraft.theWorld.provider.isSurfaceWorld()) {
-                float f = minecraft.theWorld.getCelestialAngle(1.0F);
-                time = (double)f;
+                time = minecraft.theWorld.getCelestialAngle(1.0F);
             } else {
                 time = Math.random();
             }
         }
-        int minutes = (int) (time * ((float) (24 * 60) - 0.1f));
+        int minutes = (int) (time * ((24 * 60) - 0.1f));
         int hours = minutes / 60;
         hours = (hours + 12) % 24;
         minutes = minutes % 60;

@@ -97,14 +97,24 @@ public class BlockInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         BlockInfo blockInfo = (BlockInfo) o;
 
-        if (energyStored != blockInfo.energyStored) return false;
-        if (maxEnergyStored != blockInfo.maxEnergyStored) return false;
-        if (coordinate != null ? !coordinate.equals(blockInfo.coordinate) : blockInfo.coordinate != null) return false;
+        if (energyStored != blockInfo.energyStored) {
+            return false;
+        }
+        if (maxEnergyStored != blockInfo.maxEnergyStored) {
+            return false;
+        }
+        if (coordinate != null ? !coordinate.equals(blockInfo.coordinate) : blockInfo.coordinate != null) {
+            return false;
+        }
 
         return true;
     }

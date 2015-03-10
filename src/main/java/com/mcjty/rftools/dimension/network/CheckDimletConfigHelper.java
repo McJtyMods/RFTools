@@ -13,7 +13,7 @@ public class CheckDimletConfigHelper {
         World world = Minecraft.getMinecraft().theWorld;
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
 
-        dimensionManager.checkDimletConfigFromServer(message.dimlets, world);
+        dimensionManager.checkDimletConfigFromServer(message.getDimlets(), world);
     }
 
 }

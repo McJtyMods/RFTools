@@ -111,9 +111,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 for (int x = -bounds ; x <= bounds ; x++) {
                     for (int z = -bounds ; z <= bounds ; z++) {
                         if (x == -bounds || x == bounds || z == -bounds || z == bounds) {
-                            if (z == 0 && y >= 2 && y <= 3) {
-                                world.setBlock(x+midx, starty+y, z+midz, Blocks.glass_pane, 0, 2);
-                            } else if (x == 0 && y >= 2 && y <= 3 && z == bounds) {
+                            if (z == 0 && y >= 2 && y <= 3 || x == 0 && y >= 2 && y <= 3 && z == bounds) {
                                 world.setBlock(x+midx, starty+y, z+midz, Blocks.glass_pane, 0, 2);
                             } else if (x == 0 && y == 1 && z == -bounds) {
                                 world.setBlock(x+midx, starty+y, z+midz, Blocks.iron_door, 1, 2);
@@ -154,8 +152,8 @@ public class GenericWorldGenerator implements IWorldGenerator {
     }
 
     private void generateDungeon(World world, Random random, int midx, int starty, int midz) {
-        boolean do_small_antenna = random.nextInt(4) == 0;
-        boolean do_extra_feature = random.nextInt(4) == 0;
+        boolean doSmallAntenna = random.nextInt(4) == 0;
+        boolean doExtraFeature = random.nextInt(4) == 0;
 
         Block cornerBlock;
         switch (random.nextInt(3)) {
@@ -185,7 +183,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 boolean xside = x == midx-3 || x == midx+3;
                 boolean zside = z == midz-3 || z == midz+3;
                 boolean antenna = (x == midx-2 && z == midz-2);
-                boolean small_antenna = do_small_antenna && (x == midx+2 && z == midz+2);
+                boolean smallAntenna = doSmallAntenna && (x == midx+2 && z == midz+2);
                 world.setBlock(x, starty, z, Blocks.double_stone_slab, 0, 2);
                 if (corner) {
                     world.setBlock(x, starty + 1, z, cornerBlock, 1, 2);
@@ -214,7 +212,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     world.setBlock(x, starty+6, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+7, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+8, z, Blocks.glowstone, 0, 2);
-                } else if (small_antenna) {
+                } else if (smallAntenna) {
                     world.setBlock(x, starty+4, z, Blocks.double_stone_slab, 0, 2);
                     world.setBlock(x, starty+5, z, Blocks.iron_bars, 0, 2);
                     world.setBlockToAir(x, starty+6, z);
@@ -233,7 +231,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
-        if (do_extra_feature) {
+        if (doExtraFeature) {
             if (!WorldGenerationTools.isSolid(world, midx+4, starty, midz-3)) {
                 world.setBlock(midx+4, starty, midz-3, Blocks.iron_bars, 0, 2);
             }

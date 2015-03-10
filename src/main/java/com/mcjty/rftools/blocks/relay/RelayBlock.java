@@ -24,7 +24,7 @@ import java.util.List;
 
 public class RelayBlock extends GenericBlock {
 
-    private IIcon iconFront_off;
+    private IIcon iconFrontOff;
 
     public RelayBlock() {
         super(Material.iron, RelayTileEntity.class);
@@ -57,7 +57,7 @@ public class RelayBlock extends GenericBlock {
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         super.registerBlockIcons(iconRegister);
-        iconFront_off = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay");
+        iconFrontOff = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay");
     }
 
     @SideOnly(Side.CLIENT)
@@ -84,7 +84,7 @@ public class RelayBlock extends GenericBlock {
             if (rs) {
                 return iconInd;
             } else {
-                return iconFront_off;
+                return iconFrontOff;
             }
         } else {
             return iconSide;

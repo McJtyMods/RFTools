@@ -4,8 +4,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
 public class PacketReturnEnergy implements IMessage {
-    int id;
-    int energy;
+    private int id;
+    private int energy;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -17,6 +17,14 @@ public class PacketReturnEnergy implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
         buf.writeInt(energy);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getEnergy() {
+        return energy;
     }
 
     public PacketReturnEnergy() {

@@ -18,9 +18,9 @@ import java.util.List;
 
 public class PhasedFieldGeneratorItem extends Item implements IEnergyContainerItem {
 
-    protected int capacity;
-    protected int maxReceive;
-    protected int maxExtract;
+    private int capacity;
+    private int maxReceive;
+    private int maxExtract;
 
     private IIcon powerLevel[] = new IIcon[9];
 

@@ -22,7 +22,7 @@ public class CounterClientScreenModule implements ClientScreenModule {
     private int color = 0xffffff;
     private int cntcolor = 0xffffff;
     protected int dim = 0;
-    FormatStyle format = FormatStyle.MODE_FULL;
+    private FormatStyle format = FormatStyle.MODE_FULL;
     protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override

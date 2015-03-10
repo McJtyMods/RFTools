@@ -15,7 +15,6 @@ import java.util.Random;
 
 public class GenericWorldChunkManager extends WorldChunkManager {
     private DimensionInformation dimensionInformation = null;
-    private final World world;
 
     public static DimensionInformation hackyDimensionInformation;       // Hack to get the dimension information here before 'super'.
 
@@ -23,9 +22,8 @@ public class GenericWorldChunkManager extends WorldChunkManager {
         return dimensionInformation;
     }
 
-    public GenericWorldChunkManager(long seed, WorldType worldType, World world, DimensionInformation dimensionInformation) {
+    public GenericWorldChunkManager(long seed, WorldType worldType, DimensionInformation dimensionInformation) {
         super(seed, worldType);
-        this.world = world;
         this.dimensionInformation = dimensionInformation;
     }
 

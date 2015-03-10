@@ -17,12 +17,12 @@ public class DimensionClientScreenModule implements ClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private int rfcolor = 0xffffff;
-    private int rfcolor_neg = 0xffffff;
+    private int rfcolorNeg = 0xffffff;
     private boolean hidebar = false;
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
-    FormatStyle format = FormatStyle.MODE_FULL;
+    private FormatStyle format = FormatStyle.MODE_FULL;
 
     @Override
     public TransformMode getTransformMode() {
@@ -45,7 +45,7 @@ public class DimensionClientScreenModule implements ClientScreenModule {
             xoffset = 7;
         }
 
-        ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolor_neg, 0xffff0000, 0xff333300, format);
+        ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format);
     }
 
     @Override
@@ -170,9 +170,9 @@ public class DimensionClientScreenModule implements ClientScreenModule {
                 rfcolor = 0xffffff;
             }
             if (tagCompound.hasKey("rfcolor_neg")) {
-                rfcolor_neg = tagCompound.getInteger("rfcolor_neg");
+                rfcolorNeg = tagCompound.getInteger("rfcolor_neg");
             } else {
-                rfcolor_neg = 0xffffff;
+                rfcolorNeg = 0xffffff;
             }
 
             hidebar = tagCompound.getBoolean("hidebar");

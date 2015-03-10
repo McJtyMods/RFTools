@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class DimensionalShardBlock extends Block {
 
-    protected IIcon icon;
+    private IIcon icon;
 
     public DimensionalShardBlock() {
         super(Material.rock);

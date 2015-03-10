@@ -29,7 +29,6 @@ import java.util.List;
 
 public class MatterReceiverBlock extends GenericContainerBlock implements Infusable {
 
-    private IIcon iconSide;
     private IIcon iconTop;
 
     public MatterReceiverBlock() {

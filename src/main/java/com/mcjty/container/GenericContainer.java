@@ -1,6 +1,7 @@
 package com.mcjty.container;
 
 import com.google.common.collect.Range;
+import com.mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -14,14 +15,12 @@ import java.util.Map;
  * Generic container support.
  */
 public class GenericContainer extends Container {
-    protected Map<String,IInventory> inventories = new HashMap<String, IInventory>();
-    protected EntityPlayer player;
+    private Map<String,IInventory> inventories = new HashMap<String, IInventory>();
     private ContainerFactory factory;
     private GenericCrafter crafter = null;
 
-    public GenericContainer(ContainerFactory factory, EntityPlayer player) {
+    public GenericContainer(ContainerFactory factory) {
         this.factory = factory;
-        this.player = player;
     }
 
     public void addInventory(String name, IInventory inventory) {
@@ -154,8 +153,7 @@ public class GenericContainer extends Container {
                     }
                 }
             } else {
-                System.out.println("index = " + index);
-                System.out.println("WEIRD SLOT???");
+                RFTools.log("Weird slot at index: " + index);
             }
 
             if (origStack.stackSize == 0) {

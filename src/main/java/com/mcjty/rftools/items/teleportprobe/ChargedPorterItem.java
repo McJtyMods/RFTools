@@ -22,9 +22,9 @@ import java.util.List;
 
 public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
-    protected int capacity;
-    protected int maxReceive;
-    protected int maxExtract;
+    private int capacity;
+    private int maxReceive;
+    private int maxExtract;
 
     private IIcon powerLevel[] = new IIcon[9];
 
@@ -95,8 +95,8 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
         if (!world.isRemote) {
             IExtendedEntityProperties properties = player.getExtendedProperties(PlayerExtendedProperties.ID);
-            PlayerExtendedProperties PlayerExtendedProperties = (PlayerExtendedProperties) properties;
-            if (PlayerExtendedProperties.isTeleporting()) {
+            PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
+            if (playerExtendedProperties.isTeleporting()) {
                 RFTools.message(player, EnumChatFormatting.RED + "Already teleporting!");
                 return;
             }
@@ -122,7 +122,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             extractEnergyNoMax(stack, cost, false);
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
-            PlayerExtendedProperties.startTeleport(target, ticks);
+            playerExtendedProperties.startTeleport(target, ticks);
             RFTools.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
         }
     }

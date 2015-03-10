@@ -4,8 +4,8 @@ package com.mcjty.rftools.items.dimlets;
 * Created by jorrit on 8/12/14.
 */
 public class DimletKey {
-    final DimletType type;
-    final String name;
+    private final DimletType type;
+    private final String name;
 
     public DimletKey(DimletType type, String name) {
         this.type = type;
@@ -22,13 +22,21 @@ public class DimletKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DimletKey dimletKey = (DimletKey) o;
 
-        if (type != dimletKey.type) return false;
-        if (!name.equals(dimletKey.name)) return false;
+        if (type != dimletKey.type) {
+            return false;
+        }
+        if (!name.equals(dimletKey.name)) {
+            return false;
+        }
 
         return true;
     }

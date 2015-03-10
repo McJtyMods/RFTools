@@ -48,7 +48,9 @@ public class LiquidAbsorberTileEntity extends GenericTileEntity {
 
     private Block blockMatches(Coordinate c2) {
         Block block = isValidSourceBlock(c2);
-        if (block == null) return null;
+        if (block == null) {
+            return null;
+        }
         int id = Block.blockRegistry.getIDForObject(block);
         return id == blockID ? block : null;
     }

@@ -51,16 +51,13 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(EnumChatFormatting.GREEN + "Uses " + RedstoneScreenModule.RFPERTICK + " RF/tick");
-        boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             list.add(EnumChatFormatting.YELLOW + "Channel: " + tagCompound.getInteger("channel"));
         }
-        if (!hasTarget) {
-            list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a redstone transmitter or");
-            list.add(EnumChatFormatting.YELLOW + "receiver to set the channel for this module");
-        }
+        list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a redstone transmitter or");
+        list.add(EnumChatFormatting.YELLOW + "receiver to set the channel for this module");
     }
 
     @Override

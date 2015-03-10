@@ -6,8 +6,7 @@ import java.util.Map;
 public enum RedstoneMode {
     REDSTONE_IGNORED("Ignored"),
     REDSTONE_OFFREQUIRED("Off"),
-    REDSTONE_ONREQUIRED("On"),
-    ;
+    REDSTONE_ONREQUIRED("On");
 
     private static final Map<String,RedstoneMode> modeToMode = new HashMap<String, RedstoneMode>();
 

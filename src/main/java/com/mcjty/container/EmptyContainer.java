@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 public class EmptyContainer extends GenericContainer {
 
     public EmptyContainer(EntityPlayer player) {
-        super(EmptyContainerFactory.getInstance(), player);
+        super(EmptyContainerFactory.getInstance());
     }
 
     @Override

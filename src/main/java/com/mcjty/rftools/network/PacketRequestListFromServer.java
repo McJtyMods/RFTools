@@ -1,5 +1,6 @@
 package com.mcjty.rftools.network;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.tileentity.TileEntity;
@@ -30,14 +31,13 @@ public abstract class PacketRequestListFromServer<T extends ByteBufConverter, S 
     public C onMessage(S message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof CommandHandler)) {
-            // @Todo better logging
-            System.out.println("createStartScanPacket: TileEntity is not a CommandHandler!");
+            RFTools.log("createStartScanPacket: TileEntity is not a CommandHandler!");
             return null;
         }
         CommandHandler commandHandler = (CommandHandler) te;
         List<T> list = (List<T>) commandHandler.executeWithResultList(message.command, message.args);
         if (list == null) {
-            System.out.println("Command "+message.command+" was not handled!");
+            RFTools.log("Command "+message.command+" was not handled!");
             return null;
         }
         return createMessageToClient(message.x, message.y, message.z, list);

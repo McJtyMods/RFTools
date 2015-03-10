@@ -20,9 +20,9 @@ import java.util.List;
 public class GuiTeleportProbe extends GuiScreen {
 
     /** The X size of the window in pixels. */
-    protected int xSize = 356;
+    private int xSize = 356;
     /** The Y size of the window in pixels. */
-    protected int ySize = 180;
+    private int ySize = 180;
 
     private Window window;
     private WidgetList list;

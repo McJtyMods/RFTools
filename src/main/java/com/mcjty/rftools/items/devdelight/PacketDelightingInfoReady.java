@@ -73,10 +73,10 @@ public class PacketDelightingInfoReady implements IMessage, IMessageHandler<Pack
             DelightingInfoHelper.NBTDescription value = me.getValue();
             buf.writeInt(key.length());
             buf.writeBytes(key.getBytes());
-            buf.writeInt(value.type.length());
-            buf.writeBytes(value.type.getBytes());
-            buf.writeInt(value.value.length());
-            buf.writeBytes(value.value.getBytes());
+            buf.writeInt(value.getType().length());
+            buf.writeBytes(value.getType().getBytes());
+            buf.writeInt(value.getValue().length());
+            buf.writeBytes(value.getValue().getBytes());
         }
         buf.writeInt(metadata);
     }

@@ -212,8 +212,8 @@ public class GuiDevelopersDelight extends GuiScreen {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new Label(mc, this).setText(me.getKey()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(70));
             DelightingInfoHelper.NBTDescription value = me.getValue();
-            panel.addChild(new Label(mc, this).setText(value.type).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
-            panel.addChild(new Label(mc, this).setText(value.value).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            panel.addChild(new Label(mc, this).setText(value.getType()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
+            panel.addChild(new Label(mc, this).setText(value.getValue()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
             nbtDataList.addChild(panel);
         }
 

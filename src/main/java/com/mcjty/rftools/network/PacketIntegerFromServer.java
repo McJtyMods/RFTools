@@ -1,5 +1,6 @@
 package com.mcjty.rftools.network;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -65,13 +66,12 @@ public class PacketIntegerFromServer implements IMessage, IMessageHandler<Packet
     public IMessage onMessage(PacketIntegerFromServer message, MessageContext ctx) {
         TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof ClientCommandHandler)) {
-            // @Todo better logging
-            System.out.println("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
+            RFTools.log("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
             return null;
         }
         ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
         if (!clientCommandHandler.execute(message.command, message.result)) {
-            System.out.println("Command "+message.command+" was not handled!");
+            RFTools.log("Command "+message.command+" was not handled!");
         }
         return null;
     }

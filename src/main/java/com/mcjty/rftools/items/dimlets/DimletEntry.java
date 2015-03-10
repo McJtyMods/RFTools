@@ -44,17 +44,33 @@ public class DimletEntry {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DimletEntry that = (DimletEntry) o;
 
-        if (randomNotAllowed != that.randomNotAllowed) return false;
-        if (rarity != that.rarity) return false;
-        if (rfCreateCost != that.rfCreateCost) return false;
-        if (rfMaintainCost != that.rfMaintainCost) return false;
-        if (tickCost != that.tickCost) return false;
-        if (!key.equals(that.key)) return false;
+        if (randomNotAllowed != that.randomNotAllowed) {
+            return false;
+        }
+        if (rarity != that.rarity) {
+            return false;
+        }
+        if (rfCreateCost != that.rfCreateCost) {
+            return false;
+        }
+        if (rfMaintainCost != that.rfMaintainCost) {
+            return false;
+        }
+        if (tickCost != that.tickCost) {
+            return false;
+        }
+        if (!key.equals(that.key)) {
+            return false;
+        }
 
         return true;
     }

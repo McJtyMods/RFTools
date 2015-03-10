@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.monitor;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -82,8 +83,7 @@ public class PacketContentsMonitor implements IMessage, IMessageHandler<PacketCo
                 liquidMonitorBlockTileEntity.setAlarm(message.alarmMode, message.alarmLevel);
             }
         } else {
-            // @Todo better logging
-            System.out.println("TileEntity is not a RFMonitorBlockTileEntity!");
+            RFTools.log("TileEntity is not a RFMonitorBlockTileEntity!");
         }
         return null;
     }

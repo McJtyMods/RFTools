@@ -2,17 +2,14 @@ package com.mcjty.rftools.blocks.screens.modulesclient;
 
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
-import com.mcjty.gui.layout.HorizontalAlignment;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.VerticalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class RedstoneClientScreenModule implements ClientScreenModule {
@@ -23,7 +20,7 @@ public class RedstoneClientScreenModule implements ClientScreenModule {
     private int color = 0xffffff;
     private int yescolor = 0xffffff;
     private int nocolor = 0xffffff;
-    protected int channel = -1;
+    private int channel = -1;
 
     @Override
     public TransformMode getTransformMode() {
@@ -95,31 +92,6 @@ public class RedstoneClientScreenModule implements ClientScreenModule {
         }
 
         return panel;
-    }
-
-    private void addMonitorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, Panel panel) {
-        Panel monitorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                setDesiredHeight(16);
-        String monitoring;
-        if (currentData.hasKey("monitorx")) {
-            int dim = currentData.getInteger("dim");
-            World world = mc.thePlayer.worldObj;
-            if (dim == world.provider.dimensionId) {
-                int x = currentData.getInteger("monitorx");
-                int y = currentData.getInteger("monitory");
-                int z = currentData.getInteger("monitorz");
-                monitoring = currentData.getString("monitorname");
-                Block block = world.getBlock(x, y, z);
-                monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
-                monitorPanel.addChild(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
-            } else {
-                monitoring = "<unreachable>";
-            }
-        } else {
-            monitoring = "<not set>";
-        }
-        panel.addChild(monitorPanel);
-        panel.addChild(new Label(mc, gui).setText(monitoring));
     }
 
     private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {

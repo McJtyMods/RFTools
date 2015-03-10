@@ -8,7 +8,7 @@ import net.minecraftforge.common.DimensionManager;
 
 public class DimensionSyncPacket {
 
-    protected ByteBuf data = Unpooled.buffer();
+    private ByteBuf data = Unpooled.buffer();
 
     private byte[] dimensions;
 
@@ -19,6 +19,10 @@ public class DimensionSyncPacket {
     public void consumePacket(ByteBuf data) {
         dimensions = new byte[data.readableBytes()];
         data.readBytes(dimensions);
+    }
+
+    public ByteBuf getData() {
+        return data;
     }
 
     public void execute() {

@@ -86,8 +86,8 @@ public class DimensionTickEvent {
         }
     }
 
-    static Map<EffectType,Integer> effectsMap = new HashMap<EffectType, Integer>();
-    static Map<EffectType,Integer> effectAmplifierMap = new HashMap<EffectType, Integer>();
+    static final Map<EffectType,Integer> effectsMap = new HashMap<EffectType, Integer>();
+    static final Map<EffectType,Integer> effectAmplifierMap = new HashMap<EffectType, Integer>();
 
     static {
         effectsMap.put(EffectType.EFFECT_POISON, Potion.poison.getId());

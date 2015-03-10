@@ -48,9 +48,9 @@ public class MachineInfuserBlock extends GenericContainerBlock implements Infusa
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        MachineInfuserTileEntity MachineInfuserTileEntity = (MachineInfuserTileEntity) tileEntity;
-        MachineInfuserContainer MachineInfuserContainer = new MachineInfuserContainer(entityPlayer, MachineInfuserTileEntity);
-        return new GuiMachineInfuser(MachineInfuserTileEntity, MachineInfuserContainer);
+        MachineInfuserTileEntity machineInfuserTileEntity = (MachineInfuserTileEntity) tileEntity;
+        MachineInfuserContainer machineInfuserContainer = new MachineInfuserContainer(entityPlayer, machineInfuserTileEntity);
+        return new GuiMachineInfuser(machineInfuserTileEntity, machineInfuserContainer);
     }
 
     @Override

@@ -15,8 +15,8 @@ import java.util.Map;
  * Sync RfToolsDimensionManager data from server to client.
  */
 public class PacketSyncDimensionInfo implements IMessage {
-    Map<Integer, DimensionDescriptor> dimensions;
-    Map<Integer, DimensionInformation> dimensionInformation;
+    private Map<Integer, DimensionDescriptor> dimensions;
+    private Map<Integer, DimensionInformation> dimensionInformation;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -71,6 +71,14 @@ public class PacketSyncDimensionInfo implements IMessage {
             buf.writeBytes(dimInfo.getName().getBytes());
             dimInfo.toBytes(buf);
         }
+    }
+
+    public Map<Integer, DimensionDescriptor> getDimensions() {
+        return dimensions;
+    }
+
+    public Map<Integer, DimensionInformation> getDimensionInformation() {
+        return dimensionInformation;
     }
 
     public PacketSyncDimensionInfo() {

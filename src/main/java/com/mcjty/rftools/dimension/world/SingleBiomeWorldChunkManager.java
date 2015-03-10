@@ -14,11 +14,10 @@ import java.util.Random;
 
 public class SingleBiomeWorldChunkManager extends WorldChunkManager {
     private BiomeGenBase biomeGenBase;
-    private final DimensionInformation dimensionInformation;
 
     public SingleBiomeWorldChunkManager(World world, long seed, WorldType worldType) {
         super(seed, worldType);
-        dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
+        DimensionInformation dimensionInformation = RfToolsDimensionManager.getDimensionManager(world).getDimensionInformation(world.provider.dimensionId);
         biomeGenBase = dimensionInformation.getBiomes().get(0);
     }
 

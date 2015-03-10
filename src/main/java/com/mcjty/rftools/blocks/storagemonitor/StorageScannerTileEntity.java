@@ -6,7 +6,6 @@ import com.mcjty.entity.SyncedValue;
 import com.mcjty.entity.SyncedValueList;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
-import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -190,7 +189,6 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         if (tileEntity instanceof IInventory) {
             IInventory inventory = (IInventory) tileEntity;
             if (inventory.getSizeInventory() > 0) {
-                Block block = worldObj.getBlock(cx, cy, cz);
                 inventories.add(new InvBlockInfo(new Coordinate(cx, cy, cz), inventory.getSizeInventory()));
                 notifyBlockUpdate();                }
         }

@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.network.NetworkTools;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -71,7 +72,7 @@ public enum ScreenDataType {
             buf.writeByte(TYPE_ITEMSTACK.ordinal());
             NetworkTools.writeItemStack(buf, (ItemStack) obj);
         } else {
-            System.out.println("Weird? Unknown type!");
+            RFTools.log("Weird ScreenDataType!");
         }
     }
 }

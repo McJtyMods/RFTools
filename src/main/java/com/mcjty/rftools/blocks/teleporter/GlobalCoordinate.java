@@ -21,13 +21,21 @@ public class GlobalCoordinate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GlobalCoordinate that = (GlobalCoordinate) o;
 
-        if (dimension != that.dimension) return false;
-        if (!coordinate.equals(that.coordinate)) return false;
+        if (dimension != that.dimension) {
+            return false;
+        }
+        if (!coordinate.equals(that.coordinate)) {
+            return false;
+        }
 
         return true;
     }

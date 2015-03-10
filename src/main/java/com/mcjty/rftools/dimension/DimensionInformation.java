@@ -117,7 +117,7 @@ public class DimensionInformation {
         calculateSky(dimlets, random);
 
         calculateMobs(dimlets, random);
-        calculateSpecial(dimlets, random);
+        calculateSpecial(dimlets);
         calculateTime(dimlets, random);
         calculateEffects(dimlets, random);
         calculateWeather(dimlets, random);
@@ -150,16 +150,16 @@ public class DimensionInformation {
         return buffer.append("                                                  ".substring(0, indent));
     }
 
-    private static void NBTtoJson(StringBuffer buffer, NBTTagList tagList, int indent) {
+    private static void convertNBTtoJson(StringBuffer buffer, NBTTagList tagList, int indent) {
         for (int i = 0 ; i < tagList.tagCount() ; i++) {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
             appendIndent(buffer, indent).append("{\n");
-            NBTtoJson(buffer, compound, indent+4);
+            convertNBTtoJson(buffer, compound, indent + 4);
             appendIndent(buffer, indent).append("},\n");
         }
     }
 
-    private static void NBTtoJson(StringBuffer buffer, NBTTagCompound tagCompound, int indent) {
+    private static void convertNBTtoJson(StringBuffer buffer, NBTTagCompound tagCompound, int indent) {
         boolean first = true;
         for (Object o : tagCompound.func_150296_c()) {
             if (!first) {
@@ -173,12 +173,12 @@ public class DimensionInformation {
             if (tag instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) tag;
                 buffer.append("{\n");
-                NBTtoJson(buffer, compound, indent + 4);
+                convertNBTtoJson(buffer, compound, indent + 4);
                 appendIndent(buffer, indent).append('}');
             } else if (tag instanceof NBTTagList) {
                 NBTTagList list = (NBTTagList) tag;
                 buffer.append("[\n");
-                NBTtoJson(buffer, list, indent + 4);
+                convertNBTtoJson(buffer, list, indent + 4);
                 appendIndent(buffer, indent).append(']');
             } else {
                 buffer.append(tag);
@@ -195,7 +195,7 @@ public class DimensionInformation {
         writeToNBT(tagCompound);
         StringBuffer buffer = new StringBuffer();
         buffer.append("{\n");
-        NBTtoJson(buffer, tagCompound, 4);
+        convertNBTtoJson(buffer, tagCompound, 4);
         buffer.append("}");
         String json = buffer.toString();
 //        String json = tagCompound.toString();
@@ -426,13 +426,13 @@ public class DimensionInformation {
     private void readOresFromNBT(NBTTagCompound tagCompound) {
         List<BlockMeta> ores = new ArrayList<BlockMeta>();
         int[] extraOregens = getIntArraySafe(tagCompound, "extraOregen");
-        int[] extraOregen_metas = getIntArraySafe(tagCompound, "extraOregen_meta");
+        int[] extraOregenMetas = getIntArraySafe(tagCompound, "extraOregen_meta");
         for (int i = 0 ; i < extraOregens.length ; i++) {
             int id = extraOregens[i];
             Block block = (Block) Block.blockRegistry.getObjectById(id);
             int meta = 0;
-            if (i < extraOregen_metas.length) {
-                meta = extraOregen_metas[i];
+            if (i < extraOregenMetas.length) {
+                meta = extraOregenMetas[i];
             }
             ores.add(new BlockMeta(block, meta));
         }
@@ -869,7 +869,7 @@ public class DimensionInformation {
         weatherDescriptor = builder.build();
     }
 
-    private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets, Random random) {
+    private void calculateSpecial(List<Pair<DimensionDescriptor.DimletDescriptor,List<DimensionDescriptor.DimletDescriptor>>> dimlets) {
         dimlets = extractType(DimletType.DIMLET_SPECIAL, dimlets);
         for (Pair<DimensionDescriptor.DimletDescriptor, List<DimensionDescriptor.DimletDescriptor>> dimlet : dimlets) {
             DimletKey key = dimlet.getLeft().getKey();

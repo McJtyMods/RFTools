@@ -38,10 +38,14 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
     @Override
     protected void checkStateServer() {
         ItemStack dimletItemStack = validateDimletItemStack();
-        if (dimletItemStack == null) return;
+        if (dimletItemStack == null) {
+            return;
+        }
 
         ItemStack dimensionItemStack = validateDimensionItemStack();
-        if (dimensionItemStack == null) return;
+        if (dimensionItemStack == null) {
+            return;
+        }
 
         if (ticksLeft == -1) {
             // We were not injecting. Start now.

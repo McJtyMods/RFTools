@@ -1,9 +1,9 @@
 package com.mcjty.rftools.dimension.description;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.items.dimlets.*;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class DimensionDescriptor {
     private final int tickCost;
     private final long forcedSeed;
 
-    public DimensionDescriptor(List<DimletDescriptor> descriptors, World world, long forcedSeed) {
+    public DimensionDescriptor(List<DimletDescriptor> descriptors, long forcedSeed) {
         this.forcedSeed = forcedSeed;
 
         StringBuilder s = new StringBuilder();
@@ -39,33 +39,6 @@ public class DimensionDescriptor {
         tickCost = calculateTickCost(dimlets);
         rfCreateCost = calculateCreationRfCost(dimlets, currentModifiers, tickCost);
         rfMaintainCost = calculateMaintenanceRfCost(dimlets);
-    }
-
-    private void constructDescriptionString(StringBuilder s, List<Pair<DimletKey,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> currentModifiers, DimletMapping mapping) {
-        for (Pair<DimletKey, List<DimletDescriptor>> dimletWithModifiers : dimlets) {
-            DimletKey key = dimletWithModifiers.getLeft();
-            List<DimletDescriptor> mods = dimletWithModifiers.getRight();
-            if (mods != null) {
-                for (DimletDescriptor modifier : mods) {
-                    if (s.length() > 0) {
-                        s.append(',');
-                    }
-                    s.append('#').append(modifier.getType().getOpcode()).append(mapping.getId(modifier.getKey()));
-                }
-            }
-            if (s.length() > 0) {
-                s.append(',');
-            }
-            s.append(key.getType().getOpcode()).append(mapping.getId(key));
-        }
-
-        // Now add all unused modifiers to the end.
-        for (DimletDescriptor modifier : currentModifiers) {
-            if (s.length() > 0) {
-                s.append(',');
-            }
-            s.append('?').append(modifier.getType().getOpcode()).append(mapping.getId(modifier.getKey()));
-        }
     }
 
     private void constructDescriptionStringNew(StringBuilder s, List<Pair<DimletKey,List<DimletDescriptor>>> dimlets, List<DimletDescriptor> currentModifiers) {
@@ -141,7 +114,7 @@ public class DimensionDescriptor {
 
             StringBuilder s = new StringBuilder();
             constructDescriptionStringNew(s, dimlets, currentModifiers);
-            System.out.println("Converting from: " + ds + " to: " + s.toString());
+            RFTools.log("Converting dimension descriptor from: " + ds + " to: " + s);
             descriptionString = s.toString();
         }
 

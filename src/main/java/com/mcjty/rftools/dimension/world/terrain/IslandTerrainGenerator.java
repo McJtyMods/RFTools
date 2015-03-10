@@ -18,7 +18,6 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import java.util.Random;
 
 public class IslandTerrainGenerator implements BaseTerrainGenerator {
-    private World world;
     private GenericChunkProvider provider;
 
     private double[] densities;
@@ -73,7 +72,6 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
 
     @Override
     public void setup(World world, GenericChunkProvider provider) {
-        this.world = world;
         this.provider = provider;
 
         this.noiseGen1 = new NoiseGeneratorOctaves(provider.rand, 16);

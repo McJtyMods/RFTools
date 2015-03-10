@@ -20,7 +20,6 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 //    private ImageLabel arrow;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/machineinfuser.png");
-    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiMachineInfuser(MachineInfuserTileEntity pearlInjectorTileEntity, MachineInfuserContainer container) {
         super(pearlInjectorTileEntity, container);

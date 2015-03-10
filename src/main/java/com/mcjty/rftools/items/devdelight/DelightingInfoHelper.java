@@ -45,12 +45,20 @@ public class DelightingInfoHelper {
     }
 
     public static class NBTDescription {
-        String type;
-        String value;
+        private String type;
+        private String value;
 
         public NBTDescription(String type, String value) {
             this.type = type;
             this.value = value;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 }

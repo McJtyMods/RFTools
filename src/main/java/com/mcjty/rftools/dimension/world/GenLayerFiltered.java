@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class GenLayerFiltered extends GenLayer {
 
-    private final GenLayer parent;
     private final GenericWorldChunkManager chunkManager;
     private final ControllerType type;
 

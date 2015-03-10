@@ -6,7 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Coordinate implements ByteBufConverter {
-    private final int x, y, z;
+    private final int x;
+    private final int y;
+    private final int z;
 
     public static final Coordinate INVALID = new Coordinate(-1, -1, -1);
 
@@ -37,14 +39,24 @@ public class Coordinate implements ByteBufConverter {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Coordinate that = (Coordinate) o;
 
-        if (x != that.x) return false;
-        if (y != that.y) return false;
-        if (z != that.z) return false;
+        if (x != that.x) {
+            return false;
+        }
+        if (y != that.y) {
+            return false;
+        }
+        if (z != that.z) {
+            return false;
+        }
 
         return true;
     }

@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.environmental;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -139,10 +140,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
                     try {
                         environmentModule = moduleClass.newInstance();
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+                        RFTools.log("Failed to instantiate controller module!");
                         continue;
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        RFTools.log("Failed to instantiate controller module!");
                         continue;
                     }
                     environmentModules.add(environmentModule);

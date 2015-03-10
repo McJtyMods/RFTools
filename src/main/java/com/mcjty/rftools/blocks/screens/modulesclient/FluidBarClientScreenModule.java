@@ -22,13 +22,12 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private int mbcolor = 0xffffff;
-    private int mbcolor_neg = 0xffffff;
     protected int dim = 0;
     private boolean hidebar = false;
     private boolean hidetext = false;
     private boolean showdiff = false;
     private boolean showpct = false;
-    FormatStyle format = FormatStyle.MODE_FULL;
+    private FormatStyle format = FormatStyle.MODE_FULL;
     protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override
@@ -53,7 +52,8 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
         }
 
         if (coordinate.isValid()) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolor_neg, 0xff0088ff, 0xff003333, format);
+            int mbcolorNeg = 0xffffff;
+            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }

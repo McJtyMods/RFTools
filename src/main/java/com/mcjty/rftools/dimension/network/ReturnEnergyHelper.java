@@ -11,7 +11,7 @@ public class ReturnEnergyHelper {
     public static void setEnergyLevel(PacketReturnEnergy message) {
         World world = Minecraft.getMinecraft().theWorld;
         DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(world);
-        dimensionStorage.setEnergyLevel(message.id, message.energy);
+        dimensionStorage.setEnergyLevel(message.getId(), message.getEnergy());
     }
 
 }

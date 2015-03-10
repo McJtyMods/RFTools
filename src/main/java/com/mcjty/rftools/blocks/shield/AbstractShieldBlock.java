@@ -25,8 +25,8 @@ import java.util.Random;
 
 public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
-    protected IIcon icon;
-    protected IIcon[] icons = new IIcon[4];
+    private IIcon icon;
+    private IIcon[] icons = new IIcon[4];
 
     public static final int META_ITEMS = 1;             // If set then blocked for items
     public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs

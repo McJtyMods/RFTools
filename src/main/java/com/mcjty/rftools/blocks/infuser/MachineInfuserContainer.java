@@ -24,7 +24,7 @@ public class MachineInfuserContainer extends GenericContainer {
     };
 
     public MachineInfuserContainer(EntityPlayer player, MachineInfuserTileEntity containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

@@ -85,7 +85,7 @@ public class GenericWorldProvider extends WorldProvider {
                 worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
             } else {
                 GenericWorldChunkManager.hackyDimensionInformation = dimensionInformation;      // Hack to get the dimension information in the superclass.
-                worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), worldObj, dimensionInformation);
+                worldChunkMgr = new GenericWorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType(), dimensionInformation);
             }
         } else {
             worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
@@ -174,7 +174,7 @@ public class GenericWorldProvider extends WorldProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public Vec3 getFogColor(float angle, float p_76562_2_) {
+    public Vec3 getFogColor(float angle, float dt) {
         int dim = worldObj.provider.dimensionId;
         if (System.currentTimeMillis() - lastFogTime > 1000) {
             lastFogTime = System.currentTimeMillis();
@@ -195,7 +195,7 @@ public class GenericWorldProvider extends WorldProvider {
             b = dimensionInformation.getSkyDescriptor().getFogColorFactorB() * factor;
         }
 
-        Vec3 color = super.getFogColor(angle, p_76562_2_);
+        Vec3 color = super.getFogColor(angle, dt);
         return Vec3.createVectorHelper(color.xCoord * r, color.yCoord * g, color.zCoord * b);
     }
 
@@ -286,10 +286,10 @@ public class GenericWorldProvider extends WorldProvider {
     }
 
     @Override
-    public float calculateCelestialAngle(long time, float p_76563_3_) {
+    public float calculateCelestialAngle(long time, float dt) {
         getDimensionInformation();
         if (dimensionInformation == null) {
-            return super.calculateCelestialAngle(time, p_76563_3_);
+            return super.calculateCelestialAngle(time, dt);
         }
 
         if (!dimensionInformation.getTerrainType().hasSky()) {
@@ -298,9 +298,9 @@ public class GenericWorldProvider extends WorldProvider {
 
         if (dimensionInformation.getCelestialAngle() == null) {
             if (dimensionInformation.getTimeSpeed() == null) {
-                return super.calculateCelestialAngle(time, p_76563_3_);
+                return super.calculateCelestialAngle(time, dt);
             } else {
-                return super.calculateCelestialAngle((long) (time * dimensionInformation.getTimeSpeed()), p_76563_3_);
+                return super.calculateCelestialAngle((long) (time * dimensionInformation.getTimeSpeed()), dt);
             }
         } else {
             return dimensionInformation.getCelestialAngle();

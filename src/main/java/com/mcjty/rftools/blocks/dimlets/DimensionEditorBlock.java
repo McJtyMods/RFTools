@@ -23,9 +23,9 @@ import java.util.List;
 
 public class DimensionEditorBlock extends GenericContainerBlock implements Infusable {
 
-    private IIcon iconFront_empty;
-    private IIcon iconFront_busy1;
-    private IIcon iconFront_busy2;
+    private IIcon iconFrontEmpty;
+    private IIcon iconFrontBusy1;
+    private IIcon iconFrontBusy2;
 
     public DimensionEditorBlock() {
         super(Material.iron, DimensionEditorTileEntity.class);
@@ -42,9 +42,9 @@ public class DimensionEditorBlock extends GenericContainerBlock implements Infus
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         super.registerBlockIcons(iconRegister);
-        iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_empty");
-        iconFront_busy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_busy1");
-        iconFront_busy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_busy2");
+        iconFrontEmpty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_empty");
+        iconFrontBusy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_busy1");
+        iconFrontBusy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionEditor_busy2");
     }
 
     @SideOnly(Side.CLIENT)
@@ -100,9 +100,9 @@ public class DimensionEditorBlock extends GenericContainerBlock implements Infus
             int state = BlockTools.getState(meta);
             switch (state) {
                 case 0: return iconInd;
-                case 1: return iconFront_empty;
-                case 2: return iconFront_busy1;
-                case 3: return iconFront_busy2;
+                case 1: return iconFrontEmpty;
+                case 2: return iconFrontBusy1;
+                case 3: return iconFrontBusy2;
                 default: return iconInd;
             }
         } else {

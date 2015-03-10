@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketCheckDimletConfig implements IMessage {
-    Map<Integer, DimletKey> dimlets;
+    private Map<Integer, DimletKey> dimlets;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -35,6 +35,10 @@ public class PacketCheckDimletConfig implements IMessage {
             buf.writeBytes(key.getName().getBytes());
             buf.writeInt(key.getType().ordinal());
         }
+    }
+
+    public Map<Integer, DimletKey> getDimlets() {
+        return dimlets;
     }
 
     public PacketCheckDimletConfig() {

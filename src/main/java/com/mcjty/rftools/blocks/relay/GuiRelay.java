@@ -23,18 +23,8 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    private Button offButtonSub1000;
-    private Button offButtonSub100;
     private TextField offEnergy;
-    private Button offButtonAdd100;
-    private Button offButtonAdd1000;
-
-    private Button onButtonSub1000;
-    private Button onButtonSub100;
     private TextField onEnergy;
-    private Button onButtonAdd100;
-    private Button onButtonAdd1000;
-
 
     public GuiRelay(RelayTileEntity relayTileEntity, Container container) {
         super(relayTileEntity, container);
@@ -54,10 +44,10 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
                 adjustEnergy(offEnergy, 0);
             }
         });
-        offButtonSub1000 = createEnergyOffsetButton(offEnergy, "-1000", -1000);
-        offButtonSub100 = createEnergyOffsetButton(offEnergy, "-100", -100);
-        offButtonAdd100 = createEnergyOffsetButton(offEnergy, "+100", 100);
-        offButtonAdd1000 = createEnergyOffsetButton(offEnergy, "+1000", 1000);
+        Button offButtonSub1000 = createEnergyOffsetButton(offEnergy, "-1000", -1000);
+        Button offButtonSub100 = createEnergyOffsetButton(offEnergy, "-100", -100);
+        Button offButtonAdd100 = createEnergyOffsetButton(offEnergy, "+100", 100);
+        Button offButtonAdd1000 = createEnergyOffsetButton(offEnergy, "+1000", 1000);
         offEnergy.setText(Integer.toString(tileEntity.getRfOff()));
 
         Panel panelOff = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOff).
@@ -75,10 +65,10 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
                 adjustEnergy(onEnergy, 0);
             }
         });
-        onButtonSub1000 = createEnergyOffsetButton(onEnergy, "-1000", -1000);
-        onButtonSub100 = createEnergyOffsetButton(onEnergy, "-100", -100);
-        onButtonAdd100 = createEnergyOffsetButton(onEnergy, "+100", 100);
-        onButtonAdd1000 = createEnergyOffsetButton(onEnergy, "+1000", 1000);
+        Button onButtonSub1000 = createEnergyOffsetButton(onEnergy, "-1000", -1000);
+        Button onButtonSub100 = createEnergyOffsetButton(onEnergy, "-100", -100);
+        Button onButtonAdd100 = createEnergyOffsetButton(onEnergy, "+100", 100);
+        Button onButtonAdd1000 = createEnergyOffsetButton(onEnergy, "+1000", 1000);
         onEnergy.setText(Integer.toString(tileEntity.getRfOn()));
 
         Panel panelOn = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(redstoneOn).

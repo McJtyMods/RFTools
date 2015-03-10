@@ -8,7 +8,6 @@ import java.util.List;
 
 public class GenLayerCheckerboard extends GenLayer {
 
-    private final GenLayer parent;
     private final GenericWorldChunkManager chunkManager;
 
     public GenLayerCheckerboard(GenericWorldChunkManager chunkManager, long seed, GenLayer parent) {

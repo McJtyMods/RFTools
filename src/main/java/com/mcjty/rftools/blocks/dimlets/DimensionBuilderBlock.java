@@ -23,9 +23,9 @@ import java.util.List;
 
 public class DimensionBuilderBlock extends GenericContainerBlock implements Infusable {
 
-    private IIcon iconFront_empty;
-    private IIcon iconFront_busy1;
-    private IIcon iconFront_busy2;
+    private IIcon iconFrontEmpty;
+    private IIcon iconFrontBusy1;
+    private IIcon iconFrontBusy2;
 
     public DimensionBuilderBlock(boolean creative, String blockName) {
         super(Material.iron, DimensionBuilderTileEntity.class);
@@ -44,12 +44,12 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
     public void registerBlockIcons(IIconRegister iconRegister) {
         super.registerBlockIcons(iconRegister);
         if (isCreative()) {
-            iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilderC_empty");
+            iconFrontEmpty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilderC_empty");
         } else {
-            iconFront_empty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_empty");
+            iconFrontEmpty = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_empty");
         }
-        iconFront_busy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy1");
-        iconFront_busy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy2");
+        iconFrontBusy1 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy1");
+        iconFrontBusy2 = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDimensionBuilder_busy2");
     }
 
     @SideOnly(Side.CLIENT)
@@ -121,9 +121,9 @@ public class DimensionBuilderBlock extends GenericContainerBlock implements Infu
             int state = BlockTools.getState(meta);
             switch (state) {
                 case 0: return iconInd;
-                case 1: return iconFront_empty;
-                case 2: return iconFront_busy1;
-                case 3: return iconFront_busy2;
+                case 1: return iconFrontEmpty;
+                case 2: return iconFrontBusy1;
+                case 3: return iconFrontBusy2;
                 default: return iconInd;
             }
         } else {

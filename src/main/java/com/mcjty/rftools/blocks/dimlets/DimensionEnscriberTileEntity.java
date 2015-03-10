@@ -197,7 +197,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
         }
-        return new DimensionDescriptor(descriptors, worldObj, forcedSeed);
+        return new DimensionDescriptor(descriptors, forcedSeed);
     }
 
     private void extractDimlets() {

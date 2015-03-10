@@ -13,9 +13,9 @@ public class ContainerFactory {
     public static final String CONTAINER_PLAYER = "player";
 
     private boolean slotsSetup = false;
-    protected int[] accessibleSlots;
-    protected int[] accessibleInputSlots;
-    protected int[] accessibleOutputSlots;
+    private int[] accessibleSlots;
+    private int[] accessibleInputSlots;
+    private int[] accessibleOutputSlots;
 
     public ContainerFactory() {
         setup();

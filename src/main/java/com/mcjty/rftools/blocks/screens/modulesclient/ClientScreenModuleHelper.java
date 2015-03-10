@@ -76,7 +76,9 @@ public class ClientScreenModuleHelper {
             case MODE_COMPACT: {
                 long contents = Long.parseLong(in);
                 int unit = 1000;
-                if (contents < unit) return in;
+                if (contents < unit) {
+                    return in;
+                }
                 int exp = (int) (Math.log(contents) / Math.log(unit));
                 char pre = "KMGTP".charAt(exp-1);
                 return String.format("%.1f %s", contents / Math.pow(unit, exp), pre);
@@ -88,13 +90,13 @@ public class ClientScreenModuleHelper {
     }
 
     public static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        final String mode_full = FormatStyle.MODE_FULL.getName();
-        final String mode_compact = FormatStyle.MODE_COMPACT.getName();
-        final String mode_commas = FormatStyle.MODE_COMMAS.getName();
-        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(mode_full, mode_compact, mode_commas).
-                setChoiceTooltip(mode_full, "Full format: 3123555").
-                setChoiceTooltip(mode_compact, "Compact format: 3.1M").
-                setChoiceTooltip(mode_commas, "Comma format: 3,123,555").
+        final String modeFull = FormatStyle.MODE_FULL.getName();
+        final String modeCompact = FormatStyle.MODE_COMPACT.getName();
+        final String modeCommas = FormatStyle.MODE_COMMAS.getName();
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(modeFull, modeCompact, modeCommas).
+                setChoiceTooltip(modeFull, "Full format: 3123555").
+                setChoiceTooltip(modeCompact, "Compact format: 3.1M").
+                setChoiceTooltip(modeCommas, "Comma format: 3,123,555").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -110,14 +112,14 @@ public class ClientScreenModuleHelper {
     }
 
     public static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        String mode_none = "None";
-        final String mode_pertick = componentName + "/t";
-        final String mode_pct = componentName + "%";
-        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(mode_none, componentName, mode_pertick, mode_pct).
-                setChoiceTooltip(mode_none, "No text is shown").
+        String modeNone = "None";
+        final String modePertick = componentName + "/t";
+        final String modePct = componentName + "%";
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(modeNone, componentName, modePertick, modePct).
+                setChoiceTooltip(modeNone, "No text is shown").
                 setChoiceTooltip(componentName, "Show the amount of " + componentName).
-                setChoiceTooltip(mode_pertick, "Show the average "+componentName+"/tick", "gain or loss").
-                setChoiceTooltip(mode_pct, "Show the amount of "+componentName, "as a percentage").
+                setChoiceTooltip(modePertick, "Show the average "+componentName+"/tick", "gain or loss").
+                setChoiceTooltip(modePct, "Show the amount of "+componentName, "as a percentage").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -125,11 +127,11 @@ public class ClientScreenModuleHelper {
                             currentData.setBoolean("showdiff", false);
                             currentData.setBoolean("showpct", false);
                             currentData.setBoolean("hidetext", false);
-                        } else if (mode_pertick.equals(newChoice)) {
+                        } else if (modePertick.equals(newChoice)) {
                             currentData.setBoolean("showdiff", true);
                             currentData.setBoolean("showpct", false);
                             currentData.setBoolean("hidetext", false);
-                        } else if (mode_pct.equals(newChoice)) {
+                        } else if (modePct.equals(newChoice)) {
                             currentData.setBoolean("showdiff", false);
                             currentData.setBoolean("showpct", true);
                             currentData.setBoolean("hidetext", false);
@@ -144,11 +146,11 @@ public class ClientScreenModuleHelper {
 
 
         if (currentData.getBoolean("hidetext")) {
-            modeButton.setChoice(mode_none);
+            modeButton.setChoice(modeNone);
         } else if (currentData.getBoolean("showdiff")) {
-            modeButton.setChoice(mode_pertick);
+            modeButton.setChoice(modePertick);
         } else if (currentData.getBoolean("showpct")) {
-            modeButton.setChoice(mode_pct);
+            modeButton.setChoice(modePct);
         } else {
             modeButton.setChoice(componentName);
         }

@@ -15,7 +15,7 @@ public class DimensionSyncChannelHandler extends FMLIndexedMessageToMessageCodec
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, DimensionSyncPacket msg, ByteBuf target) throws Exception {
-        target.writeBytes(msg.data);
+        target.writeBytes(msg.getData());
     }
 
     @Override

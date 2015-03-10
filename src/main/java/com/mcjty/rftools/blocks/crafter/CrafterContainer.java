@@ -31,7 +31,7 @@ public class CrafterContainer extends GenericContainer {
 
 
     public CrafterContainer(EntityPlayer player, CrafterBaseTE containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

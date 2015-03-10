@@ -18,9 +18,9 @@ import java.awt.*;
 public class GuiRFToolsManual extends GuiScreen {
 
     /** The X size of the window in pixels. */
-    protected int xSize = 400;
+    private int xSize = 400;
     /** The Y size of the window in pixels. */
-    protected int ySize = 224;
+    private int ySize = 224;
 
     private Window window;
     private TextPage textPage;

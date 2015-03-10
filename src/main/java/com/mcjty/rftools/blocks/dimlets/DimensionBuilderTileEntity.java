@@ -53,29 +53,28 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     protected void checkStateServer() {
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
-            setState(-1, 0);
+            setState(-1);
             return;
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
 
         if (tagCompound == null) {
-            setState(-1, 0);
+            setState(-1);
             return;
         }
 
         int ticksLeft = tagCompound.getInteger("ticksLeft");
-        int tickCost = tagCompound.getInteger("tickCost");
         if (ticksLeft > 0) {
             ticksLeft = createDimensionTick(tagCompound, ticksLeft);
         } else {
             maintainDimensionTick(tagCompound);
         }
 
-        setState(ticksLeft, tickCost);
+        setState(ticksLeft);
     }
 
-    static int counter = 20;
+    private static int counter = 20;
 
     private void maintainDimensionTick(NBTTagCompound tagCompound) {
         int id = tagCompound.getInteger("id");
@@ -140,7 +139,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         return ticksLeft;
     }
 
-    private void setState(int ticksLeft, int tickCost) {
+    private void setState(int ticksLeft) {
         int state = 0;
         if (ticksLeft == 0) {
             state = 0;

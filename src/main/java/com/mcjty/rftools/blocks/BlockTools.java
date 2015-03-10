@@ -123,7 +123,8 @@ public class BlockTools {
             float f1 = random.nextFloat() * 0.8F + 0.1F;
             EntityItem entityitem;
 
-            for (float f2 = random.nextFloat() * 0.8F + 0.1F; itemstack.stackSize > 0; world.spawnEntityInWorld(entityitem)) {
+            float f2 = random.nextFloat() * 0.8F + 0.1F;
+            while (itemstack.stackSize > 0) {
                 int j = random.nextInt(21) + 10;
 
                 if (j > itemstack.stackSize) {
@@ -140,6 +141,7 @@ public class BlockTools {
                 if (itemstack.hasTagCompound()) {
                     entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
                 }
+                world.spawnEntityInWorld(entityitem);
             }
         }
     }

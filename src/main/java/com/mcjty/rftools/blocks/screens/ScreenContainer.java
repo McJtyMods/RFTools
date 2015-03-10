@@ -22,7 +22,7 @@ public class ScreenContainer extends GenericContainer {
 
 
     public ScreenContainer(EntityPlayer player, ScreenTileEntity containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

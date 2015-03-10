@@ -1,6 +1,6 @@
 package com.mcjty.rftools;
 
-public class Constants {
+public interface Constants {
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
     public static final int SIDE_NORTH = 2;

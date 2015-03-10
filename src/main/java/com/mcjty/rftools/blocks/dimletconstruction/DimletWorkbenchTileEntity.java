@@ -211,7 +211,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptTimeDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidTimeEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidTimeEssence(stackEssence, stackEssence.getTagCompound())) {
+            return false;
+        }
         DimletKey timeDimlet = findTimeDimlet(stackEssence);
         if (timeDimlet == null) {
             return false;
@@ -224,7 +226,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptLiquidDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidLiquidEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidLiquidEssence(stackEssence, stackEssence.getTagCompound())) {
+            return false;
+        }
         DimletKey liquidDimlet = findLiquidDimlet(stackEssence.getTagCompound());
         if (liquidDimlet == null) {
             return false;
@@ -237,7 +241,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptMaterialDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidMaterialEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidMaterialEssence(stackEssence, stackEssence.getTagCompound())) {
+            return false;
+        }
         DimletKey materialDimlet = findMaterialDimlet(stackEssence.getTagCompound());
         if (materialDimlet == null) {
             return false;
@@ -250,7 +256,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptSpecialDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidSpecialEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidSpecialEssence(stackEssence)) {
+            return false;
+        }
         DimletKey specialDimlet = findSpecialDimlet(stackEssence);
         if (specialDimlet == null) {
             return false;
@@ -263,7 +271,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptMobDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidMobEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidMobEssence(stackEssence, stackEssence.getTagCompound())) {
+            return false;
+        }
         String mob = stackEssence.getTagCompound().getString("mobName");
         if (!matchDimletRecipe(new DimletKey(DimletType.DIMLET_MOBS, mob), stackController, stackMemory, stackEnergy)) {
             return false;
@@ -274,7 +284,9 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
     }
 
     private boolean attemptBiomeDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidBiomeEssence(stackEssence, stackEssence.getTagCompound())) return false;
+        if (!isValidBiomeEssence(stackEssence, stackEssence.getTagCompound())) {
+            return false;
+        }
         DimletKey biomeDimlet = findBiomeDimlet(stackEssence.getTagCompound());
         if (biomeDimlet == null) {
             return false;
@@ -458,7 +470,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         return true;
     }
 
-    private boolean isValidSpecialEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
+    private boolean isValidSpecialEssence(ItemStack stackEssence) {
         if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
             return true;
         }
@@ -634,8 +646,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             startExtracting();
             return true;
         } else if (CMD_SETAUTOEXTRACT.equals(command)) {
-            boolean auto = args.get("auto").getBoolean();
-            autoExtract = auto;
+            autoExtract = args.get("auto").getBoolean();
             markDirty();
             return true;
         }

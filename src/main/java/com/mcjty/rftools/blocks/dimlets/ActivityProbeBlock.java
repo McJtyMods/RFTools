@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class ActivityProbeBlock extends Block {
 
-    protected IIcon icon;
+    private IIcon icon;
 
     public ActivityProbeBlock() {
         super(Material.iron);

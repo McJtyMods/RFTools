@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.storagemonitor;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -54,8 +55,7 @@ public class PacketGetInventory implements IMessage, IMessageHandler<PacketGetIn
     public PacketInventoryReady onMessage(PacketGetInventory message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof StorageScannerTileEntity)) {
-            // @Todo better logging
-            System.out.println("createGetInventoryPacket: TileEntity is not a StorageScannerTileEntity!");
+            RFTools.log("createGetInventoryPacket: TileEntity is not a StorageScannerTileEntity!");
             return null;
         }
         StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;

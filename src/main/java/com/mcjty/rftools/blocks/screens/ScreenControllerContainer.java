@@ -15,7 +15,7 @@ public class ScreenControllerContainer extends GenericContainer {
     };
 
     public ScreenControllerContainer(EntityPlayer player, ScreenControllerTileEntity containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }

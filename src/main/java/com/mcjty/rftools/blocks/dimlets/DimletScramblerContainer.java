@@ -27,7 +27,7 @@ public class DimletScramblerContainer extends GenericContainer {
     };
 
     public DimletScramblerContainer(EntityPlayer player, DimletScramblerTileEntity containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

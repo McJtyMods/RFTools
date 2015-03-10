@@ -22,7 +22,7 @@ public class EnvironmentalControllerContainer extends GenericContainer {
 
 
     public EnvironmentalControllerContainer(EntityPlayer player, EnvironmentalControllerTileEntity containerInventory) {
-        super(factory, player);
+        super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

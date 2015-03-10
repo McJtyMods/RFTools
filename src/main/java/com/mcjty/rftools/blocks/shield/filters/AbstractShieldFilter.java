@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.shield.filters;
 
+import com.mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,7 +62,7 @@ public abstract class AbstractShieldFilter implements ShieldFilter {
         } else if ("default".equals(type)) {
             filter = new DefaultFilter();
         } else {
-            System.out.println("Unknown filter type = " + type);
+            RFTools.log("Unknown filter type = " + type);
             filter = new DefaultFilter();
         }
         return filter;

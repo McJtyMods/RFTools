@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 
 public class DimensionalSmallBlocks extends Block {
 
-    protected IIcon icon;
+    private IIcon icon;
 
     public DimensionalSmallBlocks() {
         super(Material.rock);
