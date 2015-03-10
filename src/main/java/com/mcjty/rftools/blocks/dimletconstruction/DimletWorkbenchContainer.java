@@ -51,11 +51,6 @@ public class DimletWorkbenchContainer extends GenericContainer {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        return super.transferStackInSlot(player, index);
-    }
-
-    @Override
     public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
         if (index == SLOT_OUTPUT) {
             Achievements.trigger(player, Achievements.dimletMaster);
