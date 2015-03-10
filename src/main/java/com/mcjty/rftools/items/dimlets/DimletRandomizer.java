@@ -221,7 +221,12 @@ public class DimletRandomizer {
         for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
         }
-        Collections.sort(sortedCounters);
+        Collections.sort(sortedCounters, new Comparator<Pair<Integer, DimletKey>>() {
+            @Override
+            public int compare(Pair<Integer, DimletKey> o1, Pair<Integer, DimletKey> o2) {
+                return o1.getLeft().compareTo(o2.getLeft());
+            }
+        });
 
         for (Pair<Integer, DimletKey> entry : sortedCounters) {
             int count = entry.getKey();
@@ -253,7 +258,12 @@ public class DimletRandomizer {
         for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
         }
-        Collections.sort(sortedCounters);
+        Collections.sort(sortedCounters, new Comparator<Pair<Integer, DimletKey>>() {
+            @Override
+            public int compare(Pair<Integer, DimletKey> o1, Pair<Integer, DimletKey> o2) {
+                return o1.getLeft().compareTo(o2.getLeft());
+            }
+        });
 
         for (Pair<Integer, DimletKey> entry : sortedCounters) {
             int count = entry.getKey();
