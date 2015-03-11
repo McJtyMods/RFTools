@@ -9,7 +9,7 @@ public class ClientDisconnectEvent {
 
     @SubscribeEvent
     public void onDisconnectedFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
-        System.out.println("###### Disconnect from server");
+        RFTools.log("Disconnect from server: Unregistering RFTools dimensions");
         RfToolsDimensionManager.unregisterDimensions();
         KnownDimletConfiguration.clean();
     }

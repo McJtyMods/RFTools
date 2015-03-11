@@ -181,7 +181,7 @@ public class RFTools {
     @EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         System.out.println("###### RFTools.serverStopped");
-        RfToolsDimensionManager.unregisterDimensions();
+        RfToolsDimensionManager.cleanupDimensionInformation();
         TeleportDestinations.clearInstance();
         RfToolsDimensionManager.clearInstance();
         DimensionStorage.clearInstance();

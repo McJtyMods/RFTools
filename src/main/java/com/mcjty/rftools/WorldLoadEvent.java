@@ -41,7 +41,7 @@ public class WorldLoadEvent {
 
         if (!evt.world.isRemote) {
             if (MinecraftServer.getServer().isDedicatedServer()) {
-                RfToolsDimensionManager.unregisterDimensions();
+                RfToolsDimensionManager.cleanupDimensionInformation();
                 KnownDimletConfiguration.clean();
             }
         }

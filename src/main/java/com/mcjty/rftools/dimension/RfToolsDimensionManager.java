@@ -35,7 +35,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     private final Set<Integer> reclaimedIds = new HashSet<Integer>();
 
     public void syncFromServer(Map<Integer, DimensionDescriptor> dims, Map<Integer, DimensionInformation> dimInfo) {
-        System.out.println("RfToolsDimensionManager.syncFromServer");
+        RFTools.log("RfToolsDimensionManager.syncFromServer");
         if (dims.isEmpty() || dimInfo.isEmpty()) {
             RFTools.log("This should not happen! Dimension information from server is empty? Trying to adapt...");
         }
@@ -71,31 +71,38 @@ public class RfToolsDimensionManager extends WorldSavedData {
         }
     }
 
-    public static void unregisterDimensions() {
+    public static void cleanupDimensionInformation() {
         if (instance != null) {
             RFTools.log("Cleaning up RFTools dimensions");
-            for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
-                int id = me.getKey();
-                RFTools.log("    Dimension: " + id);
-                if (DimensionManager.isDimensionRegistered(id)) {
-                    try {
-                        DimensionManager.unregisterDimension(id);
-                    } catch (Exception e) {
-                        // We ignore this error.
-                        RFTools.log("        Could not unregister dimension: " + id);
-                    }
-                    try {
-                        DimensionManager.unregisterProviderType(id);
-                    } catch (Exception e) {
-                        // We ignore this error.
-                        RFTools.log("        Could not unregister provider: " + id);
-                    }
-                }
-            }
+            unregisterDimensions();
             instance.getDimensions().clear();
             instance.dimensionToID.clear();
             instance.dimensionInformation.clear();
             instance.reclaimedIds.clear();
+            instance = null;
+        }
+    }
+
+    public static void unregisterDimensions() {
+        for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
+            int id = me.getKey();
+            if (DimensionManager.isDimensionRegistered(id)) {
+                RFTools.log("    Unregister dimension: " + id);
+                try {
+                    DimensionManager.unregisterDimension(id);
+                } catch (Exception e) {
+                    // We ignore this error.
+                    RFTools.log("        Could not unregister dimension: " + id);
+                }
+                try {
+                    DimensionManager.unregisterProviderType(id);
+                } catch (Exception e) {
+                    // We ignore this error.
+                    RFTools.log("        Could not unregister provider: " + id);
+                }
+            } else {
+                RFTools.log("    Already unregistered! Dimension: " + id);
+            }
         }
     }
 
@@ -169,9 +176,6 @@ public class RfToolsDimensionManager extends WorldSavedData {
     }
 
     public static RfToolsDimensionManager getDimensionManager(World world) {
-//        if (world.isRemote) {
-//            return null;
-//        }
         if (instance != null) {
             return instance;
         }
