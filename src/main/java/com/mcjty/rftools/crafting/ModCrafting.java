@@ -151,7 +151,7 @@ public final class ModCrafting {
                 new ItemStack(ModItems.regenerationEModuleItem)));
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                new ItemStack[] {null, horseSyringe, null, reds, gold, reds, null, ink, null},
+                new ItemStack[] {new ItemStack(Items.saddle), horseSyringe, new ItemStack(Items.saddle), reds, gold, reds, null, ink, null},
                 new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
                 new ItemStack(ModItems.speedEModuleItem)));
 

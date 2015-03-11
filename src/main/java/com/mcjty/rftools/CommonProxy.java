@@ -38,13 +38,10 @@ public class CommonProxy {
 
     public static File modConfigDir;
     private Configuration mainConfig;
-    private Configuration dimletConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
-        dimletConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "dimlets.cfg"));
-        dimletConfig.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_KNOWNDIMLETS, "Dimlet configuration");
 
         readMainConfig();
 
@@ -72,7 +69,6 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller system");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RARITY, "General rarity distribution for dimlet selection");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
-            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_DIMLETSETTINGS, "Settings for specific dimlets");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Default rarity per type of dimlet. 0 is very common, 100 is non-existant");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "The base amount of time needed to create a dimension per type of dimlet in it");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "The base amount of RF needed to create a dimension per type of dimlet in it");
@@ -91,7 +87,6 @@ public class CommonProxy {
             EnvironmentalConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
-            DimletRandomizer.initTypeRarity(cfg);
             DimletCosts.initTypeRfCreateCost(cfg);
             DimletCosts.initTypeRfMaintainCost(cfg);
             DimletCosts.initTypeTickCost(cfg);
@@ -115,10 +110,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
-//        KnownDimletConfiguration.init();
-
         mainConfig = null;
-        dimletConfig = null;
         WrenchChecker.init();
     }
 

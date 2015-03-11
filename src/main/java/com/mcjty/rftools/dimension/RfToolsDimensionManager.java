@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension;
 
+import com.mcjty.rftools.CommonProxy;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.dimension.network.PacketCheckDimletConfig;
@@ -20,8 +21,10 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.Constants;
 
+import java.io.File;
 import java.util.*;
 
 public class RfToolsDimensionManager extends WorldSavedData {
@@ -143,7 +146,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         DimletMapping mapping = DimletMapping.getDimletMapping(world);
         mapping.overrideServerMapping(dimlets);
 
-        KnownDimletConfiguration.init(world, null);
+        KnownDimletConfiguration.init(world);
         KnownDimletConfiguration.initCrafting(world);
     }
 

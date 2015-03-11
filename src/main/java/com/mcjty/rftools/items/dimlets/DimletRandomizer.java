@@ -22,6 +22,14 @@ public class DimletRandomizer {
     public static final int RARITY_5 = 5;
     public static final int RARITY_6 = 6;
 
+    public static float rarity0;
+    public static float rarity1;
+    public static float rarity2;
+    public static float rarity3;
+    public static float rarity4;
+    public static float rarity5;
+    public static float rarity6;
+
     public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
     // Used for randomly generating dimlets.
     public static final List<DimletKey> dimletIds = new ArrayList<DimletKey>();
@@ -35,6 +43,27 @@ public class DimletRandomizer {
     public static WeightedRandomSelector<Integer,DimletKey> randomStructureDimlets;
     public static WeightedRandomSelector<Integer,DimletKey> randomEffectDimlets;
     public static WeightedRandomSelector<Integer,DimletKey> randomFeatureDimlets;
+
+    public static void clean() {
+        randomDimlets = null;
+        randomMaterialDimlets = null;
+        randomLiquidDimlets = null;
+        randomMobDimlets = null;
+        randomStructureDimlets = null;
+        randomEffectDimlets = null;
+        randomFeatureDimlets = null;
+    }
+
+    public static void readRandomConfig(Configuration cfg) {
+        rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 500.0f).getDouble();
+        rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 250.0f).getDouble();
+        rarity2 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level2", 150.0f).getDouble();
+        rarity3 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level3", 90.0f).getDouble();
+        rarity4 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level4", 40.0f).getDouble();
+        rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 20.0f).getDouble();
+        rarity6 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level6", 1.0f).getDouble();
+        initTypeRarity(cfg);
+    }
 
     public static void initTypeRarity(Configuration cfg) {
         typeRarity.clear();
@@ -59,25 +88,7 @@ public class DimletRandomizer {
         typeRarity.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "rarity." + type.getName(), rarity).getInt());
     }
 
-    public static void clean() {
-        randomDimlets = null;
-        randomMaterialDimlets = null;
-        randomLiquidDimlets = null;
-        randomMobDimlets = null;
-        randomStructureDimlets = null;
-        randomEffectDimlets = null;
-        randomFeatureDimlets = null;
-    }
-
-    static void setupWeightedRandomList(Configuration cfg, DimletMapping mapping) {
-        float rarity0 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level0", 500.0f).getDouble();
-        float rarity1 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level1", 250.0f).getDouble();
-        float rarity2 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level2", 150.0f).getDouble();
-        float rarity3 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level3", 90.0f).getDouble();
-        float rarity4 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level4", 40.0f).getDouble();
-        float rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 20.0f).getDouble();
-        float rarity6 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level6", 1.0f).getDouble();
-
+    static void setupWeightedRandomList() {
         randomDimlets = new WeightedRandomSelector<Integer, DimletKey>();
         setupRarity(randomDimlets, rarity0, rarity1, rarity2, rarity3, rarity4, rarity5, rarity6);
         randomMaterialDimlets = new WeightedRandomSelector<Integer, DimletKey>();
@@ -184,6 +195,7 @@ public class DimletRandomizer {
         randomDimlets.addRarity(RARITY_5, rarity5);
         randomDimlets.addRarity(RARITY_6, rarity6);
     }
+
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
     public static DimletKey getRandomDimlet(float bonus, Random random) {

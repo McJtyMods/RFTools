@@ -19,14 +19,14 @@ public class WorldLoadEvent {
             // If we are on a server then we initialize here.
             if (evt.world.provider.dimensionId == 0 && !KnownDimletConfiguration.isInitialized()) {
                 RFTools.log("Serverside World Load Event: initialize dimlets");
-                KnownDimletConfiguration.initServer(evt.world);
+                KnownDimletConfiguration.init(evt.world);
                 KnownDimletConfiguration.initCrafting(evt.world);
             }
         } else {
             // If we are on a single player client then we connect here.
             if (!KnownDimletConfiguration.isInitialized()) {
                 RFTools.log("Single player World Load Event: initialize dimlets");
-                KnownDimletConfiguration.initClient(evt.world);
+                KnownDimletConfiguration.init(evt.world);
                 KnownDimletConfiguration.initCrafting(evt.world);
             }
         }
