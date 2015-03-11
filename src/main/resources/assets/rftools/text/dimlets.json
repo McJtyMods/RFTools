@@ -50,6 +50,14 @@
         [ "Material", "tile.Ore7", 12000, 2000, 400, 3, 0 ],
         [ "Material", "tile.Ore8", 12000, 2000, 400, 3, 0 ],
 
+        [ "Material", "tile.gemOre2", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre4", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre6", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre8", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre10", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre12", 15000, 3500, 400, 3, 0 ],
+        [ "Material", "tile.gemOre14", 15000, 3500, 400, 3, 0 ],
+
         [ "Material", "mariculture.tile.rocks2", 10000, 2000, 400, 3, 0 ],
         [ "Material", "mariculture.tile.rocks3", 10000, 2000, 400, 3, 0 ],
 
