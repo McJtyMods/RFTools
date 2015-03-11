@@ -28,6 +28,6 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
     public void execute(ICommandSender sender, String[] args) {
         float bonus = fetchFloat(sender, args, 1, 0.0f);
 
-        DimletRandomizer.dumpRarityDistribution(bonus, sender.getEntityWorld());
+        DimletRandomizer.dumpRarityDistribution(bonus);
     }
 }

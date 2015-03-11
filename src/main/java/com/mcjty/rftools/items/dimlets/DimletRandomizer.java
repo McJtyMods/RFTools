@@ -200,7 +200,7 @@ public class DimletRandomizer {
         return randomDimlets.select(distribution, random);
     }
 
-    public static void dumpRarityDistribution(float bonus, World world) {
+    public static void dumpRarityDistribution(float bonus) {
         Random random = new Random();
         Map<DimletKey,Integer> counter = new HashMap<DimletKey, Integer>();
         WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
@@ -233,7 +233,8 @@ public class DimletRandomizer {
             DimletKey key = entry.getValue();
             int id = mapping.getId(key);
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + key.getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(key)+"\",    count:"+ count + ", "+percentage+"%");
+
+            formatDimletOutput(count, key, id, percentage);
         }
     }
 
@@ -270,7 +271,21 @@ public class DimletRandomizer {
             DimletKey key = entry.getValue();
             int id = mapping.getId(key);
             float percentage = count * 100.0f / total;
-            RFTools.log("Id:"+id + ",    key:\"" + key.getName() + "\",    name:\""+ KnownDimletConfiguration.idToDisplayName.get(key)+"\",    count:"+ count + ", "+percentage+"%");
+
+            formatDimletOutput(count, key, id, percentage);
         }
+    }
+
+    private static void formatDimletOutput(int count, DimletKey key, int id, float percentage) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb, Locale.US);
+        String name = KnownDimletConfiguration.idToDisplayName.get(key);
+        DimletEntry de = KnownDimletConfiguration.getEntry(key);
+        int rarity = -1;
+        if (de != null) {
+            rarity = de.getRarity();
+        }
+        formatter.format("Id:%1$-5d  Key:%2$-40.40s Name:%3$-40.40s [Count:%4$-8d %5$g%% R:%6$d]", id, key.toString(), name, count, percentage, rarity);
+        RFTools.log(sb.toString());
     }
 }
