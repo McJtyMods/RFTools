@@ -35,6 +35,7 @@ public class EntityEvents {
                         switch (DimletConfiguration.bedBehaviour) {
                             case 0:
                                 event.setCanceled(true);
+                                RFTools.message(event.entityPlayer, "You cannot sleep in this dimension!");
                                 break;
                             case 1:
                                 // Just do the usual thing (this typically mean explosion).
