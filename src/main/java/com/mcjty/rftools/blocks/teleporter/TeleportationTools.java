@@ -164,6 +164,16 @@ public class TeleportationTools {
         rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
 
         int extracted = matterReceiverTileEntity.extractEnergy(ForgeDirection.DOWN, rf, false);
+
+        int remainingRf = matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN);
+        if (remainingRf <= 1) {
+            RFTools.warn(player, "The matter receiver has run out of power!");
+        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 10)) {
+            RFTools.warn(player, "The matter receiver is getting very low on power!");
+        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 5)) {
+            RFTools.warn(player, "The matter receiver is getting low on power!");
+        }
+
         return 10 - (extracted * 10 / rf);
     }
 
