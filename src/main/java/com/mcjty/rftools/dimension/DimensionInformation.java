@@ -1189,6 +1189,24 @@ public class DimensionInformation {
             fluidsForLakes = new Block[0];
         }
 
+        if (featureTypes.contains(FeatureType.FEATURE_OREGEN)) {
+            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
+            List<Block> fluids = new ArrayList<Block>();
+            getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_OREGEN), blocks, fluids);
+
+            // If no ores are specified we will generate a few random ores.
+            if (blocks.isEmpty()) {
+                float chance = 1.1f;
+                while (random.nextFloat() < chance) {
+                    DimletKey key = DimletRandomizer.getRandomMaterialBlock(random, true);
+                    blocks.add(DimletObjectMapping.idToBlock.get(key));
+                    chance = chance * 0.80f;
+                }
+            }
+
+            extraOregen = blocks.toArray(new BlockMeta[blocks.size()]);
+        }
+
         tendrilBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS);
         sphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_ORBS);
         liquidSphereBlock = getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS);
