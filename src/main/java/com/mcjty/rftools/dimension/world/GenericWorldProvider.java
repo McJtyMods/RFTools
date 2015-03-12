@@ -150,7 +150,8 @@ public class GenericWorldProvider extends WorldProvider {
 
     @Override
     public int getRespawnDimension(EntityPlayerMP player) {
-        if (DimletConfiguration.respawnSameDim) {
+        getDimensionInformation();
+        if (DimletConfiguration.respawnSameDim || (dimensionInformation != null && dimensionInformation.isRespawnHere())) {
             DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
             int power = dimensionStorage.getEnergyLevel(dimensionId);
             if (power < 1000) {

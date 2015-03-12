@@ -219,6 +219,7 @@
         [ "Special", "Mediocre Efficiency", 40000, -5, 400, 4, 0 ],
         [ "Special", "Shelter", 15000, 0, 400, 3, 0 ],
         [ "Special", "Seed", 1000, 0, 100, 2, 0 ],
+        [ "Special", "Spawn", 10000, 300, 100, 2, 0 ],
         [ "Effect", "None", 2000, 10, 10, 0, 0 ],
         [ "Effect", "Regeneration", 80000, 35000, 800, 4, 0 ],
         [ "Effect", "Regeneration II", 90000, 40000, 900, 5, 0 ],

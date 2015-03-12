@@ -55,6 +55,7 @@ public class DimensionInformation {
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
     private boolean shelter = false;
+    private boolean respawnHere = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
     private BlockMeta[] extraOregen = new BlockMeta[] {};
@@ -292,8 +293,11 @@ public class DimensionInformation {
 
     private void injectSpecialDimlet(DimletKey key) {
         addToCost(key);
-        if (DimletObjectMapping.idToSpecialType.get(key) == SpecialType.SPECIAL_PEACEFUL) {
+        SpecialType specialType = DimletObjectMapping.idToSpecialType.get(key);
+        if (specialType == SpecialType.SPECIAL_PEACEFUL) {
             peaceful = true;
+        } else if (specialType == SpecialType.SPECIAL_SPAWN) {
+            respawnHere = true;
         }
     }
 
@@ -376,6 +380,7 @@ public class DimensionInformation {
 
         peaceful = tagCompound.getBoolean("peaceful");
         shelter = tagCompound.getBoolean("shelter");
+        respawnHere = tagCompound.getBoolean("respawnHere");
         if (tagCompound.hasKey("celestialAngle")) {
             celestialAngle = tagCompound.getFloat("celestialAngle");
         } else {
@@ -484,6 +489,7 @@ public class DimensionInformation {
 
         tagCompound.setBoolean("peaceful", peaceful);
         tagCompound.setBoolean("shelter", shelter);
+        tagCompound.setBoolean("respawnHere", respawnHere);
         if (celestialAngle != null) {
             tagCompound.setFloat("celestialAngle", celestialAngle);
         }
@@ -657,6 +663,9 @@ public class DimensionInformation {
         if (shelter) {
             logDebug(player, "    Safe shelter");
         }
+        if (respawnHere) {
+            logDebug(player, "    Respawn local");
+        }
         if (celestialAngle != null) {
             logDebug(player, "    Celestial angle: " + celestialAngle);
         }
@@ -710,6 +719,7 @@ public class DimensionInformation {
 
         buf.writeBoolean(peaceful);
         buf.writeBoolean(shelter);
+        buf.writeBoolean(respawnHere);
         ByteBufTools.writeFloat(buf, celestialAngle);
         ByteBufTools.writeFloat(buf, timeSpeed);
 
@@ -792,6 +802,7 @@ public class DimensionInformation {
 
         peaceful = buf.readBoolean();
         shelter = buf.readBoolean();
+        respawnHere = buf.readBoolean();
 
         celestialAngle = ByteBufTools.readFloat(buf);
         timeSpeed = ByteBufTools.readFloat(buf);
@@ -878,6 +889,8 @@ public class DimensionInformation {
                 peaceful = true;
             } else if (specialType == SpecialType.SPECIAL_SHELTER) {
                 shelter = true;
+            } else if (specialType == SpecialType.SPECIAL_SPAWN) {
+                respawnHere = true;
             }
         }
     }
@@ -1454,6 +1467,10 @@ public class DimensionInformation {
 
     public boolean isShelter() {
         return shelter;
+    }
+
+    public boolean isRespawnHere() {
+        return respawnHere;
     }
 
     public Float getCelestialAngle() {

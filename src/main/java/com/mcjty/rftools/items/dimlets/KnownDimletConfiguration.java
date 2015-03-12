@@ -294,6 +294,8 @@ public class KnownDimletConfiguration {
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Shelter"), "Generate a better sheltered spawn", "platform in the dimension");
         initSpecialItem(cfg, "Seed", SpecialType.SPECIAL_SEED, mapping);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Seed"), "Force a specific seed for a dimension.", "Right click in dimension to store seed.", "Shift-right click to lock seed");
+        initSpecialItem(cfg, "Spawn", SpecialType.SPECIAL_SPAWN, mapping);
+        addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
 
         initMobItem(cfg, "Default", mapping);
         initMobItem(cfg, "Zombie", mapping);
