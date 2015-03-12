@@ -136,6 +136,8 @@ tile.materialAbsorberBlock.name=Материальный поглотитель
 tile.liquidAbsorberBlock.name=Поглотитель жидкостей
 tile.timeAbsorberBlock.name=Time Absorber
 tile.environmentalControllerBlock.name=Контроллер окружающей среды
+tile.volcanicCoreBlock.name=Volcanic Core
+tile.volcanicBlock.name=Volcanic Block
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения

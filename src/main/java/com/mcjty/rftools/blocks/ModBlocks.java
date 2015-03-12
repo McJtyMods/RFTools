@@ -27,6 +27,10 @@ import com.mcjty.rftools.blocks.screens.ScreenControllerTileEntity;
 import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
 import com.mcjty.rftools.blocks.shards.*;
 import com.mcjty.rftools.blocks.shield.*;
+import com.mcjty.rftools.blocks.special.VolcanicBlock;
+import com.mcjty.rftools.blocks.special.VolcanicCoreBlock;
+import com.mcjty.rftools.blocks.special.VolcanicCoreTileEntity;
+import com.mcjty.rftools.blocks.special.VolcanicTileEntity;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -102,6 +106,9 @@ public final class ModBlocks {
 
     public static EnvironmentalControllerBlock environmentalControllerBlock;
 
+    public static VolcanicCoreBlock volcanicCoreBlock;
+    public static VolcanicBlock volcanicBlock;
+
     public static void init() {
         monitorBlock = new RFMonitorBlock();
         GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
@@ -132,6 +139,14 @@ public final class ModBlocks {
         environmentalControllerBlock = new EnvironmentalControllerBlock();
         GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
         GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
+
+        volcanicCoreBlock = new VolcanicCoreBlock();
+        GameRegistry.registerBlock(volcanicCoreBlock, "volcanicCoreBlock");
+        GameRegistry.registerTileEntity(VolcanicCoreTileEntity.class, "VolcanicCoreTileEntity");
+
+        volcanicBlock = new VolcanicBlock();
+        GameRegistry.registerBlock(volcanicBlock, "volcanicBlock");
+        GameRegistry.registerTileEntity(VolcanicTileEntity.class, "VolcanicTileEntity");
 
         initScreenBlocks();
         initDimletBlocks();

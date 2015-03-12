@@ -417,6 +417,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, "Maze", FeatureType.FEATURE_MAZE, mapping);
         initFeatureItem(cfg, "Liquid Orbs", FeatureType.FEATURE_LIQUIDORBS, mapping);
         initFeatureItem(cfg, "Shallow Ocean", FeatureType.FEATURE_SHALLOW_OCEAN, mapping);
+        initFeatureItem(cfg, "Volcanoes", FeatureType.FEATURE_VOLCANOES, mapping);
         addExtraInformation(new DimletKey(DimletType.DIMLET_FEATURE, "None"), "With this none dimlet you can disable", "all special features");
 
         initEffectItem(cfg, "None", EffectType.EFFECT_NONE, mapping);

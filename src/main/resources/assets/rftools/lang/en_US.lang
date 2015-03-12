@@ -136,6 +136,8 @@ tile.materialAbsorberBlock.name=Material Absorber
 tile.liquidAbsorberBlock.name=Liquid Absorber
 tile.timeAbsorberBlock.name=Time Absorber
 tile.environmentalControllerBlock.name=Environmental Controller
+tile.volcanicCoreBlock.name=Volcanic Core
+tile.volcanicBlock.name=Volcanic Block
 
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.dimensionalBlankBlock.name=Dimensional Blank Block
