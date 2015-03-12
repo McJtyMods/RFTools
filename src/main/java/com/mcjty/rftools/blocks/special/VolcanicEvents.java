@@ -42,7 +42,7 @@ public class VolcanicEvents {
             }
             Block block = worldObj.getBlock(x, y, z);
             if (block == null || block.getMaterial() == Material.air) {
-                worldObj.setBlock(x, y, z, Blocks.lava, 0, 2);
+                worldObj.setBlock(x, y, z, Blocks.lava, 0, 3);
             }
         }
     }
@@ -58,6 +58,7 @@ public class VolcanicEvents {
             if (y < 0 || y >= worldObj.getHeight()) {
                 return;
             }
+            worldObj.setBlockToAir(x, y, z);
             worldObj.newExplosion(null, (x + 0.5F), (y + 0.5F), (z + 0.5F), radius, true, true);
         }
     }

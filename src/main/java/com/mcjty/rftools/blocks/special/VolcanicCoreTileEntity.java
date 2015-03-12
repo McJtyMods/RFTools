@@ -14,7 +14,7 @@ public class VolcanicCoreTileEntity extends GenericTileEntity {
                 case 0:
                 case 1:
                 case 2:
-                    VolcanicEvents.explosion(worldObj, xCoord, yCoord, zCoord, 5, 5.0f);
+                    VolcanicEvents.explosion(worldObj, xCoord, yCoord, zCoord, 8, 5.0f);
                     break;
                 case 10:
                 case 11:
