@@ -27,6 +27,7 @@ public class TeleportConfiguration {
     public static int rfStartTeleportBaseDim = 100000;      // Base RF consumed by transmitter when starting a teleport to another dimension
     public static int rfStartTeleportDist = 10;             // RF per distance unit when starting a teleport
     public static int rfTeleportPerTick = 500;              // During the time the teleport is busy this RF is used per tick on the transmitter
+    public static int rfMatterIdleTick = 0;                 // The rf per tick a dialed transmitter consumes.
     public static int rfPerTeleportReceiver = 5000;         // On the receiver side we need this amount of power
     public static int rfBoostedTeleport = 20000;            // The RF needed to do a boosted teleportation
 
@@ -85,6 +86,8 @@ public class TeleportConfiguration {
                 "For every unit in distance this value is added to the initial RF cost for starting the teleportation. This value is not used when teleporting to another dimension").getInt();
         rfTeleportPerTick = cfg.get(CATEGORY_TELEPORTER, "rfTeleportPerTick", rfTeleportPerTick,
                 "For the duration of the teleport process this value represents the amount of RF that is consumed by the matter transmitter for every tick").getInt();
+        rfMatterIdleTick = cfg.get(CATEGORY_TELEPORTER, "rfMatterIdleTick", rfMatterIdleTick,
+                "The amount of RF/tick an idle dialed transmitter consumes").getInt();
 
         rfPerTeleportReceiver = cfg.get(CATEGORY_TELEPORTER, "rfPerTeleportReceiver", rfPerTeleportReceiver,
                 "This is the amount of RF that is consumed at the receiving side for every teleport. This RF is only consumed when the teleportation actually happens").getInt();

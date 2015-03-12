@@ -228,12 +228,24 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         markDirty();
     }
 
+    private void consumeIdlePower() {
+        if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
+            if (getEnergyStored(ForgeDirection.DOWN) >= TeleportConfiguration.rfMatterIdleTick) {
+                extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfMatterIdleTick, false);
+            } else {
+                setTeleportDestination(null);
+            }
+        }
+    }
+
     @Override
     protected void checkStateServer() {
         super.checkStateServer();
 
         // Every few times we check if the receiver is ok (if we're dialed).
-        if (teleportDestination != null || teleportId != null) {
+        if (isDialed()) {
+            consumeIdlePower();
+
             checkReceiverStatusCounter--;
             if (checkReceiverStatusCounter <= 0) {
                 checkReceiverStatusCounter = 20;
