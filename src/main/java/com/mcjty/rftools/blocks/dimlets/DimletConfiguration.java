@@ -27,6 +27,8 @@ public class DimletConfiguration {
     public static int dungeonChance = 200;
     public static int dimensionDifficulty = 1;      // -1 == whimpy, 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
+    public static boolean respawnSameDim = false;   // If true we first try to respawn in rftools dimension unless power is low.
+
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
     public static float maintenanceCostPercentage = 0.0f;   // Bonus percentage in the dimlet cost.
@@ -120,6 +122,8 @@ public class DimletConfiguration {
                 "Difficulty level for the dimension system. -1 means dimensions don't consume power. 0 means that you will not get killed but kicked out of the dimension when it runs out of power. 1 means certain death").getInt();
         spawnDimension = cfg.get(CATEGORY_DIMLETS, "spawnDimension", spawnDimension,
                 "Dimension to respawn in after you get kicked out of an RFTools dimension").getInt();
+        respawnSameDim = cfg.get(CATEGORY_DIMLETS, "respawnRfToolsDimension", respawnSameDim,
+                "If this flag is true the player will respawn in the rftools dimension when he dies (unless power runs out)").getBoolean();
         cavernHeightLimit = cfg.get(CATEGORY_DIMLETS, "cavernHeightLimit", cavernHeightLimit,
                 "Maximum height of the caverns. 0=64, 1=128, 2=196, 3=256").getInt();
 
