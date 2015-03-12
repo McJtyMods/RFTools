@@ -21,6 +21,9 @@ public class MatterBoosterBlock extends Block {
         super(Material.iron);
         setBlockName("matterBoosterBlock");
         setCreativeTab(RFTools.tabRfTools);
+        setHardness(2.0f);
+        setStepSound(soundTypeMetal);
+        setHarvestLevel("pickaxe", 0);
     }
 
     @Override
