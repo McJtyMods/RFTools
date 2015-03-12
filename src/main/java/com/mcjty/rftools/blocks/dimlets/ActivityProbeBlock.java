@@ -18,6 +18,9 @@ public class ActivityProbeBlock extends Block {
         super(Material.iron);
         setBlockName("activityProbeBlock");
         setCreativeTab(RFTools.tabRfTools);
+        setHardness(2.0f);
+        setStepSound(soundTypeMetal);
+        setHarvestLevel("pickaxe", 0);
     }
 
     @Override
