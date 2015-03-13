@@ -4,12 +4,9 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.entity.item.EntityMinecart;
 
 public class VolcanicCoreTileEntity extends GenericTileEntity {
-    private int ticker = 10;
+//    private int ticker = 10;
 
 //    @Override
 //    protected void checkStateClient() {

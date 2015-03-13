@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
 
@@ -109,52 +110,45 @@ public class VolcanicTileEntity extends GenericTileEntity {
     private void spawnVolcanicBlock() {
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         if (meta > 0) {
-            int rx = VolcanicEvents.random.nextInt(3)-1;
-            int ry = VolcanicEvents.random.nextInt(3)-1;
-            int rz = VolcanicEvents.random.nextInt(3)-1;
-            if (rx != 0 || ry != 0 || rz != 0) {
-                int x = xCoord + rx;
-                int y = yCoord + ry;
-                int z = zCoord + rz;
-                if (y < 1 || y >= worldObj.getHeight()) {
+            int dir = VolcanicEvents.random.nextInt(6);
+            ForgeDirection direction = ForgeDirection.values()[dir];
+
+            int x = xCoord + direction.offsetX;
+            int y = yCoord + direction.offsetY;
+            int z = zCoord + direction.offsetZ;
+            if (y < 1 || y >= worldObj.getHeight()) {
+                return;
+            }
+            Block block = worldObj.getBlock(x, y, z);
+
+            if (block == null || block.getMaterial() == Material.air) {
+                float chanceToSpawn = (direction == ForgeDirection.DOWN) ? .5f : .1f;
+                Block blockBelow = worldObj.getBlock(x, y-1, z);
+                if ((blockBelow == null || blockBelow.getMaterial() == Material.air) && VolcanicEvents.random.nextFloat() > chanceToSpawn) {
+                    // If the block below us is empty there is a high chance we don't spawn a volcanic block.
                     return;
                 }
-                Block block = worldObj.getBlock(x, y, z);
-
-                if (block == null || block.getMaterial() == Material.air) {
-                    float chanceToSpawn = (rx == 0 && rz == 0 && ry == -1) ? .5f : .1f;
-                    Block blockBelow = worldObj.getBlock(x, y-1, z);
-                    if ((blockBelow == null || blockBelow.getMaterial() == Material.air) && VolcanicEvents.random.nextFloat() > chanceToSpawn) {
-                        // If the block below us is empty there is a high chance we don't spawn a volcanic block.
-                        return;
-                    }
-                    if (ry == -1) {
-                        // Down
-                        if (rx == 0 && rz == 0) {
-                            // meta unchanged. We can go down unhindered.
-                        } else {
-                            // We go down but not straight. Meta-1
+                switch (direction) {
+                    case DOWN:
+                        break;
+                    case UP:
+                        meta -= 2;
+                        break;
+                    case NORTH:
+                    case SOUTH:
+                    case EAST:
+                    case WEST:
+                        // If we go horizontal we have a small chance of not decreasing meta.
+                        if (VolcanicEvents.random.nextFloat() > .2f) {
                             meta--;
                         }
-                    } else if (ry == 1) {
-                        if (rx == 0 && rz == 0) {
-                            // Straight up.
-                            meta-=2;
-                        } else {
-                            meta-=3;
-                        }
-                    } else {
-                        if (rx == 0 || rz == 0) {
-                            // If we go horizontal we have a small chance of not decreasing meta.
-                            if (VolcanicEvents.random.nextFloat() < .2f) {
-                                meta++;     // Increase so it gets decreased below again.
-                            }
-                        }
-                        meta--;
-                    }
-                    if (meta >= 0) {
-                        worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, meta, 2);
-                    }
+                        break;
+                    case UNKNOWN:
+                        break;
+                }
+
+                if (meta >= 0) {
+                    worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, meta, 2);
                 }
             }
         }
