@@ -3,6 +3,7 @@ package com.mcjty.rftools;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -54,6 +55,7 @@ public class BedControl {
 
         if (enumstatus == EntityPlayer.EnumStatus.OK) {
             BlockBed.func_149979_a(world, x, y, z, true);
+            player.addChatComponentMessage(new ChatComponentText("Somehow this place feels more like home now."));
             return true;
         } else {
             if (enumstatus == EntityPlayer.EnumStatus.NOT_POSSIBLE_NOW) {
