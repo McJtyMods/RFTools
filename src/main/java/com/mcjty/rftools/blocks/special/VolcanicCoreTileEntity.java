@@ -4,9 +4,28 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.entity.item.EntityMinecart;
 
 public class VolcanicCoreTileEntity extends GenericTileEntity {
+    private int ticker = 10;
 
+//    @Override
+//    protected void checkStateClient() {
+//        ticker--;
+//        if (ticker < 0) {
+//            ticker = 10;
+//
+//            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+//            int dx = (int) (player.posX - xCoord);
+//            int dy = (int) (player.posY - yCoord);
+//            int dz = (int) (player.posZ - zCoord);
+//
+//            Minecraft.getMinecraft().getSoundHandler().playSound(new VolcanicRumbleSound(player, xCoord, yCoord, zCoord));
+//        }
+//    }
+//
     @Override
     protected void checkStateServer() {
         if (VolcanicEvents.random.nextFloat() < 0.01f) {

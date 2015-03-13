@@ -42,7 +42,8 @@ public class VolcanicEvents {
             }
             Block block = worldObj.getBlock(x, y, z);
             if (block == null || block.getMaterial() == Material.air) {
-                worldObj.setBlock(x, y, z, Blocks.lava, 0, 3);
+                worldObj.setBlock(x, y, z, Blocks.flowing_lava, 0, 3);
+                worldObj.markBlockForUpdate(x, y, z);
             }
         }
     }
