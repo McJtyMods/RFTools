@@ -25,6 +25,7 @@ public class DimletConfiguration {
     public static int rfInfuseOperation = 600;
     public static int maxInfuse = 256;
     public static int dungeonChance = 200;
+    public static int volcanoChance = 30;
     public static int dimensionDifficulty = 1;      // -1 == whimpy, 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static boolean respawnSameDim = false;   // If true we first try to respawn in rftools dimension unless power is low.
@@ -118,6 +119,8 @@ public class DimletConfiguration {
 
         dungeonChance = cfg.get(CATEGORY_DIMLETS, "dungeonChance", dungeonChance,
                 "The chance for a dungeon to spawn in a chunk. Higher numbers mean less chance (1 in 'dungeonChance' chance)").getInt();
+        volcanoChance = cfg.get(CATEGORY_DIMLETS, "volcanoChance", volcanoChance,
+                "The chance for a volcano to spawn in a chunk (with the volcano feature dimlet). Higher numbers mean less chance (1 in 'volcanoChance' chance)").getInt();
         dimensionDifficulty = cfg.get(CATEGORY_DIMLETS, "difficulty", dimensionDifficulty,
                 "Difficulty level for the dimension system. -1 means dimensions don't consume power. 0 means that you will not get killed but kicked out of the dimension when it runs out of power. 1 means certain death").getInt();
         spawnDimension = cfg.get(CATEGORY_DIMLETS, "spawnDimension", spawnDimension,

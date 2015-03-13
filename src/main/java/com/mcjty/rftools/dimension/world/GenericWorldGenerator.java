@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.blocks.teleporter.*;
@@ -15,6 +16,7 @@ import com.mcjty.varia.Coordinate;
 import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.IWorldGenerator;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -22,6 +24,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
+import net.minecraft.world.gen.feature.WorldGenTaiga1;
 
 import java.util.Random;
 
@@ -61,6 +64,30 @@ public class GenericWorldGenerator implements IWorldGenerator {
                 }
             }
         }
+
+        if (Math.abs(chunkX) >= 3 && Math.abs(chunkZ) >= 3 && information.hasFeatureType(FeatureType.FEATURE_VOLCANOES)) {
+            if (random.nextInt(DimletConfiguration.volcanoChance) == 1) {
+                int x = chunkX * 16 + random.nextInt(16);
+                int z = chunkZ * 16 + random.nextInt(16);
+                int y = world.getTopSolidOrLiquidBlock(x, z);
+
+                int cntsolid = 0;
+                while (y > 3) {
+                    if (WorldGenerationTools.isSolid(world, x, y, z)) {
+                        cntsolid++;
+                        if (cntsolid > 5) {
+                            world.setBlock(x, y, z, ModBlocks.volcanicCoreBlock, 0, 3);
+                            RFTools.log("Spawned volcano block at " + x + "," + y + "," + z);
+                            break;
+                        }
+                    } else {
+                        cntsolid = 0;
+                    }
+                    y--;
+                }
+            }
+        }
+
     }
 
     private void generateSpawnPlatform(World world) {
