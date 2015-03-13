@@ -54,7 +54,7 @@ public class DimletConfiguration {
     public static float randomControllerChance = 0.4f;
 
     public static int bedrockLayer = 1;
-    public static int bedBehaviour = 0;         // Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = sleep for a few hours
+    public static int bedBehaviour = 0;         // Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = set spawn
 
 	public static boolean randomizeSeed = false;
 
@@ -162,7 +162,7 @@ public class DimletConfiguration {
         bedrockLayer = cfg.get(CATEGORY_DIMLETS, "bedrockLayer", bedrockLayer,
                 "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
         bedBehaviour = cfg.get(CATEGORY_DIMLETS, "bedBehaviour", bedBehaviour,
-                "Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = sleep for a few hours").getInt();
+                "Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = set spawn").getInt();
 
 		randomizeSeed = cfg.get(CATEGORY_DIMLETS, "randomizeSeed", randomizeSeed,
 			"Randomize the seed when the dimension is created").getBoolean();
