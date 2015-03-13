@@ -277,6 +277,7 @@
         [ "Effect", "Wither II", 1000, -5, 200, 5, 0 ],
         [ "Effect", "Wither III", 1000, -6, 200, 5, 0 ],
         [ "Weather", "No Rain", 300, 120, 50, 3, 0 ],
+        [ "Feature", "Maze", 100, 1, 1, 1, 0 ],
         [ "Feature", "Volcanoes", 100, 1, 1, 1, 1 ]
     ]
 }
