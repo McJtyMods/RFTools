@@ -1,5 +1,8 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.dimension.DimensionInformation;
+import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +58,11 @@ public class BedControl {
 
         if (enumstatus == EntityPlayer.EnumStatus.OK) {
             BlockBed.func_149979_a(world, x, y, z, true);
-            player.addChatComponentMessage(new ChatComponentText("Somehow this place feels more like home now."));
+            RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
+            DimensionInformation information = manager.getDimensionInformation(world.provider.dimensionId);
+            if (DimletConfiguration.respawnSameDim || (information != null && information.isRespawnHere())) {
+                player.addChatComponentMessage(new ChatComponentText("Somehow this place feels more like home now."));
+            }
             return true;
         } else {
             if (enumstatus == EntityPlayer.EnumStatus.NOT_POSSIBLE_NOW) {
