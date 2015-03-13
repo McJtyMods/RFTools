@@ -66,18 +66,24 @@ public class VolcanicTileEntity extends GenericTileEntity {
                         break;
                     case 100:
                     case 101:
-                        VolcanicEvents.randomLava(worldObj, xCoord, yCoord, zCoord, 1);
-                        break;
                     case 102:
                     case 103:
                     case 104:
                     case 105:
                     case 106:
+                        VolcanicEvents.randomLava(worldObj, xCoord, yCoord, zCoord, 1);
+                        break;
                     case 107:
                     case 108:
                     case 109:
                     case 110:
                     case 111:
+                    case 112:
+                    case 113:
+                    case 114:
+                    case 115:
+                    case 116:
+                    case 117:
                         if (meta > 3) {
                             VolcanicEvents.randomLava(worldObj, xCoord, yCoord, zCoord, 1);
                         }
