@@ -25,7 +25,7 @@ public class DimletConfiguration {
     public static int rfInfuseOperation = 600;
     public static int maxInfuse = 256;
     public static int dungeonChance = 200;
-    public static int volcanoChance = 30;
+    public static int volcanoChance = 60;
     public static int dimensionDifficulty = 1;      // -1 == whimpy, 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static boolean respawnSameDim = false;   // If true we first try to respawn in rftools dimension unless power is low.

@@ -21,20 +21,38 @@ public class VolcanicTileEntity extends GenericTileEntity {
 
     private void igniteNearEntities() {
         if (beamBox == null) {
-            beamBox = AxisAlignedBB.getBoundingBox(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 2, zCoord + 1);
+            beamBox = AxisAlignedBB.getBoundingBox(xCoord-.5, yCoord - .5, zCoord - .5, xCoord + 1.5, yCoord + 2.5, zCoord + 1.5);
         }
 
         List<Entity> l = worldObj.getEntitiesWithinAABB(Entity.class, beamBox);
         for (Entity entity : l) {
             if (!entity.isImmuneToFire()) {
-                entity.attackEntityFrom(DamageSource.inFire, 1.0f);
+                entity.attackEntityFrom(DamageSource.inFire, 6.0f);
             }
 
             boolean wet = entity.isWet();
             if (!wet) {
-                entity.setFire(2);
+                entity.setFire(6);
             }
         }
+    }
+
+    private int checkSurroundings() {
+        int cntHot = 0;
+        for (ForgeDirection direction : ForgeDirection.values()) {
+            if (direction != ForgeDirection.UNKNOWN) {
+                int ox = xCoord + direction.offsetX;
+                int oy = yCoord + direction.offsetY;
+                int oz = zCoord + direction.offsetZ;
+                Block block = worldObj.getBlock(ox, oy, oz);
+                if (block == Blocks.lava || block == ModBlocks.volcanicBlock || block == ModBlocks.volcanicCoreBlock || block == Blocks.flowing_lava || block == Blocks.fire) {
+                    cntHot++;
+                } else if (block == Blocks.water) {
+                    worldObj.setBlock(ox, oy, oz, Blocks.cobblestone, 0, 2);
+                }
+            }
+        }
+        return cntHot;
     }
 
     @Override
@@ -43,11 +61,19 @@ public class VolcanicTileEntity extends GenericTileEntity {
         if (ticker < 0) {
             ticker = 20;
             igniteNearEntities();
+            int cntHot = checkSurroundings();
+            if (cntHot <= 3) {
+                if (VolcanicEvents.random.nextInt(120) < 2) {
+                    coolDown();
+                    return;
+                }
+            }
         }
 
         if (VolcanicEvents.random.nextFloat() < 0.01f) {
             age++;
             markDirty();
+
             int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
             if (VolcanicEvents.random.nextInt(150) < (age - 26)) {
                 coolDown();

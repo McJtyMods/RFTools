@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.special;
 
+import com.mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -46,6 +47,37 @@ public class VolcanicEvents {
                 worldObj.markBlockForUpdate(x, y, z);
             }
         }
+    }
+
+    public static void spawnVolcanicBlocks(World worldObj, int xCoord, int yCoord, int zCoord, int originradius) {
+        int rx = random.nextInt(originradius+originradius+1)-originradius;
+        int rz = random.nextInt(originradius+originradius+1)-originradius;
+
+        int x = rx + xCoord;
+        int z = rz + zCoord;
+        int y = worldObj.getTopSolidOrLiquidBlock(x, z);
+        if (y > yCoord - 5 && y < yCoord + 9) {
+            if (y <= 0 || y >= worldObj.getHeight()-1) {
+                return;
+            }
+            worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, 8, 3);
+            if (random.nextFloat() < .7) {
+                worldObj.setBlock(x-1, y, z, ModBlocks.volcanicBlock, 8, 3);
+            }
+            if (random.nextFloat() < .7) {
+                worldObj.setBlock(x+1, y, z, ModBlocks.volcanicBlock, 8, 3);
+            }
+            if (random.nextFloat() < .7) {
+                worldObj.setBlock(x, y, z-1, ModBlocks.volcanicBlock, 8, 3);
+            }
+            if (random.nextFloat() < .7) {
+                worldObj.setBlock(x, y, z+1, ModBlocks.volcanicBlock, 8, 3);
+            }
+            if (random.nextFloat() < .7) {
+                worldObj.setBlock(x, y+1, z, ModBlocks.volcanicBlock, 8, 3);
+            }
+        }
+
     }
 
     public static void explosion(World worldObj, int xCoord, int yCoord, int zCoord, int originradius, float radius) {

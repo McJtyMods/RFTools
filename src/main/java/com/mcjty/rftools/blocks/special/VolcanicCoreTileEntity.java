@@ -1,36 +1,71 @@
 package com.mcjty.rftools.blocks.special;
 
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Map;
 
 public class VolcanicCoreTileEntity extends GenericTileEntity {
-//    private int ticker = 10;
+    // Client side only.
+    private VolcanicRumbleSound sound = null;
 
-//    @Override
-//    protected void checkStateClient() {
-//        ticker--;
-//        if (ticker < 0) {
-//            ticker = 10;
-//
-//            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-//            int dx = (int) (player.posX - xCoord);
-//            int dy = (int) (player.posY - yCoord);
-//            int dz = (int) (player.posZ - zCoord);
-//
-//            Minecraft.getMinecraft().getSoundHandler().playSound(new VolcanicRumbleSound(player, xCoord, yCoord, zCoord));
-//        }
-//    }
-//
+    // Activity cycle.
+    private int cycle = 500 + VolcanicEvents.random.nextInt(1500);
+
+    @Override
+    protected void checkStateClient() {
+        if (sound == null) {
+            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+            sound = new VolcanicRumbleSound(player, worldObj, xCoord, yCoord, zCoord);
+            Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+//            RFTools.log("++++ Start rumble at " + xCoord + "," + yCoord + "," + zCoord);
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (sound != null) {
+//            RFTools.log("---- Stop rumble at " + xCoord + "," + yCoord + "," + zCoord);
+            Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+            sound = null;
+        }
+    }
+
     @Override
     protected void checkStateServer() {
-        if (VolcanicEvents.random.nextFloat() < 0.01f) {
+        cycle++;
+        markDirty();
+        float activityChance;
+        int c = cycle % 1500;
+        if (c < 400) {
+            activityChance = 0.0001f;
+        } else if (c < 600) {
+            activityChance = 0.01f;
+        } else if (c < 800) {
+            activityChance = 0.05f;
+        } else if (c < 1200) {
+            activityChance = 0.01f;
+        } else {
+            activityChance = 0.0001f;
+        }
+
+        if (VolcanicEvents.random.nextFloat() < activityChance) {
             switch (VolcanicEvents.random.nextInt(16)) {
                 case 0:
+                    VolcanicEvents.spawnVolcanicBlocks(worldObj, xCoord, yCoord, zCoord, 7);
+                    break;
                 case 1:
                 case 2:
-                    VolcanicEvents.explosion(worldObj, xCoord, yCoord, zCoord, 8, 5.0f);
+                    VolcanicEvents.explosion(worldObj, xCoord, yCoord, zCoord, 7, 5.0f);
                     break;
                 case 10:
                 case 11:
@@ -64,5 +99,17 @@ public class VolcanicCoreTileEntity extends GenericTileEntity {
                 worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, 15, 2);
             }
         }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        cycle = tagCompound.getInteger("cycle");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setInteger("cycle", cycle);
     }
 }

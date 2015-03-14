@@ -35,7 +35,7 @@ public class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
 
     public AbstractShieldBlock() {
-        super(Material.portal);
+        super(Material.rock);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setCreativeTab(RFTools.tabRfTools);
