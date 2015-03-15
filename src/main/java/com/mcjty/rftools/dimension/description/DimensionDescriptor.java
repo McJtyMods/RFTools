@@ -163,8 +163,9 @@ public class DimensionDescriptor {
 
     private static List<DimletDescriptor> parseNewDescriptionString(String descriptionString) {
         List<DimletDescriptor> result = new ArrayList<DimletDescriptor>();
-        if (!descriptionString.isEmpty()) {
-            String[] opcodes = descriptionString.substring(1).split(",");
+        String ds = descriptionString.substring(1);
+        if (!ds.isEmpty()) {
+            String[] opcodes = ds.split(",");
             for (String oc : opcodes) {
                 DimletKey key;
                 if (oc.startsWith("#")) {
