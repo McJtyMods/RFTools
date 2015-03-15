@@ -53,11 +53,15 @@ public class GenLayerFiltered extends GenLayer {
     @Override
     public int[] getInts(int x, int z, int width, int length) {
         int[] ints = parent.getInts(x, z, width, length);
-        int[] aint = IntCache.getIntCache(width * length);
         Map<Integer, Integer> filterMap = getFilterFromType();
-        for (int i = 0; i < width * length; ++i) {
-            aint[i] = filterMap.get(ints[i]);
+        if (filterMap != null) {
+            int[] aint = IntCache.getIntCache(width * length);
+            for (int i = 0; i < width * length; ++i) {
+                aint[i] = filterMap.get(ints[i]);
+            }
+            return aint;
+        } else {
+            return ints;
         }
-        return aint;
     }
 }
