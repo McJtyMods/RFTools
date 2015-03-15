@@ -127,10 +127,15 @@ public class DimensionDescriptor {
     public List<Pair<DimletDescriptor,List<DimletDescriptor>>> getDimletsWithModifiers() {
         List<Pair<DimletDescriptor,List<DimletDescriptor>>> result = new ArrayList<Pair<DimletDescriptor, List<DimletDescriptor>>>();
 
-        if (!descriptionString.isEmpty()) {
+        String ds = descriptionString;
+        if (ds.startsWith("@")) {
+            ds = ds.substring(1);
+        }
+
+        if (!ds.isEmpty()) {
             List<DimletDescriptor> modifiers = new ArrayList<DimletDescriptor>();
 
-            String[] opcodes = descriptionString.split(",");
+            String[] opcodes = ds.split(",");
             for (String oc : opcodes) {
                 DimletKey key;
                 if (oc.startsWith("#")) {
