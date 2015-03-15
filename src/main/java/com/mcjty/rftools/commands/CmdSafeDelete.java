@@ -4,7 +4,6 @@ import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -42,9 +41,9 @@ public class CmdSafeDelete extends AbstractRfToolsCommand {
         }
 
         int dim = fetchInt(sender, args, 1, 0);
-        EntityPlayer player = (EntityPlayer) sender;
+        World world = sender.getEntityWorld();
 
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         if (dimensionManager.getDimensionDescriptor(dim) == null) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
             return;
@@ -56,17 +55,17 @@ public class CmdSafeDelete extends AbstractRfToolsCommand {
             return;
         }
 
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         destinations.removeDestinationsInDimension(dim);
-        destinations.save(player.worldObj);
+        destinations.save(world);
 
         dimensionManager.removeDimension(dim);
         dimensionManager.reclaimId(dim);
-        dimensionManager.save(player.worldObj);
+        dimensionManager.save(world);
 
-        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(player.worldObj);
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(world);
         dimensionStorage.removeDimension(dim);
-        dimensionStorage.save(player.worldObj);
+        dimensionStorage.save(world);
 
         sender.addChatMessage(new ChatComponentText("Dimension deleted. Please remove the dimension folder from disk!"));
     }

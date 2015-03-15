@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class CmdRecover extends AbstractRfToolsCommand {
@@ -40,9 +41,12 @@ public class CmdRecover extends AbstractRfToolsCommand {
             return;
         }
 
-        EntityPlayer player = (EntityPlayer) sender;
-
-        ItemStack heldItem = player.getHeldItem();
+        World world = sender.getEntityWorld();
+        ItemStack heldItem = null;
+        if (sender instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) sender;
+            heldItem = player.getHeldItem();
+        }
         if (heldItem == null || heldItem.getItem() != ModItems.realizedDimensionTab) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "You need to hold a realized dimension tab in your hand!"));
             return;
@@ -65,7 +69,7 @@ public class CmdRecover extends AbstractRfToolsCommand {
             }
         }
 
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         DimensionInformation information = dimensionManager.getDimensionInformation(dim);
 
         if (information != null) {
@@ -81,7 +85,7 @@ public class CmdRecover extends AbstractRfToolsCommand {
 
         DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
         String name = tagCompound.getString("name");
-        dimensionManager.recoverDimension(player.worldObj, dim, descriptor, name);
+        dimensionManager.recoverDimension(world, dim, descriptor, name);
 
         sender.addChatMessage(new ChatComponentText("Dimension was succesfully recovered"));
     }

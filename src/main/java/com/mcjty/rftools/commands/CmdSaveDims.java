@@ -3,9 +3,9 @@ package com.mcjty.rftools.commands;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 
 import java.io.File;
 
@@ -49,9 +49,9 @@ public class CmdSaveDims extends AbstractRfToolsCommand {
             return;
         }
 
-        EntityPlayer player = (EntityPlayer) sender;
+        World world = sender.getEntityWorld();
 
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         for (Integer dim : dimensionManager.getDimensions().keySet()) {
             DimensionInformation information = dimensionManager.getDimensionInformation(dim);
             if (information != null) {

@@ -3,9 +3,9 @@ package com.mcjty.rftools.commands;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 
 public class CmdSaveDim extends AbstractRfToolsCommand {
     @Override
@@ -41,9 +41,9 @@ public class CmdSaveDim extends AbstractRfToolsCommand {
         int dim = fetchInt(sender, args, 1, 0);
         String filename = fetchString(sender, args, 2, null);
 
-        EntityPlayer player = (EntityPlayer) sender;
+        World world = sender.getEntityWorld();
 
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         if (dimensionManager.getDimensionDescriptor(dim) == null) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
             return;

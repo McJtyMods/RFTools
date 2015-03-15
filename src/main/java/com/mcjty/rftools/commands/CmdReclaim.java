@@ -2,9 +2,9 @@ package com.mcjty.rftools.commands;
 
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class CmdReclaim extends AbstractRfToolsCommand {
@@ -39,16 +39,16 @@ public class CmdReclaim extends AbstractRfToolsCommand {
         }
 
         int dim = fetchInt(sender, args, 1, 0);
-        EntityPlayer player = (EntityPlayer) sender;
+        World world = sender.getEntityWorld();
 
         if (DimensionManager.isDimensionRegistered(dim)) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This dimension is still in use! You can't reclaim the id!"));
             return;
         }
 
-        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         dimensionManager.reclaimId(dim);
-        dimensionManager.save(player.worldObj);
+        dimensionManager.save(world);
 
         sender.addChatMessage(new ChatComponentText("Dimension id " + dim + " reclaimed for future use."));
     }

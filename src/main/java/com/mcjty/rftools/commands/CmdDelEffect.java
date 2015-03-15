@@ -4,9 +4,9 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.world.types.EffectType;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 
 public class CmdDelEffect extends AbstractRfToolsCommand {
     @Override
@@ -49,23 +49,20 @@ public class CmdDelEffect extends AbstractRfToolsCommand {
             return;
         }
 
-        if (sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sender;
-
-            int dim = player.worldObj.provider.dimensionId;
-            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
-            DimensionInformation information = dimensionManager.getDimensionInformation(dim);
-            if (information == null) {
-                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
-                return;
-            }
-
-            if (!information.getEffectTypes().contains(type)) {
-                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This effect is not active!"));
-                return;
-            }
-            information.getEffectTypes().remove(type);
-            dimensionManager.save(player.worldObj);
+        World world = sender.getEntityWorld();
+        int dim = world.provider.dimensionId;
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation information = dimensionManager.getDimensionInformation(dim);
+        if (information == null) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
+            return;
         }
+
+        if (!information.getEffectTypes().contains(type)) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This effect is not active!"));
+            return;
+        }
+        information.getEffectTypes().remove(type);
+        dimensionManager.save(world);
     }
 }
