@@ -6,6 +6,7 @@
         [ "Liquid", "mana" ],
         [ "Liquid", "steam" ],
         [ "Liquid", "tower" ],
+        [ "Biome", "Storage Cell" ],
         [ "Material", "tile.thermalfoundation.ore6"],
         [ "Material", "gt.blockores*"],
         [ "Foliage", "Oak" ]
