@@ -9,6 +9,7 @@ import com.mcjty.gui.widgets.Button;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.gui.widgets.Widget;
+import com.mcjty.gui.widgets.Label;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
@@ -37,7 +38,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
     private Button extractButton;
     private Button storeButton;
     private TextField nameField;
-    private TextField validateField;
+    private Label validateField;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionenscriber.png");
 
@@ -74,8 +75,10 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                 storeName(newText);
             }
         }).setLayoutHint(new PositionalLayout.PositionalHint(13, 200, 60, 16));
-        validateField = new TextField(mc, this).setText("Val").setLayoutHint(new PositionalLayout.PositionalHint(35, 142, 38, 16)).
-                setTooltips("Hover here for errors...");
+        validateField = new Label(mc, this).setText("Val");
+        validateField.setTooltips("Hover here for errors...");
+        validateField.setLayoutHint(new PositionalLayout.PositionalHint(35, 142, 38, 16));
+
         setNameFromDimensionTab();
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(extractButton).addChild(storeButton).
@@ -227,10 +230,14 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
             tooltips.add("There are dangling modifiers in this descriptor");
         }
 
+        boolean error = true;
         if (tooltips.isEmpty()) {
             tooltips.add("Everything appears to be allright");
+            error = false;
         }
         validateField.setTooltips(tooltips.toArray(new String[tooltips.size()]));
+        validateField.setColor(error ? 0xFF0000 : 0x008800);
+        validateField.setText(error ? "Err" : "Ok");
     }
 
     @Override
