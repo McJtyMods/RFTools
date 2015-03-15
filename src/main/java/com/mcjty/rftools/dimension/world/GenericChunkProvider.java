@@ -63,6 +63,7 @@ public class GenericChunkProvider implements IChunkProvider {
     private MapGenOrbs sphereGenerator = new MapGenOrbs(this);
     private MapGenRuinedCities ruinedCitiesGenerator = new MapGenRuinedCities(this);
     private MapGenLiquidOrbs liquidSphereGenerator = new MapGenLiquidOrbs(this);
+    private MapGenBase denseCaveGenerator = new MapGenDenseCaves(this);
 
     // Holds Stronghold Generator
     private MapGenStronghold strongholdGenerator = new MapGenStronghold();
@@ -213,6 +214,9 @@ public class GenericChunkProvider implements IChunkProvider {
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CAVES)) {
             this.caveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
+        }
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_DENSE_CAVES)) {
+            this.denseCaveGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_RAVINES)) {
             this.ravineGenerator.func_151539_a(this, this.worldObj, chunkX, chunkZ, ablock);
