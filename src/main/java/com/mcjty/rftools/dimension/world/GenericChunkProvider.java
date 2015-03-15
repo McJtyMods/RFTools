@@ -123,6 +123,9 @@ public class GenericChunkProvider implements IChunkProvider {
             case TERRAIN_AMPLIFIED:
                 terrainGenerator = new AmplifiedTerrainGenerator();
                 break;
+            case TERRAIN_NEARLANDS:
+                terrainGenerator = new NearlandsTerrainGenerator();
+                break;
             case TERRAIN_NORMAL:
                 terrainGenerator = new NormalTerrainGenerator();
                 break;

@@ -405,6 +405,7 @@ public class KnownDimletConfiguration {
         initTerrainItem(cfg, "Grid", TerrainType.TERRAIN_GRID, mapping);
         initTerrainItem(cfg, "Low Cavern", TerrainType.TERRAIN_LOW_CAVERN, mapping);
         initTerrainItem(cfg, "Flooded Cavern", TerrainType.TERRAIN_FLOODED_CAVERN, mapping);
+        initTerrainItem(cfg, "Nearlands", TerrainType.TERRAIN_NEARLANDS, mapping);
 
         initFeatureItem(cfg, "None", FeatureType.FEATURE_NONE, mapping);
         initFeatureItem(cfg, "Caves", FeatureType.FEATURE_CAVES, mapping);

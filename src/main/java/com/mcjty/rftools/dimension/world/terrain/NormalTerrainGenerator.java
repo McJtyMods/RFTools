@@ -3,6 +3,7 @@ package com.mcjty.rftools.dimension.world.terrain;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.world.GenericChunkProvider;
 import com.mcjty.rftools.dimension.world.types.FeatureType;
+import com.mcjty.rftools.dimension.world.types.TerrainType;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
@@ -84,6 +85,12 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
 
         boolean domaze = false;
         boolean elevated = false;
+        boolean donearlands = provider.dimensionInformation.getTerrainType() == TerrainType.TERRAIN_NEARLANDS;
+
+        if (donearlands) {
+            elevated = true;
+        }
+
         if (provider.dimensionInformation.hasFeatureType(FeatureType.FEATURE_MAZE)) {
             domaze = true;
             long s2 = (((chunkX4 >> 2) + provider.seed + 13) * 314) + (chunkZ4 >> 2) * 17L;
@@ -92,6 +99,14 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
             elevated = ((chunkX4 >> 2) & 1) == 0;
             if (rand.nextFloat() < .2f) {
                 elevated = !elevated;
+            }
+        }
+
+        if (donearlands) {
+            int cx = chunkX4 >> 2;
+            int cz = chunkZ4 >> 2;
+            if (Math.abs(cx) < 5 && Math.abs(cz) < 5) {
+                elevated = false;
             }
         }
 
@@ -114,7 +129,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                         float f3 = biomegenbase1.rootHeight;
                         float f4 = biomegenbase1.heightVariation;
 
-                        if (domaze) {
+                        if (domaze || donearlands) {
                             if (f3 > 0.0F && elevated) {
                                 if (provider.worldType == WorldType.AMPLIFIED) {
                                     f3 = 2.0F + f3 * 1.5f;

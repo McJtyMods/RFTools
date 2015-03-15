@@ -1036,6 +1036,7 @@ public class DimensionInformation {
         List<DimensionDescriptor.DimletDescriptor> modifiers;
         terrainType = TerrainType.TERRAIN_VOID;
         if (dimlets.isEmpty()) {
+            System.out.println("Dimlets is empty");
             // Pick a random terrain type with a seed that is generated from all the
             // dimlets so we always get the same random value for these dimlets.
             List<DimletKey> idList = new ArrayList<DimletKey>(DimletObjectMapping.idToTerrainType.keySet());
@@ -1045,8 +1046,10 @@ public class DimensionInformation {
             modifiers = Collections.emptyList();
         } else {
             int index = random.nextInt(dimlets.size());
+            System.out.println("index = " + index);
             DimletKey key = dimlets.get(index).getLeft().getKey();
             terrainType = DimletObjectMapping.idToTerrainType.get(key);
+            System.out.println("terrainType = " + terrainType.name());
             modifiers = dimlets.get(index).getRight();
         }
 
