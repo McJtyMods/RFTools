@@ -4,6 +4,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.items.dimlets.*;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ public class DimensionDescriptor {
         if (!ds.isEmpty()) {
             List<DimletDescriptor> modifiers = new ArrayList<DimletDescriptor>();
 
-            String[] opcodes = ds.split(",");
+            String[] opcodes = StringUtils.split(ds, ",");
             for (String oc : opcodes) {
                 DimletKey key;
                 if (oc.startsWith("#")) {
@@ -165,7 +166,7 @@ public class DimensionDescriptor {
         List<DimletDescriptor> result = new ArrayList<DimletDescriptor>();
         String ds = descriptionString.substring(1);
         if (!ds.isEmpty()) {
-            String[] opcodes = ds.split(",");
+            String[] opcodes = StringUtils.split(ds, ",");
             for (String oc : opcodes) {
                 DimletKey key;
                 if (oc.startsWith("#")) {
@@ -187,7 +188,7 @@ public class DimensionDescriptor {
         DimletMapping mapping = DimletMapping.getInstance();
         List<DimletDescriptor> result = new ArrayList<DimletDescriptor>();
         if (!descriptionString.isEmpty()) {
-            String[] opcodes = descriptionString.split(",");
+            String[] opcodes = StringUtils.split(descriptionString, ",");
             for (String oc : opcodes) {
                 DimletType type;
                 Integer id;

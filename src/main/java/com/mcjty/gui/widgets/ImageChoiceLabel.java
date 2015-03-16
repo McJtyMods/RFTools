@@ -5,6 +5,7 @@ import com.mcjty.gui.events.ChoiceEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
 
     public ImageChoiceLabel addChoice(String choice, String tooltips, ResourceLocation image, int u, int v) {
         choiceList.add(choice);
-        tooltipList.add(Arrays.asList(tooltips.split("\n")));
+        tooltipList.add(Arrays.asList(StringUtils.split(tooltips, "\n")));
         imageList.add(image);
         uList.add(u);
         vList.add(v);
