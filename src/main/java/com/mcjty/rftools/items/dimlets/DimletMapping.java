@@ -107,12 +107,12 @@ public class DimletMapping extends WorldSavedData {
         return idToDimlet.get(id);
     }
 
-    public void removeId(int id) {
-        DimletKey key = idToDimlet.get(id);
-        if (key != null) {
-            idToDimlet.remove(key);
+    public void removeKey(DimletKey key) {
+        Integer id = dimletToID.get(key);
+        if (id != null) {
+            idToDimlet.remove(id);
         }
-        idToDimlet.remove(id);
+        dimletToID.remove(key);
     }
 
     public Set<Map.Entry<Integer, DimletKey>> getEntries() {

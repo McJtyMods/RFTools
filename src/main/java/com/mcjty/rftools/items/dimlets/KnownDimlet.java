@@ -83,8 +83,13 @@ public class KnownDimlet extends Item {
         DimletEntry entry = KnownDimletConfiguration.getEntry(key);
         if (entry == null) {
             // Safety. Should not occur.
-            list.add(EnumChatFormatting.RED + "Something is wrong!");
-            list.add(EnumChatFormatting.RED + "Dimlet with key " + key + " (id " + itemStack.getItemDamage() + ") is missing!");
+            if (KnownDimletConfiguration.isBlacklisted(key)) {
+                list.add(EnumChatFormatting.WHITE + "Dimlet " + key.getType().getName() + "." + key.getName());
+                list.add(EnumChatFormatting.RED + "This dimlet is blacklisted!");
+            } else {
+                list.add(EnumChatFormatting.RED + "Something is wrong!");
+                list.add(EnumChatFormatting.RED + "Dimlet with key " + key + " (id " + itemStack.getItemDamage() + ") is missing!");
+            }
             return;
         }
 
