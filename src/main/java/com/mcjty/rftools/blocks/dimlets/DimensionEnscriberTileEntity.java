@@ -13,6 +13,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     private void storeDimlets() {
         DimensionDescriptor descriptor = convertToDimensionDescriptor();
-        ItemStack realizedTab = createRealizedTab(descriptor);
+        ItemStack realizedTab = createRealizedTab(descriptor, worldObj);
         inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = realizedTab;
 
         markDirty();
@@ -159,13 +160,13 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
      * Create a realized dimension tab by taking a map of ids per type and storing
      * that in the NBT of the realized dimension tab.
      */
-    private ItemStack createRealizedTab(DimensionDescriptor descriptor) {
+    public static ItemStack createRealizedTab(DimensionDescriptor descriptor, World world) {
         ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
         NBTTagCompound tagCompound = new NBTTagCompound();
         descriptor.writeToNBT(tagCompound);
 
         // Check if the dimension already exists and if so set the progress to 100%.
-        RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
         Integer id = manager.getDimensionID(descriptor);
         if (id != null) {
             // The dimension was already created.
