@@ -107,6 +107,8 @@ public class GenericChunkProvider implements IChunkProvider {
 
         if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_AMPLIFIED) {
             worldType = WorldType.AMPLIFIED;
+        } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_NORMAL) {
+            worldType = WorldType.DEFAULT;
         } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_FLAT) {
             worldType = WorldType.FLAT;
         }
