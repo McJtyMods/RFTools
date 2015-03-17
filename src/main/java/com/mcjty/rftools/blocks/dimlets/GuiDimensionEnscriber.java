@@ -187,7 +187,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                 } else {
                     List<DimletKey> modifiersForType = extractModifiersForType(modifiers, type);
                     if (type == DimletType.DIMLET_TERRAIN) {
-                        if (DimletObjectMapping.idToTerrainType.get(key) == TerrainType.TERRAIN_VOID) {
+                        if (DimletObjectMapping.idToTerrainType.get(key) == TerrainType.TERRAIN_VOID && !modifiersForType.isEmpty()) {
                             tooltips.add("VOID terrain cannot use modifiers");
                         }
                     } else if (type == DimletType.DIMLET_FEATURE) {
