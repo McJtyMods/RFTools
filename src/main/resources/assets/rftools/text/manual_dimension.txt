@@ -430,7 +430,13 @@ Note that inserted dimlets are lost during this process (you will not get
 it back even if you deconstruct the dimension tab) and you pay the full
 power cost for it. There is no way to undo this so be careful. This can
 only be done with dimlets of type 'special', 'mob', 'effect',
-'sky', and 'time'.
+'sky', 'weather', and 'time'.
+{-------------------------------------------------------------}
+In addition to injecting some types of dimlets you can also inject
+a pre-charged matter receiver. This can be handy in case you
+accidently broke your receiver or it failed to generate because
+some structure overwrote it (AE2 meteors tend to do that for
+example).
 {-------------------------------------------------------------}
 {b}Dimension Monitor
 {n:monitor}
