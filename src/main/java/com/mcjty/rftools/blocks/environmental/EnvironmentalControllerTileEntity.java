@@ -64,6 +64,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void setRadius(int radius) {
         this.radius = radius;
         volume = -1;
+        environmentModules = null;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -75,6 +76,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void setMiny(int miny) {
         this.miny = miny;
         volume = -1;
+        environmentModules = null;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -86,6 +88,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     public void setMaxy(int maxy) {
         this.maxy = maxy;
         volume = -1;
+        environmentModules = null;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
