@@ -50,6 +50,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private int totalTicks;
     private int goodTicks;
     private int badTicks;
+    private int rfPerTick = 0;
 
     private int checkReceiverStatusCounter = 20;
 
@@ -125,6 +126,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             teleportingPlayer = null;
         }
         status = tagCompound.getInteger("status");
+        rfPerTick = tagCompound.getInteger("rfPerTick");
     }
 
     @Override
@@ -167,6 +169,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayName());
         }
         tagCompound.setInteger("status", status);
+        tagCompound.setInteger("rfPerTick", rfPerTick);
     }
 
     @Override
@@ -279,8 +282,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             // The player moved outside the beam. Interrupt the teleport.
             clearTeleport(80);
         } else {
-            int rf = TeleportConfiguration.rfTeleportPerTick;
-            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+            int rf = rfPerTick;
 
             if (getEnergyStored(ForgeDirection.DOWN) < rf) {
                 // We don't have enough energy to handle this tick.
@@ -490,12 +492,16 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
                 cooldownTimer = 80;
                 return;
             }
-            extractEnergy(ForgeDirection.DOWN, cost, false);
 
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
             teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, dest);
             teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
+
+            int rf = TeleportConfiguration.rfTeleportPerTick;
+            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+            int totalRfUsed = cost + rf * (teleportTimer+1);
+            rfPerTick = totalRfUsed / (teleportTimer+1);
 
             totalTicks = teleportTimer;
             goodTicks = 0;
