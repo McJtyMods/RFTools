@@ -173,20 +173,20 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void hilightSelectedTransmitter(int index) {
-        if (index == -1) {
+        TransmitterInfo transmitterInfo = getSelectedTransmitter(index);
+        if (transmitterInfo == null) {
             return;
         }
-        TransmitterInfo transmitterInfo = transmitters.get(index);
         Coordinate c = transmitterInfo.getCoordinate();
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
     private void hilightSelectedReceiver(int index) {
-        if (index == -1) {
+        TeleportDestination destination = getSelectedReceiver(index);
+        if (destination == null) {
             return;
         }
-        TeleportDestination destination = receivers.get(index);
 
         Coordinate c = destination.getCoordinate();
         double distance = Vec3.createVectorHelper(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPosition(1.0f));
@@ -213,10 +213,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     private void checkStatus() {
         int receiverSelected = receiverList.getSelected();
-        if (receiverSelected == -1) {
-            return; // Shouldn't happen. Just to be sure.
+        TeleportDestination destination = getSelectedReceiver(receiverSelected);
+        if (destination == null) {
+            return;
         }
-        TeleportDestination destination = receivers.get(receiverSelected);
         Coordinate c = destination.getCoordinate();
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
@@ -288,12 +288,16 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     private void dial() {
         int transmitterSelected = transmitterList.getSelected();
-        int receiverSelected = receiverList.getSelected();
-        if (transmitterSelected == -1 || receiverSelected == -1) {
-            return; // Shouldn't happen. Just to be sure.
+        TransmitterInfo transmitterInfo = getSelectedTransmitter(transmitterSelected);
+        if (transmitterInfo == null) {
+            return;
         }
-        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
-        TeleportDestination destination = receivers.get(receiverSelected);
+
+        int receiverSelected = receiverList.getSelected();
+        TeleportDestination destination = getSelectedReceiver(receiverSelected);
+        if (destination == null) {
+            return;
+        }
 
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
@@ -305,12 +309,22 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         listDirty = 0;
     }
 
+    private TeleportDestination getSelectedReceiver(int receiverSelected) {
+        if (receiverSelected == -1) {
+            return null;
+        }
+        if (receiverSelected >= receivers.size()) {
+            return null;
+        }
+        return receivers.get(receiverSelected);
+    }
+
     private void interruptDial() {
         int transmitterSelected = transmitterList.getSelected();
-        if (transmitterSelected == -1) {
-            return; // Shouldn't happen. Just to be sure.
+        TransmitterInfo transmitterInfo = getSelectedTransmitter(transmitterSelected);
+        if (transmitterInfo == null) {
+            return;
         }
-        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
@@ -359,10 +373,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     private TeleportDestination getSelectedTransmitterDestination() {
         int transmitterSelected = transmitterList.getSelected();
-        if (transmitterSelected == -1) {
+        TransmitterInfo transmitterInfo = getSelectedTransmitter(transmitterSelected);
+        if (transmitterInfo == null) {
             return null;
         }
-        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
         TeleportDestination destination = transmitterInfo.getTeleportDestination();
         if (destination.isValid()) {
             return destination;
@@ -429,15 +443,40 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private String calculateDistance(int transmitterSelected, int receiverSelected) {
-        TransmitterInfo transmitterInfo = transmitters.get(transmitterSelected);
-        TeleportDestination teleportDestination = receivers.get(receiverSelected);
+        TransmitterInfo transmitterInfo = getSelectedTransmitter(transmitterSelected);
+        if (transmitterInfo == null) {
+            return "?";
+        }
+        TeleportDestination teleportDestination = getSelectedReceiver(receiverSelected);
+        if (teleportDestination == null) {
+            return "?";
+        }
 
         return DialingDeviceTileEntity.calculateDistance(mc.theWorld, transmitterInfo, teleportDestination);
     }
 
+    private TransmitterInfo getSelectedTransmitter(int transmitterSelected) {
+        if (transmitterSelected == -1) {
+            return null;
+        }
+        if (transmitterSelected >= transmitters.size()) {
+            return null;
+        }
+        return transmitters.get(transmitterSelected);
+    }
+
     private void enableButtons() {
         int transmitterSelected = transmitterList.getSelected();
+        if (transmitters == null || transmitterSelected >= transmitters.size()) {
+            transmitterSelected = -1;
+            transmitterList.setSelected(-1);
+        }
         int receiverSelected = receiverList.getSelected();
+        if (receivers == null || receiverSelected >= receivers.size()) {
+            receiverSelected = -1;
+            receiverList.setSelected(-1);
+        }
+
         if (transmitterSelected != -1 && receiverSelected != -1) {
             dialButton.setEnabled(true);
             String distance = calculateDistance(transmitterSelected, receiverSelected);
