@@ -527,7 +527,9 @@ public class DimensionInformation {
             logDebug(player, "    Feature: " + featureType.toString());
         }
         for (BlockMeta block : extraOregen) {
-            logDebug(player, "        Extra ore: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+            if (block != null) {
+                logDebug(player, "        Extra ore: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+            }
         }
         for (Block block : fluidsForLakes) {
             logDebug(player, "        Lake fluid: " + new ItemStack(block).getDisplayName());

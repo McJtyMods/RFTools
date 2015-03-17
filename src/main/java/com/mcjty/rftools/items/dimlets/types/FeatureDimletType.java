@@ -111,8 +111,11 @@ public class FeatureDimletType implements IDimletType {
                 float chance = 1.1f;
                 while (random.nextFloat() < chance) {
                     DimletKey key = DimletRandomizer.getRandomMaterialBlock(random, true);
-                    blocks.add(DimletObjectMapping.idToBlock.get(key));
-                    chance = chance * 0.80f;
+                    BlockMeta bm = DimletObjectMapping.idToBlock.get(key);
+                    if (bm != null) {
+                        blocks.add(bm);
+                        chance = chance * 0.80f;
+                    }
                 }
             }
 
