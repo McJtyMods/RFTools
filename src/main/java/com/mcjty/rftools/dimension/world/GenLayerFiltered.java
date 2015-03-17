@@ -57,7 +57,12 @@ public class GenLayerFiltered extends GenLayer {
         if (filterMap != null) {
             int[] aint = IntCache.getIntCache(width * length);
             for (int i = 0; i < width * length; ++i) {
-                aint[i] = filterMap.get(ints[i]);
+                Integer biome = filterMap.get(ints[i]);
+                if (biome != null) {
+                    aint[i] = biome;
+                } else {
+                    aint[i] = ints[i];
+                }
             }
             return aint;
         } else {
