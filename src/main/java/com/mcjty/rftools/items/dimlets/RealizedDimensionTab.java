@@ -105,12 +105,12 @@ public class RealizedDimensionTab extends Item {
 
     private void constructDescriptionHelp(List list, String descriptionString) {
         Map<DimletType,List<DimletKey>> dimletTypeListMap = new HashMap<DimletType, List<DimletKey>>();
-        for (DimensionDescriptor.DimletDescriptor descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
+        for (DimletKey descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
             DimletType type = descriptor.getType();
             if (!dimletTypeListMap.containsKey(type)) {
                 dimletTypeListMap.put(type, new ArrayList<DimletKey>());
             }
-            dimletTypeListMap.get(descriptor.getType()).add(descriptor.getKey());
+            dimletTypeListMap.get(descriptor.getType()).add(descriptor);
         }
 
         for (Map.Entry<DimletType, List<DimletKey>> entry : dimletTypeListMap.entrySet()) {
@@ -125,9 +125,9 @@ public class RealizedDimensionTab extends Item {
                     list.add(EnumChatFormatting.GREEN + "Digits " + digitString);
                 } else {
                     if (keys.size() == 1) {
-                        list.add(EnumChatFormatting.GREEN + type.getName() + " 1 dimlet");
+                        list.add(EnumChatFormatting.GREEN + type.dimletType.getName() + " 1 dimlet");
                     } else {
-                        list.add(EnumChatFormatting.GREEN + type.getName() + " " + keys.size() + " dimlets");
+                        list.add(EnumChatFormatting.GREEN + type.dimletType.getName() + " " + keys.size() + " dimlets");
                     }
                 }
             }

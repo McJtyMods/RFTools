@@ -49,11 +49,11 @@ public class DimletCosts {
     }
 
     private static void initRfCreateModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        rfCreateModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
+        rfCreateModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "multiplier." + type1.dimletType.getName() + "." + type2.dimletType.getName(), value).getInt());
     }
 
     private static void initTypeRfCreateCost(Configuration cfg, DimletType type, int cost) {
-        typeRfCreateCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "rfcreate." + type.getName(), cost).getInt());
+        typeRfCreateCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFCREATECOST, "rfcreate." + type.dimletType.getName(), cost).getInt());
     }
 
     public static void initTypeRfMaintainCost(Configuration cfg) {
@@ -81,11 +81,11 @@ public class DimletCosts {
     }
 
     private static void initRfMaintainModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        rfMaintainModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
+        rfMaintainModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "multiplier." + type1.dimletType.getName() + "." + type2.dimletType.getName(), value).getInt());
     }
 
     private static void initTypeRfMaintainCost(Configuration cfg, DimletType type, int cost) {
-        typeRfMaintainCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "rfmaintain." + type.getName(), cost).getInt());
+        typeRfMaintainCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERFMAINTAINCOST, "rfmaintain." + type.dimletType.getName(), cost).getInt());
     }
 
     public static void initTypeTickCost(Configuration cfg) {
@@ -113,10 +113,10 @@ public class DimletCosts {
     }
 
     private static void initTickCostModifierMultiplier(Configuration cfg, DimletType type1, DimletType type2, int value) {
-        tickCostModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "multiplier." + type1.getName() + "." + type2.getName(), value).getInt());
+        tickCostModifierMultiplier.put(Pair.of(type1, type2), cfg.get(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "multiplier." + type1.dimletType.getName() + "." + type2.dimletType.getName(), value).getInt());
     }
 
     private static void initTypeTickCost(Configuration cfg, DimletType type, int cost) {
-        typeTickCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "ticks." + type.getName(), cost).getInt());
+        typeTickCost.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPETICKCOST, "ticks." + type.dimletType.getName(), cost).getInt());
     }
 }

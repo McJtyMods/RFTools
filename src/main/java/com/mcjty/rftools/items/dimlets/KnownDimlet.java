@@ -28,7 +28,7 @@ public class KnownDimlet extends Item {
     @Override
     public void registerIcons(IIconRegister iconRegister) {
         for (DimletType type : DimletType.values()) {
-            IIcon icon = iconRegister.registerIcon(RFTools.MODID + ":dimlets/" + type.getTextureName());
+            IIcon icon = iconRegister.registerIcon(RFTools.MODID + ":dimlets/" + type.dimletType.getTextureName());
             icons.put(type, icon);
         }
     }
@@ -84,7 +84,7 @@ public class KnownDimlet extends Item {
         if (entry == null) {
             // Safety. Should not occur.
             if (KnownDimletConfiguration.isBlacklisted(key)) {
-                list.add(EnumChatFormatting.WHITE + "Dimlet " + key.getType().getName() + "." + key.getName());
+                list.add(EnumChatFormatting.WHITE + "Dimlet " + key.getType().dimletType.getName() + "." + key.getName());
                 list.add(EnumChatFormatting.RED + "This dimlet is blacklisted!");
             } else {
                 list.add(EnumChatFormatting.RED + "Something is wrong!");
@@ -123,7 +123,7 @@ public class KnownDimlet extends Item {
                 list.add(EnumChatFormatting.AQUA + "This dimlet uses an old key");
             }
         } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            for (String info : entry.getKey().getType().getInformation()) {
+            for (String info : entry.getKey().getType().dimletType.getInformation()) {
                 list.add(EnumChatFormatting.WHITE + info);
             }
             List<String> extra = KnownDimletConfiguration.idToExtraInformation.get(entry.getKey());

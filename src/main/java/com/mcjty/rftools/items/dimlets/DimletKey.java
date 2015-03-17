@@ -50,7 +50,7 @@ public class DimletKey {
 
     @Override
     public String toString() {
-        return type.getOpcode() + name;
+        return type.dimletType.getOpcode() + name;
     }
 
     public static DimletKey parseKey(String skey) {

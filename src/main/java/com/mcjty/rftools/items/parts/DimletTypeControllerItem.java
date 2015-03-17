@@ -65,7 +65,7 @@ public class DimletTypeControllerItem extends Item {
 
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
-        return super.getUnlocalizedName(itemStack) + DimletType.values()[itemStack.getItemDamage()].getName();
+        return super.getUnlocalizedName(itemStack) + DimletType.values()[itemStack.getItemDamage()].dimletType.getName();
     }
 
     @Override

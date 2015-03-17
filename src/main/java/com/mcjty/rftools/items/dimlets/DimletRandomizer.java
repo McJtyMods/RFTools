@@ -85,7 +85,7 @@ public class DimletRandomizer {
     }
 
     private static void initRarity(Configuration cfg, DimletType type, int rarity) {
-        typeRarity.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "rarity." + type.getName(), rarity).getInt());
+        typeRarity.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "rarity." + type.dimletType.getName(), rarity).getInt());
     }
 
     static void setupWeightedRandomList() {

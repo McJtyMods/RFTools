@@ -126,7 +126,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
         int i = 0;
         while (i < modifiers.size()) {
             DimletKey modifier = modifiers.get(i);
-            if (type.isModifiedBy(modifier.getType())) {
+            if (type.dimletType.isModifiedBy(modifier.getType())) {
                 modifiersForType.add(modifier);
                 modifiers.remove(i);
             } else {
@@ -182,7 +182,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                 ItemStack stack = slot.getStack();
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, Minecraft.getMinecraft().theWorld);
                 DimletType type = key.getType();
-                if (type.isModifier()) {
+                if (type.dimletType.isModifier()) {
                     modifiers.add(key);
                 } else {
                     List<DimletKey> modifiersForType = extractModifiersForType(modifiers, type);
