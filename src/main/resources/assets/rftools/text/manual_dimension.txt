@@ -17,6 +17,7 @@ Table of contents:
 {l:infuser}Machine Infuser
 {l:scrambler}Dimlet Scrambler
 {l:probe}Activity Probe
+{l:extractor}Energy Extractor
 {l:editor}Dimension Editor
 {l:monitor}Dimension Monitor
 {l:create}Dimlet Crafting
@@ -406,6 +407,17 @@ dimension it monitors activity in that dimension and it will shut
 down power consumption from that dimension when nobody is in the
 dimension (including chunk loaders). So this block is an effective
 way to make sure your dimension isn't using power needlessly.
+{-------------------------------------------------------------}
+{b}Energy Extractor
+{n:extractor}
+
+With this block it is possible to extract energy back out of
+a dimension. You can use this in case you no longer want to
+use the dimension or perhaps you have a central hub where you
+pump a lot of energy in your dimension and then you can use this
+block to distribute power everywhere. Be careful to not let
+the dimension run dry!
+{rb:energyExtractorBlock}
 {-------------------------------------------------------------}
 {b}Dimension Editor
 {n:editor}
