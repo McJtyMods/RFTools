@@ -6,6 +6,7 @@ import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.items.dimlets.*;
+import com.mcjty.rftools.items.dimlets.types.IDimletType;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
@@ -98,16 +99,11 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
         DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, worldObj);
         DimletType type = key.getType();
-        switch (type) {
-            case DIMLET_MOBS:
-            case DIMLET_SKY:
-            case DIMLET_TIME:
-            case DIMLET_SPECIAL:
-            case DIMLET_EFFECT:
-            case DIMLET_WEATHER:
-                return itemStack;
-            default:
-                return null;
+        IDimletType itype = type.dimletType;
+        if (itype.isInjectable()) {
+            return itemStack;
+        } else {
+            return null;
         }
     }
 
