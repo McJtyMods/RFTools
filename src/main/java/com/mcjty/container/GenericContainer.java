@@ -166,7 +166,6 @@ public class GenericContainer extends Container {
                 return null;
             }
 
-            RFTools.log("    GenericContainer.transferStackInSlot: 17");
             slot.onPickupFromSlot(player, origStack);
         }
 
