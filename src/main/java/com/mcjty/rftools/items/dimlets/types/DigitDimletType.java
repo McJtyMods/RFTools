@@ -2,9 +2,9 @@ package com.mcjty.rftools.items.dimlets.types;
 
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.items.dimlets.DimletKey;
+import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -48,7 +48,13 @@ public class DigitDimletType implements IDimletType {
 
     @Override
     public void constructDimension(List<Pair<DimletKey, List<DimletKey>>> dimlets, Random random, DimensionInformation dimensionInformation) {
-
+        dimlets = DimensionInformation.extractType(DimletType.DIMLET_DIGIT, dimlets);
+        String digitString = "";
+        for (Pair<DimletKey, List<DimletKey>> dimletWithModifiers : dimlets) {
+            DimletKey key = dimletWithModifiers.getKey();
+            digitString += DimletObjectMapping.idToDigit.get(key);
+        }
+        dimensionInformation.setDigitString(digitString);
     }
 
     @Override
@@ -57,7 +63,7 @@ public class DigitDimletType implements IDimletType {
     }
 
     @Override
-    public ItemStack attemptDimletCrafting(World world, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+    public DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
         return null;
     }
 }

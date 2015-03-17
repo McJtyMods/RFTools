@@ -11,7 +11,6 @@ import com.mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public class TerrainDimletType implements IDimletType {
         List<DimletKey> modifiers;
         TerrainType terrainType = TerrainType.TERRAIN_VOID;
         if (dimlets.isEmpty()) {
-            System.out.println("Dimlets is empty");
             // Pick a random terrain type with a seed that is generated from all the
             // dimlets so we always get the same random value for these dimlets.
             List<DimletKey> idList = new ArrayList<DimletKey>(DimletObjectMapping.idToTerrainType.keySet());
@@ -124,7 +122,7 @@ public class TerrainDimletType implements IDimletType {
     }
 
     @Override
-    public ItemStack attemptDimletCrafting(World world, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+    public DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
         return null;
     }
 }

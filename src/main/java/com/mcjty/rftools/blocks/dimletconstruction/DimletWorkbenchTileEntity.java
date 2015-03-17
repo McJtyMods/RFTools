@@ -3,21 +3,18 @@ package com.mcjty.rftools.blocks.dimletconstruction;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.dimlets.types.DimletCraftingTools;
+import com.mcjty.rftools.items.dimlets.types.IDimletType;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
-import com.mcjty.varia.BlockMeta;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -182,120 +179,13 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         }
 
         DimletType type = DimletType.values()[stackTypeController.getItemDamage()];
-        switch (type) {
-            case DIMLET_BIOME:
-                return attemptBiomeDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_MOBS:
-                return attemptMobDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_SPECIAL:
-                return attemptSpecialDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_MATERIAL:
-                return attemptMaterialDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_LIQUID:
-                return attemptLiquidDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_TIME:
-                return attemptTimeDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
-            case DIMLET_SKY:
-            case DIMLET_WEATHER:
-            case DIMLET_STRUCTURE:
-            case DIMLET_TERRAIN:
-            case DIMLET_FEATURE:
-            case DIMLET_EFFECT:
-            case DIMLET_CONTROLLER:
-            case DIMLET_DIGIT:
-            case DIMLET_FOLIAGE:
-                return false;
+        IDimletType itype = type.dimletType;
+        DimletKey key = itype.attemptDimletCrafting(stackController, stackMemory, stackEnergy, stackEssence);
+        if (key != null) {
+            inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(key, worldObj));
+            return true;
         }
-
-        return true;
-    }
-
-    private boolean attemptTimeDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidTimeEssence(stackEssence, stackEssence.getTagCompound())) {
-            return false;
-        }
-        DimletKey timeDimlet = findTimeDimlet(stackEssence);
-        if (timeDimlet == null) {
-            return false;
-        }
-        if (!DimletCraftingTools.matchDimletRecipe(timeDimlet, stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(timeDimlet, worldObj));
-        return true;
-    }
-
-    private boolean attemptLiquidDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidLiquidEssence(stackEssence, stackEssence.getTagCompound())) {
-            return false;
-        }
-        DimletKey liquidDimlet = findLiquidDimlet(stackEssence.getTagCompound());
-        if (liquidDimlet == null) {
-            return false;
-        }
-        if (!DimletCraftingTools.matchDimletRecipe(liquidDimlet, stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(liquidDimlet, worldObj));
-        return true;
-    }
-
-    private boolean attemptMaterialDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidMaterialEssence(stackEssence, stackEssence.getTagCompound())) {
-            return false;
-        }
-        DimletKey materialDimlet = findMaterialDimlet(stackEssence.getTagCompound());
-        if (materialDimlet == null) {
-            return false;
-        }
-        if (!DimletCraftingTools.matchDimletRecipe(materialDimlet, stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(materialDimlet, worldObj));
-        return true;
-    }
-
-    private boolean attemptSpecialDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidSpecialEssence(stackEssence)) {
-            return false;
-        }
-        DimletKey specialDimlet = findSpecialDimlet(stackEssence);
-        if (specialDimlet == null) {
-            return false;
-        }
-        if (!DimletCraftingTools.matchDimletRecipe(specialDimlet, stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(specialDimlet, worldObj));
-        return true;
-    }
-
-    private boolean attemptMobDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidMobEssence(stackEssence, stackEssence.getTagCompound())) {
-            return false;
-        }
-        String mob = stackEssence.getTagCompound().getString("mobName");
-        if (!DimletCraftingTools.matchDimletRecipe(new DimletKey(DimletType.DIMLET_MOBS, mob), stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        DimletKey mobDimlet = new DimletKey(DimletType.DIMLET_MOBS, mob);
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(mobDimlet, worldObj));
-        return true;
-    }
-
-    private boolean attemptBiomeDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        if (!isValidBiomeEssence(stackEssence, stackEssence.getTagCompound())) {
-            return false;
-        }
-        DimletKey biomeDimlet = findBiomeDimlet(stackEssence.getTagCompound());
-        if (biomeDimlet == null) {
-            return false;
-        }
-        if (!DimletCraftingTools.matchDimletRecipe(biomeDimlet, stackController, stackMemory, stackEnergy)) {
-            return false;
-        }
-        inventoryHelper.setInventorySlotContents(1, DimletWorkbenchContainer.SLOT_OUTPUT, KnownDimletConfiguration.makeKnownDimlet(biomeDimlet, worldObj));
-        return true;
+        return false;
     }
 
     public void craftDimlet() {
@@ -308,155 +198,6 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_ESSENCE, 1);
         inhibitCrafting--;
         checkCrafting();
-    }
-
-    private DimletKey findTimeDimlet(ItemStack stackEssence) {
-        float angle = stackEssence.getTagCompound().getFloat("angle");
-        return TimeAbsorberTileEntity.findBestTimeDimlet(angle);
-    }
-
-    private DimletKey findSpecialDimlet(ItemStack stackEssence) {
-        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
-            return new DimletKey(DimletType.DIMLET_SPECIAL, "Peaceful");
-        } else if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
-            return new DimletKey(DimletType.DIMLET_SPECIAL, "Efficiency");
-        } else if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
-            return new DimletKey(DimletType.DIMLET_SPECIAL, "Mediocre Efficiency");
-        }
-        return null;
-    }
-
-    private DimletKey findBiomeDimlet(NBTTagCompound essenceCompound) {
-        int biomeID = essenceCompound.getInteger("biome");
-        for (Map.Entry<DimletKey, BiomeGenBase> entry : DimletObjectMapping.idToBiome.entrySet()) {
-            if (entry.getValue().biomeID == biomeID) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    private DimletKey findMaterialDimlet(NBTTagCompound essenceCompound) {
-        int blockID = essenceCompound.getInteger("block");
-        for (Map.Entry<DimletKey, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
-            if (entry.getValue() != null) {
-                int id = Block.blockRegistry.getIDForObject(entry.getValue().getBlock());
-                if (blockID == id) {
-                    return entry.getKey();
-                }
-            }
-        }
-        return null;
-    }
-
-    private DimletKey findLiquidDimlet(NBTTagCompound essenceCompound) {
-        int blockID = essenceCompound.getInteger("liquid");
-        for (Map.Entry<DimletKey, Block> entry : DimletObjectMapping.idToFluid.entrySet()) {
-            if (entry.getValue() != null) {
-                int id = Block.blockRegistry.getIDForObject(entry.getValue());
-                if (blockID == id) {
-                    return entry.getKey();
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isValidBiomeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = DimletCraftingTools.getBlock(stackEssence);
-
-        if (essenceBlock != ModBlocks.biomeAbsorberBlock) {
-            return false;
-        }
-        if (essenceCompound == null) {
-            return false;
-        }
-        int absorbing = essenceCompound.getInteger("absorbing");
-        int biome = essenceCompound.getInteger("biome");
-        if (absorbing > 0 || biome == -1) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidTimeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = DimletCraftingTools.getBlock(stackEssence);
-
-        if (essenceBlock != ModBlocks.timeAbsorberBlock) {
-            return false;
-        }
-        if (essenceCompound == null) {
-            return false;
-        }
-        int absorbing = essenceCompound.getInteger("absorbing");
-        float angle = essenceCompound.getFloat("angle");
-        if (absorbing > 0 || angle < -0.01f) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidLiquidEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = DimletCraftingTools.getBlock(stackEssence);
-
-        if (essenceBlock != ModBlocks.liquidAbsorberBlock) {
-            return false;
-        }
-        if (essenceCompound == null) {
-            return false;
-        }
-        int absorbing = essenceCompound.getInteger("absorbing");
-        int blockID = essenceCompound.getInteger("liquid");
-        if (absorbing > 0 || blockID == -1) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidMaterialEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = DimletCraftingTools.getBlock(stackEssence);
-
-        if (essenceBlock != ModBlocks.materialAbsorberBlock) {
-            return false;
-        }
-        if (essenceCompound == null) {
-            return false;
-        }
-        int absorbing = essenceCompound.getInteger("absorbing");
-        int blockID = essenceCompound.getInteger("block");
-        if (absorbing > 0 || blockID == -1) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidMobEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        if (stackEssence.getItem() != ModItems.syringeItem) {
-            return false;
-        }
-        if (essenceCompound == null) {
-            return false;
-        }
-        int level = essenceCompound.getInteger("level");
-        String mob = essenceCompound.getString("mobName");
-        if (level < DimletConstructionConfiguration.maxMobInjections || mob == null) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidSpecialEssence(ItemStack stackEssence) {
-        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
-            return true;
-        }
-        if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
-            return true;
-        }
-        if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
-            return true;
-        }
-
-        return false;
     }
 
     private void startExtracting() {

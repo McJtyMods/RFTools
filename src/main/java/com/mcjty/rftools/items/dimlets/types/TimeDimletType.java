@@ -7,11 +7,9 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -108,7 +106,7 @@ public class TimeDimletType implements IDimletType {
     }
 
     @Override
-    public ItemStack attemptDimletCrafting(World world, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+    public DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
         if (!isValidTimeEssence(stackEssence, stackEssence.getTagCompound())) {
             return null;
         }
@@ -119,6 +117,6 @@ public class TimeDimletType implements IDimletType {
         if (!DimletCraftingTools.matchDimletRecipe(timeDimlet, stackController, stackMemory, stackEnergy)) {
             return null;
         }
-        return KnownDimletConfiguration.makeKnownDimlet(timeDimlet, world);
+        return timeDimlet;
     }
 }

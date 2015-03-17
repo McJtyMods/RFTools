@@ -44,13 +44,13 @@ public interface IDimletType {
 
     /**
      * Attempt to craft a dimlet of this type given a controller, a memory part, an energy part and an essence item.
-     * @param world the world
+     *
      * @param stackController
      * @param stackMemory
      * @param stackEnergy
      * @param stackEssence
      * @return an itemstack if succesful
      */
-    ItemStack attemptDimletCrafting(World world, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence);
+    DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence);
 
 }

@@ -7,11 +7,9 @@ import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
 import com.mcjty.rftools.items.dimlets.DimletType;
-import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -146,7 +144,7 @@ public class BiomeDimletType implements IDimletType {
     }
 
     @Override
-    public ItemStack attemptDimletCrafting(World world, ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
+    public DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
         if (!isValidBiomeEssence(stackEssence, stackEssence.getTagCompound())) {
             return null;
         }
@@ -157,6 +155,6 @@ public class BiomeDimletType implements IDimletType {
         if (!DimletCraftingTools.matchDimletRecipe(biomeDimlet, stackController, stackMemory, stackEnergy)) {
             return null;
         }
-        return KnownDimletConfiguration.makeKnownDimlet(biomeDimlet, world);
+        return biomeDimlet;
     }
 }
