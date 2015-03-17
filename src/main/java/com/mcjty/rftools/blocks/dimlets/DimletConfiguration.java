@@ -4,6 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 
 public class DimletConfiguration {
     public static final String CATEGORY_DIMLETS = "dimlets";
+    public static int EXTRACTOR_MAXENERGY = 50000;
+    public static int EXTRACTOR_SENDPERTICK = 1000;
     public static int RESEARCHER_MAXENERGY = 32000;
     public static int RESEARCHER_RECEIVEPERTICK = 80;
     public static int rfResearchOperation = 100;
@@ -61,35 +63,40 @@ public class DimletConfiguration {
 
 
 	public static void init(Configuration cfg) {
+        EXTRACTOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "energyExtractorMaxRF", EXTRACTOR_MAXENERGY,
+                "Maximum RF storage that the energy extractor can hold").getInt();
+        EXTRACTOR_SENDPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldRFPerTick", EXTRACTOR_SENDPERTICK,
+                "RF per tick that the energy extractor can send").getInt();
+
         PHASEDFIELD_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "phasedFieldMaxRF", PHASEDFIELD_MAXENERGY,
                 "Maximum RF storage that the phased field generator item can hold").getInt();
         PHASEDFIELD_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldRFPerTick", PHASEDFIELD_RECEIVEPERTICK,
-                "RF per tick that the the phased field generator item can receive").getInt();
+                "RF per tick that the phased field generator item can receive").getInt();
         PHASEDFIELD_CONSUMEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldConsumePerTick", PHASEDFIELD_CONSUMEPERTICK,
-                "RF per tick that the the phased field generator item will consume").getInt();
+                "RF per tick that the phased field generator item will consume").getInt();
 
         RESEARCHER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletResearcherMaxRF", RESEARCHER_MAXENERGY,
                 "Maximum RF storage that the dimlet researcher can hold").getInt();
         RESEARCHER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimletResearcherRFPerTick", RESEARCHER_RECEIVEPERTICK,
-                "RF per tick that the the dimlet researcher can receive").getInt();
+                "RF per tick that the dimlet researcher can receive").getInt();
         rfResearchOperation = cfg.get(CATEGORY_DIMLETS, "dimletResearcherRFPerOperation", rfResearchOperation,
                 "RF that the dimlet researcher needs for researching a single unknown dimlet").getInt();
 
         SCRAMBLER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletScramblerMaxRF", SCRAMBLER_MAXENERGY,
                 "Maximum RF storage that the dimlet scrambler can hold").getInt();
         SCRAMBLER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimletScramblerRFPerTick", SCRAMBLER_RECEIVEPERTICK,
-                "RF per tick that the the dimlet scrambler can receive").getInt();
+                "RF per tick that the dimlet scrambler can receive").getInt();
         rfScrambleOperation = cfg.get(CATEGORY_DIMLETS, "dimletScramblerRFPerOperation", rfScrambleOperation,
                 "RF that the dimlet scrambler needs for one operation").getInt();
 
         BUILDER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimensionBuilderMaxRF", BUILDER_MAXENERGY,
                 "Maximum RF storage that the dimension builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimensionBuilderRFPerTick", BUILDER_RECEIVEPERTICK,
-                "RF per tick that the the dimension builder can receive").getInt();
+                "RF per tick that the dimension builder can receive").getInt();
         EDITOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimensionEditorMaxRF", EDITOR_MAXENERGY,
                 "Maximum RF storage that the dimension editor can hold").getInt();
         EDITOR_RECEIVEPERTICK = cfg.get(CATEGORY_DIMLETS, "dimensionEditorRFPerTick", EDITOR_RECEIVEPERTICK,
-                "RF per tick that the the dimension editor can receive").getInt();
+                "RF per tick that the dimension editor can receive").getInt();
         MAX_DIMENSION_POWER = cfg.get(CATEGORY_DIMLETS, "dimensionPower", MAX_DIMENSION_POWER,
                 "The internal RF buffer for every dimension").getInt();
         DIMPOWER_WARN0 = cfg.get(CATEGORY_DIMLETS, "dimensionPowerWarn0", DIMPOWER_WARN0,

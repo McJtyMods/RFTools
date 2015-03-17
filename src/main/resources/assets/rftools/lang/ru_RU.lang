@@ -129,6 +129,7 @@ tile.dimensionEditorBlock.name=Редактор измерений
 tile.dimensionMonitorBlock.name=Монитор измерений
 tile.machineInfuserBlock.name=Механизм наполнения
 tile.activityProbeBlock.name=Зонд активности
+tile.energyExtractorBlock.name=Energy Extractor
 tile.screenBlock.name=Экран
 tile.screenControllerBlock.name=Экранный контроллер
 tile.biomeAbsorberBlock.name=Поглотитель биомов

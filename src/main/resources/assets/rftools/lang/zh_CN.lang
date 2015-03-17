@@ -128,6 +128,7 @@ tile.dimensionEditorBlock.name=Dimension Editor
 tile.dimensionMonitorBlock.name=Dimension Monitor
 tile.machineInfuserBlock.name=Machine Infuser
 tile.activityProbeBlock.name=Activity Probe
+tile.energyExtractorBlock.name=Energy Extractor
 tile.screenBlock.name=Screen
 tile.screenControllerBlock.name=Screen Controller
 tile.biomeAbsorberBlock.name=Biome Absorber

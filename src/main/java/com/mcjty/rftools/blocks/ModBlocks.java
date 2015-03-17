@@ -100,6 +100,7 @@ public final class ModBlocks {
     public static DimensionalPattern1Block dimensionalPattern1Block;
     public static DimensionalPattern2Block dimensionalPattern2Block;
     public static ActivityProbeBlock activityProbeBlock;
+    public static EnergyExtractorBlock energyExtractorBlock;
 
     public static ScreenBlock screenBlock;
     public static ScreenControllerBlock screenControllerBlock;
@@ -226,6 +227,10 @@ public final class ModBlocks {
 
         activityProbeBlock = new ActivityProbeBlock();
         GameRegistry.registerBlock(activityProbeBlock, "activityProbeBlock");
+
+        energyExtractorBlock = new EnergyExtractorBlock();
+        GameRegistry.registerBlock(energyExtractorBlock, GenericItemBlock.class, "energyExtractorBlock");
+        GameRegistry.registerTileEntity(EnergyExtractorTileEntity.class, "EnergyExtractorTileEntity");
 
         biomeAbsorberBlock = new BiomeAbsorberBlock();
         GameRegistry.registerBlock(biomeAbsorberBlock, GenericItemBlock.class, "biomeAbsorberBlock");
