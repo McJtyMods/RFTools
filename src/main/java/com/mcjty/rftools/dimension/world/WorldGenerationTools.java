@@ -40,6 +40,15 @@ public class WorldGenerationTools {
         return block.getMaterial().blocksMovement();
     }
 
+    // Return true if this block is solid.
+    public static boolean isAir(World world, int x, int y, int z) {
+        if (world.isAirBlock(x, y, z)) {
+            return true;
+        }
+        Block block = world.getBlock(x, y, z);
+        return block == null;
+    }
+
     // Starting at the current height, go down and fill all air blocks with stone until a
     // non-air block is encountered.
     public static void fillEmptyWithStone(World world, int x, int y, int z) {

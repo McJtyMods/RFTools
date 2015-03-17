@@ -3,18 +3,23 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.blocks.BlockTools;
+import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.rftools.dimension.world.WorldGenerationTools;
 import com.mcjty.rftools.items.dimlets.*;
 import com.mcjty.rftools.items.dimlets.types.IDimletType;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -38,8 +43,8 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
     @Override
     protected void checkStateServer() {
-        ItemStack dimletItemStack = validateDimletItemStack();
-        if (dimletItemStack == null) {
+        ItemStack injectableItemStack = validateInjectableItemStack();
+        if (injectableItemStack == null) {
             return;
         }
 
@@ -50,11 +55,17 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
         if (ticksLeft == -1) {
             // We were not injecting. Start now.
-            DimletKey key = KnownDimletConfiguration.getDimletKey(dimletItemStack, worldObj);
-            DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(key);
-            ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
-            ticksLeft = ticksCost;
-            rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
+            if (isMatterReceiver(injectableItemStack)) {
+                ticksCost = DimletCosts.baseDimensionTickCost + 1000;
+                ticksLeft = ticksCost;
+                rfPerTick = DimletCosts.baseDimensionCreationCost + 200;
+            } else {
+                DimletKey key = KnownDimletConfiguration.getDimletKey(injectableItemStack, worldObj);
+                DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(key);
+                ticksCost = DimletCosts.baseDimensionTickCost + dimletEntry.getTickCost();
+                ticksLeft = ticksCost;
+                rfPerTick = DimletCosts.baseDimensionCreationCost + dimletEntry.getRfCreateCost();
+            }
         } else {
             int rf = getEnergyStored(ForgeDirection.DOWN);
             int rfpt = rfPerTick;
@@ -72,14 +83,27 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                     NBTTagCompound tagCompound = dimensionTab.getTagCompound();
                     int id = tagCompound.getInteger("id");
 
-                    ItemStack dimletStack = validateDimletItemStack();
-                    DimletKey key = KnownDimletConfiguration.getDimletKey(dimletStack, worldObj);
+                    injectableItemStack = validateInjectableItemStack();
+                    if (isMatterReceiver(injectableItemStack)) {
+                        World dimWorld = dimensionManager.getWorldForDimension(id);
+                        int y = findGoodReceiverLocation(dimWorld);
+                        if (y == -1) {
+                            y = dimWorld.getHeight() / 2;
+                        }
+                        dimWorld.setBlock(8, y, 8, ModBlocks.matterReceiverBlock, 0, 2);
+                        ModBlocks.matterReceiverBlock.onBlockPlaced(dimWorld, 8, y, 8, 0, 0, 0, 0, 0);
+                        ModBlocks.matterReceiverBlock.onBlockPlacedBy(dimWorld, 8, y, 8, null, injectableItemStack);
+                        dimWorld.setBlockToAir(8, y+1, 8);
+                        dimWorld.setBlockToAir(8, y+2, 8);
+                    } else {
+                        DimletKey key = KnownDimletConfiguration.getDimletKey(injectableItemStack, worldObj);
 
-                    DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                    information.injectDimlet(key);
-                    dimensionManager.save(worldObj);
+                        DimensionInformation information = dimensionManager.getDimensionInformation(id);
+                        information.injectDimlet(key);
+                        dimensionManager.save(worldObj);
+                    }
 
-                    inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_DIMLETINPUT, 1);
+                    inventoryHelper.decrStackSize(DimensionEditorContainer.SLOT_INJECTINPUT, 1);
 
                     stopInjecting();
                 }
@@ -90,11 +114,21 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
         setState();
     }
 
-    private ItemStack validateDimletItemStack() {
-        ItemStack itemStack = inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_DIMLETINPUT];
+    private int findGoodReceiverLocation(World dimWorld) {
+        int y = WorldGenerationTools.findSuitableEmptySpot(dimWorld, 8, 8);
+        y++;
+        return y;
+    }
+
+    private ItemStack validateInjectableItemStack() {
+        ItemStack itemStack = inventoryHelper.getStacks()[DimensionEditorContainer.SLOT_INJECTINPUT];
         if (itemStack == null || itemStack.stackSize == 0) {
             stopInjecting();
             return null;
+        }
+
+        if (isMatterReceiver(itemStack)) {
+            return itemStack;
         }
 
         DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, worldObj);
@@ -105,6 +139,15 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
         } else {
             return null;
         }
+    }
+
+    private boolean isMatterReceiver(ItemStack itemStack) {
+        Block block = BlockTools.getBlock(itemStack);
+        if (block == ModBlocks.matterReceiverBlock) {
+            // We can inject matter receivers too.
+            return true;
+        }
+        return false;
     }
 
     private ItemStack validateDimensionItemStack() {

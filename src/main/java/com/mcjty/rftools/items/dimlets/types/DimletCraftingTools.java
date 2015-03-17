@@ -36,12 +36,4 @@ public class DimletCraftingTools {
         }
         return level;
     }
-
-    public static Block getBlock(ItemStack stackEssence) {
-        if (stackEssence.getItem() instanceof ItemBlock) {
-            return ((ItemBlock) stackEssence.getItem()).field_150939_a;
-        } else {
-            return null;
-        }
-    }
 }

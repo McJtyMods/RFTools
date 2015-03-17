@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
@@ -143,6 +144,14 @@ public class BlockTools {
                 }
                 world.spawnEntityInWorld(entityitem);
             }
+        }
+    }
+
+    public static Block getBlock(ItemStack stack) {
+        if (stack.getItem() instanceof ItemBlock) {
+            return ((ItemBlock) stack.getItem()).field_150939_a;
+        } else {
+            return null;
         }
     }
 }

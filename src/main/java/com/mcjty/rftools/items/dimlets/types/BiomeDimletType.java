@@ -1,5 +1,6 @@
 package com.mcjty.rftools.items.dimlets.types;
 
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionInformation;
@@ -117,7 +118,7 @@ public class BiomeDimletType implements IDimletType {
     }
 
     private static boolean isValidBiomeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        Block essenceBlock = DimletCraftingTools.getBlock(stackEssence);
+        Block essenceBlock = BlockTools.getBlock(stackEssence);
 
         if (essenceBlock != ModBlocks.biomeAbsorberBlock) {
             return false;
