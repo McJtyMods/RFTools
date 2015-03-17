@@ -2,52 +2,50 @@ package com.mcjty.container;
 
 import net.minecraft.item.ItemStack;
 
+import java.util.Arrays;
+
 public class SlotDefinition {
     private final SlotType type;
-    private final ItemStack itemStack;
+    private final ItemStack[] itemStacks;
 
-    public SlotDefinition(SlotType type) {
-        this(type, null);
-    }
-
-    public SlotDefinition(SlotType type, ItemStack itemStack) {
+    public SlotDefinition(SlotType type, ItemStack... itemStacks) {
         this.type = type;
-        this.itemStack = itemStack;
+        this.itemStacks = itemStacks;
     }
 
     public SlotType getType() {
         return type;
     }
 
-    public ItemStack getItemStack() {
-        return itemStack;
+    public boolean itemStackMatches(ItemStack stack) {
+        for (ItemStack itemStack : itemStacks) {
+            if (itemStack.getItem() == stack.getItem()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         SlotDefinition that = (SlotDefinition) o;
 
-        if (itemStack != null ? !itemStack.equals(that.itemStack) : that.itemStack != null) {
+        if (!Arrays.equals(itemStacks, that.itemStacks)) {
             return false;
         }
-        if (type != that.type) {
-            return false;
-        }
+        return type == that.type;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
         int result = type.hashCode();
-        result = 31 * result + (itemStack != null ? itemStack.hashCode() : 0);
+        result = 31 * result + (itemStacks != null ? Arrays.hashCode(itemStacks) : 0);
         return result;
     }
 }

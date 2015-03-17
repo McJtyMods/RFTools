@@ -57,11 +57,11 @@ public class GenericContainer extends Container {
             } else if (slotFactory.getSlotType() == SlotType.SLOT_GHOSTOUT) {
                 slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else if (slotFactory.getSlotType() == SlotType.SLOT_SPECIFICITEM) {
-                final ItemStack itemStack = slotFactory.getSlotDefinition().getItemStack();
+                final SlotDefinition slotDefinition = slotFactory.getSlotDefinition();
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                     @Override
                     public boolean isItemValid(ItemStack stack) {
-                        return itemStack.getItem() == stack.getItem();
+                        return slotDefinition.itemStackMatches(stack);
                     }
                 };
             } else if (slotFactory.getSlotType() == SlotType.SLOT_CRAFTRESULT) {
@@ -96,7 +96,7 @@ public class GenericContainer extends Container {
 
         SlotType slotType = slotDefinition.getType();
 
-        if (itemStack.getItem() != null && slotType == SlotType.SLOT_SPECIFICITEM && (slotDefinition.getItemStack().getItem() != itemStack.getItem())) {
+        if (itemStack.getItem() != null && slotType == SlotType.SLOT_SPECIFICITEM && !slotDefinition.itemStackMatches(itemStack)) {
             return false;
         }
         for (Range<Integer> r : ranges.asRanges()) {
