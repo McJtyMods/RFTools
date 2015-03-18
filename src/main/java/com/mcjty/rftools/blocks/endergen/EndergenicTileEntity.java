@@ -385,7 +385,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
     // Called from client side when a wrench is used.
     public void useWrench(EntityPlayer player) {
         Coordinate thisCoord = new Coordinate(xCoord, yCoord, zCoord);
-        Coordinate coord = RFTools.instance.clientInfo.getSelectedEndergenicTileEntity();
+        Coordinate coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
             tileEntity = worldObj.getTileEntity(coord.getX(), coord.getY(), coord.getZ());
@@ -393,20 +393,20 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
 
         if (!(tileEntity instanceof EndergenicTileEntity)) {
             // None selected. Just select this one.
-            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(thisCoord);
+            RFTools.instance.clientInfo.setSelectedTE(thisCoord);
             EndergenicTileEntity destinationTE = getDestinationTE();
             if (destinationTE == null) {
-                RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
+                RFTools.instance.clientInfo.setDestinationTE(null);
                 RFTools.message(player, "Select another endergenic generator as destination");
             } else {
-                RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(new Coordinate(destinationTE.xCoord, destinationTE.yCoord, destinationTE.zCoord));
+                RFTools.instance.clientInfo.setDestinationTE(new Coordinate(destinationTE.xCoord, destinationTE.yCoord, destinationTE.zCoord));
                 int distance = getDistanceInTicks();
                 RFTools.message(player, "Select another endergenic generator as destination (current distance "+distance+")");
             }
         } else if (coord.equals(thisCoord)) {
             // Unselect this one.
-            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
-            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
+            RFTools.instance.clientInfo.setSelectedTE(null);
+            RFTools.instance.clientInfo.setDestinationTE(null);
         } else {
             // Make a link.
             EndergenicTileEntity otherTE = (EndergenicTileEntity) tileEntity;
@@ -416,8 +416,8 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
                 return;
             }
             otherTE.setDestination(thisCoord);
-            RFTools.instance.clientInfo.setSelectedEndergenicTileEntity(null);
-            RFTools.instance.clientInfo.setDestinationEndergenicTileEntity(null);
+            RFTools.instance.clientInfo.setSelectedTE(null);
+            RFTools.instance.clientInfo.setDestinationTE(null);
             RFTools.message(player, "Destination is set (distance "+otherTE.getDistanceInTicks()+" ticks)");
         }
     }

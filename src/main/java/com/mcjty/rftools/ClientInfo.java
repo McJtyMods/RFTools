@@ -6,8 +6,8 @@ import com.mcjty.varia.Coordinate;
  * This class holds information on client-side only which are global to the mod.
  */
 public class ClientInfo {
-    private Coordinate selectedEndergenicTileEntity = null;
-    private Coordinate destinationEndergenicTileEntity = null;
+    private Coordinate selectedTE = null;
+    private Coordinate destinationTE = null;
 
     private Coordinate hilightedBlock = null;
     private long expireHilight = 0;
@@ -25,19 +25,19 @@ public class ClientInfo {
         return expireHilight;
     }
 
-    public Coordinate getSelectedEndergenicTileEntity() {
-        return selectedEndergenicTileEntity;
+    public Coordinate getSelectedTE() {
+        return selectedTE;
     }
 
-    public void setSelectedEndergenicTileEntity(Coordinate selectedEndergenicTileEntity) {
-        this.selectedEndergenicTileEntity = selectedEndergenicTileEntity;
+    public void setSelectedTE(Coordinate selectedTE) {
+        this.selectedTE = selectedTE;
     }
 
-    public Coordinate getDestinationEndergenicTileEntity() {
-        return destinationEndergenicTileEntity;
+    public Coordinate getDestinationTE() {
+        return destinationTE;
     }
 
-    public void setDestinationEndergenicTileEntity(Coordinate destinationEndergenicTileEntity) {
-        this.destinationEndergenicTileEntity = destinationEndergenicTileEntity;
+    public void setDestinationTE(Coordinate destinationTE) {
+        this.destinationTE = destinationTE;
     }
 }

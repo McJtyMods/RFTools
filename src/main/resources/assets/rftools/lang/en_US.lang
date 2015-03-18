@@ -137,6 +137,8 @@ tile.materialAbsorberBlock.name=Material Absorber
 tile.liquidAbsorberBlock.name=Liquid Absorber
 tile.timeAbsorberBlock.name=Time Absorber
 tile.environmentalControllerBlock.name=Environmental Controller
+tile.spawnerBlock.name=Spawner
+tile.matterBeamerBlock.name=Matter Beamer
 tile.volcanicCoreBlock.name=Volcanic Core
 tile.volcanicBlock.name=Volcanic Block
 

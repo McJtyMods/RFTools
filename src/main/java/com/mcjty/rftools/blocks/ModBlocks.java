@@ -27,6 +27,10 @@ import com.mcjty.rftools.blocks.screens.ScreenControllerTileEntity;
 import com.mcjty.rftools.blocks.screens.ScreenTileEntity;
 import com.mcjty.rftools.blocks.shards.*;
 import com.mcjty.rftools.blocks.shield.*;
+import com.mcjty.rftools.blocks.spawner.MatterBeamerBlock;
+import com.mcjty.rftools.blocks.spawner.MatterBeamerTileEntity;
+import com.mcjty.rftools.blocks.spawner.SpawnerBlock;
+import com.mcjty.rftools.blocks.spawner.SpawnerTileEntity;
 import com.mcjty.rftools.blocks.special.VolcanicBlock;
 import com.mcjty.rftools.blocks.special.VolcanicCoreBlock;
 import com.mcjty.rftools.blocks.special.VolcanicCoreTileEntity;
@@ -107,6 +111,9 @@ public final class ModBlocks {
 
     public static EnvironmentalControllerBlock environmentalControllerBlock;
 
+    public static SpawnerBlock spawnerBlock;
+    public static MatterBeamerBlock matterBeamerBlock;
+
     public static VolcanicCoreBlock volcanicCoreBlock;
     public static VolcanicBlock volcanicBlock;
 
@@ -140,6 +147,13 @@ public final class ModBlocks {
         environmentalControllerBlock = new EnvironmentalControllerBlock();
         GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
         GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
+
+        spawnerBlock = new SpawnerBlock();
+        GameRegistry.registerBlock(spawnerBlock, GenericItemBlock.class, "spawnerBlock");
+        GameRegistry.registerTileEntity(SpawnerTileEntity.class, "SpawnerTileEntity");
+        matterBeamerBlock = new MatterBeamerBlock();
+        GameRegistry.registerBlock(matterBeamerBlock, GenericItemBlock.class, "matterBeamerBlock");
+        GameRegistry.registerTileEntity(MatterBeamerTileEntity.class, "MatterBeamerTileEntity");
 
         volcanicCoreBlock = new VolcanicCoreBlock();
         GameRegistry.registerBlock(volcanicCoreBlock, "volcanicCoreBlock");

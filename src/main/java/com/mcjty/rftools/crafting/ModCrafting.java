@@ -103,6 +103,9 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
                 'D', Blocks.diamond_block, 'E', Blocks.emerald_block, 'G', Blocks.gold_block, 'I', Blocks.iron_block);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.spawnerBlock), "rzr", "eMr", "rbr", 'M', ModBlocks.machineFrame, 'z', Items.rotten_flesh, 'e', Items.ender_pearl,
+                'r', Items.blaze_rod, 'b', Items.bone, 'r', Items.redstone);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.matterBeamerBlock), "RGR", "GMG", "RGR", 'M', ModBlocks.machineFrame, 'R', Blocks.redstone_block, 'G', Blocks.glowstone);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone);
         GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator);

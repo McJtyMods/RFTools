@@ -9,6 +9,7 @@ import com.mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import com.mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import com.mcjty.rftools.blocks.screens.ScreenConfiguration;
 import com.mcjty.rftools.blocks.shield.ShieldConfiguration;
+import com.mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import com.mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import com.mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import com.mcjty.rftools.crafting.ModCrafting;
@@ -67,6 +68,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(DimletConfiguration.CATEGORY_DIMLETS, "Settings for the dimlet/dimension system");
             cfg.addCustomCategoryComment(DimletConstructionConfiguration.CATEGORY_DIMLET_CONSTRUCTION, "Settings for the dimlet construction system");
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller system");
+            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_SPAWNER, "Settings for the spawner system");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RARITY, "General rarity distribution for dimlet selection");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "Default rarity per type of dimlet. 0 is very common, 100 is non-existant");
@@ -85,6 +87,7 @@ public class CommonProxy {
             DimletConfiguration.init(cfg);
             DimletConstructionConfiguration.init(cfg);
             EnvironmentalConfiguration.init(cfg);
+            SpawnerConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
             DimletCosts.initTypeRfCreateCost(cfg);
