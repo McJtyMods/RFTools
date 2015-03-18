@@ -59,7 +59,7 @@ public class DimletConfiguration {
     public static int bedBehaviour = 0;         // Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = set spawn
 
 	public static boolean randomizeSeed = false;
-
+    public static boolean normalTerrainInheritsOverworld = false;
 
 
 	public static void init(Configuration cfg) {
@@ -171,8 +171,10 @@ public class DimletConfiguration {
         bedBehaviour = cfg.get(CATEGORY_DIMLETS, "bedBehaviour", bedBehaviour,
                 "Behaviour when sleeping in an RFTools dimension: 0 = do nothing, 1 = explode, 2 = set spawn").getInt();
 
-		randomizeSeed = cfg.get(CATEGORY_DIMLETS, "randomizeSeed", randomizeSeed,
-			"Randomize the seed when the dimension is created").getBoolean();
+        randomizeSeed = cfg.get(CATEGORY_DIMLETS, "randomizeSeed", randomizeSeed,
+                "Randomize the seed when the dimension is created").getBoolean();
+        normalTerrainInheritsOverworld = cfg.get(CATEGORY_DIMLETS, "normalTerrainInheritsOverworld", normalTerrainInheritsOverworld,
+                "Set this to true if you want terrains with dimlet 'normal' to generate like the overworld (i.e. amplified if the overworld is amplified)").getBoolean();
     }
 
 }

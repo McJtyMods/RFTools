@@ -1,5 +1,6 @@
 package com.mcjty.rftools.dimension.world;
 
+import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
@@ -107,7 +108,7 @@ public class GenericChunkProvider implements IChunkProvider {
 
         if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_AMPLIFIED) {
             worldType = WorldType.AMPLIFIED;
-        } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_NORMAL) {
+        } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_NORMAL && !DimletConfiguration.normalTerrainInheritsOverworld) {
             worldType = WorldType.DEFAULT;
         } else if (dimensionInformation.getTerrainType() == TerrainType.TERRAIN_FLAT) {
             worldType = WorldType.FLAT;
