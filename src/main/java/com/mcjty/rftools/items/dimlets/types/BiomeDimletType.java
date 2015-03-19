@@ -78,6 +78,7 @@ public class BiomeDimletType implements IDimletType {
             DimletKey key = controllerDimlets.get(random.nextInt(controllerDimlets.size())).getLeft();
             controllerType = DimletObjectMapping.idToControllerType.get(key);
         }
+        dimensionInformation.setControllerType(controllerType);
 
         // Now see if we have to add or randomize biomes.
         for (Pair<DimletKey, List<DimletKey>> dimletWithModifiers : biomeDimlets) {

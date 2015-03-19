@@ -991,6 +991,10 @@ public class DimensionInformation {
         return controllerType;
     }
 
+    public void setControllerType(ControllerType controllerType) {
+        this.controllerType = controllerType;
+    }
+
     public String getDigitString() {
         return digitString;
     }
