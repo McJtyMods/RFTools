@@ -148,12 +148,12 @@ public final class ModBlocks {
         GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
         GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
 
-//        spawnerBlock = new SpawnerBlock();
-//        GameRegistry.registerBlock(spawnerBlock, GenericItemBlock.class, "spawnerBlock");
-//        GameRegistry.registerTileEntity(SpawnerTileEntity.class, "SpawnerTileEntity");
-//        matterBeamerBlock = new MatterBeamerBlock();
-//        GameRegistry.registerBlock(matterBeamerBlock, GenericItemBlock.class, "matterBeamerBlock");
-//        GameRegistry.registerTileEntity(MatterBeamerTileEntity.class, "MatterBeamerTileEntity");
+        spawnerBlock = new SpawnerBlock();
+        GameRegistry.registerBlock(spawnerBlock, GenericItemBlock.class, "spawnerBlock");
+        GameRegistry.registerTileEntity(SpawnerTileEntity.class, "SpawnerTileEntity");
+        matterBeamerBlock = new MatterBeamerBlock();
+        GameRegistry.registerBlock(matterBeamerBlock, GenericItemBlock.class, "matterBeamerBlock");
+        GameRegistry.registerTileEntity(MatterBeamerTileEntity.class, "MatterBeamerTileEntity");
 
         volcanicCoreBlock = new VolcanicCoreBlock();
         GameRegistry.registerBlock(volcanicCoreBlock, "volcanicCoreBlock");
