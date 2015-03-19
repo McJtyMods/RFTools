@@ -8,6 +8,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.crafting.KnownDimletShapedRecipe;
+import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.dimension.description.SkyDescriptor;
 import com.mcjty.rftools.dimension.description.WeatherDescriptor;
 import com.mcjty.rftools.dimension.world.types.*;
@@ -347,34 +348,9 @@ public class KnownDimletConfiguration {
         initSpecialItem(cfg, "Spawn", SpecialType.SPECIAL_SPAWN, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
 
-        initMobItem(cfg, "Default", mapping, master);
-        initMobItem(cfg, "Zombie", mapping, master);
-        initMobItem(cfg, "Skeleton", mapping, master);
-        initMobItem(cfg, "Enderman", mapping, master);
-        initMobItem(cfg, "Blaze", mapping, master);
-        initMobItem(cfg, "Creeper", mapping, master);
-        initMobItem(cfg, "Cave Spider", mapping, master);
-        initMobItem(cfg, "Ghast", mapping, master);
-        initMobItem(cfg, "Iron Golem", mapping, master);
-        initMobItem(cfg, "Magma Cube", mapping, master);
-        initMobItem(cfg, "Zombie Pigman", mapping, master);
-        initMobItem(cfg, "Slime", mapping, master);
-        initMobItem(cfg, "Snowman", mapping, master);
-        initMobItem(cfg, "Spider", mapping, master);
-        initMobItem(cfg, "Witch", mapping, master);
-        initMobItem(cfg, "Bat", mapping, master);
-        initMobItem(cfg, "Chicken", mapping, master);
-        initMobItem(cfg, "Cow", mapping, master);
-        initMobItem(cfg, "Horse", mapping, master);
-        initMobItem(cfg, "Mooshroom", mapping, master);
-        initMobItem(cfg, "Ocelot", mapping, master);
-        initMobItem(cfg, "Pig", mapping, master);
-        initMobItem(cfg, "Sheep", mapping, master);
-        initMobItem(cfg, "Squid", mapping, master);
-        initMobItem(cfg, "Wolf", mapping, master);
-        initMobItem(cfg, "Villager", mapping, master);
-        initMobItem(cfg, "Wither", mapping, master);
-        initMobItem(cfg, "Dragon", mapping, master);
+        for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {
+            initMobItem(cfg, entry.getKey(), mapping, master);
+        }
         DimletKey keyDefaultMobs = new DimletKey(DimletType.DIMLET_MOBS, "Default");
         addExtraInformation(keyDefaultMobs, "With this default dimlet you will just get", "the default mob spawning");
 
