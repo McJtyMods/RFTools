@@ -7,12 +7,15 @@ import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
 import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Map;
@@ -82,6 +85,13 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox(xCoord - 4, yCoord - 4, zCoord - 4, xCoord + 5, yCoord + 5, zCoord + 5);
+    }
+
 
     // Called from client side when a wrench is used.
     public void useWrench(EntityPlayer player) {
