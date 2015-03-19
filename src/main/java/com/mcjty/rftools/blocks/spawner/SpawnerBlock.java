@@ -16,17 +16,12 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
 public class SpawnerBlock extends GenericContainerBlock implements Infusable {
-
-    private IIcon iconTop;
 
     public SpawnerBlock() {
         super(Material.iron, SpawnerTileEntity.class);
@@ -105,27 +100,8 @@ public class SpawnerBlock extends GenericContainerBlock implements Infusable {
 
 
     @Override
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSpawner");
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
-    }
-
-    @Override
-    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        if (side == ForgeDirection.UP.ordinal()) {
-            return iconTop;
-        } else {
-            return iconSide;
-        }
-    }
-
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == ForgeDirection.UP.ordinal()) {
-            return iconTop;
-        } else {
-            return iconSide;
-        }
+    public String getIdentifyingIconName() {
+        return "machineSpawner";
     }
 
 }

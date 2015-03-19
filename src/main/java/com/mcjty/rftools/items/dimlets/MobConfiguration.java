@@ -78,6 +78,7 @@ public class MobConfiguration {
 
         addMobSpawnAmount(cfg, "Bat", "1", Blocks.dirt, 0, 20);
         addMobSpawnAmount(cfg, "Bat", "2", "living", 0, 3);
+        addMobSpawnAmount(cfg, "Bat", "3", "null", 0, 3);
         addMobSpawnAmount(cfg, "Blaze", "1", Items.blaze_rod, 0, 0.1f);
         addMobSpawnAmount(cfg, "Blaze", "2", Blocks.netherrack, 0, 60);
         addMobSpawnAmount(cfg, "Blaze", "3", "living", 0, 9);
@@ -163,7 +164,9 @@ public class MobConfiguration {
             String[] splitted = StringUtils.split(name, ".");
             if (!mobClasses.containsKey(splitted[0])) {
                 registerCustomMobItem(category, splitted[0]);
-                //@todo addMobSpawnAmount(cfg, splitted[0], );
+                addMobSpawnAmount(cfg, splitted[0], "1", Blocks.dirt, 0, 100);
+                addMobSpawnAmount(cfg, splitted[0], "2", "living", 0, 100);
+                addMobSpawnAmount(cfg, splitted[0], "3", "null", 0, 100);
             }
         }
 

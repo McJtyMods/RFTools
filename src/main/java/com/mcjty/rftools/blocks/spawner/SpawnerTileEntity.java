@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.spawner;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import com.mcjty.rftools.dimension.description.MobDescriptor;
 import com.mcjty.rftools.items.dimlets.DimletKey;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -93,7 +95,19 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
             return;
         }
 
-        entityLiving.setLocationAndAngles(xCoord + 0.5D, (double) yCoord + 1, zCoord + 0.5D, 0.0F, 0.0F);
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection k = BlockTools.getOrientation(meta);
+        int sx = xCoord;
+        int sy = yCoord;
+        int sz = zCoord;
+        sx += k.offsetX;
+        sy += k.offsetY;
+        sz += k.offsetZ;
+        if (k == ForgeDirection.DOWN) {
+            sy -= entityLiving.height - 1;
+        }
+
+        entityLiving.setLocationAndAngles(sx + 0.5D, (double) sy, sz + 0.5D, 0.0F, 0.0F);
         worldObj.spawnEntityInWorld(entityLiving);
     }
 
