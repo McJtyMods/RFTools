@@ -75,6 +75,7 @@ public final class ModBlocks {
 
     public static ShieldBlock shieldBlock;
     public static ShieldBlock shieldBlock2;
+    public static ShieldBlock shieldBlock3;
     public static InvisibleShieldBlock invisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
@@ -285,6 +286,10 @@ public final class ModBlocks {
         shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class);
         GameRegistry.registerBlock(shieldBlock2, GenericItemBlock.class, "shieldBlock2");
         GameRegistry.registerTileEntity(ShieldTileEntity2.class, "ShieldTileEntity2");
+
+        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class);
+        GameRegistry.registerBlock(shieldBlock3, GenericItemBlock.class, "shieldBlock3");
+        GameRegistry.registerTileEntity(ShieldTileEntity3.class, "ShieldTileEntity3");
 
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");

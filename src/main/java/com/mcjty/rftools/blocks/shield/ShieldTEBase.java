@@ -63,6 +63,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     private int camoRenderPass = 0;
 
     private int supportedBlocks;
+    private float damageFactor = 1.0f;
 
     // Filter list.
     private final List<ShieldFilter> filters = new ArrayList<ShieldFilter>();
@@ -90,6 +91,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
 
     public void setSupportedBlocks(int supportedBlocks) {
         this.supportedBlocks = supportedBlocks;
+    }
+
+    public void setDamageFactor(float factor) {
+        this.damageFactor = factor;
     }
 
     @Override
@@ -386,6 +391,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
         extractEnergy(ForgeDirection.DOWN, rf, false);
 
         float damage = ShieldConfiguration.damage;
+        damage *= damageFactor;
         damage = damage * (1.0f + getInfusedFactor() / 2.0f);
 
         entity.attackEntityFrom(source, damage);

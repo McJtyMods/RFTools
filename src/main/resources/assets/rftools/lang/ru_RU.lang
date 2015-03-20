@@ -116,6 +116,7 @@ tile.redstoneReceiverBlock.name=Приёмник красного камня
 tile.enderMonitorBlock.name=Монитор Края
 tile.shieldBlock.name=Проектировщик щита 1-ого уровня
 tile.shieldBlock2.name=Проектировщик щита 2-ого уровня
+tile.shieldBlock3.name=Shield Projector Tier 3
 tile.invisibleShieldBlock.name=Блок невидимого щита
 tile.solidShieldBlock.name=Блок твёрдого щита
 tile.shieldTemplateBlock.name=Шаблон щита
