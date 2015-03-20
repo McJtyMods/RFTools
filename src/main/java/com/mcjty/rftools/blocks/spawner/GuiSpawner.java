@@ -27,6 +27,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     private EnergyBar energyBar;
     private BlockRender blocks[] = new BlockRender[3];
     private Label labels[] = new Label[3];
+    private Label name;
+    private Label rfTick;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
@@ -46,17 +48,20 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        blocks[0] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(60, 5, 18, 18));
-        blocks[1] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(60, 25, 18, 18));
-        blocks[2] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(60, 45, 18, 18));
-        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[0].setLayoutHint(new PositionalLayout.PositionalHint(80, 5, 90, 18));
-        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[1].setLayoutHint(new PositionalLayout.PositionalHint(80, 25, 90, 18));
-        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[2].setLayoutHint(new PositionalLayout.PositionalHint(80, 45, 90, 18));
+        blocks[0] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 5, 18, 18));
+        blocks[1] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 25, 18, 18));
+        blocks[2] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 45, 18, 18));
+        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[0].setLayoutHint(new PositionalLayout.PositionalHint(130, 5, 40, 18));
+        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[1].setLayoutHint(new PositionalLayout.PositionalHint(130, 25, 40, 18));
+        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[2].setLayoutHint(new PositionalLayout.PositionalHint(130, 45, 40, 18));
+        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(new PositionalLayout.PositionalHint(28, 31, 78, 16));
+        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(new PositionalLayout.PositionalHint(28, 47, 78, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(blocks[0]).addChild(labels[0]).
                 addChild(blocks[1]).addChild(labels[1]).
-                addChild(blocks[2]).addChild(labels[2]);
+                addChild(blocks[2]).addChild(labels[2]).
+                addChild(rfTick).addChild(name);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -69,6 +74,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
             blocks[i].setRenderItem(null);
             labels[i].setText("");
         }
+        name.setText("");
+        rfTick.setText("");
 
         ItemStack stack = tileEntity.getStackInSlot(SpawnerContainer.SLOT_SYRINGE);
         if (stack == null || stack.stackSize == 0) {
@@ -78,6 +85,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         if (tagCompound != null) {
             String mob = tagCompound.getString("mobName");
             if (mob != null && !mob.isEmpty()) {
+                name.setText(mob);
+                rfTick.setText(SpawnerConfiguration.mobSpawnRf.get(mob) + "RF");
                 int i = 0;
                 List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mob);
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {

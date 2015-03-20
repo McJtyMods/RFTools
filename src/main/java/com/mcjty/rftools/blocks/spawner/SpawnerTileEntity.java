@@ -63,10 +63,10 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         mobName = mob;
     }
 
-    public int addMatter(ItemStack stack, int m) {
+    public void addMatter(ItemStack stack, int m) {
         testSyringe();
         if (mobName.isEmpty()) {
-            return 0;       // No matter was added.
+            return;       // No matter was added.
         }
         int materialType = 0;
         Float factor = null;
@@ -80,16 +80,18 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         }
         if (factor == null) {
             // This type of material is not supported by the spawner.
-            return 0;
+            return;
         }
 
-        matter[materialType] += m * factor;
-//        if (matter > SpawnerConfiguration.maxMatterStorage) {
-//            matter = SpawnerConfiguration.maxMatterStorage;
-//        }
+        float mm = matter[materialType];
+        mm += m * factor;
+        if (mm > SpawnerConfiguration.maxMatterStorage) {
+            mm = SpawnerConfiguration.maxMatterStorage;
+        }
+        matter[materialType] = mm;
+
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        return m;
     }
 
     public float[] getMatter() {
@@ -109,6 +111,14 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
                 return;     // Not enough material yet.
             }
         }
+
+        // We have enough materials. Check power.
+        int rf = SpawnerConfiguration.mobSpawnRf.get(mobName);
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
+            return;
+        }
+        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         for (int i = 0 ; i < 3 ; i++) {
             matter[i] -= spawnAmounts.get(i).getAmount();

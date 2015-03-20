@@ -16,7 +16,7 @@ public class MatterBeamerContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MATERIAL, 28, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MATERIAL, 28, 8, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

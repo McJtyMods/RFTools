@@ -46,7 +46,8 @@ public class MatterBeamerBlock extends GenericContainerBlock implements Infusabl
             list.add(EnumChatFormatting.WHITE + "This block converts matter into a beam");
             list.add(EnumChatFormatting.WHITE + "of energy. It can then send that beam to");
             list.add(EnumChatFormatting.WHITE + "a connected spawner. Connect by using a wrench.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power usage and speed.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power usage");
+            list.add(EnumChatFormatting.YELLOW + "and increased speed.");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

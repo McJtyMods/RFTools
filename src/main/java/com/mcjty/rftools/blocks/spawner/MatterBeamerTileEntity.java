@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
             return;
         }
         ticker = TICKTIME;
+
         TileEntity te = null;
         if (destination != null) {
             te = worldObj.getTileEntity(destination.getX(), destination.getY(), destination.getZ());
@@ -68,11 +70,18 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
         }
 
         SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
-        int a = Math.min(TICKTIME, itemStack.stackSize);
-        a = spawnerTileEntity.addMatter(itemStack, a);
-        if (a > 0) {
-            inventoryHelper.decrStackSize(0, a);
+
+        int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.0 + getInfusedFactor()));
+        int numblocks = Math.min(maxblocks, itemStack.stackSize);
+
+        int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
+        if (getEnergyStored(ForgeDirection.DOWN) < rf) {
+            return;
         }
+        extractEnergy(ForgeDirection.DOWN, rf, false);
+
+        spawnerTileEntity.addMatter(itemStack, numblocks);
+        inventoryHelper.decrStackSize(0, numblocks);
         enableBlockGlow();
     }
 

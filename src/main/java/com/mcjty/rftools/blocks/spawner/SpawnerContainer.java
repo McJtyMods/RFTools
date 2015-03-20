@@ -16,7 +16,7 @@ public class SpawnerContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.syringeItem)), CONTAINER_INVENTORY, SLOT_SYRINGE, 28, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.syringeItem)), CONTAINER_INVENTORY, SLOT_SYRINGE, 28, 8, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

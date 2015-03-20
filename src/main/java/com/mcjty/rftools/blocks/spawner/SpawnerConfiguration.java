@@ -16,8 +16,10 @@ import java.util.*;
 public class SpawnerConfiguration {
     public static final String CATEGORY_SPAWNER = "spawner";
     public static final String CATEGORY_MOBSPAWNAMOUNTS = "mobspawnamounts";
+    public static final String CATEGORY_MOBSPAWNRF = "mobspawnrf";
     public static final String CATEGORY_LIVINGMATTER = "livingmatter";
 
+    public static final Map<String,Integer> mobSpawnRf = new HashMap<String, Integer>();
     public static final Map<String,List<MobSpawnAmount>> mobSpawnAmounts = new HashMap<String, List<MobSpawnAmount>>();
     public static final Map<Object,Float> livingMatter = new HashMap<Object, Float>();
 
@@ -26,13 +28,14 @@ public class SpawnerConfiguration {
     public static final int MATERIALTYPE_LIVING = 2;
 
     public static int SPAWNER_MAXENERGY = 200000;
-    public static int SPAWNER_RECEIVEPERTICK = 1000;
+    public static int SPAWNER_RECEIVEPERTICK = 2000;
 
     public static int BEAMER_MAXENERGY = 200000;
     public static int BEAMER_RECEIVEPERTICK = 1000;
+    public static int beamRfPerObject = 10;
+    public static int beamBlocksPerSend = 10;
 
-    public static int matterAmount = 64 * 4;
-    public static int maxMatterStorage = 64 * 10;
+    public static int maxMatterStorage = 64 * 100;
 
     public static void init(Configuration cfg) {
         SPAWNER_MAXENERGY = cfg.get(CATEGORY_SPAWNER, "spawnerMaxRF", SPAWNER_MAXENERGY,
@@ -44,11 +47,13 @@ public class SpawnerConfiguration {
                 "Maximum RF storage that the matter beamer can hold").getInt();
         BEAMER_RECEIVEPERTICK = cfg.get(CATEGORY_SPAWNER, "beamerRFPerTick", BEAMER_RECEIVEPERTICK,
                 "RF per tick that the matter beamer can receive").getInt();
+        beamRfPerObject = cfg.get(CATEGORY_SPAWNER, "beamerRfPerSend", beamRfPerObject,
+                "RF per tick that the matter beamer will use for sending over a single object").getInt();
+        beamBlocksPerSend = cfg.get(CATEGORY_SPAWNER, "beamerBlocksPerSend", beamBlocksPerSend,
+                "The amount of blocks that the matter beamer will use send in one operation (every 10 ticks)").getInt();
 
-        matterAmount = cfg.get(CATEGORY_SPAWNER, "spawnerMatterAmount", matterAmount,
-                "Amount of energized matter that is needed to spawn a single creature").getInt();
         maxMatterStorage = cfg.get(CATEGORY_SPAWNER, "spawnerMaxMatterStorage", maxMatterStorage,
-                "The maximum amount of energized matter that this spawner can store").getInt();
+                "The maximum amount of energized matter that this spawner can store (per type)").getInt();
 
         readLivingConfig(cfg);
     }
@@ -114,87 +119,119 @@ public class SpawnerConfiguration {
     }
 
     public static void readMobSpawnAmountConfig(Configuration cfg) {
+        addMobSpawnRF(cfg, "Bat", 100);
         addMobSpawnAmount(cfg, "Bat", MATERIALTYPE_KEY, Items.feather, 0, .1f);
         addMobSpawnAmount(cfg, "Bat", MATERIALTYPE_BULK, Blocks.dirt, 0, 20);
         addMobSpawnAmount(cfg, "Bat", MATERIALTYPE_LIVING, null, 0, 2);
+        addMobSpawnRF(cfg, "Blaze", 1000);
         addMobSpawnAmount(cfg, "Blaze", MATERIALTYPE_KEY, Items.blaze_rod, 0, 0.1f);
         addMobSpawnAmount(cfg, "Blaze", MATERIALTYPE_BULK, Blocks.netherrack, 0, 60);
         addMobSpawnAmount(cfg, "Blaze", MATERIALTYPE_LIVING, null, 0, 9);
+        addMobSpawnRF(cfg, "Cave Spider", 500);
         addMobSpawnAmount(cfg, "Cave Spider", MATERIALTYPE_KEY, Items.string, 0, 0.1f);
         addMobSpawnAmount(cfg, "Cave Spider", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Cave Spider", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Chicken", 500);
         addMobSpawnAmount(cfg, "Chicken", MATERIALTYPE_KEY, Items.feather, 0, 0.1f);
         addMobSpawnAmount(cfg, "Chicken", MATERIALTYPE_BULK, Blocks.dirt, 0, 30);
         addMobSpawnAmount(cfg, "Chicken", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Cow", 800);
         addMobSpawnAmount(cfg, "Cow", MATERIALTYPE_KEY, Items.leather, 0, 0.1f);
         addMobSpawnAmount(cfg, "Cow", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Cow", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Creeper", 800);
         addMobSpawnAmount(cfg, "Creeper", MATERIALTYPE_KEY, Items.gunpowder, 0, 0.1f);
         addMobSpawnAmount(cfg, "Creeper", MATERIALTYPE_BULK, Blocks.dirt, 0, 60);
         addMobSpawnAmount(cfg, "Creeper", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Dragon", 100000);
         addMobSpawnAmount(cfg, "Dragon", MATERIALTYPE_KEY, Items.experience_bottle, 0, 0.1f);
         addMobSpawnAmount(cfg, "Dragon", MATERIALTYPE_BULK, Blocks.end_stone, 0, 200);
         addMobSpawnAmount(cfg, "Dragon", MATERIALTYPE_LIVING, null, 0, 200);
+        addMobSpawnRF(cfg, "Enderman", 2000);
         addMobSpawnAmount(cfg, "Enderman", MATERIALTYPE_KEY, Items.ender_pearl, 0, 0.1f);
         addMobSpawnAmount(cfg, "Enderman", MATERIALTYPE_BULK, Blocks.end_stone, 0, 20);
         addMobSpawnAmount(cfg, "Enderman", MATERIALTYPE_LIVING, null, 0, 11);
+        addMobSpawnRF(cfg, "Ghast", 2000);
         addMobSpawnAmount(cfg, "Ghast", MATERIALTYPE_KEY, Items.ghast_tear, 0, 0.1f);
         addMobSpawnAmount(cfg, "Ghast", MATERIALTYPE_BULK, Blocks.netherrack, 0, 50);
         addMobSpawnAmount(cfg, "Ghast", MATERIALTYPE_LIVING, null, 0, 12);
+        addMobSpawnRF(cfg, "Horse", 1000);
         addMobSpawnAmount(cfg, "Horse", MATERIALTYPE_KEY, Items.leather, 0, 0.1f);
         addMobSpawnAmount(cfg, "Horse", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Horse", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Iron Golem", 2000);
         addMobSpawnAmount(cfg, "Iron Golem", MATERIALTYPE_KEY, Items.iron_ingot, 0, 0.1f);
         addMobSpawnAmount(cfg, "Iron Golem", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Iron Golem", MATERIALTYPE_LIVING, 38, 0, 0.1f);     // Poppy
+        addMobSpawnRF(cfg, "Magma Cube", 600);
         addMobSpawnAmount(cfg, "Magma Cube", MATERIALTYPE_KEY, Items.magma_cream, 0, 0.1f);
         addMobSpawnAmount(cfg, "Magma Cube", MATERIALTYPE_BULK, Blocks.netherrack, 0, 50);
         addMobSpawnAmount(cfg, "Magma Cube", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Mooshroom", 800);
         addMobSpawnAmount(cfg, "Mooshroom", MATERIALTYPE_KEY, Items.leather, 0, 0.1f);
         addMobSpawnAmount(cfg, "Mooshroom", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Mooshroom", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Ocelot", 800);
         addMobSpawnAmount(cfg, "Ocelot", MATERIALTYPE_KEY, Items.fish, 0, 0.1f);
         addMobSpawnAmount(cfg, "Ocelot", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Ocelot", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Pig", 800);
         addMobSpawnAmount(cfg, "Pig", MATERIALTYPE_KEY, Items.leather, 0, 0.1f);
         addMobSpawnAmount(cfg, "Pig", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Pig", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Sheep", 800);
         addMobSpawnAmount(cfg, "Sheep", MATERIALTYPE_KEY, Blocks.wool, 0, 0.1f);
         addMobSpawnAmount(cfg, "Sheep", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Sheep", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Skeleton", 800);
         addMobSpawnAmount(cfg, "Skeleton", MATERIALTYPE_KEY, Items.bone, 0, 0.1f);
         addMobSpawnAmount(cfg, "Skeleton", MATERIALTYPE_BULK, Blocks.dirt, 0, 30);
         addMobSpawnAmount(cfg, "Skeleton", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Slime", 600);
         addMobSpawnAmount(cfg, "Slime", MATERIALTYPE_KEY, Items.slime_ball, 0, 0.1f);
         addMobSpawnAmount(cfg, "Slime", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Slime", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Snowman", 600);
         addMobSpawnAmount(cfg, "Snowman", MATERIALTYPE_KEY, Items.snowball, 0, 0.1f);
         addMobSpawnAmount(cfg, "Snowman", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Snowman", MATERIALTYPE_LIVING, null, 0, 4);
+        addMobSpawnRF(cfg, "Spider", 500);
         addMobSpawnAmount(cfg, "Spider", MATERIALTYPE_KEY, Items.string, 0, 0.1f);
         addMobSpawnAmount(cfg, "Spider", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Spider", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Squid", 500);
         addMobSpawnAmount(cfg, "Squid", MATERIALTYPE_KEY, 351, 0, 0.1f);     // Ink sac
         addMobSpawnAmount(cfg, "Squid", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Squid", MATERIALTYPE_LIVING, null, 0, 4);
-        addMobSpawnAmount(cfg, "Villager", MATERIALTYPE_KEY, Items.emerald, 0, 0.1f);
+        addMobSpawnRF(cfg, "Villager", 2000);
+        addMobSpawnAmount(cfg, "Villager", MATERIALTYPE_KEY, Items.book, 0, 0.1f);
         addMobSpawnAmount(cfg, "Villager", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Villager", MATERIALTYPE_LIVING, null, 0, 7);
-        addMobSpawnAmount(cfg, "Witch", MATERIALTYPE_KEY, Items.glowstone_dust, 0, 0.1f);
+        addMobSpawnRF(cfg, "Witch", 1200);
+        addMobSpawnAmount(cfg, "Witch", MATERIALTYPE_KEY, Items.glass_bottle, 0, 0.1f);
         addMobSpawnAmount(cfg, "Witch", MATERIALTYPE_BULK, Blocks.dirt, 0, 40);
         addMobSpawnAmount(cfg, "Witch", MATERIALTYPE_LIVING, null, 0, 7);
+        addMobSpawnRF(cfg, "Wither", 20000);
         addMobSpawnAmount(cfg, "Wither", MATERIALTYPE_KEY, Items.nether_star, 0, 0.1f);
         addMobSpawnAmount(cfg, "Wither", MATERIALTYPE_BULK, Blocks.soul_sand, 0, 40);
         addMobSpawnAmount(cfg, "Wither", MATERIALTYPE_LIVING, null, 0, 6);
+        addMobSpawnRF(cfg, "Wolf", 800);
         addMobSpawnAmount(cfg, "Wolf", MATERIALTYPE_KEY, Items.bone, 0, 0.1f);
         addMobSpawnAmount(cfg, "Wolf", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
         addMobSpawnAmount(cfg, "Wolf", MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnRF(cfg, "Zombie Pigman", 1200);
         addMobSpawnAmount(cfg, "Zombie Pigman", MATERIALTYPE_KEY, Items.gold_nugget, 0, 0.1f);
         addMobSpawnAmount(cfg, "Zombie Pigman", MATERIALTYPE_BULK, Blocks.netherrack, 0, 30);
         addMobSpawnAmount(cfg, "Zombie Pigman", MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, "Zombie", 800);
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_KEY, Items.rotten_flesh, 0, 0.1f);
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_BULK, Blocks.dirt, 0, 30);
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_LIVING, null, 0, 5);
+    }
+
+    public static void addMobSpawnRF(Configuration cfg, String name, int rf) {
+        rf = cfg.get(CATEGORY_MOBSPAWNRF, name, rf).getInt();
+        mobSpawnRf.put(name, rf);
     }
 
     public static void addMobSpawnAmount(Configuration cfg, String name, int materialType, Object object, int meta, float amount) {

@@ -61,6 +61,7 @@ public class MobConfiguration {
                 SpawnerConfiguration.addMobSpawnAmount(cfg, splitted[0], SpawnerConfiguration.MATERIALTYPE_KEY, Blocks.dirt, 0, 100);
                 SpawnerConfiguration.addMobSpawnAmount(cfg, splitted[0], SpawnerConfiguration.MATERIALTYPE_BULK, Blocks.dirt, 0, 100);
                 SpawnerConfiguration.addMobSpawnAmount(cfg, splitted[0], SpawnerConfiguration.MATERIALTYPE_LIVING, "living", 0, 100);
+                SpawnerConfiguration.addMobSpawnRF(cfg, splitted[0], 1000);
             }
         }
 
