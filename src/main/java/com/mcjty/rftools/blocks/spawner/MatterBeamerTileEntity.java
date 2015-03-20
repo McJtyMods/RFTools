@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.spawner;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketServerCommand;
@@ -38,6 +39,12 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
 
     @Override
     protected void checkStateServer() {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        if (!BlockTools.getRedstoneSignal(meta)) {
+            disableBlockGlow();
+            return;
+        }
+
         ticker--;
         if (ticker > 0) {
             return;
@@ -62,22 +69,25 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
 
         SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
         int a = Math.min(TICKTIME, itemStack.stackSize);
-        inventoryHelper.decrStackSize(0, a);
-        spawnerTileEntity.addMatter(a);
+        a = spawnerTileEntity.addMatter(itemStack, a);
+        if (a > 0) {
+            inventoryHelper.decrStackSize(0, a);
+        }
         enableBlockGlow();
     }
 
     private void disableBlockGlow() {
+        // Bit 0 is active, bit 3 is redstone.
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        if (meta != 0) {
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3);
+        if ((meta & 1) != 0) {
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, (meta & ~1), 3);
         }
     }
 
     private void enableBlockGlow() {
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        if (meta == 0) {
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1, 3);
+        if ((meta & 1) == 0) {
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, meta | 1, 3);
         }
     }
 

@@ -22,36 +22,26 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpawnerContainer.factory, 1);
 
-    private int matter = 0;
+    private float matter[] = new float[] { 0, 0, 0 };
+    private boolean checkSyringe = true;
+    private String mobName = "";
 
     public SpawnerTileEntity() {
         super(SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK);
     }
 
-    public void addMatter(int m) {
-        matter += m;
-        if (matter > SpawnerConfiguration.maxMatterStorage) {
-            matter = SpawnerConfiguration.maxMatterStorage;
-        }
-        markDirty();
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
-    public int getMatter() {
-        return matter;
-    }
-
-    @Override
-    protected void checkStateServer() {
-        if (matter < SpawnerConfiguration.matterAmount) {
+    private void testSyringe() {
+        if (!checkSyringe) {
             return;
         }
-
+        checkSyringe = false;
+        mobName = "";
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
             return;
@@ -70,28 +60,80 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         if (level < DimletConstructionConfiguration.maxMobInjections) {
             return;
         }
+        mobName = mob;
+    }
 
-        matter -= SpawnerConfiguration.matterAmount;
+    public int addMatter(ItemStack stack, int m) {
+        testSyringe();
+        if (mobName.isEmpty()) {
+            return 0;       // No matter was added.
+        }
+        int materialType = 0;
+        Float factor = null;
+        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobName);
+        for (SpawnerConfiguration.MobSpawnAmount spawnAmount : spawnAmounts) {
+            factor = spawnAmount.match(stack);
+            if (factor != null) {
+                break;
+            }
+            materialType++;
+        }
+        if (factor == null) {
+            // This type of material is not supported by the spawner.
+            return 0;
+        }
+
+        matter[materialType] += m * factor;
+//        if (matter > SpawnerConfiguration.maxMatterStorage) {
+//            matter = SpawnerConfiguration.maxMatterStorage;
+//        }
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        return m;
+    }
+
+    public float[] getMatter() {
+        return matter;
+    }
+
+    @Override
+    protected void checkStateServer() {
+        testSyringe();
+        if (mobName.isEmpty()) {
+            return;
+        }
+
+        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobName);
+        for (int i = 0 ; i < 3 ; i++) {
+            if (matter[i] < spawnAmounts.get(i).getAmount()) {
+                return;     // Not enough material yet.
+            }
+        }
+
+        for (int i = 0 ; i < 3 ; i++) {
+            matter[i] -= spawnAmounts.get(i).getAmount();
+        }
+
         markDirty();
 
         // @todo for now, later we may want to support mobs that have no dimlets.
-        DimletKey key = new DimletKey(DimletType.DIMLET_MOBS, mob);
+        DimletKey key = new DimletKey(DimletType.DIMLET_MOBS, mobName);
 
         MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(key);
         EntityLiving entityLiving;
         try {
             entityLiving = descriptor.getEntityClass().getConstructor(World.class).newInstance(worldObj);
         } catch (InstantiationException e) {
-            RFTools.logError("Fail to spawn mob: " + mob);
+            RFTools.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (IllegalAccessException e) {
-            RFTools.logError("Fail to spawn mob: " + mob);
+            RFTools.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (InvocationTargetException e) {
-            RFTools.logError("Fail to spawn mob: " + mob);
+            RFTools.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (NoSuchMethodException e) {
-            RFTools.logError("Fail to spawn mob: " + mob);
+            RFTools.logError("Fail to spawn mob: " + mobName);
             return;
         }
 
@@ -140,7 +182,11 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        matter = tagCompound.getInteger("matter");
+        matter[0] = tagCompound.getFloat("matter0");
+        matter[1] = tagCompound.getFloat("matter1");
+        matter[2] = tagCompound.getFloat("matter2");
+        checkSyringe = tagCompound.getBoolean("checkSyringe");
+        mobName = tagCompound.getString("mobName");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -160,7 +206,11 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setInteger("matter", matter);
+        tagCompound.setFloat("matter0", matter[0]);
+        tagCompound.setFloat("matter1", matter[1]);
+        tagCompound.setFloat("matter2", matter[2]);
+        tagCompound.setBoolean("checkSyringe", checkSyringe);
+        tagCompound.setString("mobName", mobName);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -203,6 +253,7 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        checkSyringe = true;
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -213,6 +264,7 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        checkSyringe = true;
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 

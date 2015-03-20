@@ -8,7 +8,6 @@ import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.items.dimlets.MobConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -80,22 +79,14 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
             String mob = tagCompound.getString("mobName");
             if (mob != null && !mob.isEmpty()) {
                 int i = 0;
-                List<MobConfiguration.MobSpawnAmount> list = MobConfiguration.mobSpawnAmounts.get(mob);
-                for (MobConfiguration.MobSpawnAmount spawnAmount : list) {
-                    Object b = spawnAmount.getObject();
-                    int meta = spawnAmount.getMeta();
+                List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mob);
+                for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
+                    ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
-                    if (b instanceof String) {
-                        String s = (String) b;
-                        if (s.equals("living")) {
-                            blocks[i].setRenderItem(new ItemStack(Blocks.leaves, 1, meta));
-                        } else {
-                            continue;
-                        }
-                    } else if (b instanceof Block) {
-                        blocks[i].setRenderItem(new ItemStack((Block) b, 1, meta));
-                    } else if (b instanceof Item) {
-                        blocks[i].setRenderItem(new ItemStack((Item) b, 1, meta));
+                    if (b == null) {
+                        blocks[i].setRenderItem(new ItemStack(Blocks.leaves, 1, 0));
+                    } else {
+                        blocks[i].setRenderItem(b);
                     }
                     labels[i].setText(Float.toString(amount));
                     i++;

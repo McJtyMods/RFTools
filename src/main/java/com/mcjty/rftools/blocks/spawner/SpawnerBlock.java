@@ -56,8 +56,10 @@ public class SpawnerBlock extends GenericContainerBlock implements Infusable {
         TileEntity te = accessor.getTileEntity();
         if (te instanceof SpawnerTileEntity) {
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
-            int matter = spawnerTileEntity.getMatter();
-            currenttip.add(EnumChatFormatting.GREEN + "Matter: " + matter);
+            float[] matter = spawnerTileEntity.getMatter();
+            currenttip.add(EnumChatFormatting.GREEN + "Key Matter: " + matter[0]);
+            currenttip.add(EnumChatFormatting.GREEN + "Bulk Matter: " + matter[1]);
+            currenttip.add(EnumChatFormatting.GREEN + "Living Matter: " + matter[2]);
         }
         return currenttip;
     }

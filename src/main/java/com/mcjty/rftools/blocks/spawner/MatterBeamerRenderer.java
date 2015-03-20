@@ -25,7 +25,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer {
         Coordinate destination = matterBeamerTileEntity.getDestination();
         if (destination != null) {
             int meta = tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-            drawBeam(f, new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), destination, meta);
+            drawBeam(f, new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), destination, meta & 1);    // Use bit 0, bit 3 is used for redstone
         }
 
         Coordinate coord = new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);

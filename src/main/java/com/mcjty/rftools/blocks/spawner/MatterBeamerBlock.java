@@ -6,6 +6,7 @@ import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -87,6 +88,10 @@ public class MatterBeamerBlock extends GenericContainerBlock implements Infusabl
         }
     }
 
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        checkRedstone(world, x, y, z);
+    }
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
