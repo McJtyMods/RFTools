@@ -44,6 +44,10 @@ public class MobConfiguration {
         public float getAmount() {
             return amount;
         }
+
+        public int getMeta() {
+            return meta;
+        }
     }
 
     public static void readMobConfig(Configuration cfg) {
