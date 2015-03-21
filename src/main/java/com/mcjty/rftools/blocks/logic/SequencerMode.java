@@ -8,8 +8,9 @@ public enum SequencerMode {
     MODE_ONCE2("Once2"),             // Cycle once as soon as a redstone signal is received. Restarts cycleBits if a new redstone signal arrives
     MODE_LOOP1("Loop1"),             // Cycle all the time. Ignore redstone signals
     MODE_LOOP2("Loop2"),             // Cycle all the time. Restone signal sets cycle to the beginning
-    MODE_LOOP3("Loop3"),             // Cycle for as long as a redstone signal is given. Stop as soon as the signal ends
+    MODE_LOOP3("Loop3"),             // Cycle for as long as a redstone signal is given. Stop as soon as the signal ends and stay at the cycle step.
     MODE_STEP("Step"),               // Proceed one step in the cycleBits every time a redstone signal comes in
+    MODE_LOOP4("Loop4"),             // Cycle for as long as a redstone signal is given. Stop as soon as the signal ends and resets to the beginning.
     ;
 
     private static final Map<String,SequencerMode> modeToMode = new HashMap<String, SequencerMode>();

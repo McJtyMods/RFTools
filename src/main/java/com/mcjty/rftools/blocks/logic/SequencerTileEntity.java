@@ -50,6 +50,7 @@ public class SequencerTileEntity extends GenericTileEntity {
             case MODE_ONCE1:
             case MODE_ONCE2:
             case MODE_LOOP3:
+            case MODE_LOOP4:
                 currentStep = -1;
                 break;
             case MODE_LOOP1:
@@ -139,6 +140,11 @@ public class SequencerTileEntity extends GenericTileEntity {
             case MODE_LOOP3:
                 if (redstone) {
                     nextStep();
+                }
+                break;
+            case MODE_LOOP4:
+                if (redstone) {
+                    nextStep();
                 } else {
                     currentStep = -1;
                 }
@@ -171,6 +177,7 @@ public class SequencerTileEntity extends GenericTileEntity {
                 currentStep = 0;
                 break;
             case MODE_LOOP3:
+            case MODE_LOOP4:
                 // Ignore pulses. We just work on redstone signal.
                 break;
             case MODE_STEP:

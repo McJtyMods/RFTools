@@ -107,14 +107,19 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     private void initGuiMode() {
         mode = new ChoiceLabel(mc, this).setDesiredHeight(13).setDesiredWidth(55);
-        for (SequencerMode m : SequencerMode.values()) {
-            mode.addChoices(m.getDescription());
-        }
+        mode.addChoices(SequencerMode.MODE_ONCE1.getDescription());
+        mode.addChoices(SequencerMode.MODE_ONCE2.getDescription());
+        mode.addChoices(SequencerMode.MODE_LOOP1.getDescription());
+        mode.addChoices(SequencerMode.MODE_LOOP2.getDescription());
+        mode.addChoices(SequencerMode.MODE_LOOP3.getDescription());
+        mode.addChoices(SequencerMode.MODE_LOOP4.getDescription());
+        mode.addChoices(SequencerMode.MODE_STEP.getDescription());
         mode.setChoiceTooltip(SequencerMode.MODE_ONCE1.getDescription(), "When a redstone signal is", "received, loop the cycle once.", "Ignore further pulses");
         mode.setChoiceTooltip(SequencerMode.MODE_ONCE2.getDescription(), "When a redstone signal is", "received, loop the cycle once.", "Restart if new pulse arrives");
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP1.getDescription(), "Loop the cycle all the time.", "Ignore redstone signals");
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP2.getDescription(), "Loop the cycle all the time.", "Restart on redstone pulse");
-        mode.setChoiceTooltip(SequencerMode.MODE_LOOP3.getDescription(), "Loop the cycle when redstone.", "signal is present");
+        mode.setChoiceTooltip(SequencerMode.MODE_LOOP3.getDescription(), "Loop the cycle when redstone.", "signal is present. Continue at current step");
+        mode.setChoiceTooltip(SequencerMode.MODE_LOOP4.getDescription(), "Loop the cycle when redstone.", "signal is present. Restart on no signal");
         mode.setChoiceTooltip(SequencerMode.MODE_STEP.getDescription(), "Do one step in the cycle", "for every redstone pulse");
         mode.setChoice(tileEntity.getMode().getDescription());
         mode.addChoiceEvent(new ChoiceEvent() {
