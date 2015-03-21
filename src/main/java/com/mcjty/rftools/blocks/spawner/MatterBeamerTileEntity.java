@@ -71,7 +71,7 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
 
         SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
-        int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.0 + getInfusedFactor()));
+        int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
         int numblocks = Math.min(maxblocks, itemStack.stackSize);
 
         int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);

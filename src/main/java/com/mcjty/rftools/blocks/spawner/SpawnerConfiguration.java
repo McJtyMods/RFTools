@@ -33,7 +33,7 @@ public class SpawnerConfiguration {
     public static int BEAMER_MAXENERGY = 200000;
     public static int BEAMER_RECEIVEPERTICK = 1000;
     public static int beamRfPerObject = 10;
-    public static int beamBlocksPerSend = 10;
+    public static int beamBlocksPerSend = 1;
     public static int maxBeamDistance = 8;
     public static int maxMatterStorage = 64 * 100;
 
