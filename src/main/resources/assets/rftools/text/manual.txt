@@ -75,13 +75,16 @@ The modes of this block are explained in the next page. You can
 also set the speed at which the cycles are played. Default is 1
 which means that the cycle will proceed every tick.
 {-------------------------------------------------------------} 
-It has six different modes:
+It has seven different modes:
 
     Once1: cycle once when pulse arrives. Ignore further pulses
     Once2: cycle once when pulse arrives. Restart on pulse
     Loop1: loop continuously, ignore redstone signal
     Loop2: loop continuously, restart on pulse
-    Loop3: loop continuously while redstone signal is on
+    Loop3: loop continuously while redstone signal is on. If
+           signal is down, stay at current step.
+    Loop4: loop continuously while redstone signal is on. If
+           signal is down, restart.
     Step: step through the cycle one by one
 {-------------------------------------------------------------}
 {b}Timer
