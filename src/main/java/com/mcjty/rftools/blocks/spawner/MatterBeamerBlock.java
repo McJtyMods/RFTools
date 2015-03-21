@@ -4,8 +4,11 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -52,6 +55,24 @@ public class MatterBeamerBlock extends GenericContainerBlock implements Infusabl
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof MatterBeamerTileEntity) {
+            MatterBeamerTileEntity matterBeamerTileEntity = (MatterBeamerTileEntity) te;
+            Coordinate coordinate = matterBeamerTileEntity.getDestination();
+            if (coordinate == null) {
+                currenttip.add(EnumChatFormatting.RED + "Not connected to a spawner!");
+            } else {
+                currenttip.add(EnumChatFormatting.GREEN + "Connected!");
+            }
+        }
+        return currenttip;
+    }
+
 
     @Override
     public int getGuiID() {
