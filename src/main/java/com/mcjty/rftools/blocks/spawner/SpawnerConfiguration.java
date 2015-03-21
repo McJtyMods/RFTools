@@ -34,7 +34,7 @@ public class SpawnerConfiguration {
     public static int BEAMER_RECEIVEPERTICK = 1000;
     public static int beamRfPerObject = 10;
     public static int beamBlocksPerSend = 10;
-
+    public static int maxBeamDistance = 8;
     public static int maxMatterStorage = 64 * 100;
 
     public static void init(Configuration cfg) {
@@ -54,6 +54,8 @@ public class SpawnerConfiguration {
 
         maxMatterStorage = cfg.get(CATEGORY_SPAWNER, "spawnerMaxMatterStorage", maxMatterStorage,
                 "The maximum amount of energized matter that this spawner can store (per type)").getInt();
+        maxBeamDistance = cfg.get(CATEGORY_SPAWNER, "maxBeamDistance", maxBeamDistance,
+                "The maximum distance that a laser can travel between the beamer and the spawner").getInt();
 
         readLivingConfig(cfg);
     }

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -172,7 +173,11 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         Coordinate thisCoord = new Coordinate(xCoord, yCoord, zCoord);
         TileEntity tileEntity = worldObj.getTileEntity(coord.getX(), coord.getY(), coord.getZ());
 
-        if (tileEntity instanceof MatterBeamerTileEntity) {
+        double d = Vec3.createVectorHelper(coord.getX(), coord.getY(), coord.getZ()).distanceTo(
+                Vec3.createVectorHelper(xCoord, yCoord, zCoord));
+        if (d > SpawnerConfiguration.maxBeamDistance) {
+            RFTools.message(player, "Destination distance is too far!");
+        } else if (tileEntity instanceof MatterBeamerTileEntity) {
             MatterBeamerTileEntity matterBeamerTileEntity = (MatterBeamerTileEntity) tileEntity;
             matterBeamerTileEntity.setDestination(thisCoord);
             RFTools.message(player, "Destination set!");
