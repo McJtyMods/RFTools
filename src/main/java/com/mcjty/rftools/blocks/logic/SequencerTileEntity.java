@@ -139,6 +139,8 @@ public class SequencerTileEntity extends GenericTileEntity {
             case MODE_LOOP3:
                 if (redstone) {
                     nextStep();
+                } else {
+                    currentStep = -1;
                 }
                 break;
             case MODE_STEP:
