@@ -64,6 +64,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
 
     private int supportedBlocks;
     private float damageFactor = 1.0f;
+    private float costFactor = 1.0f;
 
     // Filter list.
     private final List<ShieldFilter> filters = new ArrayList<ShieldFilter>();
@@ -95,6 +96,9 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
 
     public void setDamageFactor(float factor) {
         this.damageFactor = factor;
+    }
+    public void setCostFactor(float factor) {
+        this.costFactor = factor;
     }
 
     @Override
@@ -382,7 +386,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
 
-        rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+        rf = (int) (rf * costFactor * (4.0f - getInfusedFactor()) / 4.0f);
 
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             // Not enough RF to do damage.
