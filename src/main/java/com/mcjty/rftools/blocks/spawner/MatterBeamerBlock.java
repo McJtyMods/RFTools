@@ -94,6 +94,11 @@ public class MatterBeamerBlock extends GenericContainerBlock implements Infusabl
         checkRedstone(world, x, y, z);
     }
 
+//    @Override
+//    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
+//        return true;
+//    }
+//
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineBeamerOff");
@@ -103,7 +108,7 @@ public class MatterBeamerBlock extends GenericContainerBlock implements Infusabl
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        if (meta > 0) {
+        if ((meta & 1) > 0) {
             return iconSideOn;
         } else {
             return iconSide;
