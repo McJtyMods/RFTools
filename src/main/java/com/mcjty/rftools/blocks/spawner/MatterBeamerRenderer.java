@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.spawner;
 
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.render.DefaultISBRH;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,9 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer {
         Coordinate destination = matterBeamerTileEntity.getDestination();
         if (destination != null) {
             int meta = tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-            drawBeam(f, new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), destination, meta & 1);    // Use bit 0, bit 3 is used for redstone
+            if ((meta & BlockTools.MASK_REDSTONE) != 0) {
+                drawBeam(f, new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), destination, meta & 1);    // Use bit 0, bit 3 is used for redstone
+            }
         }
 
         Coordinate coord = new Coordinate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
