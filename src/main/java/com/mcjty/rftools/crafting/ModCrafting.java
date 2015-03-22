@@ -82,9 +82,18 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
                 'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock2), "ss ", "ss ", "   ", 's', ModBlocks.shieldBlock);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldBlock3), "bsb", "sSs", "bsb", 'S', ModBlocks.shieldBlock2,
-                's', ModItems.dimensionalShard, 'b', Blocks.diamond_block);
+
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block),
+                new ItemStack(Blocks.obsidian), new ItemStack(ModBlocks.shieldBlock), new ItemStack(Blocks.obsidian),
+                new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block)
+        }, new ItemStack(ModBlocks.shieldBlock2), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                new ItemStack(ModItems.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShard),
+                new ItemStack(Blocks.obsidian), new ItemStack(ModBlocks.shieldBlock2), new ItemStack(Blocks.obsidian),
+                new ItemStack(ModItems.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShard)
+        }, new ItemStack(ModBlocks.shieldBlock3), 4));
+
         GameRegistry.addRecipe(new ItemStack(ModBlocks.shieldTemplateBlock, 8), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
 
         GameRegistry.addSmelting(ModBlocks.dimensionalShardBlock, new ItemStack(ModItems.dimensionalShard, 4), 1.0f);
