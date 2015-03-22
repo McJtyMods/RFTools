@@ -5,7 +5,7 @@ public class ShieldTileEntity3 extends ShieldTEBase {
     public ShieldTileEntity3() {
         super();
         setSupportedBlocks(ShieldConfiguration.maxShieldSize * 4);
-        setDamageFactor(5.0f);
+        setDamageFactor(4.0f);
         setCostFactor(2.0f);
     }
 }
