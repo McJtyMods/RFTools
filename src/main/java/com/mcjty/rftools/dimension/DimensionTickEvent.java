@@ -257,7 +257,7 @@ public class DimensionTickEvent {
                 if (DimletConfiguration.dimensionDifficulty >= 1) {
                     for (EntityPlayer player : players) {
                         if (!checkValidPhasedFieldGenerator(player)) {
-                            player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000.0f);
+                            player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000000.0f);
                         } else {
                             if (doEffects) {
                                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX * MAXTICKS, 4, true));
