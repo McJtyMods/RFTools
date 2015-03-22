@@ -45,23 +45,35 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         mobName = "";
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
+            clearMatter();
             return;
         }
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound == null) {
+            clearMatter();
             return;
         }
 
         String mob = tagCompound.getString("mobName");
         if (mob == null) {
+            clearMatter();
             return;
         }
         int level = tagCompound.getInteger("level");
         if (level < DimletConstructionConfiguration.maxMobInjections) {
+            clearMatter();
             return;
         }
         mobName = mob;
+    }
+
+    private void clearMatter() {
+        if (matter[0] != 0 || matter[1] != 0 || matter[2] != 0) {
+            matter[0] = matter[1] = matter[2] = 0;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     public void addMatter(ItemStack stack, int m) {
