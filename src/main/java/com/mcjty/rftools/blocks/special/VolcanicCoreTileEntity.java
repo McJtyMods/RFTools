@@ -1,17 +1,14 @@
 package com.mcjty.rftools.blocks.special;
 
 import com.mcjty.entity.GenericTileEntity;
-import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.ModBlocks;
-import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.Map;
 
 public class VolcanicCoreTileEntity extends GenericTileEntity {
     // Client side only.
@@ -23,18 +20,30 @@ public class VolcanicCoreTileEntity extends GenericTileEntity {
     @Override
     protected void checkStateClient() {
         if (sound == null) {
-            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-            sound = new VolcanicRumbleSound(player, worldObj, xCoord, yCoord, zCoord);
-            Minecraft.getMinecraft().getSoundHandler().playSound(sound);
-//            RFTools.log("++++ Start rumble at " + xCoord + "," + yCoord + "," + zCoord);
+            playRumble();
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void playRumble() {
+        EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+        sound = new VolcanicRumbleSound(player, worldObj, xCoord, yCoord, zCoord);
+        Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+//            RFTools.log("++++ Start rumble at " + xCoord + "," + yCoord + "," + zCoord);
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
+        if (worldObj.isRemote) {
+            stopRumble();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void stopRumble() {
         if (sound != null) {
-//            RFTools.log("---- Stop rumble at " + xCoord + "," + yCoord + "," + zCoord);
+            //            RFTools.log("---- Stop rumble at " + xCoord + "," + yCoord + "," + zCoord);
             Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
             sound = null;
         }
