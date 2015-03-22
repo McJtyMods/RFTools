@@ -135,6 +135,8 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedTE(null);
             RFTools.instance.clientInfo.setDestinationTE(null);
+            setDestination(null);
+            RFTools.message(player, "Destination cleared!");
         }
     }
 
