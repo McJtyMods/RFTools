@@ -27,6 +27,7 @@ item.ChargedPorter.name=Charged Porter
 item.RFToolsManual.name=RF工具指南
 item.RFToolsManualDimension.name=RFTools Dimension Manual
 item.DevelopersDelight.name=开发者指南工具
+item.ShardWand.name=Shard Wand
 item.UnknownDimlet.name=未知的世界信息卡
 item.KnownDimlet.name=世界信息卡
 item.EmptyDimensionTab.name=空白世界构建模板

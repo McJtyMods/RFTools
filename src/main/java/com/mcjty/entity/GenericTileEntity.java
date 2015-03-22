@@ -101,6 +101,12 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         readFromNBT(packet.func_148857_g());
     }
 
+    public void setInfused(int infused) {
+        this.infused = infused;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     public int getInfused() {
         return infused;
     }

@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
 
-    public static final int TICKTIME = 10;
+    public static final int TICKTIME = 20;
     public static String CMD_SETDESTINATION = "setDest";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, MatterBeamerContainer.factory, 1);

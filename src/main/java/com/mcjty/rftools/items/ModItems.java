@@ -2,6 +2,7 @@ package com.mcjty.rftools.items;
 
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.items.devdelight.DevelopersDelightItem;
+import com.mcjty.rftools.items.devdelight.ShardWandItem;
 import com.mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
 import com.mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import com.mcjty.rftools.items.dimlets.*;
@@ -22,6 +23,7 @@ public final class ModItems {
     public static RFToolsManualItem rfToolsManualItem;
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
+    public static ShardWandItem shardWandItem;
 
     public static UnknownDimlet unknownDimlet;
     public static DimletTemplate dimletTemplate;
@@ -102,6 +104,12 @@ public final class ModItems {
         developersDelightItem.setCreativeTab(RFTools.tabRfTools);
         developersDelightItem.setTextureName(RFTools.MODID + ":developersDelightItem");
         GameRegistry.registerItem(developersDelightItem, "developersDelightItem");
+
+        shardWandItem = new ShardWandItem();
+        shardWandItem.setUnlocalizedName("ShardWand");
+        shardWandItem.setCreativeTab(RFTools.tabRfTools);
+        shardWandItem.setTextureName(RFTools.MODID + ":shardWandItem");
+        GameRegistry.registerItem(shardWandItem, "shardWandItem");
 
         initEnvironmentModuleItems();
         initScreenModuleItems();

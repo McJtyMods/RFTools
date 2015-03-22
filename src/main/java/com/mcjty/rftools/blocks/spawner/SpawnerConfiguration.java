@@ -32,7 +32,7 @@ public class SpawnerConfiguration {
 
     public static int BEAMER_MAXENERGY = 200000;
     public static int BEAMER_RECEIVEPERTICK = 1000;
-    public static int beamRfPerObject = 10;
+    public static int beamRfPerObject = 2000;
     public static int beamBlocksPerSend = 1;
     public static int maxBeamDistance = 8;
     public static int maxMatterStorage = 64 * 100;
@@ -50,7 +50,7 @@ public class SpawnerConfiguration {
         beamRfPerObject = cfg.get(CATEGORY_SPAWNER, "beamerRfPerSend", beamRfPerObject,
                 "RF per tick that the matter beamer will use for sending over a single object").getInt();
         beamBlocksPerSend = cfg.get(CATEGORY_SPAWNER, "beamerBlocksPerSend", beamBlocksPerSend,
-                "The amount of blocks that the matter beamer will use send in one operation (every 10 ticks)").getInt();
+                "The amount of blocks that the matter beamer will use send in one operation (every 20 ticks)").getInt();
 
         maxMatterStorage = cfg.get(CATEGORY_SPAWNER, "spawnerMaxMatterStorage", maxMatterStorage,
                 "The maximum amount of energized matter that this spawner can store (per type)").getInt();
