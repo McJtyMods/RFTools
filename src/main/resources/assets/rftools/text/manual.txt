@@ -19,6 +19,7 @@ Table of contents:
 {l:shield}Shield System
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
+{l:spawner}Spawner System
 {l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
@@ -435,14 +436,13 @@ This injector has an internal buffer that can only store ender pearls.
 {-------------------------------------------------------------}
 {b}Shield System
 {n:shield}
-
 RFTools implements a 'simple' shield system that can filter mobs, animals,
 players, and items. You start by building the shape of your yield with
 connected Shield Template Blocks. Then you put a Shield Block next
 to one of these templates and you give it power.
 
-By default there is a maximum of 256 blocks in a single shield.
-A tier 2 shield can go up to 1024 blocks.
+A tier 1 shield can handle up to 256 blocks. Tier 2 ups this to 1024.
+The tier 3 shield deals 4 times as much damage at twice the power.
 
 To compose the shield you then need to right click the shield block with
 a wrench. The shield block will compose the shield in the specified shape.
@@ -545,6 +545,34 @@ regeneration, and so on. Every module requires power so this doesn't
 come free. A single controller can affect an cylindrical area
 with a maximum radius of 100 from bottom to top of the world
 (if you're prepared to consume that much power).
+{-------------------------------------------------------------}
+{b}Spawner System
+{n:spawner}
+{rb:spawnerBlock}
+
+With this block you can spawn many kinds of mobs. Using it requires
+a bit of setup work though. First you need a full syringe for the
+mob that you want to spawn. If you insert this syringe in the spawner
+UI you can then see the other items you will need to spawn a creature
+of this type.
+{-------------------------------------------------------------}
+To get the materials into the spawner you need to set up
+at least one, preferably three or even more matter beamers:
+{rb:matterBeamerBlock}
+
+This block has a single slot for items. You can connect
+it to a spawner by first selecting the beamer and then the
+spawner with a wrench.
+{-------------------------------------------------------------}
+If you then give the spawner and the beamers power they should start
+to work. Note that to spawn a creature you need three types of
+material. That's why it is recommended to use three beamers as
+then you can dedicate every material to every laser.
+
+The beamer needs a redstone signal before it starts.
+
+Infusing the beamer greatly increases the speed with which it
+can beam matter (and thus the spawning rate).
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
