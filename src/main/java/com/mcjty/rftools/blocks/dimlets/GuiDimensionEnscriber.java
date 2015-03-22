@@ -237,7 +237,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
         }
         validateField.setTooltips(tooltips.toArray(new String[tooltips.size()]));
         validateField.setColor(error ? 0xFF0000 : 0x008800);
-        validateField.setText(error ? "Err" : "Ok");
+        validateField.setText(error ? "Warn" : "Ok");
     }
 
     @Override
