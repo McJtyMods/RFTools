@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -32,6 +33,9 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
     private float matter[] = new float[] { 0, 0, 0 };
     private boolean checkSyringe = true;
     private String mobName = "";
+
+    private AxisAlignedBB entityCheckBox = null;
+
 
     public SpawnerTileEntity() {
         super(SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK);
@@ -142,6 +146,25 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         // @todo for now, later we may want to support mobs that have no dimlets.
         DimletKey key = new DimletKey(DimletType.DIMLET_MOBS, mobName);
 
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection k = BlockTools.getOrientation(meta);
+        int sx = xCoord;
+        int sy = yCoord;
+        int sz = zCoord;
+        sx += k.offsetX;
+        sy += k.offsetY;
+        sz += k.offsetZ;
+
+//        if (entityCheckBox == null) {
+//            entityCheckBox = AxisAlignedBB.getBoundingBox(xCoord-6, yCoord-6, zCoord-6, xCoord+sx+7, yCoord+sy+7, zCoord+sz+7);
+//        }
+//
+//        int cnt = countEntitiesWithinAABB(entityCheckBox);
+//        if (cnt >= SpawnerConfiguration.maxEntitiesBeforeSpawner) {
+//            return;
+//        }
+//
+//
         MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(key);
         EntityLiving entityLiving;
         try {
@@ -160,14 +183,6 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
             return;
         }
 
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        ForgeDirection k = BlockTools.getOrientation(meta);
-        int sx = xCoord;
-        int sy = yCoord;
-        int sz = zCoord;
-        sx += k.offsetX;
-        sy += k.offsetY;
-        sz += k.offsetZ;
         if (k == ForgeDirection.DOWN) {
             sy -= entityLiving.height - 1;
         }
@@ -175,6 +190,39 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         entityLiving.setLocationAndAngles(sx + 0.5D, (double) sy, sz + 0.5D, 0.0F, 0.0F);
         worldObj.spawnEntityInWorld(entityLiving);
     }
+
+//    private int countEntitiesWithinAABB(AxisAlignedBB aabb) {
+//        int i = MathHelper.floor_double((aabb.minX - World.MAX_ENTITY_RADIUS) / 16.0D);
+//        int j = MathHelper.floor_double((aabb.maxX + World.MAX_ENTITY_RADIUS) / 16.0D);
+//        int k = MathHelper.floor_double((aabb.minZ - World.MAX_ENTITY_RADIUS) / 16.0D);
+//        int l = MathHelper.floor_double((aabb.maxZ + World.MAX_ENTITY_RADIUS) / 16.0D);
+//
+//        int cnt = 0;
+//        for (int i1 = i; i1 <= j; ++i1) {
+//            for (int j1 = k; j1 <= l; ++j1) {
+//                if (worldObj.getChunkProvider().chunkExists(i1, j1)) {
+//                    cnt += countEntitiesWithinChunkAABB(worldObj.getChunkFromChunkCoords(i1, j1), aabb);
+//                }
+//            }
+//        }
+//        return cnt;
+//    }
+//
+//    private int countEntitiesWithinChunkAABB(Chunk chunk, AxisAlignedBB aabb) {
+//        int cnt = 0;
+//        int i = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
+//        int j = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+//        i = MathHelper.clamp_int(i, 0, chunk.entityLists.length - 1);
+//        j = MathHelper.clamp_int(j, 0, chunk.entityLists.length - 1);
+//
+//        for (int k = i; k <= j; ++k) {
+//            List entityList = chunk.entityLists[k];
+//            cnt += entityList.size();
+//        }
+//        return cnt;
+//    }
+//
+
 
     // Called from client side when a wrench is used.
     public void useWrench(EntityPlayer player) {
