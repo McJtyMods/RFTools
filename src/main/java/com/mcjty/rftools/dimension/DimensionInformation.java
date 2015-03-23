@@ -897,7 +897,7 @@ public class DimensionInformation {
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 if (random.nextFloat() < DimletConfiguration.randomOrbFluidChance) {
-                    DimletKey key = DimletRandomizer.getRandomFluidBlock(random);
+                    DimletKey key = DimletRandomizer.getRandomFluidBlock(random, true);
                     actualRfCost += calculateCostFactor(key);
                     block = DimletObjectMapping.idToFluid.get(key);
                 } else {

@@ -106,7 +106,7 @@ public class TerrainDimletType implements IDimletType {
             }
         } else {
             if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
-                DimletKey key = DimletRandomizer.getRandomFluidBlock(random);
+                DimletKey key = DimletRandomizer.getRandomFluidBlock(random, false);
                 dimensionInformation.updateCostFactor(key);
                 fluidForTerrain = DimletObjectMapping.idToFluid.get(key);
             } else {

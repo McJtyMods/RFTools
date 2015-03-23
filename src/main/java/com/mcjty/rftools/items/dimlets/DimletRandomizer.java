@@ -174,8 +174,12 @@ public class DimletRandomizer {
         return key;
     }
 
-    public static DimletKey getRandomFluidBlock(Random random) {
-        return randomLiquidDimlets.select(random);
+    public static DimletKey getRandomFluidBlock(Random random, boolean allowRandom) {
+        DimletKey key = randomLiquidDimlets.select(random);
+        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+            key = randomLiquidDimlets.select(random);
+        }
+        return key;
     }
 
     public static DimletKey getRandomMaterialBlock(Random random, boolean allowRandom) {

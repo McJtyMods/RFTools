@@ -206,6 +206,7 @@
         [ "Liquid", "mithril.molten", 20000, 8000, 350, 3, 0 ],
         [ "Liquid", "platinum.molten", 20000, 8000, 350, 3, 0 ],
         [ "Liquid", "mobessence", 30000, 9000, 350, 4, 0 ],
+        [ "Liquid", "pinkslime", 10000, 2500, 150, 3, 1 ],
 
         [ "Mob", "Default", 300, 100, 200, 1, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0 ],

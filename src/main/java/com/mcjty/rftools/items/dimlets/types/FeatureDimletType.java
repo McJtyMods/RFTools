@@ -87,7 +87,7 @@ public class FeatureDimletType implements IDimletType {
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
                 while (random.nextFloat() < DimletConfiguration.randomLakeFluidChance) {
-                    DimletKey key = DimletRandomizer.getRandomFluidBlock(random);
+                    DimletKey key = DimletRandomizer.getRandomFluidBlock(random, true);
                     dimensionInformation.updateCostFactor(key);
                     fluids.add(DimletObjectMapping.idToFluid.get(key));
                 }
