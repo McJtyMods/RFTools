@@ -17,6 +17,7 @@ import com.mcjty.varia.BlockMeta;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -349,7 +350,10 @@ public class KnownDimletConfiguration {
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
 
         for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {
-            initMobItem(cfg, entry.getKey(), mapping, master);
+            Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
+            if (entityClass != null) {
+                initMobItem(cfg, entry.getKey(), mapping, master);
+            }
         }
         DimletKey keyDefaultMobs = new DimletKey(DimletType.DIMLET_MOBS, "Default");
         addExtraInformation(keyDefaultMobs, "With this default dimlet you will just get", "the default mob spawning");

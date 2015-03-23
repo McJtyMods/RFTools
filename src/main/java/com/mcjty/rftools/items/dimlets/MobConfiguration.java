@@ -49,6 +49,7 @@ public class MobConfiguration {
         initMobItem(cfg, EntityVillager.class, "Villager", 10, 3, 4, 20);
         initMobItem(cfg, EntityWither.class, "Wither", 5, 1, 2, 5);
         initMobItem(cfg, EntityDragon.class, "Dragon", 4, 1, 2, 4);
+        readModdedMobConfig(cfg);
 
         SpawnerConfiguration.readMobSpawnAmountConfig(cfg);
 
@@ -67,18 +68,18 @@ public class MobConfiguration {
 
     }
 
+    public static void readModdedMobConfig(Configuration cfg) {
+        initModdedMobItem(cfg, "Blizz", "Blizz", 20, 2, 4, 20);
+        initModdedMobItem(cfg, "Thaumcraft.Wisp", "Wisp", 20, 2, 4, 10);
+        SpawnerConfiguration.readModdedMobSpawnAmountConfig(cfg);
+    }
+
     private static void registerCustomMobItem(ConfigCategory category, String name) {
         Property entityNameProperty = checkProperty(category, name, "entityname");
         if (entityNameProperty == null) {
             return;
         }
         String entityName = entityNameProperty.getString();
-        Object o = EntityList.stringToClassMapping.get(entityName);
-        if (!EntityLiving.class.isAssignableFrom((Class)o)) {
-            RFTools.logError("Invalid custom mob item: '" + entityName + "' is not a living entity!");
-            return;
-        }
-        Class<? extends EntityLiving> clazz = (Class<? extends EntityLiving>) o;
 
         Property chanceProperty = checkProperty(category, name, "chance");
         if (chanceProperty == null) {
@@ -104,7 +105,7 @@ public class MobConfiguration {
         }
         int mingroup = chanceProperty.getInt();
 
-        initMobItem(null, clazz, name, chance, mingroup, maxgroup, maxentity);
+        initModdedMobItem(null, entityName, name, chance, mingroup, maxgroup, maxentity);
     }
 
     private static Property checkProperty(ConfigCategory category, String name, String propname) {
@@ -116,6 +117,19 @@ public class MobConfiguration {
         return entityNameProperty;
     }
 
+    private static void initModdedMobItem(Configuration cfg, String entityName, String name,
+                                    int chance, int mingroup, int maxgroup, int maxentity) {
+        Class clazz = (Class) EntityList.stringToClassMapping.get(entityName);
+        if (cfg != null) {
+            chance = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".chance", chance).getInt();
+            mingroup = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".mingroup", mingroup).getInt();
+            maxgroup = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
+            maxentity = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
+        }
+        mobClasses.put(name, new MobDescriptor(entityName, clazz, chance, mingroup, maxgroup, maxentity));
+    }
+
+
     private static void initMobItem(Configuration cfg, Class<? extends EntityLiving> entity, String name,
                                     int chance, int mingroup, int maxgroup, int maxentity) {
         if (cfg != null) {
@@ -124,7 +138,7 @@ public class MobConfiguration {
             maxgroup = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".maxgroup", maxgroup).getInt();
             maxentity = cfg.get(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, name + ".maxentity", maxentity).getInt();
         }
-        mobClasses.put(name, new MobDescriptor(entity, chance, mingroup, maxgroup, maxentity));
+        mobClasses.put(name, new MobDescriptor(null, entity, chance, mingroup, maxgroup, maxentity));
     }
 
 }

@@ -334,7 +334,7 @@ public class DimensionInformation {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
+            MobDescriptor mob = new MobDescriptor(null, c, chance, minGroup, maxGroup, maxLoaded);
             extraMobs.add(mob);
         }
 
@@ -747,7 +747,7 @@ public class DimensionInformation {
                 int minGroup = buf.readInt();
                 int maxGroup = buf.readInt();
                 int maxLoaded = buf.readInt();
-                MobDescriptor mob = new MobDescriptor(c, chance, minGroup, maxGroup, maxLoaded);
+                MobDescriptor mob = new MobDescriptor(null, c, chance, minGroup, maxGroup, maxLoaded);
                 extraMobs.add(mob);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

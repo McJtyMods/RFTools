@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.spawner;
 
 import com.mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -234,6 +235,17 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_KEY, Items.rotten_flesh, 0, 0.1f);
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_BULK, Blocks.dirt, 0, 30);
         addMobSpawnAmount(cfg, "Zombie", MATERIALTYPE_LIVING, null, 0, 5);
+    }
+
+    public static void readModdedMobSpawnAmountConfig(Configuration cfg) {
+        addMobSpawnRF(cfg, "Blizz", 1000);
+        addMobSpawnAmount(cfg, "Blizz", MATERIALTYPE_KEY, Items.snowball, 0, 0.1f);
+        addMobSpawnAmount(cfg, "Blizz", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
+        addMobSpawnAmount(cfg, "Blizz", MATERIALTYPE_LIVING, null, 0, 9);
+        addMobSpawnRF(cfg, "Wisp", 2000);
+        addMobSpawnAmount(cfg, "Wisp", MATERIALTYPE_KEY, Items.diamond, 0, 0.1f);
+        addMobSpawnAmount(cfg, "Wisp", MATERIALTYPE_BULK, Blocks.dirt, 0, 50);
+        addMobSpawnAmount(cfg, "Wisp", MATERIALTYPE_LIVING, null, 0, 4);
     }
 
     public static void addMobSpawnRF(Configuration cfg, String name, int rf) {

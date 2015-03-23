@@ -20,6 +20,7 @@ import com.mcjty.rftools.items.ModItems;
 import com.mcjty.rftools.items.dimlets.DimletCosts;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import com.mcjty.rftools.items.dimlets.MobConfiguration;
 import com.mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import com.mcjty.rftools.mobs.ModEntities;
 import com.mcjty.rftools.network.PacketHandler;
@@ -99,8 +100,8 @@ public class CommonProxy {
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {
-            if (cfg.hasChanged()) {
-                cfg.save();
+            if (mainConfig.hasChanged()) {
+                mainConfig.save();
             }
         }
     }
@@ -116,6 +117,12 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e) {
+//        MobConfiguration.readModdedMobConfig(mainConfig);
+//        if (mainConfig.hasChanged()) {
+//            mainConfig.save();
+//        }
+
+
         mainConfig = null;
         WrenchChecker.init();
     }

@@ -29,5 +29,15 @@ public class CmdDumpRarity extends AbstractRfToolsCommand {
         float bonus = fetchFloat(sender, args, 1, 0.0f);
 
         DimletRandomizer.dumpRarityDistribution(bonus);
+//
+//        Set<Map.Entry> set = EntityList.classToStringMapping.entrySet();
+//        for (Map.Entry entry : set) {
+//            Class clazz = (Class) entry.getKey();
+//            String name = (String) entry.getValue();
+//            if (EntityLiving.class.isAssignableFrom(clazz)) {
+//                System.out.println("name = " + name + ", getCanonicalName = " + clazz.getCanonicalName());
+//            }
+//        }
+//
     }
 }
