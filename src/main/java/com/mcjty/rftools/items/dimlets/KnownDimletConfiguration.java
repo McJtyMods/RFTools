@@ -1050,7 +1050,10 @@ public class KnownDimletConfiguration {
 
         DimletMapping mapping = DimletMapping.getInstance();
         if (mapping != null) {
-            itemStack.setItemDamage(mapping.getId(key));
+            Integer id = mapping.getId(key);
+            if (id != null) {
+                itemStack.setItemDamage(id);
+            }
         }
     }
 
