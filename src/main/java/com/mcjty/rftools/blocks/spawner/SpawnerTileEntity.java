@@ -18,8 +18,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -156,14 +158,13 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         sz += k.offsetZ;
 
 //        if (entityCheckBox == null) {
-//            entityCheckBox = AxisAlignedBB.getBoundingBox(xCoord-6, yCoord-6, zCoord-6, xCoord+sx+7, yCoord+sy+7, zCoord+sz+7);
+//            entityCheckBox = AxisAlignedBB.getBoundingBox(xCoord-9, yCoord-9, zCoord-9, xCoord+sx+10, yCoord+sy+10, zCoord+sz+10);
 //        }
 //
 //        int cnt = countEntitiesWithinAABB(entityCheckBox);
-//        if (cnt >= SpawnerConfiguration.maxEntitiesBeforeSpawner) {
+//        if (cnt >= SpawnerConfiguration.maxEntitiesAroundSpawner) {
 //            return;
 //        }
-//
 //
         MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(key);
         EntityLiving entityLiving;
@@ -222,7 +223,7 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
 //        return cnt;
 //    }
 //
-
+//
 
     // Called from client side when a wrench is used.
     public void useWrench(EntityPlayer player) {

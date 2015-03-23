@@ -37,7 +37,7 @@ public class SpawnerConfiguration {
     public static int maxBeamDistance = 8;
     public static int maxMatterStorage = 64 * 100;
 
-//    public static int maxEntitiesBeforeSpawner = 100;
+//    public static int maxEntitiesAroundSpawner = 300;
 
     public static void init(Configuration cfg) {
         SPAWNER_MAXENERGY = cfg.get(CATEGORY_SPAWNER, "spawnerMaxRF", SPAWNER_MAXENERGY,
@@ -59,8 +59,8 @@ public class SpawnerConfiguration {
         maxBeamDistance = cfg.get(CATEGORY_SPAWNER, "maxBeamDistance", maxBeamDistance,
                 "The maximum distance that a laser can travel between the beamer and the spawner").getInt();
 
-//        maxEntitiesBeforeSpawner = cfg.get(CATEGORY_SPAWNER, "maxEntitiesBeforeSpawner", maxEntitiesBeforeSpawner,
-//                "If the number of entities in the spawn area of the spawner exceeds this number it will automatically stop spawning").getInt();
+//        maxEntitiesAroundSpawner = cfg.get(CATEGORY_SPAWNER, "maxEntitiesAroundSpawner", maxEntitiesAroundSpawner,
+//                "If the number of entities around the spawner exceeds this number it will automatically stop spawning").getInt();
 
         readLivingConfig(cfg);
     }
