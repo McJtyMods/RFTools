@@ -206,7 +206,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                         }
 
                         if (terrainType == null && !featureType.supportsAllTerrains()) {
-                            tooltips.add(shortenName(featureType.name()) + " does not work on all terrains and no terrain was specified!");
+                            tooltips.add(shortenName(featureType.name()) + " is possibly useless as it does not work on all terrains!");
                         }
                         if (terrainType != null && !featureType.isTerrainSupported(terrainType)) {
                             tooltips.add(shortenName(featureType.name()) + " does not work for terrain " + shortenName(terrainType.name()) + "!");
