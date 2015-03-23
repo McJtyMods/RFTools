@@ -5,6 +5,7 @@ import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
@@ -190,10 +191,14 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
             if (stack != null && stack.stackSize > 0) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
-                descriptors.add(key);
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
-                    forcedSeed = tagCompound.getLong("forcedSeed");
+                DimletEntry entry = KnownDimletConfiguration.getEntry(key);
+                if (entry != null) {
+                    // Make sure the dimlet is not blacklisted.
+                    descriptors.add(key);
+                    NBTTagCompound tagCompound = stack.getTagCompound();
+                    if (tagCompound != null && tagCompound.getLong("forcedSeed") != 0) {
+                        forcedSeed = tagCompound.getLong("forcedSeed");
+                    }
                 }
             }
             inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;

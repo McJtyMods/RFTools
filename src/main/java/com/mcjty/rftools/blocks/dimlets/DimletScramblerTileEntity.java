@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.dimlets;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.items.ModItems;
+import com.mcjty.rftools.items.dimlets.DimletEntry;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -82,13 +83,26 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         ItemStack[] input = inventoryHelper.getStacks();
 
         DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input[0], worldObj);
         DimletKey key2 =  KnownDimletConfiguration.getDimletKey(input[1], worldObj);
         DimletKey key3 =  KnownDimletConfiguration.getDimletKey(input[2], worldObj);
+        DimletEntry entry1 = KnownDimletConfiguration.getEntry(key1);
+        if (entry1 == null) {   // Protect against blacklisted dimlets.
+            return;
+        }
+        DimletEntry entry2 = KnownDimletConfiguration.getEntry(key2);
+        if (entry2 == null) {   // Protect against blacklisted dimlets.
+            return;
+        }
+        DimletEntry entry3 = KnownDimletConfiguration.getEntry(key3);
+        if (entry3 == null) {   // Protect against blacklisted dimlets.
+            return;
+        }
+
+        extractEnergy(ForgeDirection.DOWN, rf, false);
 
         input[0].splitStack(1);
         if (input[0].stackSize == 0) {
@@ -103,9 +117,9 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             input[2] = null;
         }
 
-        int rarity1 = KnownDimletConfiguration.getEntry(key1).getRarity();
-        int rarity2 = KnownDimletConfiguration.getEntry(key2).getRarity();
-        int rarity3 = KnownDimletConfiguration.getEntry(key3).getRarity();
+        int rarity1 = entry1.getRarity();
+        int rarity2 = entry2.getRarity();
+        int rarity3 = entry3.getRarity();
         float b = (rarity1 + rarity2 + rarity3) / 3.0f;
         bonus = (b / 50.0f) * (getInfusedFactor() / 3.0f + 1.0f);  // An average of rarity 5 will give the best bonus which is 0.1
 

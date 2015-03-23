@@ -209,11 +209,14 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
         if (stack != null) {
             if (ModItems.knownDimlet.equals(stack.getItem())) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
-                if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
-                    extracting = 64;
-                    idToExtract = key;
-                    inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_INPUT, 1);
-                    markDirty();
+                DimletEntry entry = KnownDimletConfiguration.getEntry(key);
+                if (entry != null) {
+                    if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
+                        extracting = 64;
+                        idToExtract = key;
+                        inventoryHelper.decrStackSize(DimletWorkbenchContainer.SLOT_INPUT, 1);
+                        markDirty();
+                    }
                 }
             }
         }
