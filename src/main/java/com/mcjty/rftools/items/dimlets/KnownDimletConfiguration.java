@@ -1049,7 +1049,9 @@ public class KnownDimletConfiguration {
         itemStack.setTagCompound(tagCompound);
 
         DimletMapping mapping = DimletMapping.getInstance();
-        itemStack.setItemDamage(mapping.getId(key));
+        if (mapping != null) {
+            itemStack.setItemDamage(mapping.getId(key));
+        }
     }
 
     /**
