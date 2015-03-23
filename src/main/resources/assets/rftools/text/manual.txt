@@ -573,6 +573,10 @@ The beamer needs a redstone signal before it starts.
 
 Infusing the beamer greatly increases the speed with which it
 can beam matter (and thus the spawning rate).
+
+The leaf block in the spawner GUI indicates any type of living
+material (meat, wheat, seeds, ...). Some types of living material
+give a bigger bonus.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
