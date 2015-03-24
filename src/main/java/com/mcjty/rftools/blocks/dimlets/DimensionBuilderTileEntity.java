@@ -5,12 +5,18 @@ import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
 import com.mcjty.rftools.blocks.ModBlocks;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.dimension.DimensionStorage;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.dimension.description.DimensionDescriptor;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.rftools.network.PacketHandler;
 import com.mcjty.rftools.network.PacketRequestIntegerFromServer;
+import cpw.mods.fml.common.Optional;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -23,13 +29,17 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Map;
 import java.util.Random;
 
-public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
+public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory, SimpleComponent {
 
     public static final String CMD_GETBUILDING = "getBuilding";
+    public static final String CMD_RSMODE = "rsMode";
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
 
     private static int buildPercentage = 0;
     private int creative = -1;      // -1 is unknown
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+    private int powered = 0;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionBuilderContainer.factory, 1);
 
@@ -51,17 +61,25 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
 
     @Override
     protected void checkStateServer() {
-        ItemStack itemStack = inventoryHelper.getStacks()[0];
-        if (itemStack == null || itemStack.stackSize == 0) {
+        NBTTagCompound tagCompound = hasTab();
+        if (tagCompound == null) {
             setState(-1);
             return;
         }
 
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-
-        if (tagCompound == null) {
-            setState(-1);
-            return;
+        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
+            boolean rs = powered > 0;
+            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
+                if (rs) {
+                    setState(-1);
+                    return;
+                }
+            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
+                if (!rs) {
+                    setState(-1);
+                    return;
+                }
+            }
         }
 
         int ticksLeft = tagCompound.getInteger("ticksLeft");
@@ -72,6 +90,96 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         }
 
         setState(ticksLeft);
+    }
+
+    @Override
+    public void setPowered(int powered) {
+        if (this.powered != powered) {
+            this.powered = powered;
+            markDirty();
+        }
+    }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return "dimension_builder";
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] hasTab(Context context, Arguments args) throws Exception {
+        return new Object[] { hasTab() != null };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getBuildingPercentage(Context context, Arguments args) throws Exception {
+        NBTTagCompound tagCompound = hasTab();
+        if (tagCompound != null) {
+            int ticksLeft = tagCompound.getInteger("ticksLeft");
+            int tickCost = tagCompound.getInteger("tickCost");
+            int pct = (tickCost - ticksLeft) * 100 / tickCost;
+            return new Object[] { pct };
+        } else {
+            return new Object[] { 0 };
+        }
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getDimensionPower(Context context, Arguments args) throws Exception {
+        NBTTagCompound tagCompound = hasTab();
+        if (tagCompound != null) {
+            int id = tagCompound.getInteger("id");
+            int power = 0;
+            if (id != 0) {
+                DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+                power = dimensionStorage.getEnergyLevel(id);
+            }
+            return new Object[] { power };
+        } else {
+            return new Object[] { 0 };
+        }
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getRedstoneMode().getDescription() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRedstoneMode(redstoneMode);
+        return null;
+    }
+
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    private NBTTagCompound hasTab() {
+        ItemStack itemStack = inventoryHelper.getStacks()[0];
+        if (itemStack == null || itemStack.stackSize == 0) {
+            return null;
+        }
+
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        return tagCompound;
     }
 
     private static int counter = 20;
@@ -275,6 +383,20 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
         return false;
     }
 
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        }
+        return false;
+    }
+
     public static int getBuildPercentage() {
         return buildPercentage;
     }
@@ -282,12 +404,15 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        powered = tagCompound.getByte("powered");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
+        int m = tagCompound.getByte("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -301,12 +426,14 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setByte("powered", (byte) powered);
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
