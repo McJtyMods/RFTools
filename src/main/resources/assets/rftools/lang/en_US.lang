@@ -48,6 +48,7 @@ item.FluidPlusModule.name=Fluid Plus Module
 item.CounterModule.name=Counter Module
 item.CounterPlusModule.name=Counter Plus Module
 item.RedstoneModule.name=Redstone Module
+item.MachineInformationModule.name=Machine Information Module
 
 item.RegenerationEModule.name=Regeneration Module
 item.RegenerationPlusEModule.name=Regeneration Plus Module

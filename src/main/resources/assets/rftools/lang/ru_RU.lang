@@ -48,6 +48,7 @@ item.FluidPlusModule.name=Модуль «Жидкость+»
 item.CounterModule.name=Модуль «Счётчик»
 item.CounterPlusModule.name=Модуль «Счётчик+»
 item.RedstoneModule.name=Модуль «Красный камень»
+item.MachineInformationModule.name=Machine Information Module
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»

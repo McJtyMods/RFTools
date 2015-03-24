@@ -46,6 +46,7 @@ public final class ModItems {
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
     public static RedstoneModuleItem redstoneModuleItem;
+    public static MachineInformationModuleItem machineInformationModuleItem;
 
     public static RegenerationEModuleItem regenerationEModuleItem;
     public static RegenerationPlusEModuleItem regenerationPlusEModuleItem;
@@ -308,6 +309,12 @@ public final class ModItems {
         redstoneModuleItem.setCreativeTab(RFTools.tabRfTools);
         redstoneModuleItem.setTextureName(RFTools.MODID + ":modules/redstoneModuleItem");
         GameRegistry.registerItem(redstoneModuleItem, "redstoneModuleItem");
+
+        machineInformationModuleItem = new MachineInformationModuleItem();
+        machineInformationModuleItem.setUnlocalizedName("MachineInformationModule");
+        machineInformationModuleItem.setCreativeTab(RFTools.tabRfTools);
+        machineInformationModuleItem.setTextureName(RFTools.MODID + ":modules/machineInformationModuleItem");
+        GameRegistry.registerItem(machineInformationModuleItem, "machineInformationModuleItem");
     }
 
     private static void initDimensionItems() {

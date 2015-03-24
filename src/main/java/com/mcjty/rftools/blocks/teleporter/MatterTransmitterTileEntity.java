@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.teleporter;
 
+import com.mcjty.api.MachineInformation;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
@@ -24,7 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity {
+public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity implements MachineInformation {
 
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_ADDPLAYER = "addPlayer";
@@ -76,6 +77,38 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public void setPrivateAccess(boolean privateAccess) {
         this.privateAccess = privateAccess;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    @Override
+    public String[] getSupportedTags() {
+        return new String[] { "dim", "coord", "name" };
+    }
+
+    @Override
+    public String getData(String tag, long millis) {
+        if ("name".equals(tag)) {
+            TeleportDestination destination = getTeleportDestination();
+            if (destination != null) {
+                return destination.getName();
+            } else {
+                return "<not dialed>";
+            }
+        } else if ("coord".equals(tag)) {
+            TeleportDestination destination = getTeleportDestination();
+            if (destination != null) {
+                return destination.getCoordinate().toString();
+            } else {
+                return "<not dialed>";
+            }
+        } else if ("dim".equals(tag)) {
+            TeleportDestination destination = getTeleportDestination();
+            if (destination != null) {
+                return Integer.toString(destination.getDimension());
+            } else {
+                return "<not dialed>";
+            }
+        }
+        return null;
     }
 
     public boolean checkAccess(String player) {

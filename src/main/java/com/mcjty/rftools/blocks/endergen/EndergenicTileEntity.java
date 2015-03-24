@@ -1,6 +1,7 @@
 package com.mcjty.rftools.blocks.endergen;
 
 import cofh.api.energy.IEnergyConnection;
+import com.mcjty.api.MachineInformation;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
+public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity implements MachineInformation {
 
     private static Random random = new Random();
 
@@ -170,6 +171,25 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity {
             log("Server Tick: charging mode ends -> idle");
             chargingMode = CHARGE_IDLE;
         }
+    }
+
+    @Override
+    public String[] getSupportedTags() {
+        return new String[] { "rftick", "lost", "launched", "opportunities" };
+    }
+
+    @Override
+    public String getData(String tag, long millis) {
+        if ("rftick".equals(tag)) {
+            return Integer.toString(lastRfPerTick);
+        } else if ("lost".equals(tag)) {
+            return Integer.toString(lastPearlsLost);
+        } else if ("launched".equals(tag)) {
+            return Integer.toString(lastPearlsLaunched);
+        } else if ("opportunities".equals(tag)) {
+            return Integer.toString(lastPearlOpportunities);
+        }
+        return null;
     }
 
     private void log(String message) {

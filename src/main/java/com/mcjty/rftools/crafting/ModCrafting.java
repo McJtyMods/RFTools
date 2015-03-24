@@ -304,6 +304,8 @@ public final class ModCrafting {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.redstoneModuleItem), " c ", "rir", " b ", 'c', Items.repeater, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.machineInformationModuleItem), " f ", "rir", " b ", 'f', Blocks.furnace, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,
