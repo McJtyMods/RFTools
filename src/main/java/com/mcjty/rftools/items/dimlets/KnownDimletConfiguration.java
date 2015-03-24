@@ -734,7 +734,7 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    private static String getModidForBlock(Block block) {
+    public static String getModidForBlock(Block block) {
         String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
         String[] lst = StringUtils.split(nameForObject, ":");
         if (lst.length >= 2) {
@@ -1049,7 +1049,12 @@ public class KnownDimletConfiguration {
         itemStack.setTagCompound(tagCompound);
 
         DimletMapping mapping = DimletMapping.getInstance();
-        itemStack.setItemDamage(mapping.getId(key));
+        if (mapping != null) {
+            Integer id = mapping.getId(key);
+            if (id != null) {
+                itemStack.setItemDamage(id);
+            }
+        }
     }
 
     /**

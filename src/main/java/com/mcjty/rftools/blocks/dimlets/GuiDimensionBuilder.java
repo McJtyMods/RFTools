@@ -2,11 +2,14 @@ package com.mcjty.rftools.blocks.dimlets;
 
 import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.layout.PositionalLayout;
 import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
+import com.mcjty.rftools.network.Argument;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -19,9 +22,11 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
     private EnergyBar energyBar;
     private ImageLabel stages;
     private Label percentage;
+    private ImageChoiceLabel redstoneMode;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionbuilder.png");
     private static final ResourceLocation iconStages = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionbuilderstages.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionBuilder(DimensionBuilderTileEntity dimensionBuilderTileEntity, DimensionBuilderContainer container) {
         super(dimensionBuilderTileEntity, container);
@@ -45,13 +50,35 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
         percentage = new Label(mc, this).setText("0%");
         percentage.setLayoutHint(new PositionalLayout.PositionalHint(115, 25, 40, 16));
 
+        initRedstoneMode();
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(stages).addChild(percentage);
+                addChild(stages).addChild(percentage).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
         tileEntity.requestBuildingPercentage();
+    }
+
+    private void initRedstoneMode() {
+        redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeRedstoneMode();
+                    }
+                }).
+                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
+                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
+                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(150, 46, 16, 16));
+        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+    }
+
+    private void changeRedstoneMode() {
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        sendServerCommand(DimensionBuilderTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
     }
 
 

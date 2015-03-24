@@ -45,6 +45,10 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         }
     }
 
+    /// Called by GenericBlock.checkRedstoneWithTE() to set the redstone/powered state of this TE.
+    public void setPowered(int powered) {
+    }
+
     protected void checkStateClient() {
         // Sync all values from the server.
         boolean syncNeeded = false;
