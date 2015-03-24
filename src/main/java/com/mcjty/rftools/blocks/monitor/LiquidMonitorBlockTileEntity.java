@@ -144,7 +144,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity {
         FluidTankInfo[] tankInfo = handler.getTankInfo(ForgeDirection.DOWN);
         long stored = 0;
         long maxContents = 0;
-        if (tankInfo.length > 0) {
+        if (tankInfo != null && tankInfo.length > 0) {
             if (tankInfo[0].fluid != null) {
                 stored = tankInfo[0].fluid.amount;
             }

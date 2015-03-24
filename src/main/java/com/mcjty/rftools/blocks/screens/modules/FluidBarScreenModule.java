@@ -34,7 +34,7 @@ public class FluidBarScreenModule implements ScreenModule {
         FluidTankInfo[] tankInfo = tank.getTankInfo(ForgeDirection.DOWN);
         int contents = 0;
         int maxContents = 0;
-        if (tankInfo.length > 0) {
+        if (tankInfo != null && tankInfo.length > 0) {
             if (tankInfo[0].fluid != null) {
                 contents = tankInfo[0].fluid.amount;
             }
