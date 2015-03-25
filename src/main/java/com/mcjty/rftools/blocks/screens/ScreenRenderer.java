@@ -60,6 +60,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
             ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
             GL11.glDepthMask(false);
+            boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_LIGHTING);
 
 
@@ -69,6 +70,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.isLarge());
 
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+            if (lightingEnabled) {
+                GL11.glEnable(GL11.GL_LIGHTING);
+            }
         }
 
         GL11.glDepthMask(true);
