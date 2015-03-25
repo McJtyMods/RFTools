@@ -1,5 +1,6 @@
 package com.mcjty.rftools.blocks.spawner;
 
+import com.mcjty.api.MachineInformation;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
@@ -28,9 +29,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory, MachineInformation {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpawnerContainer.factory, 1);
+
+    private static final String[] TAGS = new String[]{"matter1", "matter2", "matter3", "mob"};
+    private static final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
+            "The amount of matter in the third slot", "The name of the mob being spawned"};
 
     private float matter[] = new float[] { 0, 0, 0 };
     private boolean checkSyringe = true;
@@ -41,6 +46,32 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
 
     public SpawnerTileEntity() {
         super(SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK);
+    }
+
+    @Override
+    public int getTagCount() {
+        return 4;
+    }
+
+    @Override
+    public String getTagName(int index) {
+        return TAGS[index];
+    }
+
+    @Override
+    public String getTagDescription(int index) {
+        return TAG_DESCRIPTIONS[index];
+    }
+
+    @Override
+    public String getData(int index, long millis) {
+        switch (index) {
+            case 0: return Float.toString(matter[0]);
+            case 1: return Float.toString(matter[1]);
+            case 2: return Float.toString(matter[2]);
+            case 3: return mobName;
+        }
+        return null;
     }
 
     private void testSyringe() {
