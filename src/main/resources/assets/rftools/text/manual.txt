@@ -499,6 +499,7 @@ are planned for the future.
 
 There are large and transparent screens variations of the
 screen. You can get those by using a wrench on the screen.
+You can also color a screen by selecting it with a dye item.
 {-------------------------------------------------------------}
 Screens are not directly powered but get power from a Screen
 Controller that you can craft as follows:
