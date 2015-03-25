@@ -38,6 +38,10 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity impleme
     public static String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
     public static String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
 
+    private static final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
+    private static final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
+            "Amount of pearls that were launched during the last 5 seconds", "Number of opportunities for the last 5 seconds"};
+
     public static final int CHARGE_IDLE = 0;
     public static final int CHARGE_HOLDING = -1;
 
@@ -174,20 +178,27 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity impleme
     }
 
     @Override
-    public String[] getSupportedTags() {
-        return new String[] { "rftick", "lost", "launched", "opportunities" };
+    public int getTagCount() {
+        return 4;
     }
 
     @Override
-    public String getData(String tag, long millis) {
-        if ("rftick".equals(tag)) {
-            return Integer.toString(lastRfPerTick);
-        } else if ("lost".equals(tag)) {
-            return Integer.toString(lastPearlsLost);
-        } else if ("launched".equals(tag)) {
-            return Integer.toString(lastPearlsLaunched);
-        } else if ("opportunities".equals(tag)) {
-            return Integer.toString(lastPearlOpportunities);
+    public String getTagName(int index) {
+        return TAGS[index];
+    }
+
+    @Override
+    public String getTagDescription(int index) {
+        return TAG_DESCRIPTIONS[index];
+    }
+
+    @Override
+    public String getData(int index, long millis) {
+        switch (index) {
+            case 0: return Integer.toString(lastRfPerTick);
+            case 1: return Integer.toString(lastPearlsLost);
+            case 2: return Integer.toString(lastPearlsLaunched);
+            case 3: return Integer.toString(lastPearlOpportunities);
         }
         return null;
     }

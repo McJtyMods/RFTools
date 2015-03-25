@@ -9,7 +9,7 @@ import net.minecraftforge.common.DimensionManager;
 
 public class MachineInformationScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
-    private String tag;
+    private int tag;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
 
@@ -37,7 +37,7 @@ public class MachineInformationScreenModule implements ScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
             coordinate = Coordinate.INVALID;
-            tag = tagCompound.getString("monitorTag");
+            tag = tagCompound.getInteger("monitorTag");
             if (tagCompound.hasKey("monitorx")) {
                 this.dim = tagCompound.getInteger("dim");
                 if (dim == this.dim) {

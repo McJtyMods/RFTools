@@ -1,5 +1,7 @@
 package com.mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mcjty.api.MachineInformation;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.ColorChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.layout.HorizontalAlignment;
@@ -13,8 +15,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MachineInformationClientScreenModule implements ClientScreenModule {
 
@@ -77,29 +83,40 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
     private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
-        Label l = new Label(mc, gui).setText("Tag:");
-        final TextField tagField = new TextField(mc, gui);
-        tagField.addTextEvent(new TextEvent() {
+        final Map<String,Integer> choiceToIndex = new HashMap<String, Integer>();
+        final ChoiceLabel tagButton = new ChoiceLabel(mc, gui).setDesiredHeight(16).setDesiredWidth(80);
+        tagButton.addChoiceEvent(new ChoiceEvent() {
             @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("monitorTag", tagField.getText());
+            public void choiceChanged(Widget parent, String newChoice) {
+                String choice = tagButton.getCurrentChoice();
+                Integer index = choiceToIndex.get(choice);
+                if (index != null) {
+                    currentData.setInteger("monitorTag", index);
+                }
                 moduleGuiChanged.updateData();
             }
         });
-        tagField.setText(currentData.getString("monitorTag"));
-        optionPanel.addChild(l).addChild(tagField);
+        optionPanel.addChild(tagButton);
 
-//        final ChoiceLabel tagButton = new ChoiceLabel(mc, gui);
-//        tagButton.addChoiceEvent(new ChoiceEvent() {
-//            @Override
-//            public void choiceChanged(Widget parent, String newChoice) {
-//                currentData.setString("monitorTag", tagButton.getCurrentChoice());
-//                moduleGuiChanged.updateData();
-//            }
-//        });
-//        optionPanel.addChild(tagButton);
-//
-//        tagButton.setChoice()
+//        int dim = currentData.getInteger("dim");
+        int x = currentData.getInteger("monitorx");
+        int y = currentData.getInteger("monitory");
+        int z = currentData.getInteger("monitorz");
+        TileEntity tileEntity = mc.theWorld.getTileEntity(x, y, z);
+
+        if (tileEntity instanceof MachineInformation) {
+            int current = currentData.getInteger("monitorTag");
+            MachineInformation information = (MachineInformation) tileEntity;
+            for (int i = 0 ; i < information.getTagCount() ; i++) {
+                String tag = information.getTagName(i);
+                choiceToIndex.put(tag, i);
+                tagButton.addChoices(tag);
+                tagButton.setChoiceTooltip(tag, information.getTagDescription(i));
+                if (current == i) {
+                    tagButton.setChoice(tag);
+                }
+            }
+        }
 
         panel.addChild(optionPanel);
     }

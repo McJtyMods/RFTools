@@ -34,6 +34,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
+    private static final String[] TAGS = new String[]{"dim", "coord", "name"};
+    private static final String[] TAG_DESCRIPTIONS = new String[]{"The dimension this transmitter is dialed too", "The coordinate this transmitter is dialed too", "The name of the destination"};
+
     // Server side: current dialing destination. Old system.
     private TeleportDestination teleportDestination = null;
     // Server side: current dialing destination. New system.
@@ -80,33 +83,30 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     }
 
     @Override
-    public String[] getSupportedTags() {
-        return new String[] { "dim", "coord", "name" };
+    public int getTagCount() {
+        return 3;
     }
 
     @Override
-    public String getData(String tag, long millis) {
-        if ("name".equals(tag)) {
-            TeleportDestination destination = getTeleportDestination();
-            if (destination != null) {
-                return destination.getName();
-            } else {
-                return "<not dialed>";
-            }
-        } else if ("coord".equals(tag)) {
-            TeleportDestination destination = getTeleportDestination();
-            if (destination != null) {
-                return destination.getCoordinate().toString();
-            } else {
-                return "<not dialed>";
-            }
-        } else if ("dim".equals(tag)) {
-            TeleportDestination destination = getTeleportDestination();
-            if (destination != null) {
-                return Integer.toString(destination.getDimension());
-            } else {
-                return "<not dialed>";
-            }
+    public String getTagName(int index) {
+        return TAGS[index];
+    }
+
+    @Override
+    public String getTagDescription(int index) {
+        return TAG_DESCRIPTIONS[index];
+    }
+
+    @Override
+    public String getData(int index, long millis) {
+        TeleportDestination destination = getTeleportDestination();
+        if (destination == null) {
+            return "<not dialed>";
+        }
+        switch (index) {
+            case 0: return Integer.toString(destination.getDimension());
+            case 1: return destination.getCoordinate().toString();
+            case 2: return destination.getName();
         }
         return null;
     }
