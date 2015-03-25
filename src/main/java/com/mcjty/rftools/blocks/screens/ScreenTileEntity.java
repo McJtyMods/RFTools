@@ -33,6 +33,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private boolean connected = false;      // True if screen is connected to a controller.
     private boolean large = false;          // Large screen.
     private boolean transparent = false;    // Transparent screen.
+    private int color = 0;                  // Color of the screen.
 
     // Cached server screen modules
     private List<ScreenModule> screenModules = null;
@@ -142,6 +143,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         readBufferFromNBT(tagCompound);
         large = tagCompound.getBoolean("large");
         transparent = tagCompound.getBoolean("transparent");
+        color = tagCompound.getInteger("color");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -168,6 +170,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         writeBufferToNBT(tagCompound);
         tagCompound.setBoolean("large", large);
         tagCompound.setBoolean("transparent", transparent);
+        tagCompound.setInteger("color", color);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -181,6 +184,16 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag("Items", bufferTagList);
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public void setLarge(boolean large) {

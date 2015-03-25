@@ -51,8 +51,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
+        boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
+
         if (!screenTileEntity.isTransparent()) {
-            renderScreenBoard(screenTileEntity.isLarge());
+            GL11.glDisable(GL11.GL_LIGHTING);
+            renderScreenBoard(screenTileEntity.isLarge(), screenTileEntity.getColor());
         }
 
         if (screenTileEntity.isPowerOn()) {
@@ -60,9 +63,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
             ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
             GL11.glDepthMask(false);
-            boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_LIGHTING);
-
 
             Map<Integer, Object[]> screenData = updateScreenData(screenTileEntity);
 
@@ -74,6 +75,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             if (lightingEnabled) {
                 GL11.glEnable(GL11.GL_LIGHTING);
             }
+        }
+
+        if (lightingEnabled) {
+            GL11.glEnable(GL11.GL_LIGHTING);
         }
 
         GL11.glDepthMask(true);
@@ -149,7 +154,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         }
     }
 
-    private void renderScreenBoard(boolean large) {
+    private void renderScreenBoard(boolean large, int color) {
         this.bindTexture(texture);
         GL11.glPushMatrix();
         GL11.glScalef(1, -1, -1);
@@ -163,7 +168,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
         tessellator.setBrightness(240);
-        tessellator.setColorOpaque(0, 0, 0);
+        tessellator.setColorRGBA_I(color, 255);
+//        tessellator.setColorOpaque(0, 0, 0);
         float r;
         if (large) {
             r = 1.46f;

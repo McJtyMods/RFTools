@@ -12,7 +12,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -76,7 +78,21 @@ public class ScreenBlock extends GenericContainerBlock {
             breakAndRemember(world, x, y, z);
             return true;
         } else {
-            return openGui(world, x, y, z, player);
+            ItemStack itemStack = player.getHeldItem();
+            if (itemStack != null && itemStack.getItem() == Items.dye) {
+                int damage = itemStack.getItemDamage();
+                if (damage < 0) {
+                    damage = 0;
+                } else if (damage > 15) {
+                    damage = 15;
+                }
+                int color = ItemDye.field_150922_c[damage];
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
+                screenTileEntity.setColor(color);
+                return true;
+            } else {
+                return openGui(world, x, y, z, player);
+            }
         }
     }
 
