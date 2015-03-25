@@ -529,6 +529,7 @@ The following screen modules are currently supported:
     - Inventory: monitor up to 4 slots in an inventory
     - Counter: show the current value of a counter gate
     - Redstone: show yes/no text depending on wireless redstone
+    - Machine Info: generic information on certain machines
 {-------------------------------------------------------------}
 Some modules (like energy, fluid, inventory, and counter modules)
 require that you first shift-right click on the machine/tank that
