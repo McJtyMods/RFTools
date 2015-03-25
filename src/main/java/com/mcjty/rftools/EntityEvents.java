@@ -1,16 +1,21 @@
 package com.mcjty.rftools;
 
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import com.mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
+import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
+import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 
 public class EntityEvents {
 
@@ -50,6 +55,17 @@ public class EntityEvents {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
+        if (event.entity instanceof IMob) {
+            Coordinate coordinate = new Coordinate((int) event.entity.posX, (int) event.entity.posY, (int) event.entity.posZ);
+            if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, event.world.provider.dimensionId))) {
+                event.setResult(Event.Result.DENY);
+                RFTools.logDebug("Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }

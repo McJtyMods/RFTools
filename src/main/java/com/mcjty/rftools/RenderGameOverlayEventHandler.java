@@ -80,6 +80,9 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_FLIGHT:
                     item = ModItems.flightEModuleItem;
                     break;
+                case BUFF_PEACEFUL:
+                    item = ModItems.peacefulEModuleItem;
+                    break;
                 default:
                     item = null;
             }

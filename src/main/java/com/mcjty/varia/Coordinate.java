@@ -22,6 +22,10 @@ public class Coordinate implements ByteBufConverter {
         this.z = z;
     }
 
+    public float squaredDistance(Coordinate c) {
+        return (c.x-x) * (c.x-x) + (c.y-y) * (c.y-y) + (c.z-z) * (c.z-z);
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(x);

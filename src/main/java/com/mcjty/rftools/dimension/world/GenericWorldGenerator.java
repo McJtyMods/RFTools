@@ -13,10 +13,10 @@ import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.varia.BlockMeta;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import com.mcjty.varia.WeightedRandomSelector;
 import cpw.mods.fml.common.IWorldGenerator;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
-import net.minecraft.world.gen.feature.WorldGenTaiga1;
 
 import java.util.Random;
 

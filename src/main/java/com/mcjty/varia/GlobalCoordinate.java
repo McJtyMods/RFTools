@@ -1,6 +1,4 @@
-package com.mcjty.rftools.blocks.teleporter;
-
-import com.mcjty.varia.Coordinate;
+package com.mcjty.varia;
 
 public class GlobalCoordinate {
     private final Coordinate coordinate;

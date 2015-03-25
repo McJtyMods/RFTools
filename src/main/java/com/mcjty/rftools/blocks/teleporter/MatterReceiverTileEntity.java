@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

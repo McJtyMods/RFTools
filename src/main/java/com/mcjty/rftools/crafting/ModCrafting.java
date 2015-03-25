@@ -210,6 +210,9 @@ public final class ModCrafting {
                 new ItemStack[]{new ItemStack(ModItems.featherFallingEModuleItem), chickenSyringe, batSyringe, null},
                 new String[][] {null, syringeMatcher, syringeMatcher, null},
                 new ItemStack(ModItems.featherFallingPlusEModuleItem)));
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', ModItems.peaceEssenceItem,
+                'r', reds, 'g', gold, 'i', ink);
     }
 
     private static void initLogicBlockCrafting() {

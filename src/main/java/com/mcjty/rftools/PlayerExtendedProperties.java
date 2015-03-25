@@ -1,6 +1,6 @@
 package com.mcjty.rftools;
 
-import com.mcjty.rftools.blocks.teleporter.GlobalCoordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestination;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.blocks.teleporter.TeleportationTools;

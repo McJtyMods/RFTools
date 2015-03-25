@@ -5,6 +5,7 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.Infusable;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaConfigHandler;

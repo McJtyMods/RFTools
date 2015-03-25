@@ -59,6 +59,7 @@ public final class ModItems {
     public static FeatherFallingEModuleItem featherFallingEModuleItem;
     public static FeatherFallingPlusEModuleItem featherFallingPlusEModuleItem;
     public static FlightEModuleItem flightEModuleItem;
+    public static PeacefulEModuleItem peacefulEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -235,6 +236,12 @@ public final class ModItems {
         flightEModuleItem.setCreativeTab(RFTools.tabRfTools);
         flightEModuleItem.setTextureName(RFTools.MODID + ":envmodules/flightEModuleItem");
         GameRegistry.registerItem(flightEModuleItem, "flightEModuleItem");
+
+        peacefulEModuleItem = new PeacefulEModuleItem();
+        peacefulEModuleItem.setUnlocalizedName("PeacefulEModule");
+        peacefulEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        peacefulEModuleItem.setTextureName(RFTools.MODID + ":envmodules/peacefulEModuleItem");
+        GameRegistry.registerItem(peacefulEModuleItem, "peacefulEModuleItem");
     }
 
     private static void initScreenModuleItems() {

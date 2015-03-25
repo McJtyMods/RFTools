@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.teleporter;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;

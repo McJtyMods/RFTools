@@ -19,6 +19,10 @@ public abstract class BuffEModule implements EnvironmentModule {
         this.buff = buff;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     @Override
     public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
         if (!active) {

@@ -5,6 +5,7 @@ import com.mcjty.rftools.PlayerExtendedProperties;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.teleporter.*;
 import com.mcjty.varia.Coordinate;
+import com.mcjty.varia.GlobalCoordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
