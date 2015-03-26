@@ -118,7 +118,6 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
         if (rc) {
             return true;
         }
-
         if (CMD_SETTINGS.equals(command)) {
             setRfOn(args.get("on").getInteger());
             setRfOff(args.get("off").getInteger());
