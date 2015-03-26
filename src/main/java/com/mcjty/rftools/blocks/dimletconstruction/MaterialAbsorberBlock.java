@@ -34,7 +34,8 @@ public class MaterialAbsorberBlock extends GenericBlock {
             if (blockID != -1) {
                 Block block = (Block) Block.blockRegistry.getObjectById(blockID);
                 if (block != null) {
-                    currenttip.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block).getDisplayName());
+                    int meta = tagCompound.getInteger("meta");
+                    currenttip.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block, 1, meta).getDisplayName());
                     int absorbing = tagCompound.getInteger("absorbing");
                     int pct = ((DimletConstructionConfiguration.maxBlockAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBlockAbsorbtion;
                     currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
@@ -55,7 +56,8 @@ public class MaterialAbsorberBlock extends GenericBlock {
             if (blockID != -1) {
                 Block block = (Block) Block.blockRegistry.getObjectById(blockID);
                 if (block != null) {
-                    list.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block).getDisplayName());
+                    int meta = tagCompound.getInteger("meta");
+                    list.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block, 1, meta).getDisplayName());
                     int absorbing = tagCompound.getInteger("absorbing");
                     int pct = ((DimletConstructionConfiguration.maxBlockAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBlockAbsorbtion;
                     list.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");

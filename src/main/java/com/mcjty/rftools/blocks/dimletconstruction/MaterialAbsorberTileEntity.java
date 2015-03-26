@@ -20,6 +20,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
 
     private int absorbing = 0;
     private int blockID = -1;
+    private int meta = 0;
     private int timer = ABSORB_SPEED;
     private Set<Coordinate> toscan = new HashSet<Coordinate>();
 
@@ -52,8 +53,9 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         if (block == null || block.getMaterial() == Material.air) {
             return null;
         }
+        int m = worldObj.getBlockMetadata(c2.getX(), c2.getY(), c2.getZ());
         int id = Block.blockRegistry.getIDForObject(block);
-        return id == blockID ? block : null;
+        return (id == blockID && m == meta) ? block : null;
     }
 
     // Server side: play a sound to all nearby players
@@ -79,7 +81,8 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         if (block == null || block.getMaterial() == Material.air) {
             return null;
         }
-        boolean ok = isValidDimletBlock(block);
+        int m = worldObj.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+        boolean ok = isValidDimletBlock(block, m);
         return ok ? block : null;
     }
 
@@ -96,11 +99,10 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
                     if (blockID == -1) {
                         absorbing = DimletConstructionConfiguration.maxBlockAbsorbtion;
                         blockID = id;
+                        meta = worldObj.getBlockMetadata(xCoord, yCoord - 1, zCoord);
                         toscan.clear();
-                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
-                    } else if (id == blockID) {
-                        toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
                     }
+                    toscan.add(new Coordinate(xCoord, yCoord - 1, zCoord));
                 }
 
                 if (!toscan.isEmpty()) {
@@ -131,10 +133,11 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         }
     }
 
-    private boolean isValidDimletBlock(Block block) {
+    private boolean isValidDimletBlock(Block block, int m) {
         boolean ok = false;
         for (Map.Entry<DimletKey, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().getBlock() == block) {
+            BlockMeta blockMeta = entry.getValue();
+            if (blockMeta != null && blockMeta.getBlock() == block && blockMeta.getMeta() == m) {
                 ok = true;
                 break;
             }
@@ -165,6 +168,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("absorbing", absorbing);
         tagCompound.setInteger("block", blockID);
+        tagCompound.setInteger("meta", meta);
     }
 
     @Override
@@ -184,6 +188,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         super.readRestorableFromNBT(tagCompound);
         absorbing = tagCompound.getInteger("absorbing");
         blockID = tagCompound.getInteger("block");
+        meta = tagCompound.getInteger("meta");
     }
 
 
