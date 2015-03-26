@@ -61,6 +61,8 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.paper,
                 'r', Items.redstone, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.dimletFilterBlock), " u ", "rMr", " r ", 'M', ModBlocks.itemFilterBlock, 'y', ModItems.unknownDimlet,
+                'r', Items.redstone);
 
         GameRegistry.addRecipe(new ItemStack(ModBlocks.matterTransmitterBlock), "ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
                 'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot);

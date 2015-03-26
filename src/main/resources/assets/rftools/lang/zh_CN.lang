@@ -99,6 +99,7 @@ tile.crafterBlock2.name=自动合成机<2级>
 tile.crafterBlock3.name=自动合成机<3级>
 tile.relayBlock.name=能量继电器
 tile.itemFilterBlock.name=Item Filter
+tile.dimletFilterBlock.name=Dimlet Filter
 tile.storageScannerBlock.name=存储检测器
 tile.rfMonitorBlock.name=RF显示器
 tile.liquidMonitorBlock.name=Liquid Monitor

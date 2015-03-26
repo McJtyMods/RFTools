@@ -115,6 +115,8 @@ public class RFTools {
     public static final int GUI_ENVIRONMENTAL_CONTROLLER = modGuiIndex++;
     public static final int GUI_SPAWNER = modGuiIndex++;
     public static final int GUI_MATTER_BEAMER = modGuiIndex++;
+    public static final int GUI_DIMLET_FILTER = modGuiIndex++;
+
 
     public static void logError(String msg) {
         instance.logger.log(Level.ERROR, msg);

@@ -100,6 +100,7 @@ tile.crafterBlock2.name=Создатель 2-ого уровня
 tile.crafterBlock3.name=Создатель 3-его уровня
 tile.relayBlock.name=Ретранслятор энергии
 tile.itemFilterBlock.name=Предметный фильтр
+tile.dimletFilterBlock.name=Dimlet Filter
 tile.storageScannerBlock.name=Сканер хранилища
 tile.rfMonitorBlock.name=RF-монитор
 tile.liquidMonitorBlock.name=Монитор жидкостей

@@ -12,6 +12,8 @@ import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerBlock;
 import com.mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserBlock;
 import com.mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
+import com.mcjty.rftools.blocks.itemfilter.DimletFilterBlock;
+import com.mcjty.rftools.blocks.itemfilter.DimletFilterTileEntity;
 import com.mcjty.rftools.blocks.itemfilter.ItemFilterBlock;
 import com.mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity;
 import com.mcjty.rftools.blocks.logic.*;
@@ -56,6 +58,7 @@ public final class ModBlocks {
     public static RelayBlock relayBlock;
 
     public static ItemFilterBlock itemFilterBlock;
+    public static DimletFilterBlock dimletFilterBlock;
 
     public static MatterTransmitterBlock matterTransmitterBlock;
     public static MatterReceiverBlock matterReceiverBlock;
@@ -136,6 +139,10 @@ public final class ModBlocks {
         itemFilterBlock = new ItemFilterBlock();
         GameRegistry.registerBlock(itemFilterBlock, GenericItemBlock.class, "itemFilterBlock");
         GameRegistry.registerTileEntity(ItemFilterTileEntity.class, "ItemFilterTileEntity");
+
+        dimletFilterBlock = new DimletFilterBlock();
+        GameRegistry.registerBlock(dimletFilterBlock, GenericItemBlock.class, "dimletFilterBlock");
+        GameRegistry.registerTileEntity(DimletFilterTileEntity.class, "DimletFilterTileEntity");
 
         storageScannerBlock = new StorageScannerBlock();
         GameRegistry.registerBlock(storageScannerBlock, GenericItemBlock.class, "storageScannerBlock");
