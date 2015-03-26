@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.itemfilter;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.items.dimlets.DimletType;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -14,6 +15,9 @@ import java.util.Map;
 
 public class DimletFilterTileEntity extends GenericTileEntity implements ISidedInventory {
     public static final String CMD_SETMODE = "setMode";
+    public static final String CMD_SETMINRARITY = "setMinRarity";
+    public static final String CMD_SETMAXRARITY = "setMaxRarity";
+    public static final String CMD_SETTYPE = "setType";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletFilterContainer.factory, DimletFilterContainer.BUFFER_SIZE);
 
@@ -22,9 +26,33 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
     public static final int OUTPUT = 2;
 
     private int inputMode[] = new int[6];
+    private int minRarity[] = new int[6];
+    private int maxRarity[] = new int[6];
+    private DimletType types[] = new DimletType[6];
 
     public int[] getInputMode() {
         return inputMode;
+    }
+
+    public int[] getMinRarity() {
+        return minRarity;
+    }
+
+    public int[] getMaxRarity() {
+        return maxRarity;
+    }
+
+    public DimletType[] getTypes() {
+        return types;
+    }
+
+    public DimletFilterTileEntity() {
+        for (int i = 0 ; i < 6 ; i++) {
+            inputMode[i] = DISABLED;
+            minRarity[i] = 0;
+            maxRarity[i] = 6;
+            types[i] = null;
+        }
     }
 
     @Override
@@ -42,6 +70,28 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         inputMode = tagCompound.getIntArray("inputs");
+        minRarity = tagCompound.getIntArray("minRarity");
+        if (minRarity == null || minRarity.length == 0) {
+            minRarity = new int[6];
+        }
+        maxRarity = tagCompound.getIntArray("maxRarity");
+        if (maxRarity == null || maxRarity.length == 0) {
+            maxRarity = new int[6];
+        }
+        int[] typesI = tagCompound.getIntArray("types");
+        if (typesI == null || typesI.length == 0) {
+            for (int i = 0 ; i < 6 ; i++) {
+                types[i] = null;
+            }
+        } else {
+            for (int i = 0; i < 6; i++) {
+                if (typesI[i] == -1) {
+                    types[i] = null;
+                } else {
+                    types[i] = DimletType.values()[typesI[i]];
+                }
+            }
+        }
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -62,6 +112,13 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         tagCompound.setIntArray("inputs", inputMode);
+        tagCompound.setIntArray("minRarity", minRarity);
+        tagCompound.setIntArray("maxRarity", maxRarity);
+        int[] typesI = new int[6];
+        for (int i = 0 ; i < 6 ; i++) {
+            typesI[i] = types[i] == null ? -1 : types[i].ordinal();
+        }
+        tagCompound.setIntArray("types", typesI);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -87,7 +144,34 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
             Integer input = args.get("input").getInteger();
 
             inputMode[side] = input;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        } else if (CMD_SETMINRARITY.equals(command)) {
+            Integer side = args.get("side").getInteger();
+            Integer value = args.get("value").getInteger();
 
+            minRarity[side] = value;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        } else if (CMD_SETMAXRARITY.equals(command)) {
+            Integer side = args.get("side").getInteger();
+            Integer value = args.get("value").getInteger();
+
+            maxRarity[side] = value;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        } else if (CMD_SETTYPE.equals(command)) {
+            Integer side = args.get("side").getInteger();
+            Integer type = args.get("type").getInteger();
+
+            if (type == -1) {
+                types[side] = null;
+            } else {
+                types[side] = DimletType.values()[type];
+            }
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
