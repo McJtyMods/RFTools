@@ -14,7 +14,8 @@ public enum ScreenDataType {
     TYPE_FLOAT,
     TYPE_STRING,
     TYPE_BOOLEAN,
-    TYPE_ITEMSTACK;
+    TYPE_ITEMSTACK,
+    TYPE_COLOREDTEXT;
 
     public Object readObject(ByteBuf buf) {
         switch (this) {
@@ -38,6 +39,12 @@ public enum ScreenDataType {
                 return new String(dst);
             case TYPE_ITEMSTACK:
                 return NetworkTools.readItemStack(buf);
+            case TYPE_COLOREDTEXT:
+                byte[] dst2 = new byte[buf.readInt()];
+                buf.readBytes(dst2);
+                int color = buf.readInt();
+                return new ComputerScreenModule.ColoredText(new String(dst2), color);
+
         }
         return null;
     }
@@ -71,6 +78,13 @@ public enum ScreenDataType {
         } else if (obj instanceof ItemStack) {
             buf.writeByte(TYPE_ITEMSTACK.ordinal());
             NetworkTools.writeItemStack(buf, (ItemStack) obj);
+        } else if (obj instanceof ComputerScreenModule.ColoredText) {
+            buf.writeByte(TYPE_COLOREDTEXT.ordinal());
+            ComputerScreenModule.ColoredText ct = (ComputerScreenModule.ColoredText) obj;
+            String s  = ct.getText();
+            buf.writeInt(s.length());
+            buf.writeBytes(s.getBytes());
+            buf.writeInt(ct.getColor());
         } else {
             RFTools.log("Weird ScreenDataType!");
         }

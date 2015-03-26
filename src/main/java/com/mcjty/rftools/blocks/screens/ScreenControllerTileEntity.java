@@ -1,17 +1,25 @@
 package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
+import com.mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
+import cpw.mods.fml.common.Optional;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
+@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
+public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent {
 
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
@@ -22,6 +30,120 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity {
     public ScreenControllerTileEntity() {
         super(ScreenConfiguration.CONTROLLER_MAXENERGY, ScreenConfiguration.CONTROLLER_RECEIVEPERTICK);
     }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return "screen_controller";
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getScreens(Context context, Arguments args) throws Exception {
+        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
+        for (Coordinate screen : connectedScreens) {
+            Map<String,Integer> coordinate = new HashMap<String, Integer>();
+            coordinate.put("x", screen.getX());
+            coordinate.put("y", screen.getY());
+            coordinate.put("z", screen.getZ());
+            result.add(coordinate);
+        }
+
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
+        Map screen = args.checkTable(0);
+        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
+            throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
+        }
+        Coordinate recC = new Coordinate(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
+        int i = 0;
+        for (Coordinate connectedScreen : connectedScreens) {
+            if (connectedScreen.equals(recC)) {
+                return new Object[] { i };
+            }
+            i++;
+        }
+
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
+        int index = args.checkInteger(0);
+        if (index < 0 || index >= connectedScreens.size()) {
+            throw new IllegalArgumentException("Screen index out of range!");
+        }
+        Coordinate screen = connectedScreens.get(index);
+        Map<String,Integer> coordinate = new HashMap<String, Integer>();
+        coordinate.put("x", screen.getX());
+        coordinate.put("y", screen.getY());
+        coordinate.put("z", screen.getZ());
+
+        return new Object[] { coordinate };
+    }
+
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] addText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+        String text = args.checkString(1);
+        int color = args.checkInteger(2);
+
+        for (Coordinate screen : connectedScreens) {
+            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
+                if (computerScreenModules != null) {
+                    for (ComputerScreenModule screenModule : computerScreenModules) {
+                        screenModule.addText(text, color);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] clearText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+
+        for (Coordinate screen : connectedScreens) {
+            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
+                if (computerScreenModules != null) {
+                    for (ComputerScreenModule screenModule : computerScreenModules) {
+                        screenModule.clearText();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getTags(Context context, Arguments args) throws Exception {
+        List<String> tags = new ArrayList<String>();
+        for (Coordinate screen : connectedScreens) {
+            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                tags.addAll(screenTileEntity.getTags());
+            }
+        }
+        return new Object[] { tags };
+    }
+
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {

@@ -2,6 +2,7 @@ package com.mcjty.rftools.blocks.screens;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import com.mcjty.rftools.blocks.screens.modules.ScreenModule;
 import com.mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import com.mcjty.varia.Coordinate;
@@ -12,10 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ScreenTileEntity extends GenericTileEntity implements ISidedInventory {
 
@@ -27,6 +25,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     // Cached client screen modules
     private List<ClientScreenModule> clientScreenModules = null;
+
+    // A list of tags linked to computer modules.
+    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
 
     private boolean needsServerData = false;
     private boolean powerOn = false;        // True if screen is powered.
@@ -77,9 +78,14 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        resetModules();
+        return inventoryHelper.decrStackSize(index, amount);
+    }
+
+    private void resetModules() {
         clientScreenModules = null;
         screenModules = null;
-        return inventoryHelper.decrStackSize(index, amount);
+        computerModules.clear();
     }
 
     @Override
@@ -90,8 +96,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        clientScreenModules = null;
-        screenModules = null;
+        resetModules();
     }
 
     @Override
@@ -152,8 +157,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             inventoryHelper.getStacks()[i + ScreenContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
-        clientScreenModules = null;
-        screenModules = null;
+        resetModules();
     }
 
     @Override
@@ -247,6 +251,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         stack.setTagCompound(tagCompound);
         screenModules = null;
         clientScreenModules = null;
+        computerModules.clear();
         markDirty();
     }
 
@@ -314,6 +319,15 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
                     screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
+
+                    if (screenModule instanceof ComputerScreenModule) {
+                        ComputerScreenModule computerScreenModule = (ComputerScreenModule) screenModule;
+                        String tag = computerScreenModule.getTag();
+                        if (!computerModules.containsKey(tag)) {
+                            computerModules.put(tag, new ArrayList<ComputerScreenModule>());
+                        }
+                        computerModules.get(tag).add(computerScreenModule);
+                    }
                 } else {
                     screenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }
@@ -323,6 +337,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         return screenModules;
     }
 
+    public List<ComputerScreenModule> getComputerModules(String tag) {
+        return computerModules.get(tag);
+    }
+
+    public Set<String> getTags() {
+        return computerModules.keySet();
+    }
 
     // This is called server side.
     public Map<Integer, Object[]> getScreenData(long millis) {
