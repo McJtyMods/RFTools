@@ -81,10 +81,11 @@ public class MaterialDimletType implements IDimletType {
 
     private static DimletKey findMaterialDimlet(NBTTagCompound essenceCompound) {
         int blockID = essenceCompound.getInteger("block");
+        int meta = essenceCompound.getInteger("meta");
         for (Map.Entry<DimletKey, BlockMeta> entry : DimletObjectMapping.idToBlock.entrySet()) {
             if (entry.getValue() != null) {
                 int id = Block.blockRegistry.getIDForObject(entry.getValue().getBlock());
-                if (blockID == id) {
+                if (blockID == id && meta == entry.getValue().getMeta()) {
                     return entry.getKey();
                 }
             }
