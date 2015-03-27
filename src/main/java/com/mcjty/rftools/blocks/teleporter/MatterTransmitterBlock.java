@@ -113,12 +113,15 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTransmitter");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+        iconBottom = iconRegister.registerIcon(RFTools.MODID + ":" + "machineBottom");
     }
 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         if (side == ForgeDirection.UP.ordinal()) {
             return iconTop;
+        } else if (side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }
@@ -128,6 +131,8 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     public IIcon getIcon(int side, int meta) {
         if (side == ForgeDirection.UP.ordinal()) {
             return iconTop;
+        } else if (side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }

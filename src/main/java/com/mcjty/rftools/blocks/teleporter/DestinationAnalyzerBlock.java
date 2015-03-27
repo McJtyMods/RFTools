@@ -14,8 +14,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class DestinationAnalyzerBlock extends Block {
 
-    private IIcon iconFront;
+    private IIcon iconInd;
     private IIcon iconSide;
+    private IIcon iconTop;
+    private IIcon iconBottom;
 
     public DestinationAnalyzerBlock() {
         super(Material.iron);
@@ -28,8 +30,10 @@ public class DestinationAnalyzerBlock extends Block {
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconFront = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDestinationAnalyzer");
+        iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + "machineDestinationAnalyzer");
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineSide");
+        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + "machineTop");
+        iconBottom = iconRegister.registerIcon(RFTools.MODID + ":" + "machineBottom");
     }
 
     @Override
@@ -39,13 +43,16 @@ public class DestinationAnalyzerBlock extends Block {
         world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
     }
 
-
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
         ForgeDirection k = BlockTools.getOrientation(meta);
-        if (side == k.ordinal()) {
-            return iconFront;
+        if (iconInd != null && side == k.ordinal()) {
+            return iconInd;
+        } else if (iconTop != null && side == BlockTools.getTopDirection(k).ordinal()) {
+            return iconTop;
+        } else if (iconBottom != null && side ==  BlockTools.getBottomDirection(k).ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }
@@ -53,8 +60,12 @@ public class DestinationAnalyzerBlock extends Block {
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        if (side == ForgeDirection.SOUTH.ordinal()) {
-            return iconFront;
+        if (iconInd != null && side == ForgeDirection.SOUTH.ordinal()) {
+            return iconInd;
+        } else if (iconTop != null && side == ForgeDirection.UP.ordinal()) {
+            return iconTop;
+        } else if (iconBottom != null && side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }

@@ -16,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -93,21 +92,14 @@ public class DimensionEditorBlock extends GenericContainerBlock implements Infus
     }
 
     @Override
-    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
-        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-        if (side == k.ordinal()) {
-            int state = BlockTools.getState(meta);
-            switch (state) {
-                case 0: return iconInd;
-                case 1: return iconFrontEmpty;
-                case 2: return iconFrontBusy1;
-                case 3: return iconFrontBusy2;
-                default: return iconInd;
-            }
-        } else {
-            return iconSide;
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
+        int state = BlockTools.getState(meta);
+        switch (state) {
+            case 0: return iconInd;
+            case 1: return iconFrontEmpty;
+            case 2: return iconFrontBusy1;
+            case 3: return iconFrontBusy2;
+            default: return iconInd;
         }
     }
-
 }

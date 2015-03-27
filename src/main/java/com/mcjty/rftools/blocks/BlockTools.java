@@ -30,6 +30,28 @@ public class BlockTools {
         return ForgeDirection.getOrientation(metadata & MASK_ORIENTATION);
     }
 
+    public static ForgeDirection getTopDirection(ForgeDirection direction) {
+        switch(direction) {
+            case DOWN:
+                return ForgeDirection.SOUTH;
+            case UP:
+                return ForgeDirection.NORTH;
+            default:
+                return ForgeDirection.UP;
+        }
+    }
+
+    public static ForgeDirection getBottomDirection(ForgeDirection direction) {
+        switch(direction) {
+            case DOWN:
+                return ForgeDirection.NORTH;
+            case UP:
+                return ForgeDirection.SOUTH;
+            default:
+                return ForgeDirection.DOWN;
+        }
+    }
+
     public static int setOrientation(int metadata, ForgeDirection orientation) {
         return (metadata & ~MASK_ORIENTATION) | orientation.ordinal();
     }

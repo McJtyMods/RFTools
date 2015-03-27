@@ -8,6 +8,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,6 +73,11 @@ public class MaterialAbsorberBlock extends GenericBlock {
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
     }
 
     @Override

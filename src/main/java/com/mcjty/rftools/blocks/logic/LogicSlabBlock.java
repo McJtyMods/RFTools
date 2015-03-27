@@ -133,6 +133,8 @@ public abstract class LogicSlabBlock extends GenericBlock {
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         if (side == ForgeDirection.UP.ordinal()) {
             return iconInd;
+        } else if (side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }
@@ -142,6 +144,8 @@ public abstract class LogicSlabBlock extends GenericBlock {
     public IIcon getIcon(int side, int meta) {
         if (side == ForgeDirection.UP.ordinal()) {
             return iconInd;
+        } else if (side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }

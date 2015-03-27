@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -88,6 +89,11 @@ public class BiomeAbsorberBlock extends GenericBlock {
     @Override
     public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
         return new ArrayList<ItemStack>();
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
     }
 
     @Override

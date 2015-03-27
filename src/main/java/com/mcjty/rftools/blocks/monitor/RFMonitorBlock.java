@@ -92,26 +92,18 @@ public class RFMonitorBlock extends GenericBlock {
         }
     }
 
-
     @Override
-    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
         TileEntity tileEntity = blockAccess.getTileEntity(x, y, z);
-        int meta = blockAccess.getBlockMetadata(x, y, z);
-        ForgeDirection k = BlockTools.getOrientation(meta);
-        if (side == k.ordinal()) {
-            RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
-            int rflevel = monitorBlockTileEntity.getRflevel();
-            switch (rflevel) {
-                case 1: return iconFront0;
-                case 2: return iconFront1;
-                case 3: return iconFront2;
-                case 4: return iconFront3;
-                case 5: return iconFront4;
-                default: return iconInd;
-
-            }
-        } else {
-            return iconSide;
+        RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) tileEntity;
+        int rflevel = monitorBlockTileEntity.getRflevel();
+        switch (rflevel) {
+            case 1: return iconFront0;
+            case 2: return iconFront1;
+            case 3: return iconFront2;
+            case 4: return iconFront3;
+            case 5: return iconFront4;
+            default: return iconInd;
         }
     }
 }

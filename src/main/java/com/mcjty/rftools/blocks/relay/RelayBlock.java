@@ -76,18 +76,12 @@ public class RelayBlock extends GenericBlock {
     }
 
     @Override
-    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
-        ForgeDirection k = BlockTools.getOrientation(meta);
-        if (side == k.ordinal()) {
-            boolean rs = BlockTools.getRedstoneSignal(meta);
-            if (rs) {
-                return iconInd;
-            } else {
-                return iconFrontOff;
-            }
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
+        boolean rs = BlockTools.getRedstoneSignal(meta);
+        if (rs) {
+            return iconInd;
         } else {
-            return iconSide;
+            return iconFrontOff;
         }
     }
 }

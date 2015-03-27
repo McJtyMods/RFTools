@@ -10,6 +10,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -94,6 +95,11 @@ public class ScreenBlock extends GenericContainerBlock {
                 return openGui(world, x, y, z, player);
             }
         }
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
     }
 
 

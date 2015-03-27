@@ -37,6 +37,8 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     protected IIcon iconInd;        // The identifying face of the block (front by default but can be different).
     protected IIcon iconSide;
+    protected IIcon iconTop;
+    protected IIcon iconBottom;
     protected final Class<? extends TileEntity> tileEntityClass;
 
     private boolean creative;
@@ -331,6 +333,8 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
             iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + getIdentifyingIconName());
         }
         iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
+        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + getTopIconName());
+        iconBottom = iconRegister.registerIcon(RFTools.MODID + ":" + getBottomIconName());
     }
 
     public String getSideIconName() {
@@ -341,6 +345,21 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         }
     }
 
+    public String getTopIconName() {
+        if (creative) {
+            return "machineSideC";
+        } else {
+            return "machineTop";
+        }
+    }
+
+    public String getBottomIconName() {
+        if (creative) {
+            return "machineSideC";
+        } else {
+            return "machineBottom";
+        }
+    }
     /**
      * Return the name of the icon to be used for the front side of the machine.
      */
@@ -371,9 +390,18 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        ForgeDirection k = BlockTools.getOrientation(meta);
+        ForgeDirection k;
+        if (horizRotation) {
+            k = BlockTools.getOrientationHoriz(meta);
+        } else {
+            k = BlockTools.getOrientation(meta);
+        }
         if (iconInd != null && side == k.ordinal()) {
-            return iconInd;
+            return getIconInd(blockAccess, x, y, z, meta);
+        } else if (iconTop != null && side == BlockTools.getTopDirection(k).ordinal()) {
+            return iconTop;
+        } else if (iconBottom != null && side ==  BlockTools.getBottomDirection(k).ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }
@@ -383,16 +411,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     public IIcon getIcon(int side, int meta) {
         if (iconInd != null && side == ForgeDirection.SOUTH.ordinal()) {
             return iconInd;
+        } else if (iconTop != null && side == ForgeDirection.UP.ordinal()) {
+            return iconTop;
+        } else if (iconBottom != null && side == ForgeDirection.DOWN.ordinal()) {
+            return iconBottom;
         } else {
             return iconSide;
         }
     }
 
-    public IIcon getIconInd() {
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
         return iconInd;
-    }
-
-    public IIcon getIconSide() {
-        return iconSide;
     }
 }
