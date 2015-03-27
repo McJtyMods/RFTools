@@ -2,15 +2,17 @@ package com.mcjty.rftools.blocks.environmental;
 
 import com.mcjty.container.GenericGuiContainer;
 import com.mcjty.gui.Window;
+import com.mcjty.gui.events.ChoiceEvent;
 import com.mcjty.gui.events.TextEvent;
 import com.mcjty.gui.events.ValueEvent;
 import com.mcjty.gui.layout.HorizontalLayout;
 import com.mcjty.gui.layout.PositionalLayout;
+import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.Label;
 import com.mcjty.gui.widgets.Panel;
-import com.mcjty.gui.widgets.*;
 import com.mcjty.gui.widgets.TextField;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -22,10 +24,12 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     public static final int ENV_HEIGHT = 224;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/environmentalcontroller.png");
+    private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private Panel toplevel;
     private TextField minyTextField;
     private TextField maxyTextField;
+    private ImageChoiceLabel redstoneMode;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity environmentalControllerTileEntity, EnvironmentalControllerContainer container) {
         super(environmentalControllerTileEntity, container);
@@ -76,12 +80,34 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         });
         maxPanel.addChild(new Label(mc, this).setText("Maximum height:")).addChild(maxyTextField);
 
-        toplevel.addChild(radiusPanel).addChild(minPanel).addChild(maxPanel);
+        initRedstoneMode();
+
+        toplevel.addChild(radiusPanel).addChild(minPanel).addChild(maxPanel).addChild(redstoneMode);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
+    }
+
+    private void initRedstoneMode() {
+        redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeRedstoneMode();
+                    }
+                }).
+                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
+                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
+                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(152, 118, 16, 16));
+        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+    }
+
+    private void changeRedstoneMode() {
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        sendServerCommand(EnvironmentalControllerTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
     }
 
     private void sendBounds(boolean minchanged) {

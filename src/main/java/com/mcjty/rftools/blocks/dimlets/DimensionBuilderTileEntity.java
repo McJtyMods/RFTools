@@ -33,8 +33,8 @@ import java.util.Random;
 public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory, SimpleComponent {
 
     public static final String CMD_GETBUILDING = "getBuilding";
-    public static final String CMD_RSMODE = "rsMode";
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
+    public static final String CMD_RSMODE = "rsMode";
 
     private static int buildPercentage = 0;
     private int creative = -1;      // -1 is unknown

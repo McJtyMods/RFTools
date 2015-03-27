@@ -3,6 +3,7 @@ package com.mcjty.rftools.blocks.environmental;
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
 import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.blocks.RedstoneMode;
 import com.mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
+    public static final String CMD_RSMODE = "rsMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
 
@@ -32,6 +34,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
     private int maxy = 70;
     private int volume = -1;
     private boolean active = false;
+
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+    private int powered = 0;
 
     private int powerTimeout = 0;
 
@@ -102,6 +107,19 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
 
         int rf = getEnergyStored(ForgeDirection.DOWN);
 
+        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
+            boolean rs = powered > 0;
+            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
+                if (rs) {
+                    rf = 0;         // Turn of by simulating no power.
+                }
+            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
+                if (!rs) {
+                    rf = 0;         // Turn of by simulating no power.
+                }
+            }
+        }
+
         getEnvironmentModules();
 
         int rfNeeded = getTotalRfPerTick();
@@ -126,6 +144,25 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
                 markDirty();
                 worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             }
+        }
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    @Override
+    public void setPowered(int powered) {
+        if (this.powered != powered) {
+            this.powered = powered;
+            powerTimeout = 0;
+            markDirty();
         }
     }
 
@@ -304,6 +341,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
             int maxy = args.get("maxy").getInteger();
             setMiny(miny);
             setMaxy(maxy);
+            return true;
+        } else if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
             return true;
         }
         return false;
