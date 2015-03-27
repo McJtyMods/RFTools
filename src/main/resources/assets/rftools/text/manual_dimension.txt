@@ -16,6 +16,7 @@ Table of contents:
 {l:shards}Shards of the World
 {l:infuser}Machine Infuser
 {l:scrambler}Dimlet Scrambler
+{l:filter}Dimlet Filter
 {l:create}Dimlet Crafting
 {l:probe}Activity Probe
 {l:extractor}Energy Extractor
@@ -391,6 +392,18 @@ This machine takes three dimlets (two should be non-craftable) of any type
 and recyles their components to create a new random dimlet. In contrast
 with the dimlet researcher this machine has a better chance of giving back
 rare dimlets. This depends on the rarity of the dimlets that you scramble.
+{-------------------------------------------------------------}
+{b}Dimlet Filter
+{n:filter}
+With the Dimlet Filter you can easily sort all the dimlets you get
+from the researcher or scrambler. It has six configurable sides and
+you can filter based on dimlet type, rarirty as well as craftability.
+You can craft it as follows:
+{rb:dimletFilterBlock}
+
+Note that dimlets can only be extracted from the most-matching side.
+So if a dimlet matches with more then one side the side which matches
+most rules (or most specific rules) will be selected for output.
 {-------------------------------------------------------------}
 {b}Dimlet Crafting
 {n:create}
