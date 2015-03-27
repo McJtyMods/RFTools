@@ -62,6 +62,6 @@ public abstract class PotionEffectModule implements EnvironmentModule {
             return;
         }
         active = a;
-        ticks = MAXTICKS;
+        ticks = 1;
     }
 }

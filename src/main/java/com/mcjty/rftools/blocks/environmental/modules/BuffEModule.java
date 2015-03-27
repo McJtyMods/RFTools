@@ -57,6 +57,6 @@ public abstract class BuffEModule implements EnvironmentModule {
             return;
         }
         active = a;
-        ticks = MAXTICKS;
+        ticks = 1;
     }
 }
