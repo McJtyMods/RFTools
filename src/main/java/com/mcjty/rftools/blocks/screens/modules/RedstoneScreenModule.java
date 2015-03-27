@@ -1,15 +1,31 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
 import com.mcjty.rftools.blocks.logic.RedstoneChannels;
+import com.mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class RedstoneScreenModule implements ScreenModule {
     public static final int RFPERTICK = 4;
-    protected int channel = -1;
+    private int channel = -1;
+    private Coordinate coordinate = Coordinate.INVALID;
+    private int dim = 0;
+    private int side = 0;
 
     @Override
     public Object[] getData(long millis) {
         if (channel == -1) {
+            // If we are monitoring some block then we can use that.
+            if (coordinate.isValid()) {
+                World world = DimensionManager.getWorld(dim);
+                if (world != null) {
+//                    int powerTo = world.isBlockProvidingPowerTo(coordinate.getX(), coordinate.getY(), coordinate.getZ(), side);
+                    int powerTo = world.getIndirectPowerLevelTo(coordinate.getX(), coordinate.getY(), coordinate.getZ(), side);
+
+                    return new Object[] { powerTo > 0 ? true : false };
+                }
+            }
             return null;
         }
         RedstoneChannels channels = RedstoneChannels.getChannels();
@@ -29,6 +45,19 @@ public class RedstoneScreenModule implements ScreenModule {
             channel = -1;
             if (tagCompound.hasKey("channel")) {
                 channel = tagCompound.getInteger("channel");
+            }
+            if (tagCompound.hasKey("monitorx")) {
+                this.side = tagCompound.getInteger("monitorside");
+                this.dim = tagCompound.getInteger("dim");
+                if (dim == this.dim) {
+                    Coordinate c = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                    int dx = Math.abs(c.getX() - x);
+                    int dy = Math.abs(c.getY() - y);
+                    int dz = Math.abs(c.getZ() - z);
+                    if (dx <= 64 && dy <= 64 && dz <= 64) {
+                        coordinate = c;
+                    }
+                }
             }
         }
     }

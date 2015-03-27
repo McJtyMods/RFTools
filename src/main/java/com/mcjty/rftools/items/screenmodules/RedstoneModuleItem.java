@@ -54,10 +54,20 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
-            list.add(EnumChatFormatting.YELLOW + "Channel: " + tagCompound.getInteger("channel"));
+            int channel = tagCompound.getInteger("channel");
+            if (channel != -1) {
+                list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+            } else if (tagCompound.hasKey("monitorx")) {
+                int mx = tagCompound.getInteger("monitorx");
+                int my = tagCompound.getInteger("monitory");
+                int mz = tagCompound.getInteger("monitorz");
+                list.add(EnumChatFormatting.YELLOW + "Block at: " + mx + "," + my + "," + mz);
+            }
         }
-        list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a redstone transmitter or");
-        list.add(EnumChatFormatting.YELLOW + "receiver to set the channel for this module");
+        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a redstone transmitter or");
+        list.add(EnumChatFormatting.WHITE + "receiver to set the channel for this module.");
+        list.add(EnumChatFormatting.WHITE + "Or else sneak right-click on the side of any");
+        list.add(EnumChatFormatting.WHITE + "block to monitor the redstone output on that side");
     }
 
     @Override
@@ -66,13 +76,33 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
+            stack.setTagCompound(tagCompound);
         }
         int channel = -1;
         if (te instanceof RedstoneReceiverTileEntity) {
             channel = ((RedstoneReceiverTileEntity) te).getChannel();
         } else if (te instanceof RedstoneTransmitterTileEntity) {
             channel = ((RedstoneTransmitterTileEntity) te).getChannel();
+        } else {
+            // We selected a random block.
+            tagCompound.setInteger("channel", -1);
+            tagCompound.setInteger("dim", world.provider.dimensionId);
+            tagCompound.setInteger("monitorx", x);
+            tagCompound.setInteger("monitory", y);
+            tagCompound.setInteger("monitorz", z);
+            tagCompound.setInteger("monitorside", side);
+            if (world.isRemote) {
+                RFTools.message(player, "Redstone module is set to " + x + "," + y + "," + z);
+            }
+
+            return true;
         }
+
+        tagCompound.removeTag("dim");
+        tagCompound.removeTag("monitorx");
+        tagCompound.removeTag("monitory");
+        tagCompound.removeTag("monitorz");
+        tagCompound.removeTag("monitorside");
 
         if (channel != -1) {
             tagCompound.setInteger("channel", channel);
@@ -85,7 +115,6 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
                 RFTools.message(player, "Redstone module is cleared");
             }
         }
-        stack.setTagCompound(tagCompound);
         return true;
     }
 }
