@@ -277,6 +277,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         super.readFromNBT(tagCompound);
         totalRfPerTick = tagCompound.getInteger("rfPerTick");
         active = tagCompound.getBoolean("active");
+        powered = tagCompound.getByte("powered");
     }
 
     @Override
@@ -287,6 +288,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         miny = tagCompound.getInteger("miny");
         maxy = tagCompound.getInteger("maxy");
         volume = -1;
+        int m = tagCompound.getByte("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -303,6 +306,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
         tagCompound.setBoolean("active", active);
+        tagCompound.setByte("powered", (byte) powered);
     }
 
     @Override
@@ -312,6 +316,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
         tagCompound.setInteger("radius", radius);
         tagCompound.setInteger("miny", miny);
         tagCompound.setInteger("maxy", maxy);
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
