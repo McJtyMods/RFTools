@@ -2,7 +2,10 @@ package com.mcjty.rftools.blocks.itemfilter;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericTileEntity;
+import com.mcjty.rftools.items.dimlets.DimletEntry;
+import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletType;
+import com.mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import com.mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -18,6 +21,7 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
     public static final String CMD_SETMINRARITY = "setMinRarity";
     public static final String CMD_SETMAXRARITY = "setMaxRarity";
     public static final String CMD_SETTYPE = "setType";
+    public static final String CMD_SETCRAFTABLE = "setCraftable";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimletFilterContainer.factory, DimletFilterContainer.BUFFER_SIZE);
 
@@ -25,10 +29,15 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
     public static final int INPUT = 1;
     public static final int OUTPUT = 2;
 
+    public static final int CRAFTABLE_DONTCARE = 0;
+    public static final int CRAFTABLE_YES = 1;
+    public static final int CRAFTABLE_NO = 2;
+
     private int inputMode[] = new int[6];
     private int minRarity[] = new int[6];
     private int maxRarity[] = new int[6];
     private DimletType types[] = new DimletType[6];
+    private int craftable[] = new int[6];
 
     public int[] getInputMode() {
         return inputMode;
@@ -42,6 +51,10 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         return maxRarity;
     }
 
+    public int[] getCraftable() {
+        return craftable;
+    }
+
     public DimletType[] getTypes() {
         return types;
     }
@@ -52,6 +65,7 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
             minRarity[i] = 0;
             maxRarity[i] = 6;
             types[i] = null;
+            craftable[i] = CRAFTABLE_DONTCARE;
         }
     }
 
@@ -77,6 +91,10 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         maxRarity = tagCompound.getIntArray("maxRarity");
         if (maxRarity == null || maxRarity.length == 0) {
             maxRarity = new int[6];
+        }
+        craftable = tagCompound.getIntArray("craftable");
+        if (craftable == null || craftable.length == 0) {
+            craftable = new int[6];
         }
         int[] typesI = tagCompound.getIntArray("types");
         if (typesI == null || typesI.length == 0) {
@@ -114,6 +132,7 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         tagCompound.setIntArray("inputs", inputMode);
         tagCompound.setIntArray("minRarity", minRarity);
         tagCompound.setIntArray("maxRarity", maxRarity);
+        tagCompound.setIntArray("craftable", craftable);
         int[] typesI = new int[6];
         for (int i = 0 ; i < 6 ; i++) {
             typesI[i] = types[i] == null ? -1 : types[i].ordinal();
@@ -172,6 +191,14 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
             } else {
                 types[side] = DimletType.values()[type];
             }
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        } else if (CMD_SETCRAFTABLE.equals(command)) {
+            Integer side = args.get("side").getInteger();
+            Integer cr = args.get("craftable").getInteger();
+
+            craftable[side] = cr;
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
@@ -250,13 +277,73 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
         return isInputMode(side);
     }
 
+    private int findMostSpecificExtractionSide(DimletEntry entry) {
+        DimletKey key = entry.getKey();
+        int rarity = entry.getRarity();
+        int side = -1;
+        int bestMatch = 0;
+        int cr = KnownDimletConfiguration.craftableDimlets.contains(key) ? CRAFTABLE_YES : CRAFTABLE_NO;
+
+        for (int i = 0 ; i < 6 ; i++) {
+            if (isOutputMode(i)) {
+                int match = 0;
+                if (types[i] == null || types[i].equals(key.getType())) {
+                    if (types[i] == null) {
+                        match += 1;
+                    } else {
+                        match += 7;
+                    }
+                    if (rarity >= minRarity[i] && rarity <= maxRarity[i]) {
+                        match += 7 - (maxRarity[i] - minRarity[i]);
+                        if (craftable[i] == CRAFTABLE_DONTCARE || craftable[i] == cr) {
+                            if (craftable[i] == CRAFTABLE_DONTCARE) {
+                                match += 1;
+                            } else {
+                                match += 7;
+                            }
+                            if (match > bestMatch) {
+                                bestMatch = match;
+                                side = i;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return side;
+    }
+
     @Override
     public boolean canExtractItem(int index, ItemStack stack, int side) {
         if (!isOutputMode(side)) {
             return false;
         }
-        // Do filter matching here ! @@@
-        return true;
+        if (stack == null) {
+            return false;
+        }
+        DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
+        if (key == null) {
+            return false;
+        }
+        if (types[side] != null && !types[side].equals(key.getType())) {
+            return false;
+        }
+        DimletEntry entry = KnownDimletConfiguration.getEntry(key);
+        if (entry == null) {
+            return false;
+        }
+        int rarity = entry.getRarity();
+        if (rarity < minRarity[side] || rarity > maxRarity[side]) {
+            return false;
+        }
+        if (craftable[side] != 0) {
+            int cr = KnownDimletConfiguration.craftableDimlets.contains(key) ? CRAFTABLE_YES : CRAFTABLE_NO;
+            if (cr != craftable[side]) {
+                return false;
+            }
+        }
+        // Is this the best match?
+        return findMostSpecificExtractionSide(entry) == side;
     }
 
     private boolean isInputMode(int side) {

@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.awt.Rectangle;
 
 public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity> {
-    public static final int DIMLETFILTER_WIDTH = 195;
+    public static final int DIMLETFILTER_WIDTH = 211;
     public static final int DIMLETFILTER_HEIGHT = 212;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimletfilter.png");
@@ -26,6 +26,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
     private TextField[] minText = new TextField[6];
     private TextField[] maxText = new TextField[6];
     private ChoiceLabel[] types = new ChoiceLabel[6];
+    private ChoiceLabel[] craftable = new ChoiceLabel[6];
 
     public GuiDimletFilter(DimletFilterTileEntity dimletFilterTileEntity, DimletFilterContainer container) {
         super(dimletFilterTileEntity, container);
@@ -43,13 +44,14 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         int[] inputMode = tileEntity.getInputMode();
         int[] minRarity = tileEntity.getMinRarity();
         int[] maxRarity = tileEntity.getMaxRarity();
+        int[] craftableI = tileEntity.getCraftable();
         DimletType[] dimletTypes = tileEntity.getTypes();
 
         for (ForgeDirection direction : ForgeDirection.values()) {
             if (!ForgeDirection.UNKNOWN.equals(direction)) {
                 final int side = direction.ordinal();
-                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(18, 21 + side * 13, 174, 12));
-                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setDesiredWidth(12).setDesiredHeight(12). //setLayoutHint(new PositionalLayout.PositionalHint(25, 22 + side * 13, 12, 12)).
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(18, 21 + side * 13, 190, 12));
+                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setDesiredWidth(12).setDesiredHeight(12).
                         addChoice("0", "Disabled", iconGuiElements, 160, 0).
                         addChoice("1", "Input", iconGuiElements, 96, 16).
                         addChoice("2", "Output", iconGuiElements, 80, 16);
@@ -78,12 +80,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
                 });
                 maxText[side].setText(Integer.toString(maxRarity[side]));
 
-                types[side] = new ChoiceLabel(mc, this).setDesiredHeight(12).setDesiredWidth(68).addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        setType(side);
-                    }
-                });
+                types[side] = new ChoiceLabel(mc, this).setDesiredHeight(12).setDesiredWidth(68).setTooltips("Filter based on type", "of the dimlet");
                 types[side].addChoices("*");
                 for (DimletType type : DimletType.values()) {
                     types[side].addChoices(type.dimletType.getName());
@@ -93,11 +90,33 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
                 } else {
                     types[side].setChoice(dimletTypes[side].dimletType.getName());
                 }
+                types[side].addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setType(side);
+                    }
+                });
 
-                panel.addChild(choiceLabel).addChild(minLabel).addChild(minText[side]).addChild(maxText[side]).addChild(types[side]);
+
+                craftable[side] = new ChoiceLabel(mc, this).setDesiredHeight(12).setDesiredWidth(16).setTooltips("Filter based on craftability", "of the dimlet");
+                craftable[side].addChoices("*", "Y", "N");
+                if (craftableI[side] == DimletFilterTileEntity.CRAFTABLE_DONTCARE) {
+                    craftable[side].setChoice("*");
+                } else if (craftableI[side] == DimletFilterTileEntity.CRAFTABLE_YES) {
+                    craftable[side].setChoice("Y");
+                } else {
+                    craftable[side].setChoice("N");
+                }
+                craftable[side].addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setCraftable(side);
+                    }
+                });
+
+                panel.addChild(choiceLabel).addChild(minLabel).addChild(minText[side]).addChild(maxText[side]).addChild(types[side]).addChild(craftable[side]);
 
                 toplevel.addChild(panel);
-
             }
         }
 
@@ -138,6 +157,21 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         sendServerCommand(DimletFilterTileEntity.CMD_SETMAXRARITY,
                 new Argument("side", side),
                 new Argument("value", value));
+    }
+
+    private void setCraftable(int side) {
+        String choice = craftable[side].getCurrentChoice();
+        int cr;
+        if ("*".equals(choice)) {
+            cr = DimletFilterTileEntity.CRAFTABLE_DONTCARE;
+        } else if ("Y".equals(choice)) {
+            cr = DimletFilterTileEntity.CRAFTABLE_YES;
+        } else {
+            cr = DimletFilterTileEntity.CRAFTABLE_NO;
+        }
+        sendServerCommand(DimletFilterTileEntity.CMD_SETCRAFTABLE,
+                new Argument("side", side),
+                new Argument("craftable", cr));
     }
 
     private void setType(int side) {
