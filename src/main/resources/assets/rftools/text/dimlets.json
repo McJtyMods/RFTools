@@ -43,6 +43,8 @@
 
         [ "Material", "tile.factorization:darkIronOre", 10000, 2000, 400, 3, 0 ],
 
+        [ "Material", "tile.draconicevolution:draconiumOre", 200000, 90000, 2000, 6, 0 ],
+
         [ "Material", "tile.brOre", 50000, 14000, 800, 4, 0 ],
 
         [ "Material", "tile.OreEln5", 12000, 2500, 400, 3, 0 ],
