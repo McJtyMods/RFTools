@@ -514,8 +514,8 @@ public class KnownDimletConfiguration {
         initTimeItem(cfg, "Normal", null, null, mapping, master);
         initTimeItem(cfg, "Noon", 0.0f, null, mapping, master);
         initTimeItem(cfg, "Midnight", 0.5f, null, mapping, master);
-        initTimeItem(cfg, "Morning", 0.2f, null, mapping, master);
-        initTimeItem(cfg, "Evening", 0.75f, null, mapping, master);
+        initTimeItem(cfg, "Morning", 0.75f, null, mapping, master);
+        initTimeItem(cfg, "Evening", 0.2f, null, mapping, master);
         initTimeItem(cfg, "Fast", null, 2.0f, mapping, master);
         initTimeItem(cfg, "Slow", null, 0.5f, mapping, master);
         DimletKey keyTimeNormal = new DimletKey(DimletType.DIMLET_TIME, "Normal");
