@@ -79,6 +79,11 @@ public class TimeAbsorberTileEntity extends GenericTileEntity {
                     absorbing = 0;
                 }
                 registerTimeout = 3000;
+            } else {
+                absorbing++;
+                if (absorbing >= DimletConstructionConfiguration.maxTimeAbsorbtion) {
+                    absorbing = DimletConstructionConfiguration.maxTimeAbsorbtion-1;
+                }
             }
         }
     }
