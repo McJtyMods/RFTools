@@ -349,6 +349,7 @@ public class KnownDimletConfiguration {
         initSpecialItem(cfg, "Spawn", SpecialType.SPECIAL_SPAWN, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
 
+        initMobItem(cfg, "Default", mapping, master);
         for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null) {
