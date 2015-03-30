@@ -1,5 +1,6 @@
 package com.mcjty.rftools;
 
+import com.mcjty.rftools.apideps.ComputerCraftHelper;
 import com.mcjty.rftools.blocks.logic.RedstoneChannels;
 import com.mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import com.mcjty.rftools.commands.CommandRftCfg;
@@ -200,6 +201,9 @@ public class RFTools {
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
         enderio = Loader.isModLoaded("EnderIO");
+        if (Loader.isModLoaded("ComputerCraft")) {
+            ComputerCraftHelper.register();
+        }
     }
 
     public static void message(EntityPlayer player, String message) {

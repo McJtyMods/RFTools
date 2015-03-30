@@ -5,6 +5,10 @@ import com.mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -18,11 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
-public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, dan200.computercraft.api.peripheral.IPeripheral {
 
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
+
+    public static final String COMPONENT_NAME = "screen_controller";
 
     private List<Coordinate> connectedScreens = new ArrayList<Coordinate>();
     private int tickCounter = 20;
@@ -32,9 +40,52 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
     }
 
     @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String getType() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String[] getMethodNames() {
+        return new String[] { "getScreenCount", "getScreenIndex", "getScreenCoordinate", "addText", "clearText" };
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        switch (method) {
+            case 0: return new Object[] { connectedScreens.size() };
+            case 1: return getScreenIndex(new Coordinate(((Double) arguments[0]).intValue(), ((Double) arguments[1]).intValue(), ((Double) arguments[2]).intValue()));
+            case 2: Coordinate c = connectedScreens.get(((Double) arguments[0]).intValue()); return new Object[] { c.getX(), c.getY(), c.getZ() };
+            case 3: return addText((String) arguments[0], (String) arguments[1], ((Double) arguments[2]).intValue());
+            case 4: return clearText((String) arguments[0]);
+        }
+        return new Object[0];
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void attach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void detach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public boolean equals(IPeripheral other) {
+        return false;
+    }
+
+    @Override
     @Optional.Method(modid = "OpenComputers")
     public String getComponentName() {
-        return "screen_controller";
+        return COMPONENT_NAME;
     }
 
     @Callback
@@ -60,9 +111,13 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
             throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
         }
         Coordinate recC = new Coordinate(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
+        return getScreenIndex(recC);
+    }
+
+    private Object[] getScreenIndex(Coordinate coordinate) {
         int i = 0;
         for (Coordinate connectedScreen : connectedScreens) {
-            if (connectedScreen.equals(recC)) {
+            if (connectedScreen.equals(coordinate)) {
                 return new Object[] { i };
             }
             i++;
@@ -95,6 +150,10 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
         String text = args.checkString(1);
         int color = args.checkInteger(2);
 
+        return addText(tag, text, color);
+    }
+
+    private Object[] addText(String tag, String text, int color) {
         for (Coordinate screen : connectedScreens) {
             TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
             if (te instanceof ScreenTileEntity) {
@@ -115,6 +174,10 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
     public Object[] clearText(Context context, Arguments args) throws Exception {
         String tag = args.checkString(0);
 
+        return clearText(tag);
+    }
+
+    private Object[] clearText(String tag) {
         for (Coordinate screen : connectedScreens) {
             TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
             if (te instanceof ScreenTileEntity) {
