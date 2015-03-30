@@ -257,7 +257,7 @@ public class DimensionDescriptor {
         if (entry != null) {
             cost = entry.getRfCreateCost();
             if (cost == -1) {
-                cost = DimletCosts.typeRfCreateCost.get(type);
+                cost = type.dimletType.getCreationCost();
             }
         }
         return cost;
@@ -273,8 +273,8 @@ public class DimensionDescriptor {
             List<DimletKey> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletKey modifier : list) {
-                    int mult = getModifierMultiplier(DimletCosts.rfCreateModifierMultiplier, modifier.getType(), type);
-                    rf += getCreationCost(modifier.getType(), modifier) * mult;
+                    float mult = type.dimletType.getModifierCreateCostFactor(modifier.getType(), key);
+                    rf += (int) (getCreationCost(modifier.getType(), modifier) * mult);
                 }
             }
 
@@ -297,7 +297,7 @@ public class DimensionDescriptor {
         if (entry != null) {
             cost = entry.getRfMaintainCost();
             if (cost == -1) {
-                cost = DimletCosts.typeRfMaintainCost.get(type);
+                cost = type.dimletType.getMaintenanceCost();
             }
         }
         return cost;
@@ -314,8 +314,8 @@ public class DimensionDescriptor {
             List<DimletKey> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletKey modifier : list) {
-                    int mult = getModifierMultiplier(DimletCosts.rfMaintainModifierMultiplier, modifier.getType(), type);
-                    rf += getMaintenanceCost(modifier.getType(), modifier) * mult;
+                    float mult = type.dimletType.getModifierMaintainCostFactor(modifier.getType(), key);
+                    rf += (int) (getMaintenanceCost(modifier.getType(), modifier) * mult);
                 }
             }
 
@@ -343,7 +343,7 @@ public class DimensionDescriptor {
         if (entry != null) {
             cost = entry.getTickCost();
             if (cost == -1) {
-                cost = DimletCosts.typeTickCost.get(type);
+                cost = type.dimletType.getTickCost();
             }
         }
         return cost;
@@ -359,8 +359,8 @@ public class DimensionDescriptor {
             List<DimletKey> list = dimletWithModifier.getRight();
             if (list != null) {
                 for (DimletKey modifier : list) {
-                    int mult = getModifierMultiplier(DimletCosts.tickCostModifierMultiplier, modifier.getType(), type);
-                    ticks += getTickCost(modifier.getType(), modifier) * mult;
+                    float mult = type.dimletType.getModifierTickCostFactor(modifier.getType(), key);
+                    ticks += (int) (getTickCost(modifier.getType(), modifier) * mult);
                 }
             }
 

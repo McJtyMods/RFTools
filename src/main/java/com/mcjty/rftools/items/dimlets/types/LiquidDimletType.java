@@ -5,10 +5,12 @@ import com.mcjty.rftools.blocks.ModBlocks;
 import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletObjectMapping;
+import com.mcjty.rftools.items.dimlets.DimletRandomizer;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -16,6 +18,13 @@ import java.util.Map;
 import java.util.Random;
 
 public class LiquidDimletType implements IDimletType {
+    private static final String CATEGORY_TYPE = "type_liquid";
+
+    private static int rarity = DimletRandomizer.RARITY_2;
+    private static int baseCreationCost = 500;
+    private static int baseMaintainCost = 300;
+    private static int baseTickCost = 200;
+
     @Override
     public String getName() {
         return "Liquid";
@@ -32,6 +41,35 @@ public class LiquidDimletType implements IDimletType {
     }
 
     @Override
+    public void setupFromConfig(Configuration cfg) {
+        cfg.addCustomCategoryComment(CATEGORY_TYPE, "Settings for the liquid dimlet type. Note that this is a modifier so actual cost depends on terrain/feature you use this with");
+        rarity = cfg.get(CATEGORY_TYPE, "rarity", rarity, "Default rarity for this dimlet type").getInt();
+        baseCreationCost = cfg.get(CATEGORY_TYPE, "creation.cost", baseCreationCost, "Dimlet creation cost (how much power this dimlets adds during creation time of a dimension)").getInt();
+        baseMaintainCost = cfg.get(CATEGORY_TYPE, "maintenance.cost", baseMaintainCost, "Dimlet maintenance cost (how much power this dimlet will use up to keep the dimension running)").getInt();
+        baseTickCost = cfg.get(CATEGORY_TYPE, "tick.cost", baseTickCost, "Dimlet tick cost (how long it takes to make a dimension with this dimlet in it)").getInt();
+    }
+
+    @Override
+    public int getRarity() {
+        return rarity;
+    }
+
+    @Override
+    public int getCreationCost() {
+        return baseCreationCost;
+    }
+
+    @Override
+    public int getMaintenanceCost() {
+        return baseMaintainCost;
+    }
+
+    @Override
+    public int getTickCost() {
+        return baseTickCost;
+    }
+
+    @Override
     public boolean isModifier() {
         return true;
     }
@@ -39,6 +77,21 @@ public class LiquidDimletType implements IDimletType {
     @Override
     public boolean isModifiedBy(DimletType type) {
         return false;
+    }
+
+    @Override
+    public float getModifierCreateCostFactor(DimletType modifierType, DimletKey key) {
+        return 1.0f;
+    }
+
+    @Override
+    public float getModifierMaintainCostFactor(DimletType modifierType, DimletKey key) {
+        return 1.0f;
+    }
+
+    @Override
+    public float getModifierTickCostFactor(DimletType modifierType, DimletKey key) {
+        return 1.0f;
     }
 
     @Override

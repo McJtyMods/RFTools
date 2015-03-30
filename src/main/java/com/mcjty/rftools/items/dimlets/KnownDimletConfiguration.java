@@ -47,10 +47,6 @@ public class KnownDimletConfiguration {
     public static final String CATEGORY_KNOWNDIMLETS = "knowndimlets";              // This is part of dimlets.cfg
     public static final String CATEGORY_DIMLETSETTINGS = "dimletsettings";          // This is part of dimlets.cfg
     public static final String CATEGORY_RARITY = "rarity";
-    public static final String CATEGORY_TYPERARIRTY = "typerarity";
-    public static final String CATEGORY_TYPERFCREATECOST = "typerfcreatecost";
-    public static final String CATEGORY_TYPERFMAINTAINCOST = "typerfmaintaincost";
-    public static final String CATEGORY_TYPETICKCOST = "typetickcost";
     public static final String CATEGORY_MOBSPAWNS = "mobspawns";
     public static final String CATEGORY_GENERAL = "general";
 
@@ -85,6 +81,10 @@ public class KnownDimletConfiguration {
 
         DimletRandomizer.readRandomConfig(cfg);
         MobConfiguration.readMobConfig(cfg);
+
+        for (DimletType type : DimletType.values()) {
+            type.dimletType.setupFromConfig(cfg);
+        }
     }
 
 
@@ -189,10 +189,10 @@ public class KnownDimletConfiguration {
             return id;
         }
 
-        int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, DimletCosts.dimletBuiltinRfCreate, DimletCosts.typeRfCreateCost);
-        int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, DimletCosts.typeRfMaintainCost);
-        int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, DimletCosts.typeTickCost);
-        int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, DimletRandomizer.typeRarity);
+        int rfCreateCost = checkCostConfig(cfg, "rfcreate.", key, DimletCosts.dimletBuiltinRfCreate, key.getType().dimletType.getCreationCost());
+        int rfMaintainCost = checkCostConfig(cfg, "rfmaintain.", key, DimletCosts.dimletBuiltinRfMaintain, key.getType().dimletType.getMaintenanceCost());
+        int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, key.getType().dimletType.getTickCost());
+        int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, key.getType().dimletType.getRarity());
         boolean randomNotAllowed = checkFlagConfig(cfg, "expensive.", key, dimletRandomNotAllowed);
 
         if (rfMaintainCost > 0) {
@@ -220,15 +220,15 @@ public class KnownDimletConfiguration {
         }
     }
 
-    private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, Map<DimletType,Integer> typeDefaults) {
+    private static int checkCostConfig(Configuration cfg, String prefix, DimletKey key, Map<DimletKey,Integer> builtinDefaults, int defCost) {
         String k;
         k = prefix + key.getType().dimletType.getName() + "." + key.getName();
         Integer defaultValue = builtinDefaults.get(key);
         if (defaultValue == null) {
-            defaultValue = typeDefaults.get(key.getType());
+            defaultValue = defCost;
         }
         int cost;
-        if (defaultValue.equals(typeDefaults.get(key.getType())) && !cfg.getCategory(CATEGORY_DIMLETSETTINGS).containsKey(k)) {
+        if (defaultValue.equals(defCost) && !cfg.getCategory(CATEGORY_DIMLETSETTINGS).containsKey(k)) {
             // Still using default. We don't want to force a config value so we first check to see
             // if it is there.
             cost = defaultValue;

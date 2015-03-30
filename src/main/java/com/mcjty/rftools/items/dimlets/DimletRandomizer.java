@@ -30,7 +30,6 @@ public class DimletRandomizer {
     public static float rarity5;
     public static float rarity6;
 
-    public static final Map<DimletType,Integer> typeRarity = new HashMap<DimletType, Integer>();
     // Used for randomly generating dimlets.
     public static final List<DimletKey> dimletIds = new ArrayList<DimletKey>();
     static final Map<DimletKey,Integer> dimletBuiltinRarity = new HashMap<DimletKey, Integer>();
@@ -62,30 +61,6 @@ public class DimletRandomizer {
         rarity4 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level4", 40.0f).getDouble();
         rarity5 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level5", 20.0f).getDouble();
         rarity6 = (float) cfg.get(KnownDimletConfiguration.CATEGORY_RARITY, "level6", 1.0f).getDouble();
-        initTypeRarity(cfg);
-    }
-
-    public static void initTypeRarity(Configuration cfg) {
-        typeRarity.clear();
-        initRarity(cfg, DimletType.DIMLET_BIOME, RARITY_1);
-        initRarity(cfg, DimletType.DIMLET_TIME, RARITY_2);
-        initRarity(cfg, DimletType.DIMLET_FOLIAGE, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_LIQUID, RARITY_2);
-        initRarity(cfg, DimletType.DIMLET_MATERIAL, RARITY_1);
-        initRarity(cfg, DimletType.DIMLET_MOBS, RARITY_2);
-        initRarity(cfg, DimletType.DIMLET_SKY, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_STRUCTURE, RARITY_3);
-        initRarity(cfg, DimletType.DIMLET_TERRAIN, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_FEATURE, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_DIGIT, RARITY_0);
-        initRarity(cfg, DimletType.DIMLET_EFFECT, RARITY_3);
-        initRarity(cfg, DimletType.DIMLET_SPECIAL, RARITY_5);
-        initRarity(cfg, DimletType.DIMLET_CONTROLLER, RARITY_1);
-        initRarity(cfg, DimletType.DIMLET_WEATHER, RARITY_1);
-    }
-
-    private static void initRarity(Configuration cfg, DimletType type, int rarity) {
-        typeRarity.put(type, cfg.get(KnownDimletConfiguration.CATEGORY_TYPERARIRTY, "rarity." + type.dimletType.getName(), rarity).getInt());
     }
 
     static void setupWeightedRandomList() {

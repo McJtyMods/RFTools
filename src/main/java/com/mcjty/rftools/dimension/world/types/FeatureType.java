@@ -7,27 +7,29 @@ import java.util.*;
 import static com.mcjty.rftools.dimension.world.types.TerrainType.*;
 
 public enum FeatureType {
-    FEATURE_NONE(null, null),
-    FEATURE_CAVES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null),
-    FEATURE_RAVINES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null),
-    FEATURE_ORBS(null, new MMap(1, DimletType.DIMLET_MATERIAL)),
-    FEATURE_OREGEN(null, new MMap(-1, DimletType.DIMLET_MATERIAL)),
-    FEATURE_LAKES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), new MMap(-1, DimletType.DIMLET_LIQUID)),
-    FEATURE_TENDRILS(null, new MMap(1, DimletType.DIMLET_MATERIAL)),
-    FEATURE_CANYONS(null, new MMap(1, DimletType.DIMLET_MATERIAL)),
-    FEATURE_MAZE(new TSet(TERRAIN_AMPLIFIED, TERRAIN_FLAT, TERRAIN_NORMAL, TERRAIN_NEARLANDS), null),
-    FEATURE_LIQUIDORBS(null, new MMap(1, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_LIQUID)),
-    FEATURE_SHALLOW_OCEAN(new TSet(TERRAIN_PLATEAUS, TERRAIN_ISLANDS, TERRAIN_ISLAND, TERRAIN_CHAOTIC), new MMap(1, DimletType.DIMLET_LIQUID)),
-    FEATURE_VOLCANOES(null, null),
-    FEATURE_DENSE_CAVES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null);
+    FEATURE_NONE(null, null, 0, 0),
+    FEATURE_CAVES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null, 0, 0),
+    FEATURE_RAVINES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null, 0, 0),
+    FEATURE_ORBS(null, new MMap(1, DimletType.DIMLET_MATERIAL), 1, 0),
+    FEATURE_OREGEN(null, new MMap(-1, DimletType.DIMLET_MATERIAL), 0, 0),
+    FEATURE_LAKES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), new MMap(-1, DimletType.DIMLET_LIQUID), 0, 0),
+    FEATURE_TENDRILS(null, new MMap(1, DimletType.DIMLET_MATERIAL), 2, 0),
+    FEATURE_CANYONS(null, new MMap(1, DimletType.DIMLET_MATERIAL), 2, 0),
+    FEATURE_MAZE(new TSet(TERRAIN_AMPLIFIED, TERRAIN_FLAT, TERRAIN_NORMAL, TERRAIN_NEARLANDS), null, 0, 0),
+    FEATURE_LIQUIDORBS(null, new MMap(1, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_LIQUID), 1, 1),
+    FEATURE_SHALLOW_OCEAN(new TSet(TERRAIN_PLATEAUS, TERRAIN_ISLANDS, TERRAIN_ISLAND, TERRAIN_CHAOTIC), new MMap(1, DimletType.DIMLET_LIQUID), 0, 3),
+    FEATURE_VOLCANOES(null, null, 0, 0),
+    FEATURE_DENSE_CAVES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null, 0, 0);
 
     private final Set<TerrainType> supportedTerrains;
     private final Map<DimletType,Integer> supportedModifiers;
+    private final int materialClass;            // A value indicating how expensive material modifiers should be for this feature (0 is cheapest, 3 is most expensive)
+    private final int liquidClass;              // A value indicating how expensive liquid modifiers should be for this feature (0 is cheapest, 3 is most expensive)
 
     /**
      * If no terrain types are given then they are all supported.
      */
-    FeatureType(Set<TerrainType> terrainTypes, Map<DimletType,Integer> modifiers) {
+    FeatureType(Set<TerrainType> terrainTypes, Map<DimletType, Integer> modifiers, int materialClass, int liquidClass) {
         if (terrainTypes == null) {
             supportedTerrains = Collections.emptySet();
         } else {
@@ -38,6 +40,8 @@ public enum FeatureType {
         } else {
             supportedModifiers = new HashMap<DimletType, Integer>(modifiers);
         }
+        this.materialClass = materialClass;
+        this.liquidClass = liquidClass;
     }
 
     public boolean isTerrainSupported(TerrainType type) {
@@ -46,6 +50,14 @@ public enum FeatureType {
 
     public boolean supportsAllTerrains() {
         return supportedTerrains.isEmpty();
+    }
+
+    public int getMaterialClass() {
+        return materialClass;
+    }
+
+    public int getLiquidClass() {
+        return liquidClass;
     }
 
     public Integer getSupportedModifierAmount(DimletType type) {

@@ -4,7 +4,7 @@ import com.mcjty.rftools.dimension.DimensionInformation;
 import com.mcjty.rftools.items.dimlets.DimletKey;
 import com.mcjty.rftools.items.dimlets.DimletType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -15,6 +15,33 @@ public interface IDimletType {
     String getOpcode();
     String getTextureName();
 
+    /**
+     * Setup this type from the main configuration file. This is called
+     * once during init.
+     * @param cfg
+     */
+    void setupFromConfig(Configuration cfg);
+
+    /**
+     * Get the default rarity for this type.
+     */
+    int getRarity();
+
+    /**
+     * Get the default creation cost for this type.
+     */
+    int getCreationCost();
+
+    /**
+     * Get the default maintenance cost for this type.
+     */
+    int getMaintenanceCost();
+
+    /**
+     * Get the default tick cost for this type.
+     */
+    int getTickCost();
+
     // Return true if this dimlet is a modifier.
     boolean isModifier();
 
@@ -23,6 +50,24 @@ public interface IDimletType {
      * @param type
      */
     public boolean isModifiedBy(DimletType type);
+
+    /**
+     * Return the relative cost that will be applied to the modifier
+     * when used in combination with this type and the given key of this type.
+     */
+    public float getModifierCreateCostFactor(DimletType modifierType, DimletKey key);
+
+    /**
+     * Return the relative cost that will be applied to the modifier
+     * when used in combination with this type and the given key of this type.
+     */
+    public float getModifierMaintainCostFactor(DimletType modifierType, DimletKey key);
+
+    /**
+     * Return the relative cost that will be applied to the modifier
+     * when used in combination with this type and the given key of this type.
+     */
+    public float getModifierTickCostFactor(DimletType modifierType, DimletKey key);
 
     // Return true if this dimlet can be injected into an existing dimension.
     boolean isInjectable();
