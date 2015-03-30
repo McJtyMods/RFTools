@@ -1,5 +1,6 @@
 package com.mcjty.rftools.apideps;
 
+import com.mcjty.entity.GenericTileEntity;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -18,7 +19,7 @@ public class ComputerCraftHelper implements IPeripheralProvider {
     @Optional.Method(modid = "ComputerCraft")
     public IPeripheral getPeripheral(World world, int x, int y, int z, int side) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof IPeripheral) {
+        if (te != null && te instanceof GenericTileEntity && te instanceof IPeripheral) {
             return (IPeripheral) te;
         } else {
             return null;
