@@ -6,6 +6,7 @@ import cofh.api.energy.IEnergyReceiver;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.apideps.DraconicEvolutionCompatibility;
 import com.mcjty.rftools.apideps.EnderIOCompatibility;
+import com.mcjty.rftools.apideps.MekanismCompatibility;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -61,6 +62,9 @@ public class EnergyTools {
         } else if (RFTools.instance.draconicevolution && DraconicEvolutionCompatibility.isPowerStorage(tileEntity)) {
             maxEnergyStored = DraconicEvolutionCompatibility.getMaxEnergyLevel(tileEntity);
             energyStored = DraconicEvolutionCompatibility.getEnergyLevel(tileEntity);
+        } else if (RFTools.instance.mekanism && MekanismCompatibility.isPowerStorage(tileEntity)) {
+            maxEnergyStored = MekanismCompatibility.getMaxEnergyLevel(tileEntity);
+            energyStored = MekanismCompatibility.getEnergyLevel(tileEntity);
         } else if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
             maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);

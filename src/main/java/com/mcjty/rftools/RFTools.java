@@ -53,6 +53,7 @@ public class RFTools {
 
     // Are some mods loaded?.
     public boolean enderio = false;
+    public boolean mekanism = false;
     public boolean draconicevolution = false;
 
     public Logger logger;
@@ -203,7 +204,9 @@ public class RFTools {
         this.proxy.postInit(e);
 
         enderio = Loader.isModLoaded("EnderIO");
+        mekanism = Loader.isModLoaded("Mekanism");
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
+
         if (Loader.isModLoaded("ComputerCraft")) {
             ComputerCraftHelper.register();
         }
