@@ -51,8 +51,9 @@ public class RFTools {
     @Mod.Instance("rftools")
     public static RFTools instance;
 
-    // Is EnderIO loaded.
+    // Are some mods loaded?.
     public boolean enderio = false;
+    public boolean draconicevolution = false;
 
     public Logger logger;
 
@@ -200,7 +201,9 @@ public class RFTools {
     @EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
+
         enderio = Loader.isModLoaded("EnderIO");
+        draconicevolution = Loader.isModLoaded("DraconicEvolution");
         if (Loader.isModLoaded("ComputerCraft")) {
             ComputerCraftHelper.register();
         }
