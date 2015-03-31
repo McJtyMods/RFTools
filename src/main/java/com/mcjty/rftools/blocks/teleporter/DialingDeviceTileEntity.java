@@ -8,6 +8,10 @@ import com.mcjty.rftools.dimension.RfToolsDimensionManager;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -25,8 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
-public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, IPeripheral {
 
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";
@@ -48,6 +54,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
     public static final int DIAL_INVALID_SOURCE_MASK = 0x100;       // The source is somehow invalid
     public static final int DIAL_DIMENSION_POWER_LOW_MASK = 0x200;  // The destination dimension is low on power
     public static final int DIAL_OK = 0;                            // All is ok
+    public static final String COMPONENT_NAME = "dialing_device";
 
     public DialingDeviceTileEntity() {
         super(TeleportConfiguration.DIALER_MAXENERGY, TeleportConfiguration.DIALER_RECEIVEPERTICK);
@@ -117,9 +124,122 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
     }
 
     @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String getType() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String[] getMethodNames() {
+        return new String[] { "getTransmitterCount", "getTransmitter", "getReceiverCount", "getReceiver", "getReceiverName", "getTransmitterName",
+            "dial", "interrupt", "getDialed" };
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        switch (method) {
+            case 0: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                return new Object[] { transmitterInfos.size() };
+            }
+            case 1: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                int idx = ((Double) arguments[0]).intValue();
+                TransmitterInfo ti = transmitterInfos.get(idx);
+                return new Object[] { ti.getCoordinate().getX(), ti.getCoordinate().getY(), ti.getCoordinate().getZ() };
+            }
+            case 2: {
+                List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+                return new Object[] { receivers.size() };
+            }
+            case 3: {
+                List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+                int idx = ((Double) arguments[0]).intValue();
+                TeleportDestinationClientInfo ti = receivers.get(idx);
+                return new Object[] { ti.getDimension(), ti.getCoordinate().getX(), ti.getCoordinate().getY(), ti.getCoordinate().getZ() };
+            }
+            case 4: {
+                List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+                int idx = ((Double) arguments[0]).intValue();
+                TeleportDestinationClientInfo ti = receivers.get(idx);
+                TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+                TeleportDestination destination = destinations.getDestination(ti.getCoordinate(), ti.getDimension());
+                if (destination == null) {
+                    return null;
+                }
+                return new Object[] { destination.getName() };
+            }
+            case 5: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                int idx = ((Double) arguments[0]).intValue();
+                TransmitterInfo ti = transmitterInfos.get(idx);
+                return new Object[] { ti.getName() };
+            }
+            case 6: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+
+                int transIdx = ((Double) arguments[0]).intValue();
+                int recIdx = ((Double) arguments[1]).intValue();
+
+                TransmitterInfo trans = transmitterInfos.get(transIdx);
+                TeleportDestinationClientInfo rec = receivers.get(recIdx);
+
+                int transDim = worldObj.provider.dimensionId;
+                int result = dial(null, trans.getCoordinate(), transDim, rec.getCoordinate(), rec.getDimension());
+                return new Object[] { result };
+            }
+            case 7: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                int transIdx = ((Double) arguments[0]).intValue();
+                TransmitterInfo trans = transmitterInfos.get(transIdx);
+
+                int transDim = worldObj.provider.dimensionId;
+                int result = dial(null, trans.getCoordinate(), transDim, null, -1);
+                if (result == DIAL_INVALID_DESTINATION_MASK) {
+                    result = 0;
+                }
+                return new Object[] { result };
+            }
+            case 8: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                int transIdx = ((Double) arguments[0]).intValue();
+                TransmitterInfo trans = transmitterInfos.get(transIdx);
+                TeleportDestination teleportDestination = trans.getTeleportDestination();
+                if (teleportDestination == null) {
+                    return null;
+                }
+                Coordinate c = teleportDestination.getCoordinate();
+                return new Object[] { teleportDestination.getDimension(), c.getX(), c.getY(), c.getZ() };
+            }
+        }
+        return new Object[0];
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void attach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void detach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public boolean equals(IPeripheral other) {
+        return false;
+    }
+
+    @Override
     @Optional.Method(modid = "OpenComputers")
     public String getComponentName() {
-        return "dialing_device";
+        return COMPONENT_NAME;
     }
 
     @Callback
@@ -249,9 +369,13 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         List<TransmitterInfo> transmitterInfos = searchTransmitters();
         for (TransmitterInfo info : transmitterInfos) {
             if (info.getCoordinate().equals(transC)) {
+                TeleportDestination teleportDestination = info.getTeleportDestination();
+                if (teleportDestination == null) {
+                    return null;
+                }
                 Map<String,Integer> coordinate = new HashMap<String, Integer>();
-                coordinate.put("dim", info.getTeleportDestination().getDimension());
-                Coordinate c = info.getTeleportDestination().getCoordinate();
+                coordinate.put("dim", teleportDestination.getDimension());
+                Coordinate c = teleportDestination.getCoordinate();
                 coordinate.put("x", c.getX());
                 coordinate.put("y", c.getY());
                 coordinate.put("z", c.getZ());
