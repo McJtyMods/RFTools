@@ -54,6 +54,7 @@ public class RFTools {
     // Are some mods loaded?.
     public boolean enderio = false;
     public boolean mfr = false;
+    public boolean jabba = false;
     public boolean mekanism = false;
     public boolean draconicevolution = false;
 
@@ -206,6 +207,7 @@ public class RFTools {
 
         enderio = Loader.isModLoaded("EnderIO");
         mfr = Loader.isModLoaded("MineFactory Reloaded");
+        jabba = Loader.isModLoaded("JABBA");
         mekanism = Loader.isModLoaded("Mekanism");
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
 

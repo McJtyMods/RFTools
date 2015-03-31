@@ -51,6 +51,8 @@ public class ItemStackScreenModule implements ScreenModule {
         if (slot < inventory.getSizeInventory()) {
             if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
                 return MFRCompatibility.getContents(inventory);
+            } else if (RFTools.instance.jabba && MFRCompatibility.isExtendedStorage(inventory)) {
+                return MFRCompatibility.getContents(inventory);
             }
             return inventory.getStackInSlot(slot);
         } else {
