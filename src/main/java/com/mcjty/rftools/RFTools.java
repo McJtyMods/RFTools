@@ -53,6 +53,7 @@ public class RFTools {
 
     // Are some mods loaded?.
     public boolean enderio = false;
+    public boolean mfr = false;
     public boolean mekanism = false;
     public boolean draconicevolution = false;
 
@@ -204,6 +205,7 @@ public class RFTools {
         this.proxy.postInit(e);
 
         enderio = Loader.isModLoaded("EnderIO");
+        mfr = Loader.isModLoaded("MineFactory Reloaded");
         mekanism = Loader.isModLoaded("Mekanism");
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
 

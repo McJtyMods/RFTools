@@ -1,5 +1,8 @@
 package com.mcjty.rftools.blocks.screens.modules;
 
+import com.mcjty.rftools.RFTools;
+import com.mcjty.rftools.apideps.EnderIOCompatibility;
+import com.mcjty.rftools.apideps.MFRCompatibility;
 import com.mcjty.varia.Coordinate;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -46,6 +49,9 @@ public class ItemStackScreenModule implements ScreenModule {
             return null;
         }
         if (slot < inventory.getSizeInventory()) {
+            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
+                return MFRCompatibility.getContents(inventory);
+            }
             return inventory.getStackInSlot(slot);
         } else {
             return null;
