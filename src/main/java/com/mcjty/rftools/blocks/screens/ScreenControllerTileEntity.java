@@ -25,7 +25,7 @@ import java.util.Map;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, dan200.computercraft.api.peripheral.IPeripheral {
+public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, IPeripheral {
 
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
@@ -86,6 +86,12 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
     @Optional.Method(modid = "OpenComputers")
     public String getComponentName() {
         return COMPONENT_NAME;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getScreenCount(Context context, Arguments args) throws Exception {
+        return new Object[] { connectedScreens.size() };
     }
 
     @Callback
