@@ -22,6 +22,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -76,6 +77,8 @@ public class DimensionInformation {
 
     private SkyDescriptor skyDescriptor;
     private List<CelestialBodyDescriptor> celestialBodyDescriptors;
+
+    private String[] dimensionTypes = new String[0];    // Used for Recurrent Complex if that's present.
 
     private WeatherDescriptor weatherDescriptor;
 
@@ -338,6 +341,11 @@ public class DimensionInformation {
             extraMobs.add(mob);
         }
 
+        String ds = tagCompound.getString("dimensionTypes");
+        dimensionTypes = StringUtils.split(ds, ",");
+        if (dimensionTypes == null) {
+            dimensionTypes = new String[0];
+        }
     }
 
     private void readFluidsFromNBT(NBTTagCompound tagCompound) {
@@ -439,6 +447,7 @@ public class DimensionInformation {
         }
 
         tagCompound.setTag("mobs", list);
+        tagCompound.setString("dimensionTypes", StringUtils.join(dimensionTypes, ","));
     }
 
     private void setBlockMeta(NBTTagCompound tagCompound, BlockMeta blockMeta, String name) {
@@ -540,6 +549,11 @@ public class DimensionInformation {
         }
         for (StructureType structureType : getStructureTypes()) {
             logDebug(player, "    Structure: " + structureType.toString());
+        }
+        if (structureTypes.contains(StructureType.STRUCTURE_RECURRENTCOMPLEX)) {
+            for (String type : dimensionTypes) {
+                logDebug(player, "    RR DimensionType: " + type);
+            }
         }
         for (EffectType effectType : getEffectTypes()) {
             logDebug(player, "    Effect: " + effectType.toString());
@@ -663,6 +677,12 @@ public class DimensionInformation {
                 }
             }
         }
+
+        buf.writeInt(dimensionTypes.length);
+        for (String type : dimensionTypes) {
+            ByteBufTools.writeString(buf, type);
+        }
+
     }
 
     public DimensionInformation(String name, DimensionDescriptor descriptor, ByteBuf buf) {
@@ -752,6 +772,12 @@ public class DimensionInformation {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        size = buf.readInt();
+        dimensionTypes = new String[size];
+        for (int i = 0 ; i < size ; i++) {
+            dimensionTypes[i] = ByteBufTools.readString(buf);
         }
 
         setupBiomeMapping();
@@ -1085,6 +1111,14 @@ public class DimensionInformation {
 
     public List<CelestialBodyDescriptor> getCelestialBodyDescriptors() {
         return celestialBodyDescriptors;
+    }
+
+    public String[] getDimensionTypes() {
+        return dimensionTypes;
+    }
+
+    public void setDimensionTypes(String[] dimensionTypes) {
+        this.dimensionTypes = dimensionTypes;
     }
 
     public List<MobDescriptor> getExtraMobs() {

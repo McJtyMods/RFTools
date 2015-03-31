@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -105,22 +106,31 @@ public class StructureDimletType implements IDimletType {
     @Override
     public void constructDimension(List<Pair<DimletKey, List<DimletKey>>> dimlets, Random random, DimensionInformation dimensionInformation) {
         Set<StructureType> structureTypes = dimensionInformation.getStructureTypes();
+        Set<String> dimensionTypes = new HashSet<String>();
         dimlets = DimensionInformation.extractType(DimletType.DIMLET_STRUCTURE, dimlets);
         if (dimlets.isEmpty()) {
             while (random.nextFloat() < DimletConfiguration.randomStructureChance) {
                 DimletKey key = DimletRandomizer.getRandomStructure(random, false);
                 StructureType structureType = DimletObjectMapping.idToStructureType.get(key);
-                if (!structureTypes.contains(structureType)) {
+                if (!structureTypes.contains(structureType) || (structureType == StructureType.STRUCTURE_RECURRENTCOMPLEX)) {
                     dimensionInformation.updateCostFactor(key);
                     structureTypes.add(structureType);
+                    if (structureType == StructureType.STRUCTURE_RECURRENTCOMPLEX) {
+                        dimensionTypes.add(DimletObjectMapping.idToRecurrentComplexType.get(key));
+                    }
                 }
             }
         } else {
             for (Pair<DimletKey, List<DimletKey>> dimletWithModifier : dimlets) {
                 DimletKey key = dimletWithModifier.getLeft();
-                structureTypes.add(DimletObjectMapping.idToStructureType.get(key));
+                StructureType structureType = DimletObjectMapping.idToStructureType.get(key);
+                structureTypes.add(structureType);
+                if (structureType == StructureType.STRUCTURE_RECURRENTCOMPLEX) {
+                    dimensionTypes.add(DimletObjectMapping.idToRecurrentComplexType.get(key));
+                }
             }
         }
+        dimensionInformation.setDimensionTypes(dimensionTypes.toArray(new String[dimensionTypes.size()]));
     }
 
     @Override

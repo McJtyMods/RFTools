@@ -9,9 +9,12 @@ import com.mcjty.rftools.dimension.description.WeatherDescriptor;
 import com.mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import com.mcjty.rftools.dimension.world.types.ControllerType;
 import com.mcjty.rftools.dimension.world.types.SkyType;
+import com.mcjty.rftools.dimension.world.types.StructureType;
 import com.mcjty.rftools.network.PacketHandler;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ivorius.reccomplex.dimensions.DimensionDictionary;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Vec3;
@@ -21,10 +24,16 @@ import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.DimensionManager;
 
-public class GenericWorldProvider extends WorldProvider {
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+@Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions", modid = "reccomplex"))
+public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler {
     private DimensionInformation dimensionInformation;
     private DimensionStorage storage;
     private long seed;
+    private Set<String> dimensionTypes = null;  // Used for Recurrent Complex support
 
     private long calculateSeed(long seed, int dim) {
         return dim * 13L + seed;
@@ -51,6 +60,53 @@ public class GenericWorldProvider extends WorldProvider {
             }
         }
         return dimensionInformation;
+    }
+
+    @Override
+    @Optional.Method(modid = "reccomplex")
+    public Set<String> getDimensionTypes() {
+        getDimensionInformation();
+        if (dimensionInformation == null) {
+            return Collections.EMPTY_SET;
+        }
+        if (dimensionTypes == null) {
+            dimensionTypes = new HashSet<String>();
+            dimensionTypes.add(DimensionDictionary.INFINITE);
+            dimensionTypes.add("RFTOOLS_DIMENSION");
+            // @todo temporary. This should probably be in the TerrainType enum.
+            switch (dimensionInformation.getTerrainType()) {
+                case TERRAIN_VOID:
+                case TERRAIN_ISLAND:
+                case TERRAIN_ISLANDS:
+                case TERRAIN_CHAOTIC:
+                case TERRAIN_PLATEAUS:
+                case TERRAIN_GRID:
+                    dimensionTypes.add(DimensionDictionary.NO_TOP_LIMIT);
+                    dimensionTypes.add(DimensionDictionary.NO_BOTTOM_LIMIT);
+                    break;
+                case TERRAIN_FLAT:
+                case TERRAIN_AMPLIFIED:
+                case TERRAIN_NORMAL:
+                case TERRAIN_NEARLANDS:
+                    dimensionTypes.add(DimensionDictionary.NO_TOP_LIMIT);
+                    dimensionTypes.add(DimensionDictionary.BOTTOM_LIMIT);
+                    break;
+                case TERRAIN_CAVERN_OLD:
+                    dimensionTypes.add(DimensionDictionary.BOTTOM_LIMIT);
+                    dimensionTypes.add(DimensionDictionary.TOP_LIMIT);
+                    break;
+                case TERRAIN_CAVERN:
+                case TERRAIN_LOW_CAVERN:
+                case TERRAIN_FLOODED_CAVERN:
+                    dimensionTypes.add(DimensionDictionary.BOTTOM_LIMIT);
+                    dimensionTypes.add(DimensionDictionary.NO_TOP_LIMIT);
+                    break;
+            }
+            if (dimensionInformation.hasStructureType(StructureType.STRUCTURE_RECURRENTCOMPLEX)) {
+                Collections.addAll(dimensionTypes, dimensionInformation.getDimensionTypes());
+            }
+        }
+        return dimensionTypes;
     }
 
     private void setSeed(int dim) {

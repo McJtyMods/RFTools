@@ -73,6 +73,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RARITY, "General rarity distribution for dimlet selection");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_GENERAL, "General dimension configuration");
             cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_MOBSPAWNS, "Settings for the mob dimlets");
+            cfg.addCustomCategoryComment(KnownDimletConfiguration.CATEGORY_RECURRENTCOMPLEX, "Settings Recurrent Complex structure dimlets");
 
             GeneralConfiguration.init(cfg);
             NetworkMonitorConfiguration.init(cfg);

@@ -49,6 +49,7 @@ public class KnownDimletConfiguration {
     public static final String CATEGORY_RARITY = "rarity";
     public static final String CATEGORY_MOBSPAWNS = "mobspawns";
     public static final String CATEGORY_GENERAL = "general";
+    public static final String CATEGORY_RECURRENTCOMPLEX = "recurrentcomplex";
 
     // Map the id of a dimlet to a display name.
     public static final Map<DimletKey,String> idToDisplayName = new HashMap<DimletKey, String>();
@@ -423,6 +424,7 @@ public class KnownDimletConfiguration {
         initStructureItem(cfg, "Scattered", StructureType.STRUCTURE_SCATTERED, mapping, master);
         DimletKey keyStructureNone = new DimletKey(DimletType.DIMLET_STRUCTURE, "None");
         addExtraInformation(keyStructureNone, "With this none dimlet you can disable", "all normal structure spawning");
+        initRecurrentComplexStructures(cfg, mapping, master);
 
         initTerrainItem(cfg, "Void", TerrainType.TERRAIN_VOID, mapping, master);
         initTerrainItem(cfg, "Flat", TerrainType.TERRAIN_FLAT, mapping, master);
@@ -960,6 +962,19 @@ public class KnownDimletConfiguration {
             idToDisplayName.put(key, DimletType.DIMLET_WEATHER.dimletType.getName() + " " + name + " Dimlet");
         }
         return id;
+    }
+
+    private static void initRecurrentComplexStructures(Configuration cfg, DimletMapping mapping, boolean master) {
+        ConfigCategory category = cfg.getCategory(CATEGORY_RECURRENTCOMPLEX);
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            if (entry.getKey().startsWith("recurrentcomplex.")) {
+                String[] strings = StringUtils.split(entry.getKey(), ".");
+                int id = initStructureItem(cfg, strings[1], StructureType.STRUCTURE_RECURRENTCOMPLEX, mapping, master);
+                if (id != -1) {
+                    DimletObjectMapping.idToRecurrentComplexType.put(new DimletKey(DimletType.DIMLET_STRUCTURE, strings[1]), entry.getValue().getString());
+                }
+            }
+        }
     }
 
     private static int initStructureItem(Configuration cfg, String name, StructureType structureType, DimletMapping mapping, boolean master) {

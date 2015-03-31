@@ -29,6 +29,7 @@ public class DimletObjectMapping {
     public static final Map<DimletKey,MobDescriptor> idtoMob = new HashMap<DimletKey, MobDescriptor>();
     public static final Map<DimletKey,Float> idToCelestialAngle = new HashMap<DimletKey, Float>();
     public static final Map<DimletKey,Float> idToSpeed = new HashMap<DimletKey, Float>();
+    public static final Map<DimletKey,String> idToRecurrentComplexType = new HashMap<DimletKey, String>();
 
     public static final Set<DimletKey> celestialBodies = new HashSet<DimletKey>();
 
@@ -48,6 +49,7 @@ public class DimletObjectMapping {
         idtoMob.clear();
         idToCelestialAngle.clear();
         idToSpeed.clear();
+        idToRecurrentComplexType.clear();
         celestialBodies.clear();
     }
 }
