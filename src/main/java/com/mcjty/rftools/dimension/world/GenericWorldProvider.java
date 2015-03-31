@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions", modid = "reccomplex"))
+@Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions.DimensionDictionary$Handler", modid = "reccomplex"))
 public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler {
     private DimensionInformation dimensionInformation;
     private DimensionStorage storage;
