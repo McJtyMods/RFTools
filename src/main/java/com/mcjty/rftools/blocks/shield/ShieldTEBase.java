@@ -9,6 +9,10 @@ import com.mcjty.rftools.blocks.shield.filters.*;
 import com.mcjty.rftools.network.Argument;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -32,8 +36,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"))
-public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInventory, SimpleComponent {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInventory, SimpleComponent, IPeripheral {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -46,6 +52,8 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     public static final String CMD_GETFILTERS = "getFilters";
     public static final String CMD_SETCOLOR = "setColor";
     public static final String CLIENTCMD_GETFILTERS = "getFilters";
+
+    public static final String COMPONENT_NAME = "shield_projector";
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private DamageTypeMode damageMode = DamageTypeMode.DAMAGETYPE_GENERIC;
@@ -102,9 +110,58 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     }
 
     @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String getType() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String[] getMethodNames() {
+        return new String[] { "getDamageMode", "setDamageMode", "getRedstoneMode", "setRedstoneMode", "getShieldRenderingMode", "setShieldRenderingMode", "isShieldActive", "isShieldComposed",
+            "composeShield", "decomposeShield" };
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        switch (method) {
+            case 0: return new Object[] { getDamageMode().getDescription() };
+            case 1: return setDamageMode((String) arguments[0]);
+            case 2: return new Object[] { getRedstoneMode().getDescription() };
+            case 3: return setRedstoneMode((String) arguments[0]);
+            case 4: return new Object[] { getShieldRenderingMode().getDescription() };
+            case 5: return setShieldRenderingMode((String) arguments[0]);
+            case 6: return new Object[] { isShieldActive() };
+            case 7: return new Object[] { isShieldComposed() };
+            case 8: return composeShieldComp();
+            case 9: return decomposeShieldComp();
+        }
+        return new Object[0];
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void attach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void detach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public boolean equals(IPeripheral other) {
+        return false;
+    }
+
+    @Override
     @Optional.Method(modid = "OpenComputers")
     public String getComponentName() {
-        return "shield_projector";
+        return COMPONENT_NAME;
     }
 
 
@@ -118,6 +175,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     @Optional.Method(modid = "OpenComputers")
     public Object[] setDamageMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
+        return setDamageMode(mode);
+    }
+
+    private Object[] setDamageMode(String mode) {
         DamageTypeMode damageMode = DamageTypeMode.getMode(mode);
         if (damageMode == null) {
             throw new IllegalArgumentException("Not a valid mode");
@@ -136,6 +197,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     @Optional.Method(modid = "OpenComputers")
     public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
+        return setRedstoneMode(mode);
+    }
+
+    private Object[] setRedstoneMode(String mode) {
         RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
         if (redstoneMode == null) {
             throw new IllegalArgumentException("Not a valid mode");
@@ -155,6 +220,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     @Optional.Method(modid = "OpenComputers")
     public Object[] setShieldRenderingMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
+        return setShieldRenderingMode(mode);
+    }
+
+    private Object[] setShieldRenderingMode(String mode) {
         ShieldRenderingMode renderingMode = ShieldRenderingMode.getMode(mode);
         if (renderingMode == null) {
             throw new IllegalArgumentException("Not a valid mode");
@@ -178,6 +247,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] composeShield(Context context, Arguments args) throws Exception {
+        return composeShieldComp();
+    }
+
+    private Object[] composeShieldComp() {
         boolean done = false;
         if (!isShieldComposed()) {
             composeShield();
@@ -189,6 +262,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] decomposeShield(Context context, Arguments args) throws Exception {
+        return decomposeShieldComp();
+    }
+
+    private Object[] decomposeShieldComp() {
         boolean done = false;
         if (isShieldComposed()) {
             decomposeShield();
