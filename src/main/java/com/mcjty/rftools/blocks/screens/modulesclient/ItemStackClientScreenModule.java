@@ -127,8 +127,18 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y) {
         if (itemStack != null) {
-            if (itemStack.stackSize > 1) {
-                String s1 = String.valueOf(itemStack.stackSize);
+            int size = itemStack.stackSize;
+            if (size > 1) {
+                String s1;
+                if (size < 10000) {
+                    s1 = String.valueOf(size);
+                } else if (size < 1000000) {
+                    s1 = String.valueOf(size / 1000) + "k";
+                } else if (size < 1000000000) {
+                    s1 = String.valueOf(size / 1000000) + "m";
+                } else {
+                    s1 = String.valueOf(size / 1000000000) + "g";
+                }
                 GL11.glDisable(GL11.GL_LIGHTING);
 //                GL11.glDisable(GL11.GL_DEPTH_TEST);
                 GL11.glDisable(GL11.GL_BLEND);
