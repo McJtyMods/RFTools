@@ -1,0 +1,55 @@
+package mcjty.rftools.commands;
+
+import mcjty.rftools.dimension.RfToolsDimensionManager;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+
+public class CmdReclaim extends AbstractRfToolsCommand {
+    @Override
+    public String getHelp() {
+        return "<dimension>";
+    }
+
+    @Override
+    public String getCommand() {
+        return "reclaim";
+    }
+
+    @Override
+    public int getPermissionLevel() {
+        return 3;
+    }
+
+    @Override
+    public boolean isClientSide() {
+        return false;
+    }
+
+    @Override
+    public void execute(ICommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "The dimension parameters is missing!"));
+            return;
+        } else if (args.length > 2) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));
+            return;
+        }
+
+        int dim = fetchInt(sender, args, 1, 0);
+        World world = sender.getEntityWorld();
+
+        if (DimensionManager.isDimensionRegistered(dim)) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This dimension is still in use! You can't reclaim the id!"));
+            return;
+        }
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        dimensionManager.reclaimId(dim);
+        dimensionManager.save(world);
+
+        sender.addChatMessage(new ChatComponentText("Dimension id " + dim + " reclaimed for future use."));
+    }
+}
