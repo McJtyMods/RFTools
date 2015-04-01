@@ -206,12 +206,28 @@ public class RFTools {
         this.proxy.postInit(e);
 
         enderio = Loader.isModLoaded("EnderIO");
-        mfr = Loader.isModLoaded("MineFactory Reloaded");
+        if (enderio) {
+            RFTools.log("RFTools Detected EnderIO: enabling support");
+        }
+        mfr = Loader.isModLoaded("MineFactoryReloaded");
+        if (mfr) {
+            RFTools.log("RFTools Detected MineFactory Reloaded: enabling support");
+        }
         jabba = Loader.isModLoaded("JABBA");
+        if (jabba) {
+            RFTools.log("RFTools Detected JABBA: enabling support");
+        }
         mekanism = Loader.isModLoaded("Mekanism");
+        if (mekanism) {
+            RFTools.log("RFTools Detected Mekanism: enabling support");
+        }
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
+        if (draconicevolution) {
+            RFTools.log("RFTools Detected Draconic Evolution: enabling support");
+        }
 
         if (Loader.isModLoaded("ComputerCraft")) {
+            RFTools.log("RFTools Detected ComputerCraft: enabling support");
             ComputerCraftHelper.register();
         }
     }
