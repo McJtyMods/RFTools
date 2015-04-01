@@ -170,7 +170,7 @@
 
         [ "Liquid", "pyrotheum", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "redstone", 30000, 10000, 800, 5, 0 ],
-        [ "Liquid", "cryotheum", 30000, 10000, 800, 5, 0 ],
+        [ "Liquid", "cryotheum", 8000, 3000, 300, 3, 0 ],
         [ "Liquid", "emerald.liquid", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "ender", 30000, 10000, 1000, 5, 0 ],
         [ "Liquid", "lava", 10000, 1500, 250, 3, 0 ],
