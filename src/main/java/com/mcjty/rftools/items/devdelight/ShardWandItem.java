@@ -2,13 +2,12 @@ package com.mcjty.rftools.items.devdelight;
 
 import com.mcjty.entity.GenericTileEntity;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 

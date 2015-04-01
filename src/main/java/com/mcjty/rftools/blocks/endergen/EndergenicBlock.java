@@ -5,7 +5,7 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.Achievements;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import com.mcjty.rftools.blocks.ModBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

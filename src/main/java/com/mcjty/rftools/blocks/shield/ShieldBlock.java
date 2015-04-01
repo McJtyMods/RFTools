@@ -4,7 +4,7 @@ import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
 import com.mcjty.rftools.blocks.BlockTools;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;

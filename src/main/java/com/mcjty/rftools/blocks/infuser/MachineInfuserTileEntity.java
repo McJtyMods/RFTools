@@ -2,7 +2,7 @@ package com.mcjty.rftools.blocks.infuser;
 
 import com.mcjty.container.InventoryHelper;
 import com.mcjty.entity.GenericEnergyHandlerTileEntity;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import com.mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import com.mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;

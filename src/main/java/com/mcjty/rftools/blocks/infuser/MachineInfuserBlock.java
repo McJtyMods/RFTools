@@ -2,7 +2,7 @@ package com.mcjty.rftools.blocks.infuser;
 
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;

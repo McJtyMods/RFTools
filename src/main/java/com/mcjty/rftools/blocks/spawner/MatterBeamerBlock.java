@@ -3,7 +3,7 @@ package com.mcjty.rftools.blocks.spawner;
 import com.mcjty.container.GenericContainerBlock;
 import com.mcjty.container.WrenchUsage;
 import com.mcjty.rftools.RFTools;
-import com.mcjty.rftools.blocks.Infusable;
+import com.mcjty.api.Infusable;
 import com.mcjty.varia.Coordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
