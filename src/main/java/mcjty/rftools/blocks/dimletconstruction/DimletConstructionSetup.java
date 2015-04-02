@@ -41,6 +41,16 @@ public class DimletConstructionSetup {
     }
 
     public static void setupCrafting() {
+        String[] syringeMatcher = new String[] { "level", "mobName" };
+        String[] pickMatcher = new String[] { "ench" };
+
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{EnvironmentalSetup.createMobSyringe("Iron Golem"), EnvironmentalSetup.createMobSyringe("Enderman"), EnvironmentalSetup.createMobSyringe("Snowman"),
+                        EnvironmentalSetup.createMobSyringe("Bat"), EnvironmentalSetup.createMobSyringe("Ocelot"), EnvironmentalSetup.createMobSyringe("Squid"),
+                        EnvironmentalSetup.createMobSyringe("Wolf"), EnvironmentalSetup.createMobSyringe("Zombie Pigman"), EnvironmentalSetup.createMobSyringe("Mooshroom")},
+                new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
+                new ItemStack(ModItems.peaceEssenceItem)));
+
         GameRegistry.addRecipe(new ItemStack(dimletWorkbenchBlock), "gug", "cMc", "grg", 'M', ModBlocks.machineFrame, 'u', ModItems.unknownDimlet, 'c', Blocks.crafting_table,
                 'r', Items.redstone, 'g', Items.gold_nugget);
 
@@ -53,20 +63,6 @@ public class DimletConstructionSetup {
         GameRegistry.addShapelessRecipe(new ItemStack(liquidAbsorberBlock), new ItemStack(liquidAbsorberBlock));
         GameRegistry.addRecipe(new ItemStack(timeAbsorberBlock), "cwc", "wMw", "cwc", 'M', ModBlocks.machineFrame, 'c', Items.clock, 'w', Blocks.wool);
         GameRegistry.addShapelessRecipe(new ItemStack(timeAbsorberBlock), new ItemStack(timeAbsorberBlock));
-    }
-
-    public static void initDimletConstructionCrafting() {
-        String[] syringeMatcher = new String[] { "level", "mobName" };
-        String[] pickMatcher = new String[] { "ench" };
-
-        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                new ItemStack[]{EnvironmentalSetup.createMobSyringe("Iron Golem"), EnvironmentalSetup.createMobSyringe("Enderman"), EnvironmentalSetup.createMobSyringe("Snowman"),
-                        EnvironmentalSetup.createMobSyringe("Bat"), EnvironmentalSetup.createMobSyringe("Ocelot"), EnvironmentalSetup.createMobSyringe("Squid"),
-                        EnvironmentalSetup.createMobSyringe("Wolf"), EnvironmentalSetup.createMobSyringe("Zombie Pigman"), EnvironmentalSetup.createMobSyringe("Mooshroom")},
-                new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
-                new ItemStack(ModItems.peaceEssenceItem)));
-
-        setupCrafting();
 
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
 

@@ -32,8 +32,9 @@ public final class ModCrafting {
     }
 
     public static void init() {
-        initItemCrafting();
         intBaseCrafting();
+        initItemCrafting();
+
         MonitorSetup.setupCrafting();
         CrafterSetup.setupCrafting();
         MachineInfuserSetup.setupCrafting();
@@ -48,8 +49,7 @@ public final class ModCrafting {
         EnvironmentalSetup.setupCrafting();
         SpawnerSetup.setupCrafting();
         ScreenSetup.setupCrafting();
-        DimletConstructionSetup.initDimletConstructionCrafting();
-        EnvironmentalSetup.initEnvModuleCrafting();
+        DimletConstructionSetup.setupCrafting();
     }
 
     private static void initItemCrafting() {
@@ -60,11 +60,6 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualDimensionItem), "r r", " b ", "r r", 'r', Items.redstone, 'b', Items.book);
 
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator);
-        GameRegistry.addRecipe(new ItemStack(ModItems.phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', ModItems.dimensionalShard);
-
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
     }
 
     private static void intBaseCrafting() {

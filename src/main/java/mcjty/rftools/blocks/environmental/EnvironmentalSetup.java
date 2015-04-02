@@ -29,9 +29,7 @@ public class EnvironmentalSetup {
     public static void setupCrafting() {
         GameRegistry.addRecipe(new ItemStack(environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
                 'D', Blocks.diamond_block, 'E', Blocks.emerald_block, 'G', Blocks.gold_block, 'I', Blocks.iron_block);
-    }
 
-    public static void initEnvModuleCrafting() {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
         String[] syringeMatcher = new String[] { "level", "mobName" };
