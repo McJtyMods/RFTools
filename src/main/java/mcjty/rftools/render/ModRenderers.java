@@ -10,6 +10,8 @@ import mcjty.rftools.blocks.screens.ScreenRenderer;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import mcjty.rftools.blocks.shield.SolidShieldBlock;
 import mcjty.rftools.blocks.shield.SolidShieldBlockRenderer;
+import mcjty.rftools.blocks.spaceprojector.ProxyBlock;
+import mcjty.rftools.blocks.spaceprojector.ProxyBlockRenderer;
 import mcjty.rftools.blocks.spawner.MatterBeamerRenderer;
 import mcjty.rftools.blocks.spawner.MatterBeamerTileEntity;
 import mcjty.rftools.blocks.teleporter.BeamRenderer;
@@ -25,6 +27,9 @@ public final class ModRenderers {
 
         SolidShieldBlock.RENDERID_SHIELDBLOCK = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(SolidShieldBlock.RENDERID_SHIELDBLOCK, new SolidShieldBlockRenderer());
+
+        ProxyBlock.RENDERID_PROXYBLOCK = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(ProxyBlock.RENDERID_PROXYBLOCK, new ProxyBlockRenderer());
 
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(MatterBeamerTileEntity.class, new MatterBeamerRenderer());

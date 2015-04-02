@@ -13,6 +13,7 @@ import mcjty.rftools.blocks.monitor.MonitorSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
+import mcjty.rftools.blocks.spaceprojector.SpaceProjectorSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.special.*;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
@@ -41,6 +42,7 @@ public final class ModBlocks {
         LogicBlockSetup.setupBlocks();
         ShieldSetup.setupBlocks();
         DimletConstructionSetup.setupBlocks();
+        SpaceProjectorSetup.setupBlocks();
     }
 
     private static void initBaseBlocks() {

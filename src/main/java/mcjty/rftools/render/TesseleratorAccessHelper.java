@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.shield;
+package mcjty.rftools.render;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.client.renderer.Tessellator;

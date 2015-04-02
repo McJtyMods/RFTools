@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.render.DefaultISBRH;
+import mcjty.rftools.render.TesseleratorAccessHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
