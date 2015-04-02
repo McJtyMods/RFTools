@@ -1,7 +1,7 @@
 package mcjty.rftools.items.dimlets.types;
 
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
@@ -117,7 +117,7 @@ public class LiquidDimletType implements IDimletType {
     private static boolean isValidLiquidEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
         Block essenceBlock = BlockTools.getBlock(stackEssence);
 
-        if (essenceBlock != ModBlocks.liquidAbsorberBlock) {
+        if (essenceBlock != DimletConstructionSetup.liquidAbsorberBlock) {
             return false;
         }
         if (essenceCompound == null) {

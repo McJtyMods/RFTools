@@ -1,6 +1,6 @@
 package mcjty.rftools;
 
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.DimensionSyncPacket;
@@ -52,7 +52,7 @@ public class PlayerEvents {
             Item item = event.crafting.getItem();
             if (item instanceof ItemBlock) {
                 ItemBlock itemBlock = (ItemBlock) item;
-                if (itemBlock.field_150939_a == ModBlocks.endergenicBlock) {
+                if (itemBlock.field_150939_a == EndergenicSetup.endergenicBlock) {
                     Achievements.trigger(event.player, Achievements.hardPower);
                 }
             }

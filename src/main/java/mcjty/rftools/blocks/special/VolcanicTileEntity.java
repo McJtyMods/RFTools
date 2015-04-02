@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.special;
 
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -45,7 +44,7 @@ public class VolcanicTileEntity extends GenericTileEntity {
                 int oy = yCoord + direction.offsetY;
                 int oz = zCoord + direction.offsetZ;
                 Block block = worldObj.getBlock(ox, oy, oz);
-                if (block == Blocks.lava || block == ModBlocks.volcanicBlock || block == ModBlocks.volcanicCoreBlock || block == Blocks.flowing_lava || block == Blocks.fire) {
+                if (block == Blocks.lava || block == SpecialSetup.volcanicBlock || block == SpecialSetup.volcanicCoreBlock || block == Blocks.flowing_lava || block == Blocks.fire) {
                     cntHot++;
                 } else if (block == Blocks.water) {
                     worldObj.setBlock(ox, oy, oz, Blocks.cobblestone, 0, 2);
@@ -174,7 +173,7 @@ public class VolcanicTileEntity extends GenericTileEntity {
                 }
 
                 if (meta >= 0) {
-                    worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, meta, 2);
+                    worldObj.setBlock(x, y, z, SpecialSetup.volcanicBlock, meta, 2);
                 }
             }
         }

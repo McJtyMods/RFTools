@@ -1,8 +1,9 @@
 package mcjty.rftools.dimension.world;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
+import mcjty.rftools.blocks.special.SpecialSetup;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -44,7 +45,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
-        addOreSpawn(ModBlocks.dimensionalShardBlock, (byte)0, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
+        addOreSpawn(DimletSetup.dimensionalShardBlock, (byte)0, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
 
         if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
@@ -75,7 +76,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     if (WorldGenerationTools.isSolid(world, x, y, z)) {
                         cntsolid++;
                         if (cntsolid > 5) {
-                            world.setBlock(x, y, z, ModBlocks.volcanicCoreBlock, 0, 3);
+                            world.setBlock(x, y, z, SpecialSetup.volcanicCoreBlock, 0, 3);
                             RFTools.log("Spawned volcano block at " + x + "," + y + "," + z);
                             break;
                         }
@@ -112,7 +113,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
         for (int x = -bounds ; x <= bounds ; x++) {
             for (int z = -bounds ; z <= bounds ; z++) {
                 if (x == 0 && z == 0) {
-                    world.setBlock(x+midx, starty, z+midz, ModBlocks.matterReceiverBlock, 0, 2);
+                    world.setBlock(x+midx, starty, z+midz, TeleporterSetup.matterReceiverBlock, 0, 2);
                     MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x+midx, starty, z+midz);
                     matterReceiverTileEntity.modifyEnergyStored(TeleportConfiguration.RECEIVER_MAXENERGY);
                     matterReceiverTileEntity.setName(information.getName());
@@ -183,10 +184,10 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         Block cornerBlock;
         switch (random.nextInt(3)) {
-            case 0: cornerBlock = ModBlocks.dimensionalCrossBlock; break;
-            case 1: cornerBlock = ModBlocks.dimensionalPattern1Block; break;
-            case 2: cornerBlock = ModBlocks.dimensionalPattern2Block; break;
-            default: cornerBlock = ModBlocks.dimensionalCross2Block;
+            case 0: cornerBlock = DimletSetup.dimensionalCrossBlock; break;
+            case 1: cornerBlock = DimletSetup.dimensionalPattern1Block; break;
+            case 2: cornerBlock = DimletSetup.dimensionalPattern2Block; break;
+            default: cornerBlock = DimletSetup.dimensionalCross2Block;
         }
 
         Block buildingBlock = Blocks.stained_hardened_clay;
@@ -199,7 +200,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
             color = 11;
         } else {
             color = 0;
-            buildingBlock = ModBlocks.dimensionalBlankBlock;
+            buildingBlock = DimletSetup.dimensionalBlankBlock;
         }
 
         // Spawn the building

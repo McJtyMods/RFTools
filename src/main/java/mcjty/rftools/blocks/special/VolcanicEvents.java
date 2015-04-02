@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.special;
 
-import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -60,21 +59,21 @@ public class VolcanicEvents {
             if (y <= 0 || y >= worldObj.getHeight()-1) {
                 return;
             }
-            worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, 8, 3);
+            worldObj.setBlock(x, y, z, SpecialSetup.volcanicBlock, 8, 3);
             if (random.nextFloat() < .7) {
-                worldObj.setBlock(x-1, y, z, ModBlocks.volcanicBlock, 8, 3);
+                worldObj.setBlock(x-1, y, z, SpecialSetup.volcanicBlock, 8, 3);
             }
             if (random.nextFloat() < .7) {
-                worldObj.setBlock(x+1, y, z, ModBlocks.volcanicBlock, 8, 3);
+                worldObj.setBlock(x+1, y, z, SpecialSetup.volcanicBlock, 8, 3);
             }
             if (random.nextFloat() < .7) {
-                worldObj.setBlock(x, y, z-1, ModBlocks.volcanicBlock, 8, 3);
+                worldObj.setBlock(x, y, z-1, SpecialSetup.volcanicBlock, 8, 3);
             }
             if (random.nextFloat() < .7) {
-                worldObj.setBlock(x, y, z+1, ModBlocks.volcanicBlock, 8, 3);
+                worldObj.setBlock(x, y, z+1, SpecialSetup.volcanicBlock, 8, 3);
             }
             if (random.nextFloat() < .7) {
-                worldObj.setBlock(x, y+1, z, ModBlocks.volcanicBlock, 8, 3);
+                worldObj.setBlock(x, y+1, z, SpecialSetup.volcanicBlock, 8, 3);
             }
         }
 

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.special;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -38,7 +37,7 @@ public class VolcanicRumbleSound extends MovingSound {
     @Override
     public void update() {
         Block block = world.getBlock(x, y, z);
-        if (block != ModBlocks.volcanicCoreBlock) {
+        if (block != SpecialSetup.volcanicCoreBlock) {
             donePlaying = true;
             return;
         }

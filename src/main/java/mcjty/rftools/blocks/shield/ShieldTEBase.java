@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shield;
 import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.entity.SyncedValueList;
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.Argument;
@@ -384,10 +383,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
             return Blocks.air;
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
-            return ModBlocks.invisibleShieldBlock;
+            return ShieldSetup.invisibleShieldBlock;
         }
 
-        return ModBlocks.solidShieldBlock;
+        return ShieldSetup.solidShieldBlock;
     }
 
     private int calculateDamageBits() {
@@ -590,10 +589,10 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
         for (Coordinate c : shieldBlocks) {
             Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
             if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ModBlocks.shieldTemplateBlock, 0, 2);
+                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, 0, 2);
             } else {
                 // No room, just spawn the block
-                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ModBlocks.shieldTemplateBlock));
+                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock));
             }
         }
         shieldComposed = false;
@@ -621,7 +620,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
             if (yy >= 0 && yy < worldObj.getHeight()) {
                 Coordinate c = new Coordinate(xx, yy, zz);
                 if (!coordinateSet.contains(c)) {
-                    if (ModBlocks.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                    if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
                         coordinateSet.add(c);
                         findTemplateBlocks(coordinateSet, xx, yy, zz);
                     }

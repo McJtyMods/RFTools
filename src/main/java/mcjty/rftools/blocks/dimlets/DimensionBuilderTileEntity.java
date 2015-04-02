@@ -4,7 +4,6 @@ import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -58,7 +57,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
     private boolean isCreative() {
         if (creative == -1) {
             Block block = worldObj.getBlock(xCoord, yCoord, zCoord);
-            if (ModBlocks.creativeDimensionBuilderBlock.equals(block)) {
+            if (DimletSetup.creativeDimensionBuilderBlock.equals(block)) {
                 creative = 1;
             } else {
                 creative = 0;

@@ -1,6 +1,10 @@
 package mcjty.rftools;
 
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
+import mcjty.rftools.blocks.endergen.EndergenicSetup;
+import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,28 +34,28 @@ public class Achievements {
         theFirstStep = new Achievement("achievement.theFirstStep", "theFirstStep", 0, 0, new ItemStack(ModItems.unknownDimlet), null).registerStat();
         achievements.add(theFirstStep);
 
-        researching = new Achievement("achievement.researching", "researching", 2, 2, new ItemStack(ModBlocks.dimletResearcherBlock), theFirstStep).registerStat();
+        researching = new Achievement("achievement.researching", "researching", 2, 2, new ItemStack(DimletSetup.dimletResearcherBlock), theFirstStep).registerStat();
         achievements.add(researching);
 
         smallBits = new Achievement("achievement.smallBits", "smallBits", 3, 3, new ItemStack(ModItems.dimletBaseItem), researching).registerStat();
         achievements.add(smallBits);
 
-        dimletMaster = new Achievement("achievement.dimletMaster", "dimletMaster", 4, 3, new ItemStack(ModBlocks.dimletWorkbenchBlock), smallBits).registerStat();
+        dimletMaster = new Achievement("achievement.dimletMaster", "dimletMaster", 4, 3, new ItemStack(DimletConstructionSetup.dimletWorkbenchBlock), smallBits).registerStat();
         achievements.add(dimletMaster);
 
-        scrambled = new Achievement("achievement.scrambled", "scrambled", 3, 1, new ItemStack(ModBlocks.dimensionEnscriberBlock), researching).registerStat();
+        scrambled = new Achievement("achievement.scrambled", "scrambled", 3, 1, new ItemStack(DimletSetup.dimensionEnscriberBlock), researching).registerStat();
         achievements.add(scrambled);
 
         firstDimension = new Achievement("achievement.firstDimension", "firstDimension", 0, 4, new ItemStack(ModItems.realizedDimensionTab), researching).registerStat();
         achievements.add(firstDimension);
 
-        firstTeleport = new Achievement("achievement.firstTeleport", "firstTeleport", 0, -2, new ItemStack(ModBlocks.matterTransmitterBlock), null).registerStat();
+        firstTeleport = new Achievement("achievement.firstTeleport", "firstTeleport", 0, -2, new ItemStack(TeleporterSetup.matterTransmitterBlock), null).registerStat();
         achievements.add(firstTeleport);
 
-        hardPower = new Achievement("achievement.hardPower", "hardPower", 2, -2, new ItemStack(ModBlocks.endergenicBlock), null).registerStat();
+        hardPower = new Achievement("achievement.hardPower", "hardPower", 2, -2, new ItemStack(EndergenicSetup.endergenicBlock), null).registerStat();
         achievements.add(hardPower);
 
-        clearVision = new Achievement("achievement.clearVision", "clearVision", 4, -2, new ItemStack(ModBlocks.screenBlock), null).registerStat();
+        clearVision = new Achievement("achievement.clearVision", "clearVision", 4, -2, new ItemStack(ScreenSetup.screenBlock), null).registerStat();
         achievements.add(clearVision);
 
         specialOres = new Achievement("achievement.specialOres", "specialOres", -2, 4, new ItemStack(ModItems.dimensionalShard), firstDimension).registerStat();

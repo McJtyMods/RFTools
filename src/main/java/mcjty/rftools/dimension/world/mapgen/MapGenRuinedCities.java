@@ -1,6 +1,6 @@
 package mcjty.rftools.dimension.world.mapgen;
 
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
 import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
@@ -148,12 +148,12 @@ public class MapGenRuinedCities {
         }
         blockMap = new HashMap<Character, BlockMeta>();
         blockMap.put(' ', null);
-        blockMap.put('B', new BlockMeta(ModBlocks.dimensionalBlock, 0));
-        blockMap.put('b', new BlockMeta(ModBlocks.dimensionalBlankBlock, 0));
-        blockMap.put('p', new BlockMeta(ModBlocks.dimensionalCrossBlock, 2));
-        blockMap.put('P', new BlockMeta(ModBlocks.dimensionalCrossBlock, 0));
-        blockMap.put('X', new BlockMeta(ModBlocks.dimensionalPattern1Block, 0));
-        blockMap.put('x', new BlockMeta(ModBlocks.dimensionalPattern2Block, 0));
+        blockMap.put('B', new BlockMeta(DimletSetup.dimensionalBlock, 0));
+        blockMap.put('b', new BlockMeta(DimletSetup.dimensionalBlankBlock, 0));
+        blockMap.put('p', new BlockMeta(DimletSetup.dimensionalCrossBlock, 2));
+        blockMap.put('P', new BlockMeta(DimletSetup.dimensionalCrossBlock, 0));
+        blockMap.put('X', new BlockMeta(DimletSetup.dimensionalPattern1Block, 0));
+        blockMap.put('x', new BlockMeta(DimletSetup.dimensionalPattern2Block, 0));
         blockMap.put('g', new BlockMeta(Blocks.stained_glass, 11));
     }
 

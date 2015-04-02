@@ -1,193 +1,46 @@
 package mcjty.rftools.blocks;
 
-import mcjty.container.GenericItemBlock;
-import mcjty.rftools.blocks.crafter.CrafterBlock;
-import mcjty.rftools.blocks.crafter.CrafterBlockTileEntity1;
-import mcjty.rftools.blocks.crafter.CrafterBlockTileEntity2;
-import mcjty.rftools.blocks.crafter.CrafterBlockTileEntity3;
-import mcjty.rftools.blocks.dimletconstruction.*;
-import mcjty.rftools.blocks.dimlets.*;
-import mcjty.rftools.blocks.endergen.*;
-import mcjty.rftools.blocks.environmental.EnvironmentalControllerBlock;
-import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
-import mcjty.rftools.blocks.infuser.MachineInfuserBlock;
-import mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
-import mcjty.rftools.blocks.itemfilter.DimletFilterBlock;
-import mcjty.rftools.blocks.itemfilter.DimletFilterTileEntity;
-import mcjty.rftools.blocks.itemfilter.ItemFilterBlock;
-import mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity;
-import mcjty.rftools.blocks.logic.*;
-import mcjty.rftools.blocks.monitor.LiquidMonitorBlock;
-import mcjty.rftools.blocks.monitor.LiquidMonitorBlockTileEntity;
-import mcjty.rftools.blocks.monitor.RFMonitorBlock;
-import mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
-import mcjty.rftools.blocks.relay.RelayBlock;
-import mcjty.rftools.blocks.relay.RelayTileEntity;
-import mcjty.rftools.blocks.screens.ScreenBlock;
-import mcjty.rftools.blocks.screens.ScreenControllerBlock;
-import mcjty.rftools.blocks.screens.ScreenControllerTileEntity;
-import mcjty.rftools.blocks.screens.ScreenTileEntity;
-import mcjty.rftools.blocks.shards.*;
-import mcjty.rftools.blocks.shield.*;
-import mcjty.rftools.blocks.spawner.MatterBeamerBlock;
-import mcjty.rftools.blocks.spawner.MatterBeamerTileEntity;
-import mcjty.rftools.blocks.spawner.SpawnerBlock;
-import mcjty.rftools.blocks.spawner.SpawnerTileEntity;
-import mcjty.rftools.blocks.special.VolcanicBlock;
-import mcjty.rftools.blocks.special.VolcanicCoreBlock;
-import mcjty.rftools.blocks.special.VolcanicCoreTileEntity;
-import mcjty.rftools.blocks.special.VolcanicTileEntity;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerBlock;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
-import mcjty.rftools.blocks.teleporter.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
+import mcjty.rftools.blocks.endergen.EndergenicSetup;
+import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
+import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
+import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
+import mcjty.rftools.blocks.logic.LogicBlockSetup;
+import mcjty.rftools.blocks.monitor.MonitorSetup;
+import mcjty.rftools.blocks.relay.RelaySetup;
+import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.shield.ShieldSetup;
+import mcjty.rftools.blocks.spawner.SpawnerSetup;
+import mcjty.rftools.blocks.special.*;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
+import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 
 public final class ModBlocks {
     public static MachineFrame machineFrame;
     public static MachineBase machineBase;
 
-    public static RFMonitorBlock monitorBlock;
-    public static LiquidMonitorBlock liquidMonitorBlock;
-
-    public static CrafterBlock crafterBlock1;
-    public static CrafterBlock crafterBlock2;
-    public static CrafterBlock crafterBlock3;
-
-    public static StorageScannerBlock storageScannerBlock;
-
-    public static RelayBlock relayBlock;
-
-    public static ItemFilterBlock itemFilterBlock;
-    public static DimletFilterBlock dimletFilterBlock;
-
-    public static MatterTransmitterBlock matterTransmitterBlock;
-    public static MatterReceiverBlock matterReceiverBlock;
-    public static DialingDeviceBlock dialingDeviceBlock;
-    public static DestinationAnalyzerBlock destinationAnalyzerBlock;
-    public static MatterBoosterBlock matterBoosterBlock;
-
-    public static EndergenicBlock endergenicBlock;
-    public static PearlInjectorBlock pearlInjectorBlock;
-    public static EnderMonitorBlock enderMonitorBlock;
-
-    public static SequencerBlock sequencerBlock;
-    public static TimerBlock timerBlock;
-    public static CounterBlock counterBlock;
-    public static RedstoneTransmitterBlock redstoneTransmitterBlock;
-    public static RedstoneReceiverBlock redstoneReceiverBlock;
-
-    public static ShieldBlock shieldBlock;
-    public static ShieldBlock shieldBlock2;
-    public static ShieldBlock shieldBlock3;
-    public static InvisibleShieldBlock invisibleShieldBlock;
-    public static SolidShieldBlock solidShieldBlock;
-    public static ShieldTemplateBlock shieldTemplateBlock;
-
-    public static MachineInfuserBlock machineInfuserBlock;
-
-    public static DimletResearcherBlock dimletResearcherBlock;
-    public static DimletScramblerBlock dimletScramblerBlock;
-    public static DimletWorkbenchBlock dimletWorkbenchBlock;
-    public static DimensionEnscriberBlock dimensionEnscriberBlock;
-    public static DimensionBuilderBlock dimensionBuilderBlock;
-    public static DimensionBuilderBlock creativeDimensionBuilderBlock;
-    public static DimensionEditorBlock dimensionEditorBlock;
-    public static DimensionMonitorBlock dimensionMonitorBlock;
-
-    public static BiomeAbsorberBlock biomeAbsorberBlock;
-    public static MaterialAbsorberBlock materialAbsorberBlock;
-    public static LiquidAbsorberBlock liquidAbsorberBlock;
-    public static TimeAbsorberBlock timeAbsorberBlock;
-
-    public static DimensionalShardBlock dimensionalShardBlock;
-    public static DimensionalBlankBlock dimensionalBlankBlock;
-    public static DimensionalBlock dimensionalBlock;
-    public static DimensionalSmallBlocks dimensionalSmallBlocks;
-    public static DimensionalCrossBlock dimensionalCrossBlock;
-    public static DimensionalCross2Block dimensionalCross2Block;
-    public static DimensionalPattern1Block dimensionalPattern1Block;
-    public static DimensionalPattern2Block dimensionalPattern2Block;
-    public static ActivityProbeBlock activityProbeBlock;
-    public static EnergyExtractorBlock energyExtractorBlock;
-
-    public static ScreenBlock screenBlock;
-    public static ScreenControllerBlock screenControllerBlock;
-
-    public static EnvironmentalControllerBlock environmentalControllerBlock;
-
-    public static SpawnerBlock spawnerBlock;
-    public static MatterBeamerBlock matterBeamerBlock;
-
-    public static VolcanicCoreBlock volcanicCoreBlock;
-    public static VolcanicBlock volcanicBlock;
-
     public static void init() {
-        monitorBlock = new RFMonitorBlock();
-        GameRegistry.registerBlock(monitorBlock, GenericItemBlock.class, "rfMonitorBlock");
-        GameRegistry.registerTileEntity(RFMonitorBlockTileEntity.class, "RFMonitorTileEntity");
-
-        liquidMonitorBlock = new LiquidMonitorBlock();
-        GameRegistry.registerBlock(liquidMonitorBlock, GenericItemBlock.class, "liquidMonitorBlock");
-        GameRegistry.registerTileEntity(LiquidMonitorBlockTileEntity.class, "LiquidMonitorBlockTileEntity");
-
-        initCrafterBlocks();
-
-        relayBlock = new RelayBlock();
-        GameRegistry.registerBlock(relayBlock, GenericItemBlock.class, "relayBlock");
-        GameRegistry.registerTileEntity(RelayTileEntity.class, "RelayTileEntity");
-
-        itemFilterBlock = new ItemFilterBlock();
-        GameRegistry.registerBlock(itemFilterBlock, GenericItemBlock.class, "itemFilterBlock");
-        GameRegistry.registerTileEntity(ItemFilterTileEntity.class, "ItemFilterTileEntity");
-
-        dimletFilterBlock = new DimletFilterBlock();
-        GameRegistry.registerBlock(dimletFilterBlock, GenericItemBlock.class, "dimletFilterBlock");
-        GameRegistry.registerTileEntity(DimletFilterTileEntity.class, "DimletFilterTileEntity");
-
-        storageScannerBlock = new StorageScannerBlock();
-        GameRegistry.registerBlock(storageScannerBlock, GenericItemBlock.class, "storageScannerBlock");
-        GameRegistry.registerTileEntity(StorageScannerTileEntity.class, "StorageScannerTileEntity");
-
-        machineInfuserBlock = new MachineInfuserBlock();
-        GameRegistry.registerBlock(machineInfuserBlock, GenericItemBlock.class, "machineInfuserBlock");
-        GameRegistry.registerTileEntity(MachineInfuserTileEntity.class, "MachineInfuserTileEntity");
-
-        environmentalControllerBlock = new EnvironmentalControllerBlock();
-        GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
-        GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
-
-        spawnerBlock = new SpawnerBlock();
-        GameRegistry.registerBlock(spawnerBlock, GenericItemBlock.class, "spawnerBlock");
-        GameRegistry.registerTileEntity(SpawnerTileEntity.class, "SpawnerTileEntity");
-        matterBeamerBlock = new MatterBeamerBlock();
-        GameRegistry.registerBlock(matterBeamerBlock, GenericItemBlock.class, "matterBeamerBlock");
-        GameRegistry.registerTileEntity(MatterBeamerTileEntity.class, "MatterBeamerTileEntity");
-
-        volcanicCoreBlock = new VolcanicCoreBlock();
-        GameRegistry.registerBlock(volcanicCoreBlock, "volcanicCoreBlock");
-        GameRegistry.registerTileEntity(VolcanicCoreTileEntity.class, "VolcanicCoreTileEntity");
-
-        volcanicBlock = new VolcanicBlock();
-        GameRegistry.registerBlock(volcanicBlock, "volcanicBlock");
-        GameRegistry.registerTileEntity(VolcanicTileEntity.class, "VolcanicTileEntity");
-
-        initScreenBlocks();
-        initDimletBlocks();
-        initTeleporterBlocks();
-        initEndergenicBlocks();
-        initLogicBlocks();
-        initShieldBlocks();
         initBaseBlocks();
-    }
 
-    private static void initScreenBlocks() {
-        screenBlock = new ScreenBlock("screenBlock", ScreenTileEntity.class);
-        GameRegistry.registerBlock(screenBlock, GenericItemBlock.class, "screenBlock");
-        GameRegistry.registerTileEntity(ScreenTileEntity.class, "ScreenTileEntity");
-
-        screenControllerBlock = new ScreenControllerBlock();
-        GameRegistry.registerBlock(screenControllerBlock, GenericItemBlock.class, "screenControllerBlock");
-        GameRegistry.registerTileEntity(ScreenControllerTileEntity.class, "ScreenControllerTileEntity");
+        MonitorSetup.setupBlocks();
+        CrafterSetup.setupBlocks();
+        RelaySetup.setupBlocks();
+        ItemFilterSetup.setupBlocks();
+        StorageScannerSetup.setupBlocks();
+        MachineInfuserSetup.setupBlocks();
+        EnvironmentalSetup.setupBlocks();
+        SpawnerSetup.setupBlocks();
+        SpecialSetup.setupBlocks();
+        ScreenSetup.setupBlocks();
+        DimletSetup.setupBlocks();
+        TeleporterSetup.setupBlocks();
+        EndergenicSetup.setupBlocks();
+        LogicBlockSetup.setupBlocks();
+        ShieldSetup.setupBlocks();
+        DimletConstructionSetup.setupBlocks();
     }
 
     private static void initBaseBlocks() {
@@ -198,171 +51,4 @@ public final class ModBlocks {
         GameRegistry.registerBlock(machineBase, "machineBase");
     }
 
-    private static void initDimletBlocks() {
-        dimletResearcherBlock = new DimletResearcherBlock();
-        GameRegistry.registerBlock(dimletResearcherBlock, GenericItemBlock.class, "dimletResearcherBlock");
-        GameRegistry.registerTileEntity(DimletResearcherTileEntity.class, "DimletResearcherTileEntity");
-
-        dimletScramblerBlock = new DimletScramblerBlock();
-        GameRegistry.registerBlock(dimletScramblerBlock, GenericItemBlock.class, "dimletScramblerBlock");
-        GameRegistry.registerTileEntity(DimletScramblerTileEntity.class, "DimletScramblerTileEntity");
-
-        dimletWorkbenchBlock = new DimletWorkbenchBlock();
-        GameRegistry.registerBlock(dimletWorkbenchBlock, GenericItemBlock.class, "dimletWorkbenchBlock");
-        GameRegistry.registerTileEntity(DimletWorkbenchTileEntity.class, "DimletWorkbenchTileEntity");
-
-        dimensionEnscriberBlock = new DimensionEnscriberBlock();
-        GameRegistry.registerBlock(dimensionEnscriberBlock, GenericItemBlock.class, "dimensionEnscriberBlock");
-        GameRegistry.registerTileEntity(DimensionEnscriberTileEntity.class, "DimensionEnscriberTileEntity");
-
-        dimensionBuilderBlock = new DimensionBuilderBlock(false, "dimensionBuilderBlock");
-        GameRegistry.registerBlock(dimensionBuilderBlock, GenericItemBlock.class, "dimensionBuilderBlock");
-        GameRegistry.registerTileEntity(DimensionBuilderTileEntity.class, "DimensionBuilderTileEntity");
-
-        creativeDimensionBuilderBlock = new DimensionBuilderBlock(true, "creativeDimensionBuilderBlock");
-        GameRegistry.registerBlock(creativeDimensionBuilderBlock, GenericItemBlock.class, "creativeDimensionBuilderBlock");
-
-        dimensionEditorBlock = new DimensionEditorBlock();
-        GameRegistry.registerBlock(dimensionEditorBlock, GenericItemBlock.class, "dimensionEditorBlock");
-        GameRegistry.registerTileEntity(DimensionEditorTileEntity.class, "DimensionEditorTileEntity");
-
-        dimensionMonitorBlock = new DimensionMonitorBlock();
-        GameRegistry.registerBlock(dimensionMonitorBlock, GenericItemBlock.class, "dimensionMonitorBlock");
-        GameRegistry.registerTileEntity(DimensionMonitorTileEntity.class, "DimensionMonitorTileEntity");
-
-        dimensionalShardBlock = new DimensionalShardBlock();
-        GameRegistry.registerBlock(dimensionalShardBlock, "dimensionalShardBlock");
-        dimensionalBlankBlock = new DimensionalBlankBlock();
-        GameRegistry.registerBlock(dimensionalBlankBlock, "dimensionalBlankBlock");
-        dimensionalBlock = new DimensionalBlock();
-        GameRegistry.registerBlock(dimensionalBlock, "dimensionalBlock");
-        dimensionalSmallBlocks = new DimensionalSmallBlocks();
-        GameRegistry.registerBlock(dimensionalSmallBlocks, "dimensionalSmallBlocks");
-        dimensionalCrossBlock = new DimensionalCrossBlock();
-        GameRegistry.registerBlock(dimensionalCrossBlock, "dimensionalCrossBlock");
-        dimensionalCross2Block = new DimensionalCross2Block();
-        GameRegistry.registerBlock(dimensionalCross2Block, "dimensionalCross2Block");
-        dimensionalPattern1Block = new DimensionalPattern1Block();
-        GameRegistry.registerBlock(dimensionalPattern1Block, "dimensionalPattern1Block");
-        dimensionalPattern2Block = new DimensionalPattern2Block();
-        GameRegistry.registerBlock(dimensionalPattern2Block, "dimensionalPattern2Block");
-
-        activityProbeBlock = new ActivityProbeBlock();
-        GameRegistry.registerBlock(activityProbeBlock, "activityProbeBlock");
-
-        energyExtractorBlock = new EnergyExtractorBlock();
-        GameRegistry.registerBlock(energyExtractorBlock, GenericItemBlock.class, "energyExtractorBlock");
-        GameRegistry.registerTileEntity(EnergyExtractorTileEntity.class, "EnergyExtractorTileEntity");
-
-        biomeAbsorberBlock = new BiomeAbsorberBlock();
-        GameRegistry.registerBlock(biomeAbsorberBlock, GenericItemBlock.class, "biomeAbsorberBlock");
-        GameRegistry.registerTileEntity(BiomeAbsorberTileEntity.class, "BiomeAbsorberTileEntity");
-
-        materialAbsorberBlock = new MaterialAbsorberBlock();
-        GameRegistry.registerBlock(materialAbsorberBlock, GenericItemBlock.class, "materialAbsorberBlock");
-        GameRegistry.registerTileEntity(MaterialAbsorberTileEntity.class, "MaterialAbsorberTileEntity");
-
-        liquidAbsorberBlock = new LiquidAbsorberBlock();
-        GameRegistry.registerBlock(liquidAbsorberBlock, GenericItemBlock.class, "liquidAbsorberBlock");
-        GameRegistry.registerTileEntity(LiquidAbsorberTileEntity.class, "LiquidAbsorberTileEntity");
-
-        timeAbsorberBlock = new TimeAbsorberBlock();
-        GameRegistry.registerBlock(timeAbsorberBlock, GenericItemBlock.class, "timeAbsorberBlock");
-        GameRegistry.registerTileEntity(TimeAbsorberTileEntity.class, "TimeAbsorberTileEntity");
-    }
-
-    private static void initCrafterBlocks() {
-        crafterBlock1 = new CrafterBlock("crafterBlock1", "machineCrafter1", CrafterBlockTileEntity1.class);
-        GameRegistry.registerBlock(crafterBlock1, GenericItemBlock.class, "crafterBlock1");
-        GameRegistry.registerTileEntity(CrafterBlockTileEntity1.class, "CrafterTileEntity1");
-
-        crafterBlock2 = new CrafterBlock("crafterBlock2", "machineCrafter2", CrafterBlockTileEntity2.class);
-        GameRegistry.registerBlock(crafterBlock2, GenericItemBlock.class, "crafterBlock2");
-        GameRegistry.registerTileEntity(CrafterBlockTileEntity2.class, "CrafterTileEntity2");
-
-        crafterBlock3 = new CrafterBlock("crafterBlock3", "machineCrafter3", CrafterBlockTileEntity3.class);
-        GameRegistry.registerBlock(crafterBlock3, GenericItemBlock.class, "crafterBlock3");
-        GameRegistry.registerTileEntity(CrafterBlockTileEntity3.class, "CrafterTileEntity3");
-    }
-
-    private static void initShieldBlocks() {
-        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class);
-        GameRegistry.registerBlock(shieldBlock, GenericItemBlock.class, "shieldBlock");
-        GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
-
-        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class);
-        GameRegistry.registerBlock(shieldBlock2, GenericItemBlock.class, "shieldBlock2");
-        GameRegistry.registerTileEntity(ShieldTileEntity2.class, "ShieldTileEntity2");
-
-        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class);
-        GameRegistry.registerBlock(shieldBlock3, GenericItemBlock.class, "shieldBlock3");
-        GameRegistry.registerTileEntity(ShieldTileEntity3.class, "ShieldTileEntity3");
-
-        invisibleShieldBlock = new InvisibleShieldBlock();
-        GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
-
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
-            solidShieldBlock = new SolidShieldBlock();
-            GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
-            GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
-            shieldTemplateBlock = new ShieldTemplateBlock();
-            GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
-        }
-    }
-
-    private static void initLogicBlocks() {
-        enderMonitorBlock = new EnderMonitorBlock();
-        GameRegistry.registerBlock(enderMonitorBlock, GenericItemBlock.class, "enderMonitorBlock");
-        GameRegistry.registerTileEntity(EnderMonitorTileEntity.class, "EnderMonitorTileEntity");
-
-        sequencerBlock = new SequencerBlock();
-        GameRegistry.registerBlock(sequencerBlock, GenericItemBlock.class, "sequencerBlock");
-        GameRegistry.registerTileEntity(SequencerTileEntity.class, "SequencerTileEntity");
-
-        timerBlock = new TimerBlock();
-        GameRegistry.registerBlock(timerBlock, GenericItemBlock.class, "timerBlock");
-        GameRegistry.registerTileEntity(TimerTileEntity.class, "TimerTileEntity");
-
-        counterBlock = new CounterBlock();
-        GameRegistry.registerBlock(counterBlock, GenericItemBlock.class, "counterBlock");
-        GameRegistry.registerTileEntity(CounterTileEntity.class, "CounterTileEntity");
-
-        redstoneTransmitterBlock = new RedstoneTransmitterBlock();
-        GameRegistry.registerBlock(redstoneTransmitterBlock, GenericItemBlock.class, "redstoneTransmitterBlock");
-        GameRegistry.registerTileEntity(RedstoneTransmitterTileEntity.class, "RedstoneTransmitterTileEntity");
-
-        redstoneReceiverBlock = new RedstoneReceiverBlock();
-        GameRegistry.registerBlock(redstoneReceiverBlock, RedstoneReceiverItemBlock.class, "redstoneReceiverBlock");
-        GameRegistry.registerTileEntity(RedstoneReceiverTileEntity.class, "RedstoneReceiverTileEntity");
-    }
-
-    private static void initEndergenicBlocks() {
-        endergenicBlock = new EndergenicBlock();
-        GameRegistry.registerBlock(endergenicBlock, GenericItemBlock.class, "endergenicBlock");
-        GameRegistry.registerTileEntity(EndergenicTileEntity.class, "EndergenicTileEntity");
-
-        pearlInjectorBlock = new PearlInjectorBlock();
-        GameRegistry.registerBlock(pearlInjectorBlock, GenericItemBlock.class, "pearlInjectorBlock");
-        GameRegistry.registerTileEntity(PearlInjectorTileEntity.class, "PearlInjectorTileEntity");
-    }
-
-    private static void initTeleporterBlocks() {
-        matterTransmitterBlock = new MatterTransmitterBlock();
-        GameRegistry.registerBlock(matterTransmitterBlock, GenericItemBlock.class, "matterTransmitterBlock");
-        GameRegistry.registerTileEntity(MatterTransmitterTileEntity.class, "MatterTransmitterTileEntity");
-
-        matterReceiverBlock = new MatterReceiverBlock();
-        GameRegistry.registerBlock(matterReceiverBlock, GenericItemBlock.class, "matterReceiverBlock");
-        GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
-
-        dialingDeviceBlock = new DialingDeviceBlock();
-        GameRegistry.registerBlock(dialingDeviceBlock, GenericItemBlock.class, "dialingDeviceBlock");
-        GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
-
-        destinationAnalyzerBlock = new DestinationAnalyzerBlock();
-        GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
-
-        matterBoosterBlock = new MatterBoosterBlock();
-        GameRegistry.registerBlock(matterBoosterBlock, "matterBoosterBlock");
-    }
 }
