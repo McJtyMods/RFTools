@@ -12,6 +12,8 @@ import mcjty.rftools.blocks.shield.SolidShieldBlock;
 import mcjty.rftools.blocks.shield.SolidShieldBlockRenderer;
 import mcjty.rftools.blocks.spaceprojector.ProxyBlock;
 import mcjty.rftools.blocks.spaceprojector.ProxyBlockRenderer;
+import mcjty.rftools.blocks.spaceprojector.ProxyBlockTERenderer;
+import mcjty.rftools.blocks.spaceprojector.ProxyBlockTileEntity;
 import mcjty.rftools.blocks.spawner.MatterBeamerRenderer;
 import mcjty.rftools.blocks.spawner.MatterBeamerTileEntity;
 import mcjty.rftools.blocks.teleporter.BeamRenderer;
@@ -36,5 +38,6 @@ public final class ModRenderers {
         ClientRegistry.bindTileEntitySpecialRenderer(ScreenTileEntity.class, new ScreenRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalControllerRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(MatterTransmitterTileEntity.class, new BeamRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(ProxyBlockTileEntity.class, new ProxyBlockTERenderer());
     }
 }

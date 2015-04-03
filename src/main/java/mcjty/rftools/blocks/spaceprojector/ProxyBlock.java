@@ -25,6 +25,11 @@ public class ProxyBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
     public int getRenderType() {
         return RENDERID_PROXYBLOCK;
     }

@@ -38,6 +38,7 @@ public class SpaceProjectorTileEntity extends GenericEnergyHandlerTileEntity {
                             world.setBlock(dx + x, dy + y, dz + z, SpaceProjectorSetup.proxyBlock, world.getBlockMetadata(x, y, z), 3);
                             ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) world.getTileEntity(dx + x, dy + y, dz + z);
                             proxyBlockTileEntity.setCamoBlock(Block.blockRegistry.getIDForObject(block));
+                            proxyBlockTileEntity.setOrigCoordinate(new Coordinate(x, y, z), dimension);
                         }
                     }
                 }

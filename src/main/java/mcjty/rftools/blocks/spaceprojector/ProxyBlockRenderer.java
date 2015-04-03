@@ -17,7 +17,7 @@ public class ProxyBlockRenderer  extends DefaultISBRH {
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
         ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) world.getTileEntity(x, y, z);
         Block camoBlock = proxyBlockTileEntity.getBlock();
-        if (camoBlock == null) {
+        if (camoBlock != null) {
             try {
                 int addedVertices = TesseleratorAccessHelper.getAddedVertices(Tessellator.instance);
                 boolean rc = renderer.renderBlockByRenderType(camoBlock, x, y, z);
