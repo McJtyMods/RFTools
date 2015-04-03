@@ -25,6 +25,11 @@ public class ProxyBlockTERenderer extends TileEntitySpecialRenderer {
             }
             int dimension = proxyBlockTileEntity.getDimension();
             World world = DimensionManager.getWorld(dimension);
+
+            int meta = world.getBlockMetadata(oc.getX(), oc.getY(), oc.getZ());
+            tileEntity.getWorldObj().setBlockMetadataWithNotify(oc.getX(), oc.getY(), oc.getZ(), meta, 3);
+//            tileEntity.getWorldObj().markBlockForUpdate((int) x, (int) y, (int) z);
+
             TileEntity te = world.getTileEntity(oc.getX(), oc.getY(), oc.getZ());
             if (te != null) {
                 Object renderer = TileEntityRendererDispatcher.instance.mapSpecialRenderers.get(te.getClass());

@@ -1,14 +1,18 @@
 package mcjty.rftools.blocks.spaceprojector;
 
 import mcjty.rftools.RFTools;
+import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.Random;
 
@@ -22,6 +26,11 @@ public class ProxyBlock extends Block implements ITileEntityProvider {
         setResistance(6000000.0F);
         setBlockName("proxyBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
     }
 
     @Override
@@ -51,6 +60,19 @@ public class ProxyBlock extends Block implements ITileEntityProvider {
     @Override
     public int getMobilityFlag() {
         return 2;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        if (!world.isRemote) {
+            ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) world.getTileEntity(x, y, z);
+            Coordinate oc = proxyBlockTileEntity.getOrigCoordinate();
+            int dim = proxyBlockTileEntity.getDimension();
+            World w = DimensionManager.getWorld(dim);
+            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+            entityPlayerMP.theItemInWorldManager.activateBlockOrUseItem(player, w, null, oc.getX(), oc.getY(), oc.getZ(), side, sidex, sidey, sidez);
+        }
+        return true;
     }
 
     @Override

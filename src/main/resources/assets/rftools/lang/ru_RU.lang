@@ -147,6 +147,10 @@ tile.spawnerBlock.name=Spawner
 tile.matterBeamerBlock.name=Matter Beamer
 tile.volcanicCoreBlock.name=Volcanic Core
 tile.volcanicBlock.name=Volcanic Block
+tile.proxyBlock.name=Proxy Block
+tile.spaceChamberBlock.name=Space Chamber Corner Block
+tile.spaceChamberControllerBlock.name=Space Chamber Controller Block
+tile.spaceProjectorBlock.name=Space Projector Block
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения
