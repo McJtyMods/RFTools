@@ -73,7 +73,7 @@ public class ProxyBlockTileEntity extends TileEntity {
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("camoId", camoId);
-        Coordinate.writeToNBT(tagCompound, "oCoor", origCoordinate);
+        Coordinate.writeToNBT(tagCompound, "oCoord", origCoordinate);
         tagCompound.setInteger("dimension", dimension);
     }
 
