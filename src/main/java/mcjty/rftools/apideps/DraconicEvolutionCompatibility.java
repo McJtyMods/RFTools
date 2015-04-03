@@ -1,6 +1,6 @@
 package mcjty.rftools.apideps;
 
-import brandon3055.draconicevolution.api.IExtendedRFStorage;
+import com.brandon3055.draconicevolution.api.IExtendedRFStorage;
 import net.minecraft.tileentity.TileEntity;
 
 public class DraconicEvolutionCompatibility {
