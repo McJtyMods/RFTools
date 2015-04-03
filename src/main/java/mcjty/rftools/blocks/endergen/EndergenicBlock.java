@@ -6,7 +6,6 @@ import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.api.Infusable;
-import mcjty.rftools.blocks.ModBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -92,8 +91,8 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
     }
 
     private void checkForMonitor(World world, int x, int y, int z) {
-        if (ModBlocks.enderMonitorBlock.equals(world.getBlock(x, y, z))) {
-            ModBlocks.enderMonitorBlock.registerWithEndergenic(world, x, y, z);
+        if (EndergenicSetup.enderMonitorBlock.equals(world.getBlock(x, y, z))) {
+            EndergenicSetup.enderMonitorBlock.registerWithEndergenic(world, x, y, z);
         }
     }
 

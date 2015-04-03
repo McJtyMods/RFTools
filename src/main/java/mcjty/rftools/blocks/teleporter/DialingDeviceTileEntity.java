@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -79,22 +78,22 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
     }
 
     public static boolean isMatterBoosterAvailable(World world, int x, int y, int z) {
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x + 1, y, z))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x + 1, y, z))) {
             return true;
         }
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x - 1, y, z))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x - 1, y, z))) {
             return true;
         }
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y + 1, z))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x, y + 1, z))) {
             return true;
         }
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y - 1, z))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x, y - 1, z))) {
             return true;
         }
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y, z + 1))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x, y, z + 1))) {
             return true;
         }
-        if (ModBlocks.matterBoosterBlock.equals(world.getBlock(x, y, z - 1))) {
+        if (TeleporterSetup.matterBoosterBlock.equals(world.getBlock(x, y, z - 1))) {
             return true;
         }
         return false;
@@ -102,22 +101,22 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
 
 
     public static boolean isDestinationAnalyzerAvailable(World world, int x, int y, int z) {
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x + 1, y, z))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x + 1, y, z))) {
             return true;
         }
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x - 1, y, z))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x - 1, y, z))) {
             return true;
         }
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y + 1, z))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x, y + 1, z))) {
             return true;
         }
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y - 1, z))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x, y - 1, z))) {
             return true;
         }
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y, z + 1))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x, y, z + 1))) {
             return true;
         }
-        if (ModBlocks.destinationAnalyzerBlock.equals(world.getBlock(x, y, z - 1))) {
+        if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlock(x, y, z - 1))) {
             return true;
         }
         return false;

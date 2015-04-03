@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.rftools.CommonProxy;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.KnownDimletShapedRecipe;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.dimension.description.SkyDescriptor;
@@ -596,7 +596,7 @@ public class KnownDimletConfiguration {
         initMaterialItem(cfg, Blocks.packed_ice, 0, mapping, master);
         initMaterialItem(cfg, Blocks.clay, 0, mapping, master);
         initMaterialItem(cfg, Blocks.hardened_clay, 0, mapping, master);
-        initMaterialItem(cfg, ModBlocks.dimensionalShardBlock, 0, mapping, master);
+        initMaterialItem(cfg, DimletSetup.dimensionalShardBlock, 0, mapping, master);
 
         initOreDictionaryDimlets(cfg, mapping, master);
 

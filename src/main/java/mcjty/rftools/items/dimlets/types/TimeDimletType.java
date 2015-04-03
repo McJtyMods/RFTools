@@ -1,7 +1,7 @@
 package mcjty.rftools.items.dimlets.types;
 
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimletconstruction.TimeAbsorberTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
@@ -140,7 +140,7 @@ public class TimeDimletType implements IDimletType {
     private static boolean isValidTimeEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
         Block essenceBlock = BlockTools.getBlock(stackEssence);
 
-        if (essenceBlock != ModBlocks.timeAbsorberBlock) {
+        if (essenceBlock != DimletConstructionSetup.timeAbsorberBlock) {
             return false;
         }
         if (essenceCompound == null) {

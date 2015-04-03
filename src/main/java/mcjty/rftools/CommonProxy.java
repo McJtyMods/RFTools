@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
@@ -59,6 +60,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
             cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the automatic crafter machine");
             cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
+            cfg.addCustomCategoryComment(SpaceProjectorConfiguration.CATEGORY_SPACEPROJECTOR, "Settings for the space projector system");
             cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
             cfg.addCustomCategoryComment(NetworkMonitorConfiguration.CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
             cfg.addCustomCategoryComment(TeleportConfiguration.CATEGORY_TELEPORTER, "Settings for the teleporter system");
@@ -88,6 +90,7 @@ public class CommonProxy {
             EnvironmentalConfiguration.init(cfg);
             SpawnerConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
+            SpaceProjectorConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

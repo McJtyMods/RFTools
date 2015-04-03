@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.special;
 
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.blocks.ModBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -105,7 +104,7 @@ public class VolcanicCoreTileEntity extends GenericTileEntity {
             }
             Block block = worldObj.getBlock(x, y, z);
             if (block == null || block.getMaterial() == Material.air) {
-                worldObj.setBlock(x, y, z, ModBlocks.volcanicBlock, 15, 2);
+                worldObj.setBlock(x, y, z, SpecialSetup.volcanicBlock, 15, 2);
             }
         }
     }

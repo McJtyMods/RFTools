@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.WorldGenerationTools;
@@ -89,9 +89,9 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
                         if (y == -1) {
                             y = dimWorld.getHeight() / 2;
                         }
-                        dimWorld.setBlock(8, y, 8, ModBlocks.matterReceiverBlock, 0, 2);
-                        ModBlocks.matterReceiverBlock.onBlockPlaced(dimWorld, 8, y, 8, 0, 0, 0, 0, 0);
-                        ModBlocks.matterReceiverBlock.onBlockPlacedBy(dimWorld, 8, y, 8, null, injectableItemStack);
+                        dimWorld.setBlock(8, y, 8, TeleporterSetup.matterReceiverBlock, 0, 2);
+                        TeleporterSetup.matterReceiverBlock.onBlockPlaced(dimWorld, 8, y, 8, 0, 0, 0, 0, 0);
+                        TeleporterSetup.matterReceiverBlock.onBlockPlacedBy(dimWorld, 8, y, 8, null, injectableItemStack);
                         dimWorld.setBlockToAir(8, y+1, 8);
                         dimWorld.setBlockToAir(8, y+2, 8);
                     } else {
@@ -142,7 +142,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
     private boolean isMatterReceiver(ItemStack itemStack) {
         Block block = BlockTools.getBlock(itemStack);
-        if (block == ModBlocks.matterReceiverBlock) {
+        if (block == TeleporterSetup.matterReceiverBlock) {
             // We can inject matter receivers too.
             return true;
         }
