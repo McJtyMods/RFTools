@@ -159,7 +159,7 @@ public class RFTools {
         logger = LogManager.getLogger();
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
-        FMLInterModComms.sendMessage("Waila", "register", "com.mcjty.rftools.apideps.WailaCompatibility.load");
+        FMLInterModComms.sendMessage("Waila", "register", "mcjty.rftools.apideps.WailaCompatibility.load");
     }
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.
