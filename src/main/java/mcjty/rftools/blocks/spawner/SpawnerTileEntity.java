@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.api.MachineInformation;
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
@@ -27,7 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory, MachineInformation {
+public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory, MachineInformation {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpawnerContainer.factory, 1);
 
@@ -166,7 +166,7 @@ public class SpawnerTileEntity extends GenericEnergyHandlerTileEntity implements
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         for (int i = 0 ; i < 3 ; i++) {
             matter[i] -= spawnAmounts.get(i).getAmount();

@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.storagemonitor;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.rftools.network.PacketListFromServer;
 import mcjty.varia.Coordinate;
-import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 

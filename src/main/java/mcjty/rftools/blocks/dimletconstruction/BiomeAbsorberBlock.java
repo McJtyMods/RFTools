@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.container.GenericBlock;
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.container.GenericBlock;
+import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;

@@ -1,8 +1,5 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
-
 public class SpaceProjectorSetup {
     public static ProxyBlock proxyBlock;
     public static SpaceChamberBlock spaceChamberBlock;

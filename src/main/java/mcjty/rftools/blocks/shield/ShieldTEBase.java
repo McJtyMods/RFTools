@@ -1,12 +1,5 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.entity.SyncedValueList;
-import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.rftools.network.Argument;
-import mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -16,6 +9,13 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.entity.SyncedValueList;
+import mcjty.rftools.blocks.BlockTools;
+import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.network.Argument;
+import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +38,7 @@ import java.util.*;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInventory, SimpleComponent, IPeripheral {
+public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IInventory, SimpleComponent, IPeripheral {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -468,7 +468,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
             // Not enough RF to do damage.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         float damage = ShieldConfiguration.damage;
         damage *= damageFactor;
@@ -505,7 +505,7 @@ public class ShieldTEBase extends GenericEnergyHandlerTileEntity implements IInv
                 if (checkPower) {
                     needsUpdate = true;
                 }
-                extractEnergy(ForgeDirection.DOWN, rf, false);
+                consumeEnergy(rf);
             }
         }
 

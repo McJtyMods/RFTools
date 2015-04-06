@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.special;
 
-import mcjty.entity.GenericTileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.entity.GenericTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;

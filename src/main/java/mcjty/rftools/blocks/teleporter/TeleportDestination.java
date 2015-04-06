@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.rftools.network.ByteBufConverter;
 import mcjty.varia.Coordinate;
-import io.netty.buffer.ByteBuf;
 
 public class TeleportDestination implements ByteBufConverter {
     private final Coordinate coordinate;

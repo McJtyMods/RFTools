@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class DimletResearcherTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final String CMD_GETRESEARCHING = "getResearching";
     public static final String CLIENTCMD_GETRESEARCHING = "getResearching";
@@ -63,7 +63,7 @@ public class DimletResearcherTileEntity extends GenericEnergyHandlerTileEntity i
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         inventoryHelper.getStacks()[0].splitStack(1);
         if (inventoryHelper.getStacks()[0].stackSize == 0) {

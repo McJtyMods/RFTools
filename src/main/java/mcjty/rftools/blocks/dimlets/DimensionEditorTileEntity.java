@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
-public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final String CMD_GETEDITING = "getEditing";
     public static final String CLIENTCMD_GETEDITING = "getEditing";
@@ -72,7 +72,7 @@ public class DimensionEditorTileEntity extends GenericEnergyHandlerTileEntity im
 
             if (rf >= rfpt) {
                 // Enough energy.
-                extractEnergy(ForgeDirection.DOWN, rfpt, false);
+                consumeEnergy(rfpt);
 
                 ticksLeft--;
                 if (ticksLeft <= 0) {

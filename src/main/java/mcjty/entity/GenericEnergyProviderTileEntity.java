@@ -1,21 +1,13 @@
 package mcjty.entity;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class GenericEnergyHandlerTileEntity extends GenericEnergyStorageTileEntity implements IEnergyHandler {
+public class GenericEnergyProviderTileEntity extends GenericEnergyStorageTileEntity implements IEnergyProvider {
 
-    public GenericEnergyHandlerTileEntity(int maxEnergy, int maxReceive) {
-        super(maxEnergy, maxReceive);
-    }
-
-    public GenericEnergyHandlerTileEntity(int maxEnergy, int maxReceive, int maxExtract) {
-        super(maxEnergy, maxReceive, maxExtract);
-    }
-
-    @Override
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return storage.receiveEnergy(maxReceive, simulate);
+    public GenericEnergyProviderTileEntity(int maxEnergy, int maxExtract) {
+        super(maxEnergy, 0, maxExtract);
     }
 
     @Override

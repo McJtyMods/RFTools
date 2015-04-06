@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.container.EmptyContainer;
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.container.EmptyContainer;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;

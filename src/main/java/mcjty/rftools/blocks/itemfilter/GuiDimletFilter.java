@@ -7,13 +7,16 @@ import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Label;
+import mcjty.gui.widgets.Panel;
+import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.rftools.network.Argument;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity> {
     public static final int DIMLETFILTER_WIDTH = 211;

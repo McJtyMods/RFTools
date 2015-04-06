@@ -6,10 +6,10 @@ import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Button;
+import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
-import mcjty.gui.widgets.Widget;
-import mcjty.gui.widgets.Label;
+import mcjty.gui.widgets.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.FeatureType;
@@ -28,8 +28,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscriberTileEntity> {
     public static final int ENSCRIBER_WIDTH = 256;

@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.spawner;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
-public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final int TICKTIME = 20;
     public static String CMD_SETDESTINATION = "setDest";
@@ -78,7 +78,7 @@ public class MatterBeamerTileEntity extends GenericEnergyHandlerTileEntity imple
         if (getEnergyStored(ForgeDirection.DOWN) < rf) {
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         spawnerTileEntity.addMatter(itemStack, numblocks);
         inventoryHelper.decrStackSize(0, numblocks);

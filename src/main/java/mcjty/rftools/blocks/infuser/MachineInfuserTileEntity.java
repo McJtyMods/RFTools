@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.infuser;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.api.Infusable;
+import mcjty.container.InventoryHelper;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
@@ -16,7 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, MachineInfuserContainer.factory, 2);
 
@@ -99,7 +99,7 @@ public class MachineInfuserTileEntity extends GenericEnergyHandlerTileEntity imp
             // Not enough energy.
             return;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         inventoryHelper.getStacks()[0].splitStack(1);
         if (inventoryHelper.getStacks()[0].stackSize == 0) {

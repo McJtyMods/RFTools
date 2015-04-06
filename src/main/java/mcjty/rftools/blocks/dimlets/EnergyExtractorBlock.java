@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.GenericBlock;
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.container.GenericBlock;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

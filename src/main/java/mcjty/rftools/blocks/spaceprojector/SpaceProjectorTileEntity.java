@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class SpaceProjectorTileEntity extends GenericEnergyHandlerTileEntity {
+public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity {
 
     private Coordinate chamberController;
     private int dimension = 0;

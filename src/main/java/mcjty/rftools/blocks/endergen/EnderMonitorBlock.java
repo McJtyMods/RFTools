@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.endergen;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
 import mcjty.varia.Coordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

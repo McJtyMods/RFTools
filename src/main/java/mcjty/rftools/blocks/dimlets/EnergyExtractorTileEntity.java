@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.dimlets;
 
 import cofh.api.energy.IEnergyConnection;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class EnergyExtractorTileEntity extends GenericEnergyHandlerTileEntity {
+public class EnergyExtractorTileEntity extends GenericEnergyProviderTileEntity {
 
     public EnergyExtractorTileEntity() {
-        super(DimletConfiguration.EXTRACTOR_MAXENERGY, 0, DimletConfiguration.EXTRACTOR_SENDPERTICK);
+        super(DimletConfiguration.EXTRACTOR_MAXENERGY, DimletConfiguration.EXTRACTOR_SENDPERTICK);
     }
 
     @Override

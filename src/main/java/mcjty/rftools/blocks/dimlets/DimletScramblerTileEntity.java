@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final String CMD_GETSCRAMBLING = "getScrambling";
     public static final String CLIENTCMD_GETSCRAMBLING = "getScrambling";
@@ -102,7 +102,7 @@ public class DimletScramblerTileEntity extends GenericEnergyHandlerTileEntity im
             return;
         }
 
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         input[0].splitStack(1);
         if (input[0].stackSize == 0) {

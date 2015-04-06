@@ -1,11 +1,5 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import mcjty.rftools.dimension.DimensionStorage;
-import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.rftools.network.Argument;
-import mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -15,6 +9,12 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.dimension.DimensionStorage;
+import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.network.Argument;
+import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -31,7 +31,7 @@ import java.util.Map;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, IPeripheral {
+public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity implements SimpleComponent, IPeripheral {
 
     public static final String CMD_TELEPORT = "tp";
     public static final String CMD_GETRECEIVERS = "getReceivers";
@@ -507,7 +507,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
         }
 
-        extractEnergy(ForgeDirection.DOWN, cost, false);
+        consumeEnergy(cost);
         transmitterTileEntity.setTeleportDestination(teleportDestination);
 
         return DialingDeviceTileEntity.DIAL_OK;
@@ -521,7 +521,7 @@ public class DialingDeviceTileEntity extends GenericEnergyHandlerTileEntity impl
         if (getEnergyStored(ForgeDirection.DOWN) < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
-        extractEnergy(ForgeDirection.DOWN, cost, false);
+        consumeEnergy(cost);
 
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
         World w = dimensionManager.getWorldForDimension(dim);

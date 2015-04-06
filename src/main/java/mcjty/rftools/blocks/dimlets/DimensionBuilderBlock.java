@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.dimlets;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.api.Infusable;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

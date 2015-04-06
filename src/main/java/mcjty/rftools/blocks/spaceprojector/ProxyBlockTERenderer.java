@@ -26,8 +26,8 @@ public class ProxyBlockTERenderer extends TileEntitySpecialRenderer {
             int dimension = proxyBlockTileEntity.getDimension();
             World world = DimensionManager.getWorld(dimension);
 
-            int meta = world.getBlockMetadata(oc.getX(), oc.getY(), oc.getZ());
-            tileEntity.getWorldObj().setBlockMetadataWithNotify(oc.getX(), oc.getY(), oc.getZ(), meta, 3);
+//            int meta = world.getBlockMetadata(oc.getX(), oc.getY(), oc.getZ());
+//            tileEntity.getWorldObj().setBlockMetadataWithNotify(oc.getX(), oc.getY(), oc.getZ(), meta, 3);
 //            tileEntity.getWorldObj().markBlockForUpdate((int) x, (int) y, (int) z);
 
             TileEntity te = world.getTileEntity(oc.getX(), oc.getY(), oc.getZ());
@@ -35,6 +35,13 @@ public class ProxyBlockTERenderer extends TileEntitySpecialRenderer {
                 Object renderer = TileEntityRendererDispatcher.instance.mapSpecialRenderers.get(te.getClass());
                 if (renderer instanceof TileEntitySpecialRenderer) {
                     ((TileEntitySpecialRenderer) renderer).renderTileEntityAt(te, x, y, z, f);
+
+
+//                    GL11.glPushMatrix();
+//                    GL11.glTranslatef((float) (oc.getX() - x), (float) (oc.getY() - y), (float) (oc.getZ() - z));
+//                    TileEntityRendererDispatcher.instance.renderTileEntity(te, f);
+//                    ((TileEntitySpecialRenderer) renderer).renderTileEntityAt(te, oc.getX(), oc.getY(), oc.getZ(), f);
+//                    GL11.glPopMatrix();
                 }
             }
         }

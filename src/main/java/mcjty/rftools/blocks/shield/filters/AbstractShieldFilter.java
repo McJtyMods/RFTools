@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.shield.filters;
 
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.RFTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class AbstractShieldFilter implements ShieldFilter {

@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedCoordinate;
 import mcjty.entity.SyncedValue;
 import mcjty.entity.SyncedValueList;
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
+public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_STARTSCAN = "startScan";
@@ -135,7 +135,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
             if (getEnergyStored(ForgeDirection.DOWN) < rf) {
                 return;
             }
-            extractEnergy(ForgeDirection.DOWN, rf, false);
+            consumeEnergy(rf);
 
             int scans = StorageScannerConfiguration.scansPerOperation;
 
@@ -169,7 +169,7 @@ public class StorageScannerTileEntity extends GenericEnergyHandlerTileEntity {
         if (getEnergyStored(ForgeDirection.DOWN) < StorageScannerConfiguration.rfPerOperation) {
             return showingItems;
         }
-        extractEnergy(ForgeDirection.DOWN, StorageScannerConfiguration.rfPerOperation, false);
+        consumeEnergy(StorageScannerConfiguration.rfPerOperation);
 
         TileEntity tileEntity = worldObj.getTileEntity(cx, cy, cz);
         if (tileEntity instanceof IInventory) {

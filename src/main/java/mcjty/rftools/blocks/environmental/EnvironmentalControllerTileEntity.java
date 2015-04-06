@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
@@ -134,7 +134,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyHandlerTileE
                 worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             }
         } else {
-            extractEnergy(ForgeDirection.DOWN, rfNeeded, false);
+            consumeEnergy(rfNeeded);
             for (EnvironmentModule module : environmentModules) {
                 module.activate(true);
                 module.tick(worldObj, xCoord, yCoord, zCoord, radius, miny, maxy);

@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.MachineInformation;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -9,8 +11,6 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity implements MachineInformation {
+public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation {
 
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_ADDPLAYER = "addPlayer";
@@ -268,7 +268,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
     private void consumeIdlePower() {
         if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
             if (getEnergyStored(ForgeDirection.DOWN) >= TeleportConfiguration.rfMatterIdleTick) {
-                extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfMatterIdleTick, false);
+                consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
             } else {
                 setTeleportDestination(null);
             }
@@ -324,7 +324,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
             } else {
                 // We have enough energy so this is a good tick.
                 markDirty();
-                extractEnergy(ForgeDirection.DOWN, rf, false);
+                consumeEnergy(rf);
                 goodTicks++;
 
                 teleportTimer--;
@@ -465,7 +465,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyHandlerTileEntity 
         }
         boolean boostNeeded = TeleportationTools.performTeleport(teleportingPlayer, dest, badTicks, totalTicks, boosted);
         if (boostNeeded) {
-            extractEnergy(ForgeDirection.DOWN, TeleportConfiguration.rfBoostedTeleport, false);
+            consumeEnergy(TeleportConfiguration.rfBoostedTeleport);
         }
 
         teleportingPlayer = null;

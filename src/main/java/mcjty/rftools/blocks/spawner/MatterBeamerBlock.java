@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.spawner;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
 import mcjty.container.GenericContainerBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.rftools.RFTools;
-import mcjty.api.Infusable;
 import mcjty.varia.Coordinate;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;

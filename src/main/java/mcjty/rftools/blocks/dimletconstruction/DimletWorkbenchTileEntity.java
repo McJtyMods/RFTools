@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.*;
@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
-public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
     public static final String CMD_STARTEXTRACT = "startExtract";
     public static final String CMD_GETEXTRACTING = "getExtracting";
     public static final String CLIENTCMD_GETEXTRACTING = "getExtracting";
@@ -228,7 +228,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyHandlerTileEntity im
             // Not enough energy.
             return false;
         }
-        extractEnergy(ForgeDirection.DOWN, rf, false);
+        consumeEnergy(rf);
 
         float factor = getInfusedFactor();
 

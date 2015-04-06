@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.endergen;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericContainerBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
-import mcjty.api.Infusable;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

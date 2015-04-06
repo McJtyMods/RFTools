@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -13,7 +13,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class MatterReceiverTileEntity extends GenericEnergyHandlerTileEntity {
+public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
 
     public static final String CMD_SETNAME = "setName";
     public static final String CMD_ADDPLAYER = "addPlayer";

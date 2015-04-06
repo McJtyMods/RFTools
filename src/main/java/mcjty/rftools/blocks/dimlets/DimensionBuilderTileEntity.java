@@ -1,16 +1,5 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.rftools.dimension.DimensionStorage;
-import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.rftools.dimension.description.DimensionDescriptor;
-import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
-import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -20,6 +9,17 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
+import mcjty.container.InventoryHelper;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.BlockTools;
+import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.rftools.dimension.DimensionStorage;
+import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.dimension.description.DimensionDescriptor;
+import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -35,7 +35,7 @@ import java.util.Random;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity implements ISidedInventory, SimpleComponent, IPeripheral {
+public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory, SimpleComponent, IPeripheral {
 
     public static final String CMD_GETBUILDING = "getBuilding";
     public static final String CLIENTCMD_GETBUILDING = "getBuilding";
@@ -271,7 +271,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
                 }
             }
             if (!isCreative()) {
-                extractEnergy(ForgeDirection.DOWN, rf, false);
+                consumeEnergy(rf);
             }
             dimensionStorage.setEnergyLevel(id, energy + rf);
             dimensionStorage.save(worldObj);
@@ -288,7 +288,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyHandlerTileEntity i
             if (isCreative()) {
                 ticksLeft = 0;
             } else {
-                extractEnergy(ForgeDirection.DOWN, createCost, false);
+                consumeEnergy(createCost);
                 ticksLeft--;
                 if (random.nextFloat() < getInfusedFactor()) {
                     // Randomly reduce another tick if the device is infused.

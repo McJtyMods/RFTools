@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.network.Argument;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CrafterBaseTE extends GenericEnergyHandlerTileEntity implements ISidedInventory {
+public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ISidedInventory {
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
 
@@ -296,7 +296,7 @@ public class CrafterBaseTE extends GenericEnergyHandlerTileEntity implements ISi
         }
 
         if (energyConsumed) {
-            extractEnergy(ForgeDirection.DOWN, rf, false);
+            consumeEnergy(rf);
         }
     }
 

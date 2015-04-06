@@ -1,9 +1,5 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
-import mcjty.rftools.network.Argument;
-import mcjty.varia.Coordinate;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -13,6 +9,10 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
+import mcjty.rftools.network.Argument;
+import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -25,7 +25,7 @@ import java.util.Map;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity implements SimpleComponent, IPeripheral {
+public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements SimpleComponent, IPeripheral {
 
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
@@ -281,7 +281,7 @@ public class ScreenControllerTileEntity extends GenericEnergyHandlerTileEntity i
             }
         }
         if (rf < rememberRf) {
-            extractEnergy(ForgeDirection.DOWN, rememberRf - rf, false);
+            consumeEnergy(rememberRf - rf);
         }
 
         if (fixesAreNeeded) {

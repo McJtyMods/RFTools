@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 
-public class SpaceChamberControllerTileEntity extends GenericEnergyHandlerTileEntity {
+public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileEntity {
     private Coordinate minCorner;
     private Coordinate maxCorner;
 

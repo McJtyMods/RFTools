@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens.network;
 
-import mcjty.rftools.blocks.screens.modules.ScreenDataType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.blocks.screens.modules.ScreenDataType;
 
 import java.util.HashMap;
 import java.util.Map;

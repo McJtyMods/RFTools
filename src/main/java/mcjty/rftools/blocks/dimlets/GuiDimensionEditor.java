@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.GenericGuiContainer;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyStorageTileEntity;
 import mcjty.gui.Window;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
@@ -26,7 +26,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
     public GuiDimensionEditor(DimensionEditorTileEntity dimensionEditorTileEntity, DimensionEditorContainer container) {
         super(dimensionEditorTileEntity, container);
-        GenericEnergyHandlerTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = EDITOR_WIDTH;
         ySize = EDITOR_HEIGHT;
@@ -38,7 +38,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
-        energyBar.setValue(GenericEnergyHandlerTileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
         arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
@@ -68,7 +68,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
         window.draw();
 
-        energyBar.setValue(GenericEnergyHandlerTileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer();
         tileEntity.requestBuildingPercentage();

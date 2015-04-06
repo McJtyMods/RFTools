@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import cofh.api.energy.IEnergyConnection;
 import mcjty.api.MachineInformation;
-import mcjty.entity.GenericEnergyHandlerTileEntity;
+import mcjty.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.network.Argument;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity implements MachineInformation {
+public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements MachineInformation {
 
     private static Random random = new Random();
 
@@ -93,7 +93,7 @@ public class EndergenicTileEntity extends GenericEnergyHandlerTileEntity impleme
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
     public EndergenicTileEntity() {
-        super(5000000, 0, 20000);
+        super(5000000, 20000);
     }
 
     @Override
