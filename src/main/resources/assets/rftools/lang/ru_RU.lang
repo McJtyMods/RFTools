@@ -1,3 +1,4 @@
+# Achievements
 achievement.theFirstStep=Маленький шаг в большой мир
 achievement.theFirstStep.desc=Найдите Ваш первый неизвестный димлет
 achievement.researching=Доктор Димлет!
@@ -19,21 +20,23 @@ achievement.clearVision.desc=Поставьте модульный экран
 achievement.specialOres=Экзотический шахтёр!
 achievement.specialOres.desc=Добудьте осколки измерения
 
+# Death Messages
 death.dimension.powerfailure=%s умер в разрушающемся мире!
 
+# Items
 item.NetworkMonitor.name=Монитор RF-сети
 item.TeleportProbe.name=Зонд-телепорт
 item.ChargedPorter.name=Charged Porter
 item.RFToolsManual.name=Общее руководство пр RFTools
 item.RFToolsManualDimension.name=Руководство по измерениям RFTools
 item.DevelopersDelight.name=Восхищение разработчика
-item.ShardWand.name=Shard Wand
+item.ShardWand.name=Жезл осколков
 item.UnknownDimlet.name=Неизвестный димлет
 item.KnownDimlet.name=Известный димлет
 item.EmptyDimensionTab.name=Вкладка пустых измерений
 item.RealizedDimensionTab.name=Вкладка созданных измерений
 item.DimensionMonitor.name=Монитор измерений
-item.PhasedFieldGenerator.name=Phased Field Generator
+item.PhasedFieldGenerator.name=Генератор переключаемого поля
 item.DimensionalShard.name=Осколок измерения
 item.DimletTemplate.name=Шаблон димлета
 item.TextModule.name=Модуль «Текст»
@@ -48,8 +51,8 @@ item.FluidPlusModule.name=Модуль «Жидкость+»
 item.CounterModule.name=Модуль «Счётчик»
 item.CounterPlusModule.name=Модуль «Счётчик+»
 item.RedstoneModule.name=Модуль «Красный камень»
-item.MachineInformationModule.name=Machine Information Module
-item.ComputerModule.name=Computer Module
+item.MachineInformationModule.name=Модуль «Информация о механизме»
+item.ComputerModule.name=Модуль «Компьютер»
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»
@@ -59,10 +62,10 @@ item.HasteEModule.name=Модуль «Спешка»
 item.HastePlusEModule.name=Модуль «Спешка+»
 item.SaturationEModule.name=Модуль «Насыщение»
 item.SaturationPlusEModule.name=Модуль «Насыщение+»
-item.FeatherFallingEModule.name=Feather Falling Module
-item.FeatherFallingPlusEModule.name=Feather Falling Plus Module
-item.FlightEModule.name=Flight Module
-item.PeacefulEModule.name=Peaceful Module
+item.FeatherFallingEModule.name=Модуль «Невесомость»
+item.FeatherFallingPlusEModule.name=Модуль «Невесомость+»
+item.FlightEModule.name=Модуль «Полёт»
+item.PeacefulEModule.name=Модуль «Мир»
 
 item.DimletBase.name=Основая деталь димлета
 item.DimletControlCircuit0.name=Схема управления редкостью димлета 0
@@ -95,12 +98,13 @@ item.PeaceEssence.name=Обычная эссенция
 item.EfficiencyEssence.name=Эссенция эффективности
 item.MediocreEfficiencyEssence.name=Посредственная эссенция эффективности
 
-tile.crafterBlock1.name=Создатель 1-ого уровня
-tile.crafterBlock2.name=Создатель 2-ого уровня
-tile.crafterBlock3.name=Создатель 3-его уровня
+# Blocks
+tile.crafterBlock1.name=Создатель 1-го уровня
+tile.crafterBlock2.name=Создатель 2-го уровня
+tile.crafterBlock3.name=Создатель 3-го уровня
 tile.relayBlock.name=Ретранслятор энергии
 tile.itemFilterBlock.name=Предметный фильтр
-tile.dimletFilterBlock.name=Dimlet Filter
+tile.dimletFilterBlock.name=Фильтр димлетов
 tile.storageScannerBlock.name=Сканер хранилища
 tile.rfMonitorBlock.name=RF-монитор
 tile.liquidMonitorBlock.name=Монитор жидкостей
@@ -110,7 +114,7 @@ tile.matterTransmitterBlock.name=Передатчик материи
 tile.matterReceiverBlock.name=Приёмник материи
 tile.dialingDeviceBlock.name=Модем
 tile.destinationAnalyzerBlock.name=Анализатор целей
-tile.matterBoosterBlock.name=Matter Booster
+tile.matterBoosterBlock.name=Усилитель материи
 tile.endergenicBlock.name=Генератор Края
 tile.pearlInjectorBlock.name=Инжектор жемчуга
 tile.sequencerBlock.name=Секвенсор
@@ -119,9 +123,9 @@ tile.timerBlock.name=Таймер
 tile.redstoneTransmitterBlock.name=Передатчик красного камня
 tile.redstoneReceiverBlock.name=Приёмник красного камня
 tile.enderMonitorBlock.name=Монитор Края
-tile.shieldBlock.name=Проектировщик щита 1-ого уровня
-tile.shieldBlock2.name=Проектировщик щита 2-ого уровня
-tile.shieldBlock3.name=Shield Projector Tier 3
+tile.shieldBlock.name=Проектировщик щита 1-го уровня
+tile.shieldBlock2.name=Проектировщик щита 2-го уровня
+tile.shieldBlock3.name=Проектировщик щита 3-го уровня
 tile.invisibleShieldBlock.name=Блок невидимого щита
 tile.solidShieldBlock.name=Блок твёрдого щита
 tile.shieldTemplateBlock.name=Шаблон щита
@@ -135,22 +139,22 @@ tile.dimensionEditorBlock.name=Редактор измерений
 tile.dimensionMonitorBlock.name=Монитор измерений
 tile.machineInfuserBlock.name=Механизм наполнения
 tile.activityProbeBlock.name=Зонд активности
-tile.energyExtractorBlock.name=Energy Extractor
+tile.energyExtractorBlock.name=Энергетический экстрактор
 tile.screenBlock.name=Экран
 tile.screenControllerBlock.name=Экранный контроллер
 tile.biomeAbsorberBlock.name=Поглотитель биомов
 tile.materialAbsorberBlock.name=Материальный поглотитель
 tile.liquidAbsorberBlock.name=Поглотитель жидкостей
-tile.timeAbsorberBlock.name=Time Absorber
+tile.timeAbsorberBlock.name=Поглотитель времени
 tile.environmentalControllerBlock.name=Контроллер окружающей среды
-tile.spawnerBlock.name=Spawner
-tile.matterBeamerBlock.name=Matter Beamer
-tile.volcanicCoreBlock.name=Volcanic Core
-tile.volcanicBlock.name=Volcanic Block
+tile.spawnerBlock.name=Спаунер
+tile.matterBeamerBlock.name=Излучатель материи
+tile.volcanicCoreBlock.name=Вулканическое ядро
+tile.volcanicBlock.name=Вулканический блок
 tile.proxyBlock.name=Proxy Block
-tile.spaceChamberBlock.name=Space Chamber Corner Block
-tile.spaceChamberControllerBlock.name=Space Chamber Controller Block
-tile.spaceProjectorBlock.name=Space Projector Block
+tile.spaceChamberBlock.name=Блок угла космической камеры
+tile.spaceChamberControllerBlock.name=Блок контроллера космической камеры
+tile.spaceProjectorBlock.name=Блок космического проектировщика
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения
@@ -161,5 +165,6 @@ tile.dimensionalCross2Block.name=Двойной перекрёстный бло�
 tile.dimensionalPattern1Block.name=Шаблонный блок измерения 1
 tile.dimensionalPattern2Block.name=Шаблонный блок измерения 2
 
+# Creative Tabs
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools: Димлеты

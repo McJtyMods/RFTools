@@ -1,3 +1,4 @@
+# Achievements
 achievement.theFirstStep=Small Step to a Big World
 achievement.theFirstStep.desc=Find your first unknown dimlet
 achievement.researching=Doctor Dimlet!
@@ -19,8 +20,10 @@ achievement.clearVision.desc=Place a modular screen
 achievement.specialOres=Exotic Miner!
 achievement.specialOres.desc=Mine dimensional shards
 
+# Death Messages
 death.dimension.powerfailure=%s dies in a collapsing world!
 
+# Items
 item.NetworkMonitor.name=RF Network Monitor
 item.TeleportProbe.name=Teleporter Probe
 item.ChargedPorter.name=Charged Porter
@@ -95,6 +98,7 @@ item.PeaceEssence.name=Peace Essence
 item.EfficiencyEssence.name=Efficiency Essence
 item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 
+# Blocks
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3
@@ -152,7 +156,6 @@ tile.spaceChamberBlock.name=Space Chamber Corner Block
 tile.spaceChamberControllerBlock.name=Space Chamber Controller Block
 tile.spaceProjectorBlock.name=Space Projector Block
 
-
 tile.dimensionalShardBlock.name=Dimensional Shard Ore
 tile.dimensionalBlankBlock.name=Dimensional Blank Block
 tile.dimensionalBlock.name=Dimensional Block
@@ -162,5 +165,6 @@ tile.dimensionalCross2Block.name=Dimensional Cross 2 Block
 tile.dimensionalPattern1Block.name=Dimensional Pattern 1 Block
 tile.dimensionalPattern2Block.name=Dimensional Pattern 2 Block
 
+# Creative Tabs
 itemGroup.RfTools=RFTools
 itemGroup.RfToolsDimlets=RFTools Dimlets

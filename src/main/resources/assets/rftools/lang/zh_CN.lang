@@ -1,3 +1,4 @@
+# Achievements
 achievement.theFirstStep=Small Step to a Big World
 achievement.theFirstStep.desc=Find your first unknown dimlet
 achievement.researching=Doctor Dimlet!
@@ -19,8 +20,10 @@ achievement.clearVision.desc=Place a modular screen
 achievement.specialOres=Exotic Miner!
 achievement.specialOres.desc=Mine dimensional shards
 
+# Death Messages
 death.dimension.powerfailure=%s dies in a collapsing world!
 
+# Items
 item.NetworkMonitor.name=RF网络监视仪
 item.TeleportProbe.name=传输调试仪
 item.ChargedPorter.name=Charged Porter
@@ -58,6 +61,7 @@ item.SpeedPlusEModule.name=Speed Plus Module
 item.HasteEModule.name=Haste Module
 item.HastePlusEModule.name=Haste Plus Module
 item.SaturationEModule.name=Saturation Module
+item.SaturationPlusEModule.name=Saturation Plus Module
 item.FeatherFallingEModule.name=Feather Falling Module
 item.FeatherFallingPlusEModule.name=Feather Falling Plus Module
 item.FlightEModule.name=Flight Module
@@ -94,6 +98,7 @@ item.PeaceEssence.name=Peace Essence
 item.EfficiencyEssence.name=Efficiency Essence
 item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 
+# Blocks
 tile.crafterBlock1.name=自动合成机<1级>
 tile.crafterBlock2.name=自动合成机<2级>
 tile.crafterBlock3.name=自动合成机<3级>
@@ -160,5 +165,6 @@ tile.dimensionalCross2Block.name=Dimensional Cross 2 Block
 tile.dimensionalPattern1Block.name=Dimensional Pattern 1 Block
 tile.dimensionalPattern2Block.name=Dimensional Pattern 2 Block
 
+# Creative Tabs
 itemGroup.RfTools=RF工具
 itemGroup.RfToolsDimlets=RF工具|信息卡
