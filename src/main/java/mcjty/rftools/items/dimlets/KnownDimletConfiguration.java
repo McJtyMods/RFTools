@@ -739,6 +739,9 @@ public class KnownDimletConfiguration {
 
     public static String getModidForBlock(Block block) {
         String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        if (nameForObject == null) {
+            return "?";
+        }
         String[] lst = StringUtils.split(nameForObject, ":");
         if (lst.length >= 2) {
             return lst[0];
