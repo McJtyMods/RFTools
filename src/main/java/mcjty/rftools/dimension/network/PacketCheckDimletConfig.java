@@ -1,5 +1,6 @@
 package mcjty.rftools.dimension.network;
 
+import mcjty.rftools.RFTools;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -17,11 +18,24 @@ public class PacketCheckDimletConfig implements IMessage {
         dimlets = new HashMap<Integer, DimletKey>();
         for (int i = 0 ; i < size ; i++) {
             int id = buf.readInt();
-            byte[] dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            String name = new String(dst);
+            int s = buf.readInt();
+            String name;
+            if (s == -1) {
+                name = null;
+            } else if (s == 0) {
+                name = "";
+            } else {
+                byte[] dst = new byte[s];
+                buf.readBytes(dst);
+                name = new String(dst);
+            }
             int typeOrdinal = buf.readInt();
-            dimlets.put(id, new DimletKey(DimletType.values()[typeOrdinal], name));
+            try {
+                dimlets.put(id, new DimletKey(DimletType.values()[typeOrdinal], name));
+            } catch (Exception e) {
+                RFTools.logError("INTERNAL ERROR: name=" + name + ", i=" + i + ", size=" + size + "!");
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -31,8 +45,15 @@ public class PacketCheckDimletConfig implements IMessage {
         for (Map.Entry<Integer,DimletKey> me : dimlets.entrySet()) {
             buf.writeInt(me.getKey());
             DimletKey key = me.getValue();
-            buf.writeInt(key.getName().length());
-            buf.writeBytes(key.getName().getBytes());
+            String name = key.getName();
+            if (name == null) {
+                buf.writeInt(-1);
+            } else if (name.isEmpty()) {
+                buf.writeInt(0);
+            } else {
+                buf.writeInt(name.length());
+                buf.writeBytes(name.getBytes());
+            }
             buf.writeInt(key.getType().ordinal());
         }
     }

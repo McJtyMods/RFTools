@@ -3,6 +3,8 @@ package mcjty.rftools.items.dimlets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.rftools.CommonProxy;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
@@ -14,8 +16,6 @@ import mcjty.rftools.dimension.description.WeatherDescriptor;
 import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.ModItems;
 import mcjty.varia.BlockMeta;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
@@ -354,7 +354,10 @@ public class KnownDimletConfiguration {
         for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {
             Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
             if (entityClass != null) {
-                initMobItem(cfg, entry.getKey(), mapping, master);
+                String name = entry.getKey();
+                if (name != null && !name.isEmpty()) {
+                    initMobItem(cfg, name, mapping, master);
+                }
             }
         }
         DimletKey keyDefaultMobs = new DimletKey(DimletType.DIMLET_MOBS, "Default");
@@ -622,15 +625,17 @@ public class KnownDimletConfiguration {
                         ItemBlock itemBlock = (ItemBlock) item;
                         Block block = itemBlock.field_150939_a;
                         String unlocalizedName = block.getUnlocalizedName();
-                        int meta = itemStack.getItemDamage();
-                        if (meta != 0) {
-                            unlocalizedName += meta;
-                        }
-                        DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
-                        Integer id = mapping.getId(key);
+                        if (unlocalizedName != null && !unlocalizedName.isEmpty()) {
+                            int meta = itemStack.getItemDamage();
+                            if (meta != 0) {
+                                unlocalizedName += meta;
+                            }
+                            DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
+                            Integer id = mapping.getId(key);
 
-                        if (id == null || !idToDimletEntry.containsKey(id)) {
-                            initMaterialItem(cfg, block, meta, mapping, master);
+                            if (id == null || !idToDimletEntry.containsKey(id)) {
+                                initMaterialItem(cfg, block, meta, mapping, master);
+                            }
                         }
                     }
                 }
@@ -752,19 +757,23 @@ public class KnownDimletConfiguration {
 
     private static int initMaterialItem(Configuration cfg, Block block, int meta, DimletMapping mapping, boolean master) {
         String unlocalizedName = block.getUnlocalizedName();
-        if (meta != 0) {
-            unlocalizedName += meta;
-        }
-        DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
+        if (unlocalizedName != null && !unlocalizedName.isEmpty()) {
+            if (meta != 0) {
+                unlocalizedName += meta;
+            }
+            DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
 
-        String modid = getModidForBlock(block);
-        int id = registerDimlet(cfg, key, mapping, master, modid);
-        if (id != -1) {
-            ItemStack stack = new ItemStack(block, 1, meta);
-            idToDisplayName.put(key, DimletType.DIMLET_MATERIAL.dimletType.getName() + " " + stack.getDisplayName() + " Dimlet");
-            DimletObjectMapping.idToBlock.put(key, new BlockMeta(block, (byte)meta));
+            String modid = getModidForBlock(block);
+            int id = registerDimlet(cfg, key, mapping, master, modid);
+            if (id != -1) {
+                ItemStack stack = new ItemStack(block, 1, meta);
+                idToDisplayName.put(key, DimletType.DIMLET_MATERIAL.dimletType.getName() + " " + stack.getDisplayName() + " Dimlet");
+                DimletObjectMapping.idToBlock.put(key, new BlockMeta(block, (byte)meta));
+            }
+            return id;
+        } else {
+            return -1;
         }
-        return id;
     }
 
     /**
@@ -881,11 +890,13 @@ public class KnownDimletConfiguration {
         for (BiomeGenBase biome : biomeGenArray) {
             if (biome != null) {
                 String name = biome.biomeName;
-                DimletKey key = new DimletKey(DimletType.DIMLET_BIOME, name);
-                int id = registerDimlet(cfg, key, mapping, master, null);
-                if (id != -1) {
-                    DimletObjectMapping.idToBiome.put(key, biome);
-                    idToDisplayName.put(key, DimletType.DIMLET_BIOME.dimletType.getName() + " " + name + " Dimlet");
+                if (name != null && !name.isEmpty()) {
+                    DimletKey key = new DimletKey(DimletType.DIMLET_BIOME, name);
+                    int id = registerDimlet(cfg, key, mapping, master, null);
+                    if (id != -1) {
+                        DimletObjectMapping.idToBiome.put(key, biome);
+                        idToDisplayName.put(key, DimletType.DIMLET_BIOME.dimletType.getName() + " " + name + " Dimlet");
+                    }
                 }
             }
         }
@@ -903,21 +914,24 @@ public class KnownDimletConfiguration {
         Map<String,Fluid> fluidMap = FluidRegistry.getRegisteredFluids();
         for (Map.Entry<String,Fluid> me : fluidMap.entrySet()) {
             if (me.getValue().canBePlacedInWorld()) {
-                try {
-                    Block block = me.getValue().getBlock();
-                    if (block != null) {
-                        String modid = getModidForBlock(block);
-                        String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
-                        DimletKey key = new DimletKey(DimletType.DIMLET_LIQUID, me.getKey());
-                        int id = registerDimlet(cfg, key, mapping, master, modid);
-                        if (id != -1) {
-                            DimletObjectMapping.idToFluid.put(key, me.getValue().getBlock());
-                            idToDisplayName.put(key, DimletType.DIMLET_LIQUID.dimletType.getName() + " " + displayName + " Dimlet");
+                String name = me.getKey();
+                if (name != null && !name.isEmpty()) {
+                    try {
+                        Block block = me.getValue().getBlock();
+                        if (block != null) {
+                            String modid = getModidForBlock(block);
+                            String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
+                            DimletKey key = new DimletKey(DimletType.DIMLET_LIQUID, name);
+                            int id = registerDimlet(cfg, key, mapping, master, modid);
+                            if (id != -1) {
+                                DimletObjectMapping.idToFluid.put(key, me.getValue().getBlock());
+                                idToDisplayName.put(key, DimletType.DIMLET_LIQUID.dimletType.getName() + " " + displayName + " Dimlet");
+                            }
                         }
+                    } catch (Exception e) {
+                        RFTools.logError("Something went wrong getting the name of a fluid:");
+                        RFTools.logError("Fluid: " + name + ", unlocalizedName: " + me.getValue().getUnlocalizedName());
                     }
-                } catch (Exception e) {
-                    RFTools.logError("Something went wrong getting the name of a fluid:");
-                    RFTools.logError("Fluid: " + me.getKey() + ", unlocalizedName: " + me.getValue().getUnlocalizedName());
                 }
             }
         }
