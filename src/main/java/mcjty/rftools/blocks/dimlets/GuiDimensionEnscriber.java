@@ -233,7 +233,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
 
         boolean error = true;
         if (tooltips.isEmpty()) {
-            tooltips.add("Everything appears to be allright");
+            tooltips.add("Everything appears to be alright");
             error = false;
         }
         validateField.setTooltips(tooltips.toArray(new String[tooltips.size()]));
