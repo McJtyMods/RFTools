@@ -19,24 +19,18 @@ public class AbstractServerCommand implements IMessage {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        command = new String(dst);
+        command = NetworkTools.readString(buf);
         int size = buf.readInt();
         if (size == 0) {
             args = null;
         } else {
             args = new HashMap<String,Argument>(size);
             for (int i = 0 ; i < size ; i++) {
-                dst = new byte[buf.readInt()];
-                buf.readBytes(dst);
-                String key = new String(dst);
+                String key = NetworkTools.readString(buf);
                 ArgumentType type = ArgumentType.getType(buf.readByte());
                 switch (type) {
                     case TYPE_STRING:
-                        dst = new byte[buf.readInt()];
-                        buf.readBytes(dst);
-                        args.put(key, new Argument(key, new String(dst)));
+                        args.put(key, new Argument(key, NetworkTools.readString(buf)));
                         break;
                     case TYPE_INTEGER:
                         args.put(key, new Argument(key, buf.readInt()));
@@ -64,24 +58,18 @@ public class AbstractServerCommand implements IMessage {
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
-        buf.writeInt(command.length());
-        buf.writeBytes(command.getBytes());
+        NetworkTools.writeString(buf, command);
         if (args == null) {
             buf.writeInt(0);
         } else {
             buf.writeInt(args.size());
             for (Argument arg : args.values()) {
                 String key = arg.getName();
-                buf.writeInt(key.length());
-                buf.writeBytes(key.getBytes());
+                NetworkTools.writeString(buf, key);
                 buf.writeByte(arg.getType().getIndex());
                 switch (arg.getType()) {
                     case TYPE_STRING:
-                        String s = arg.getString();
-                        buf.writeInt(s == null ? 0 : s.length());
-                        if (s != null) {
-                            buf.writeBytes(s.getBytes());
-                        }
+                        NetworkTools.writeString(buf, arg.getString());
                         break;
                     case TYPE_INTEGER:
                         buf.writeInt(arg.getInteger());

@@ -37,7 +37,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void syncFromServer(Map<Integer, DimensionDescriptor> dims, Map<Integer, DimensionInformation> dimInfo) {
         RFTools.log("RfToolsDimensionManager.syncFromServer");
         if (dims.isEmpty() || dimInfo.isEmpty()) {
-            RFTools.log("This should not happen! Dimension information from server is empty? Trying to adapt...");
+            RFTools.log("Dimension information from server is empty.");
         }
 
         for (Map.Entry<Integer, DimensionDescriptor> entry : dims.entrySet()) {

@@ -21,17 +21,14 @@ public class PacketRequestIntegerFromServer extends AbstractServerCommand implem
     public void fromBytes(ByteBuf buf) {
         super.fromBytes(buf);
 
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        clientCommand = new String(dst);
+        clientCommand = NetworkTools.readString(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         super.toBytes(buf);
 
-        buf.writeInt(clientCommand.length());
-        buf.writeBytes(clientCommand.getBytes());
+        NetworkTools.writeString(buf, clientCommand);
     }
 
     public PacketRequestIntegerFromServer(int x, int y, int z, String command, String clientCommand, Argument... arguments) {

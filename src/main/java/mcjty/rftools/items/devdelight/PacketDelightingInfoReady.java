@@ -4,6 +4,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.network.NetworkTools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,33 +22,21 @@ public class PacketDelightingInfoReady implements IMessage, IMessageHandler<Pack
         int size = buf.readInt();
         blockClasses = new ArrayList<String>(size);
         for (int i = 0 ; i < size ; i++) {
-            byte[] dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            blockClasses.add(new String(dst));
+            blockClasses.add(NetworkTools.readString(buf));
         }
 
         size = buf.readInt();
         teClasses = new ArrayList<String>(size);
         for (int i = 0 ; i < size ; i++) {
-            byte[] dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            teClasses.add(new String(dst));
+            teClasses.add(NetworkTools.readString(buf));
         }
 
         size = buf.readInt();
         nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>(size);
         for (int i = 0 ; i < size ; i++) {
-            byte[] dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            String key = new String(dst);
-
-            dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            String type = new String(dst);
-
-            dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            String value = new String(dst);
+            String key = NetworkTools.readString(buf);
+            String type = NetworkTools.readString(buf);
+            String value = NetworkTools.readString(buf);
 
             nbtData.put(key, new DelightingInfoHelper.NBTDescription(type, value));
         }
@@ -59,24 +48,19 @@ public class PacketDelightingInfoReady implements IMessage, IMessageHandler<Pack
     public void toBytes(ByteBuf buf) {
         buf.writeInt(blockClasses.size());
         for (String c : blockClasses) {
-            buf.writeInt(c.length());
-            buf.writeBytes(c.getBytes());
+            NetworkTools.writeString(buf, c);
         }
         buf.writeInt(teClasses.size());
         for (String c : teClasses) {
-            buf.writeInt(c.length());
-            buf.writeBytes(c.getBytes());
+            NetworkTools.writeString(buf, c);
         }
         buf.writeInt(nbtData.size());
         for (Map.Entry<String,DelightingInfoHelper.NBTDescription> me : nbtData.entrySet()) {
             String key = me.getKey();
             DelightingInfoHelper.NBTDescription value = me.getValue();
-            buf.writeInt(key.length());
-            buf.writeBytes(key.getBytes());
-            buf.writeInt(value.getType().length());
-            buf.writeBytes(value.getType().getBytes());
-            buf.writeInt(value.getValue().length());
-            buf.writeBytes(value.getValue().getBytes());
+            NetworkTools.writeString(buf, key);
+            NetworkTools.writeString(buf, value.getType());
+            NetworkTools.writeString(buf, value.getValue());
         }
         buf.writeInt(metadata);
     }

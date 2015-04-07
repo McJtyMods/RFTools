@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.network.NetworkTools;
 
 public class TeleportDestinationClientInfo extends TeleportDestination implements Comparable<TeleportDestinationClientInfo> {
 
@@ -8,9 +9,7 @@ public class TeleportDestinationClientInfo extends TeleportDestination implement
 
     public TeleportDestinationClientInfo(ByteBuf buf) {
         super(buf);
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        setDimensionName(new String(dst));
+        setDimensionName(NetworkTools.readString(buf));
     }
 
     public TeleportDestinationClientInfo(TeleportDestination destination) {
@@ -21,8 +20,7 @@ public class TeleportDestinationClientInfo extends TeleportDestination implement
     @Override
     public void toBytes(ByteBuf buf) {
         super.toBytes(buf);
-        buf.writeInt(getDimensionName().length());
-        buf.writeBytes(getDimensionName().getBytes());
+        NetworkTools.writeString(buf, getDimensionName());
     }
 
     public String getDimensionName() {

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.network.ByteBufConverter;
+import mcjty.rftools.network.NetworkTools;
 import mcjty.varia.Coordinate;
 
 public class TeleportDestination implements ByteBufConverter {
@@ -19,9 +20,7 @@ public class TeleportDestination implements ByteBufConverter {
             coordinate = new Coordinate(cx, cy, cz);
         }
         dimension = buf.readInt();
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        setName(new String(dst));
+        setName(NetworkTools.readString(buf));
     }
 
     public TeleportDestination(Coordinate coordinate, int dimension) {
@@ -45,8 +44,7 @@ public class TeleportDestination implements ByteBufConverter {
             buf.writeInt(coordinate.getZ());
         }
         buf.writeInt(dimension);
-        buf.writeInt(getName().length());
-        buf.writeBytes(getName().getBytes());
+        NetworkTools.writeString(buf, getName());
     }
 
     public String getName() {

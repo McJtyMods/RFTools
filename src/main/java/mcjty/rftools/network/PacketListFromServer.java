@@ -31,9 +31,7 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
         y = buf.readInt();
         z = buf.readInt();
 
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        command = new String(dst);
+        command = NetworkTools.readString(buf);
 
         int size = buf.readInt();
         if (size != -1) {
@@ -55,8 +53,7 @@ public abstract class PacketListFromServer<S extends PacketListFromServer, T ext
         buf.writeInt(y);
         buf.writeInt(z);
 
-        buf.writeInt(command.length());
-        buf.writeBytes(command.getBytes());
+        NetworkTools.writeString(buf, command);
 
         if (list == null) {
             buf.writeInt(-1);

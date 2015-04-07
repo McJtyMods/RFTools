@@ -6,7 +6,7 @@ import mcjty.rftools.dimension.description.*;
 import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
-import mcjty.rftools.network.ByteBufTools;
+import mcjty.rftools.network.NetworkTools;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
@@ -614,18 +614,18 @@ public class DimensionInformation {
     }
 
     public void toBytes(ByteBuf buf) {
-        ByteBufTools.writeEnum(buf, terrainType, TerrainType.TERRAIN_VOID);
-        ByteBufTools.writeEnumCollection(buf, featureTypes);
-        ByteBufTools.writeEnumCollection(buf, structureTypes);
-        ByteBufTools.writeEnumCollection(buf, effectTypes);
+        NetworkTools.writeEnum(buf, terrainType, TerrainType.TERRAIN_VOID);
+        NetworkTools.writeEnumCollection(buf, featureTypes);
+        NetworkTools.writeEnumCollection(buf, structureTypes);
+        NetworkTools.writeEnumCollection(buf, effectTypes);
 
         buf.writeInt(biomes.size());
         for (BiomeGenBase entry : biomes) {
             buf.writeInt(entry.biomeID);
         }
-        ByteBufTools.writeEnum(buf, controllerType, ControllerType.CONTROLLER_DEFAULT);
+        NetworkTools.writeEnum(buf, controllerType, ControllerType.CONTROLLER_DEFAULT);
 
-        ByteBufTools.writeString(buf, digitString);
+        NetworkTools.writeString(buf, digitString);
         buf.writeLong(forcedDimensionSeed);
         buf.writeLong(baseSeed);
         buf.writeInt(worldVersion);
@@ -656,8 +656,8 @@ public class DimensionInformation {
         buf.writeBoolean(peaceful);
         buf.writeBoolean(shelter);
         buf.writeBoolean(respawnHere);
-        ByteBufTools.writeFloat(buf, celestialAngle);
-        ByteBufTools.writeFloat(buf, timeSpeed);
+        NetworkTools.writeFloat(buf, celestialAngle);
+        NetworkTools.writeFloat(buf, timeSpeed);
 
         buf.writeInt(probeCounter);
         buf.writeInt(actualRfCost);
@@ -669,7 +669,7 @@ public class DimensionInformation {
         for (MobDescriptor mob : extraMobs) {
             if (mob != null) {
                 if (mob.getEntityClass() != null) {
-                    ByteBufTools.writeString(buf, mob.getEntityClass().getName());
+                    NetworkTools.writeString(buf, mob.getEntityClass().getName());
                     buf.writeInt(mob.getSpawnChance());
                     buf.writeInt(mob.getMinGroup());
                     buf.writeInt(mob.getMaxGroup());
@@ -680,7 +680,7 @@ public class DimensionInformation {
 
         buf.writeInt(dimensionTypes.length);
         for (String type : dimensionTypes) {
-            ByteBufTools.writeString(buf, type);
+            NetworkTools.writeString(buf, type);
         }
 
     }
@@ -689,18 +689,18 @@ public class DimensionInformation {
         this.name = name;
         this.descriptor = descriptor;
 
-        terrainType = ByteBufTools.readEnum(buf, TerrainType.values());
-        ByteBufTools.readEnumCollection(buf, featureTypes, FeatureType.values());
-        ByteBufTools.readEnumCollection(buf, structureTypes, StructureType.values());
-        ByteBufTools.readEnumCollection(buf, effectTypes, EffectType.values());
+        terrainType = NetworkTools.readEnum(buf, TerrainType.values());
+        NetworkTools.readEnumCollection(buf, featureTypes, FeatureType.values());
+        NetworkTools.readEnumCollection(buf, structureTypes, StructureType.values());
+        NetworkTools.readEnumCollection(buf, effectTypes, EffectType.values());
 
         biomes.clear();
         int size = buf.readInt();
         for (int i = 0 ; i < size ; i++) {
             biomes.add(BiomeGenBase.getBiome(buf.readInt()));
         }
-        controllerType = ByteBufTools.readEnum(buf, ControllerType.values());
-        digitString = ByteBufTools.readString(buf);
+        controllerType = NetworkTools.readEnum(buf, ControllerType.values());
+        digitString = NetworkTools.readString(buf);
 
         forcedDimensionSeed = buf.readLong();
         baseSeed = buf.readLong();
@@ -746,8 +746,8 @@ public class DimensionInformation {
         shelter = buf.readBoolean();
         respawnHere = buf.readBoolean();
 
-        celestialAngle = ByteBufTools.readFloat(buf);
-        timeSpeed = ByteBufTools.readFloat(buf);
+        celestialAngle = NetworkTools.readFloat(buf);
+        timeSpeed = NetworkTools.readFloat(buf);
 
         probeCounter = buf.readInt();
         actualRfCost = buf.readInt();
@@ -760,7 +760,7 @@ public class DimensionInformation {
         extraMobs.clear();
         size = buf.readInt();
         for (int i = 0 ; i < size ; i++) {
-            String className = ByteBufTools.readString(buf);
+            String className = NetworkTools.readString(buf);
             try {
                 Class<? extends EntityLiving> c = (Class<? extends EntityLiving>) Class.forName(className);
                 int chance = buf.readInt();
@@ -777,7 +777,7 @@ public class DimensionInformation {
         size = buf.readInt();
         dimensionTypes = new String[size];
         for (int i = 0 ; i < size ; i++) {
-            dimensionTypes[i] = ByteBufTools.readString(buf);
+            dimensionTypes[i] = NetworkTools.readString(buf);
         }
 
         setupBiomeMapping();

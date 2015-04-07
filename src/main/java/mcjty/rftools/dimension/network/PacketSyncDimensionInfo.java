@@ -4,6 +4,7 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.network.NetworkTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -40,9 +41,7 @@ public class PacketSyncDimensionInfo implements IMessage {
         dimensionInformation = new HashMap<Integer, DimensionInformation>();
         for (int i = 0 ; i < size ; i++) {
             int id = buf.readInt();
-            byte[] dst = new byte[buf.readInt()];
-            buf.readBytes(dst);
-            String name = new String(dst);
+            String name = NetworkTools.readString(buf);
             DimensionInformation dimInfo = new DimensionInformation(name, dimensions.get(id), buf);
             dimensionInformation.put(id, dimInfo);
         }
@@ -67,8 +66,7 @@ public class PacketSyncDimensionInfo implements IMessage {
         for (Map.Entry<Integer, DimensionInformation> me : dimensionInformation.entrySet()) {
             buf.writeInt(me.getKey());
             DimensionInformation dimInfo = me.getValue();
-            buf.writeInt(dimInfo.getName().length());
-            buf.writeBytes(dimInfo.getName().getBytes());
+            NetworkTools.writeString(buf, dimInfo.getName());
             dimInfo.toBytes(buf);
         }
     }

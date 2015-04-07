@@ -24,9 +24,7 @@ public class PacketIntegerFromServer implements IMessage, IMessageHandler<Packet
         y = buf.readInt();
         z = buf.readInt();
 
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        command = new String(dst);
+        command = NetworkTools.readString(buf);
 
         boolean resultPresent = buf.readBoolean();
         if (resultPresent) {
@@ -42,8 +40,7 @@ public class PacketIntegerFromServer implements IMessage, IMessageHandler<Packet
         buf.writeInt(y);
         buf.writeInt(z);
 
-        buf.writeInt(command.length());
-        buf.writeBytes(command.getBytes());
+        NetworkTools.writeString(buf, command);
 
         buf.writeBoolean(result != null);
         if (result != null) {

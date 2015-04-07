@@ -5,6 +5,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.network.NetworkTools;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,17 +19,7 @@ public class PacketCheckDimletConfig implements IMessage {
         dimlets = new HashMap<Integer, DimletKey>();
         for (int i = 0 ; i < size ; i++) {
             int id = buf.readInt();
-            int s = buf.readInt();
-            String name;
-            if (s == -1) {
-                name = null;
-            } else if (s == 0) {
-                name = "";
-            } else {
-                byte[] dst = new byte[s];
-                buf.readBytes(dst);
-                name = new String(dst);
-            }
+            String name = NetworkTools.readString(buf);
             int typeOrdinal = buf.readInt();
             try {
                 dimlets.put(id, new DimletKey(DimletType.values()[typeOrdinal], name));
@@ -43,17 +34,9 @@ public class PacketCheckDimletConfig implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(dimlets.size());
         for (Map.Entry<Integer,DimletKey> me : dimlets.entrySet()) {
-            buf.writeInt(me.getKey());
             DimletKey key = me.getValue();
-            String name = key.getName();
-            if (name == null) {
-                buf.writeInt(-1);
-            } else if (name.isEmpty()) {
-                buf.writeInt(0);
-            } else {
-                buf.writeInt(name.length());
-                buf.writeBytes(name.getBytes());
-            }
+            buf.writeInt(me.getKey());
+            NetworkTools.writeString(buf, key.getName());
             buf.writeInt(key.getType().ordinal());
         }
     }

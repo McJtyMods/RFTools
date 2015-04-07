@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.network.ByteBufConverter;
+import mcjty.rftools.network.NetworkTools;
 
 public class PlayerName implements ByteBufConverter {
     private final String name;
@@ -11,15 +12,12 @@ public class PlayerName implements ByteBufConverter {
     }
 
     public PlayerName(ByteBuf buf) {
-        byte[] dst = new byte[buf.readInt()];
-        buf.readBytes(dst);
-        name = new String(dst);
+        name = NetworkTools.readString(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(getName().length());
-        buf.writeBytes(getName().getBytes());
+        NetworkTools.writeString(buf, getName());
     }
 
     public String getName() {
