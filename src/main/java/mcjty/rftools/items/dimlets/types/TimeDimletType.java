@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 public class TimeDimletType implements IDimletType {
-    private static final String CATEGORY_TYPE = "type_terrain";
+    private static final String CATEGORY_TYPE = "type_time";
 
     private static int rarity = DimletRandomizer.RARITY_2;
     private static int baseCreationCost = 300;
