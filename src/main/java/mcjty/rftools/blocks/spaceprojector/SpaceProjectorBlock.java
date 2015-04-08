@@ -6,6 +6,7 @@ import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -32,6 +33,11 @@ public class SpaceProjectorBlock extends GenericContainerBlock {
         super(Material.iron, SpaceProjectorTileEntity.class);
         setBlockName("spaceProjectorBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        checkRedstoneWithTE(world, x, y, z);
     }
 
     @SideOnly(Side.CLIENT)

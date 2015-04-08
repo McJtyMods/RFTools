@@ -11,6 +11,8 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,14 +24,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Map;
+
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
 public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory, SimpleComponent, IPeripheral {
 
     public static final String COMPONENT_NAME = "space_projector";
+    public static final String CMD_RSMODE = "rsMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpaceProjectorContainer.factory, 1);
+
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+    private int powered = 0;
 
     public SpaceProjectorTileEntity() {
         super(SpaceProjectorConfiguration.SPACEPROJECTOR_MAXENERGY, SpaceProjectorConfiguration.SPACEPROJECTOR_RECEIVEPERTICK);
@@ -44,7 +52,7 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "hasCard" };
+        return new String[] { "hasCard", "getRedstoneMode", "setRedstoneMode"  };
     }
 
     @Override
@@ -52,7 +60,8 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
         switch (method) {
             case 0: return new Object[] { hasCard() != null };
-
+            case 1: return new Object[] { getRedstoneMode().getDescription() };
+            case 2: return setRedstoneMode((String) arguments[0]);
         }
         return new Object[0];
     }
@@ -87,6 +96,19 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         return new Object[] { hasCard() != null };
     }
 
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getRedstoneMode().getDescription() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        return setRedstoneMode(mode);
+    }
+
     private NBTTagCompound hasCard() {
         ItemStack itemStack = inventoryHelper.getStacks()[0];
         if (itemStack == null || itemStack.stackSize == 0) {
@@ -97,6 +119,33 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         return tagCompound;
     }
 
+
+    @Override
+    public void setPowered(int powered) {
+        if (this.powered != powered) {
+            this.powered = powered;
+            markDirty();
+        }
+    }
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    private Object[] setRedstoneMode(String mode) {
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRedstoneMode(redstoneMode);
+        return null;
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
 
     public void project() {
         NBTTagCompound tc = hasCard();
@@ -224,12 +273,15 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        powered = tagCompound.getByte("powered");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
+        int m = tagCompound.getByte("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -243,12 +295,14 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setByte("powered", (byte) powered);
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -262,6 +316,20 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag("Items", bufferTagList);
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        }
+        return false;
     }
 
 }

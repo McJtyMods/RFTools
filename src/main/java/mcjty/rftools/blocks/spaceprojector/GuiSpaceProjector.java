@@ -76,12 +76,12 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(150, 46, 16, 16));
-//        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
     private void changeRedstoneMode() {
-//        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
-//        sendServerCommand(DimensionBuilderTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        sendServerCommand(SpaceProjectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
     }
 
 
