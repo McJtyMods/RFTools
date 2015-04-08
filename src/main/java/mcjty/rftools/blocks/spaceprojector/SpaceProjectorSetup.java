@@ -22,7 +22,7 @@ public class SpaceProjectorSetup {
         GameRegistry.registerTileEntity(SpaceChamberControllerTileEntity.class, "SpaceChamberControllerTileEntity");
 
         spaceProjectorBlock = new SpaceProjectorBlock();
-        GameRegistry.registerBlock(spaceProjectorBlock, SpaceProjectorItemBlock.class, "spaceProjectorBlock");
+        GameRegistry.registerBlock(spaceProjectorBlock, GenericItemBlock.class, "spaceProjectorBlock");
         GameRegistry.registerTileEntity(SpaceProjectorTileEntity.class, "SpaceProjectorTileEntity");
     }
 }

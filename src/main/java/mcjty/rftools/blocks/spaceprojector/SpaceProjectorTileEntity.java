@@ -16,7 +16,6 @@ import net.minecraftforge.common.util.Constants;
 public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     private int dimension = 0;
-    private int channel = -1;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpaceProjectorContainer.factory, 1);
 
@@ -24,7 +23,25 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         super(SpaceProjectorConfiguration.SPACEPROJECTOR_MAXENERGY, SpaceProjectorConfiguration.SPACEPROJECTOR_RECEIVEPERTICK);
     }
 
+    private NBTTagCompound hasCard() {
+        ItemStack itemStack = inventoryHelper.getStacks()[0];
+        if (itemStack == null || itemStack.stackSize == 0) {
+            return null;
+        }
+
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        return tagCompound;
+    }
+
+
     public void project() {
+        NBTTagCompound tc = hasCard();
+        if (tc == null) {
+            return;
+        }
+
+        int channel = tc.getInteger("channel");
+
         if (channel == -1) {
             return;
         }
@@ -148,7 +165,6 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        channel = tagCompound.getInteger("channel");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -168,7 +184,6 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setInteger("channel", channel);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {

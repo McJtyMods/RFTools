@@ -2,9 +2,11 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import mcjty.container.GenericGuiContainer;
 import mcjty.gui.Window;
+import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
@@ -21,6 +23,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
 
     private EnergyBar energyBar;
     private ImageChoiceLabel redstoneMode;
+    private Button projectButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -41,14 +44,24 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
+        projectButton = new Button(mc, this).setText("Update").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 70, 16)).addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                updateProjection();
+            }
+        });
         initRedstoneMode();
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(redstoneMode);
+                addChild(redstoneMode).addChild(projectButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
+    }
+
+    private void updateProjection() {
+        tileEntity.project();
     }
 
     private void initRedstoneMode() {

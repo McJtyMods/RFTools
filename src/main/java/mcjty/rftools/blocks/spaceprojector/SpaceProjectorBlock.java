@@ -38,31 +38,13 @@ public class SpaceProjectorBlock extends GenericContainerBlock {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
-            list.add(EnumChatFormatting.GREEN + "Channel: " + channel);
-        }
-
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This block is linked to a space chamber and");
-            list.add(EnumChatFormatting.WHITE + "can project it on top of this block. Right");
-            list.add(EnumChatFormatting.WHITE + "click on a space chamber controller to link");
+            list.add(EnumChatFormatting.WHITE + "can project it on top of this block. Insert");
+            list.add(EnumChatFormatting.WHITE + "a chamber card to make a projection");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
-            currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
-        }
-        return currenttip;
     }
 
     @Override
@@ -81,18 +63,6 @@ public class SpaceProjectorBlock extends GenericContainerBlock {
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return new SpaceProjectorContainer(entityPlayer, (SpaceProjectorTileEntity) tileEntity);
-    }
-
-
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
-        if (!world.isRemote) {
-            SpaceProjectorTileEntity spaceProjectorTileEntity = (SpaceProjectorTileEntity) world.getTileEntity(x, y, z);
-            RFTools.message((EntityPlayer) entityLivingBase, "Start projecting...");
-            spaceProjectorTileEntity.project();
-        }
     }
 
     @Override
