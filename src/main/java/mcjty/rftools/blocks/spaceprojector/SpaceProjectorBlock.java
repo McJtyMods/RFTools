@@ -7,11 +7,14 @@ import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -64,8 +67,23 @@ public class SpaceProjectorBlock extends GenericContainerBlock {
 
     @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_SPACE_PROJECTOR;
     }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        SpaceProjectorTileEntity spaceProjectorTileEntity = (SpaceProjectorTileEntity) tileEntity;
+        SpaceProjectorContainer spaceProjectorContainer = new SpaceProjectorContainer(entityPlayer, spaceProjectorTileEntity);
+        return new GuiSpaceProjector(spaceProjectorTileEntity, spaceProjectorContainer);
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new SpaceProjectorContainer(entityPlayer, (SpaceProjectorTileEntity) tileEntity);
+    }
+
+
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {

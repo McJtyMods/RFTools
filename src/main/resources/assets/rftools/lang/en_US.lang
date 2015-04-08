@@ -53,6 +53,7 @@ item.CounterPlusModule.name=Counter Plus Module
 item.RedstoneModule.name=Redstone Module
 item.MachineInformationModule.name=Machine Information Module
 item.ComputerModule.name=Computer Module
+item.SpaceChamberCard.name=Space Chamber Card
 
 item.RegenerationEModule.name=Regeneration Module
 item.RegenerationPlusEModule.name=Regeneration Plus Module

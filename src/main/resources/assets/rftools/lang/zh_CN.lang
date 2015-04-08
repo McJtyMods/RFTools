@@ -50,7 +50,8 @@ item.CounterPlusModule.name=计数器+模块
 item.RedstoneModule.name=红石模块
 item.MachineInformationModule.name=机器资讯模块
 item.ComputerModule.name=电脑模块
- 
+item.SpaceChamberCard.name=Space Chamber Card
+
 item.RegenerationEModule.name=再生模块
 item.RegenerationPlusEModule.name=再生+模块
 item.SpeedEModule.name=速度模块

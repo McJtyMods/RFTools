@@ -1,6 +1,7 @@
 package mcjty.rftools.items;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.spaceprojector.SpaceChamberCardItem;
 import mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import mcjty.rftools.items.devdelight.ShardWandItem;
 import mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
@@ -24,6 +25,7 @@ public final class ModItems {
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
     public static ShardWandItem shardWandItem;
+    public static SpaceChamberCardItem spaceChamberCardItem;
 
     public static UnknownDimlet unknownDimlet;
     public static DimletTemplate dimletTemplate;
@@ -113,6 +115,12 @@ public final class ModItems {
         shardWandItem.setCreativeTab(RFTools.tabRfTools);
         shardWandItem.setTextureName(RFTools.MODID + ":shardWandItem");
         GameRegistry.registerItem(shardWandItem, "shardWandItem");
+
+        spaceChamberCardItem = new SpaceChamberCardItem();
+        spaceChamberCardItem.setUnlocalizedName("SpaceChamberCard");
+        spaceChamberCardItem.setCreativeTab(RFTools.tabRfTools);
+        spaceChamberCardItem.setTextureName(RFTools.MODID + ":spaceChamberCardItem");
+        GameRegistry.registerItem(spaceChamberCardItem, "spaceChamberCardItem");
 
         initEnvironmentModuleItems();
         initScreenModuleItems();

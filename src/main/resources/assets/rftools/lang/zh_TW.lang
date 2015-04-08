@@ -50,7 +50,8 @@ item.CounterPlusModule.name=計數器+模塊
 item.RedstoneModule.name=紅石模塊
 item.MachineInformationModule.name=機器資訊模塊
 item.ComputerModule.name=電腦模塊
- 
+item.SpaceChamberCard.name=Space Chamber Card
+
 item.RegenerationEModule.name=再生模塊
 item.RegenerationPlusEModule.name=再生+模塊
 item.SpeedEModule.name=速度模塊
