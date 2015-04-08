@@ -371,11 +371,18 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, "Bright Night", new SkyDescriptor.Builder().starBrightnessFactor(1.5f).build(), false, mapping, master);
         initSkyItem(cfg, "Dark Night", new SkyDescriptor.Builder().starBrightnessFactor(0.4f).build(), false, mapping, master);
         initSkyItem(cfg, "Red Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 0.2f).build(), false, mapping, master);
+        initSkyItem(cfg, "Dark Red Color", new SkyDescriptor.Builder().skyColorFactor(0.6f, 0.0f, 0.0f).build(), false, mapping, master);
         initSkyItem(cfg, "Green Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 0.2f).build(), false, mapping, master);
+        initSkyItem(cfg, "Dark Green Color", new SkyDescriptor.Builder().skyColorFactor(0f, 0.6f, 0f).build(), false, mapping, master);
         initSkyItem(cfg, "Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 0.2f, 1.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Dark Blue Color", new SkyDescriptor.Builder().skyColorFactor(0.0f, 0.0f, 0.6f).build(), false, mapping, master);
         initSkyItem(cfg, "Yellow Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 1.0f, 0.2f).build(), false, mapping, master);
         initSkyItem(cfg, "Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.2f, 1.0f, 1.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Dark Cyan Color", new SkyDescriptor.Builder().skyColorFactor(0.0f, 0.6f, 0.6f).build(), false, mapping, master);
         initSkyItem(cfg, "Purple Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.2f, 1.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Dark Purple Color", new SkyDescriptor.Builder().skyColorFactor(0.6f, 0, 0.6f).build(), false, mapping, master);
+        initSkyItem(cfg, "Black Color", new SkyDescriptor.Builder().skyColorFactor(0.0f, 0.0f, 0.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Gold Color", new SkyDescriptor.Builder().skyColorFactor(1.0f, 0.6f, 0.0f).build(), false, mapping, master);
 
         initSkyItem(cfg, "Normal Fog", new SkyDescriptor.Builder().fogColorFactor(1.0f, 1.0f, 1.0f).build(), false, mapping, master);
         initSkyItem(cfg, "Black Fog", new SkyDescriptor.Builder().fogColorFactor(0.0f, 0.0f, 0.0f).build(), false, mapping, master);
