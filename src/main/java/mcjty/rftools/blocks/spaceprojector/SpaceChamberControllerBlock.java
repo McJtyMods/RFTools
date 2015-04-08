@@ -1,14 +1,26 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.rftools.RFTools;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class SpaceChamberControllerBlock extends GenericContainerBlock {
 
@@ -16,6 +28,36 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
         super(Material.iron, SpaceChamberControllerTileEntity.class);
         setBlockName("spaceChamberControllerBlock");
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+        super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            int channel = tagCompound.getInteger("channel");
+            list.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "This block is one of the eight corners of an");
+            list.add(EnumChatFormatting.WHITE + "area of space you want to project elsewhere");
+        } else {
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            int channel = tagCompound.getInteger("channel");
+            currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+        }
+        return currenttip;
     }
 
     @Override
@@ -41,6 +83,35 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
             return openGui(world, x, y, z, player);
         }
     }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+        if (!world.isRemote) {
+            SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
+            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            if (te.getChannel() == -1) {
+                int id = chamberRepository.newChannel();
+                te.setChannel(id);
+                chamberRepository.save(world);
+            }
+            onNeighborBlockChange(world, x, y, z, this);
+        }
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        if (!world.isRemote) {
+            SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
+            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            if (te.getChannel() != -1) {
+                chamberRepository.deleteChannel(te.getChannel());
+                chamberRepository.save(world);
+            }
+        }
+        super.breakBlock(world, x, y, z, block, meta);
+    }
+
 
     @Override
     public boolean renderAsNormalBlock() {

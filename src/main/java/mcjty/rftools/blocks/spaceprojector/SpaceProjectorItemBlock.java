@@ -21,9 +21,9 @@ public class SpaceProjectorItemBlock extends GenericItemBlock {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof SpaceChamberControllerTileEntity) {
             if (!world.isRemote) {
-                SpaceChamberControllerTileEntity redstoneTransmitterTileEntity = (SpaceChamberControllerTileEntity) te;
-                Coordinate minCorner = redstoneTransmitterTileEntity.getMinCorner();
-                Coordinate maxCorner = redstoneTransmitterTileEntity.getMaxCorner();
+                SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
+                Coordinate minCorner = chamberControllerTileEntity.getMinCorner();
+                Coordinate maxCorner = chamberControllerTileEntity.getMaxCorner();
                 if (minCorner == null || maxCorner == null) {
                     RFTools.message(player, EnumChatFormatting.YELLOW + "This chamber controller has no formed chamber yet!");
                 } else {
@@ -31,8 +31,7 @@ public class SpaceProjectorItemBlock extends GenericItemBlock {
                     if (tagCompound == null) {
                         tagCompound = new NBTTagCompound();
                     }
-                    Coordinate.writeToNBT(tagCompound, "controller", new Coordinate(x, y, z));
-                    tagCompound.setInteger("dim", world.provider.dimensionId);
+                    tagCompound.setInteger("channel", chamberControllerTileEntity.getChannel());
                     stack.setTagCompound(tagCompound);
                     RFTools.message(player, EnumChatFormatting.WHITE + "Chamber controller target set!");
                 }

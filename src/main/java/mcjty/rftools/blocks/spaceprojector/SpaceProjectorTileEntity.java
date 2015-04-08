@@ -12,21 +12,31 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity {
 
     private Coordinate chamberController;
     private int dimension = 0;
+    private int channel = -1;
 
     public SpaceProjectorTileEntity() {
         super(SpaceProjectorConfiguration.SPACEPROJECTOR_MAXENERGY, SpaceProjectorConfiguration.SPACEPROJECTOR_RECEIVEPERTICK);
     }
 
     public void project() {
-        if (chamberController == null) {
+        if (channel == -1) {
             return;
         }
-        World world = DimensionManager.getWorld(dimension);
+
+        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
+        if (chamberChannel == null) {
+            return;
+        }
+        Coordinate minCorner = chamberChannel.getMinCorner();
+        Coordinate maxCorner = chamberChannel.getMaxCorner();
+        if (minCorner == null || maxCorner == null) {
+            return;
+        }
+
+        World world = DimensionManager.getWorld(chamberChannel.getDimension());
         TileEntity te = world.getTileEntity(chamberController.getX(), chamberController.getY(), chamberController.getZ());
         if (te instanceof SpaceChamberControllerTileEntity) {
-            SpaceChamberControllerTileEntity controllerTileEntity = (SpaceChamberControllerTileEntity) te;
-            Coordinate minCorner = controllerTileEntity.getMinCorner();
-            Coordinate maxCorner = controllerTileEntity.getMaxCorner();
             int dx = xCoord + 1 - minCorner.getX();
             int dy = yCoord + 1 - minCorner.getY();
             int dz = zCoord + 1 - minCorner.getZ();
@@ -47,6 +57,11 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
+    public boolean canUpdate() {
+        return false;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
     }
@@ -54,8 +69,7 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity {
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        chamberController = Coordinate.readFromNBT(tagCompound, "controller");
-        dimension = tagCompound.getInteger("dim");
+        channel = tagCompound.getInteger("channel");
     }
 
     @Override
@@ -66,7 +80,6 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity {
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        Coordinate.writeToNBT(tagCompound, "controller", chamberController);
-        tagCompound.setInteger("dim", dimension);
+        tagCompound.setInteger("channel", channel);
     }
 }

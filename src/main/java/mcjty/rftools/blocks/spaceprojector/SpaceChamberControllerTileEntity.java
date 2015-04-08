@@ -10,6 +10,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileEntity {
     private Coordinate minCorner;
     private Coordinate maxCorner;
+    private int channel = -1;
 
     public SpaceChamberControllerTileEntity() {
         super(SpaceProjectorConfiguration.CHAMBERCONTROLLER_MAXENERGY, SpaceProjectorConfiguration.CHAMBERCONTROLLER_RECEIVEPERTICK);
@@ -100,6 +101,27 @@ public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileE
 
         RFTools.message(player, EnumChatFormatting.WHITE + "Chamber succesfully created!");
 
+        SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = chamberRepository.getOrCreateChannel(channel);
+        chamberChannel.setDimension(worldObj.provider.dimensionId);
+        chamberChannel.setMinCorner(minCorner);
+        chamberChannel.setMaxCorner(maxCorner);
+
+        markDirty();
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         markDirty();
     }
 
@@ -111,9 +133,21 @@ public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileE
     }
 
     @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        channel = tagCompound.getInteger("channel");
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         Coordinate.writeToNBT(tagCompound, "minCorner", minCorner);
         Coordinate.writeToNBT(tagCompound, "maxCorner", maxCorner);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setInteger("channel", channel);
     }
 }

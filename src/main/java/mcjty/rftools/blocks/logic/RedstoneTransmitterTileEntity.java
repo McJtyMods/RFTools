@@ -19,6 +19,7 @@ public class RedstoneTransmitterTileEntity extends GenericTileEntity {
     public void setChannel(int channel) {
         this.channel = channel;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     @Override
