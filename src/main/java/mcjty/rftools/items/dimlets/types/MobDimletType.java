@@ -119,13 +119,14 @@ public class MobDimletType implements IDimletType {
             }
         } else {
             DimletKey key = dimlets.get(0).getLeft();
-            if (dimlets.size() == 1 && DimletObjectMapping.idtoMob.get(key).getEntityClass() == null) {
+            MobDescriptor mobDescriptor = DimletObjectMapping.idtoMob.get(key);
+            if (dimlets.size() == 1 && (mobDescriptor == null || mobDescriptor.getEntityClass() == null)) {
                 // Just default.
             } else {
                 for (Pair<DimletKey, List<DimletKey>> dimletWithModifiers : dimlets) {
                     DimletKey modifierKey = dimletWithModifiers.getLeft();
                     MobDescriptor descriptor = DimletObjectMapping.idtoMob.get(modifierKey);
-                    if (descriptor.getEntityClass() != null) {
+                    if (descriptor != null && descriptor.getEntityClass() != null) {
                         extraMobs.add(descriptor);
                     }
                 }
