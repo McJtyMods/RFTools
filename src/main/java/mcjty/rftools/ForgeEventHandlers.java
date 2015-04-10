@@ -1,12 +1,12 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
@@ -17,7 +17,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-public class EntityEvents {
+public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntityConstructingEvent(EntityEvent.EntityConstructing event) {

@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-public class PlayerEvents {
+public class FMLEventHandlers {
 
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {

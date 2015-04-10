@@ -10,6 +10,7 @@ import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketRegisterDimensions;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,9 +19,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.world.ChunkEvent;
 
 import java.util.*;
 
@@ -116,6 +120,47 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void reclaimId(int id) {
         reclaimedIds.add(id);
     }
+
+    /**
+     * Freeze a dimension: avoid ticking all tile entities and remove all
+     * active entities (they are still there but will not do anything).
+     */
+    public static void freezeDimension(World world) {
+        List tokeep = new ArrayList();
+        boolean allplayer = true;
+        for (Object o : world.loadedEntityList) {
+            if (o instanceof EntityPlayer) {
+                tokeep.add(o);
+            } else {
+                allplayer = false;
+            }
+        }
+        if (!allplayer) {
+            world.loadedEntityList.clear();
+            world.loadedEntityList.addAll(tokeep);
+        }
+
+        world.loadedTileEntityList.clear();
+
+    }
+
+    public static void unfreezeDimension(World world) {
+        WorldServer worldServer = (WorldServer) world;
+        for (Object chunk : worldServer.theChunkProviderServer.loadedChunks) {
+            Chunk c = (Chunk) chunk;
+            unfreezeChunk(c);
+        }
+    }
+
+    public static void unfreezeChunk(Chunk chunk) {
+        chunk.isChunkLoaded = true;
+        chunk.worldObj.func_147448_a(chunk.chunkTileEntityMap.values());
+
+        for (List entityList : chunk.entityLists) {
+            chunk.worldObj.loadedEntityList.addAll(entityList);
+        }
+    }
+
 
     /**
      * Check if the client dimlet id's match with the server.
