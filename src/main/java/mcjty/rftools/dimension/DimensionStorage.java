@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -55,12 +56,13 @@ public class DimensionStorage extends WorldSavedData {
         int old = getEnergyLevel(id);
         energy.put(id, energyLevel);
         if (DimletConfiguration.freezeUnpowered) {
-            if (old == 0 && energyLevel > 0) {
-                World world = RfToolsDimensionManager.getWorldForDimension(id);
-                RfToolsDimensionManager.unfreezeDimension(world);
-            } else if (energyLevel == 0) {
-                World world = RfToolsDimensionManager.getWorldForDimension(id);
-                RfToolsDimensionManager.freezeDimension(world);
+            World world = DimensionManager.getWorld(id);
+            if (world != null) {
+                if (old == 0 && energyLevel > 0) {
+                    RfToolsDimensionManager.unfreezeDimension(world);
+                } else if (energyLevel == 0) {
+                    RfToolsDimensionManager.freezeDimension(world);
+                }
             }
         }
     }
