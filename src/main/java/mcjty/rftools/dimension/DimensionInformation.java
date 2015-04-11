@@ -51,6 +51,7 @@ public class DimensionInformation {
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
     private BlockMeta[] sphereBlocks = new BlockMeta[] { BlockMeta.STONE };
+    private BlockMeta[] hugeSphereBlocks = new BlockMeta[] { BlockMeta.STONE };
     private BlockMeta[] liquidSphereBlocks = new BlockMeta[] { BlockMeta.STONE };
     private Block[] liquidSphereFluids = new Block[] { Blocks.water };
     private BlockMeta[] extraOregen = new BlockMeta[] {};
@@ -316,6 +317,8 @@ public class DimensionInformation {
             sphereBlocks = new BlockMeta[] { oldSphereBlock };
         }
 
+        hugeSphereBlocks = readBlockArrayFromNBT(tagCompound, "hugeSphereBlocks");
+
         extraOregen = readBlockArrayFromNBT(tagCompound, "extraOregen");
         fluidsForLakes = readFluidsFromNBT(tagCompound, "lakeFluids");
 
@@ -430,6 +433,8 @@ public class DimensionInformation {
             // Write out a single sphere block for compatibility with older RFTools.
             setBlockMeta(tagCompound, sphereBlocks[0], "sphereBlock");
         }
+
+        writeBlocksToNBT(tagCompound, hugeSphereBlocks, "hugeSphereBlocks");
 
         writeBlocksToNBT(tagCompound, liquidSphereBlocks, "liquidSphereBlocks");
         if (liquidSphereBlocks.length > 0) {
@@ -556,6 +561,11 @@ public class DimensionInformation {
                 logDebug(player, "        Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
             }
         }
+        if (featureTypes.contains(FeatureType.FEATURE_HUGEORBS)) {
+            for (BlockMeta block : hugeSphereBlocks) {
+                logDebug(player, "        Huge Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+            }
+        }
         if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
             for (BlockMeta block : liquidSphereBlocks) {
                 logDebug(player, "        Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
@@ -674,6 +684,7 @@ public class DimensionInformation {
         buf.writeInt(tendrilBlock.getMeta());
 
         writeBlockArrayToBuf(buf, sphereBlocks);
+        writeBlockArrayToBuf(buf, hugeSphereBlocks);
         writeBlockArrayToBuf(buf, liquidSphereBlocks);
         buf.writeInt(liquidSphereFluids.length);
         for (Block block : liquidSphereFluids) {
@@ -760,6 +771,7 @@ public class DimensionInformation {
         tendrilBlock = new BlockMeta(block, meta);
 
         sphereBlocks = readBlockArrayFromBuf(buf);
+        hugeSphereBlocks = readBlockArrayFromBuf(buf);
         liquidSphereBlocks = readBlockArrayFromBuf(buf);
         liquidSphereFluids = readFluidArrayFromBuf(buf);
 
@@ -1107,6 +1119,14 @@ public class DimensionInformation {
 
     public void setSphereBlocks(BlockMeta[] sphereBlocks) {
         this.sphereBlocks = sphereBlocks;
+    }
+
+    public BlockMeta[] getHugeSphereBlocks() {
+        return hugeSphereBlocks;
+    }
+
+    public void setHugeSphereBlocks(BlockMeta[] hugeSphereBlocks) {
+        this.hugeSphereBlocks = hugeSphereBlocks;
     }
 
     public BlockMeta[] getLiquidSphereBlocks() {

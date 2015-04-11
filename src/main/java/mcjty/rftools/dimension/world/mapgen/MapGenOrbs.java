@@ -9,16 +9,20 @@ import java.util.Random;
 
 public class MapGenOrbs {
     private final GenericChunkProvider provider;
+    private final boolean large;
+    private final int r;
 
-    public MapGenOrbs(GenericChunkProvider provider) {
+    public MapGenOrbs(GenericChunkProvider provider, boolean large) {
         this.provider = provider;
+        this.large = large;
+        r = large ? 2 : 1;
     }
 
     public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
         BlockMeta[] blocks = provider.dimensionInformation.getSphereBlocks();
 
-        for (int cx = -1 ; cx <= 1 ; cx++) {
-            for (int cz = -1 ; cz <= 1 ; cz++) {
+        for (int cx = -r ; cx <= r ; cx++) {
+            for (int cz = -r ; cz <= r ; cz++) {
 
                 Random random = new Random((world.getSeed() + (chunkX+cx)) * 113 + (chunkZ+cz) * 31 + 77);
                 random.nextFloat();
@@ -27,7 +31,7 @@ public class MapGenOrbs {
                     int x = cx * 16 + random.nextInt(16);
                     int y = 40 + random.nextInt(40);
                     int z = cz * 16 + random.nextInt(16);
-                    int radius = random.nextInt(6) + 4;
+                    int radius = random.nextInt(large ? 20 : 6) + (large ? 10 : 4);
                     int index = 0;
                     if (blocks.length > 1) {
                         index = random.nextInt(blocks.length);
