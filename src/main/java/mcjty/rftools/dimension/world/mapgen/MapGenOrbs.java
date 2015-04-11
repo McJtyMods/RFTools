@@ -19,7 +19,7 @@ public class MapGenOrbs {
     }
 
     public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
-        BlockMeta[] blocks = provider.dimensionInformation.getSphereBlocks();
+        BlockMeta[] blocks = large ? provider.dimensionInformation.getHugeSphereBlocks() : provider.dimensionInformation.getSphereBlocks();
 
         for (int cx = -r ; cx <= r ; cx++) {
             for (int cz = -r ; cz <= r ; cz++) {
