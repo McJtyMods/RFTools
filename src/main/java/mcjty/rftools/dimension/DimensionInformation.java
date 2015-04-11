@@ -921,7 +921,7 @@ public class DimensionInformation {
             if (!blocks.isEmpty()) {
                 block = blocks.get(random.nextInt(blocks.size()));
                 if (block == null) {
-                    block = new BlockMeta(Blocks.stone, 0);     // This is the default in case None was specified.
+                    block = BlockMeta.STONE;     // This is the default in case None was specified.
                 }
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
@@ -930,11 +930,11 @@ public class DimensionInformation {
                     actualRfCost += calculateCostFactor(key);
                     block = DimletObjectMapping.idToBlock.get(key);
                 } else {
-                    block = new BlockMeta(Blocks.stone, 0);
+                    block = BlockMeta.STONE;
                 }
             }
         } else {
-            block = new BlockMeta(Blocks.stone, 0);
+            block = BlockMeta.STONE;
         }
         return block;
     }

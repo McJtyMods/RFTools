@@ -248,7 +248,7 @@ public class FeatureDimletType implements IDimletType {
         if (allowEmpty || blockArray.length > 0) {
             return blockArray;
         }
-        return new BlockMeta[] { new BlockMeta(Blocks.stone, 0) };
+        return new BlockMeta[] { BlockMeta.STONE };
     }
 
     @Override

@@ -164,7 +164,7 @@ public class TerrainDimletType implements IDimletType {
         if (!blocks.isEmpty()) {
             baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
             if (baseBlockForTerrain == null) {
-                baseBlockForTerrain = new BlockMeta(Blocks.stone, 0);     // This is the default in case None was specified.
+                baseBlockForTerrain = BlockMeta.STONE;     // This is the default in case None was specified.
             }
         } else {
             // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
@@ -174,7 +174,7 @@ public class TerrainDimletType implements IDimletType {
                 dimensionInformation.updateCostFactor(key);
                 baseBlockForTerrain = DimletObjectMapping.idToBlock.get(key);
             } else {
-                baseBlockForTerrain = new BlockMeta(Blocks.stone, 0);
+                baseBlockForTerrain = BlockMeta.STONE;
             }
         }
         dimensionInformation.setBaseBlockForTerrain(baseBlockForTerrain);
