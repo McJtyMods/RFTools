@@ -51,7 +51,7 @@ public class DimensionInformation {
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
     private BlockMeta[] sphereBlocks = null;
-    private BlockMeta liquidSphereBlock = null;
+    private BlockMeta[] liquidSphereBlocks = null;
     private Block liquidSphereFluid = null;
     private BlockMeta[] extraOregen = new BlockMeta[] {};
     private Block[] fluidsForLakes = new Block[] {};
@@ -292,10 +292,16 @@ public class DimensionInformation {
 
         baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
         tendrilBlock = getBlockMeta(tagCompound, "tendrilBlock");
-        liquidSphereBlock = getBlockMeta(tagCompound, "liquidSphereBlock");
         liquidSphereFluid = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("liquidSphereFluid"));
         canyonBlock = getBlockMeta(tagCompound, "canyonBlock");
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("fluidBlock"));
+
+        // Support for the old format with only one sphere block.
+        BlockMeta oldLiquidSphereBlock = getBlockMeta(tagCompound, "liquidSphereBlock");
+        liquidSphereBlocks = readBlockArrayFromNBT(tagCompound, "liquidSphereBlocks");
+        if (liquidSphereBlocks.length == 0) {
+            liquidSphereBlocks = new BlockMeta[] { oldLiquidSphereBlock };
+        }
 
         // Support for the old format with only one sphere block.
         BlockMeta oldSphereBlock = getBlockMeta(tagCompound, "sphereBlock");
@@ -413,13 +419,18 @@ public class DimensionInformation {
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
         setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
 
-        writeBlocksToNBT(tagCompound, sphereBlocks, "sphereBlock");
+        writeBlocksToNBT(tagCompound, sphereBlocks, "sphereBlocks");
         if (sphereBlocks.length > 0) {
             // Write out a single sphere block for compatibility with older RFTools.
             setBlockMeta(tagCompound, sphereBlocks[0], "sphereBlock");
         }
 
-        setBlockMeta(tagCompound, liquidSphereBlock, "liquidSphereBlock");
+        writeBlocksToNBT(tagCompound, liquidSphereBlocks, "liquidSphereBlocks");
+        if (liquidSphereBlocks.length > 0) {
+            // Write out a single sphere block for compatibility with older RFTools.
+            setBlockMeta(tagCompound, liquidSphereBlocks[0], "liquidSphereBlock");
+        }
+
         tagCompound.setInteger("liquidSphereFluid", Block.blockRegistry.getIDForObject(liquidSphereFluid));
         setBlockMeta(tagCompound, canyonBlock, "canyonBlock");
         tagCompound.setInteger("fluidBlock", Block.blockRegistry.getIDForObject(fluidForTerrain));
@@ -532,11 +543,13 @@ public class DimensionInformation {
         }
         if (featureTypes.contains(FeatureType.FEATURE_ORBS)) {
             for (BlockMeta block : sphereBlocks) {
-                logDebug(player, "        Orbs blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                logDebug(player, "        Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
             }
         }
         if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
-            logDebug(player, "        Liquid Orbs block: " + new ItemStack(liquidSphereBlock.getBlock(), 1, liquidSphereBlock.getMeta()).getDisplayName());
+            for (BlockMeta block : liquidSphereBlocks) {
+                logDebug(player, "        Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+            }
         }
         if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {
             logDebug(player, "        Canyon block: " + new ItemStack(canyonBlock.getBlock(), 1, canyonBlock.getMeta()).getDisplayName());
@@ -650,9 +663,8 @@ public class DimensionInformation {
         buf.writeInt(tendrilBlock.getMeta());
 
         writeBlockArrayToBuf(buf, sphereBlocks);
+        writeBlockArrayToBuf(buf, liquidSphereBlocks);
 
-        buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereBlock.getBlock()));
-        buf.writeInt(liquidSphereBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereFluid));
         buf.writeInt(Block.blockRegistry.getIDForObject(canyonBlock.getBlock()));
         buf.writeInt(canyonBlock.getMeta());
@@ -734,11 +746,7 @@ public class DimensionInformation {
         tendrilBlock = new BlockMeta(block, meta);
 
         sphereBlocks = readBlockArrayFromBuf(buf);
-
-        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        meta = buf.readInt();
-        liquidSphereBlock = new BlockMeta(block, meta);
-        liquidSphereFluid = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+        liquidSphereBlocks = readBlockArrayFromBuf(buf);
 
         block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         meta = buf.readInt();
@@ -1082,12 +1090,12 @@ public class DimensionInformation {
         this.sphereBlocks = sphereBlocks;
     }
 
-    public BlockMeta getLiquidSphereBlock() {
-        return liquidSphereBlock;
+    public BlockMeta[] getLiquidSphereBlocks() {
+        return liquidSphereBlocks;
     }
 
-    public void setLiquidSphereBlock(BlockMeta liquidSphereBlock) {
-        this.liquidSphereBlock = liquidSphereBlock;
+    public void setLiquidSphereBlocks(BlockMeta[] liquidSphereBlocks) {
+        this.liquidSphereBlocks = liquidSphereBlocks;
     }
 
     public Block getLiquidSphereFluid() {
