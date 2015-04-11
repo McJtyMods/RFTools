@@ -10,6 +10,7 @@ import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
@@ -211,13 +212,23 @@ public class FeatureDimletType implements IDimletType {
         }
         dimensionInformation.setFluidsForLakes(fluidsForLakes);
 
-        BlockMeta[] extraOregen;
-        if (featureTypes.contains(FeatureType.FEATURE_OREGEN)) {
+        dimensionInformation.setExtraOregen(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_OREGEN, true));
+
+        dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
+        dimensionInformation.setSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_ORBS, false));
+        dimensionInformation.setLiquidSphereBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
+        dimensionInformation.setLiquidSphereFluid(dimensionInformation.getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
+        dimensionInformation.setCanyonBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS));
+    }
+
+    private BlockMeta[] getRandomBlockArray(Random random, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t, boolean allowEmpty) {
+        BlockMeta[] blockArray;
+        if (featureTypes.contains(t)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            DimensionInformation.getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_OREGEN), blocks, fluids);
+            DimensionInformation.getMaterialAndFluidModifiers(modifiersForFeature.get(t), blocks, fluids);
 
-            // If no ores are specified we will generate a few random ores.
+            // If no blocks are specified we will generate a few random ores.
             if (blocks.isEmpty()) {
                 float chance = 1.1f;
                 while (random.nextFloat() < chance) {
@@ -230,17 +241,14 @@ public class FeatureDimletType implements IDimletType {
                 }
             }
 
-            extraOregen = blocks.toArray(new BlockMeta[blocks.size()]);
+            blockArray = blocks.toArray(new BlockMeta[blocks.size()]);
         } else {
-            extraOregen = new BlockMeta[0];
+            blockArray = new BlockMeta[0];
         }
-        dimensionInformation.setExtraOregen(extraOregen);
-
-        dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
-        dimensionInformation.setSphereBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_ORBS));
-        dimensionInformation.setLiquidSphereBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
-        dimensionInformation.setLiquidSphereFluid(dimensionInformation.getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
-        dimensionInformation.setCanyonBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS));
+        if (allowEmpty || blockArray.length > 0) {
+            return blockArray;
+        }
+        return new BlockMeta[] { new BlockMeta(Blocks.stone, 0) };
     }
 
     @Override

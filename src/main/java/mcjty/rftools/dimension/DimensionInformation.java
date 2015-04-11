@@ -50,9 +50,11 @@ public class DimensionInformation {
     private Block fluidForTerrain = null;
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
-    private BlockMeta sphereBlock = null;
+    private BlockMeta[] sphereBlocks = null;
     private BlockMeta liquidSphereBlock = null;
     private Block liquidSphereFluid = null;
+    private BlockMeta[] extraOregen = new BlockMeta[] {};
+    private Block[] fluidsForLakes = new Block[] {};
 
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
@@ -60,8 +62,6 @@ public class DimensionInformation {
     private boolean respawnHere = false;
 
     private Set<FeatureType> featureTypes = new HashSet<FeatureType>();
-    private BlockMeta[] extraOregen = new BlockMeta[] {};
-    private Block[] fluidsForLakes = new Block[] {};
 
     private Set<StructureType> structureTypes = new HashSet<StructureType>();
     private Set<EffectType> effectTypes = new HashSet<EffectType>();
@@ -292,13 +292,19 @@ public class DimensionInformation {
 
         baseBlockForTerrain = getBlockMeta(tagCompound, "baseBlock");
         tendrilBlock = getBlockMeta(tagCompound, "tendrilBlock");
-        sphereBlock = getBlockMeta(tagCompound, "sphereBlock");
         liquidSphereBlock = getBlockMeta(tagCompound, "liquidSphereBlock");
         liquidSphereFluid = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("liquidSphereFluid"));
         canyonBlock = getBlockMeta(tagCompound, "canyonBlock");
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger("fluidBlock"));
 
-        readOresFromNBT(tagCompound);
+        // Support for the old format with only one sphere block.
+        BlockMeta oldSphereBlock = getBlockMeta(tagCompound, "sphereBlock");
+        sphereBlocks = readBlockArrayFromNBT(tagCompound, "sphereBlocks");
+        if (sphereBlocks.length == 0) {
+            sphereBlocks = new BlockMeta[] { oldSphereBlock };
+        }
+
+        extraOregen = readBlockArrayFromNBT(tagCompound, "extraOregen");
         readFluidsFromNBT(tagCompound);
 
         peaceful = tagCompound.getBoolean("peaceful");
@@ -356,20 +362,20 @@ public class DimensionInformation {
         fluidsForLakes = ores.toArray(new Block[ores.size()]);
     }
 
-    private void readOresFromNBT(NBTTagCompound tagCompound) {
-        List<BlockMeta> ores = new ArrayList<BlockMeta>();
-        int[] extraOregens = getIntArraySafe(tagCompound, "extraOregen");
-        int[] extraOregenMetas = getIntArraySafe(tagCompound, "extraOregen_meta");
-        for (int i = 0 ; i < extraOregens.length ; i++) {
-            int id = extraOregens[i];
+    private static BlockMeta[] readBlockArrayFromNBT(NBTTagCompound tagCompound, String name) {
+        List<BlockMeta> blocks = new ArrayList<BlockMeta>();
+        int[] blockIds = getIntArraySafe(tagCompound, name);
+        int[] metas = getIntArraySafe(tagCompound, name + "_meta");
+        for (int i = 0 ; i < blockIds.length ; i++) {
+            int id = blockIds[i];
             Block block = (Block) Block.blockRegistry.getObjectById(id);
             int meta = 0;
-            if (i < extraOregenMetas.length) {
-                meta = extraOregenMetas[i];
+            if (i < metas.length) {
+                meta = metas[i];
             }
-            ores.add(new BlockMeta(block, meta));
+            blocks.add(new BlockMeta(block, meta));
         }
-        extraOregen = ores.toArray(new BlockMeta[ores.size()]);
+        return blocks.toArray(new BlockMeta[blocks.size()]);
     }
 
     private BlockMeta getBlockMeta(NBTTagCompound tagCompound, String name) {
@@ -406,13 +412,19 @@ public class DimensionInformation {
 
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
         setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
-        setBlockMeta(tagCompound, sphereBlock, "sphereBlock");
+
+        writeBlocksToNBT(tagCompound, sphereBlocks, "sphereBlock");
+        if (sphereBlocks.length > 0) {
+            // Write out a single sphere block for compatibility with older RFTools.
+            setBlockMeta(tagCompound, sphereBlocks[0], "sphereBlock");
+        }
+
         setBlockMeta(tagCompound, liquidSphereBlock, "liquidSphereBlock");
         tagCompound.setInteger("liquidSphereFluid", Block.blockRegistry.getIDForObject(liquidSphereFluid));
         setBlockMeta(tagCompound, canyonBlock, "canyonBlock");
         tagCompound.setInteger("fluidBlock", Block.blockRegistry.getIDForObject(fluidForTerrain));
 
-        writeOresToNBT(tagCompound);
+        writeBlocksToNBT(tagCompound, extraOregen, "extraOregen");
         writeFluidsToNBT(tagCompound);
 
         tagCompound.setBoolean("peaceful", peaceful);
@@ -464,15 +476,15 @@ public class DimensionInformation {
         tagCompound.setIntArray("lakeFluids", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
     }
 
-    private void writeOresToNBT(NBTTagCompound tagCompound) {
-        List<Integer> ids = new ArrayList<Integer>(extraOregen.length);
-        List<Integer> meta = new ArrayList<Integer>(extraOregen.length);
-        for (BlockMeta t : extraOregen) {
+    private static void writeBlocksToNBT(NBTTagCompound tagCompound, BlockMeta[] blocks, String name) {
+        List<Integer> ids = new ArrayList<Integer>(blocks.length);
+        List<Integer> meta = new ArrayList<Integer>(blocks.length);
+        for (BlockMeta t : blocks) {
             ids.add(Block.blockRegistry.getIDForObject(t.getBlock()));
             meta.add((int)t.getMeta());
         }
-        tagCompound.setIntArray("extraOregen", ArrayUtils.toPrimitive(ids.toArray(new Integer[ids.size()])));
-        tagCompound.setIntArray("extraOregen_meta", ArrayUtils.toPrimitive(meta.toArray(new Integer[meta.size()])));
+        tagCompound.setIntArray(name, ArrayUtils.toPrimitive(ids.toArray(new Integer[ids.size()])));
+        tagCompound.setIntArray(name + "_meta", ArrayUtils.toPrimitive(meta.toArray(new Integer[meta.size()])));
     }
 
     private static <T extends Enum> int[] toIntArray(Collection<T> collection) {
@@ -519,7 +531,9 @@ public class DimensionInformation {
             logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock.getBlock(), 1, tendrilBlock.getMeta()).getDisplayName());
         }
         if (featureTypes.contains(FeatureType.FEATURE_ORBS)) {
-            logDebug(player, "        Orbs block: " + new ItemStack(sphereBlock.getBlock(), 1, sphereBlock.getMeta()).getDisplayName());
+            for (BlockMeta block : sphereBlocks) {
+                logDebug(player, "        Orbs blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+            }
         }
         if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
             logDebug(player, "        Liquid Orbs block: " + new ItemStack(liquidSphereBlock.getBlock(), 1, liquidSphereBlock.getMeta()).getDisplayName());
@@ -634,8 +648,9 @@ public class DimensionInformation {
         buf.writeInt(baseBlockForTerrain.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock.getBlock()));
         buf.writeInt(tendrilBlock.getMeta());
-        buf.writeInt(Block.blockRegistry.getIDForObject(sphereBlock.getBlock()));
-        buf.writeInt(sphereBlock.getMeta());
+
+        writeBlockArrayToBuf(buf, sphereBlocks);
+
         buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereBlock.getBlock()));
         buf.writeInt(liquidSphereBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(liquidSphereFluid));
@@ -643,11 +658,8 @@ public class DimensionInformation {
         buf.writeInt(canyonBlock.getMeta());
         buf.writeInt(Block.blockRegistry.getIDForObject(fluidForTerrain));
 
-        buf.writeInt(extraOregen.length);
-        for (BlockMeta block : extraOregen) {
-            buf.writeInt(Block.blockRegistry.getIDForObject(block.getBlock()));
-            buf.writeInt(block.getMeta());
-        }
+        writeBlockArrayToBuf(buf, extraOregen);
+
         buf.writeInt(fluidsForLakes.length);
         for (Block block : fluidsForLakes) {
             buf.writeInt(Block.blockRegistry.getIDForObject(block));
@@ -685,6 +697,14 @@ public class DimensionInformation {
 
     }
 
+    private void writeBlockArrayToBuf(ByteBuf buf, BlockMeta[] array) {
+        buf.writeInt(array.length);
+        for (BlockMeta block : array) {
+            buf.writeInt(Block.blockRegistry.getIDForObject(block.getBlock()));
+            buf.writeInt(block.getMeta());
+        }
+    }
+
     public DimensionInformation(String name, DimensionDescriptor descriptor, ByteBuf buf) {
         this.name = name;
         this.descriptor = descriptor;
@@ -713,9 +733,8 @@ public class DimensionInformation {
         meta = buf.readInt();
         tendrilBlock = new BlockMeta(block, meta);
 
-        block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-        meta = buf.readInt();
-        sphereBlock = new BlockMeta(block, meta);
+        sphereBlocks = readBlockArrayFromBuf(buf);
+
         block = (Block) Block.blockRegistry.getObjectById(buf.readInt());
         meta = buf.readInt();
         liquidSphereBlock = new BlockMeta(block, meta);
@@ -726,14 +745,7 @@ public class DimensionInformation {
         canyonBlock = new BlockMeta(block, meta);
         fluidForTerrain = (Block) Block.blockRegistry.getObjectById(buf.readInt());
 
-        size = buf.readInt();
-        List<BlockMeta> blocksMeta = new ArrayList<BlockMeta>();
-        for (int i = 0 ; i < size ; i++) {
-            Block b = (Block) Block.blockRegistry.getObjectById(buf.readInt());
-            int m = buf.readInt();
-            blocksMeta.add(new BlockMeta(b, m));
-        }
-        extraOregen = blocksMeta.toArray(new BlockMeta[blocksMeta.size()]);
+        extraOregen = readBlockArrayFromBuf(buf);
 
         List<Block> blocks = new ArrayList<Block>();
         size = buf.readInt();
@@ -781,6 +793,17 @@ public class DimensionInformation {
         }
 
         setupBiomeMapping();
+    }
+
+    private static BlockMeta[] readBlockArrayFromBuf(ByteBuf buf) {
+        int size = buf.readInt();
+        List<BlockMeta> blocksMeta = new ArrayList<BlockMeta>();
+        for (int i = 0 ; i < size ; i++) {
+            Block b = (Block) Block.blockRegistry.getObjectById(buf.readInt());
+            int m = buf.readInt();
+            blocksMeta.add(new BlockMeta(b, m));
+        }
+        return blocksMeta.toArray(new BlockMeta[blocksMeta.size()]);
     }
 
     public Coordinate getSpawnPoint() {
@@ -1051,12 +1074,12 @@ public class DimensionInformation {
         this.canyonBlock = canyonBlock;
     }
 
-    public BlockMeta getSphereBlock() {
-        return sphereBlock;
+    public BlockMeta[] getSphereBlocks() {
+        return sphereBlocks;
     }
 
-    public void setSphereBlock(BlockMeta sphereBlock) {
-        this.sphereBlock = sphereBlock;
+    public void setSphereBlocks(BlockMeta[] sphereBlocks) {
+        this.sphereBlocks = sphereBlocks;
     }
 
     public BlockMeta getLiquidSphereBlock() {

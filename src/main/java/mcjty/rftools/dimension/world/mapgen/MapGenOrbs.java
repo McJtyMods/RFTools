@@ -1,6 +1,7 @@
 package mcjty.rftools.dimension.world.mapgen;
 
 import mcjty.rftools.dimension.world.GenericChunkProvider;
+import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
@@ -14,6 +15,7 @@ public class MapGenOrbs {
     }
 
     public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
+        BlockMeta[] blocks = provider.dimensionInformation.getSphereBlocks();
 
         for (int cx = -1 ; cx <= 1 ; cx++) {
             for (int cz = -1 ; cz <= 1 ; cz++) {
@@ -26,15 +28,20 @@ public class MapGenOrbs {
                     int y = 40 + random.nextInt(40);
                     int z = cz * 16 + random.nextInt(16);
                     int radius = random.nextInt(6) + 4;
-                    fillSphere(ablock, ameta, x, y, z, radius);
+                    int index = 0;
+                    if (blocks.length > 1) {
+                        index = random.nextInt(blocks.length);
+                    }
+
+                    fillSphere(ablock, ameta, x, y, z, radius, blocks[index]);
                 }
             }
         }
     }
 
-    private void fillSphere(Block[] ablock, byte[] ameta, int centerx, int centery, int centerz, int radius) {
-        Block block = provider.dimensionInformation.getSphereBlock().getBlock();
-        byte blockMeta = provider.dimensionInformation.getSphereBlock().getMeta();
+    private void fillSphere(Block[] ablock, byte[] ameta, int centerx, int centery, int centerz, int radius, BlockMeta blockMeta) {
+        Block block = blockMeta.getBlock();
+        byte meta = blockMeta.getMeta();
 
         double sqradius = radius * radius;
 
@@ -48,7 +55,7 @@ public class MapGenOrbs {
                     double sqdist = dxdx + dydy + dzdz;
                     if (sqdist <= sqradius) {
                         ablock[index + y] = block;
-                        ameta[index + y] = blockMeta;
+                        ameta[index + y] = meta;
                     }
                 }
             }
