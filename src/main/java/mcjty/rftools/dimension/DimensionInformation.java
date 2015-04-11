@@ -50,8 +50,8 @@ public class DimensionInformation {
     private Block fluidForTerrain = null;
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
-    private BlockMeta[] sphereBlocks = null;
-    private BlockMeta[] liquidSphereBlocks = null;
+    private BlockMeta[] sphereBlocks = new BlockMeta[] { BlockMeta.STONE };
+    private BlockMeta[] liquidSphereBlocks = new BlockMeta[] { BlockMeta.STONE };
     private Block liquidSphereFluid = null;
     private BlockMeta[] extraOregen = new BlockMeta[] {};
     private Block[] fluidsForLakes = new Block[] {};
