@@ -190,11 +190,21 @@ public class FeatureDimletType implements IDimletType {
             modifiersForFeature.put(featureType, dimlet.getRight());
         }
 
+        dimensionInformation.setFluidsForLakes(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LAKES));
+        dimensionInformation.setExtraOregen(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_OREGEN, true));
+        dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
+        dimensionInformation.setSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_ORBS, false));
+        dimensionInformation.setLiquidSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));
+        dimensionInformation.setLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
+        dimensionInformation.setCanyonBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS));
+    }
+
+    private Block[] getRandomFluidArray(Random random, DimensionInformation dimensionInformation, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t) {
         Block[] fluidsForLakes;
-        if (featureTypes.contains(FeatureType.FEATURE_LAKES)) {
+        if (featureTypes.contains(t)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
             List<Block> fluids = new ArrayList<Block>();
-            DimensionInformation.getMaterialAndFluidModifiers(modifiersForFeature.get(FeatureType.FEATURE_LAKES), blocks, fluids);
+            DimensionInformation.getMaterialAndFluidModifiers(modifiersForFeature.get(t), blocks, fluids);
 
             // If no fluids are specified we will usually have default fluid generation (water+lava). Otherwise some random selection.
             if (fluids.isEmpty()) {
@@ -210,15 +220,7 @@ public class FeatureDimletType implements IDimletType {
         } else {
             fluidsForLakes = new Block[0];
         }
-        dimensionInformation.setFluidsForLakes(fluidsForLakes);
-
-        dimensionInformation.setExtraOregen(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_OREGEN, true));
-
-        dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
-        dimensionInformation.setSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_ORBS, false));
-        dimensionInformation.setLiquidSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));
-        dimensionInformation.setLiquidSphereFluid(dimensionInformation.getFeatureLiquid(random, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
-        dimensionInformation.setCanyonBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS));
+        return fluidsForLakes;
     }
 
     private BlockMeta[] getRandomBlockArray(Random random, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t, boolean allowEmpty) {

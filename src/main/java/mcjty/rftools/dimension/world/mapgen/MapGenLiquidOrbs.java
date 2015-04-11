@@ -16,6 +16,7 @@ public class MapGenLiquidOrbs {
 
     public void generate(World world, int chunkX, int chunkZ, Block[] ablock, byte[] ameta) {
         BlockMeta[] blocks = provider.dimensionInformation.getLiquidSphereBlocks();
+        Block[] fluids = provider.dimensionInformation.getLiquidSphereFluids();
 
         for (int cx = -1 ; cx <= 1 ; cx++) {
             for (int cz = -1 ; cz <= 1 ; cz++) {
@@ -32,17 +33,20 @@ public class MapGenLiquidOrbs {
                     if (blocks.length > 1) {
                         index = random.nextInt(blocks.length);
                     }
+                    int flindex = 0;
+                    if (fluids.length > 1) {
+                        flindex = random.nextInt(fluids.length);
+                    }
 
-                    fillSphere(ablock, ameta, x, y, z, radius, blocks[index]);
+                    fillSphere(ablock, ameta, x, y, z, radius, blocks[index], fluids[flindex]);
                 }
             }
         }
     }
 
-    private void fillSphere(Block[] ablock, byte[] ameta, int centerx, int centery, int centerz, int radius, BlockMeta blockMeta) {
+    private void fillSphere(Block[] ablock, byte[] ameta, int centerx, int centery, int centerz, int radius, BlockMeta blockMeta, Block fluid) {
         Block block = blockMeta.getBlock();
         byte meta = blockMeta.getMeta();
-        Block fluid = provider.dimensionInformation.getLiquidSphereFluid();
 
         double sqradius = radius * radius;
         double liquidradius = (((double) radius) - 1.5f) * (((double) radius) - 1.5f);
