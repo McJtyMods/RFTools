@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
+import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -15,9 +16,25 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class ForgeEventHandlers {
+
+    @SubscribeEvent
+    public void onAttackEntityEvent(AttackEntityEvent event) {
+        World world = event.entityPlayer.getEntityWorld();
+        int id = world.provider.dimensionId;
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        if (dimensionManager.getDimensionInformation(id) != null) {
+            // RFTools dimension.
+            DimensionStorage storage = DimensionStorage.getDimensionStorage(world);
+            int energy = storage.getEnergyLevel(id);
+            if (energy <= 0) {
+                event.setCanceled(true);
+            }
+        }
+    }
 
     @SubscribeEvent
     public void onEntityConstructingEvent(EntityEvent.EntityConstructing event) {
