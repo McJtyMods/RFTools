@@ -169,6 +169,7 @@
         [ "Biome", "Desert Oil Field", 16000, 3500, 300, 3, 0 ],
         [ "Biome", "Biome.Ocean Oil Field", 16000, 3500, 300, 3, 0 ],
 
+        [ "Liquid", "witchery:fluidspirit", 50000, 20000, 1000, 6, 1 ],
         [ "Liquid", "pyrotheum", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "redstone", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "cryotheum", 8000, 3000, 300, 3, 0 ],
