@@ -516,7 +516,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             dest = getTeleportDestination();
         }
 
-        if (dest != null) {
+        if (dest != null && dest.isValid()) {
             Coordinate cthis = new Coordinate(xCoord, yCoord, zCoord);
             int cost = TeleportationTools.calculateRFCost(worldObj, cthis, dest);
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
