@@ -24,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class GenericBlock extends Block implements ITileEntityProvider {
 
@@ -105,26 +107,32 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
 
     @Override
     public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-        return new ArrayList<ItemStack>();
-    }
-
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
 
         if (tileEntity instanceof GenericTileEntity) {
-            ItemStack stack = new ItemStack(block);
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
             NBTTagCompound tagCompound = new NBTTagCompound();
             ((GenericTileEntity)tileEntity).writeRestorableToNBT(tagCompound);
 
             stack.setTagCompound(tagCompound);
-            world.spawnEntityInWorld(new EntityItem(world, x, y, z, stack));
+            ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+            result.add(stack);
+            return result;
+        } else {
+            return super.getDrops(world, x, y, z, metadata, fortune);
         }
+    }
 
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
+        if (willHarvest) return true; // If it will harvest, delay deletion of the block until after getDrops
+        return super.removedByPlayer(world, player, x, y, z, willHarvest);
+    }
 
-        super.breakBlock(world, x, y, z, block, meta);
-        world.removeTileEntity(x, y, z);
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int meta) {
+        super.harvestBlock(world, player, x, y, z, meta);
+        world.setBlockToAir(x, y, z);
     }
 
     @Override
