@@ -211,6 +211,7 @@
         [ "Liquid", "platinum.molten", 15000, 6000, 350, 3, 0 ],
         [ "Liquid", "mobessence", 22000, 8000, 350, 4, 0 ],
         [ "Liquid", "pinkslime", 8000, 2000, 150, 3, 1 ],
+        [ "Liquid", "life essence", 2000, 1000, 250, 3, 0 ],
 
         [ "Mob", "Default", 300, 100, 200, 1, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0 ],
