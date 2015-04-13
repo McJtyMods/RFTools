@@ -44,7 +44,7 @@
 
         [ "Material", "tile.factorization:darkIronOre", 8000, 1800, 400, 3, 0 ],
 
-        [ "Material", "tile.draconicevolution:draconiumOre", 200000, 100000, 2000, 6, 0 ],
+        [ "Material", "tile.draconicevolution:draconiumOre", 200000, 100000, 2000, 6, 1 ],
 
         [ "Material", "tile.brOre", 40000, 10000, 800, 4, 0 ],
 
@@ -169,6 +169,7 @@
         [ "Biome", "Desert Oil Field", 16000, 3500, 300, 3, 0 ],
         [ "Biome", "Biome.Ocean Oil Field", 16000, 3500, 300, 3, 0 ],
 
+        [ "Liquid", "witchery:fluidspirit", 50000, 20000, 1000, 6, 1 ],
         [ "Liquid", "pyrotheum", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "redstone", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "cryotheum", 8000, 3000, 300, 3, 0 ],
@@ -210,6 +211,7 @@
         [ "Liquid", "platinum.molten", 15000, 6000, 350, 3, 0 ],
         [ "Liquid", "mobessence", 22000, 8000, 350, 4, 0 ],
         [ "Liquid", "pinkslime", 8000, 2000, 150, 3, 1 ],
+        [ "Liquid", "life essence", 2000, 1000, 250, 3, 0 ],
 
         [ "Mob", "Default", 300, 100, 200, 1, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0 ],

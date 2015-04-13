@@ -614,6 +614,15 @@ public class KnownDimletConfiguration {
 
         initModMaterialItem(cfg, "chisel", "marble", 0, mapping, master);
         initModMaterialItem(cfg, "chisel", "limestone", 0, mapping, master);
+
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.nether", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.bloodstained", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 5, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.abyssal", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.sandy", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.quarried", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.frostbound", 2, mapping, master);
     }
 
     private static void initOreDictionaryDimlets(Configuration cfg, DimletMapping mapping, boolean master) {
