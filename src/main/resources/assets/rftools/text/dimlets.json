@@ -44,7 +44,7 @@
 
         [ "Material", "tile.factorization:darkIronOre", 8000, 1800, 400, 3, 0 ],
 
-        [ "Material", "tile.draconicevolution:draconiumOre", 200000, 100000, 2000, 6, 0 ],
+        [ "Material", "tile.draconicevolution:draconiumOre", 200000, 100000, 2000, 6, 1 ],
 
         [ "Material", "tile.brOre", 40000, 10000, 800, 4, 0 ],
 
