@@ -11,6 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
@@ -40,6 +41,8 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int powered = 0;
+    private Coordinate minBox = null;
+    private Coordinate maxBox = null;
 
     public SpaceProjectorTileEntity() {
         super(SpaceProjectorConfiguration.SPACEPROJECTOR_MAXENERGY, SpaceProjectorConfiguration.SPACEPROJECTOR_RECEIVEPERTICK);
@@ -149,7 +152,33 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         markDirty();
     }
 
+    public void unproject() {
+        if (minBox == null) {
+            return;
+        }
+
+        for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
+            for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
+                for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
+                    Block block = worldObj.getBlock(x, y, z);
+                    if (block.equals(SpaceProjectorSetup.proxyBlock)) {
+                        worldObj.setBlockToAir(x, y, z);
+                    }
+                }
+            }
+        }
+        minBox = null;
+        maxBox = null;
+
+        markDirty();
+    }
+
+
+
     public void project() {
+        if (minBox != null) {
+            unproject();
+        }
         NBTTagCompound tc = hasCard();
         if (tc == null) {
             return;
@@ -177,6 +206,10 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         int dx = xCoord + 1 - minCorner.getX();
         int dy = yCoord + 1 - minCorner.getY();
         int dz = zCoord + 1 - minCorner.getZ();
+
+        minBox = new Coordinate(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
+        maxBox = new Coordinate(maxCorner.getX() + dx, maxCorner.getY() + dy, maxCorner.getZ() + dz);
+
         for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
             for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                 for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
@@ -190,11 +223,17 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
                 }
             }
         }
+        markDirty();
     }
 
     @Override
-    public boolean canUpdate() {
-        return false;
+    protected void checkStateServer() {
+        if (minBox != null) {
+            NBTTagCompound tc = hasCard();
+            if (tc == null) {
+                unproject();
+            }
+        }
     }
 
     @Override
@@ -276,6 +315,8 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         powered = tagCompound.getByte("powered");
+        minBox = Coordinate.readFromNBT(tagCompound, "minBox");
+        maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
     }
 
     @Override
@@ -298,6 +339,8 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("powered", (byte) powered);
+        Coordinate.writeToNBT(tagCompound, "minBox", minBox);
+        Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
     }
 
     @Override

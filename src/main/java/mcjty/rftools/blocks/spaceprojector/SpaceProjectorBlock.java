@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.BlockTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -70,6 +71,21 @@ public class SpaceProjectorBlock extends GenericContainerBlock {
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         return new SpaceProjectorContainer(entityPlayer, (SpaceProjectorTileEntity) tileEntity);
     }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof SpaceProjectorTileEntity) {
+                SpaceProjectorTileEntity projectorTileEntity = (SpaceProjectorTileEntity) te;
+                projectorTileEntity.unproject();
+            }
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+    }
+
+
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
