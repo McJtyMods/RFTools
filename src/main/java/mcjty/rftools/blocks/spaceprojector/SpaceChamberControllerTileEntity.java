@@ -106,6 +106,7 @@ public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileE
         chamberChannel.setDimension(worldObj.provider.dimensionId);
         chamberChannel.setMinCorner(minCorner);
         chamberChannel.setMaxCorner(maxCorner);
+        chamberRepository.save(worldObj);
 
         markDirty();
     }

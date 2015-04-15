@@ -61,7 +61,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
     }
 
     private void updateProjection() {
-        tileEntity.project();
+        sendServerCommand(SpaceProjectorTileEntity.CMD_PROJECT);
     }
 
     private void initRedstoneMode() {

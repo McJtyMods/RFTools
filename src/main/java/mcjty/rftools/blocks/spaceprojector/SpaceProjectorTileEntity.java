@@ -32,7 +32,9 @@ import java.util.Map;
 public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory, SimpleComponent, IPeripheral {
 
     public static final String COMPONENT_NAME = "space_projector";
+
     public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_PROJECT = "project";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SpaceProjectorContainer.factory, 1);
 
@@ -327,6 +329,9 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
             setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        } else if (CMD_PROJECT.equals(command)) {
+            project();
             return true;
         }
         return false;
