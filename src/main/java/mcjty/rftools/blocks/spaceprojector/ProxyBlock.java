@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import com.mojang.authlib.GameProfile;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -12,9 +13,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class ProxyBlock extends Block implements ITileEntityProvider {
 
@@ -66,11 +71,43 @@ public class ProxyBlock extends Block implements ITileEntityProvider {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
         if (!world.isRemote) {
             ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) world.getTileEntity(x, y, z);
-            Coordinate oc = proxyBlockTileEntity.getOrigCoordinate();
+            final Coordinate oc = proxyBlockTileEntity.getOrigCoordinate();
             int dim = proxyBlockTileEntity.getDimension();
-            World w = DimensionManager.getWorld(dim);
-            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-            entityPlayerMP.theItemInWorldManager.activateBlockOrUseItem(player, w, null, oc.getX(), oc.getY(), oc.getZ(), side, sidex, sidey, sidez);
+            final WorldServer w = DimensionManager.getWorld(dim);
+
+            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+
+//            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(w);
+            FakePlayer fakePlayer = new FakePlayer(w, new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]")) {
+                @Override
+                public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {
+                    entityPlayerMP.openGui(mod, modGuiId, w, oc.getX(), oc.getY(), oc.getZ());
+                }
+            };
+            fakePlayer.getPlayerCoordinates().posX = oc.getX();
+            fakePlayer.getPlayerCoordinates().posY = oc.getY();
+            fakePlayer.getPlayerCoordinates().posZ = oc.getZ();
+            fakePlayer.playerNetServerHandler = entityPlayerMP.playerNetServerHandler;
+            fakePlayer.inventory = entityPlayerMP.inventory;
+            fakePlayer.dimension = dim;
+
+//            World oldWorld = entityPlayerMP.worldObj;
+//            int oldPosX = entityPlayerMP.getPlayerCoordinates().posX;
+//            int oldPosY = entityPlayerMP.getPlayerCoordinates().posY;
+//            int oldPosZ = entityPlayerMP.getPlayerCoordinates().posZ;
+//            entityPlayerMP.worldObj = w;
+//            entityPlayerMP.getPlayerCoordinates().posX = oc.getX();
+//            entityPlayerMP.getPlayerCoordinates().posY = oc.getY();
+//            entityPlayerMP.getPlayerCoordinates().posZ = oc.getZ();
+
+            entityPlayerMP.theItemInWorldManager.activateBlockOrUseItem(fakePlayer, w, null, oc.getX(), oc.getY(), oc.getZ(), side, sidex, sidey, sidez);
+
+
+//            entityPlayerMP.worldObj = oldWorld;
+//            entityPlayerMP.getPlayerCoordinates().posX = oldPosX;
+//            entityPlayerMP.getPlayerCoordinates().posY = oldPosY;
+//            entityPlayerMP.getPlayerCoordinates().posZ = oldPosZ;
+
         }
         return true;
     }

@@ -175,7 +175,7 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
 
 
 
-    public void project() {
+    private void project() {
         if (minBox != null) {
             unproject();
         }
@@ -215,8 +215,8 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
                 for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
                     Block block = world.getBlock(x, y, z);
                     if (block != null && !block.isAir(world, x, y, z)) {
-                        world.setBlock(dx + x, dy + y, dz + z, SpaceProjectorSetup.proxyBlock, world.getBlockMetadata(x, y, z), 3);
-                        ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) world.getTileEntity(dx + x, dy + y, dz + z);
+                        worldObj.setBlock(dx + x, dy + y, dz + z, SpaceProjectorSetup.proxyBlock, world.getBlockMetadata(x, y, z), 3);
+                        ProxyBlockTileEntity proxyBlockTileEntity = (ProxyBlockTileEntity) worldObj.getTileEntity(dx + x, dy + y, dz + z);
                         proxyBlockTileEntity.setCamoBlock(Block.blockRegistry.getIDForObject(block));
                         proxyBlockTileEntity.setOrigCoordinate(new Coordinate(x, y, z), dimension);
                     }
