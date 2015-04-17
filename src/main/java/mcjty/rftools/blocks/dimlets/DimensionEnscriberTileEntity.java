@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.items.ModItems;
@@ -230,6 +231,15 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
                 realizedTab.setTagCompound(tagCompound);
             }
             tagCompound.setString("name", name);
+            if (tagCompound.hasKey("id")) {
+                Integer id = tagCompound.getInteger("id");
+                RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+                DimensionInformation information = dimensionManager.getDimensionInformation(id);
+                if (information != null) {
+                    information.setName(name);
+                    dimensionManager.save(worldObj);
+                }
+            }
             markDirty();
         }
     }

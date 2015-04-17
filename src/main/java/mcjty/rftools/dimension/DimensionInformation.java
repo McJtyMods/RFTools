@@ -32,7 +32,7 @@ import java.util.*;
 
 public class DimensionInformation {
     private final DimensionDescriptor descriptor;
-    private final String name;
+    private String name;
 
     private Coordinate spawnPoint = null;
 
@@ -247,6 +247,7 @@ public class DimensionInformation {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
+        this.name = tagCompound.getString("name");
         setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
         setProbeCounter(tagCompound.getInteger("probeCounter"));
         setupFromNBT(tagCompound);
@@ -400,7 +401,7 @@ public class DimensionInformation {
 
     private BlockMeta getBlockMeta(NBTTagCompound tagCompound, String name) {
         Block block = (Block) Block.blockRegistry.getObjectById(tagCompound.getInteger(name));
-        int meta = tagCompound.getInteger(name+"_meta");
+        int meta = tagCompound.getInteger(name + "_meta");
         return new BlockMeta(block, meta);
     }
 
@@ -1048,6 +1049,10 @@ public class DimensionInformation {
 
     public DimensionDescriptor getDescriptor() {
         return descriptor;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
