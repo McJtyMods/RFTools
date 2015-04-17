@@ -107,7 +107,7 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
             }
             return true;
         } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, x, y, z);
+            breakAndRemember(world, player, x, y, z);
             return true;
         } else {
             return openGui(world, x, y, z, player);

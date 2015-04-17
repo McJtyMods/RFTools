@@ -218,7 +218,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
             rotateBlock(world, x, y, z);
             return true;
         } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, x, y, z);
+            breakAndRemember(world, player, x, y, z);
             return true;
         } else {
             return openGui(world, x, y, z, player);
@@ -306,14 +306,11 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
     /**
      * Break a block in the world, convert it to an entity and remember all the settings
      * for this block in the itemstack.
-     * @param world
-     * @param x
-     * @param y
-     * @param z
      */
-    protected void breakAndRemember(World world, int x, int y, int z) {
+    protected void breakAndRemember(World world, EntityPlayer player, int x, int y, int z) {
         if (!world.isRemote) {
-            world.setBlockToAir(x, y, z);
+            harvestBlock(world, player, x, y, z, world.getBlockMetadata(x, y, z));
+//            world.setBlockToAir(x, y, z);
         }
     }
 

@@ -76,7 +76,7 @@ public class ScreenBlock extends GenericContainerBlock {
             }
             return true;
         } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, x, y, z);
+            breakAndRemember(world, player, x, y, z);
             return true;
         } else {
             ItemStack itemStack = player.getHeldItem();
