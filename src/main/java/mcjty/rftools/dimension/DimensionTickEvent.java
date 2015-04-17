@@ -1,7 +1,7 @@
 package mcjty.rftools.dimension;
 
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
 import mcjty.rftools.items.ModItems;
@@ -278,8 +278,7 @@ public class DimensionTickEvent {
                                 y = 63;
                             }
 
-                            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension,
-                                    new RfToolsTeleporter(worldServerForDimension, x, y, z));
+                            TeleportationTools.teleportToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension, x, y, z);
                         } else {
                             if (doEffects) {
                                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX * MAXTICKS, 4, true));

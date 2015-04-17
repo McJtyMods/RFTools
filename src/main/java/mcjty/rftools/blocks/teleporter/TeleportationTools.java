@@ -119,9 +119,7 @@ public class TeleportationTools {
 
         int currentId = player.worldObj.provider.dimensionId;
         if (currentId != dest.getDimension()) {
-            WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(dest.getDimension());
-            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, dest.getDimension(),
-                    new RfToolsTeleporter(worldServerForDimension, c.getX()+0.5, c.getY()+1.5, c.getZ()+0.5));
+            TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
         } else {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
@@ -216,5 +214,13 @@ public class TeleportationTools {
 
     public static boolean mustInterrupt(int bad, int total) {
         return bad > (total / 2);
+    }
+
+    public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
+        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+        WorldServer worldServer = MinecraftServer.getServer().worldServerForDimension(dimension);
+        player.addExperienceLevel(0);
+        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
+                new RfToolsTeleporter(worldServer, x, y, z));
     }
 }
