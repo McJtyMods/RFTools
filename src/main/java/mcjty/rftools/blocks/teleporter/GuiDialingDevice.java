@@ -489,11 +489,15 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         if (transmitterSelected != -1 && receiverSelected != -1) {
             dialButton.setEnabled(true);
+            dialOnceButton.setEnabled(true);
             String distance = calculateDistance(transmitterSelected, receiverSelected);
-            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver.", "Distance: "+distance);
+            dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver.", "Distance: " + distance);
+            dialOnceButton.setTooltips("Dial a connection for a", "single teleport.", "Distance: " + distance);
         } else {
             dialButton.setEnabled(false);
+            dialOnceButton.setEnabled(false);
             dialButton.setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver");
+            dialOnceButton.setTooltips("Dial a connection for a", "single teleport");
         }
         if (transmitterSelected != -1) {
             TeleportDestination destination = getSelectedTransmitterDestination();
