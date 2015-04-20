@@ -58,6 +58,11 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             if (dialed) {
                 list.add(EnumChatFormatting.YELLOW + "[DIALED]");
             }
+
+            boolean once = tagCompound.getBoolean("once");
+            if (once) {
+                list.add(EnumChatFormatting.YELLOW + "[ONCE]");
+            }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "If you place this block near a Dialing Device then");
@@ -85,6 +90,9 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             currenttip.add(EnumChatFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
             if (matterTransmitterTileEntity.isDialed()) {
                 currenttip.add(EnumChatFormatting.YELLOW + "[DIALED]");
+            }
+            if (matterTransmitterTileEntity.isOnce()) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[ONCE]");
             }
         }
         return currenttip;

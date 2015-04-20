@@ -85,6 +85,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
+    public boolean isOnce() {
+        return once;
+    }
+
     @Override
     public int getTagCount() {
         return 3;
