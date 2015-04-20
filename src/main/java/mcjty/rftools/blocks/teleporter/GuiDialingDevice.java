@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericGuiContainer;
 import mcjty.gui.events.ButtonEvent;
+import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.events.DefaultSelectionEvent;
 import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
@@ -31,7 +32,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     public static final int DIALER_WIDTH = 256;
     public static final int DIALER_HEIGHT = 224;
 
-    private static final ResourceLocation iconDialOn = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
+    private static final ResourceLocation guielements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private EnergyBar energyBar;
     private WidgetList transmitterList;
@@ -39,6 +40,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private Button dialButton;
     private Button dialOnceButton;
     private Button interruptButton;
+    private ImageChoiceLabel favoriteButton;
     private Button statusButton;
     private Label statusLabel;
 
@@ -105,6 +107,15 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                         interruptDial();
                     }
                 });
+        favoriteButton = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, String newChoice) {
+                changeFavorite();
+            }
+        }).setDesiredWidth(10).setDesiredHeight(10);
+        favoriteButton.addChoice("No", "Unfavorited receiver", guielements, 131, 19);
+        favoriteButton.addChoice("Yes", "Favorited receiver", guielements, 115, 19);
+        favoriteButton.setCurrentChoice(0);
 
         analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
         statusButton = new Button(mc, this).setText("Check").
@@ -122,7 +133,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             statusButton.setTooltips("Check the status of", "the selected receiver", "(needs an adjacent analyzer!)");
         }
 
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).addChild(statusButton).setDesiredHeight(16);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).
+                addChild(favoriteButton).addChild(statusButton).setDesiredHeight(16);
 
         statusLabel = new Label(mc, this);
         statusLabel.setDesiredWidth(180).setDesiredHeight(14).setFilledRectThickness(1);
@@ -319,7 +331,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         listDirty = 0;
     }
 
-    private TeleportDestination getSelectedReceiver(int receiverSelected) {
+    private TeleportDestinationClientInfo getSelectedReceiver(int receiverSelected) {
         if (receiverSelected == -1) {
             return null;
         }
@@ -353,6 +365,22 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         PacketHandler.INSTANCE.sendToServer(new PacketGetTransmitters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
+    private void changeFavorite() {
+        int receiverSelected = receiverList.getSelected();
+        TeleportDestinationClientInfo destination = getSelectedReceiver(receiverSelected);
+        if (destination == null) {
+            return;
+        }
+        boolean favorite = destination.isFavorite();
+        destination.setFavorite(!favorite);
+        sendServerCommand(DialingDeviceTileEntity.CMD_FAVORITE,
+                new Argument("player", mc.thePlayer.getDisplayName()),
+                new Argument("receiver", destination.getCoordinate()),
+                new Argument("dimension", destination.getDimension()),
+                new Argument("favorite", !favorite));
+        listDirty = 0;
+    }
+
     private void populateReceivers() {
         List<TeleportDestinationClientInfo> newReceivers = fromServer_receivers;
         if (newReceivers == null) {
@@ -373,10 +401,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 dimName = "Id " + destination.getDimension();
             }
 
+            boolean favorite = destination.isFavorite();
+
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(65));
+            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(60));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
-            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(55));
+            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
+            panel.addChild(new ImageLabel(mc, this).setImage(guielements, favorite ? 115 : 131, 19).setDesiredWidth(10));
             receiverList.addChild(panel);
         }
     }
@@ -414,7 +445,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new Label(mc, this).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
-            panel.addChild(new ImageLabel(mc, this).setImage(iconDialOn, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
+            panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }
     }
@@ -507,8 +538,16 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         if (receiverSelected != -1) {
             statusButton.setEnabled(analyzerAvailable);
+            TeleportDestinationClientInfo destinationClientInfo = getSelectedReceiver(receiverSelected);
+            if (destinationClientInfo != null) {
+                favoriteButton.setCurrentChoice(destinationClientInfo.isFavorite() ? 1 : 0);
+            } else {
+                favoriteButton.setCurrentChoice(0);
+            }
+            favoriteButton.setEnabled(true);
         } else {
             statusButton.setEnabled(false);
+            favoriteButton.setEnabled(false);
         }
     }
 }

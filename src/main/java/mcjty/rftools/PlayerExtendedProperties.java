@@ -1,24 +1,25 @@
 package mcjty.rftools;
 
-import mcjty.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketSendBuffsToClient;
+import mcjty.varia.Coordinate;
+import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerExtendedProperties implements IExtendedEntityProperties {
-    public static final String ID = "rftoolsTimedTeleport";
+    public static final String ID = "RFToolsPlayerProperties";
 
     public static final int BUFF_MAXTICKS = 180;
     private int buffTimeout;
@@ -27,6 +28,8 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     private int teleportTimeout;
     private Entity entity = null;
     private boolean globalSyncNeeded = true;
+
+    private Set<GlobalCoordinate> favoriteDestinations = new HashSet<GlobalCoordinate>();
 
     // Here we mirror the flags out of capabilities so that we can restore them.
     private boolean oldAllowFlying = false;
@@ -94,8 +97,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     }
 
     public static void addBuff(EntityPlayer player, PlayerBuff buff, int ticks) {
-        IExtendedEntityProperties properties = player.getExtendedProperties(ID);
-        PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
+        PlayerExtendedProperties playerExtendedProperties = getProperties(player);
         playerExtendedProperties.addBuff(buff, ticks);
     }
 
@@ -112,6 +114,18 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
 
     public boolean hasBuff(PlayerBuff buff) {
         return buffs.containsKey(buff);
+    }
+
+    public boolean isDestinationFavorite(GlobalCoordinate coordinate) {
+        return favoriteDestinations.contains(coordinate);
+    }
+
+    public void setDestinationFavorite(GlobalCoordinate coordinate, boolean favorite) {
+        if (favorite) {
+            favoriteDestinations.add(coordinate);
+        } else {
+            favoriteDestinations.remove(coordinate);
+        }
     }
 
     public void startTeleport(int target, int ticks) {
@@ -198,7 +212,23 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         }
         compound.setIntArray("buffs", buffArray);
         compound.setIntArray("buffTimeouts", timeoutArray);
+        writeFavoritesToNBT(compound, favoriteDestinations);
     }
+
+    private static void writeFavoritesToNBT(NBTTagCompound tagCompound, Collection<GlobalCoordinate> destinations) {
+        NBTTagList lst = new NBTTagList();
+        for (GlobalCoordinate destination : destinations) {
+            NBTTagCompound tc = new NBTTagCompound();
+            Coordinate c = destination.getCoordinate();
+            tc.setInteger("x", c.getX());
+            tc.setInteger("y", c.getY());
+            tc.setInteger("z", c.getZ());
+            tc.setInteger("dim", destination.getDimension());
+            lst.appendTag(tc);
+        }
+        tagCompound.setTag("destinations", lst);
+    }
+
 
     @Override
     public void loadNBTData(NBTTagCompound compound) {
@@ -223,7 +253,20 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         allowFlying = compound.getBoolean("allowFlying");
         oldAllowFlying = compound.getBoolean("oldAllowFlying");
         globalSyncNeeded = true;
+
+        favoriteDestinations.clear();
+        readCoordinatesFromNBT(compound, favoriteDestinations);
     }
+
+    private static  void readCoordinatesFromNBT(NBTTagCompound tagCompound, Set<GlobalCoordinate> destinations) {
+        NBTTagList lst = tagCompound.getTagList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.tagCount() ; i++) {
+            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            Coordinate c = new Coordinate(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
+            destinations.add(new GlobalCoordinate(c, tc.getInteger("dim")));
+        }
+    }
+
 
     @Override
     public void init(Entity entity, World world) {

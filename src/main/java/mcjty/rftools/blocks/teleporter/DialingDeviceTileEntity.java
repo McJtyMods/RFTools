@@ -10,12 +10,15 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.PlayerExtendedProperties;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
+import mcjty.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -38,6 +41,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
     public static final String CMD_DIAL = "dial";
     public static final String CMD_DIALONCE = "dialOnce";
+    public static final String CMD_FAVORITE = "favorite";
     public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
@@ -493,6 +497,20 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return true;
     }
 
+    // Server side only.
+    private void changeFavorite(String playerName, Coordinate receiver, int dimension, boolean favorite) {
+        List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        for (Object p : list) {
+            EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
+            if (playerName.equals(entityplayermp.getDisplayName())) {
+                PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
+                properties.setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
+                return;
+            }
+        }
+    }
+
+
     // Server side only
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension, boolean once) {
         World transWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(transDim);
@@ -600,6 +618,25 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
             return searchTransmitters();
         }
         return null;
+    }
+
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return rc;
+        }
+        if (CMD_FAVORITE.equals(command)) {
+            String player = args.get("player").getString();
+            Coordinate receiver = args.get("receiver").getCoordinate();
+            int dimension = args.get("dimension").getInteger();
+            boolean favorite = args.get("favorite").getBoolean();
+            changeFavorite(player, receiver, dimension, favorite);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

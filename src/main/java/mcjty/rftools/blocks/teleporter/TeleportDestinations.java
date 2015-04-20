@@ -1,11 +1,14 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.rftools.PlayerExtendedProperties;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
@@ -85,9 +88,22 @@ public class TeleportDestinations extends WorldSavedData {
 
     // Server side only
     public Collection<TeleportDestinationClientInfo> getValidDestinations(String playerName) {
+        PlayerExtendedProperties properties = null;
+        if (playerName != null) {
+            List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+            for (Object player : list) {
+                EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+                if (playerName.equals(entityplayermp.getDisplayName())) {
+                    properties = PlayerExtendedProperties.getProperties(entityplayermp);
+                    break;
+                }
+            }
+        }
+
         List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
+            Coordinate c = destination.getCoordinate();
             World world = DimensionManager.getWorld(destination.getDimension());
             if (world != null) {
                 String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
@@ -95,7 +111,6 @@ public class TeleportDestinations extends WorldSavedData {
                     dimName = "Id " + destination.getDimension();
                 }
                 destinationClientInfo.setDimensionName(dimName);
-                Coordinate c = destination.getCoordinate();
                 TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
                 if (te instanceof MatterReceiverTileEntity) {
                     MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
@@ -104,6 +119,9 @@ public class TeleportDestinations extends WorldSavedData {
                         continue;
                     }
                 }
+            }
+            if (properties != null) {
+                destinationClientInfo.setFavorite(properties.isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
             }
             result.add(destinationClientInfo);
         }
@@ -192,6 +210,10 @@ public class TeleportDestinations extends WorldSavedData {
         destinationById.clear();
         destinationIdByCoordinate.clear();
         lastId = tagCompound.getInteger("lastId");
+        readDestinationsFromNBT(tagCompound);
+    }
+
+    private void readDestinationsFromNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = tagCompound.getTagList("destinations", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
@@ -215,8 +237,14 @@ public class TeleportDestinations extends WorldSavedData {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
+        writeDestinationsToNBT(tagCompound, destinations.values(), destinationIdByCoordinate);
+        tagCompound.setInteger("lastId", lastId);
+    }
+
+    private static void writeDestinationsToNBT(NBTTagCompound tagCompound, Collection<TeleportDestination> destinations,
+                                              Map<GlobalCoordinate, Integer> coordinateToInteger) {
         NBTTagList lst = new NBTTagList();
-        for (TeleportDestination destination : destinations.values()) {
+        for (TeleportDestination destination : destinations) {
             NBTTagCompound tc = new NBTTagCompound();
             Coordinate c = destination.getCoordinate();
             tc.setInteger("x", c.getX());
@@ -224,13 +252,14 @@ public class TeleportDestinations extends WorldSavedData {
             tc.setInteger("z", c.getZ());
             tc.setInteger("dim", destination.getDimension());
             tc.setString("name", destination.getName());
-            Integer id = destinationIdByCoordinate.get(new GlobalCoordinate(c, destination.getDimension()));
-            if (id != null) {
-                tc.setInteger("id", id);
+            if (coordinateToInteger != null) {
+                Integer id = coordinateToInteger.get(new GlobalCoordinate(c, destination.getDimension()));
+                if (id != null) {
+                    tc.setInteger("id", id);
+                }
             }
             lst.appendTag(tc);
         }
         tagCompound.setTag("destinations", lst);
-        tagCompound.setInteger("lastId", lastId);
     }
 }
