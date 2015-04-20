@@ -42,6 +42,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     public static final String CMD_DIAL = "dial";
     public static final String CMD_DIALONCE = "dialOnce";
     public static final String CMD_FAVORITE = "favorite";
+    public static final String CMD_SHOWFAVORITE = "showFavorite";
     public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
@@ -59,6 +60,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     public static final int DIAL_DIMENSION_POWER_LOW_MASK = 0x200;  // The destination dimension is low on power
     public static final int DIAL_OK = 0;                            // All is ok
     public static final String COMPONENT_NAME = "dialing_device";
+
+    private boolean showOnlyFavorites = false;
 
     public DialingDeviceTileEntity() {
         super(TeleportConfiguration.DIALER_MAXENERGY, TeleportConfiguration.DIALER_RECEIVEPERTICK);
@@ -427,14 +430,36 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return null;
     }
 
+    public boolean isShowOnlyFavorites() {
+        return showOnlyFavorites;
+    }
+
+    public void setShowOnlyFavorites(boolean showOnlyFavorites) {
+        this.showOnlyFavorites = showOnlyFavorites;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
     }
 
     @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        showOnlyFavorites = tagCompound.getBoolean("showFav");
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setBoolean("showFav", showOnlyFavorites);
     }
 
     private TeleportDestination findDestination(Coordinate coordinate, int dimension) {
@@ -633,6 +658,10 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
             int dimension = args.get("dimension").getInteger();
             boolean favorite = args.get("favorite").getBoolean();
             changeFavorite(player, receiver, dimension, favorite);
+            return true;
+        } else if (CMD_SHOWFAVORITE.equals(command)) {
+            boolean favorite = args.get("favorite").getBoolean();
+            setShowOnlyFavorites(favorite);
             return true;
         }
 

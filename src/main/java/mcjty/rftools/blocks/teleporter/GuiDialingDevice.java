@@ -55,6 +55,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     // A copy of the receivers we're currently showing.
     private List<TeleportDestinationClientInfo> receivers = null;
+    private boolean receiversFiltered = false;
 
     // A copy of the transmitters we're currently showing.
     private List<TransmitterInfo> transmitters = null;
@@ -110,12 +111,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         favoriteButton = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
-                changeFavorite();
+                changeShowFavorite();
             }
         }).setDesiredWidth(10).setDesiredHeight(10);
         favoriteButton.addChoice("No", "Unfavorited receiver", guielements, 131, 19);
         favoriteButton.addChoice("Yes", "Favorited receiver", guielements, 115, 19);
-        favoriteButton.setCurrentChoice(0);
+        favoriteButton.setCurrentChoice(tileEntity.isShowOnlyFavorites() ? 1 : 0);
 
         analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
         statusButton = new Button(mc, this).setText("Check").
@@ -156,7 +157,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private Panel setupReceiverPanel() {
-        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).addSelectionEvent(new DefaultSelectionEvent() {
+        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -365,6 +366,15 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         PacketHandler.INSTANCE.sendToServer(new PacketGetTransmitters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
+    private void changeShowFavorite() {
+        boolean fav = favoriteButton.getCurrentChoice() == 1;
+        sendServerCommand(DialingDeviceTileEntity.CMD_SHOWFAVORITE,
+                new Argument("favorite", fav));
+        listDirty = 0;
+        transmitterList.setSelected(-1);
+        receiverList.setSelected(-1);
+    }
+
     private void changeFavorite() {
         int receiverSelected = receiverList.getSelected();
         TeleportDestinationClientInfo destination = getSelectedReceiver(receiverSelected);
@@ -386,11 +396,27 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         if (newReceivers == null) {
             return;
         }
-        if (newReceivers.equals(receivers)) {
+
+        boolean newReceiversFiltered = favoriteButton.getCurrentChoice() == 1;
+
+        if (newReceivers.equals(receivers) && newReceiversFiltered == receiversFiltered) {
             return;
         }
 
-        receivers = new ArrayList<TeleportDestinationClientInfo>(newReceivers);
+        receiversFiltered = newReceiversFiltered;
+        if (receiversFiltered) {
+            receivers = new ArrayList<TeleportDestinationClientInfo>();
+            // We only show favorited receivers. Remove the rest.
+            for (TeleportDestinationClientInfo receiver : newReceivers) {
+                if (receiver.isFavorite()) {
+                    receivers.add(receiver);
+                }
+            }
+        } else {
+            // Show all receivers.
+            receivers = new ArrayList<TeleportDestinationClientInfo>(newReceivers);
+        }
+
         receiverList.removeChildren();
 
         for (TeleportDestinationClientInfo destination : receivers) {
@@ -402,12 +428,20 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
 
             boolean favorite = destination.isFavorite();
-
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(60));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
             panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
-            panel.addChild(new ImageLabel(mc, this).setImage(guielements, favorite ? 115 : 131, 19).setDesiredWidth(10));
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
+                @Override
+                public void choiceChanged(Widget parent, String newChoice) {
+                    changeFavorite();
+                }
+            }).setDesiredWidth(10);
+            choiceLabel.addChoice("No", "Not favorited", guielements, 131, 19);
+            choiceLabel.addChoice("Yes", "Favorited", guielements, 115, 19);
+            choiceLabel.setCurrentChoice(favorite ? 1 : 0);
+            panel.addChild(choiceLabel);
             receiverList.addChild(panel);
         }
     }
@@ -538,16 +572,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         if (receiverSelected != -1) {
             statusButton.setEnabled(analyzerAvailable);
-            TeleportDestinationClientInfo destinationClientInfo = getSelectedReceiver(receiverSelected);
-            if (destinationClientInfo != null) {
-                favoriteButton.setCurrentChoice(destinationClientInfo.isFavorite() ? 1 : 0);
-            } else {
-                favoriteButton.setCurrentChoice(0);
-            }
-            favoriteButton.setEnabled(true);
         } else {
             statusButton.setEnabled(false);
-            favoriteButton.setEnabled(false);
         }
     }
 }

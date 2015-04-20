@@ -19,6 +19,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     private int first = 0;
     private int selected = -1;
     private long prevTime = -1;
+    private boolean propagateEventsToChildren = false;
     private List<SelectionEvent> selectionEvents = null;
     private Set<Integer> hilightedRows = new HashSet<Integer>();
 
@@ -41,6 +42,15 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     public WidgetList setSelected(int selected) {
         this.selected = selected;
+        return this;
+    }
+
+    public boolean isPropagateEventsToChildren() {
+        return propagateEventsToChildren;
+    }
+
+    public WidgetList setPropagateEventsToChildren(boolean propagateEventsToChildren) {
+        this.propagateEventsToChildren = propagateEventsToChildren;
         return this;
     }
 
@@ -110,6 +120,16 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             selected = newSelected;
             fireSelectionEvents(selected);
         }
+
+        if (propagateEventsToChildren && selected != -1) {
+            Widget child = children.get(selected);
+            int xx = x-bounds.x;
+            int yy = y-bounds.y;
+            if (child.in(xx, yy) && child.isVisible()) {
+                child.mouseClick(window, xx, yy, button);
+            }
+        }
+
         long t = System.currentTimeMillis();
         if (prevTime != -1 && (t - prevTime) < 250) {
             fireDoubleClickEvent(selected);
