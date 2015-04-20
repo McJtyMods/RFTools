@@ -37,6 +37,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     public static final String CMD_GETRECEIVERS = "getReceivers";
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
     public static final String CMD_DIAL = "dial";
+    public static final String CMD_DIALONCE = "dialOnce";
     public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
@@ -132,7 +133,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
         return new String[] { "getTransmitterCount", "getTransmitter", "getReceiverCount", "getReceiver", "getReceiverName", "getTransmitterName",
-            "dial", "interrupt", "getDialed" };
+            "dial", "dialOnce", "interrupt", "getDialed" };
     }
 
     @Override
@@ -187,22 +188,36 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
                 TeleportDestinationClientInfo rec = receivers.get(recIdx);
 
                 int transDim = worldObj.provider.dimensionId;
-                int result = dial(null, trans.getCoordinate(), transDim, rec.getCoordinate(), rec.getDimension());
+                int result = dial(null, trans.getCoordinate(), transDim, rec.getCoordinate(), rec.getDimension(), false);
                 return new Object[] { result };
             }
             case 7: {
+                List<TransmitterInfo> transmitterInfos = searchTransmitters();
+                List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
+
+                int transIdx = ((Double) arguments[0]).intValue();
+                int recIdx = ((Double) arguments[1]).intValue();
+
+                TransmitterInfo trans = transmitterInfos.get(transIdx);
+                TeleportDestinationClientInfo rec = receivers.get(recIdx);
+
+                int transDim = worldObj.provider.dimensionId;
+                int result = dial(null, trans.getCoordinate(), transDim, rec.getCoordinate(), rec.getDimension(), true);
+                return new Object[] { result };
+            }
+            case 8: {
                 List<TransmitterInfo> transmitterInfos = searchTransmitters();
                 int transIdx = ((Double) arguments[0]).intValue();
                 TransmitterInfo trans = transmitterInfos.get(transIdx);
 
                 int transDim = worldObj.provider.dimensionId;
-                int result = dial(null, trans.getCoordinate(), transDim, null, -1);
+                int result = dial(null, trans.getCoordinate(), transDim, null, -1, false);
                 if (result == DIAL_INVALID_DESTINATION_MASK) {
                     result = 0;
                 }
                 return new Object[] { result };
             }
-            case 8: {
+            case 9: {
                 List<TransmitterInfo> transmitterInfos = searchTransmitters();
                 int transIdx = ((Double) arguments[0]).intValue();
                 TransmitterInfo trans = transmitterInfos.get(transIdx);
@@ -333,7 +348,31 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         Coordinate recC = new Coordinate(((Double) receiver.get("x")).intValue(), ((Double) receiver.get("y")).intValue(), ((Double) receiver.get("z")).intValue());
         int recDim = ((Double) receiver.get("dim")).intValue();
 
-        int result = dial(null, transC, transDim, recC, recDim);
+        int result = dial(null, transC, transDim, recC, recDim, false);
+        return new Object[] { result };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] dialOnce(Context context, Arguments args) throws Exception {
+        Map transmitter = args.checkTable(0);
+        Map receiver = args.checkTable(1);
+        if (!transmitter.containsKey("x") || !transmitter.containsKey("y") || !transmitter.containsKey("z")) {
+            throw new IllegalArgumentException("Transmitter map doesn't contain the right x,y,z coordinate!");
+        }
+        if (!receiver.containsKey("x") || !receiver.containsKey("y") || !receiver.containsKey("z")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right x,y,z coordinate!");
+        }
+        if (!receiver.containsKey("dim")) {
+            throw new IllegalArgumentException("Receiver map doesn't contain the right dimension!");
+        }
+
+        Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
+        int transDim = worldObj.provider.dimensionId;
+        Coordinate recC = new Coordinate(((Double) receiver.get("x")).intValue(), ((Double) receiver.get("y")).intValue(), ((Double) receiver.get("z")).intValue());
+        int recDim = ((Double) receiver.get("dim")).intValue();
+
+        int result = dial(null, transC, transDim, recC, recDim, true);
         return new Object[] { result };
     }
 
@@ -348,7 +387,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         Coordinate transC = new Coordinate(((Double) transmitter.get("x")).intValue(), ((Double) transmitter.get("y")).intValue(), ((Double) transmitter.get("z")).intValue());
         int transDim = worldObj.provider.dimensionId;
 
-        int result = dial(null, transC, transDim, null, -1);
+        int result = dial(null, transC, transDim, null, -1, false);
         if (result == DIAL_INVALID_DESTINATION_MASK) {
             result = 0;
         }
@@ -455,7 +494,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     // Server side only
-    private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension) {
+    private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension, boolean once) {
         World transWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(transDim);
         if (transWorld == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
@@ -467,7 +506,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         }
 
         if (coordinate == null) {
-            transmitterTileEntity.setTeleportDestination(null);
+            transmitterTileEntity.setTeleportDestination(null, false);
             return DialingDeviceTileEntity.DIAL_INTERRUPTED;
         }
 
@@ -508,7 +547,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         }
 
         consumeEnergy(cost);
-        transmitterTileEntity.setTeleportDestination(teleportDestination);
+        transmitterTileEntity.setTeleportDestination(teleportDestination, once);
 
         return DialingDeviceTileEntity.DIAL_OK;
     }
@@ -580,7 +619,15 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
             Coordinate c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
 
-            return dial(player, transmitter, transDim, c, dim);
+            return dial(player, transmitter, transDim, c, dim, false);
+        } else if (CMD_DIALONCE.equals(command)) {
+            String player = args.get("player").getString();
+            Coordinate transmitter = args.get("trans").getCoordinate();
+            int transDim = args.get("transDim").getInteger();
+            Coordinate c = args.get("c").getCoordinate();
+            int dim = args.get("dim").getInteger();
+
+            return dial(player, transmitter, transDim, c, dim, true);
         }
         return null;
     }

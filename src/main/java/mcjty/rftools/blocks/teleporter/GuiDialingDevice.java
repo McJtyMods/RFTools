@@ -37,6 +37,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private WidgetList transmitterList;
     private WidgetList receiverList;
     private Button dialButton;
+    private Button dialOnceButton;
     private Button interruptButton;
     private Button statusButton;
     private Label statusLabel;
@@ -85,7 +86,15 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
-                        dial();
+                        dial(false);
+                    }
+                });
+        dialOnceButton = new Button(mc, this).setText("Dial Once").setTooltips("Dial a connection for a", "single teleport").
+                setDesiredHeight(14).
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        dial(true);
                     }
                 });
         interruptButton = new Button(mc, this).setText("Interrupt").setTooltips("Interrupt a connection", "for the selected transmitter").
@@ -113,7 +122,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             statusButton.setTooltips("Check the status of", "the selected receiver", "(needs an adjacent analyzer!)");
         }
 
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(interruptButton).addChild(statusButton).setDesiredHeight(16);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).addChild(statusButton).setDesiredHeight(16);
 
         statusLabel = new Label(mc, this);
         statusLabel.setDesiredWidth(180).setDesiredHeight(14).setFilledRectThickness(1);
@@ -178,7 +187,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         Coordinate c = transmitterInfo.getCoordinate();
-        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
+        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
         mc.getMinecraft().thePlayer.closeScreen();
     }
 
@@ -286,7 +295,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
     }
 
-    private void dial() {
+    private void dial(boolean once) {
         int transmitterSelected = transmitterList.getSelected();
         TransmitterInfo transmitterInfo = getSelectedTransmitter(transmitterSelected);
         if (transmitterInfo == null) {
@@ -299,7 +308,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+                once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),

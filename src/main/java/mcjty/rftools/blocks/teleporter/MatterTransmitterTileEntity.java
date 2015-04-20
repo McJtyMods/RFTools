@@ -42,6 +42,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private TeleportDestination teleportDestination = null;
     // Server side: current dialing destination. New system.
     private Integer teleportId = null;
+    // If this is true the dial is cleared as soon as a player teleports.
+    private boolean once = false;
 
     private String name = null;
     private boolean privateAccess = false;
@@ -180,6 +182,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             teleportId = null;
         }
         privateAccess = tagCompound.getBoolean("private");
+        once = tagCompound.getBoolean("once");
 
         allowedPlayers.clear();
         NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
@@ -224,6 +227,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         tagCompound.setBoolean("private", privateAccess);
+        tagCompound.setBoolean("once", once);
 
         NBTTagList playerTagList = new NBTTagList();
         for (String player : allowedPlayers) {
@@ -249,9 +253,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return teleportDestination;
     }
 
-    public void setTeleportDestination(TeleportDestination teleportDestination) {
+    public void setTeleportDestination(TeleportDestination teleportDestination, boolean once) {
         this.teleportDestination = null;
         this.teleportId = null;
+        this.once = once;
         if (teleportDestination != null) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
             Integer id = destinations.getIdForCoordinate(new GlobalCoordinate(teleportDestination.getCoordinate(), teleportDestination.getDimension()));
@@ -270,7 +275,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (getEnergyStored(ForgeDirection.DOWN) >= TeleportConfiguration.rfMatterIdleTick) {
                 consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
             } else {
-                setTeleportDestination(null);
+                setTeleportDestination(null, false);
             }
         }
     }
@@ -457,6 +462,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         TeleportDestination dest = getTeleportDestination();
+
+        // The destination is valid. If this is a 'once' dial then we clear the destination here.
+        if (once) {
+            setTeleportDestination(null, false);
+        }
 
         boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(worldObj, xCoord, yCoord, zCoord);
         if (boosted && getEnergyStored(ForgeDirection.DOWN) < TeleportConfiguration.rfBoostedTeleport) {
