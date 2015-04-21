@@ -53,6 +53,7 @@ item.CounterPlusModule.name=Модуль «Счётчик+»
 item.RedstoneModule.name=Модуль «Красный камень»
 item.MachineInformationModule.name=Модуль «Информация о механизме»
 item.ComputerModule.name=Модуль «Компьютер»
+item.ButtonModule.name=Button Module
 item.SpaceChamberCard.name=Space Chamber Card
 
 item.RegenerationEModule.name=Модуль «Регенерация»

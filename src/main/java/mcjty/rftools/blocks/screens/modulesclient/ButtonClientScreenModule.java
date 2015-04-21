@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.events.ButtonEvent;
+import mcjty.gui.RenderHelper;
 import mcjty.gui.events.ColorChoiceEvent;
 import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.HorizontalLayout;
@@ -13,29 +13,35 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
 
-public class TextClientScreenModule implements ClientScreenModule {
+public class ButtonClientScreenModule implements ClientScreenModule {
     private String line = "";
+    private String button = "";
     private int color = 0xffffff;
-    private boolean large = false;
+    private int buttonColor = 0xffffff;
 
     @Override
     public TransformMode getTransformMode() {
-        return large ? TransformMode.TEXTLARGE : TransformMode.TEXT;
+        return TransformMode.TEXT;
     }
 
     @Override
     public int getHeight() {
-        return large ? 20 : 10;
+        return 14;
     }
 
     @Override
     public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GL11.glDisable(GL11.GL_LIGHTING);
-        if (large) {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 60), 4, currenty / 2 + 1, color);
+        int xoffset;
+        if (!line.isEmpty()) {
+            fontRenderer.drawString(line, 7, currenty + 2, color);
+            xoffset = 7 + 80;
         } else {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 115), 7, currenty, color);
+            xoffset = 7 + 5;
         }
+
+        RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff666666);
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset, currenty + 2, buttonColor);
     }
 
     @Override
@@ -46,7 +52,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to show").addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Label text").addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 currentData.setString("text", newText);
@@ -54,6 +60,15 @@ public class TextClientScreenModule implements ClientScreenModule {
             }
         });
         panel.addChild(textField);
+        TextField buttonTextField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Button text").addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                currentData.setString("button", newText);
+                moduleGuiChanged.updateData();
+            }
+        });
+        panel.addChild(buttonTextField);
+
         ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
@@ -61,16 +76,14 @@ public class TextClientScreenModule implements ClientScreenModule {
                 moduleGuiChanged.updateData();
             }
         });
-
-        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large").setTooltips("Large or small font").setDesiredHeight(13).setCheckMarker(true);
-        largeButton.addButtonEvent(new ButtonEvent() {
+        ColorChoiceLabel buttonColorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("large", largeButton.isPressed());
+            public void choiceChanged(Widget parent, Integer newColor) {
+                currentData.setInteger("buttonColor", newColor);
                 moduleGuiChanged.updateData();
             }
         });
-        panel.addChild(largeButton);
+
 
         if (currentData != null) {
             textField.setText(currentData.getString("text"));
@@ -78,12 +91,20 @@ public class TextClientScreenModule implements ClientScreenModule {
             if (currentColor != 0) {
                 colorSelector.setCurrentColor(currentColor);
             }
-            largeButton.setPressed(currentData.getBoolean("large"));
+            buttonTextField.setText(currentData.getString("button"));
+            int currentButtonColor = currentData.getInteger("buttonColor");
+            if (currentButtonColor != 0) {
+                buttonColorSelector.setCurrentColor(currentButtonColor);
+            }
         }
 
         panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
                 addChild(new Label(mc, gui).setText("Color:")).
                 addChild(colorSelector).
+                setDesiredHeight(18));
+        panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
+                addChild(new Label(mc, gui).setText("Button color:")).
+                addChild(buttonColorSelector).
                 setDesiredHeight(18));
         return panel;
     }
@@ -92,12 +113,17 @@ public class TextClientScreenModule implements ClientScreenModule {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
+            button = tagCompound.getString("button");
             if (tagCompound.hasKey("color")) {
                 color = tagCompound.getInteger("color");
             } else {
                 color = 0xffffff;
             }
-            large = tagCompound.getBoolean("large");
+            if (tagCompound.hasKey("buttonColor")) {
+                buttonColor = tagCompound.getInteger("buttonColor");
+            } else {
+                buttonColor = 0xffffff;
+            }
         }
     }
 

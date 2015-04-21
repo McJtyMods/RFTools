@@ -41,6 +41,11 @@ public class ComputerClientScreenModule implements ClientScreenModule {
     }
 
     @Override
+    public void activate(int x, int y, int currenty) {
+
+    }
+
+    @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
         Label label1 = new Label(mc, gui).setText("Contents of this module is").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);

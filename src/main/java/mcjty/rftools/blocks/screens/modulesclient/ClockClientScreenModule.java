@@ -66,6 +66,11 @@ public class ClockClientScreenModule implements ClientScreenModule {
     }
 
     @Override
+    public void activate(int x, int y, int currenty) {
+
+    }
+
+    @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
         TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {

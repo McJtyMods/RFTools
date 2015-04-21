@@ -56,6 +56,8 @@ public class ScreenSetup {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(ModItems.computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,

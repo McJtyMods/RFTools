@@ -92,6 +92,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         GL11.glDepthMask(false);
     }
 
+    @Override
+    public void activate(int x, int y, int currenty) {
+
+    }
+
     private int renderSlot(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
         if (slot != -1) {
             ItemStack itm = null;

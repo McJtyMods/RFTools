@@ -13,4 +13,9 @@ public class EnergyPlusBarClientScreenModule extends EnergyBarClientScreenModule
             coordinate = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
         }
     }
+
+    @Override
+    public void activate(int x, int y, int currenty) {
+
+    }
 }

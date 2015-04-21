@@ -13,4 +13,9 @@ public class FluidPlusBarClientScreenModule extends FluidBarClientScreenModule {
             coordinate = new Coordinate(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
         }
     }
+
+    @Override
+    public void activate(int x, int y, int currenty) {
+
+    }
 }
