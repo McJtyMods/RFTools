@@ -61,6 +61,14 @@ public class ScreenBlock extends GenericContainerBlock {
     }
 
     @Override
+    public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
+        if (!world.isRemote) {
+        }
+    }
+
+
+
+    @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
         WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
         if (wrenchUsed == WrenchUsage.NORMAL) {
