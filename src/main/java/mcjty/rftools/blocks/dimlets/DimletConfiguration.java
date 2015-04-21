@@ -66,7 +66,7 @@ public class DimletConfiguration {
 	public static void init(Configuration cfg) {
         EXTRACTOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "energyExtractorMaxRF", EXTRACTOR_MAXENERGY,
                 "Maximum RF storage that the energy extractor can hold").getInt();
-        EXTRACTOR_SENDPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldRFPerTick", EXTRACTOR_SENDPERTICK,
+        EXTRACTOR_SENDPERTICK = cfg.get(CATEGORY_DIMLETS, "energyExtractorRFPerTick", EXTRACTOR_SENDPERTICK,
                 "RF per tick that the energy extractor can send").getInt();
 
         PHASEDFIELD_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "phasedFieldMaxRF", PHASEDFIELD_MAXENERGY,
