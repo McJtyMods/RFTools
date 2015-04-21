@@ -76,6 +76,9 @@ public class ChoiceLabel extends Label<ChoiceLabel> {
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
         if (isEnabledAndVisible()) {
+            if (choiceList.isEmpty()) {
+                return null;
+            }
             int index = choiceList.indexOf(currentChoice);
             index++;
             if (index >= choiceList.size()) {
