@@ -1,17 +1,12 @@
 package mcjty.rftools.dimension;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
-import mcjty.rftools.items.ModItems;
-import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -231,23 +226,6 @@ public class DimensionTickEvent {
         }
     }
 
-    private boolean checkValidPhasedFieldGenerator(EntityPlayer player) {
-        InventoryPlayer inventory = player.inventory;
-        for (int i = 0 ; i < inventory.getHotbarSize() ; i++) {
-            ItemStack slot = inventory.getStackInSlot(i);
-            if (slot != null && slot.getItem() == ModItems.phasedFieldGeneratorItem) {
-                PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
-                int energyStored = pfg.getEnergyStored(slot);
-                int toConsume = MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
-                if (energyStored >= toConsume) {
-                    pfg.extractEnergy(slot, toConsume, false);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private void handleLowPower(Integer id, int power, boolean doEffects) {
         if (power <= 0) {
             // We ran out of power!
@@ -256,7 +234,7 @@ public class DimensionTickEvent {
                 List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
                 if (DimletConfiguration.dimensionDifficulty >= 1) {
                     for (EntityPlayer player : players) {
-                        if (!checkValidPhasedFieldGenerator(player)) {
+                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true)) {
                             player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000000.0f);
                         } else {
                             if (doEffects) {
@@ -269,7 +247,7 @@ public class DimensionTickEvent {
                 } else {
                     Random random = new Random();
                     for (EntityPlayer player : players) {
-                        if (!checkValidPhasedFieldGenerator(player)) {
+                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true)) {
                             WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(DimletConfiguration.spawnDimension);
                             int x = random.nextInt(2000) - 1000;
                             int z = random.nextInt(2000) - 1000;
@@ -278,7 +256,7 @@ public class DimensionTickEvent {
                                 y = 63;
                             }
 
-                            TeleportationTools.teleportToDimension((EntityPlayerMP) player, DimletConfiguration.spawnDimension, x, y, z);
+                            TeleportationTools.teleportToDimension(player, DimletConfiguration.spawnDimension, x, y, z);
                         } else {
                             if (doEffects) {
                                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX * MAXTICKS, 4, true));

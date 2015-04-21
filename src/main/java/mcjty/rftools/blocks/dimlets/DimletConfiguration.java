@@ -40,6 +40,7 @@ public class DimletConfiguration {
     public static int PHASEDFIELD_MAXENERGY = 1000000;
     public static int PHASEDFIELD_RECEIVEPERTICK = 1000;
     public static int PHASEDFIELD_CONSUMEPERTICK = 100;
+    public static int phasedFieldGeneratorRange = 5;
 
     public static float randomFeatureChance = 0.4f;
     public static float randomLakeFluidChance = 0.2f;
@@ -75,6 +76,8 @@ public class DimletConfiguration {
                 "RF per tick that the phased field generator item can receive").getInt();
         PHASEDFIELD_CONSUMEPERTICK = cfg.get(CATEGORY_DIMLETS, "phasedFieldConsumePerTick", PHASEDFIELD_CONSUMEPERTICK,
                 "RF per tick that the phased field generator item will consume").getInt();
+        phasedFieldGeneratorRange = cfg.get(CATEGORY_DIMLETS, "phasedFieldGeneratorRange", phasedFieldGeneratorRange,
+                "In this range the PFG will keep entities active (set to 0 to disable this feature)").getInt();
 
         RESEARCHER_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "dimletResearcherMaxRF", RESEARCHER_MAXENERGY,
                 "Maximum RF storage that the dimlet researcher can hold").getInt();

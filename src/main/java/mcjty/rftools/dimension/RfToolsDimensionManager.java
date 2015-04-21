@@ -1,30 +1,35 @@
 package mcjty.rftools.dimension;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.network.PacketCheckDimletConfig;
 import mcjty.rftools.dimension.network.PacketSyncDimensionInfo;
 import mcjty.rftools.dimension.world.GenericWorldProvider;
+import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketRegisterDimensions;
+import mcjty.varia.Coordinate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.world.ChunkEvent;
 
 import java.util.*;
 
@@ -124,25 +129,75 @@ public class RfToolsDimensionManager extends WorldSavedData {
     /**
      * Freeze a dimension: avoid ticking all tile entities and remove all
      * active entities (they are still there but will not do anything).
+     * Entities that are within range of a player having a PFG will be kept
+     * active (but not tile entities).
      */
     public static void freezeDimension(World world) {
-        List tokeep = new ArrayList();
-        boolean allplayer = true;
-        for (Object o : world.loadedEntityList) {
-            if (o instanceof EntityPlayer) {
-                tokeep.add(o);
-            } else {
-                allplayer = false;
+        // First find all players that have a valid PFG.
+        List<Coordinate> pfgList = new ArrayList<Coordinate>();
+        int radius = DimletConfiguration.phasedFieldGeneratorRange;
+        if (radius > 0) {
+            for (Object ent : world.playerEntities) {
+                EntityPlayer player = (EntityPlayer) ent;
+                // Check if this player has a valid PFG but don't consume energy.
+                if (checkValidPhasedFieldGenerator(player, false)) {
+                    pfgList.add(new Coordinate((int) player.posX, (int) player.posY, (int) player.posZ));
+                }
             }
         }
-        if (!allplayer) {
-            world.loadedEntityList.clear();
-            world.loadedEntityList.addAll(tokeep);
+
+        // If there are players with a valid PFG then we check if there are entities we want to keep.
+        List tokeep = new ArrayList();
+        tokeep.addAll(world.playerEntities);    // We want to keep all players for sure.
+        // Add all entities that are within range of a PFG.
+        for (Coordinate coordinate : pfgList) {
+            getEntitiesInSphere(world, coordinate, radius, tokeep);
         }
 
-        world.loadedTileEntityList.clear();
+        world.loadedEntityList.clear();
+        world.loadedEntityList.addAll(tokeep);
 
+        world.loadedTileEntityList.clear();
     }
+
+    private static void getEntitiesInSphere(World world, Coordinate c, float radius, List tokeep) {
+        int i = MathHelper.floor_double((c.getX() - radius) / 16.0D);
+        int j = MathHelper.floor_double((c.getX() + 1 + radius) / 16.0D);
+        int k = MathHelper.floor_double((c.getZ() - radius) / 16.0D);
+        int l = MathHelper.floor_double((c.getZ() + 1 + radius) / 16.0D);
+
+        for (int i1 = i; i1 <= j; ++i1) {
+            for (int j1 = k; j1 <= l; ++j1) {
+                if (world.getChunkProvider().chunkExists(i1, j1)) {
+                    Chunk chunk = world.getChunkFromChunkCoords(i1, j1);
+                    getEntitiesInSphere(chunk, c, radius, tokeep);
+                }
+            }
+        }
+    }
+
+    private static void getEntitiesInSphere(Chunk chunk, Coordinate c, float radius, List entities) {
+        float squaredRange = radius * radius;
+        int i = MathHelper.floor_double((c.getY() - radius) / 16.0D);
+        int j = MathHelper.floor_double((c.getY() + 1 + radius) / 16.0D);
+        i = MathHelper.clamp_int(i, 0, chunk.entityLists.length - 1);
+        j = MathHelper.clamp_int(j, 0, chunk.entityLists.length - 1);
+
+        for (int k = i; k <= j; ++k) {
+            List entityList = chunk.entityLists[k];
+            for (Object o : entityList) {
+                if (!(o instanceof EntityPlayer)) {
+                    Entity entity = (Entity) o;
+                    float sqdist = c.squaredDistance((int) entity.posX, (int) entity.posY, (int) entity.posZ);
+                    if (sqdist < squaredRange) {
+                        entities.add(entity);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 
     public static void unfreezeDimension(World world) {
         WorldServer worldServer = (WorldServer) world;
@@ -161,6 +216,24 @@ public class RfToolsDimensionManager extends WorldSavedData {
         }
     }
 
+    public static boolean checkValidPhasedFieldGenerator(EntityPlayer player, boolean consume) {
+        InventoryPlayer inventory = player.inventory;
+        for (int i = 0 ; i < inventory.getHotbarSize() ; i++) {
+            ItemStack slot = inventory.getStackInSlot(i);
+            if (slot != null && slot.getItem() == ModItems.phasedFieldGeneratorItem) {
+                PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
+                int energyStored = pfg.getEnergyStored(slot);
+                int toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
+                if (energyStored >= toConsume) {
+                    if (consume) {
+                        pfg.extractEnergy(slot, toConsume, false);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Check if the client dimlet id's match with the server.
