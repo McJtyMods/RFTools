@@ -1,6 +1,7 @@
 package mcjty.rftools.apideps;
 
 import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
@@ -44,8 +45,8 @@ public class WailaCompatibility implements IWailaDataProvider {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         Block block = accessor.getBlock();
-        if (block instanceof GenericBlock) {
-            return ((GenericBlock) block).getWailaBody(itemStack, currenttip, accessor, config);
+        if (block instanceof WailaInfoProvider) {
+            return ((WailaInfoProvider) block).getWailaBody(itemStack, currenttip, accessor, config);
         }
         return currenttip;
     }

@@ -1,14 +1,15 @@
 package mcjty.container;
 
 import cofh.api.item.IToolHammer;
-import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.apideps.WrenchChecker;
-import mcjty.rftools.blocks.BlockTools;
-import mcjty.api.Infusable;
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
+import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.apideps.WailaInfoProvider;
+import mcjty.rftools.apideps.WrenchChecker;
+import mcjty.rftools.blocks.BlockTools;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -17,14 +18,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -33,9 +32,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public abstract class GenericBlock extends Block implements ITileEntityProvider {
+public abstract class GenericBlock extends Block implements ITileEntityProvider, WailaInfoProvider {
 
     protected IIcon iconInd;        // The identifying face of the block (front by default but can be different).
     protected IIcon iconSide;
@@ -73,6 +71,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider 
         this.creative = creative;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         Block block = accessor.getBlock();
