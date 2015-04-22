@@ -42,12 +42,10 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
                 return;
             }
 
+
             MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
-            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(x+dx, y+dy, z+dz, ScreenTileEntity.CMD_CLICK,
-                    new Argument("hitX", mouseOver.hitVec.xCoord - x - dx),
-                    new Argument("hitY", mouseOver.hitVec.yCoord - y - dy),
-                    new Argument("hitZ", mouseOver.hitVec.zCoord - z - dz),
-                    new Argument("side", mouseOver.sideHit)));
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x+dx, y+dy, z+dz);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - x - dx, mouseOver.hitVec.yCoord - y - dy, mouseOver.hitVec.zCoord - z - dz, mouseOver.sideHit);
         }
     }
 
