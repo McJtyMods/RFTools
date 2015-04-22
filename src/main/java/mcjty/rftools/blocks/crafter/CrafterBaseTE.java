@@ -191,7 +191,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         writeBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
         tagCompound.setByte("rsMode", (byte)redstoneMode.ordinal());
-        tagCompound.setByte("speedMode", (byte)speedMode);
+        tagCompound.setByte("speedMode", (byte) speedMode);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -256,40 +256,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             CraftingRecipe craftingRecipe = recipes[index];
 
             if (craftingRecipe != null) {
-                IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-                if (recipe != null) {
-                    List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
-                    int keep = craftingRecipe.isKeepOne() ? 1 : 0;
-                    if (checkIfRecipeWorks(stackWithCounts, keep)) {
-                        ItemStack result = craftingRecipe.getResult();
-                        // First check if we have room for the result. If yes we can actually craft.
-                        boolean internal = craftingRecipe.isCraftInternal();
-
-                        List<InventoryHelper.SlotModifier> undo = new ArrayList<InventoryHelper.SlotModifier>();
-
-                        // Try to merge the output and the secondary outputs (buckets and such). If there is something
-                        // that doesn't fit we undo everything.
-                        int amountLeft = placeResult(internal, result, undo);
-                        if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
-                            // We have container items.
-                            for (ItemStack stack : craftingRecipe.getContainerItems()) {
-                                amountLeft = placeResult(internal, stack, undo);
-                                if (amountLeft != 0) {
-                                    break;      // Not enough room.
-                                }
-                            }
-                        }
-
-                        if (amountLeft == 0) {
-                            consumeCraftingItems(stackWithCounts, keep);
-                            energyConsumed = true;
-                        } else {
-                            // We don't have place. Undo the operation.
-                            for (InventoryHelper.SlotModifier modifier : undo) {
-                                inventoryHelper.getStacks()[modifier.getSlot()] = modifier.getOld();
-                            }
-
-                        }
+                if (checkIfRecipeWorks(craftingRecipe)) {
+                    if (craftOneItem(craftingRecipe)) {
+                        energyConsumed = true;
                     }
                 }
             }
@@ -300,7 +269,43 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         }
     }
 
-    private boolean checkIfRecipeWorks(List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
+    private boolean craftOneItem(CraftingRecipe craftingRecipe) {
+        // First check if we have room for the result. If yes we can actually craft.
+        List<InventoryHelper.SlotModifier> undo = new ArrayList<InventoryHelper.SlotModifier>();
+
+        // Try to merge the output and the secondary outputs (buckets and such). If there is something
+        // that doesn't fit we undo everything.
+        int amountLeft = placeResult(craftingRecipe.isCraftInternal(), craftingRecipe.getResult(), undo);
+        if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
+            // We have container items.
+            for (ItemStack stack : craftingRecipe.getContainerItems()) {
+                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undo);
+                if (amountLeft != 0) {
+                    break;      // Not enough room.
+                }
+            }
+        }
+
+        if (amountLeft == 0) {
+            consumeCraftingItems(craftingRecipe.getStacksWithCount(), craftingRecipe.isKeepOne() ? 1 : 0);
+            return true;
+        } else {
+            // We don't have place. Undo the operation.
+            for (InventoryHelper.SlotModifier modifier : undo) {
+                inventoryHelper.getStacks()[modifier.getSlot()] = modifier.getOld();
+            }
+            return false;
+        }
+    }
+
+    private boolean checkIfRecipeWorks(CraftingRecipe craftingRecipe) {
+        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        if (recipe == null) {
+            return false;
+        }
+
+        List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
+        int keep = craftingRecipe.isKeepOne() ? 1 : 0;
         for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
@@ -320,7 +325,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                 return false;       // We couldn't find all needed items
             }
         }
-        return true;
+        ItemStack result = craftingRecipe.getResult();
+        return result != null;
     }
 
     private void consumeCraftingItems(List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
