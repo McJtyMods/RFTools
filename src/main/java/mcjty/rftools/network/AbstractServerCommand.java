@@ -48,6 +48,9 @@ public class AbstractServerCommand implements IMessage {
                     case TYPE_BOOLEAN:
                         args.put(key, new Argument(key, buf.readByte() == 1));
                         break;
+                    case TYPE_DOUBLE:
+                        args.put(key, new Argument(key, buf.readDouble()));
+                        break;
                 }
             }
         }
@@ -88,6 +91,9 @@ public class AbstractServerCommand implements IMessage {
                         break;
                     case TYPE_BOOLEAN:
                         buf.writeByte(arg.getBoolean() ? 1 : 0);
+                        break;
+                    case TYPE_DOUBLE:
+                        buf.writeDouble(arg.getDouble());
                         break;
                 }
             }
