@@ -139,6 +139,7 @@ tile.machineInfuserBlock.name=机器注能机
 tile.activityProbeBlock.name=活性探测器
 tile.energyExtractorBlock.name=能量提取机
 tile.screenBlock.name=屏幕
+tile.screenHitBlock.name=屏幕
 tile.screenControllerBlock.name=屏幕控制器
 tile.biomeAbsorberBlock.name=生物群系吸收器
 tile.materialAbsorberBlock.name=材料吸收器

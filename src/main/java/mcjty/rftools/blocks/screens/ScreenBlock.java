@@ -8,6 +8,7 @@ import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -63,10 +64,88 @@ public class ScreenBlock extends GenericContainerBlock {
     @Override
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
         if (!world.isRemote) {
+//            System.out.println("x = " + x + "," + y + "," + z);
         }
     }
 
+    private void setInvisibleBlockSafe(World world, int x, int y, int z, int dx, int dy, int dz, int meta) {
+        int yy = y + dy;
+        if (yy < 0 || yy >= world.getHeight()) {
+            return;
+        }
+        int xx = x + dx;
+        int zz = z + dz;
+        if (world.isAirBlock(xx, yy, zz)) {
+            world.setBlock(xx, yy, zz, ScreenSetup.screenHitBlock, meta, 3);
+            ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(xx, yy, zz);
+            screenHitTileEntity.setRelativeLocation(-dx, -dy, -dz);
+        }
+    }
 
+    private void setInvisibleBlocks(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+
+        if (meta == 2) {
+            setInvisibleBlockSafe(world, x, y, z, 1, 0, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 1, -1, 0, meta);
+        }
+
+        if (meta == 3) {
+            setInvisibleBlockSafe(world, x, y, z, -1, 0, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, -1, -1, 0, meta);
+        }
+
+        if (meta == 4) {
+            setInvisibleBlockSafe(world, x, y, z, 0, 0, 1, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 1, meta);
+        }
+
+        if (meta == 5) {
+            setInvisibleBlockSafe(world, x, y, z, 0, 0, -1, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, -1, meta);
+        }
+    }
+
+    private void clearInvisibleBlockSafe(World world, int x, int y, int z) {
+        if (y < 0 || y >= world.getHeight()) {
+            return;
+        }
+        if (world.getBlock(x, y, z) == ScreenSetup.screenHitBlock) {
+            world.setBlockToAir(x, y, z);
+        }
+    }
+
+    private void clearInvisibleBlocks(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+
+        if (meta == 2) {
+            clearInvisibleBlockSafe(world, x + 1, y, z);
+            clearInvisibleBlockSafe(world, x, y - 1, z);
+            clearInvisibleBlockSafe(world, x + 1, y - 1, z);
+        }
+
+        if (meta == 3) {
+            clearInvisibleBlockSafe(world, x - 1, y, z);
+            clearInvisibleBlockSafe(world, x, y - 1, z);
+            clearInvisibleBlockSafe(world, x - 1, y - 1, z);
+        }
+
+        if (meta == 4) {
+            clearInvisibleBlockSafe(world, x, y, z + 1);
+            clearInvisibleBlockSafe(world, x, y - 1, z);
+            clearInvisibleBlockSafe(world, x, y - 1, z + 1);
+        }
+
+        if (meta == 5) {
+            clearInvisibleBlockSafe(world, x, y, z - 1);
+            clearInvisibleBlockSafe(world, x, y - 1, z);
+            clearInvisibleBlockSafe(world, x, y - 1, z - 1);
+        }
+    }
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
@@ -77,8 +156,10 @@ public class ScreenBlock extends GenericContainerBlock {
                 screenTileEntity.setTransparent(false);
             } else if (screenTileEntity.isLarge()) {
                 screenTileEntity.setLarge(false);
+                clearInvisibleBlocks(world, x, y, z);
             } else if (screenTileEntity.isTransparent()) {
                 screenTileEntity.setLarge(true);
+                setInvisibleBlocks(world, x, y, z);
             } else {
                 screenTileEntity.setTransparent(true);
             }
@@ -117,41 +198,27 @@ public class ScreenBlock extends GenericContainerBlock {
     }
 
     /**
-     * Returns a bounding box from the pool of bounding boxes (this means this box can change after the pool has been
-     * cleared to be reused)
-     */
-    @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-        return null;
-    }
-
-    /**
      * Updates the blocks bounds based on its current state. Args: world, x, y, z
      */
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         int meta = world.getBlockMetadata(x, y, z);
-        float f = 0.0F;
-        float f1 = 1.0F;
-        float f2 = 0.0F;
-        float f3 = 1.0F;
-        float f4 = 0.125F;
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
         if (meta == 2) {
-            this.setBlockBounds(f2, f, 1.0F - f4, f3, f1, 1.0F);
+            this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
         }
 
         if (meta == 3) {
-            this.setBlockBounds(f2, f, 0.0F, f3, f1, f4);
+            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
         }
 
         if (meta == 4) {
-            this.setBlockBounds(1.0F - f4, f, f2, 1.0F, f1, f3);
+            this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         }
 
         if (meta == 5) {
-            this.setBlockBounds(0.0F, f, f2, f4, f1, f3);
+            this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
         }
     }
 
@@ -245,6 +312,18 @@ public class ScreenBlock extends GenericContainerBlock {
         if (entityLivingBase instanceof EntityPlayer) {
             Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
         }
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof ScreenTileEntity) {
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+            if (screenTileEntity.isLarge()) {
+                clearInvisibleBlocks(world, x, y, z);
+            }
+        }
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override

@@ -143,6 +143,7 @@ tile.machineInfuserBlock.name=Механизм наполнения
 tile.activityProbeBlock.name=Зонд активности
 tile.energyExtractorBlock.name=Энергетический экстрактор
 tile.screenBlock.name=Экран
+tile.screenHitBlock.name=Экран
 tile.screenControllerBlock.name=Экранный контроллер
 tile.biomeAbsorberBlock.name=Поглотитель биомов
 tile.materialAbsorberBlock.name=Материальный поглотитель

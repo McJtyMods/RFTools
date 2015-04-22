@@ -18,9 +18,16 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 
 public class ForgeEventHandlers {
 
+//    @SubscribeEvent
+//    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
+//        event.block
+//
+//    }
+//
     @SubscribeEvent
     public void onAttackEntityEvent(AttackEntityEvent event) {
         World world = event.entityPlayer.getEntityWorld();

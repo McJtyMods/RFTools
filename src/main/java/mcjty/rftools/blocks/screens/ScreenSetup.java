@@ -12,12 +12,17 @@ import net.minecraft.item.ItemStack;
 
 public class ScreenSetup {
     public static ScreenBlock screenBlock;
+    public static ScreenHitBlock screenHitBlock;
     public static ScreenControllerBlock screenControllerBlock;
 
     public static void setupBlocks() {
         screenBlock = new ScreenBlock("screenBlock", ScreenTileEntity.class);
         GameRegistry.registerBlock(screenBlock, GenericItemBlock.class, "screenBlock");
         GameRegistry.registerTileEntity(ScreenTileEntity.class, "ScreenTileEntity");
+
+        screenHitBlock = new ScreenHitBlock();
+        GameRegistry.registerBlock(screenHitBlock, "screenHitBlock");
+        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "ScreenHitTileEntity");
 
         screenControllerBlock = new ScreenControllerBlock();
         GameRegistry.registerBlock(screenControllerBlock, GenericItemBlock.class, "screenControllerBlock");
