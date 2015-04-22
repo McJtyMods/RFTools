@@ -7,7 +7,8 @@ public enum ArgumentType {
     TYPE_STRING(0),
     TYPE_INTEGER(1),
     TYPE_COORDINATE(2),
-    TYPE_BOOLEAN(3);
+    TYPE_BOOLEAN(3),
+    TYPE_DOUBLE(4);
 
     private final int index;
     private static final Map<Integer, ArgumentType> mapping = new HashMap<Integer, ArgumentType>();

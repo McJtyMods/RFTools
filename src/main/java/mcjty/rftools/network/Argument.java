@@ -21,6 +21,10 @@ public class Argument {
         this(name, ArgumentType.TYPE_INTEGER, value);
     }
 
+    public Argument(String name, double value) {
+        this(name, ArgumentType.TYPE_DOUBLE, value);
+    }
+
     public Argument(String name, Coordinate value) {
         this(name, ArgumentType.TYPE_COORDINATE, value);
     }
@@ -47,6 +51,10 @@ public class Argument {
 
     public Integer getInteger() {
         return (Integer) value;
+    }
+
+    public Double getDouble() {
+        return (Double) value;
     }
 
     public Coordinate getCoordinate() {
