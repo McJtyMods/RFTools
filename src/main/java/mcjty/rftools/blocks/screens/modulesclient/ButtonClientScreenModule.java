@@ -6,6 +6,7 @@ import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.VerticalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -42,11 +43,6 @@ public class ButtonClientScreenModule implements ClientScreenModule {
 
         RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff666666);
         fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset, currenty + 2, buttonColor);
-    }
-
-    @Override
-    public void activate(int x, int y, int currenty) {
-
     }
 
     @Override

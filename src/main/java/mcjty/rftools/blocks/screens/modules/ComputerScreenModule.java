@@ -40,6 +40,11 @@ public class ComputerScreenModule implements ScreenModule {
         return RFPERTICK;
     }
 
+    @Override
+    public void activate(int x, int y) {
+
+    }
+
     public static class ColoredText {
         private final String text;
         private final int color;

@@ -6,9 +6,6 @@ import mcjty.container.GenericContainerBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
-import mcjty.rftools.network.PacketServerCommand;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -70,11 +67,8 @@ public class ScreenBlock extends GenericContainerBlock {
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
         if (world.isRemote) {
             MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
-            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(x, y, z, ScreenTileEntity.CMD_CLICK,
-                    new Argument("hitX", mouseOver.hitVec.xCoord - x),
-                    new Argument("hitY", mouseOver.hitVec.yCoord - y),
-                    new Argument("hitZ", mouseOver.hitVec.zCoord - z),
-                    new Argument("side", mouseOver.sideHit)));
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - x, mouseOver.hitVec.yCoord - y, mouseOver.hitVec.zCoord - z, mouseOver.sideHit);
         }
     }
 

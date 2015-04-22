@@ -14,8 +14,4 @@ public class EnergyPlusBarClientScreenModule extends EnergyBarClientScreenModule
         }
     }
 
-    @Override
-    public void activate(int x, int y, int currenty) {
-
-    }
 }

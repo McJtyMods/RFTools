@@ -14,8 +14,4 @@ public class FluidPlusBarClientScreenModule extends FluidBarClientScreenModule {
         }
     }
 
-    @Override
-    public void activate(int x, int y, int currenty) {
-
-    }
 }

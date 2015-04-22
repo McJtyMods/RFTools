@@ -8,4 +8,6 @@ public interface ScreenModule {
     void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z);
 
     int getRfPerTick();
+
+    void activate(int x, int y);
 }

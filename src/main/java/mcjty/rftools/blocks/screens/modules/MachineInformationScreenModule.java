@@ -58,4 +58,9 @@ public class MachineInformationScreenModule implements ScreenModule {
     public int getRfPerTick() {
         return RFPERTICK;
     }
+
+    @Override
+    public void activate(int x, int y) {
+
+    }
 }

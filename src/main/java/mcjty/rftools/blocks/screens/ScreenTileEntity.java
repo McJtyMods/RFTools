@@ -7,6 +7,8 @@ import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -92,7 +94,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         computerModules.clear();
     }
 
-    private void hitScreen(double hitX, double hitY, double hitZ, int side) {
+    public void hitScreenClient(double hitX, double hitY, double hitZ, int side) {
         float factor = large ? 2.0f : 1.0f;
         float dx = 0;
         float dy = (float) ((-hitY + 1.0) / factor);
@@ -110,8 +112,41 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
                 dx = (float) ((1.0 - hitZ) / factor);
                 break;
         }
-        RFTools.log("side = " + side + ": " + hitX + "," + hitY + "," + hitZ + "    -> " + dx + "," + dy);
+        int x = (int) (dx * 128);
+        int y = (int) (dy * 128);
+        int currenty = 7;
 
+        int moduleIndex = 0;
+        List<ClientScreenModule> clientScreenModules = getClientScreenModules();
+        for (ClientScreenModule module : clientScreenModules) {
+            if (module != null) {
+                int height = module.getHeight();
+                // Check if this module has enough room
+                if (currenty + height <= 124) {
+                    if (currenty <= y && y < (currenty + height)) {
+                        break;
+                    }
+                    currenty += height;
+                }
+            }
+            moduleIndex++;
+        }
+        if (moduleIndex >= clientScreenModules.size()) {
+            return;
+        }
+
+        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord, CMD_CLICK,
+                new Argument("x", x),
+                new Argument("y", y - currenty),
+                new Argument("module", moduleIndex)));
+    }
+
+    private void hitScreenServer(int x, int y, int module) {
+        List<ScreenModule> screenModules = getScreenModules();
+        ScreenModule screenModule = screenModules.get(module);
+        if (screenModule != null) {
+            screenModule.activate(x, y);
+        }
     }
 
     @Override
@@ -373,7 +408,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     // This is called server side.
     public Map<Integer, Object[]> getScreenData(long millis) {
-        HashMap<Integer, Object[]> map = new HashMap<Integer, Object[]>();
+        Map<Integer, Object[]> map = new HashMap<Integer, Object[]>();
         List<ScreenModule> screenModules = getScreenModules();
         int moduleIndex = 0;
         for (ScreenModule module : screenModules) {
@@ -395,11 +430,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             return true;
         }
         if (CMD_CLICK.equals(command)) {
-            double hitX = args.get("hitX").getDouble();
-            double hitY = args.get("hitY").getDouble();
-            double hitZ = args.get("hitZ").getDouble();
-            int side = args.get("side").getInteger();
-            hitScreen(hitX, hitY, hitZ, side);
+            int x = args.get("x").getInteger();
+            int y = args.get("y").getInteger();
+            int module = args.get("module").getInteger();
+            hitScreenServer(x, y, module);
             return true;
         }
         return false;

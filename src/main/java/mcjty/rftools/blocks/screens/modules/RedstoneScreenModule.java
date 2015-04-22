@@ -66,4 +66,9 @@ public class RedstoneScreenModule implements ScreenModule {
     public int getRfPerTick() {
         return RFPERTICK;
     }
+
+    @Override
+    public void activate(int x, int y) {
+
+    }
 }

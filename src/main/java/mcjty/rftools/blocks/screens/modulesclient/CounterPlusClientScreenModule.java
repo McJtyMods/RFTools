@@ -14,8 +14,4 @@ public class CounterPlusClientScreenModule extends CounterClientScreenModule {
         }
     }
 
-    @Override
-    public void activate(int x, int y, int currenty) {
-
-    }
 }

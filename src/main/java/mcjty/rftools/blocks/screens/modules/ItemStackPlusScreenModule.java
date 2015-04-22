@@ -19,4 +19,9 @@ public class ItemStackPlusScreenModule extends ItemStackScreenModule {
     public int getRfPerTick() {
         return RFPERTICK;
     }
+
+    @Override
+    public void activate(int x, int y) {
+
+    }
 }
