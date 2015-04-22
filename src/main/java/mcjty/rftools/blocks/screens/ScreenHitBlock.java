@@ -1,11 +1,16 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -27,8 +32,22 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-        if (!world.isRemote) {
-//            System.out.println("INV: x = " + x + "," + y + "," + z);
+        if (world.isRemote) {
+            ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(x, y, z);
+            int dx = screenHitTileEntity.getDx();
+            int dy = screenHitTileEntity.getDy();
+            int dz = screenHitTileEntity.getDz();
+            Block block = world.getBlock(x + dx, y + dy, z + dz);
+            if (block != ScreenSetup.screenBlock) {
+                return;
+            }
+
+            MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(x+dx, y+dy, z+dz, ScreenTileEntity.CMD_CLICK,
+                    new Argument("hitX", mouseOver.hitVec.xCoord - x - dx),
+                    new Argument("hitY", mouseOver.hitVec.yCoord - y - dy),
+                    new Argument("hitZ", mouseOver.hitVec.zCoord - z - dz),
+                    new Argument("side", mouseOver.sideHit)));
         }
     }
 

@@ -2,9 +2,11 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,6 +18,8 @@ import net.minecraftforge.common.util.Constants;
 import java.util.*;
 
 public class ScreenTileEntity extends GenericTileEntity implements ISidedInventory {
+
+    public static final String CMD_CLICK = "click";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
@@ -86,6 +90,28 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         clientScreenModules = null;
         screenModules = null;
         computerModules.clear();
+    }
+
+    private void hitScreen(double hitX, double hitY, double hitZ, int side) {
+        float factor = large ? 2.0f : 1.0f;
+        float dx = 0;
+        float dy = (float) ((-hitY + 1.0) / factor);
+        switch (side) {
+            case 2:
+                dx = (float) ((1.0-hitX) / factor);
+                break;
+            case 3:
+                dx = (float) (hitX / factor);
+                break;
+            case 4:
+                dx = (float) (hitZ / factor);
+                break;
+            case 5:
+                dx = (float) ((1.0 - hitZ) / factor);
+                break;
+        }
+        RFTools.log("side = " + side + ": " + hitX + "," + hitY + "," + hitZ + "    -> " + dx + "," + dy);
+
     }
 
     @Override
@@ -360,5 +386,22 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             moduleIndex++;
         }
         return map;
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_CLICK.equals(command)) {
+            double hitX = args.get("hitX").getDouble();
+            double hitY = args.get("hitY").getDouble();
+            double hitZ = args.get("hitZ").getDouble();
+            int side = args.get("side").getInteger();
+            hitScreen(hitX, hitY, hitZ, side);
+            return true;
+        }
+        return false;
     }
 }

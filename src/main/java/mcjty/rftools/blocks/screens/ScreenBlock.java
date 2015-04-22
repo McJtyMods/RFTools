@@ -6,10 +6,14 @@ import mcjty.container.GenericContainerBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.network.PacketServerCommand;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,6 +27,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -63,8 +68,13 @@ public class ScreenBlock extends GenericContainerBlock {
 
     @Override
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-        if (!world.isRemote) {
-//            System.out.println("x = " + x + "," + y + "," + z);
+        if (world.isRemote) {
+            MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(x, y, z, ScreenTileEntity.CMD_CLICK,
+                    new Argument("hitX", mouseOver.hitVec.xCoord - x),
+                    new Argument("hitY", mouseOver.hitVec.yCoord - y),
+                    new Argument("hitZ", mouseOver.hitVec.zCoord - z),
+                    new Argument("side", mouseOver.sideHit)));
         }
     }
 
@@ -86,15 +96,15 @@ public class ScreenBlock extends GenericContainerBlock {
         int meta = world.getBlockMetadata(x, y, z);
 
         if (meta == 2) {
-            setInvisibleBlockSafe(world, x, y, z, 1, 0, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 1, -1, 0, meta);
-        }
-
-        if (meta == 3) {
             setInvisibleBlockSafe(world, x, y, z, -1, 0, 0, meta);
             setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
             setInvisibleBlockSafe(world, x, y, z, -1, -1, 0, meta);
+        }
+
+        if (meta == 3) {
+            setInvisibleBlockSafe(world, x, y, z, 1, 0, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
+            setInvisibleBlockSafe(world, x, y, z, 1, -1, 0, meta);
         }
 
         if (meta == 4) {
@@ -123,15 +133,15 @@ public class ScreenBlock extends GenericContainerBlock {
         int meta = world.getBlockMetadata(x, y, z);
 
         if (meta == 2) {
-            clearInvisibleBlockSafe(world, x + 1, y, z);
-            clearInvisibleBlockSafe(world, x, y - 1, z);
-            clearInvisibleBlockSafe(world, x + 1, y - 1, z);
-        }
-
-        if (meta == 3) {
             clearInvisibleBlockSafe(world, x - 1, y, z);
             clearInvisibleBlockSafe(world, x, y - 1, z);
             clearInvisibleBlockSafe(world, x - 1, y - 1, z);
+        }
+
+        if (meta == 3) {
+            clearInvisibleBlockSafe(world, x + 1, y, z);
+            clearInvisibleBlockSafe(world, x, y - 1, z);
+            clearInvisibleBlockSafe(world, x + 1, y - 1, z);
         }
 
         if (meta == 4) {
