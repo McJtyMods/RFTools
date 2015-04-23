@@ -190,19 +190,19 @@ public class FeatureDimletType implements IDimletType {
             modifiersForFeature.put(featureType, dimlet.getRight());
         }
 
-        dimensionInformation.setFluidsForLakes(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LAKES));
+        dimensionInformation.setFluidsForLakes(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LAKES, true));
         dimensionInformation.setExtraOregen(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_OREGEN, true));
         dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
         dimensionInformation.setSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_ORBS, false));
         dimensionInformation.setHugeSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_HUGEORBS, false));
         dimensionInformation.setLiquidSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));
-        dimensionInformation.setLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS));
+        dimensionInformation.setLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));
         dimensionInformation.setHugeLiquidSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_HUGELIQUIDORBS, false));
-        dimensionInformation.setHugeLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_HUGELIQUIDORBS));
+        dimensionInformation.setHugeLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_HUGELIQUIDORBS, false));
         dimensionInformation.setCanyonBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_CANYONS));
     }
 
-    private Block[] getRandomFluidArray(Random random, DimensionInformation dimensionInformation, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t) {
+    private Block[] getRandomFluidArray(Random random, DimensionInformation dimensionInformation, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t, boolean allowEmpty) {
         Block[] fluidsForLakes;
         if (featureTypes.contains(t)) {
             List<BlockMeta> blocks = new ArrayList<BlockMeta>();
@@ -223,7 +223,11 @@ public class FeatureDimletType implements IDimletType {
         } else {
             fluidsForLakes = new Block[0];
         }
-        return fluidsForLakes;
+        if (allowEmpty || fluidsForLakes.length > 0) {
+            return fluidsForLakes;
+        }
+
+        return new Block[] { Blocks.water };
     }
 
     private BlockMeta[] getRandomBlockArray(Random random, Set<FeatureType> featureTypes, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType t, boolean allowEmpty) {
