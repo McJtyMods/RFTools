@@ -33,9 +33,16 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
             tagCompound.setInteger("transZ", matterTransmitterTileEntity.zCoord);
             tagCompound.setInteger("transDim", world.provider.dimensionId);
 
+            if (world.isRemote) {
+                RFTools.message(player, EnumChatFormatting.YELLOW + "Transmitter set!");
+            }
+
             if (matterTransmitterTileEntity.isDialed()) {
                 Integer id = matterTransmitterTileEntity.getTeleportId();
                 tagCompound.setInteger("receiver", id);
+                if (world.isRemote) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+                }
             }
         } else if (te instanceof MatterReceiverTileEntity) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
@@ -47,6 +54,11 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 id = matterReceiverTileEntity.getOrCalculateID();
             }
             tagCompound.setInteger("receiver", id);
+            if (world.isRemote) {
+                RFTools.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+            }
+        } else {
+            return super.onItemUse(stack, player, world, x, y, z, side, sx, sy, sz);
         }
 
         stack.setTagCompound(tagCompound);

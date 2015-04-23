@@ -30,6 +30,9 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
                 }
                 tagCompound.setInteger("channel", channel);
                 stack.setTagCompound(tagCompound);
+                if (world.isRemote) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                }
             }
         } else if (te instanceof RedstoneReceiverTileEntity) {
             RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
@@ -43,6 +46,12 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
                 }
                 tagCompound.setInteger("channel", channel);
                 stack.setTagCompound(tagCompound);
+                if (world.isRemote) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                }
+                if (world.isRemote) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                }
             }
         } else {
             return super.onItemUse(stack, player, world, x, y, z, side, sx, sy, sz);

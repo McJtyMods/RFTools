@@ -59,7 +59,11 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        transmitter = new GlobalCoordinate(new Coordinate(tagCompound.getInteger("transX"), tagCompound.getInteger("transY"), tagCompound.getInteger("transZ")), tagCompound.getInteger("transDim"));
+        if (tagCompound.hasKey("transX")) {
+            transmitter = new GlobalCoordinate(new Coordinate(tagCompound.getInteger("transX"), tagCompound.getInteger("transY"), tagCompound.getInteger("transZ")), tagCompound.getInteger("transDim"));
+        } else {
+            transmitter = null;
+        }
         if (tagCompound.hasKey("receiver")) {
             receiver = tagCompound.getInteger("receiver");
         } else {
