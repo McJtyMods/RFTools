@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
@@ -14,6 +16,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -64,6 +67,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public long lastTime = 0;
 
     public ScreenTileEntity() {
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
     }
 
     @Override
