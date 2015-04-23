@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
@@ -7,9 +8,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -18,11 +21,18 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class ScreenHitBlock extends Block implements ITileEntityProvider {
+    private IIcon icon;
+
     public ScreenHitBlock() {
         super(Material.glass);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setBlockName("screenHitBlock");
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        icon = iconRegister.registerIcon(RFTools.MODID + ":screenFrame_icon");
     }
 
     @Override
@@ -116,4 +126,8 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
         return 2;
     }
 
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        return icon;
+    }
 }
