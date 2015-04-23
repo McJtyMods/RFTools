@@ -1,11 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.events.ColorChoiceEvent;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Panel;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -56,109 +51,12 @@ public class DimensionClientScreenModule implements ClientScreenModule {
 
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("text", newText);
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(textField);
-        addColorPanel(mc, gui, currentData, moduleGuiChanged, panel);
-
-        addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
-        addMonitorPanel(mc, gui, currentData, moduleGuiChanged, panel);
-
-        if (currentData != null) {
-            textField.setText(currentData.getString("text"));
-        }
-
-        return panel;
-    }
-
-    private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
-        ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
-        ColorChoiceLabel rfColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor").setTooltips("Color for the RF text");
-        ColorChoiceLabel rfNegColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "rfcolor_neg").setTooltips("Color for the negative", "RF/tick ratio");
-        Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText("L:")).addChild(labelColorSelector).
-                addChild(new Label(mc, gui).setText("+:")).addChild(rfColorSelector).
-                addChild(new Label(mc, gui).setText("-:")).addChild(rfNegColorSelector).
-                setDesiredHeight(12);
-        panel.addChild(colorPanel);
-    }
-
-
-    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, final String tagName) {
-        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger(tagName, newColor);
-                moduleGuiChanged.updateData();
-            }
-        });
-        if (currentData != null) {
-            int currentColor = currentData.getInteger(tagName);
-            if (currentColor != 0) {
-                colorChoiceLabel.setCurrentColor(currentColor);
-            }
-        }
-        return colorChoiceLabel;
-    }
-
-
-    private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
-        Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
-
-        final ToggleButton barButton = new ToggleButton(mc, gui).setText("Bar").setTooltips("Toggle visibility of the", "energy bar").setDesiredHeight(13).setCheckMarker(true);
-        barButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("hidebar", !barButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(barButton);
-
-        ChoiceLabel modeButton = ClientScreenModuleHelper.setupModeCombo(mc, gui, "RF", currentData, moduleGuiChanged);
-        optionPanel.addChild(modeButton);
-
-        ChoiceLabel formatButton = ClientScreenModuleHelper.setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
-        optionPanel.addChild(formatButton);
-
-        if (currentData != null) {
-            barButton.setPressed(!currentData.getBoolean("hidebar"));
-        } else {
-            barButton.setPressed(true);
-        }
-
-        panel.addChild(optionPanel);
-    }
-
-    private void addMonitorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
-        Panel monitorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                setDesiredHeight(16);
-        monitorPanel.addChild(new Label(mc, gui).setText("Dimension:"));
-        TextField dimensionTextField = new TextField(mc, gui).setTooltips("The id of the dimension", "to monitor");
-        monitorPanel.addChild(dimensionTextField);
-        dimensionTextField.addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                int dim;
-                try {
-                    dim = Integer.parseInt(newText);
-                } catch (NumberFormatException e) {
-                    dim = 0;
-                }
-                currentData.setInteger("dim", dim);
-                moduleGuiChanged.updateData();
-            }
-        });
-        if (currentData != null) {
-            dimensionTextField.setText(Integer.toString(currentData.getInteger("dim")));
-        }
-        panel.addChild(monitorPanel);
+        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+                label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
+                label("RF+:").color("rfcolor", "Color for the RF text").label("RF-:").color("rfcolor_neg", "Color for the negative", "RF/tick ratio").nl().
+                toggleNegative("hidebar", "Bar", "Toggle visibility of the", "energy bar").mode("RF").format().nl().
+                label("Dimension:").integer("dim", "The id of the dimension", "to monitor").nl().
+                build();
     }
 
     @Override

@@ -1,11 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.events.ColorChoiceEvent;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Panel;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -46,47 +41,10 @@ public class TextClientScreenModule implements ClientScreenModule {
 
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to show").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("text", newText);
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(textField);
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger("color", newColor);
-                moduleGuiChanged.updateData();
-            }
-        });
-
-        final ToggleButton largeButton = new ToggleButton(mc, gui).setText("Large").setTooltips("Large or small font").setDesiredHeight(13).setCheckMarker(true);
-        largeButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("large", largeButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(largeButton);
-
-        if (currentData != null) {
-            textField.setText(currentData.getString("text"));
-            int currentColor = currentData.getInteger("color");
-            if (currentColor != 0) {
-                colorSelector.setCurrentColor(currentColor);
-            }
-            largeButton.setPressed(currentData.getBoolean("large"));
-        }
-
-        panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText("Color:")).
-                addChild(colorSelector).
-                setDesiredHeight(18));
-        return panel;
+        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+                label("Label:").text("text", "Text to show").color("color", "Color for the text").nl().
+                toggle("large", "Large", "Large or small font").nl().
+                build();
     }
 
     @Override

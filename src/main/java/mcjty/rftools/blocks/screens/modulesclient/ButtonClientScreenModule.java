@@ -1,13 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.gui.RenderHelper;
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.events.ColorChoiceEvent;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
-import mcjty.rftools.RFTools;
+import mcjty.gui.widgets.Panel;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -74,72 +68,11 @@ public class ButtonClientScreenModule implements ClientScreenModule {
 
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Label text").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("text", newText);
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(textField);
-        TextField buttonTextField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Button text").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("button", newText);
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(buttonTextField);
-
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger("color", newColor);
-                moduleGuiChanged.updateData();
-            }
-        });
-        ColorChoiceLabel buttonColorSelector = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger("buttonColor", newColor);
-                moduleGuiChanged.updateData();
-            }
-        });
-
-        final ToggleButton toggleButton = new ToggleButton(mc, gui).setText("Toggle").setTooltips("Toggle button mode").setDesiredHeight(13).setCheckMarker(true);
-        toggleButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                currentData.setBoolean("toggle", toggleButton.isPressed());
-                moduleGuiChanged.updateData();
-            }
-        });
-        panel.addChild(toggleButton);
-
-        if (currentData != null) {
-            textField.setText(currentData.getString("text"));
-            int currentColor = currentData.getInteger("color");
-            if (currentColor != 0) {
-                colorSelector.setCurrentColor(currentColor);
-            }
-            buttonTextField.setText(currentData.getString("button"));
-            int currentButtonColor = currentData.getInteger("buttonColor");
-            if (currentButtonColor != 0) {
-                buttonColorSelector.setCurrentColor(currentButtonColor);
-            }
-            toggleButton.setPressed(currentData.getBoolean("toggle"));
-        }
-
-        panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText("Color:")).
-                addChild(colorSelector).
-                setDesiredHeight(18));
-        panel.addChild(new Panel(mc, gui).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, gui).setText("Button color:")).
-                addChild(buttonColorSelector).
-                setDesiredHeight(18));
-        return panel;
+        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+                label("Label:").text("text", "Label text").color("color", "Label color").nl().
+                label("Button:").text("button", "Button text").color("buttonColor", "Button color").nl().
+                toggle("toggle", "Toggle", "Toggle button mode").nl().
+                build();
     }
 
     @Override

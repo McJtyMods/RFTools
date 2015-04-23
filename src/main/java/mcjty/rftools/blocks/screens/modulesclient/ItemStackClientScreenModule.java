@@ -1,11 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
 import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
-import mcjty.gui.widgets.Widget;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -191,74 +186,12 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-
-        TextField slot1 = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Slot index to show").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setInteger("slot1", parseIntSafe(newText));
-                moduleGuiChanged.updateData();
-            }
-        });
-        TextField slot2 = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Slot index to show").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setInteger("slot2", parseIntSafe(newText));
-                moduleGuiChanged.updateData();
-            }
-        });
-        TextField slot3 = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Slot index to show").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setInteger("slot3", parseIntSafe(newText));
-                moduleGuiChanged.updateData();
-            }
-        });
-        TextField slot4 = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Slot index to show").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setInteger("slot4", parseIntSafe(newText));
-                moduleGuiChanged.updateData();
-            }
-        });
-
-        if (currentData != null) {
-            fillSlot(slot1, currentData, "slot1");
-            fillSlot(slot2, currentData, "slot2");
-            fillSlot(slot3, currentData, "slot3");
-            fillSlot(slot4, currentData, "slot4");
-        }
-        Panel slotPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).addChild(slot1).addChild(slot2).addChild(slot3).addChild(slot4);
-        panel.addChild(slotPanel);
-        return panel;
-    }
-
-    private void fillSlot(TextField slot, NBTTagCompound currentData, String slotName) {
-        int s = getSlot(currentData, slotName);
-        if (s == -1) {
-            slot.setText("");
-        } else {
-            slot.setText(Integer.toString(s));
-        }
-    }
-
-    private int getSlot(NBTTagCompound currentData, String slotName) {
-        if (currentData.hasKey(slotName)) {
-            return currentData.getInteger(slotName);
-        } else {
-            return -1;
-        }
-    }
-
-    private int parseIntSafe(String newText) {
-        if (newText.trim().isEmpty()) {
-            return -1;
-        }
-        try {
-            return Integer.parseInt(newText);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+                label("Slot 1:").integer("slot1", "Slot index to show").nl().
+                label("Slot 2:").integer("slot2", "Slot index to show").nl().
+                label("Slot 3:").integer("slot3", "Slot index to show").nl().
+                label("Slot 4:").integer("slot4", "Slot index to show").nl().
+                build();
     }
 
     @Override

@@ -1,13 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
-import mcjty.gui.widgets.Widget;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import net.minecraft.client.Minecraft;
@@ -48,31 +41,13 @@ public class ComputerClientScreenModule implements ClientScreenModule {
 
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        Label label1 = new Label(mc, gui).setText("Contents of this module is").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        Label label2 = new Label(mc, gui).setText("controlled with a computer.").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        Label label3 = new Label(mc, gui).setText("Only works with OpenComputers.").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        panel.addChild(label1).addChild(label2).addChild(label3);
-        addOptionPanel(mc, gui, currentData, moduleGuiChanged, panel);
-        return panel;
+        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+                leftLabel("Contents of this module is").nl().
+                leftLabel("controlled with a computer.").nl().
+                leftLabel("Only works with OC or CC.").nl().
+                label("Tag:").text("moduleTag", "Tag used by LUA to identify module").nl().
+                build();
     }
-
-    private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
-        Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
-        Label label = new Label(mc, gui).setText("Tag:");
-        TextField tagField = new TextField(mc, gui).setDesiredWidth(100);
-        tagField.setText(currentData.getString("moduleTag"));
-        tagField.addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("moduleTag", newText);
-                moduleGuiChanged.updateData();
-            }
-        });
-        optionPanel.addChild(label).addChild(tagField);
-        panel.addChild(optionPanel);
-    }
-
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
