@@ -13,7 +13,7 @@ public class ComputerScreenModule implements ScreenModule {
     private final List<ColoredText> textList = new ArrayList<ColoredText>();
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
         return textList.toArray(new Object[textList.size()]);
     }
 

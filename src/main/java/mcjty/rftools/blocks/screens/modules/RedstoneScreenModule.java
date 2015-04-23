@@ -14,7 +14,7 @@ public class RedstoneScreenModule implements ScreenModule {
     private int side = 0;
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
         if (channel == -1) {
             // If we are monitoring some block then we can use that.
             if (coordinate.isValid()) {

@@ -8,7 +8,7 @@ public class TextScreenModule implements ScreenModule {
     public static final int RFPERTICK = 0;
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
         return null;
     }
 

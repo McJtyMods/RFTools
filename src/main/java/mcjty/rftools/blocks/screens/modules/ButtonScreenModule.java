@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -8,11 +7,17 @@ import net.minecraft.world.World;
 public class ButtonScreenModule implements ScreenModule {
     private String line = "";
     private int channel = -1;
+    private boolean toggle;
 
     public static final int RFPERTICK = 0;
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
+        if (channel != -1 && toggle) {
+            RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
+            RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
+            return new Object[] { ch.getValue()};
+        }
         return null;
     }
 
@@ -23,6 +28,7 @@ public class ButtonScreenModule implements ScreenModule {
             if (tagCompound.hasKey("channel")) {
                 channel = tagCompound.getInteger("channel");
             }
+            toggle = tagCompound.getBoolean("toggle");
         }
     }
 
@@ -36,10 +42,19 @@ public class ButtonScreenModule implements ScreenModule {
         }
         if (x >= xoffset) {
             if (channel != -1) {
-                RedstoneChannels channels = RedstoneChannels.getChannels(world);
-                RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
-                ch.setValue(clicked ? 15 : 0);
-                channels.save(world);
+                if (toggle) {
+                    if (clicked) {
+                        RedstoneChannels channels = RedstoneChannels.getChannels(world);
+                        RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
+                        ch.setValue((ch.getValue() == 0) ? 15 : 0);
+                        channels.save(world);
+                    }
+                } else {
+                    RedstoneChannels channels = RedstoneChannels.getChannels(world);
+                    RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
+                    ch.setValue(clicked ? 15 : 0);
+                    channels.save(world);
+                }
             }
         }
     }

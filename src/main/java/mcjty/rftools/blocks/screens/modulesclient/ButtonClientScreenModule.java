@@ -45,8 +45,17 @@ public class ButtonClientScreenModule implements ClientScreenModule {
             xoffset = 7 + 5;
         }
 
-        RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, activated ? 0xff333333 : 0xffeeeeee, activated ? 0xffeeeeee : 0xff333333, 0xff666666);
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset + (activated ? 1 : 0), currenty + 2 + (activated ? 1 : 0), buttonColor);
+        boolean act = false;
+        if (toggle) {
+            if (screenData != null && screenData.length >= 1) {
+                act = ((Integer) screenData[0]) > 0;
+            }
+        } else {
+            act = activated;
+        }
+
+        RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, act ? 0xff333333 : 0xffeeeeee, act ? 0xffeeeeee : 0xff333333, 0xff666666);
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset + (act ? 1 : 0), currenty + 2 + (act ? 1 : 0), buttonColor);
     }
 
     @Override
@@ -154,6 +163,6 @@ public class ButtonClientScreenModule implements ClientScreenModule {
 
     @Override
     public boolean needsServerData() {
-        return false;
+        return true;
     }
 }

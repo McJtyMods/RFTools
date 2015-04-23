@@ -13,7 +13,7 @@ public class CounterScreenModule implements ScreenModule {
     protected Coordinate coordinate = Coordinate.INVALID;
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;

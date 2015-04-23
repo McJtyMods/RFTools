@@ -476,7 +476,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         int moduleIndex = 0;
         for (ScreenModule module : screenModules) {
             if (module != null) {
-                Object[] data = module.getData(millis);
+                Object[] data = module.getData(worldObj, millis);
                 if (data != null) {
                     map.put(moduleIndex, data);
                 }

@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public interface ScreenModule {
-    Object[] getData(long millis);
+    Object[] getData(World worldObj, long millis);
 
     void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z);
 

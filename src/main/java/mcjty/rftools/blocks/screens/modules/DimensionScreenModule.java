@@ -12,7 +12,7 @@ public class DimensionScreenModule implements ScreenModule {
     private ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
-    public Object[] getData(long millis) {
+    public Object[] getData(World worldObj, long millis) {
         int energy = DimensionStorage.getDimensionStorage(DimensionManager.getWorld(0)).getEnergyLevel(dim);
         return helper.getContentsValue(millis, energy, DimletConfiguration.MAX_DIMENSION_POWER);
     }
