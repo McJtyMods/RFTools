@@ -111,6 +111,7 @@ tile.machineBase.name=机器基座
 tile.matterTransmitterBlock.name=物质传输器
 tile.matterReceiverBlock.name=物质接收器
 tile.dialingDeviceBlock.name=传输控制器
+tile.simpleDialerBlock.name=Simple Dialer
 tile.destinationAnalyzerBlock.name=接收控制器
 tile.matterBoosterBlock.name=物质助推器
 tile.endergenicBlock.name=末影能发电机

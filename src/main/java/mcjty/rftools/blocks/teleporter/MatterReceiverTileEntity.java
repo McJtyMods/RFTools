@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -35,6 +36,18 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
 
     public String getName() {
         return name == null ? "" : name;
+    }
+
+    public int getOrCalculateID() {
+        if (id == -1) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+            id = destinations.getNewId(gc);
+
+            destinations.save(worldObj);
+            setId(id);
+        }
+        return id;
     }
 
     public int getId() {

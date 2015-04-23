@@ -115,6 +115,7 @@ tile.machineBase.name=Machine Base
 tile.matterTransmitterBlock.name=Matter Transmitter
 tile.matterReceiverBlock.name=Matter Receiver
 tile.dialingDeviceBlock.name=Dialing Device
+tile.simpleDialerBlock.name=Simple Dialer
 tile.destinationAnalyzerBlock.name=Destination Analyzer
 tile.matterBoosterBlock.name=Matter Booster
 tile.endergenicBlock.name=Endergenic Generator

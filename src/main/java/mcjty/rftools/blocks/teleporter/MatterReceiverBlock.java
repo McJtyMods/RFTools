@@ -114,15 +114,7 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
         restoreBlockFromNBT(world, x, y, z, itemStack);
         if (!world.isRemote) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x, y, z);
-            int id = matterReceiverTileEntity.getId();
-            if (id == -1) {
-                TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-                GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId);
-                id = destinations.getNewId(gc);
-
-                destinations.save(world);
-                matterReceiverTileEntity.setId(id);
-            }
+            matterReceiverTileEntity.getOrCalculateID();
             matterReceiverTileEntity.updateDestination();
         }
     }

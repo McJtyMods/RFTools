@@ -17,7 +17,6 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -462,11 +461,6 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         tagCompound.setBoolean("showFav", showOnlyFavorites);
     }
 
-    private TeleportDestination findDestination(Coordinate coordinate, int dimension) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return destinations.getDestination(coordinate, dimension);
-    }
-
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
         return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations(playerName));
@@ -505,23 +499,6 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return transmitters;
     }
 
-    // Check if there is room for a beam.
-    public static boolean checkBeam(Coordinate c, World world, int dy1, int dy2, int errory) {
-        for (int dy = dy1 ; dy <= dy2 ; dy++) {
-            Block b = world.getBlock(c.getX(), c.getY()+dy, c.getZ());
-            if (!b.isAir(world, c.getX(), c.getY()+dy, c.getZ())) {
-                if (dy <= errory) {
-                    // Everything below errory must be free.
-                    return false;
-                } else {
-                    // Everything higher then errory doesn't have to be free.
-                    break;
-                }
-            }
-        }
-        return true;
-    }
-
     // Server side only.
     private void changeFavorite(String playerName, Coordinate receiver, int dimension, boolean favorite) {
         List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
@@ -538,61 +515,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
 
     // Server side only
     private int dial(String player, Coordinate transmitter, int transDim, Coordinate coordinate, int dimension, boolean once) {
-        World transWorld = RfToolsDimensionManager.getDimensionManager(worldObj).getWorldForDimension(transDim);
-        if (transWorld == null) {
-            return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
-        }
-        MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
-
-        if (player != null && !transmitterTileEntity.checkAccess(player)) {
-            return DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS;
-        }
-
-        if (coordinate == null) {
-            transmitterTileEntity.setTeleportDestination(null, false);
-            return DialingDeviceTileEntity.DIAL_INTERRUPTED;
-        }
-
-        TeleportDestination teleportDestination = findDestination(coordinate, dimension);
-        if (teleportDestination == null) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-        }
-
-        Coordinate c = teleportDestination.getCoordinate();
-        World recWorld = RfToolsDimensionManager.getWorldForDimension(teleportDestination.getDimension());
-        if (recWorld == null) {
-            recWorld = MinecraftServer.getServer().worldServerForDimension(teleportDestination.getDimension());
-            if (recWorld == null) {
-                return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-            }
-        }
-
-        // Only do this if not an rftools dimension.
-        TileEntity tileEntity = recWorld.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
-        }
-        MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) tileEntity;
-        matterReceiverTileEntity.updateDestination();       // Make sure destination is ok.
-        if (player != null && !matterReceiverTileEntity.checkAccess(player)) {
-            return DialingDeviceTileEntity.DIAL_RECEIVER_NOACCESS;
-        }
-
-        int cost = TeleportConfiguration.rfPerDial;
-        cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
-
-        if (getEnergyStored(ForgeDirection.DOWN) < cost) {
-            return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
-        }
-
-        if (!checkBeam(transmitter, transWorld, 1, 4, 2)) {
-            return DialingDeviceTileEntity.DIAL_TRANSMITTER_BLOCKED_MASK;
-        }
-
-        consumeEnergy(cost);
-        transmitterTileEntity.setTeleportDestination(teleportDestination, once);
-
-        return DialingDeviceTileEntity.DIAL_OK;
+        return TeleportationTools.dial(worldObj, this, player, transmitter, transDim, coordinate, dimension, once);
     }
 
     // Server side only

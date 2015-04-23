@@ -244,6 +244,13 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return teleportId != null || teleportDestination != null;
     }
 
+    public Integer getTeleportId() {
+        if (isDialed() && teleportId == null) {
+            getTeleportDestination();
+        }
+        return teleportId;
+    }
+
     public TeleportDestination getTeleportDestination() {
         if (teleportId != null) {
             TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(worldObj);

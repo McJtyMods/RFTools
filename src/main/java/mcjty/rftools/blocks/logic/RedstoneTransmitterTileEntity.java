@@ -29,6 +29,7 @@ public class RedstoneTransmitterTileEntity extends GenericTileEntity {
 
     @Override
     protected void checkStateServer() {
+        // Update is called manuall which is why canUpdate() returns false.
         super.checkStateServer();
 
         if (channel == -1) {

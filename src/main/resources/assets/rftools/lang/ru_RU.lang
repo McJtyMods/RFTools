@@ -115,6 +115,7 @@ tile.machineBase.name=Корпус RF-механизма
 tile.matterTransmitterBlock.name=Передатчик материи
 tile.matterReceiverBlock.name=Приёмник материи
 tile.dialingDeviceBlock.name=Модем
+tile.simpleDialerBlock.name=Simple Dialer
 tile.destinationAnalyzerBlock.name=Анализатор целей
 tile.matterBoosterBlock.name=Усилитель материи
 tile.endergenicBlock.name=Генератор Края

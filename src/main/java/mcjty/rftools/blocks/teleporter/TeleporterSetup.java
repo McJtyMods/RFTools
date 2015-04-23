@@ -15,6 +15,7 @@ public class TeleporterSetup {
     public static DialingDeviceBlock dialingDeviceBlock;
     public static DestinationAnalyzerBlock destinationAnalyzerBlock;
     public static MatterBoosterBlock matterBoosterBlock;
+    public static SimpleDialerBlock simpleDialerBlock;
 
     public static void setupBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock();
@@ -28,6 +29,10 @@ public class TeleporterSetup {
         dialingDeviceBlock = new DialingDeviceBlock();
         GameRegistry.registerBlock(dialingDeviceBlock, GenericItemBlock.class, "dialingDeviceBlock");
         GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
+
+        simpleDialerBlock = new SimpleDialerBlock();
+        GameRegistry.registerBlock(simpleDialerBlock, SimpleDialerItemBlock.class, "simpleDialerBlock");
+        GameRegistry.registerTileEntity(SimpleDialerTileEntity.class, "SimpleDialerTileEntity");
 
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();
         GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
@@ -49,5 +54,6 @@ public class TeleporterSetup {
         GameRegistry.addRecipe(new ItemStack(matterBoosterBlock), " B ", "BMB", " B ", 'M', destinationAnalyzerBlock,
                 'B', Blocks.redstone_block);
         GameRegistry.addRecipe(new ItemStack(ModItems.chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
     }
 }
