@@ -73,7 +73,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
         super.draw(window, x, y);
         int xx = x + bounds.x + 2;
-        int yy = y + bounds.y;
+        int yy = y + bounds.y + 1;
         int top = 0;        // Margin@@@?
 //        drawBox(xx, yy, 0xffff0000);
 
@@ -82,11 +82,11 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
             child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rowheight));
             boolean hilighted = hilightedRows.contains(i);
             if (i == selected && hilighted) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff888844, 0xff666622);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xff888844, 0xff666622);
             } else if (i == selected) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xff666666, 0xff444444);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xff666666, 0xff444444);
             } else if (hilighted) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width, yy + top + rowheight, 0xffbbbb00, 0xff999900);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xffbbbb00, 0xff999900);
             }
             if (isEnabledAndVisible()) {
                 child.draw(window, xx, yy);
