@@ -125,7 +125,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder color(final String tagname, String... tooltip) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(50).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(15).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger(tagname, newColor);
@@ -195,7 +195,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
-    public static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
@@ -217,7 +217,7 @@ public class ScreenModuleGuiBuilder {
         return modeButton;
     }
 
-    public static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         String modeNone = "None";
         final String modePertick = componentName + "/t";
         final String modePct = componentName + "%";

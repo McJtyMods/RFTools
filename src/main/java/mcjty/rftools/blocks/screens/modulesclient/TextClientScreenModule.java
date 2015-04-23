@@ -42,7 +42,7 @@ public class TextClientScreenModule implements ClientScreenModule {
     @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
-                label("Label:").text("text", "Text to show").color("color", "Color for the text").nl().
+                label("Text:").text("text", "Text to show").color("color", "Color for the text").nl().
                 toggle("large", "Large", "Large or small font").nl().
                 build();
     }
