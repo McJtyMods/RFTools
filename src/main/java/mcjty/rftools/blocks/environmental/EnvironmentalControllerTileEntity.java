@@ -52,7 +52,14 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (environmentModules == null) {
             getEnvironmentModules();
         }
-        return (int) (totalRfPerTick * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (totalRfPerTick * (4.0f - getInfusedFactor()) / 4.0f);
+        if (environmentModules.isEmpty()) {
+            return rfNeeded;
+        }
+        if (rfNeeded < EnvironmentalConfiguration.MIN_USAGE) {
+            rfNeeded = EnvironmentalConfiguration.MIN_USAGE;
+        }
+        return rfNeeded;
     }
 
     public int getVolume() {
