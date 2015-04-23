@@ -530,12 +530,17 @@ The following screen modules are currently supported:
     - Counter: show the current value of a counter gate
     - Redstone: show yes/no text depending on wireless redstone
     - Machine Info: generic information on certain machines
+    - Button: send out a wireless redstone signal (interactive)
 {-------------------------------------------------------------}
 Some modules (like energy, fluid, inventory, and counter modules)
 require that you first shift-right click on the machine/tank that
 you want to monitor. After that insert them in the screen. The
 maximum distance between the screen and the monitored block is 64.
 The 'Plus' versions of the modules have no limits.
+
+The Button module also allows the screen to be used in an
+interactive manner. i.e. you can click on the screen and control
+other machines that way.
 {-------------------------------------------------------------}
 {b}Environmental Controller
 {n:envctrl}
