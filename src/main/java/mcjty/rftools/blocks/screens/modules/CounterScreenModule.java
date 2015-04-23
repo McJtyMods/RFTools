@@ -58,7 +58,7 @@ public class CounterScreenModule implements ScreenModule {
     }
 
     @Override
-    public void activate(int x, int y) {
+    public void mouseClick(World world, int x, int y, boolean clicked) {
 
     }
 }

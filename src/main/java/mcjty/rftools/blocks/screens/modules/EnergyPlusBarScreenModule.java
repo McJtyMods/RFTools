@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
     public static final int RFPERTICK = 30;
@@ -24,7 +25,7 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
     }
 
     @Override
-    public void activate(int x, int y) {
+    public void mouseClick(World world, int x, int y, boolean clicked) {
 
     }
 }

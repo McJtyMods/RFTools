@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class ClockClientScreenModule implements ClientScreenModule {
@@ -63,6 +64,11 @@ public class ClockClientScreenModule implements ClientScreenModule {
         } else {
             fontRenderer.drawString(line + " " + timeString, 7, currenty, color);
         }
+    }
+
+    @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+
     }
 
     @Override

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public interface ScreenModule {
     Object[] getData(long millis);
@@ -9,5 +10,5 @@ public interface ScreenModule {
 
     int getRfPerTick();
 
-    void activate(int x, int y);
+    void mouseClick(World world, int x, int y, boolean clicked);
 }

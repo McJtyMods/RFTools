@@ -20,6 +20,7 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity {
 
     public void setChannel(int channel) {
         this.channel = channel;
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 

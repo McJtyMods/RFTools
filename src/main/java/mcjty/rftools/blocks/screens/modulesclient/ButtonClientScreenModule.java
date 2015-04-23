@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class ButtonClientScreenModule implements ClientScreenModule {
@@ -19,6 +20,7 @@ public class ButtonClientScreenModule implements ClientScreenModule {
     private String button = "";
     private int color = 0xffffff;
     private int buttonColor = 0xffffff;
+    private boolean activated = false;
 
     @Override
     public TransformMode getTransformMode() {
@@ -41,8 +43,22 @@ public class ButtonClientScreenModule implements ClientScreenModule {
             xoffset = 7 + 5;
         }
 
-        RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff666666);
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset, currenty + 2, buttonColor);
+        RenderHelper.drawBeveledBox(xoffset-5, currenty, 130 - 7, currenty + 12, activated ? 0xff333333 : 0xffeeeeee, activated ? 0xffeeeeee : 0xff333333, 0xff666666);
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset + (activated ? 1 : 0), currenty + 2 + (activated ? 1 : 0), buttonColor);
+    }
+
+    @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+        int xoffset;
+        if (!line.isEmpty()) {
+            xoffset = 80;
+        } else {
+            xoffset = 5;
+        }
+        activated = false;
+        if (x >= xoffset) {
+            activated = clicked;
+        }
     }
 
     @Override

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
@@ -44,6 +43,21 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     // Cached server screen modules
     private List<ScreenModule> screenModules = null;
+    private List<ActivatedModule> clickedModules = new ArrayList<ActivatedModule>();
+
+    private static class ActivatedModule {
+        int module;
+        int ticks;
+        int x;
+        int y;
+
+        public ActivatedModule(int module, int ticks, int x, int y) {
+            this.module = module;
+            this.ticks = ticks;
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
 
@@ -53,8 +67,43 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     }
 
     @Override
-    public boolean canUpdate() {
-        return false;
+    protected void checkStateClient() {
+        if (clickedModules.isEmpty()) {
+            return;
+        }
+        List<ActivatedModule> newClickedModules = new ArrayList<ActivatedModule>();
+        for (ActivatedModule cm : clickedModules) {
+            cm.ticks--;
+            if (cm.ticks > 0) {
+                newClickedModules.add(cm);
+            } else {
+                List<ClientScreenModule> modules = getClientScreenModules();
+                if (cm.module < modules.size()) {
+                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false);
+                }
+            }
+        }
+        clickedModules = newClickedModules;
+    }
+
+    @Override
+    protected void checkStateServer() {
+        if (clickedModules.isEmpty()) {
+            return;
+        }
+        List<ActivatedModule> newClickedModules = new ArrayList<ActivatedModule>();
+        for (ActivatedModule cm : clickedModules) {
+            cm.ticks--;
+            if (cm.ticks > 0) {
+                newClickedModules.add(cm);
+            } else {
+                List<ScreenModule> modules = getScreenModules();
+                if (cm.module < modules.size()) {
+                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false);
+                }
+            }
+        }
+        clickedModules = newClickedModules;
     }
 
     @Override
@@ -91,6 +140,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private void resetModules() {
         clientScreenModules = null;
         screenModules = null;
+        clickedModules.clear();
         computerModules.clear();
     }
 
@@ -135,6 +185,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
             return;
         }
 
+        clientScreenModules.get(moduleIndex).mouseClick(worldObj, x, y - currenty, true);
+        clickedModules.add(new ActivatedModule(moduleIndex, 5, x, y));
+
         PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord, CMD_CLICK,
                 new Argument("x", x),
                 new Argument("y", y - currenty),
@@ -145,7 +198,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         List<ScreenModule> screenModules = getScreenModules();
         ScreenModule screenModule = screenModules.get(module);
         if (screenModule != null) {
-            screenModule.activate(x, y);
+            screenModule.mouseClick(worldObj, x, y, true);
+            clickedModules.add(new ActivatedModule(module, 5, x, y));
         }
     }
 

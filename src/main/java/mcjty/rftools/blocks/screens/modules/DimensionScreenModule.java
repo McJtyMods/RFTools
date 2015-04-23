@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class DimensionScreenModule implements ScreenModule {
@@ -30,7 +31,7 @@ public class DimensionScreenModule implements ScreenModule {
     }
 
     @Override
-    public void activate(int x, int y) {
+    public void mouseClick(World world, int x, int y, boolean clicked) {
 
     }
 }

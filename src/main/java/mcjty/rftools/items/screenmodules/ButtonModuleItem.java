@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.logic.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ModuleProvider;
@@ -59,12 +60,17 @@ public class ButtonModuleItem extends Item implements ModuleProvider {
                 list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
             }
         }
-        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a redstone transmitter or");
-        list.add(EnumChatFormatting.WHITE + "receiver to set the channel for this module.");
+        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a redstone receiver");
+        list.add(EnumChatFormatting.WHITE + "to create a channel for this module and also");
+        list.add(EnumChatFormatting.WHITE + "set it to the receiver.");
     }
 
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+        if (world.isRemote) {
+            return true;
+        }
+
         TileEntity te = world.getTileEntity(x, y, z);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -72,28 +78,21 @@ public class ButtonModuleItem extends Item implements ModuleProvider {
             stack.setTagCompound(tagCompound);
         }
         int channel = -1;
-        if (te instanceof RedstoneReceiverTileEntity) {
-            channel = ((RedstoneReceiverTileEntity) te).getChannel();
-        } else if (te instanceof RedstoneTransmitterTileEntity) {
-            channel = ((RedstoneTransmitterTileEntity) te).getChannel();
+        if (tagCompound.hasKey("channel")) {
+            channel = tagCompound.getInteger("channel");
         }
 
-        tagCompound.removeTag("dim");
-        tagCompound.removeTag("monitorx");
-        tagCompound.removeTag("monitory");
-        tagCompound.removeTag("monitorz");
-        tagCompound.removeTag("monitorside");
-
-        if (channel != -1) {
+        if (channel == -1) {
+            RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
+            channel = redstoneChannels.newChannel();
+            redstoneChannels.save(world);
+            RFTools.message(player, "Created channel " + channel + " for Button module");
             tagCompound.setInteger("channel", channel);
-            if (world.isRemote) {
-                RFTools.message(player, "Button module is set to channel '" + channel + "'");
-            }
-        } else {
-            tagCompound.removeTag("channel");
-            if (world.isRemote) {
-                RFTools.message(player, "Button module is cleared");
-            }
+        }
+
+        if (te instanceof RedstoneReceiverTileEntity) {
+            ((RedstoneReceiverTileEntity) te).setChannel(channel);
+            RFTools.message(player, "Receiver is set to channel " + channel);
         }
         return true;
     }

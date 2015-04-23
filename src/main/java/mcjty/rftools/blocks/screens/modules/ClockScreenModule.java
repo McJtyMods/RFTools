@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class ClockScreenModule implements ScreenModule {
 
@@ -22,7 +23,7 @@ public class ClockScreenModule implements ScreenModule {
     }
 
     @Override
-    public void activate(int x, int y) {
+    public void mouseClick(World world, int x, int y, boolean clicked) {
 
     }
 }

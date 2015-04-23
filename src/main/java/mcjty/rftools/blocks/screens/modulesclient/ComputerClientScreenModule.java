@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class ComputerClientScreenModule implements ClientScreenModule {
@@ -38,6 +39,11 @@ public class ComputerClientScreenModule implements ClientScreenModule {
                 x += fontRenderer.getStringWidth(ct.getText());
             }
         }
+    }
+
+    @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+
     }
 
     @Override

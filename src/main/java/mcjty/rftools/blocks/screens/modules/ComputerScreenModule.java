@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class ComputerScreenModule implements ScreenModule {
     }
 
     @Override
-    public void activate(int x, int y) {
+    public void mouseClick(World world, int x, int y, boolean clicked) {
 
     }
 

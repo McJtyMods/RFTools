@@ -60,6 +60,11 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+
+    }
+
+    @Override
     public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
         TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {

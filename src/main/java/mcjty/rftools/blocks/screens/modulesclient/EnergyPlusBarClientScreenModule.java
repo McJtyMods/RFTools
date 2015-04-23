@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class EnergyPlusBarClientScreenModule extends EnergyBarClientScreenModule {
 
@@ -14,4 +15,8 @@ public class EnergyPlusBarClientScreenModule extends EnergyBarClientScreenModule
         }
     }
 
+    @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+
+    }
 }

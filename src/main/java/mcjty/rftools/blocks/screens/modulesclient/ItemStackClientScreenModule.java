@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class ItemStackClientScreenModule implements ClientScreenModule {
@@ -90,6 +91,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         }
 
         GL11.glDepthMask(false);
+    }
+
+    @Override
+    public void mouseClick(World world, int x, int y, boolean clicked) {
+
     }
 
     private int renderSlot(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
