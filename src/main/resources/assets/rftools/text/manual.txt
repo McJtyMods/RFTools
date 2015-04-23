@@ -255,6 +255,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {l:tpbooster}Matter Booster
 {l:tpaccess}Access Control
 {l:porter}Charged Porter Item
+{l:simdial}Simple Dialer
 {-------------------------------------------------------------} 
 {b}Matter Transmitter
 {n:tptransmitter}
@@ -341,6 +342,15 @@ still needs power! Sneak-right click on a receiver to set target.
 To craft this use:
 
 {ri:chargedPorterItem}
+{-------------------------------------------------------------}
+{b}Simple Dialer
+{n:simdial}
+The Simple Dialer is a logic block that will dial a pre-set
+transmitter/receiver combination when it gets a redstone signal.
+To set the transmitter and/or receiver you have to sneak-right
+click with this block on the transmitter and/or the receiver.
+
+{ri:simpleDialerBlock}
 {-------------------------------------------------------------}
 {b}Power Generator
 {n:power}
