@@ -32,12 +32,15 @@ public class MapGenOrbs {
                     int y = 40 + random.nextInt(40);
                     int z = cz * 16 + random.nextInt(16);
                     int radius = random.nextInt(large ? 20 : 6) + (large ? 10 : 4);
-                    int index = 0;
+
+                    BlockMeta block = BlockMeta.STONE;
                     if (blocks.length > 1) {
-                        index = random.nextInt(blocks.length);
+                        block = blocks[random.nextInt(blocks.length)];
+                    } else if (blocks.length == 1) {
+                        block = blocks[0];
                     }
 
-                    fillSphere(ablock, ameta, x, y, z, radius, blocks[index]);
+                    fillSphere(ablock, ameta, x, y, z, radius, block);
                 }
             }
         }

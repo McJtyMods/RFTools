@@ -3,6 +3,7 @@ package mcjty.rftools.dimension.world.mapgen;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
 import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -33,16 +34,20 @@ public class MapGenLiquidOrbs {
                     int y = 40 + random.nextInt(40);
                     int z = cz * 16 + random.nextInt(16);
                     int radius = random.nextInt(large ? 20 : 6) + (large ? 10 : 4);
-                    int index = 0;
+                    BlockMeta block = BlockMeta.STONE;
                     if (blocks.length > 1) {
-                        index = random.nextInt(blocks.length);
+                        block = blocks[random.nextInt(blocks.length)];
+                    } else if (blocks.length == 1) {
+                        block = blocks[0];
                     }
-                    int flindex = 0;
+                    Block fluid = Blocks.water;
                     if (fluids.length > 1) {
-                        flindex = random.nextInt(fluids.length);
+                        fluid = fluids[random.nextInt(fluids.length)];
+                    } else if (fluids.length == 1) {
+                        fluid = fluids[0];
                     }
 
-                    fillSphere(ablock, ameta, x, y, z, radius, blocks[index], fluids[flindex]);
+                    fillSphere(ablock, ameta, x, y, z, radius, block, fluid);
                 }
             }
         }
