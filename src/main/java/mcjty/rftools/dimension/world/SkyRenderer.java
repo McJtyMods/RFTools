@@ -532,7 +532,9 @@ public class SkyRenderer {
     private static void renderSun(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, CelestialBodyDescriptor body, float size) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(body.getyAngle(), 0.0F, 1.0F, 0.0F);
-        float angle = world.provider.calculateCelestialAngle((long)(world.getWorldInfo().getWorldTime() * body.getTimeFactor() + body.getTimeOffset()), partialTickTime);
+//        float angle = world.provider.calculateCelestialAngle((long)(world.getWorldInfo().getWorldTime() * body.getTimeFactor() + body.getTimeOffset()), partialTickTime);
+        float angle = world.provider.calculateCelestialAngle(world.getWorldInfo().getWorldTime(), partialTickTime);
+        angle *= body.getTimeFactor() + body.getTimeOffset();
         GL11.glRotatef(angle * 360.0F, 1.0F, 0.0F, 0.0F);
         renderEngine.bindTexture(locationSunPng);
         tessellator.startDrawingQuads();
@@ -546,7 +548,9 @@ public class SkyRenderer {
     private static void renderPlanet(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, CelestialBodyDescriptor body, float size) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(body.getyAngle(), 0.0F, 1.0F, 0.0F);
-        float angle = world.provider.calculateCelestialAngle((long)(world.getWorldInfo().getWorldTime() * body.getTimeFactor() + body.getTimeOffset()), partialTickTime);
+//        float angle = world.provider.calculateCelestialAngle((long)(world.getWorldInfo().getWorldTime() * body.getTimeFactor() + body.getTimeOffset()), partialTickTime);
+        float angle = world.provider.calculateCelestialAngle(world.getWorldInfo().getWorldTime(), partialTickTime);
+        angle *= body.getTimeFactor() + body.getTimeOffset();
         GL11.glRotatef(angle * 360.0F, 1.0F, 0.0F, 0.0F);
         renderEngine.bindTexture(locationPlanetPng);
         tessellator.startDrawingQuads();
