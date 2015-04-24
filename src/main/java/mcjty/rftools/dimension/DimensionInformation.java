@@ -906,11 +906,7 @@ public class DimensionInformation {
         celestialBodyDescriptors = new ArrayList<CelestialBodyDescriptor>();
         for (int i = 0 ; i < celestialBodies.size() ; i++) {
             CelestialBodyType type = celestialBodies.get(i);
-            if (i == sunidx || i == moonidx) {
-                celestialBodyDescriptors.add(new CelestialBodyDescriptor(type, 0.0f, 1.0f, -90.0f));
-            } else {
-                celestialBodyDescriptors.add(new CelestialBodyDescriptor(type, random.nextFloat() * 100.0f, random.nextFloat() * 3.0f, -random.nextFloat() * 180.0f));
-            }
+            celestialBodyDescriptors.add(new CelestialBodyDescriptor(type, i == sunidx || i == moonidx));
         }
     }
 
