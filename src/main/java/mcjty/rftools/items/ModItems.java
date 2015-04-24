@@ -64,6 +64,7 @@ public final class ModItems {
     public static FeatherFallingPlusEModuleItem featherFallingPlusEModuleItem;
     public static FlightEModuleItem flightEModuleItem;
     public static PeacefulEModuleItem peacefulEModuleItem;
+    public static WaterBreathingEModuleItem waterBreathingEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -252,6 +253,13 @@ public final class ModItems {
         peacefulEModuleItem.setCreativeTab(RFTools.tabRfTools);
         peacefulEModuleItem.setTextureName(RFTools.MODID + ":envmodules/peacefulEModuleItem");
         GameRegistry.registerItem(peacefulEModuleItem, "peacefulEModuleItem");
+
+        waterBreathingEModuleItem = new WaterBreathingEModuleItem();
+        waterBreathingEModuleItem.setUnlocalizedName("WaterBreathingEModule");
+        waterBreathingEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        waterBreathingEModuleItem.setTextureName(RFTools.MODID + ":envmodules/waterBreathingEModuleItem");
+        GameRegistry.registerItem(waterBreathingEModuleItem, "waterBreathingEModuleItem");
+
     }
 
     private static void initScreenModuleItems() {

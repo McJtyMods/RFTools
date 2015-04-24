@@ -68,6 +68,7 @@ item.FeatherFallingEModule.name=Feather Falling Module
 item.FeatherFallingPlusEModule.name=Feather Falling Plus Module
 item.FlightEModule.name=Flight Module
 item.PeacefulEModule.name=Peaceful Module
+item.WaterBreathingEModule.name=Water Breathing Module
 
 item.DimletBase.name=Dimlet Base Part
 item.DimletControlCircuit0.name=Dimlet Control Circuit Rarity 0

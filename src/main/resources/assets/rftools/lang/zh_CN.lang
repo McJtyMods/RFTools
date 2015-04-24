@@ -65,7 +65,8 @@ item.FeatherFallingEModule.name=摔落保护模块
 item.FeatherFallingPlusEModule.name=摔落保护+模块
 item.FlightEModule.name=飞行模块
 item.PeacefulEModule.name=和平模块
- 
+item.WaterBreathingEModule.name=Water Breathing Module
+
 item.DimletBase.name=信息卡基础部件
 item.DimletControlCircuit0.name=信息卡控制电路
 item.DimletControlCircuit1.name=信息卡控制电路1级

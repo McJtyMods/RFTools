@@ -83,6 +83,9 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_PEACEFUL:
                     item = ModItems.peacefulEModuleItem;
                     break;
+                case BUFF_WATERBREATHING:
+                    item = ModItems.waterBreathingEModuleItem;
+                    break;
                 default:
                     item = null;
             }

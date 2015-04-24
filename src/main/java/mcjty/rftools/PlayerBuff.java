@@ -12,5 +12,6 @@ public enum PlayerBuff {
     BUFF_SPEED,
     BUFF_SPEEDPLUS,
     BUFF_FLIGHT,
-    BUFF_PEACEFUL
+    BUFF_PEACEFUL,
+    BUFF_WATERBREATHING,
 }
