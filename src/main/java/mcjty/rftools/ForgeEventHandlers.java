@@ -85,11 +85,26 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
+        World world = event.world;
+        int id = world.provider.dimensionId;
+        if (DimletConfiguration.preventSpawnUnpowered) {
+            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+            if (dimensionManager.getDimensionInformation(id) != null) {
+                // RFTools dimension.
+                DimensionStorage storage = DimensionStorage.getDimensionStorage(world);
+                int energy = storage.getEnergyLevel(id);
+                if (energy <= 0) {
+                    event.setResult(Event.Result.DENY);
+                    RFTools.logDebug("Dimension power low: Prevented a spawn of " + event.entity.getClass().getName());
+               }
+            }
+        }
+
         if (event.entity instanceof IMob) {
             Coordinate coordinate = new Coordinate((int) event.entity.posX, (int) event.entity.posY, (int) event.entity.posZ);
-            if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, event.world.provider.dimensionId))) {
+            if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, id))) {
                 event.setResult(Event.Result.DENY);
-                RFTools.logDebug("Prevented a spawn of " + event.entity.getClass().getName());
+                RFTools.logDebug("Peaceful manager: Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }
