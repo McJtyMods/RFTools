@@ -31,7 +31,7 @@ public class DimletConfiguration {
     public static int dimensionDifficulty = 1;      // -1 == whimpy, 0 == easy, 1 == normal
     public static int spawnDimension = 0;           // Dimension to return too when power runs out
     public static boolean respawnSameDim = false;   // If true we first try to respawn in rftools dimension unless power is low.
-    public static boolean freezeUnpowered = false;  // Freeze all entities and TE's in an unpowered dimension.
+    public static boolean freezeUnpowered = true;   // Freeze all entities and TE's in an unpowered dimension.
 
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
