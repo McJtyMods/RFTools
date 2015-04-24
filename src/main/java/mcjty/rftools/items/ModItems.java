@@ -65,6 +65,7 @@ public final class ModItems {
     public static FlightEModuleItem flightEModuleItem;
     public static PeacefulEModuleItem peacefulEModuleItem;
     public static WaterBreathingEModuleItem waterBreathingEModuleItem;
+    public static NightVisionEModuleItem nightVisionEModuleItem;
 
     public static DimletBaseItem dimletBaseItem;
     public static DimletControlCircuitItem dimletControlCircuitItem;
@@ -260,6 +261,11 @@ public final class ModItems {
         waterBreathingEModuleItem.setTextureName(RFTools.MODID + ":envmodules/waterBreathingEModuleItem");
         GameRegistry.registerItem(waterBreathingEModuleItem, "waterBreathingEModuleItem");
 
+        nightVisionEModuleItem = new NightVisionEModuleItem();
+        nightVisionEModuleItem.setUnlocalizedName("NightVisionEModule");
+        nightVisionEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        nightVisionEModuleItem.setTextureName(RFTools.MODID + ":envmodules/nightVisionEModuleItem");
+        GameRegistry.registerItem(nightVisionEModuleItem, "nightVisionEModuleItem");
     }
 
     private static void initScreenModuleItems() {

@@ -42,6 +42,7 @@ public class EnvironmentalSetup {
         ItemStack horseSyringe = createMobSyringe("Horse");
         ItemStack zombieSyringe = createMobSyringe("Zombie");
         ItemStack squidSyringe = createMobSyringe("Squid");
+        ItemStack caveSpiderSyringe = createMobSyringe("Cave Spider");
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.efficiency.effectId, 3);
         ItemStack reds = new ItemStack(Items.redstone);
         ItemStack gold = new ItemStack(Items.gold_ingot);
@@ -80,6 +81,11 @@ public class EnvironmentalSetup {
                 new ItemStack[] {null, squidSyringe, null, reds, gold, reds, null, ink, null},
                 new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
                 new ItemStack(ModItems.waterBreathingEModuleItem)));
+
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[] {null, caveSpiderSyringe, null, reds, gold, reds, null, ink, null},
+                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(ModItems.nightVisionEModuleItem)));
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(2, 2,
                 new ItemStack[]{new ItemStack(ModItems.regenerationEModuleItem), ironGolemSyringe, ironGolemSyringe, null},

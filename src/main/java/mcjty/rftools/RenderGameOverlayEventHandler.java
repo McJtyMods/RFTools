@@ -86,6 +86,9 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_WATERBREATHING:
                     item = ModItems.waterBreathingEModuleItem;
                     break;
+                case BUFF_NIGHTVISION:
+                    item = ModItems.nightVisionEModuleItem;
+                    break;
                 default:
                     item = null;
             }

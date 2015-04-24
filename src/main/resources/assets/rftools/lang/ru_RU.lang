@@ -69,6 +69,7 @@ item.FeatherFallingPlusEModule.name=Модуль «Невесомость+»
 item.FlightEModule.name=Модуль «Полёт»
 item.PeacefulEModule.name=Модуль «Мир»
 item.WaterBreathingEModule.name=Water Breathing Module
+item.NightVisionEModule.name=Night Vision Module
 
 item.DimletBase.name=Основая деталь димлета
 item.DimletControlCircuit0.name=Схема управления редкостью димлета 0
