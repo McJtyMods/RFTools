@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -43,6 +44,7 @@ public final class ModBlocks {
         ShieldSetup.setupBlocks();
         DimletConstructionSetup.setupBlocks();
         SpaceProjectorSetup.setupBlocks();
+        BlockProtectorSetup.setupBlocks();
     }
 
     private static void initBaseBlocks() {

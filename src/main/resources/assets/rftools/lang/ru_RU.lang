@@ -161,6 +161,7 @@ tile.proxyBlock.name=Прокси-блок
 tile.spaceChamberBlock.name=Блок угла космической камеры
 tile.spaceChamberControllerBlock.name=Блок контроллера космической камеры
 tile.spaceProjectorBlock.name=Блок космического проектировщика
+tile.blockProtectorBlock.name=Block Protector
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения

@@ -2,6 +2,7 @@ package mcjty.rftools;
 
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
@@ -69,6 +70,7 @@ public class CommonProxy {
             cfg.addCustomCategoryComment(DimletConfiguration.CATEGORY_DIMLETS, "Settings for the dimlet/dimension system");
             cfg.addCustomCategoryComment(DimletConstructionConfiguration.CATEGORY_DIMLET_CONSTRUCTION, "Settings for the dimlet construction system");
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller system");
+            cfg.addCustomCategoryComment(BlockProtectorConfiguration.CATEGORY_BLOCKPROTECTOR, "Settings for the block protector machine");
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_SPAWNER, "Settings for the spawner system");
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNAMOUNTS, "Amount of materials needed to spawn mobs");
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNRF, "Amount of RF needed to spawn mobs");
@@ -92,6 +94,7 @@ public class CommonProxy {
             ScreenConfiguration.init(cfg);
             SpaceProjectorConfiguration.init(cfg);
             KnownDimletConfiguration.initGeneralConfig(cfg);
+            BlockProtectorConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

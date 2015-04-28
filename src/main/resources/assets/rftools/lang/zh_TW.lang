@@ -157,7 +157,8 @@ tile.proxyBlock.name=代理方塊
 tile.spaceChamberBlock.name=空間角落方塊
 tile.spaceChamberControllerBlock.name=空間控制方塊
 tile.spaceProjectorBlock.name=空間投影方塊
- 
+tile.blockProtectorBlock.name=Block Protector
+
 tile.dimensionalShardBlock.name=空間碎片礦
 tile.dimensionalBlankBlock.name=維度空方塊
 tile.dimensionalBlock.name=維度方塊

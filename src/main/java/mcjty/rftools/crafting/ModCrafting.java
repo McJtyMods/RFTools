@@ -2,6 +2,7 @@ package mcjty.rftools.crafting;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -50,6 +51,7 @@ public final class ModCrafting {
         SpawnerSetup.setupCrafting();
         ScreenSetup.setupCrafting();
         DimletConstructionSetup.setupCrafting();
+        BlockProtectorSetup.setupCrafting();
     }
 
     private static void initItemCrafting() {
