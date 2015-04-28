@@ -1,6 +1,7 @@
 package mcjty.rftools.apideps;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.ModItems;
 import net.minecraft.item.Item;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class WrenchChecker {
     }
 
     public static boolean isAWrench(Item item) {
+        if (item == ModItems.smartWrenchItem) {
+            return true;
+        }
         for (Class c : wrenchClasses) {
             if (item.getClass().isAssignableFrom(c)) {
                 return true;

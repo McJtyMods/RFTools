@@ -56,10 +56,14 @@ public final class ModCrafting {
 
     private static void initItemCrafting() {
         Object inkSac = Item.itemRegistry.getObjectById(351);
+        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
+
         GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.redstone, 'i', Items.iron_ingot, 'l', inkSac);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.redstone, 'b', Items.book);
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualDimensionItem), "r r", " b ", "r r", 'r', Items.redstone, 'b', Items.book);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
     }
 
     private static void intBaseCrafting() {

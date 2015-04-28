@@ -26,6 +26,7 @@ public final class ModItems {
     public static DevelopersDelightItem developersDelightItem;
     public static ShardWandItem shardWandItem;
     public static SpaceChamberCardItem spaceChamberCardItem;
+    public static SmartWrenchItem smartWrenchItem;
 
     public static UnknownDimlet unknownDimlet;
     public static DimletTemplate dimletTemplate;
@@ -124,6 +125,12 @@ public final class ModItems {
         spaceChamberCardItem.setCreativeTab(RFTools.tabRfTools);
         spaceChamberCardItem.setTextureName(RFTools.MODID + ":spaceChamberCardItem");
         GameRegistry.registerItem(spaceChamberCardItem, "spaceChamberCardItem");
+
+        smartWrenchItem = new SmartWrenchItem();
+        smartWrenchItem.setUnlocalizedName("SmartWrench");
+        smartWrenchItem.setCreativeTab(RFTools.tabRfTools);
+        smartWrenchItem.setTextureName(RFTools.MODID + ":smartWrenchItem");
+        GameRegistry.registerItem(smartWrenchItem, "smartWrenchItem");
 
         initEnvironmentModuleItems();
         initScreenModuleItems();
