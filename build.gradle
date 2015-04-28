@@ -26,7 +26,7 @@ group= "mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conve
 archivesBaseName = "rftools"
 
 minecraft {
-    version = "1.7.10-10.13.1.1225"
+    version = "1.7.10-10.13.2.1291"
     assetDir = "eclipse/assets"
 }
 
