@@ -13,6 +13,7 @@ import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.parts.*;
 import mcjty.rftools.items.screenmodules.*;
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;

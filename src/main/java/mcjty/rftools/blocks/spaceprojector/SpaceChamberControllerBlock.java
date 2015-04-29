@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.spaceprojector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
-import mcjty.container.WrenchUsage;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -65,23 +64,16 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
         return -1;
     }
 
+
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            if (world.isRemote) {
-                world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
-            } else {
-                SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
-                chamberControllerTileEntity.createChamber(player);
-            }
-            return true;
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, player, x, y, z);
-            return true;
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        if (world.isRemote) {
+            world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
         } else {
-            return openGui(world, x, y, z, player);
+            SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            chamberControllerTileEntity.createChamber(player);
         }
+        return true;
     }
 
     @Override

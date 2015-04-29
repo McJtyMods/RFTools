@@ -29,11 +29,6 @@ public abstract class LogicSlabBlock extends GenericBlock {
     }
 
 
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        return onBlockActivatedDefaultWrench(world, x, y, z, player);
-    }
-
     /**
      * Returns the signal strength at one input of the block. Args: world, X, Y, Z, side
      */

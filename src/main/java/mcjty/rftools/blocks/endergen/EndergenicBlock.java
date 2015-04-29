@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericContainerBlock;
-import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
@@ -86,7 +85,7 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
             checkForMonitor(world, x+1, y, z);
             checkForMonitor(world, x-1, y, z);
             checkForMonitor(world, x, y, z+1);
-            checkForMonitor(world, x, y, z-1);
+            checkForMonitor(world, x, y, z - 1);
         }
     }
 
@@ -97,21 +96,13 @@ public class EndergenicBlock extends GenericContainerBlock implements Infusable 
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            if (world.isRemote) {
-                EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(x, y, z);
-                world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
-                endergenicTileEntity.useWrench(player);
-            }
-            return true;
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, player, x, y, z);
-            return true;
-        } else {
-            return openGui(world, x, y, z, player);
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        if (world.isRemote) {
+            EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(x, y, z);
+            world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
+            endergenicTileEntity.useWrench(player);
         }
+        return true;
     }
 
     @Override

@@ -86,11 +86,6 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        return onBlockActivatedDefaultWrench(world, x, y, z, player);
-    }
-
-    @Override
     public int onBlockPlaced(World world, int x, int y, int z, int side, float sx, float sy, float sz, int meta) {
         int rc = super.onBlockPlaced(world, x, y, z, side, sx, sy, sz, meta);
         if (world.isRemote) {

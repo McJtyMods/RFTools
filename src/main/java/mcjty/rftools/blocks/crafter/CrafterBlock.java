@@ -75,11 +75,6 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        return onBlockActivatedDefaultWrench(world, x, y, z, player);
-    }
-
-    @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         checkRedstone(world, x, y, z);
     }

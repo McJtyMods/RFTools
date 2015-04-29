@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.screens;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
-import mcjty.container.WrenchUsage;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -152,41 +151,38 @@ public class ScreenBlock extends GenericContainerBlock {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
-        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
-            if (screenTileEntity.isTransparent() && screenTileEntity.isLarge()) {
-                screenTileEntity.setTransparent(false);
-            } else if (screenTileEntity.isLarge()) {
-                screenTileEntity.setLarge(false);
-                clearInvisibleBlocks(world, x, y, z);
-            } else if (screenTileEntity.isTransparent()) {
-                screenTileEntity.setLarge(true);
-                setInvisibleBlocks(world, x, y, z);
-            } else {
-                screenTileEntity.setTransparent(true);
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
+        if (screenTileEntity.isTransparent() && screenTileEntity.isLarge()) {
+            screenTileEntity.setTransparent(false);
+        } else if (screenTileEntity.isLarge()) {
+            screenTileEntity.setLarge(false);
+            clearInvisibleBlocks(world, x, y, z);
+        } else if (screenTileEntity.isTransparent()) {
+            screenTileEntity.setLarge(true);
+            setInvisibleBlocks(world, x, y, z);
+        } else {
+            screenTileEntity.setTransparent(true);
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
+        ItemStack itemStack = player.getHeldItem();
+        if (itemStack != null && itemStack.getItem() == Items.dye) {
+            int damage = itemStack.getItemDamage();
+            if (damage < 0) {
+                damage = 0;
+            } else if (damage > 15) {
+                damage = 15;
             }
-            return true;
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, player, x, y, z);
+            int color = ItemDye.field_150922_c[damage];
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
+            screenTileEntity.setColor(color);
             return true;
         } else {
-            ItemStack itemStack = player.getHeldItem();
-            if (itemStack != null && itemStack.getItem() == Items.dye) {
-                int damage = itemStack.getItemDamage();
-                if (damage < 0) {
-                    damage = 0;
-                } else if (damage > 15) {
-                    damage = 15;
-                }
-                int color = ItemDye.field_150922_c[damage];
-                ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
-                screenTileEntity.setColor(color);
-                return true;
-            } else {
-                return openGui(world, x, y, z, player);
-            }
+            return super.openGui(world, x, y, z, player);
         }
     }
 

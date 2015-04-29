@@ -72,17 +72,9 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            composeDecomposeShield(world, x, y, z);
-            return true;
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, player, x, y, z);
-            return true;
-        } else {
-            return openGui(world, x, y, z, player);
-        }
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        composeDecomposeShield(world, x, y, z);
+        return true;
     }
 
     private void composeDecomposeShield(World world, int x, int y, int z) {

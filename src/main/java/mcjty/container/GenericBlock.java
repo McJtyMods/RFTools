@@ -162,6 +162,8 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                     if (hammer.isUsable(itemStack, player, x, y, z)) {
                         hammer.toolUsed(itemStack, player, x, y, z);
                         wrenchUsed = WrenchUsage.NORMAL;
+                    } else {
+                        wrenchUsed = WrenchUsage.DISABLED;
                     }
                 } else if (WrenchChecker.isAWrench(item)) {
                     wrenchUsed = WrenchUsage.NORMAL;
@@ -179,7 +181,30 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
-        return onBlockActivatedDefaultWrench(world, x, y, z, player);
+        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
+        if (wrenchUsed == WrenchUsage.NORMAL) {
+            return wrenchUse(world, x, y, z, player);
+        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
+            return wrenchSneak(world, x, y, z, player);
+        } else if (wrenchUsed == WrenchUsage.DISABLED) {
+            return wrenchDisabled(world, x, y, z, player);
+        } else {
+            return openGui(world, x, y, z, player);
+        }
+    }
+
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        rotateBlock(world, x, y, z);
+        return true;
+    }
+
+    protected boolean wrenchSneak(World world, int x, int y, int z, EntityPlayer player) {
+        breakAndRemember(world, player, x, y, z);
+        return true;
+    }
+
+    protected boolean wrenchDisabled(World world, int x, int y, int z, EntityPlayer player) {
+        return false;
     }
 
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
@@ -201,29 +226,6 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             }
         }
         return true;
-    }
-
-    /**
-     * In your onBlockActivated implementation you can use this method to get the default wrench usage (rotate/pick up with
-     * remembering).
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param player
-     * @return
-     */
-    protected boolean onBlockActivatedDefaultWrench(World world, int x, int y, int z, EntityPlayer player) {
-        WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            rotateBlock(world, x, y, z);
-            return true;
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            breakAndRemember(world, player, x, y, z);
-            return true;
-        } else {
-            return openGui(world, x, y, z, player);
-        }
     }
 
     @Override
