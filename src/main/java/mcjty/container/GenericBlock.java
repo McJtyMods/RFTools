@@ -159,8 +159,10 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             if (item != null) {
                 if (item instanceof IToolHammer) {
                     IToolHammer hammer = (IToolHammer) item;
-                    hammer.toolUsed(itemStack, player, x, y, z);
-                    wrenchUsed = WrenchUsage.NORMAL;
+                    if (hammer.isUsable(itemStack, player, x, y, z)) {
+                        hammer.toolUsed(itemStack, player, x, y, z);
+                        wrenchUsed = WrenchUsage.NORMAL;
+                    }
                 } else if (WrenchChecker.isAWrench(item)) {
                     wrenchUsed = WrenchUsage.NORMAL;
 //                } else if (BuildCraftChecker.isBuildcraftPresent() && BuildCraftChecker.isBuildcraftWrench(item)) {
