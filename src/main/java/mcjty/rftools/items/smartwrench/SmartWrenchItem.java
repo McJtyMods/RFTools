@@ -5,6 +5,8 @@ import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
+import mcjty.varia.Coordinate;
+import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -27,14 +29,12 @@ public class SmartWrenchItem extends Item implements IToolHammer {
     @Optional.Method(modid = "CoFHCore")
     public boolean isUsable(ItemStack item, EntityLivingBase user, int x, int y, int z) {
         SmartWrenchMode mode = getCurrentMode(item);
-        System.out.println("mode = " + mode);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Override
     @Optional.Method(modid = "CoFHCore")
     public void toolUsed(ItemStack item, EntityLivingBase user, int x, int y, int z) {
-        System.out.println("SmartWrenchItem.toolUsed");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SmartWrenchItem extends Item implements IToolHammer {
                 stack.setTagCompound(tagCompound);
             }
             tagCompound.setString("mode", mode.getCode());
-            RFTools.message(player, "Smart wrench is now in " + mode.getName() + " mode.");
+            RFTools.message(player, EnumChatFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
         }
         return super.onItemRightClick(stack, world, player);
     }
@@ -60,6 +60,13 @@ public class SmartWrenchItem extends Item implements IToolHammer {
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
         System.out.println("onItemUse: world.isRemote = " + world.isRemote);
+        if (!world.isRemote) {
+            SmartWrenchMode mode = getCurrentMode(stack);
+            if (mode == SmartWrenchMode.MODE_SELECT) {
+                GlobalCoordinate b = getCurrentBlock(stack);
+
+            }
+        }
         return true;
     }
 
@@ -72,6 +79,10 @@ public class SmartWrenchItem extends Item implements IToolHammer {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        GlobalCoordinate b = getCurrentBlock(itemStack);
+        if (b != null) {
+            list.add(EnumChatFormatting.GREEN + "Block: " + b.getCoordinate().toString() + " at dimension " + b.getDimension());
+        }
         SmartWrenchMode mode = getCurrentMode(itemStack);
         list.add(EnumChatFormatting.WHITE + "Right-click on air to change mode.");
         list.add(EnumChatFormatting.GREEN + "Mode: " + mode.getName());
@@ -86,7 +97,7 @@ public class SmartWrenchItem extends Item implements IToolHammer {
         }
     }
 
-    private SmartWrenchMode getCurrentMode(ItemStack itemStack) {
+    public static SmartWrenchMode getCurrentMode(ItemStack itemStack) {
         SmartWrenchMode mode = SmartWrenchMode.MODE_WRENCH;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -96,6 +107,18 @@ public class SmartWrenchItem extends Item implements IToolHammer {
             }
         }
         return mode;
+    }
+
+    public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("selectedX")) {
+            int x = tagCompound.getInteger("selectedX");
+            int y = tagCompound.getInteger("selectedY");
+            int z = tagCompound.getInteger("selectedZ");
+            int dim = tagCompound.getInteger("selectedDim");
+            return new GlobalCoordinate(new Coordinate(x, y, z), dim);
+        }
+        return null;
     }
 
     @Override
