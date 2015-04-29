@@ -4,8 +4,8 @@ import mcjty.entity.GenericEnergyReceiverTileEntity;
 
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity {
 
-    public BlockProtectorTileEntity(int maxEnergy, int maxReceive) {
-        super(maxEnergy, maxReceive);
+    public BlockProtectorTileEntity() {
+        super(BlockProtectorConfiguration.MAXENERGY, BlockProtectorConfiguration.RECEIVEPERTICK);
     }
 
 
