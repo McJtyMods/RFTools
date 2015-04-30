@@ -11,6 +11,8 @@ import java.util.Set;
 
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector {
 
+    private int id = -1;
+
     // Relative coordinates (relative to this tile entity)
     private SyncedValueSet<Coordinate> protectedBlocks = new SyncedValueSet<Coordinate>() {
         @Override
@@ -57,6 +59,49 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         toggleCoordinate(gc);
     }
 
+    public int getOrCalculateID() {
+        if (id == -1) {
+            BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
+            GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+            id = protectors.getNewId(gc);
+
+            protectors.save(worldObj);
+            setId(id);
+        }
+        return id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    /**
+     * This method is called after putting down a protector that was earlier wrenched. We need to fix the data in
+     * the destination.
+     */
+    public void updateDestination() {
+        BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
+
+        GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId);
+
+        if (id == -1) {
+            id = protectors.getNewId(gc);
+            markDirty();
+        } else {
+            protectors.assignId(gc, id);
+        }
+
+        protectors.save(worldObj);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -64,8 +109,26 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        if (tagCompound.hasKey("protectorId")) {
+            id = tagCompound.getInteger("protectorId");
+        } else {
+            id = -1;
+        }
+
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         protectedBlocks.writeToNBT(tagCompound, "coordinates");
     }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        tagCompound.setInteger("protectorId", id);
+    }
+
 }

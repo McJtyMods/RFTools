@@ -1,6 +1,7 @@
 package mcjty.rftools;
 
 import mcjty.rftools.apideps.ComputerCraftHelper;
+import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
@@ -197,6 +198,7 @@ public class RFTools {
         DimensionStorage.clearInstance();
         DimletMapping.clearInstance();
         RedstoneChannels.clearInstance();
+        BlockProtectors.clearInstance();
     }
 
     /**

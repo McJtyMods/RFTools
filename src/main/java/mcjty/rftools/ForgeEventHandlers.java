@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -19,6 +20,9 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
+
+import java.util.List;
 
 public class ForgeEventHandlers {
 
@@ -28,6 +32,13 @@ public class ForgeEventHandlers {
 //
 //    }
 //
+
+//    @SubscribeEvent
+//    public void onDetonate(ExplosionEvent.Detonate event) {
+//        List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
+//
+//    }
+
     @SubscribeEvent
     public void onAttackEntityEvent(AttackEntityEvent event) {
         World world = event.entityPlayer.getEntityWorld();
