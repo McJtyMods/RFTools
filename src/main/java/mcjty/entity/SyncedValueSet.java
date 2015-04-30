@@ -117,7 +117,8 @@ public abstract class SyncedValueSet<T> implements Set<T>, SyncedObject {
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        serverVersion++;
+        return value.remove(o);
     }
 
     @Override

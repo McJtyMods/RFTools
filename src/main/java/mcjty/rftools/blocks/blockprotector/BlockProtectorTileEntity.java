@@ -2,13 +2,14 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
+import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Set;
 
-public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity {
+public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector {
 
     // Relative coordinates (relative to this tile entity)
     private SyncedValueSet<Coordinate> protectedBlocks = new SyncedValueSet<Coordinate>() {
@@ -47,6 +48,13 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity {
         }
         markDirty();
         notifyBlockUpdate();
+    }
+
+    @Override
+    public void selectBlock(int x, int y, int z) {
+        // This is always called server side.
+        GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(x, y, z), worldObj.provider.dimensionId);
+        toggleCoordinate(gc);
     }
 
     @Override

@@ -117,7 +117,8 @@ public abstract class SyncedValueList<T> implements List<T>, SyncedObject {
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        serverVersion++;
+        return value.remove(o);
     }
 
     @Override

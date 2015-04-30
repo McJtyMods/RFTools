@@ -10,6 +10,8 @@ import mcjty.rftools.apideps.WailaInfoProvider;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.items.smartwrench.SmartWrench;
+import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -151,7 +153,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     }
 
     // This if this block was activated with a wrench
-    protected WrenchUsage testWrenchUsage(int x, int y, int z, EntityPlayer player) {
+    private WrenchUsage testWrenchUsage(int x, int y, int z, EntityPlayer player) {
         ItemStack itemStack = player.getHeldItem();
         WrenchUsage wrenchUsed = WrenchUsage.NOT;
         if (itemStack != null) {
@@ -163,13 +165,22 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                         hammer.toolUsed(itemStack, player, x, y, z);
                         wrenchUsed = WrenchUsage.NORMAL;
                     } else {
+                        // It is still possible it is a smart wrench.
+                        if (item instanceof SmartWrench) {
+                            SmartWrench smartWrench = (SmartWrench) item;
+                            SmartWrenchMode mode = smartWrench.getMode(itemStack);
+                            if (mode.equals(SmartWrenchMode.MODE_SELECT)) {
+                                if (player.isSneaking()) {
+                                    return WrenchUsage.SNEAK_SELECT;
+                                } else {
+                                    return WrenchUsage.SELECT;
+                                }
+                            }
+                        }
                         wrenchUsed = WrenchUsage.DISABLED;
                     }
                 } else if (WrenchChecker.isAWrench(item)) {
                     wrenchUsed = WrenchUsage.NORMAL;
-//                } else if (BuildCraftChecker.isBuildcraftPresent() && BuildCraftChecker.isBuildcraftWrench(item)) {
-//                    BuildCraftChecker.useBuildcraftWrench(item, player, x, y, z);
-//                    wrenchUsed = WrenchUsage.NORMAL;
                 }
             }
         }
@@ -182,15 +193,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
         WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        if (wrenchUsed == WrenchUsage.NORMAL) {
-            return wrenchUse(world, x, y, z, player);
-        } else if (wrenchUsed == WrenchUsage.SNEAKING) {
-            return wrenchSneak(world, x, y, z, player);
-        } else if (wrenchUsed == WrenchUsage.DISABLED) {
-            return wrenchDisabled(world, x, y, z, player);
-        } else {
-            return openGui(world, x, y, z, player);
+        System.out.println("wrenchUsed = " + wrenchUsed);
+        switch (wrenchUsed) {
+            case NOT:          return openGui(world, x, y, z, player);
+            case NORMAL:       return wrenchUse(world, x, y, z, player);
+            case SNEAKING:     return wrenchSneak(world, x, y, z, player);
+            case DISABLED:     return wrenchDisabled(world, x, y, z, player);
+            case SELECT:       return wrenchSelect(world, x, y, z, player);
+            case SNEAK_SELECT: return wrenchSneakSelect(world, x, y, z, player);
         }
+        return false;
     }
 
     protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
@@ -204,6 +216,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     }
 
     protected boolean wrenchDisabled(World world, int x, int y, int z, EntityPlayer player) {
+        return false;
+    }
+
+    protected boolean wrenchSelect(World world, int x, int y, int z, EntityPlayer player) {
+        return false;
+    }
+
+    protected boolean wrenchSneakSelect(World world, int x, int y, int z, EntityPlayer player) {
         return false;
     }
 
