@@ -7,6 +7,7 @@ import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Set;
 
@@ -27,10 +28,37 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         }
     };
 
-
     public BlockProtectorTileEntity() {
         super(BlockProtectorConfiguration.MAXENERGY, BlockProtectorConfiguration.RECEIVEPERTICK);
         registerSyncedObject(protectedBlocks);
+    }
+
+    @Override
+    protected void checkStateServer() {
+        if (protectedBlocks.isEmpty()) {
+            return;
+        }
+        consumeEnergy(protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock);
+    }
+
+    public boolean attemptHarvestProtection() {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
+            return false;
+        }
+        consumeEnergy(BlockProtectorConfiguration.rfForHarvestAttempt);
+        return true;
+    }
+
+    // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
+    public boolean attemptExplosionProtection(float distance) {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance)) + 1;
+        if (rfneeded > rf) {
+            return false;
+        }
+        consumeEnergy(rfneeded);
+        return true;
     }
 
     public Set<Coordinate> getProtectedBlocks() {
@@ -48,6 +76,13 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     // Test if this relative coordinate is protected.
     public boolean isProtected(Coordinate c) {
         return protectedBlocks.contains(c);
+    }
+
+    // Used by the explosion event handler.
+    public void removeProtection(Coordinate relative) {
+        protectedBlocks.remove(relative);
+        markDirty();
+        notifyBlockUpdate();
     }
 
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.

@@ -15,6 +15,7 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -46,9 +47,14 @@ public class ForgeEventHandlers {
             TileEntity te = event.world.getTileEntity(cx, cy, cz);
             if (te instanceof BlockProtectorTileEntity) {
                 BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
-                boolean b = blockProtectorTileEntity.isProtected(blockProtectorTileEntity.absoluteToRelative(event.x, event.y, event.z));
+                Coordinate relative = blockProtectorTileEntity.absoluteToRelative(event.x, event.y, event.z);
+                boolean b = blockProtectorTileEntity.isProtected(relative);
                 if (b) {
-                    event.setCanceled(true);
+                    if (blockProtectorTileEntity.attemptHarvestProtection()) {
+                        event.setCanceled(true);
+                    } else {
+                        blockProtectorTileEntity.removeProtection(relative);
+                    }
                     return;
                 }
             }
@@ -70,6 +76,8 @@ public class ForgeEventHandlers {
         List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
         List<ChunkPosition> toremove = new ArrayList<ChunkPosition>();
 
+        Vec3 explosionVector = Vec3.createVectorHelper(explosion.explosionX, explosion.explosionY, explosion.explosionZ);
+
         for (GlobalCoordinate protector : protectors) {
             int cx = protector.getCoordinate().getX();
             int cy = protector.getCoordinate().getY();
@@ -78,9 +86,16 @@ public class ForgeEventHandlers {
             if (te instanceof BlockProtectorTileEntity) {
                 BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                 for (ChunkPosition block : affectedBlocks) {
-                    boolean b = blockProtectorTileEntity.isProtected(blockProtectorTileEntity.absoluteToRelative(block.chunkPosX, block.chunkPosY, block.chunkPosZ));
+                    Coordinate relative = blockProtectorTileEntity.absoluteToRelative(block.chunkPosX, block.chunkPosY, block.chunkPosZ);
+                    boolean b = blockProtectorTileEntity.isProtected(relative);
                     if (b) {
-                        toremove.add(block);
+                        Vec3 blockVector = Vec3.createVectorHelper(block.chunkPosX, block.chunkPosY, block.chunkPosZ);
+                        double distanceTo = explosionVector.distanceTo(blockVector);
+                        if (blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize))) {
+                            toremove.add(block);
+                        } else {
+                            blockProtectorTileEntity.removeProtection(relative);
+                        }
                     }
                 }
             }
