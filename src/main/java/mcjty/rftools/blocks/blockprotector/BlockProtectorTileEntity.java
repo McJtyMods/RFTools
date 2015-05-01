@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -36,13 +37,26 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         return protectedBlocks;
     }
 
+    public Coordinate absoluteToRelative(Coordinate c) {
+        return absoluteToRelative(c.getX(), c.getY(), c.getZ());
+    }
+
+    public Coordinate absoluteToRelative(int x, int y, int z) {
+        return new Coordinate(x - xCoord, y - yCoord, z - zCoord);
+    }
+
+    // Test if this relative coordinate is protected.
+    public boolean isProtected(Coordinate c) {
+        return protectedBlocks.contains(c);
+    }
+
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.
     public void toggleCoordinate(GlobalCoordinate c) {
         if (c.getDimension() != worldObj.provider.dimensionId) {
             // Wrong dimension. Don't do anything.
             return;
         }
-        Coordinate relative = new Coordinate(c.getCoordinate().getX() - xCoord, c.getCoordinate().getY() - yCoord, c.getCoordinate().getZ() - zCoord);
+        Coordinate relative = absoluteToRelative(c.getCoordinate());
         if (protectedBlocks.contains(relative)) {
             protectedBlocks.remove(relative);
         } else {

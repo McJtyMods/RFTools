@@ -2,6 +2,8 @@ package mcjty.rftools;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
+import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -12,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -22,6 +25,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ForgeEventHandlers {
@@ -33,11 +38,36 @@ public class ForgeEventHandlers {
 //    }
 //
 
-//    @SubscribeEvent
-//    public void onDetonate(ExplosionEvent.Detonate event) {
-//        List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
-//
-//    }
+    @SubscribeEvent
+    public void onDetonate(ExplosionEvent.Detonate event) {
+        int id = event.world.provider.dimensionId;
+        List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
+        List<ChunkPosition> toremove = new ArrayList<ChunkPosition>();
+        BlockProtectors protectors = BlockProtectors.getProtectors(event.world);
+        for (ChunkPosition block : affectedBlocks) {
+            Collection<GlobalCoordinate> coordinates = protectors.findProtectors(block.chunkPosX, block.chunkPosY, block.chunkPosZ, id);
+            for (GlobalCoordinate c : coordinates) {
+                int cx = c.getCoordinate().getX();
+                int cy = c.getCoordinate().getY();
+                int cz = c.getCoordinate().getZ();
+                TileEntity te = event.world.getTileEntity(cx, cy, cz);
+                if (te instanceof BlockProtectorTileEntity) {
+                    BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+                    boolean b = blockProtectorTileEntity.isProtected(blockProtectorTileEntity.absoluteToRelative(block.chunkPosX, block.chunkPosY, block.chunkPosZ));
+                    if (b) {
+                        toremove.add(block);
+                    }
+                }
+            }
+        }
+
+        // @@@ @todo temporary code. This entire routine is not efficient!
+
+        for (ChunkPosition block : toremove) {
+            affectedBlocks.remove(block);
+        }
+
+    }
 
     @SubscribeEvent
     public void onAttackEntityEvent(AttackEntityEvent event) {

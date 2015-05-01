@@ -8,8 +8,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BlockProtectors extends WorldSavedData {
     public static final String PROTECTORS_NAME = "RFToolsBlockProtectors";
@@ -82,6 +81,20 @@ public class BlockProtectors extends WorldSavedData {
             protectorById.remove(id);
             protectorIdByCoordinate.remove(key);
         }
+    }
+
+    public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension) {
+        List<GlobalCoordinate> protectors = new ArrayList<GlobalCoordinate>();
+        for (GlobalCoordinate coordinate : protectorIdByCoordinate.keySet()) {
+            if (coordinate.getDimension() == dimension) {
+                Coordinate c = coordinate.getCoordinate();
+                if (Math.abs(x-c.getX()) < 16 && Math.abs(y-c.getY()) < 16 && Math.abs(z-c.getZ()) < 16) {
+                    protectors.add(coordinate);
+                }
+            }
+        }
+
+        return protectors;
     }
 
     @Override

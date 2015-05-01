@@ -70,6 +70,7 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
             int id = blockProtectorTileEntity.getId();
             currenttip.add(EnumChatFormatting.GREEN + "Id: " + id);
+            currenttip.add(EnumChatFormatting.GREEN + "Blocks protected: " + blockProtectorTileEntity.getProtectedBlocks().size());
         }
         return currenttip;
     }
@@ -108,9 +109,8 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
+        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
         // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
-        restoreBlockFromNBT(world, x, y, z, itemStack);
         if (!world.isRemote) {
             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) world.getTileEntity(x, y, z);
             blockProtectorTileEntity.getOrCalculateID();
