@@ -83,12 +83,12 @@ public class BlockProtectors extends WorldSavedData {
         }
     }
 
-    public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension) {
+    public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension, int radius) {
         List<GlobalCoordinate> protectors = new ArrayList<GlobalCoordinate>();
         for (GlobalCoordinate coordinate : protectorIdByCoordinate.keySet()) {
             if (coordinate.getDimension() == dimension) {
                 Coordinate c = coordinate.getCoordinate();
-                if (Math.abs(x-c.getX()) < 16 && Math.abs(y-c.getY()) < 16 && Math.abs(z-c.getZ()) < 16) {
+                if (Math.abs(x-c.getX()) <= (16+radius+1) && Math.abs(y-c.getY()) <= (16+radius+1) && Math.abs(z-c.getZ()) <= (16+radius+1)) {
                     protectors.add(coordinate);
                 }
             }

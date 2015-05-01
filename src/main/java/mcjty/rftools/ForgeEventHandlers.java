@@ -16,6 +16,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -31,28 +32,52 @@ import java.util.List;
 
 public class ForgeEventHandlers {
 
-//    @SubscribeEvent
-//    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
-//        event.block
-//
-//    }
-//
+    @SubscribeEvent
+    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
+        int id = event.world.provider.dimensionId;
+        BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
+
+        Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors(event.x, event.y, event.z, id, 2);
+
+        for (GlobalCoordinate protector : protectors) {
+            int cx = protector.getCoordinate().getX();
+            int cy = protector.getCoordinate().getY();
+            int cz = protector.getCoordinate().getZ();
+            TileEntity te = event.world.getTileEntity(cx, cy, cz);
+            if (te instanceof BlockProtectorTileEntity) {
+                BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+                boolean b = blockProtectorTileEntity.isProtected(blockProtectorTileEntity.absoluteToRelative(event.x, event.y, event.z));
+                if (b) {
+                    event.setCanceled(true);
+                    return;
+                }
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public void onDetonate(ExplosionEvent.Detonate event) {
         int id = event.world.provider.dimensionId;
+        BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
+        Explosion explosion = event.explosion;
+        Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors((int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ, id, (int) explosion.explosionSize);
+
+        if (protectors.isEmpty()) {
+            return;
+        }
+
         List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
         List<ChunkPosition> toremove = new ArrayList<ChunkPosition>();
-        BlockProtectors protectors = BlockProtectors.getProtectors(event.world);
-        for (ChunkPosition block : affectedBlocks) {
-            Collection<GlobalCoordinate> coordinates = protectors.findProtectors(block.chunkPosX, block.chunkPosY, block.chunkPosZ, id);
-            for (GlobalCoordinate c : coordinates) {
-                int cx = c.getCoordinate().getX();
-                int cy = c.getCoordinate().getY();
-                int cz = c.getCoordinate().getZ();
-                TileEntity te = event.world.getTileEntity(cx, cy, cz);
-                if (te instanceof BlockProtectorTileEntity) {
-                    BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+
+        for (GlobalCoordinate protector : protectors) {
+            int cx = protector.getCoordinate().getX();
+            int cy = protector.getCoordinate().getY();
+            int cz = protector.getCoordinate().getZ();
+            TileEntity te = event.world.getTileEntity(cx, cy, cz);
+            if (te instanceof BlockProtectorTileEntity) {
+                BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+                for (ChunkPosition block : affectedBlocks) {
                     boolean b = blockProtectorTileEntity.isProtected(blockProtectorTileEntity.absoluteToRelative(block.chunkPosX, block.chunkPosY, block.chunkPosZ));
                     if (b) {
                         toremove.add(block);
@@ -61,12 +86,9 @@ public class ForgeEventHandlers {
             }
         }
 
-        // @@@ @todo temporary code. This entire routine is not efficient!
-
         for (ChunkPosition block : toremove) {
             affectedBlocks.remove(block);
         }
-
     }
 
     @SubscribeEvent
