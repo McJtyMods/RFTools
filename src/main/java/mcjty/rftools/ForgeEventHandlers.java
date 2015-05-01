@@ -91,7 +91,7 @@ public class ForgeEventHandlers {
                     if (b) {
                         Vec3 blockVector = Vec3.createVectorHelper(block.chunkPosX, block.chunkPosY, block.chunkPosZ);
                         double distanceTo = explosionVector.distanceTo(blockVector);
-                        if (blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize))) {
+                        if (blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize), explosion.explosionSize)) {
                             toremove.add(block);
                         } else {
                             blockProtectorTileEntity.removeProtection(relative);

@@ -51,9 +51,11 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
-    public boolean attemptExplosionProtection(float distance) {
+    public boolean attemptExplosionProtection(float distance, float radius) {
         int rf = getEnergyStored(ForgeDirection.DOWN);
-        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance)) + 1;
+        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
+        System.out.println("rfneeded = " + rfneeded + ", distance = " + distance + ", radius = " + radius);
+
         if (rfneeded > rf) {
             return false;
         }
