@@ -54,6 +54,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public int attemptExplosionProtection(float distance, float radius) {
         int rf = getEnergyStored(ForgeDirection.DOWN);
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
+        rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 
         if (rfneeded > rf) {
             return -1;
