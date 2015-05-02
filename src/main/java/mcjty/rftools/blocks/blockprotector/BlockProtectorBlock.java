@@ -6,6 +6,7 @@ import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -14,6 +15,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -21,12 +23,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
 public class BlockProtectorBlock extends GenericContainerBlock implements Infusable {
+
+    private IIcon iconFrontOn;
+
 
     public BlockProtectorBlock() {
         super(Material.iron, BlockProtectorTileEntity.class);
@@ -44,6 +51,13 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
     public String getIdentifyingIconName() {
         return "machineBlockProtector";
     }
+
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        super.registerBlockIcons(iconRegister);
+        iconFrontOn = iconRegister.registerIcon(RFTools.MODID + ":" + "machineBlockProtectorOn");
+    }
+
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -150,5 +164,14 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
         protectors.save(world);
     }
 
+    @Override
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
+        int state = BlockTools.getState(meta);
+        switch (state) {
+            case 0: return iconInd;
+            case 1: return iconFrontOn;
+            default: return iconInd;
+        }
+    }
 
 }

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.blockprotector;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.rftools.network.Argument;
@@ -48,9 +49,22 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
 
-        if (isDisabled()) return;
+        if (isDisabled()) {
+            setState(0);
+            return;
+        } else {
+            setState(1);
+        }
 
         consumeEnergy(protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock);
+    }
+
+    private void setState(int state) {
+        int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        int newmeta = BlockTools.setState(metadata, state);
+        if (newmeta != metadata) {
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newmeta, 2);
+        }
     }
 
     private boolean isDisabled() {
