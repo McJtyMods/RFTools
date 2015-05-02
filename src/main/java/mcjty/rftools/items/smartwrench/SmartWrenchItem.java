@@ -68,7 +68,6 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate b = getCurrentBlock(stack);
-                System.out.println("b = " + b);
                 if (b != null) {
                     if (b.getDimension() != world.provider.dimensionId) {
                         RFTools.message(player, EnumChatFormatting.RED + "The selected block is in another dimension!");
@@ -77,7 +76,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                     TileEntity te = world.getTileEntity(b.getCoordinate().getX(), b.getCoordinate().getY(), b.getCoordinate().getZ());
                     if (te instanceof SmartWrenchSelector) {
                         SmartWrenchSelector smartWrenchSelector = (SmartWrenchSelector) te;
-                        smartWrenchSelector.selectBlock(x, y, z);
+                        smartWrenchSelector.selectBlock(player, x, y, z);
                     }
                 }
             }
