@@ -78,6 +78,7 @@ public class ForgeEventHandlers {
 
         Vec3 explosionVector = Vec3.createVectorHelper(explosion.explosionX, explosion.explosionY, explosion.explosionZ);
 
+        int rf = 0;
         for (GlobalCoordinate protector : protectors) {
             int cx = protector.getCoordinate().getX();
             int cy = protector.getCoordinate().getY();
@@ -91,8 +92,10 @@ public class ForgeEventHandlers {
                     if (b) {
                         Vec3 blockVector = Vec3.createVectorHelper(block.chunkPosX, block.chunkPosY, block.chunkPosZ);
                         double distanceTo = explosionVector.distanceTo(blockVector);
-                        if (blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize), explosion.explosionSize)) {
+                        int rfneeded = blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize), explosion.explosionSize);
+                        if (rfneeded > 0) {
                             toremove.add(block);
+                            rf += rfneeded;
                         } else {
                             blockProtectorTileEntity.removeProtection(relative);
                         }
@@ -104,6 +107,8 @@ public class ForgeEventHandlers {
         for (ChunkPosition block : toremove) {
             affectedBlocks.remove(block);
         }
+
+        RFTools.log("RF Needed for one explosion:" + rf);
     }
 
     @SubscribeEvent

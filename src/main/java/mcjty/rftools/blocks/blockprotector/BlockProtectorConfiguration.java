@@ -7,8 +7,8 @@ public class BlockProtectorConfiguration {
     public static int MAXENERGY = 500000;
     public static int RECEIVEPERTICK = 20000;
     public static int rfPerProtectedBlock = 5;
-    public static int rfForHarvestAttempt = 400;
-    public static int rfForExplosionProtection = 800;
+    public static int rfForHarvestAttempt = 600;
+    public static int rfForExplosionProtection = 2000;
 
     public static void init(Configuration cfg) {
         rfPerProtectedBlock = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfPerProtectedBlock", rfPerProtectedBlock, "Amount of passive RF/tick used for every protected block").getInt();
