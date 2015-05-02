@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.blockprotector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
+import mcjty.container.EmptyContainer;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -12,8 +13,10 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -34,7 +37,7 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
 
     @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_BLOCK_PROTECTOR;
     }
 
     @Override
@@ -105,6 +108,24 @@ public class BlockProtectorBlock extends GenericContainerBlock implements Infusa
         protectors.save(world);
 
         return rc;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) tileEntity;
+        return new GuiBlockProtector(blockProtectorTileEntity, new BlockProtectorContainer(entityPlayer));
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        return new BlockProtectorContainer(entityPlayer);
+    }
+
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        checkRedstoneWithTE(world, x, y, z);
     }
 
     @Override

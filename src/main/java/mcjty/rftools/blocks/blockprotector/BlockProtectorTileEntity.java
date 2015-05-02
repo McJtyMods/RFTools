@@ -3,7 +3,9 @@ package mcjty.rftools.blocks.blockprotector;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
+import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,10 +13,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.Map;
 import java.util.Set;
 
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector {
 
+    public static final String CMD_RSMODE = "rsMode";
+
+    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
+    private int powered = 0;
     private int id = -1;
 
     // Relative coordinates (relative to this tile entity)
@@ -40,10 +47,59 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (protectedBlocks.isEmpty()) {
             return;
         }
+
+        if (isDisabled()) return;
+
         consumeEnergy(protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock);
     }
 
+    private boolean isDisabled() {
+        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
+            boolean rs = powered > 0;
+            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
+                if (rs) {
+                    return true;
+                }
+            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
+                if (!rs) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void setPowered(int powered) {
+        if (this.powered != powered) {
+            this.powered = powered;
+            markDirty();
+        }
+    }
+
+
+    private Object[] setRedstoneMode(String mode) {
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRedstoneMode(redstoneMode);
+        return null;
+    }
+
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
     public boolean attemptHarvestProtection() {
+        if (isDisabled()) return false;
         int rf = getEnergyStored(ForgeDirection.DOWN);
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
@@ -54,6 +110,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
     public int attemptExplosionProtection(float distance, float radius) {
+        if (isDisabled()) return -1;
         int rf = getEnergyStored(ForgeDirection.DOWN);
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
@@ -166,6 +223,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         protectedBlocks.readFromNBT(tagCompound, "coordinates");
+        powered = tagCompound.getByte("powered");
     }
 
     @Override
@@ -176,19 +234,36 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             id = -1;
         }
-
+        int m = tagCompound.getByte("rsMode");
+        redstoneMode = RedstoneMode.values()[m];
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         protectedBlocks.writeToNBT(tagCompound, "coordinates");
+        tagCompound.setByte("powered", (byte) powered);
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("protectorId", id);
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+    }
+
+    @Override
+    public boolean execute(String command, Map<String, Argument> args) {
+        boolean rc = super.execute(command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        }
+        return false;
     }
 
 }
