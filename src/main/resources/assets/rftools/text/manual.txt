@@ -2,6 +2,7 @@
 
 Table of contents:
 {l:general}General Tips
+{l:smartwrench}Smart Wrench
 {l:netmon}RF Network Monitor Item
 {l:base}Base Ingredients
 {l:logic}Logic Gates
@@ -9,11 +10,11 @@ Table of contents:
 {l:stomon}Storage Scanner
 {l:filter}Item Filter
 {l:crafte}Automatic Crafter
-{l:protect}Block Protector
 {/}
 
 
 
+{l:protect}Block Protector
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
 {l:power}Power Generator
@@ -33,6 +34,19 @@ All blocks in this mod can be picked up by using a wrench while
 sneaking. Most settings (like stored energy, possible inventory,
 recipes and so on) will be remembered and restored when the block
 is put back in the world.
+{-------------------------------------------------------------}
+{b}Smart Wrench
+{n:smartwrench}
+{ri:smartWrenchItem}
+The Smart Wrench works as a normal wrench. However it has two modes:
+'wrench' and 'select'. To switch modes just right click in the air.
+
+In 'wrench' mode it will work as usual: right click with wrench to
+rotate blocks (in most cases) and sneak right click to pick up a block.
+
+'select' mode is used in combination with the Block Protector.
+Sneak right click to select the protector and right click to select
+blocks to protect.
 {-------------------------------------------------------------}
 {b}RF Network Monitor Item
 {n:netmon}
