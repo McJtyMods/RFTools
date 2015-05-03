@@ -119,8 +119,9 @@ public class TeleportationTools {
     public static boolean performTeleport(EntityPlayer player, TeleportDestination dest, int bad, int good, boolean boosted) {
         Coordinate c = dest.getCoordinate();
 
-        int currentId = player.worldObj.provider.dimensionId;
-        if (currentId != dest.getDimension()) {
+        Coordinate old = new Coordinate((int)player.posX, (int)player.posY, (int)player.posZ);
+        int oldId = player.worldObj.provider.dimensionId;
+        if (oldId != dest.getDimension()) {
             TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
         } else {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
@@ -136,10 +137,14 @@ public class TeleportationTools {
             severity = 1;
         }
 
-        if (!applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded)) {
+        severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
+        if (severity > 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
                 ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
             }
+        }
+        if (TeleportConfiguration.logTeleportUsages) {
+            RFTools.log("Teleport: Player " + player.getDisplayName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
         }
         return boostNeeded;
     }
@@ -260,13 +265,13 @@ public class TeleportationTools {
         return severity;
     }
 
-    public static boolean applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total, boolean boostNeeded) {
+    public static int applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total, boolean boostNeeded) {
         severity += calculateSeverity(bad, total);
         if (severity > 10) {
             severity = 10;
         }
         if (severity <= 0) {
-            return false;
+            return 0;
         }
 
         if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
@@ -274,7 +279,7 @@ public class TeleportationTools {
         }
 
         applyEffectForSeverity(player, severity, boostNeeded);
-        return true;
+        return severity;
     }
 
     public static boolean mustInterrupt(int bad, int total) {

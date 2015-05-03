@@ -45,6 +45,8 @@ public class TeleportConfiguration {
     public static int matterTransmitterLoadChunk = -1;
     public static int matterTransmitterLoadWorld = -1;
 
+    public static boolean logTeleportUsages = false;
+
     public static void init(Configuration cfg) {
         TRANSMITTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", TRANSMITTER_MAXENERGY,
                 "Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'").getInt();
@@ -110,5 +112,8 @@ public class TeleportConfiguration {
                 "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the chunk is not loaded (-1 to disable this check completely)").getInt();
         matterTransmitterLoadWorld = cfg.get(CATEGORY_TELEPORTER, "checkUnloadedWorld", matterTransmitterLoadWorld,
                 "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the world is not loaded (-1 to disable this check completely)").getInt();
+
+        logTeleportUsages = cfg.get(CATEGORY_TELEPORTER, "logTeleportUsages", logTeleportUsages,
+                "If this is true then all usages of the teleport system are logged").getBoolean();
     }
 }
