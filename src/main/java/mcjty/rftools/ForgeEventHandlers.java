@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
+import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
@@ -170,9 +171,12 @@ public class ForgeEventHandlers {
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
         World world = event.world;
         int id = world.provider.dimensionId;
+        DimensionInformation dimensionInformation = null;
+
         if (DimletConfiguration.preventSpawnUnpowered) {
             RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
-            if (dimensionManager.getDimensionInformation(id) != null) {
+            dimensionInformation = dimensionManager.getDimensionInformation(id);
+            if (dimensionInformation != null) {
                 // RFTools dimension.
                 DimensionStorage storage = DimensionStorage.getDimensionStorage(world);
                 int energy = storage.getEnergyLevel(id);
@@ -188,6 +192,10 @@ public class ForgeEventHandlers {
             if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, id))) {
                 event.setResult(Event.Result.DENY);
                 RFTools.logDebug("Peaceful manager: Prevented a spawn of " + event.entity.getClass().getName());
+            } else if (dimensionInformation != null && dimensionInformation.isPeaceful()) {
+                // RFTools dimension.
+                event.setResult(Event.Result.DENY);
+                RFTools.logDebug("Peaceful dimension: Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }
