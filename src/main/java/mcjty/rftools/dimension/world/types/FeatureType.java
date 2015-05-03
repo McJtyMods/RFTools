@@ -21,7 +21,8 @@ public enum FeatureType {
     FEATURE_VOLCANOES(null, null, 0, 0),
     FEATURE_DENSE_CAVES(new TSet(TERRAIN_AMPLIFIED, TERRAIN_CAVERN, TERRAIN_CAVERN_OLD, TERRAIN_FLOODED_CAVERN, TERRAIN_CHAOTIC, TERRAIN_FLAT, TERRAIN_ISLAND, TERRAIN_ISLANDS, TERRAIN_LOW_CAVERN, TERRAIN_NORMAL, TERRAIN_PLATEAUS, TERRAIN_NEARLANDS), null, 0, 0),
     FEATURE_HUGEORBS(null, new MMap(-1, DimletType.DIMLET_MATERIAL), 2, 0),
-    FEATURE_HUGELIQUIDORBS(null, new MMap(-1, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_LIQUID), 1, 2);
+    FEATURE_HUGELIQUIDORBS(null, new MMap(-1, DimletType.DIMLET_MATERIAL, DimletType.DIMLET_LIQUID), 1, 2),
+    FEATURE_NODIMLETBUILDINGS(null, null, 0, 0);
 
     private final Set<TerrainType> supportedTerrains;
     private final Map<DimletType,Integer> supportedModifiers;

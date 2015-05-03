@@ -49,7 +49,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
-        } else if (Math.abs(chunkX) > 6 && Math.abs(chunkZ) > 6) {
+        } else if (Math.abs(chunkX) > 6 && Math.abs(chunkZ) > 6 && !information.hasFeatureType(FeatureType.FEATURE_NODIMLETBUILDINGS)) {
             // Not too close to starting platform we possibly generate dungeons.
             if (random.nextInt(DimletConfiguration.dungeonChance) == 1) {
                 int midx = chunkX * 16 + 8;
