@@ -61,6 +61,7 @@ public class DimensionInformation {
 
     private List<MobDescriptor> extraMobs = new ArrayList<MobDescriptor>();
     private boolean peaceful = false;
+    private boolean noanimals = false;
     private boolean shelter = false;
     private boolean respawnHere = false;
 
@@ -329,6 +330,7 @@ public class DimensionInformation {
         fluidsForLakes = readFluidsFromNBT(tagCompound, "lakeFluids");
 
         peaceful = tagCompound.getBoolean("peaceful");
+        noanimals = tagCompound.getBoolean("noanimals");
         shelter = tagCompound.getBoolean("shelter");
         respawnHere = tagCompound.getBoolean("respawnHere");
         if (tagCompound.hasKey("celestialAngle")) {
@@ -462,6 +464,7 @@ public class DimensionInformation {
         writeFluidsToNBT(tagCompound, fluidsForLakes, "lakeFluids");
 
         tagCompound.setBoolean("peaceful", peaceful);
+        tagCompound.setBoolean("noanimals", noanimals);
         tagCompound.setBoolean("shelter", shelter);
         tagCompound.setBoolean("respawnHere", respawnHere);
         if (celestialAngle != null) {
@@ -662,6 +665,9 @@ public class DimensionInformation {
         if (peaceful) {
             logDebug(player, "    Peaceful mode");
         }
+        if (noanimals) {
+            logDebug(player, "    No animals mode");
+        }
         if (shelter) {
             logDebug(player, "    Safe shelter");
         }
@@ -717,6 +723,7 @@ public class DimensionInformation {
         writeFluidArrayToBuf(buf, fluidsForLakes);
 
         buf.writeBoolean(peaceful);
+        buf.writeBoolean(noanimals);
         buf.writeBoolean(shelter);
         buf.writeBoolean(respawnHere);
         NetworkTools.writeFloat(buf, celestialAngle);
@@ -808,6 +815,7 @@ public class DimensionInformation {
         fluidsForLakes = readFluidArrayFromBuf(buf);
 
         peaceful = buf.readBoolean();
+        noanimals = buf.readBoolean();
         shelter = buf.readBoolean();
         respawnHere = buf.readBoolean();
 
@@ -1240,6 +1248,14 @@ public class DimensionInformation {
 
     public void setPeaceful(boolean peaceful) {
         this.peaceful = peaceful;
+    }
+
+    public boolean isNoanimals() {
+        return noanimals;
+    }
+
+    public void setNoanimals(boolean noanimals) {
+        this.noanimals = noanimals;
     }
 
     public boolean isShelter() {

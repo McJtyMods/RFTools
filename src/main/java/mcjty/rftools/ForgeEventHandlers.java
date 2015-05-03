@@ -14,6 +14,7 @@ import mcjty.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
@@ -196,6 +197,12 @@ public class ForgeEventHandlers {
                 // RFTools dimension.
                 event.setResult(Event.Result.DENY);
                 RFTools.logDebug("Peaceful dimension: Prevented a spawn of " + event.entity.getClass().getName());
+            }
+        } else if (event.entity instanceof IAnimals) {
+            if (dimensionInformation != null && dimensionInformation.isNoanimals()) {
+                // RFTools dimension.
+                event.setResult(Event.Result.DENY);
+                RFTools.logDebug("Noanimals dimension: Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }

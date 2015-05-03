@@ -349,6 +349,8 @@ public class KnownDimletConfiguration {
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Seed"), "Force a specific seed for a dimension.", "Right click in dimension to store seed.", "Shift-right click to lock seed");
         initSpecialItem(cfg, "Spawn", SpecialType.SPECIAL_SPAWN, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
+        initSpecialItem(cfg, "No Animals", SpecialType.SPECIAL_NOANIMALS, mapping, master);
+        addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "No Animals"), "Animal spawning is disabled", "if you use this dimlet");
 
         initMobItem(cfg, "Default", mapping, master);
         for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {

@@ -101,6 +101,8 @@ public class SpecialDimletType implements IDimletType {
         SpecialType specialType = DimletObjectMapping.idToSpecialType.get(key);
         if (specialType == SpecialType.SPECIAL_PEACEFUL) {
             dimensionInformation.setPeaceful(true);
+        } else if (specialType == SpecialType.SPECIAL_NOANIMALS) {
+            dimensionInformation.setNoanimals(true);
         } else if (specialType == SpecialType.SPECIAL_SPAWN) {
             dimensionInformation.setRespawnHere(true);
         }
@@ -114,6 +116,8 @@ public class SpecialDimletType implements IDimletType {
             SpecialType specialType = DimletObjectMapping.idToSpecialType.get(key);
             if (specialType == SpecialType.SPECIAL_PEACEFUL) {
                 dimensionInformation.setPeaceful(true);
+            } else if (specialType == SpecialType.SPECIAL_NOANIMALS) {
+                dimensionInformation.setNoanimals(true);
             } else if (specialType == SpecialType.SPECIAL_SHELTER) {
                 dimensionInformation.setShelter(true);
             } else if (specialType == SpecialType.SPECIAL_SPAWN) {

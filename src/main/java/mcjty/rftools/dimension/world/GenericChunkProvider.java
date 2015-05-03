@@ -481,6 +481,10 @@ public class GenericChunkProvider implements IChunkProvider {
                     return this.genNetherBridge.getSpawnList();
                 }
             }
+        } else if (creatureType == EnumCreatureType.ambient) {
+            if (dimensionInformation.isNoanimals()) {
+                return Collections.emptyList();
+            }
         }
 
         return biomegenbase.getSpawnableList(creatureType);
