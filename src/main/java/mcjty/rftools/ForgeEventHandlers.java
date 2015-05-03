@@ -108,7 +108,7 @@ public class ForgeEventHandlers {
             affectedBlocks.remove(block);
         }
 
-        RFTools.log("RF Needed for one explosion:" + rf);
+        RFTools.logDebug("RF Needed for one explosion:" + rf);
     }
 
     @SubscribeEvent

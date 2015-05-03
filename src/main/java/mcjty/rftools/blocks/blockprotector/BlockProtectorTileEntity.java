@@ -46,6 +46,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     protected void checkStateServer() {
         if (protectedBlocks.isEmpty()) {
+            setState(0);
             return;
         }
 

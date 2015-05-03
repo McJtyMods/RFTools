@@ -9,6 +9,7 @@ Table of contents:
 {l:stomon}Storage Scanner
 {l:filter}Item Filter
 {l:crafte}Automatic Crafter
+{l:protect}Block Protector
 {/}
 
 
@@ -218,7 +219,26 @@ can be used by other recipes in this crafter.
 The crafter also has a redstone mode (button below which can be set
 to 'ignore', 'off', or 'on') and it also has a speed mode which is set
 to slow by default. Fast mode uses more energy.
-{-------------------------------------------------------------} 
+{-------------------------------------------------------------}
+{b}Block Protector
+{n:protect}
+{rb:blockProtectorBlock}
+With the block protector you can protect blocks from being harvested
+or affected by explosions. Use the 'sneak-select' mode on the Smart
+Wrench to select the protector and then just 'select' all blocks you
+want to protect with the Smart Wrench in 'select' mode. The maximum
+distance is 10. Note that the block protector will need a little
+amount of power per tick for every block it protects.
+{-------------------------------------------------------------}
+In addition it needs extra power when a protected block is being
+harvested or affected by an explosion. If there is not enough power
+to protect a block then the block is removed from the protection
+list (and will probably get destroyed). If you want to make a room
+to protect against more powerful explosions (like from the Wither)
+it is recommended to use more then one block protector to protect
+smaller groups of blocks. Also make sure to protect the block
+protector itself.
+{-------------------------------------------------------------}
 {b}RF Power Relay
 {n:prelay}
 {rb:relayBlock}
