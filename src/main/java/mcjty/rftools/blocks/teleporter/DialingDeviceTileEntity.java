@@ -477,7 +477,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getActualHeight()) {
+            if (yy >= 0 && yy < worldObj.getHeight()) {
                 for (int dz = -hrange ; dz <= hrange; dz++) {
                     int zz = z + dz;
                     for (int dx = -hrange ; dx <= hrange ; dx++) {

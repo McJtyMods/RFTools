@@ -98,7 +98,7 @@ public class PacketGetConnectedBlocks implements IMessage, IMessageHandler<Packe
 
 
     private void findConnectedBlocks(Map<Coordinate,BlockInfo> connectedBlocks, World world, int x, int y, int z) {
-        if (y < 0 || y >= world.getActualHeight()) {
+        if (y < 0 || y >= world.getHeight()) {
             return;
         }
         Coordinate c = new Coordinate(x, y, z);

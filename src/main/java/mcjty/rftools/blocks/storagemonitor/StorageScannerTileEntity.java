@@ -92,8 +92,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
             }
             c1.setCoordinate(new Coordinate(xCoord-r, y1, zCoord-r));
             int y2 = yCoord+r;
-            if (y2 >= worldObj.getActualHeight()) {
-                y2 = worldObj.getActualHeight()-1;
+            if (y2 >= worldObj.getHeight()) {
+                y2 = worldObj.getHeight()-1;
             }
             c2.setCoordinate(new Coordinate(xCoord+r, y2, zCoord+r));
 
