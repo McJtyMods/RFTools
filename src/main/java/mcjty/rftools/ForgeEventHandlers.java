@@ -37,9 +37,12 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
-        int id = event.world.provider.dimensionId;
         BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
+        if (blockProtectors == null) {
+            return;
+        }
 
+        int id = event.world.provider.dimensionId;
         Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors(event.x, event.y, event.z, id, 2);
 
         for (GlobalCoordinate protector : protectors) {
@@ -66,8 +69,12 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onDetonate(ExplosionEvent.Detonate event) {
-        int id = event.world.provider.dimensionId;
         BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
+        if (blockProtectors == null) {
+            return;
+        }
+
+        int id = event.world.provider.dimensionId;
         Explosion explosion = event.explosion;
         Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors((int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ, id, (int) explosion.explosionSize);
 
