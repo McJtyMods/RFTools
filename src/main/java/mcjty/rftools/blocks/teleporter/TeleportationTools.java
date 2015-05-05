@@ -138,7 +138,7 @@ public class TeleportationTools {
         }
 
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
-        if (severity > 0) {
+        if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
                 ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
             }
