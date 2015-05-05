@@ -55,6 +55,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetFilters.class, PacketGetFilters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDelightingInfo.class, PacketGetDelightingInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDimensionEnergy.class, PacketGetDimensionEnergy.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetDestinationInfo.class, PacketGetDestinationInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetScreenData.class, PacketGetScreenData.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, nextID(), Side.SERVER);
 
@@ -74,6 +75,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSyncDimensionInfoHandler.class, PacketSyncDimensionInfo.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketCheckDimletConfigHandler.class, PacketCheckDimletConfig.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReturnEnergyHandler.class, PacketReturnEnergy.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketReturnDestinationInfoHandler.class, PacketReturnDestinationInfo.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketReturnScreenDataHandler.class, PacketReturnScreenData.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketRegisterDimensionsHandler.class, PacketRegisterDimensions.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSendBuffsToClientHandler.class, PacketSendBuffsToClient.class, nextID(), Side.CLIENT);

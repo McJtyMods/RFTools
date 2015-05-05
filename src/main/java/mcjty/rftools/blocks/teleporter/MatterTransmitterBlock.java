@@ -6,6 +6,11 @@ import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.dimension.network.PacketGetDestinationInfo;
+import mcjty.rftools.dimension.network.PacketReturnDestinationInfo;
+import mcjty.rftools.dimension.network.PacketReturnDestinationInfoHandler;
+import mcjty.rftools.dimension.network.ReturnDestinationInfoHelper;
+import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -56,7 +61,17 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             }
 
             if (dialed) {
-                list.add(EnumChatFormatting.YELLOW + "[DIALED]");
+                int destId = tagCompound.getInteger("destId");
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    PacketHandler.INSTANCE.sendToServer(new PacketGetDestinationInfo(destId));
+                }
+
+                String destname = "?";
+                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == destId) {
+                    destname = ReturnDestinationInfoHelper.name;
+                }
+                list.add(EnumChatFormatting.YELLOW + "[DIALED to " + destname + "]");
             }
 
             boolean once = tagCompound.getBoolean("once");
@@ -80,6 +95,8 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
         }
     }
 
+    private static long lastTime = 0;
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -89,7 +106,16 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
             MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
             currenttip.add(EnumChatFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
             if (matterTransmitterTileEntity.isDialed()) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[DIALED]");
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    PacketHandler.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                }
+
+                String name = "?";
+                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
+                    name = ReturnDestinationInfoHelper.name;
+                }
+                currenttip.add(EnumChatFormatting.YELLOW + "[DIALED to " + name + "]");
             }
             if (matterTransmitterTileEntity.isOnce()) {
                 currenttip.add(EnumChatFormatting.YELLOW + "[ONCE]");
