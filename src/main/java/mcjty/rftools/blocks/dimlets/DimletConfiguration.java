@@ -64,6 +64,8 @@ public class DimletConfiguration {
 	public static boolean randomizeSeed = false;
     public static boolean normalTerrainInheritsOverworld = false;
 
+    public static float endermanUnknownDimletDrop = 0.01f;
+
 
 	public static void init(Configuration cfg) {
         EXTRACTOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "energyExtractorMaxRF", EXTRACTOR_MAXENERGY,
@@ -174,6 +176,9 @@ public class DimletConfiguration {
                 "The chance that default weather features are selected").getDouble();
         randomControllerChance = (float) cfg.get(CATEGORY_DIMLETS, "randomControllerChance", randomControllerChance,
                 "The chance that a random biome controller is selected").getDouble();
+
+        endermanUnknownDimletDrop = (float) cfg.get(CATEGORY_DIMLETS, "endermanUnknownDimletDrop", endermanUnknownDimletDrop,
+                "The chance that you get an unknown dimlet when killing an enderman. Set to 0 to disable").getDouble();
 
         bedrockLayer = cfg.get(CATEGORY_DIMLETS, "bedrockLayer", bedrockLayer,
                 "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
