@@ -53,6 +53,9 @@ item.ComputerModule.name=電腦模塊
 item.ButtonModule.name=Button Module
 item.SpaceChamberCard.name=Space Chamber Card
 item.SmartWrench.name=Smart Wrench
+item.StorageModule0.name=Storage Module Tier 1
+item.StorageModule1.name=Storage Module Tier 2
+item.StorageModule2.name=Storage Module Tier 3
 
 item.RegenerationEModule.name=再生模塊
 item.RegenerationPlusEModule.name=再生+模塊
@@ -159,6 +162,7 @@ tile.spaceChamberBlock.name=空間角落方塊
 tile.spaceChamberControllerBlock.name=空間控制方塊
 tile.spaceProjectorBlock.name=空間投影方塊
 tile.blockProtectorBlock.name=Block Protector
+tile.modularStorageBlock.name=Modular Storage
 
 tile.dimensionalShardBlock.name=空間碎片礦
 tile.dimensionalBlankBlock.name=維度空方塊

@@ -56,6 +56,9 @@ item.ComputerModule.name=Модуль «Компьютер»
 item.ButtonModule.name=Button Module
 item.SpaceChamberCard.name=Space Chamber Card
 item.SmartWrench.name=Smart Wrench
+item.StorageModule0.name=Storage Module Tier 1
+item.StorageModule1.name=Storage Module Tier 2
+item.StorageModule2.name=Storage Module Tier 3
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»
@@ -163,6 +166,7 @@ tile.spaceChamberBlock.name=Блок угла космической камер�
 tile.spaceChamberControllerBlock.name=Блок контроллера космической камеры
 tile.spaceProjectorBlock.name=Блок космического проектировщика
 tile.blockProtectorBlock.name=Block Protector
+tile.modularStorageBlock.name=Modular Storage
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения

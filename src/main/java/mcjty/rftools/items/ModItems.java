@@ -14,6 +14,7 @@ import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.parts.*;
 import mcjty.rftools.items.screenmodules.*;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -79,6 +80,8 @@ public final class ModItems {
     public static EfficiencyEssenceItem efficiencyEssenceItem;
     public static MediocreEfficiencyEssenceItem mediocreEfficiencyEssenceItem;
 
+    public static StorageModuleItem storageModuleItem;
+
     public static void init() {
         networkMonitorItem = new NetworkMonitorItem();
         networkMonitorItem.setUnlocalizedName("NetworkMonitor");
@@ -137,6 +140,15 @@ public final class ModItems {
         initScreenModuleItems();
         initDimensionItems();
         initDimletPartItems();
+        initStorageModuleItems();
+    }
+
+    private static void initStorageModuleItems() {
+        storageModuleItem = new StorageModuleItem();
+        storageModuleItem.setUnlocalizedName("StorageModule");
+        storageModuleItem.setCreativeTab(RFTools.tabRfTools);
+        storageModuleItem.setTextureName(RFTools.MODID + ":storageModule");
+        GameRegistry.registerItem(storageModuleItem, "storageModuleItem");
     }
 
     private static void initDimletPartItems() {

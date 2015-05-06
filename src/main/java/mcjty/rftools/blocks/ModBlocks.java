@@ -17,6 +17,7 @@ import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.special.SpecialSetup;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 
@@ -45,6 +46,7 @@ public final class ModBlocks {
         DimletConstructionSetup.setupBlocks();
         SpaceProjectorSetup.setupBlocks();
         BlockProtectorSetup.setupBlocks();
+        ModularStorageSetup.setupBlocks();
     }
 
     private static void initBaseBlocks() {
