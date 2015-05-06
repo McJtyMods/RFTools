@@ -65,7 +65,9 @@ public class DimletConfiguration {
     public static boolean normalTerrainInheritsOverworld = false;
 
     public static float endermanUnknownDimletDrop = 0.01f;
-
+    public static int unknownDimletChestLootMinimum = 1;
+    public static int unknownDimletChestLootMaximum = 3;
+    public static int unknownDimletChestLootRarity = 50;
 
 	public static void init(Configuration cfg) {
         EXTRACTOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "energyExtractorMaxRF", EXTRACTOR_MAXENERGY,
@@ -179,6 +181,12 @@ public class DimletConfiguration {
 
         endermanUnknownDimletDrop = (float) cfg.get(CATEGORY_DIMLETS, "endermanUnknownDimletDrop", endermanUnknownDimletDrop,
                 "The chance that you get an unknown dimlet when killing an enderman. Set to 0 to disable").getDouble();
+        unknownDimletChestLootMinimum = cfg.get(CATEGORY_DIMLETS, "unknownDimletChestLootMinimum", unknownDimletChestLootMinimum,
+                "The minimum amount of unknown dimlets that can be generated in a dungeon chest").getInt();
+        unknownDimletChestLootMaximum = cfg.get(CATEGORY_DIMLETS, "unknownDimletChestLootMaximum", unknownDimletChestLootMaximum,
+                "The maximum amount of unknown dimlets that can be generated in a dungeon chest").getInt();
+        unknownDimletChestLootRarity = cfg.get(CATEGORY_DIMLETS, "unknownDimletChestLootRarity", unknownDimletChestLootRarity,
+                "The rarity of unknown dimlets in dungeon chests (0 means you'll get none, 100 means very common)").getInt();
 
         bedrockLayer = cfg.get(CATEGORY_DIMLETS, "bedrockLayer", bedrockLayer,
                 "The height of the bedrock layer that is generated at the bottom of some world types. Set to 0 to disable this and get default bedrock generation").getInt();
