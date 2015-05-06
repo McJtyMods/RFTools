@@ -204,7 +204,7 @@ public class DimensionTickEvent {
                         if (amplifier == null) {
                             amplifier = 0;
                         }
-                        player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS, amplifier, true));
+                        player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS*3, amplifier, true));
                     }
                 }
                 if (power < DimletConfiguration.DIMPOWER_WARN3) {
