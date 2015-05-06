@@ -2,6 +2,8 @@ package mcjty.rftools.dimension;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.PlayerExtendedProperties;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -205,6 +207,8 @@ public class DimensionTickEvent {
                             amplifier = 0;
                         }
                         player.addPotionEffect(new PotionEffect(potionEffect, EFFECTS_MAX*MAXTICKS*3, amplifier, true));
+                    } else if (effect == EffectType.EFFECT_FLIGHT) {
+                        PlayerExtendedProperties.addBuff(player, PlayerBuff.BUFF_FLIGHT, EFFECTS_MAX*MAXTICKS*2);
                     }
                 }
                 if (power < DimletConfiguration.DIMPOWER_WARN3) {

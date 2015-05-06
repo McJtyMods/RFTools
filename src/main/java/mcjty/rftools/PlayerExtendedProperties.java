@@ -60,6 +60,7 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
         for (PlayerBuff buff : buffs.keySet()) {
             if (buff == PlayerBuff.BUFF_FLIGHT) {
                 enableFlight = true;
+                break;
             }
         }
 
@@ -87,8 +88,8 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
             if (!player.capabilities.allowFlying) {
                 player.capabilities.isFlying = false;
             }
-            player.sendPlayerAbilities();
         }
+        player.sendPlayerAbilities();
     }
 
     public static PlayerExtendedProperties getProperties(EntityPlayer player) {
