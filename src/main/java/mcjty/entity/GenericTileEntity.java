@@ -5,6 +5,7 @@ import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.ClientCommandHandler;
 import mcjty.rftools.network.CommandHandler;
 import mcjty.varia.Coordinate;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -151,7 +152,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
         return false;
     }
 

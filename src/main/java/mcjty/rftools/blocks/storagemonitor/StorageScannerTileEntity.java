@@ -6,6 +6,7 @@ import mcjty.entity.SyncedValue;
 import mcjty.entity.SyncedValueList;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -259,8 +260,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }

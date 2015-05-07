@@ -10,8 +10,14 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.Argument;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
@@ -48,14 +54,45 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private void updateList() {
         itemList.removeChildren();
 
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-        ItemStack stack = inventorySlots.getSlot(0).getStack();
-        panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
-        String displayName = stack != null ? stack.getDisplayName() : "";
-        panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-//        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
-        itemList.addChild(panel);
+        if (!inventorySlots.getSlot(0).getHasStack()) {
+            return;
+        }
 
+        ItemStack storageModule = inventorySlots.getSlot(0).getStack();
+        NBTTagCompound tagCompound = storageModule.getTagCompound();
+        if (tagCompound != null) {
+            NBTTagList items = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < items.tagCount() ; i++) {
+                NBTTagCompound tag = items.getCompoundTagAt(i);
+                ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
+
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+                panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
+                String displayName = stack != null ? stack.getDisplayName() : "";
+                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+//        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
+                itemList.addChild(panel);
+            }
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) {
+        boolean shift = (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
+        if (shift) {
+            Slot slot = getSlotAtPosition(x, y);
+            if (slot != null) {
+                if (slot.getHasStack()) {
+                    ItemStack storageModule = inventorySlots.getSlot(0).getStack();
+                    if (storageModule != null) {
+                        sendServerCommand(ModularStorageTileEntity.CMD_SHIFTCLICK_SLOT, new Argument("slot", slot.getSlotIndex()));
+                        return;
+                    }
+                }
+            }
+        }
+
+        super.mouseClicked(x, y, button);
     }
 
     @Override

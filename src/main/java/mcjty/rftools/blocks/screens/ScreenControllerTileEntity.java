@@ -13,6 +13,7 @@ import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -340,8 +341,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }

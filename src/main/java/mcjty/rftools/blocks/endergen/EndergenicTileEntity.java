@@ -11,6 +11,7 @@ import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
 import mcjty.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -542,8 +543,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }

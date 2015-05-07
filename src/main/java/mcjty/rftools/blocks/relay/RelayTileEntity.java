@@ -5,6 +5,7 @@ import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.EnergyTools;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -113,8 +114,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }

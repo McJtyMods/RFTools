@@ -2,14 +2,21 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Map;
+
 public class ModularStorageTileEntity extends GenericTileEntity implements ISidedInventory {
+
+    public static final String CMD_SHIFTCLICK_SLOT = "clickSlotShift";
+
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2);
 
@@ -130,4 +137,45 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         tagCompound.setTag("Items", bufferTagList);
     }
+
+    private void shiftClickSlot(EntityPlayerMP playerMP, int slot) {
+        System.out.println("slot = " + slot);
+        ItemStack storageModule = inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE];
+        if (storageModule == null) {
+            return;
+        }
+
+//        ItemStack stack = inventoryHelper.getStacks()[slot];
+        ItemStack stack = playerMP.inventory.getStackInSlot(slot);
+        if (stack == null) {
+            return;
+        }
+        System.out.println("stack = " + stack);
+        NBTTagCompound tagCompound = storageModule.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            storageModule.setTagCompound(tagCompound);
+        }
+        NBTTagList items = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        NBTTagCompound tag = new NBTTagCompound();
+        stack.writeToNBT(tag);
+        items.appendTag(tag);
+        tagCompound.setTag("Items", items);
+//        inventoryHelper.decrStackSize(slot, stack.stackSize);
+        playerMP.inventory.decrStackSize(slot, stack.stackSize);
+    }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SHIFTCLICK_SLOT.equals(command)) {
+            shiftClickSlot(playerMP, args.get("slot").getInteger());
+            return true;
+        }
+        return false;
+    }
+
 }

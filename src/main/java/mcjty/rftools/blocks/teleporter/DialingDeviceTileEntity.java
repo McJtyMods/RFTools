@@ -570,8 +570,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
 
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return rc;
         }

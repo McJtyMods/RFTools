@@ -12,6 +12,7 @@ import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -487,8 +488,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }

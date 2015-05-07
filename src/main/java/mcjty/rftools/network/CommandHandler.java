@@ -1,5 +1,7 @@
 package mcjty.rftools.network;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +11,7 @@ import java.util.Map;
  */
 public interface CommandHandler {
     /// Return true if command was handled correctly. False if not.
-    boolean execute(String command, Map<String,Argument> args);
+    boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args);
 
     /// Return the result which will be sent back to the client. Returns nulli f command was not handled.
     List executeWithResultList(String command, Map<String, Argument> args);

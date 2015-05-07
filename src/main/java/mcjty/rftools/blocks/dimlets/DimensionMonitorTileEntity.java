@@ -5,6 +5,7 @@ import mcjty.entity.SyncedValue;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.network.Argument;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
@@ -85,8 +86,8 @@ public class DimensionMonitorTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public boolean execute(String command, Map<String, Argument> args) {
-        boolean rc = super.execute(command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
         if (rc) {
             return true;
         }
