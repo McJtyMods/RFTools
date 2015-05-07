@@ -140,7 +140,7 @@ public final class ModItems {
         initScreenModuleItems();
         initDimensionItems();
         initDimletPartItems();
-        initStorageModuleItems();
+//        initStorageModuleItems();
     }
 
     private static void initStorageModuleItems() {

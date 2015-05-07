@@ -287,16 +287,18 @@ public class TeleportationTools {
     }
 
     public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
+        int oldDimension = player.worldObj.provider.dimensionId;
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
         WorldServer worldServer = MinecraftServer.getServer().worldServerForDimension(dimension);
         player.addExperienceLevel(0);
         MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
                 new RfToolsTeleporter(worldServer, x, y, z));
-        player.setPositionAndUpdate(x, y, z);
-        worldServer.spawnEntityInWorld(player);
-        worldServer.updateEntityWithOptionalForce(player, false);
-
-
+        if (oldDimension == 1) {
+            // For some reason teleporting out of the end does weird things.
+            player.setPositionAndUpdate(x, y, z);
+            worldServer.spawnEntityInWorld(player);
+            worldServer.updateEntityWithOptionalForce(player, false);
+        }
     }
 
     public static TeleportDestination findDestination(World worldObj, Coordinate coordinate, int dimension) {
