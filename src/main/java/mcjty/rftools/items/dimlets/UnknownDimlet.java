@@ -19,6 +19,6 @@ public class UnknownDimlet extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         list.add(EnumChatFormatting.YELLOW + "Put this unknown dimlet in a 'Dimlet Researcher'");
-        list.add(EnumChatFormatting.YELLOW + "to discover it's purpose.");
+        list.add(EnumChatFormatting.YELLOW + "to discover its purpose.");
     }
 }
