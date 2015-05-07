@@ -1,7 +1,7 @@
 package mcjty.rftools.items.dimlets;
 
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -16,7 +16,7 @@ public class DimletDropsEvent {
     public void onEntityDrop(LivingDropsEvent event) {
         if (event.entityLiving instanceof EntityEnderman) {
             if (random.nextFloat() < DimletConfiguration.endermanUnknownDimletDrop) {
-                event.entityLiving.dropItem(ModItems.unknownDimlet, random.nextInt(2)+1);
+                event.entityLiving.dropItem(DimletSetup.unknownDimlet, random.nextInt(2)+1);
             }
         }
     }

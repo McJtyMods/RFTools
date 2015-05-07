@@ -4,7 +4,7 @@ import mcjty.api.Infusable;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -38,7 +38,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             ItemStack inputStack = inventoryHelper.getStacks()[0];
             ItemStack outputStack = inventoryHelper.getStacks()[1];
-            if (inputStack != null && inputStack.getItem() == ModItems.dimensionalShard && isInfusable(outputStack)) {
+            if (inputStack != null && inputStack.getItem() == DimletSetup.dimensionalShard && isInfusable(outputStack)) {
                 startInfusing();
             }
         }

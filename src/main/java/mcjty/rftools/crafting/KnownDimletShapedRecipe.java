@@ -1,6 +1,6 @@
 package mcjty.rftools.crafting;
 
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.inventory.InventoryCrafting;
@@ -11,7 +11,7 @@ public class KnownDimletShapedRecipe extends ShapedOreRecipe {
     private DimletKey destDimletKey;
 
     public KnownDimletShapedRecipe(DimletKey destDimletKey, Object... items) {
-        super(new ItemStack(ModItems.knownDimlet), items);
+        super(new ItemStack(DimletSetup.knownDimlet), items);
         this.destDimletKey = destDimletKey;
     }
 

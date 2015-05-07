@@ -5,7 +5,6 @@ import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -163,7 +162,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
      * that in the NBT of the realized dimension tab.
      */
     public static ItemStack createRealizedTab(DimensionDescriptor descriptor, World world) {
-        ItemStack realizedTab = new ItemStack(ModItems.realizedDimensionTab, 1, 0);
+        ItemStack realizedTab = new ItemStack(DimletSetup.realizedDimensionTab, 1, 0);
         NBTTagCompound tagCompound = new NBTTagCompound();
         descriptor.writeToNBT(tagCompound);
 
@@ -218,7 +217,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             }
         }
 
-        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = new ItemStack(ModItems.emptyDimensionTab);
+        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = new ItemStack(DimletSetup.emptyDimensionTab);
         markDirty();
     }
 

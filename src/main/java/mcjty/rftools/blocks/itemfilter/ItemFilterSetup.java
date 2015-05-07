@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.itemfilter;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -28,7 +28,7 @@ public class ItemFilterSetup {
 
         GameRegistry.addRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.paper,
                 'r', Items.redstone, 'c', Blocks.chest);
-        GameRegistry.addRecipe(new ItemStack(dimletFilterBlock), " u ", "rMr", " r ", 'M', itemFilterBlock, 'u', ModItems.unknownDimlet,
+        GameRegistry.addRecipe(new ItemStack(dimletFilterBlock), " u ", "rMr", " r ", 'M', itemFilterBlock, 'u', DimletSetup.unknownDimlet,
                 'r', Items.redstone);
     }
 }

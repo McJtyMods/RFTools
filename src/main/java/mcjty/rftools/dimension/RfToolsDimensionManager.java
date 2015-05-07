@@ -2,11 +2,11 @@ package mcjty.rftools.dimension;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.network.PacketCheckDimletConfig;
 import mcjty.rftools.dimension.network.PacketSyncDimensionInfo;
 import mcjty.rftools.dimension.world.GenericWorldProvider;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletMapping;
@@ -220,7 +220,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         InventoryPlayer inventory = player.inventory;
         for (int i = 0 ; i < inventory.getHotbarSize() ; i++) {
             ItemStack slot = inventory.getStackInSlot(i);
-            if (slot != null && slot.getItem() == ModItems.phasedFieldGeneratorItem) {
+            if (slot != null && slot.getItem() == DimletSetup.phasedFieldGeneratorItem) {
                 PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
                 int energyStored = pfg.getEnergyStored(slot);
                 int toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shards;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -57,7 +57,7 @@ public class DimensionalShardBlock extends Block {
 
     @Override
     public Item getItemDropped(int p_149650_1_, Random random, int p_149650_3_) {
-        return ModItems.dimensionalShard;
+        return DimletSetup.dimensionalShard;
     }
 
     @Override

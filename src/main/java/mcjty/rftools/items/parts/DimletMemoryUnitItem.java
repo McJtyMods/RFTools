@@ -1,7 +1,7 @@
 package mcjty.rftools.items.parts;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -60,7 +60,7 @@ public class DimletMemoryUnitItem extends Item {
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         for (int i = 0 ; i < 3 ; i++) {
-            list.add(new ItemStack(ModItems.dimletMemoryUnitItem, 1, i));
+            list.add(new ItemStack(DimletConstructionSetup.dimletMemoryUnitItem, 1, i));
         }
     }
 }

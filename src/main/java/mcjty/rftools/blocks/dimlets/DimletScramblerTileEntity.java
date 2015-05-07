@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
@@ -63,7 +62,7 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
         if (input1 == null || input2 == null || input3 == null) {
             return false;
         }
-        if (input1.getItem() != ModItems.knownDimlet || input2.getItem() != ModItems.knownDimlet || input3.getItem() != ModItems.knownDimlet) {
+        if (input1.getItem() != DimletSetup.knownDimlet || input2.getItem() != DimletSetup.knownDimlet || input3.getItem() != DimletSetup.knownDimlet) {
             return false;
         }
         DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input1, worldObj);

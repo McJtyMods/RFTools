@@ -14,7 +14,6 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.dimension.world.types.TerrainType;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletType;
@@ -114,9 +113,9 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
         extractButton.setEnabled(false);
         storeButton.setEnabled(false);
         if (slot.getStack() != null) {
-            if (slot.getStack().getItem() == ModItems.emptyDimensionTab) {
+            if (slot.getStack().getItem() == DimletSetup.emptyDimensionTab) {
                 storeButton.setEnabled(true);
-            } else if (slot.getStack().getItem() == ModItems.realizedDimensionTab) {
+            } else if (slot.getStack().getItem() == DimletSetup.realizedDimensionTab) {
                 extractButton.setEnabled(true);
             }
         }
@@ -255,7 +254,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
 
     private void setNameFromDimensionTab() {
         Slot slot = inventorySlots.getSlot(DimensionEnscriberContainer.SLOT_TAB);
-        if (slot.getStack() != null && slot.getStack().getItem() == ModItems.realizedDimensionTab) {
+        if (slot.getStack() != null && slot.getStack().getItem() == DimletSetup.realizedDimensionTab) {
             NBTTagCompound tagCompound = slot.getStack().getTagCompound();
             if (tagCompound != null) {
                 String name = tagCompound.getString("name");

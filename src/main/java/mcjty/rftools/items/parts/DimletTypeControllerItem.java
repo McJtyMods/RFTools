@@ -1,7 +1,7 @@
 package mcjty.rftools.items.parts;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -72,7 +72,7 @@ public class DimletTypeControllerItem extends Item {
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         for (DimletType type : DimletType.values()) {
             if (icons.containsKey(type)) {
-                list.add(new ItemStack(ModItems.dimletTypeControllerItem, 1, type.ordinal()));
+                list.add(new ItemStack(DimletConstructionSetup.dimletTypeControllerItem, 1, type.ordinal()));
             }
         }
     }

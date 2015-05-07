@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.infuser;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -17,7 +17,7 @@ public class MachineInfuserSetup {
     }
 
     public static void setupCrafting() {
-        GameRegistry.addRecipe(new ItemStack(machineInfuserBlock), "srs", "dMd", "srs", 'M', ModBlocks.machineFrame, 's', ModItems.dimensionalShard,
+        GameRegistry.addRecipe(new ItemStack(machineInfuserBlock), "srs", "dMd", "srs", 'M', ModBlocks.machineFrame, 's', DimletSetup.dimensionalShard,
                 'r', Items.redstone, 'd', Items.diamond);
     }
 }

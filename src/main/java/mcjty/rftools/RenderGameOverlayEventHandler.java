@@ -1,7 +1,7 @@
 package mcjty.rftools;
 
 import mcjty.gui.RenderHelper;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
@@ -48,46 +48,46 @@ public class RenderGameOverlayEventHandler {
             Item item;
             switch (buff) {
                 case BUFF_FEATHERFALLING:
-                    item = ModItems.featherFallingEModuleItem;
+                    item = EnvironmentalSetup.featherFallingEModuleItem;
                     break;
                 case BUFF_FEATHERFALLINGPLUS:
-                    item = ModItems.featherFallingPlusEModuleItem;
+                    item = EnvironmentalSetup.featherFallingPlusEModuleItem;
                     break;
                 case BUFF_HASTE:
-                    item = ModItems.hasteEModuleItem;
+                    item = EnvironmentalSetup.hasteEModuleItem;
                     break;
                 case BUFF_HASTEPLUS:
-                    item = ModItems.hastePlusEModuleItem;
+                    item = EnvironmentalSetup.hastePlusEModuleItem;
                     break;
                 case BUFF_REGENERATION:
-                    item = ModItems.regenerationEModuleItem;
+                    item = EnvironmentalSetup.regenerationEModuleItem;
                     break;
                 case BUFF_REGENERATIONPLUS:
-                    item = ModItems.regenerationPlusEModuleItem;
+                    item = EnvironmentalSetup.regenerationPlusEModuleItem;
                     break;
                 case BUFF_SATURATION:
-                    item = ModItems.saturationEModuleItem;
+                    item = EnvironmentalSetup.saturationEModuleItem;
                     break;
                 case BUFF_SATURATIONPLUS:
-                    item = ModItems.saturationPlusEModuleItem;
+                    item = EnvironmentalSetup.saturationPlusEModuleItem;
                     break;
                 case BUFF_SPEED:
-                    item = ModItems.speedEModuleItem;
+                    item = EnvironmentalSetup.speedEModuleItem;
                     break;
                 case BUFF_SPEEDPLUS:
-                    item = ModItems.speedPlusEModuleItem;
+                    item = EnvironmentalSetup.speedPlusEModuleItem;
                     break;
                 case BUFF_FLIGHT:
-                    item = ModItems.flightEModuleItem;
+                    item = EnvironmentalSetup.flightEModuleItem;
                     break;
                 case BUFF_PEACEFUL:
-                    item = ModItems.peacefulEModuleItem;
+                    item = EnvironmentalSetup.peacefulEModuleItem;
                     break;
                 case BUFF_WATERBREATHING:
-                    item = ModItems.waterBreathingEModuleItem;
+                    item = EnvironmentalSetup.waterBreathingEModuleItem;
                     break;
                 case BUFF_NIGHTVISION:
-                    item = ModItems.nightVisionEModuleItem;
+                    item = EnvironmentalSetup.nightVisionEModuleItem;
                     break;
                 default:
                     item = null;

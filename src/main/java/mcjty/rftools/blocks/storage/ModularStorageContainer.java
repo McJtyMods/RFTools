@@ -4,7 +4,6 @@ import mcjty.container.ContainerFactory;
 import mcjty.container.GenericContainer;
 import mcjty.container.SlotDefinition;
 import mcjty.container.SlotType;
-import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -17,7 +16,7 @@ public class ModularStorageContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.storageModuleItem)), CONTAINER_INVENTORY, SLOT_STORAGE_MODULE, 13, 160, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModularStorageSetup.storageModuleItem)), CONTAINER_INVENTORY, SLOT_STORAGE_MODULE, 13, 160, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 13, 178, 1, 18, 1, 18);
             layoutPlayerInventorySlots(85, 160);
         }

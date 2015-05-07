@@ -3,7 +3,7 @@ package mcjty.rftools.items.storage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +55,7 @@ public class StorageModuleItem extends Item {
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
         for (int i = 0 ; i < 3 ; i++) {
-            list.add(new ItemStack(ModItems.storageModuleItem, 1, i));
+            list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
         }
     }
 }

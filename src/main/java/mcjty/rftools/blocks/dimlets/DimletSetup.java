@@ -2,9 +2,12 @@ package mcjty.rftools.blocks.dimlets;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shards.*;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.dimensionmonitor.DimensionMonitorItem;
+import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
+import mcjty.rftools.items.dimlets.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -28,6 +31,15 @@ public class DimletSetup {
     public static DimensionalPattern2Block dimensionalPattern2Block;
     public static ActivityProbeBlock activityProbeBlock;
     public static EnergyExtractorBlock energyExtractorBlock;
+
+    public static UnknownDimlet unknownDimlet;
+    public static DimletTemplate dimletTemplate;
+    public static KnownDimlet knownDimlet;
+    public static EmptyDimensionTab emptyDimensionTab;
+    public static RealizedDimensionTab realizedDimensionTab;
+    public static DimensionMonitorItem dimensionMonitorItem;
+    public static PhasedFieldGeneratorItem phasedFieldGeneratorItem;
+    public static DimensionalShard dimensionalShard;
 
     public static void setupBlocks() {
         dimletResearcherBlock = new DimletResearcherBlock();
@@ -82,13 +94,60 @@ public class DimletSetup {
         GameRegistry.registerTileEntity(EnergyExtractorTileEntity.class, "EnergyExtractorTileEntity");
     }
 
+    public static void setupItems() {
+        unknownDimlet = new UnknownDimlet();
+        unknownDimlet.setUnlocalizedName("UnknownDimlet");
+        unknownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
+        unknownDimlet.setTextureName(RFTools.MODID + ":unknownDimletItem");
+        GameRegistry.registerItem(unknownDimlet, "unknownDimlet");
+
+        knownDimlet = new KnownDimlet();
+        knownDimlet.setUnlocalizedName("KnownDimlet");
+        knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
+        GameRegistry.registerItem(knownDimlet, "knownDimlet");
+
+        dimletTemplate = new DimletTemplate();
+        dimletTemplate.setUnlocalizedName("DimletTemplate");
+        dimletTemplate.setCreativeTab(RFTools.tabRfToolsDimlets);
+        dimletTemplate.setTextureName(RFTools.MODID + ":dimletTemplateItem");
+        GameRegistry.registerItem(dimletTemplate, "dimletTemplate");
+
+        emptyDimensionTab = new EmptyDimensionTab();
+        emptyDimensionTab.setUnlocalizedName("EmptyDimensionTab");
+        emptyDimensionTab.setCreativeTab(RFTools.tabRfTools);
+        emptyDimensionTab.setTextureName(RFTools.MODID + ":emptyDimensionTabItem");
+        GameRegistry.registerItem(emptyDimensionTab, "emptyDimensionTab");
+
+        realizedDimensionTab = new RealizedDimensionTab();
+        realizedDimensionTab.setUnlocalizedName("RealizedDimensionTab");
+        realizedDimensionTab.setCreativeTab(RFTools.tabRfTools);
+        realizedDimensionTab.setTextureName(RFTools.MODID + ":realizedDimensionTabItem");
+        GameRegistry.registerItem(realizedDimensionTab, "realizedDimensionTab");
+
+        dimensionMonitorItem = new DimensionMonitorItem();
+        dimensionMonitorItem.setUnlocalizedName("DimensionMonitor");
+        dimensionMonitorItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(dimensionMonitorItem, "dimensionMonitorItem");
+
+        phasedFieldGeneratorItem = new PhasedFieldGeneratorItem();
+        phasedFieldGeneratorItem.setUnlocalizedName("PhasedFieldGenerator");
+        phasedFieldGeneratorItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(phasedFieldGeneratorItem, "phasedFieldGeneratorItem");
+
+        dimensionalShard = new DimensionalShard();
+        dimensionalShard.setUnlocalizedName("DimensionalShard");
+        dimensionalShard.setCreativeTab(RFTools.tabRfTools);
+        dimensionalShard.setTextureName(RFTools.MODID + ":dimensionalShardItem");
+        GameRegistry.registerItem(dimensionalShard, "dimensionalShardItem");
+    }
+
     public static void setupCrafting() {
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
-        GameRegistry.addSmelting(dimensionalShardBlock, new ItemStack(ModItems.dimensionalShard, 4), 1.0f);
-        GameRegistry.addRecipe(new ItemStack(dimletResearcherBlock), "rur", "cMc", "iii", 'r', Items.redstone, 'u', ModItems.unknownDimlet, 'c', Items.comparator,
+        GameRegistry.addSmelting(dimensionalShardBlock, new ItemStack(dimensionalShard, 4), 1.0f);
+        GameRegistry.addRecipe(new ItemStack(dimletResearcherBlock), "rur", "cMc", "iii", 'r', Items.redstone, 'u', unknownDimlet, 'c', Items.comparator,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new ItemStack(dimletScramblerBlock), "uru", "cMc", "iii", 'r', Items.redstone, 'u', ModItems.unknownDimlet, 'c', Items.repeater,
+        GameRegistry.addRecipe(new ItemStack(dimletScramblerBlock), "uru", "cMc", "iii", 'r', Items.redstone, 'u', unknownDimlet, 'c', Items.repeater,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(dimensionEnscriberBlock), "rpr", "bMb", "iii", 'r', Items.redstone, 'p', Items.paper, 'b', inkSac,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
@@ -96,12 +155,12 @@ public class DimletSetup {
                 'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
         GameRegistry.addRecipe(new ItemStack(dimensionEditorBlock), "oEo", "DMD", "ggg", 'o', Items.redstone, 'E', Items.emerald, 'D', Items.diamond,
                 'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
-        GameRegistry.addRecipe(new ItemStack(activityProbeBlock), "sss", "oMo", "sss", 'o', Items.ender_pearl, 's', ModItems.dimensionalShard,
+        GameRegistry.addRecipe(new ItemStack(activityProbeBlock), "sss", "oMo", "sss", 'o', Items.ender_pearl, 's', dimensionalShard,
                 'M', ModBlocks.machineFrame);
-        GameRegistry.addRecipe(new ItemStack(energyExtractorBlock), "RoR", "sMs", "RsR", 'o', Items.ender_pearl, 's', ModItems.dimensionalShard,
+        GameRegistry.addRecipe(new ItemStack(energyExtractorBlock), "RoR", "sMs", "RsR", 'o', Items.ender_pearl, 's', dimensionalShard,
                 'M', ModBlocks.machineFrame, 'R', Blocks.redstone_block);
 
-        GameRegistry.addRecipe(new ItemStack(dimensionalBlankBlock, 8), "bbb", "b*b", "bbb", 'b', Blocks.stone, '*', ModItems.dimensionalShard);
+        GameRegistry.addRecipe(new ItemStack(dimensionalBlankBlock, 8), "bbb", "b*b", "bbb", 'b', Blocks.stone, '*', dimensionalShard);
         GameRegistry.addShapelessRecipe(new ItemStack(dimensionalBlock), new ItemStack(dimensionalBlankBlock));
         GameRegistry.addRecipe(new ItemStack(dimensionalSmallBlocks, 4), "bb ", "bb ", "   ", 'b', dimensionalBlankBlock);
         GameRegistry.addRecipe(new ItemStack(dimensionalCrossBlock, 5), " b ", "bbb", " b ", 'b', dimensionalBlankBlock);
@@ -111,13 +170,13 @@ public class DimletSetup {
         GameRegistry.addRecipe(new ItemStack(dimensionalPattern2Block, 7), "bxb", "bbb", "bxb", 'b', dimensionalBlankBlock, 'x', bonemealStack);
 
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
-        GameRegistry.addRecipe(new ItemStack(DimletSetup.dimensionMonitorBlock), " u ", "TMT", "rCr", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase,
+        GameRegistry.addRecipe(new ItemStack(DimletSetup.dimensionMonitorBlock), " u ", "TMT", "rCr", 'u', unknownDimlet, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase,
                 'C', Items.comparator);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.emptyDimensionTab), "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone);
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimensionMonitorItem), " u ", "rCr", " u ", 'u', ModItems.unknownDimlet, 'r', Items.redstone, 'C', Items.comparator);
-        GameRegistry.addRecipe(new ItemStack(ModItems.phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', ModItems.dimensionalShard);
+        GameRegistry.addRecipe(new ItemStack(emptyDimensionTab), "prp", "rpr", "prp", 'p', Items.paper, 'r', Items.redstone);
+        GameRegistry.addRecipe(new ItemStack(dimensionMonitorItem), " u ", "rCr", " u ", 'u', unknownDimlet, 'r', Items.redstone, 'C', Items.comparator);
+        GameRegistry.addRecipe(new ItemStack(phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', dimensionalShard);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.dimletTemplate), "sss", "sps", "sss", 's', ModItems.dimensionalShard, 'p', Items.paper);
+        GameRegistry.addRecipe(new ItemStack(dimletTemplate), "sss", "sps", "sss", 's', dimensionalShard, 'p', Items.paper);
     }
 }

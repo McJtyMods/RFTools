@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
@@ -45,7 +45,7 @@ public class CmdDimletCfg extends AbstractRfToolsCommand {
             EntityPlayer player = (EntityPlayer) sender;
             heldItem = player.getHeldItem();
         }
-        if (heldItem == null || heldItem.getItem() != ModItems.knownDimlet) {
+        if (heldItem == null || heldItem.getItem() != DimletSetup.knownDimlet) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "You need to hold a known dimlet in your hand!"));
             return;
         }

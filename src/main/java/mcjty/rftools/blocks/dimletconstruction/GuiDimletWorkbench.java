@@ -9,7 +9,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.Argument;
@@ -81,7 +81,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
         Slot slot = inventorySlots.getSlot(DimletWorkbenchContainer.SLOT_INPUT);
         if (slot.getStack() != null) {
             ItemStack itemStack = slot.getStack();
-            if (ModItems.knownDimlet.equals(itemStack.getItem())) {
+            if (DimletSetup.knownDimlet.equals(itemStack.getItem())) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, Minecraft.getMinecraft().theWorld);
                 if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
                     Achievements.trigger(Minecraft.getMinecraft().thePlayer, Achievements.smallBits);
@@ -96,7 +96,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
         Slot slot = inventorySlots.getSlot(DimletWorkbenchContainer.SLOT_INPUT);
         if (slot.getStack() != null) {
             ItemStack itemStack = slot.getStack();
-            if (ModItems.knownDimlet.equals(itemStack.getItem())) {
+            if (DimletSetup.knownDimlet.equals(itemStack.getItem())) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, Minecraft.getMinecraft().theWorld);
                 if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
                     enabled = true;

@@ -1,8 +1,8 @@
 package mcjty.rftools.items.dimlets.types;
 
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.SpecialType;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
@@ -132,13 +132,13 @@ public class SpecialDimletType implements IDimletType {
     }
 
     private static boolean isValidSpecialEssence(ItemStack stackEssence) {
-        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
+        if (stackEssence.getItem() == DimletConstructionSetup.peaceEssenceItem) {
             return true;
         }
-        if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
+        if (stackEssence.getItem() == DimletConstructionSetup.efficiencyEssenceItem) {
             return true;
         }
-        if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
+        if (stackEssence.getItem() == DimletConstructionSetup.mediocreEfficiencyEssenceItem) {
             return true;
         }
 
@@ -146,11 +146,11 @@ public class SpecialDimletType implements IDimletType {
     }
 
     private static DimletKey findSpecialDimlet(ItemStack stackEssence) {
-        if (stackEssence.getItem() == ModItems.peaceEssenceItem) {
+        if (stackEssence.getItem() == DimletConstructionSetup.peaceEssenceItem) {
             return new DimletKey(DimletType.DIMLET_SPECIAL, "Peaceful");
-        } else if (stackEssence.getItem() == ModItems.efficiencyEssenceItem) {
+        } else if (stackEssence.getItem() == DimletConstructionSetup.efficiencyEssenceItem) {
             return new DimletKey(DimletType.DIMLET_SPECIAL, "Efficiency");
-        } else if (stackEssence.getItem() == ModItems.mediocreEfficiencyEssenceItem) {
+        } else if (stackEssence.getItem() == DimletConstructionSetup.mediocreEfficiencyEssenceItem) {
             return new DimletKey(DimletType.DIMLET_SPECIAL, "Mediocre Efficiency");
         }
         return null;

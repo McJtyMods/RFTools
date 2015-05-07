@@ -1,10 +1,10 @@
 package mcjty.rftools.items.dimlets.types;
 
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.MobDescriptor;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
@@ -140,7 +140,7 @@ public class MobDimletType implements IDimletType {
     }
 
     private static boolean isValidMobEssence(ItemStack stackEssence, NBTTagCompound essenceCompound) {
-        if (stackEssence.getItem() != ModItems.syringeItem) {
+        if (stackEssence.getItem() != DimletConstructionSetup.syringeItem) {
             return false;
         }
         if (essenceCompound == null) {

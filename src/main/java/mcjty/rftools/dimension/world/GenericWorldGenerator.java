@@ -8,7 +8,6 @@ import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.types.FeatureType;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -296,7 +295,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
         world.setBlock(midx+2, starty+1, midz-2, Blocks.chest, 0, 2);
         TileEntityChest chest = (TileEntityChest) world.getTileEntity(midx+2, starty+1, midz-2);
         for (int i = 0 ; i < random.nextInt(2)+2 ; i++) {
-            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(ModItems.unknownDimlet, random.nextInt(6) + 3));
+            chest.setInventorySlotContents(random.nextInt(chest.getSizeInventory()), new ItemStack(DimletSetup.unknownDimlet, random.nextInt(6) + 3));
         }
         WeightedRandomSelector.Distribution<Integer> goodDistribution = DimletRandomizer.randomDimlets.createDistribution(0.01f);
         for (int i = 0 ; i < random.nextInt(2)+1 ; i++) {

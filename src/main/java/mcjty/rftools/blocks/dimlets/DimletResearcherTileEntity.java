@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -49,7 +48,7 @@ public class DimletResearcherTileEntity extends GenericEnergyReceiverTileEntity 
         } else {
             ItemStack inputStack = inventoryHelper.getStacks()[0];
             ItemStack outputStack = inventoryHelper.getStacks()[1];
-            if (inputStack != null && inputStack.getItem() == ModItems.unknownDimlet && outputStack == null) {
+            if (inputStack != null && inputStack.getItem() == DimletSetup.unknownDimlet && outputStack == null) {
                 startResearching();
             }
         }

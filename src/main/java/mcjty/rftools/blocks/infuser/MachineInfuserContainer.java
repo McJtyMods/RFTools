@@ -4,7 +4,7 @@ import mcjty.container.ContainerFactory;
 import mcjty.container.GenericContainer;
 import mcjty.container.SlotDefinition;
 import mcjty.container.SlotType;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -17,7 +17,7 @@ public class MachineInfuserContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.dimensionalShard)), CONTAINER_INVENTORY, SLOT_SHARDINPUT, 64, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(DimletSetup.dimensionalShard)), CONTAINER_INVENTORY, SLOT_SHARDINPUT, 64, 24, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_MACHINEOUTPUT, 118, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }

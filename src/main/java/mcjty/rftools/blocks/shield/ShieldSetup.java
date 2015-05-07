@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.shield;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
-import mcjty.rftools.items.ModItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -56,9 +56,9 @@ public class ShieldSetup {
                 new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block)
         }, new ItemStack(shieldBlock2), 4));
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(ModItems.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShard),
+                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard),
                 new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
-                new ItemStack(ModItems.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShard)
+                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard)
         }, new ItemStack(shieldBlock3), 4));
 
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);

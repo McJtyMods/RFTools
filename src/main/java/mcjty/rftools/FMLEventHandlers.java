@@ -1,8 +1,8 @@
 package mcjty.rftools;
 
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.DimensionSyncPacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -37,9 +37,9 @@ public class FMLEventHandlers {
             ItemStack stack = event.pickedUp.getEntityItem();
             if (stack != null) {
                 Item item = stack.getItem();
-                if (item == ModItems.unknownDimlet) {
+                if (item == DimletSetup.unknownDimlet) {
                     Achievements.trigger(event.player, Achievements.theFirstStep);
-                } else if (item == ModItems.dimensionalShard) {
+                } else if (item == DimletSetup.dimensionalShard) {
                     Achievements.trigger(event.player, Achievements.specialOres);
                 }
             }

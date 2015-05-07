@@ -1,9 +1,9 @@
 package mcjty.rftools.commands;
 
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
-import mcjty.rftools.items.ModItems;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -47,7 +47,7 @@ public class CmdRecover extends AbstractRfToolsCommand {
             EntityPlayer player = (EntityPlayer) sender;
             heldItem = player.getHeldItem();
         }
-        if (heldItem == null || heldItem.getItem() != ModItems.realizedDimensionTab) {
+        if (heldItem == null || heldItem.getItem() != DimletSetup.realizedDimensionTab) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "You need to hold a realized dimension tab in your hand!"));
             return;
         }

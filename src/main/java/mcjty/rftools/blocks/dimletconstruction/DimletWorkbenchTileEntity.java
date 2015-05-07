@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimletconstruction;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.DimletCraftingTools;
 import mcjty.rftools.items.dimlets.types.IDimletType;
@@ -207,7 +207,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
         }
         ItemStack stack = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_INPUT];
         if (stack != null) {
-            if (ModItems.knownDimlet.equals(stack.getItem())) {
+            if (DimletSetup.knownDimlet.equals(stack.getItem())) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
                 DimletEntry entry = KnownDimletConfiguration.getEntry(key);
                 if (entry != null) {
@@ -235,30 +235,30 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
         DimletEntry entry = KnownDimletConfiguration.getEntry(idToExtract);
 
         if (extractSuccess(factor)) {
-            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletBaseItem));
+            mergeItemOrThrowInWorld(new ItemStack(DimletConstructionSetup.dimletBaseItem));
         }
 
         int rarity = entry.getRarity();
 
         if (extractSuccess(factor)) {
-            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletTypeControllerItem, 1, entry.getKey().getType().ordinal()));
+            mergeItemOrThrowInWorld(new ItemStack(DimletConstructionSetup.dimletTypeControllerItem, 1, entry.getKey().getType().ordinal()));
         }
 
         int level = DimletCraftingTools.calculateItemLevelFromRarity(rarity);
         if (extractSuccess(factor)) {
-            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletMemoryUnitItem, 1, level));
+            mergeItemOrThrowInWorld(new ItemStack(DimletConstructionSetup.dimletMemoryUnitItem, 1, level));
         } else {
             factor += 0.1f;     // If this failed we increase our chances a bit
         }
 
         if (extractSuccess(factor)) {
-            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletEnergyModuleItem, 1, level));
+            mergeItemOrThrowInWorld(new ItemStack(DimletConstructionSetup.dimletEnergyModuleItem, 1, level));
         } else {
             factor += 0.1f;     // If this failed we increase our chances a bit
         }
 
         if (extractSuccess(factor)) {
-            mergeItemOrThrowInWorld(new ItemStack(ModItems.dimletControlCircuitItem, 1, rarity));
+            mergeItemOrThrowInWorld(new ItemStack(DimletConstructionSetup.dimletControlCircuitItem, 1, rarity));
         }
 
         idToExtract = null;

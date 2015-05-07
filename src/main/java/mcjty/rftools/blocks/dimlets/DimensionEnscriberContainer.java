@@ -5,7 +5,6 @@ import mcjty.container.GenericContainer;
 import mcjty.container.SlotDefinition;
 import mcjty.container.SlotType;
 import mcjty.rftools.Achievements;
-import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -19,7 +18,7 @@ public class DimensionEnscriberContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.knownDimlet)), CONTAINER_INVENTORY, SLOT_DIMLETS, 13, 6, 13, 18, 7, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(DimletSetup.knownDimlet)), CONTAINER_INVENTORY, SLOT_DIMLETS, 13, 6, 13, 18, 7, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_TAB, 13, 142, 1, 18, 1, 18);
             layoutPlayerInventorySlots(85, 142);
         }
