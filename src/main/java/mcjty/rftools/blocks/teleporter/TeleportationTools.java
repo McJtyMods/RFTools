@@ -292,6 +292,11 @@ public class TeleportationTools {
         player.addExperienceLevel(0);
         MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
                 new RfToolsTeleporter(worldServer, x, y, z));
+        player.setPositionAndUpdate(x, y, z);
+        worldServer.spawnEntityInWorld(player);
+        worldServer.updateEntityWithOptionalForce(player, false);
+
+
     }
 
     public static TeleportDestination findDestination(World worldObj, Coordinate coordinate, int dimension) {
