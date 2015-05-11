@@ -11,28 +11,38 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ModularStorageTileEntity extends GenericTileEntity implements ISidedInventory {
 
+    private int[] accessible = null;
+
     public static final String CMD_SHIFTCLICK_SLOT = "clickSlotShift";
 
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return ModularStorageContainer.factory.getAccessibleSlots();
+        if (accessible == null) {
+            accessible = new int[ModularStorageContainer.MAXSIZE_STORAGE];
+            for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
+                accessible[i] = 2 + i;
+            }
+        }
+        return accessible;
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return ModularStorageContainer.factory.isInputSlot(index);
+        return index >= 2;
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return ModularStorageContainer.factory.isOutputSlot(index);
+        return index >= 2;
     }
 
     @Override
@@ -151,18 +161,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             return;
         }
         System.out.println("stack = " + stack);
-        NBTTagCompound tagCompound = storageModule.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            storageModule.setTagCompound(tagCompound);
-        }
-        NBTTagList items = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        NBTTagCompound tag = new NBTTagCompound();
-        stack.writeToNBT(tag);
-        items.appendTag(tag);
-        tagCompound.setTag("Items", items);
-//        inventoryHelper.decrStackSize(slot, stack.stackSize);
-        playerMP.inventory.decrStackSize(slot, stack.stackSize);
+
+        List<InventoryHelper.SlotModifier> undo = new ArrayList<InventoryHelper.SlotModifier>();
+        int i = inventoryHelper.mergeItemStack(this, stack, 2, 2 + ModularStorageContainer.MAXSIZE_STORAGE, undo);
+        playerMP.inventory.decrStackSize(slot, stack.stackSize-i);
     }
 
     @Override
@@ -173,6 +175,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         if (CMD_SHIFTCLICK_SLOT.equals(command)) {
             shiftClickSlot(playerMP, args.get("slot").getInteger());
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
         }
         return false;

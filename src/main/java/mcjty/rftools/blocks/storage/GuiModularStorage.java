@@ -42,8 +42,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 5, 232, 143));
-        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 5, 12, 143)).setDesiredWidth(12).setVertical().setScrollable(itemList);
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 232, 147));
+        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 3, 12, 147)).setDesiredWidth(12).setVertical().setScrollable(itemList);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -58,19 +58,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             return;
         }
 
-        ItemStack storageModule = inventorySlots.getSlot(0).getStack();
-        NBTTagCompound tagCompound = storageModule.getTagCompound();
-        if (tagCompound != null) {
-            NBTTagList items = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < items.tagCount() ; i++) {
-                NBTTagCompound tag = items.getCompoundTagAt(i);
-                ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
-
-                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+        for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
+            ItemStack stack = tileEntity.getStackInSlot(i);
+            if (stack != null && stack.stackSize > 0) {
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(12);
                 panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
                 String displayName = stack != null ? stack.getDisplayName() : "";
                 panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-//        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
+                //        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
                 itemList.addChild(panel);
             }
         }
