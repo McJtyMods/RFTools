@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.container.GenericGuiContainer;
 import mcjty.gui.Window;
+import mcjty.gui.events.SelectionEvent;
 import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
@@ -42,13 +43,31 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 232, 147));
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 232, 147)).addSelectionEvent(new SelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                selectItem();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+
+            }
+        });
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 3, 12, 147)).setDesiredWidth(12).setVertical().setScrollable(itemList);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void selectItem() {
+        int selected = itemList.getFirstSelected();
+        if (selected == -1) {
+            return;
+        }
+        sendServerCommand(ModularStorageTileEntity.CMD_DRAGITEM, new Argument("selected", selected));
     }
 
     private void updateList() {

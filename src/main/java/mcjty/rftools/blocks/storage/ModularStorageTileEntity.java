@@ -20,6 +20,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private int[] accessible = null;
 
     public static final String CMD_SHIFTCLICK_SLOT = "clickSlotShift";
+    public static final String CMD_DRAGITEM = "dragItem";
 
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
@@ -148,6 +149,26 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         tagCompound.setTag("Items", bufferTagList);
     }
 
+    private void dragItem(EntityPlayerMP playerMP, int selected) {
+        int index = 0;
+        int foundSlot = -1;
+        for (int i = 2 ; i < getSizeInventory() ; i++) {
+            ItemStack stack = getStackInSlot(i);
+            if (stack != null && stack.stackSize > 0) {
+                if (index == selected) {
+                    foundSlot = i;
+                    break;
+                }
+                index++;
+            }
+        }
+        if (foundSlot != -1) {
+            ItemStack stack = getStackInSlot(foundSlot).copy();
+            inventoryHelper.decrStackSize(foundSlot, stack.stackSize);
+            playerMP.inventory.setItemStack(stack);
+        }
+    }
+
     private void shiftClickSlot(EntityPlayerMP playerMP, int slot) {
         System.out.println("slot = " + slot);
         ItemStack storageModule = inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE];
@@ -176,6 +197,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         if (CMD_SHIFTCLICK_SLOT.equals(command)) {
             shiftClickSlot(playerMP, args.get("slot").getInteger());
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        } else if (CMD_DRAGITEM.equals(command)) {
+            dragItem(playerMP, args.get("selected").getInteger());
             return true;
         }
         return false;
