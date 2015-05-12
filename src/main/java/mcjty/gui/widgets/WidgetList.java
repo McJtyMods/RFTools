@@ -23,6 +23,8 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     private List<SelectionEvent> selectionEvents = null;
     private Set<Integer> hilightedRows = new HashSet<Integer>();
     private boolean noselection = false;
+    private int leftMargin = 2;
+    private int topMargin = 1;
 
     public WidgetList(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -34,6 +36,24 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     public WidgetList setRowheight(int rowheight) {
         this.rowheight = rowheight;
+        return this;
+    }
+
+    public int getLeftMargin() {
+        return leftMargin;
+    }
+
+    public WidgetList setLeftMargin(int leftMargin) {
+        this.leftMargin = leftMargin;
+        return this;
+    }
+
+    public int getTopMargin() {
+        return topMargin;
+    }
+
+    public WidgetList setTopMargin(int topMargin) {
+        this.topMargin = topMargin;
         return this;
     }
 
@@ -82,8 +102,8 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         mouseWheel(0, x, y);
 
         super.draw(window, x, y);
-        int xx = x + bounds.x + 2;
-        int yy = y + bounds.y + 1;
+        int xx = x + bounds.x + leftMargin;
+        int yy = y + bounds.y + topMargin;
         int top = 0;        // Margin@@@?
 //        drawBox(xx, yy, 0xffff0000);
 

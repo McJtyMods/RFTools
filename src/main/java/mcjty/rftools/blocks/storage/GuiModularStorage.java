@@ -56,7 +56,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(2, 3, 236, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1));
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
+                setFilledBackground(0xff8090a0).setLeftMargin(0);
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, 147)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
         filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items");
@@ -76,14 +77,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-    }
-
-    private void selectItem() {
-//        int selected = itemList.getFirstSelected();
-//        if (selected == -1) {
-//            return;
-//        }
-//        sendServerCommand(ModularStorageTileEntity.CMD_DRAGITEM, new Argument("slot", listIndexToSlot.get(selected)));
     }
 
     private Slot findEmptySlot() {

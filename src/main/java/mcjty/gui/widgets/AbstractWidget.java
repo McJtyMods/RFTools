@@ -29,6 +29,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
     private int filledRectThickness = 0;
+    private int filledBackground = -1;
 
     protected AbstractWidget(Minecraft mc, Gui gui) {
         this.mc = mc;
@@ -148,6 +149,15 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
         return (P) this;
     }
 
+    public int getFilledBackground() {
+        return filledBackground;
+    }
+
+    public P setFilledBackground(int filledBackground) {
+        this.filledBackground = filledBackground;
+        return (P) this;
+    }
+
     @Override
     public void setBounds(Rectangle bounds) {
         this.bounds = bounds;
@@ -188,6 +198,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
             RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
         } else if (filledRectThickness < 0) {
             RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, -filledRectThickness, 0xffc6c6c6, 0xff555555, 0xffffffff);
+        } else if (filledBackground != -1) {
+            RenderHelper.drawHorizontalGradientRect(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, filledBackground, filledBackground);
         }
     }
 
