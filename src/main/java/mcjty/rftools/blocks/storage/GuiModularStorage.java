@@ -9,6 +9,7 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
+import mcjty.gui.widgets.TextField;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
@@ -33,6 +34,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private WidgetList itemList;
     private Slider slider;
+    private TextField filter;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         super(modularStorageTileEntity, container);
@@ -58,7 +60,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }).setUserObject(new Integer(-1));
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 3, 12, 147)).setDesiredWidth(12).setVertical().setScrollable(itemList);
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider);
+        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items");
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -107,17 +111,21 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             return;
         }
 
+        String filterText = filter.getText().toLowerCase().trim();
+
         for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
             ItemStack stack = tileEntity.getStackInSlot(i);
             if (stack != null && stack.stackSize > 0) {
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(12).setUserObject(new Integer(-1));
                 BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(i));
                 panel.addChild(blockRender);
-                String displayName = stack != null ? stack.getDisplayName() : "";
-                AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90).setUserObject(new Integer(-1));
-                panel.addChild(label);
-                //        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
-                itemList.addChild(panel);
+                String displayName = stack.getDisplayName();
+                if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+                    AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90).setUserObject(new Integer(-1));
+                    panel.addChild(label);
+                    //        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
+                    itemList.addChild(panel);
+                }
             }
         }
     }
