@@ -21,7 +21,7 @@ import java.util.List;
 public class StorageModuleItem extends Item {
     private final IIcon[] icons = new IIcon[3];
 
-    public static final int MAXSIZE[] = new int[] { 100, 200, 400 };
+    public static final int MAXSIZE[] = new int[] { 100, 200, 300 };
 
     public StorageModuleItem() {
         setMaxStackSize(1);
