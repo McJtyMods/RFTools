@@ -21,6 +21,8 @@ import net.minecraftforge.common.util.Constants;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
@@ -53,7 +55,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             public void doubleClick(Widget parent, int index) {
 
             }
-        });
+        }).setUserObject(new Integer(-1));
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 3, 12, 147)).setDesiredWidth(12).setVertical().setScrollable(itemList);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider);
@@ -63,11 +65,39 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private void selectItem() {
-        int selected = itemList.getFirstSelected();
-        if (selected == -1) {
-            return;
+//        int selected = itemList.getFirstSelected();
+//        if (selected == -1) {
+//            return;
+//        }
+//        sendServerCommand(ModularStorageTileEntity.CMD_DRAGITEM, new Argument("slot", listIndexToSlot.get(selected)));
+    }
+
+    private Slot findEmptySlot() {
+        for (Object slotObject : inventorySlots.inventorySlots) {
+            Slot slot = (Slot) slotObject;
+            if (!slot.getHasStack()) {
+                return slot;
+            }
         }
-        sendServerCommand(ModularStorageTileEntity.CMD_DRAGITEM, new Argument("selected", selected));
+        return null;
+    }
+
+    @Override
+    public Slot getSlotAtPosition(int x, int y) {
+        Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+        if (widget != null) {
+            Object userObject = widget.getUserObject();
+            if (userObject instanceof Integer) {
+                Integer slotIndex = (Integer) userObject;
+                if (slotIndex != -1) {
+                    return inventorySlots.getSlot(slotIndex);
+                } else {
+                    return findEmptySlot();
+                }
+            }
+        }
+
+        return super.getSlotAtPosition(x, y);
     }
 
     private void updateList() {
@@ -80,10 +110,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
             ItemStack stack = tileEntity.getStackInSlot(i);
             if (stack != null && stack.stackSize > 0) {
-                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(12);
-                panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(12).setUserObject(new Integer(-1));
+                BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(i));
+                panel.addChild(blockRender);
                 String displayName = stack != null ? stack.getDisplayName() : "";
-                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+                AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90).setUserObject(new Integer(-1));
+                panel.addChild(label);
                 //        panel.addChild(new mcjty.gui.widgets.Label(mc, this).setDynamic(true).setText(c.toString()));
                 itemList.addChild(panel);
             }

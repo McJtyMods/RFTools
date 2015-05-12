@@ -159,4 +159,11 @@ public interface Widget<P extends Widget> {
     P setLayoutHint(LayoutHint hint);
 
     LayoutHint getLayoutHint();
+
+    /**
+     * Associate a user object with this widget.
+     */
+    P setUserObject(Object obj);
+
+    Object getUserObject();
 }

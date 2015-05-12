@@ -24,6 +24,7 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     protected List<String> tooltips = null;
 
     private boolean layoutDirty = true;
+    private Object userObject = null;
 
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
@@ -243,5 +244,16 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
     @Override
     public LayoutHint getLayoutHint() {
         return layoutHint;
+    }
+
+    @Override
+    public Object getUserObject() {
+        return userObject;
+    }
+
+    @Override
+    public P setUserObject(Object obj) {
+        userObject = obj;
+        return (P) this;
     }
 }
