@@ -15,6 +15,8 @@ public class ModularStorageContainer extends GenericContainer {
     public static final int SLOT_STORAGE = 2;
     public static final int MAXSIZE_STORAGE = 20*20;
 
+    private ModularStorageTileEntity modularStorageTileEntity;
+
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
@@ -30,5 +32,14 @@ public class ModularStorageContainer extends GenericContainer {
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
+        modularStorageTileEntity = containerInventory;
+    }
+
+    @Override
+    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+        if (index == SLOT_STORAGE_MODULE && !player.worldObj.isRemote) {
+            modularStorageTileEntity.copyToModule();
+        }
+        return super.slotClick(index, button, mode, player);
     }
 }

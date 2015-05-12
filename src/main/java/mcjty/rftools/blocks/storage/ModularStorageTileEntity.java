@@ -58,6 +58,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE && stack != null) {
+            copyFromModule(stack);
+        }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
@@ -96,6 +99,45 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         return true;
     }
 
+    public void copyToModule() {
+        ItemStack stack = inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE];
+        if (stack == null || stack.stackSize == 0) {
+            // Should be impossible.
+            return;
+        }
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            stack.setTagCompound(tagCompound);
+        }
+        writeBufferToNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+
+        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
+            inventoryHelper.setInventorySlotContents(0, i, null);
+        }
+
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void copyFromModule(ItemStack stack) {
+        if (stack == null || stack.stackSize == 0) {
+            return;
+        }
+
+        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
+            inventoryHelper.setInventorySlotContents(0, i, null);
+        }
+
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null) {
+            readBufferFromNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+        }
+
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -104,14 +146,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound);
+        readBufferFromNBT(tagCompound, 0);
     }
 
-    private void readBufferFromNBT(NBTTagCompound tagCompound) {
+    private void readBufferFromNBT(NBTTagCompound tagCompound, int offset) {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.getStacks()[i+offset] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -123,12 +165,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound);
+        writeBufferToNBT(tagCompound, 0);
     }
 
-    private void writeBufferToNBT(NBTTagCompound tagCompound) {
+    private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
+        for (int i = offset ; i < inventoryHelper.getStacks().length ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {

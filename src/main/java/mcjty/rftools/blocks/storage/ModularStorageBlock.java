@@ -3,16 +3,21 @@ package mcjty.rftools.blocks.storage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
+import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModularStorageBlock extends GenericContainerBlock {
@@ -46,7 +51,26 @@ public class ModularStorageBlock extends GenericContainerBlock {
         }
     }
 
-
+//    @Override
+//    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+//        TileEntity tileEntity = world.getTileEntity(x, y, z);
+//
+//        if (tileEntity instanceof ModularStorageTileEntity) {
+//            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) tileEntity;
+//            modularStorageTileEntity.copyToModule();
+//            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
+//            NBTTagCompound tagCompound = new NBTTagCompound();
+//            ((GenericTileEntity)tileEntity).writeRestorableToNBT(tagCompound);
+//
+//            stack.setTagCompound(tagCompound);
+//            ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+//            result.add(stack);
+//            return result;
+//        } else {
+//            return super.getDrops(world, x, y, z, metadata, fortune);
+//        }
+//    }
+//
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {

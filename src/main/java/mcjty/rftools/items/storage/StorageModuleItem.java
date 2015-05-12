@@ -9,8 +9,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.Constants;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -35,6 +38,18 @@ public class StorageModuleItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            int cnt = 0;
+            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                NBTTagCompound tagAt = bufferTagList.getCompoundTagAt(i);
+                if (ItemStack.loadItemStackFromNBT(tagAt) != null) {
+                    cnt++;
+                }
+            }
+            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + bufferTagList.tagCount() + " stacks");
+        }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block");
         } else {
