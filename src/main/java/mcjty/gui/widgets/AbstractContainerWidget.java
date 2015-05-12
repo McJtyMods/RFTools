@@ -69,4 +69,7 @@ public class AbstractContainerWidget<P extends AbstractContainerWidget> extends 
         markDirty();
     }
 
+    public int getChildCount() {
+        return children.size();
+    }
 }

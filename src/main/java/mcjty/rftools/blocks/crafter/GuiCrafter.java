@@ -161,19 +161,19 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void changeRedstoneMode() {
-        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendChangeToServer();
     }
 
     private void changeSpeedMode() {
-        tileEntity.setSpeedMode(speedMode.getCurrentChoice());
+        tileEntity.setSpeedMode(speedMode.getCurrentChoiceIndex());
         sendChangeToServer();
     }
 
     private void sendChangeToServer() {
         sendServerCommand(CrafterBaseTE.CMD_MODE,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()),
-                new Argument("speed", speedMode.getCurrentChoice()));
+                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()),
+                new Argument("speed", speedMode.getCurrentChoiceIndex()));
     }
 
     private void populateList() {

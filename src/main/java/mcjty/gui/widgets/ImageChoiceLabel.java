@@ -66,8 +66,36 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
         setImage(imageList.get(currentChoice), uList.get(currentChoice), vList.get(currentChoice));
     }
 
-    public int getCurrentChoice() {
+    private int findChoice(String choice) {
+        if (choice == null) {
+            return -1;
+        }
+        int i = 0;
+        for (String s : choiceList) {
+            if (choice.equals(s)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+
+    public void setCurrentChoice(String choice) {
+        int idx = findChoice(choice);
+        if (idx != -1) {
+            setCurrentChoice(idx);
+        }
+    }
+
+    public int getCurrentChoiceIndex() {
         return currentChoice;
+    }
+
+    public String getCurrentChoice() {
+        if (currentChoice == -1) {
+            return null;
+        }
+        return choiceList.get(currentChoice);
     }
 
     public ImageChoiceLabel addChoiceEvent(ChoiceEvent event) {

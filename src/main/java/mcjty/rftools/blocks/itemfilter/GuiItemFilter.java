@@ -76,7 +76,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
 
     private void changeMode(int side, int slot) {
         ImageChoiceLabel choiceLabel = bits[side * ItemFilterContainer.BUFFER_SIZE + slot];
-        int c = choiceLabel.getCurrentChoice();
+        int c = choiceLabel.getCurrentChoiceIndex();
         boolean input = false;
         boolean output = false;
         if (c == 1) {

@@ -7,7 +7,6 @@ import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Button;
-import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
@@ -80,8 +79,8 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
     }
 
     private void changeRedstoneMode() {
-        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoice()]);
-        sendServerCommand(SpaceProjectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoice()].getDescription()));
+        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
+        sendServerCommand(SpaceProjectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
 

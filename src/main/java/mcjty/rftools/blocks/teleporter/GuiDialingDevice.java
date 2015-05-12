@@ -367,7 +367,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void changeShowFavorite() {
-        boolean fav = favoriteButton.getCurrentChoice() == 1;
+        boolean fav = favoriteButton.getCurrentChoiceIndex() == 1;
         sendServerCommand(DialingDeviceTileEntity.CMD_SHOWFAVORITE,
                 new Argument("favorite", fav));
         listDirty = 0;
@@ -397,7 +397,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        boolean newReceiversFiltered = favoriteButton.getCurrentChoice() == 1;
+        boolean newReceiversFiltered = favoriteButton.getCurrentChoiceIndex() == 1;
 
         if (newReceivers.equals(receivers) && newReceiversFiltered == receiversFiltered) {
             return;

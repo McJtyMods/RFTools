@@ -22,6 +22,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
     private boolean propagateEventsToChildren = false;
     private List<SelectionEvent> selectionEvents = null;
     private Set<Integer> hilightedRows = new HashSet<Integer>();
+    private boolean noselection = false;
 
     public WidgetList(Minecraft mc, Gui gui) {
         super(mc, gui);
@@ -47,6 +48,15 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     public boolean isPropagateEventsToChildren() {
         return propagateEventsToChildren;
+    }
+
+    public WidgetList setNoSelectionMode(boolean m) {
+        this.noselection = m;
+        return this;
+    }
+
+    public boolean isNoSelection() {
+        return noselection;
     }
 
     public WidgetList setPropagateEventsToChildren(boolean propagateEventsToChildren) {
@@ -105,6 +115,11 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         if (!isEnabledAndVisible()) {
             return null;
         }
+
+        if (noselection) {
+            return null;
+        }
+
         int newSelected = -1;
         int top = bounds.y;        // Margin@@@?
 

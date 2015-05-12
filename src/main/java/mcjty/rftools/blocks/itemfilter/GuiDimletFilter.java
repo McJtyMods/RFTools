@@ -192,7 +192,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
 
     private void changeMode(int side) {
         ImageChoiceLabel choiceLabel = bits[side];
-        int input = choiceLabel.getCurrentChoice();
+        int input = choiceLabel.getCurrentChoiceIndex();
         sendServerCommand(DimletFilterTileEntity.CMD_SETMODE,
                 new Argument("side", side),
                 new Argument("input", input));
