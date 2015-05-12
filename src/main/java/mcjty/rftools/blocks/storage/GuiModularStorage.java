@@ -20,6 +20,8 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -54,8 +56,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(2, 3, 235, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1));
-        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(240, 3, 12, 147)).setDesiredWidth(12).setVertical().setScrollable(itemList);
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(2, 3, 236, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1));
+        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, 147)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
         filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items");
 
@@ -141,21 +143,40 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         String sort = sortMode.getCurrentChoice();
 
-//        List<ItemStack> items = new ArrayList<ItemStack>();
-//        if (SORT_NAME.equals(sort)) {
-//
-//        }
-//
-        Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
-
+        List<Pair<ItemStack,Integer>> items = new ArrayList<Pair<ItemStack, Integer>>();
         for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
             ItemStack stack = tileEntity.getStackInSlot(i);
             if (stack != null && stack.stackSize > 0) {
                 String displayName = stack.getDisplayName();
                 if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
-                    currentPos = addItemToList(stack, itemList, currentPos, numcolumns, labelWidth, spacing, i);
+                    items.add(Pair.of(stack, i));
                 }
             }
+        }
+
+        if (SORT_NAME.equals(sort)) {
+            Collections.sort(items, new Comparator<Pair<ItemStack, Integer>>() {
+                @Override
+                public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+                    String name1 = o1.getLeft().getDisplayName().toLowerCase();
+                    String name2 = o2.getLeft().getDisplayName().toLowerCase();
+                    return name1.compareTo(name2);
+                }
+            });
+        } else {
+            Collections.sort(items, new Comparator<Pair<ItemStack, Integer>>() {
+                @Override
+                public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+                    Integer c1 = o1.getLeft().stackSize;
+                    Integer c2 = o2.getLeft().stackSize;
+                    return c2.compareTo(c1);
+                }
+            });
+        }
+
+        Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
+        for (Pair<ItemStack, Integer> item : items) {
+            currentPos = addItemToList(item.getKey(), itemList, currentPos, numcolumns, labelWidth, spacing, item.getValue());
         }
     }
 
