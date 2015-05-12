@@ -10,15 +10,13 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.input.Keyboard;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -187,27 +185,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
             panel.addChild(label);
         }
-        currentPos.setValue(currentPos.getValue()+1);
+        currentPos.setValue(currentPos.getValue() + 1);
         return currentPos;
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        boolean shift = (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
-        if (shift) {
-            Slot slot = getSlotAtPosition(x, y);
-            if (slot != null) {
-                if (slot.getHasStack()) {
-                    ItemStack storageModule = inventorySlots.getSlot(0).getStack();
-                    if (storageModule != null) {
-                        sendServerCommand(ModularStorageTileEntity.CMD_SHIFTCLICK_SLOT, new Argument("slot", slot.getSlotIndex()));
-                        return;
-                    }
-                }
-            }
-        }
-
-        super.mouseClicked(x, y, button);
     }
 
     @Override
