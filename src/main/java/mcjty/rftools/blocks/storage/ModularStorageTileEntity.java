@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -12,14 +13,15 @@ import net.minecraftforge.common.util.Constants;
 public class ModularStorageTileEntity extends GenericTileEntity implements ISidedInventory {
 
     private int[] accessible = null;
+    private int maxSize;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         if (accessible == null) {
-            accessible = new int[ModularStorageContainer.MAXSIZE_STORAGE];
-            for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
+            accessible = new int[maxSize];
+            for (int i = 0 ; i < maxSize ; i++) {
                 accessible[i] = 2 + i;
             }
         }
@@ -38,7 +40,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return 2 + maxSize;
     }
 
     @Override
@@ -134,6 +136,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             readBufferFromNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
         }
 
+        maxSize = StorageModuleItem.MAXSIZE[stack.getItemDamage()];
+
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -147,6 +151,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, 0);
+        maxSize = tagCompound.getInteger("maxSize");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound, int offset) {
@@ -166,6 +171,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, 0);
+        tagCompound.setInteger("maxSize", maxSize);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {

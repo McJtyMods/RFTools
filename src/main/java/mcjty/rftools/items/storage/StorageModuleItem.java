@@ -21,6 +21,8 @@ import java.util.List;
 public class StorageModuleItem extends Item {
     private final IIcon[] icons = new IIcon[3];
 
+    public static final int MAXSIZE[] = new int[] { 100, 200, 400 };
+
     public StorageModuleItem() {
         setMaxStackSize(1);
         setHasSubtypes(true);
@@ -48,7 +50,8 @@ public class StorageModuleItem extends Item {
                     cnt++;
                 }
             }
-            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + bufferTagList.tagCount() + " stacks");
+            int max = MAXSIZE[itemStack.getItemDamage()];
+            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block");
