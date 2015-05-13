@@ -30,6 +30,16 @@ public class OreDictTypeItem extends StorageTypeItem {
         return sorters;
     }
 
+    @Override
+    public String getLongLabel(ItemStack stack) {
+        return stack.getDisplayName();
+    }
+
+    @Override
+    public String getShortLabel(ItemStack stack) {
+        return stack.getDisplayName();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {

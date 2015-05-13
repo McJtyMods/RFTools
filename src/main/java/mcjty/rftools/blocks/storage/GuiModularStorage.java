@@ -248,10 +248,15 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }
-        String displayName = stack.getDisplayName();
         BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(slot));
         panel.addChild(blockRender);
         if (labelWidth > 0) {
+            String displayName;
+            if (labelWidth > 100) {
+                displayName = typeModule.getLongLabel(stack);
+            } else {
+                displayName = typeModule.getShortLabel(stack);
+            }
             AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
             panel.addChild(label);
         }
