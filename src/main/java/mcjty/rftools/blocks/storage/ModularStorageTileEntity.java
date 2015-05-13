@@ -109,6 +109,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE && stack != null) {
             copyFromModule(stack);
+        } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
+            // Make sure front side is updated.
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }

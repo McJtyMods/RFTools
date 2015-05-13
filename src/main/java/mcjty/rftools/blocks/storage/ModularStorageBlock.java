@@ -5,8 +5,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storage.modules.TypeModule;
+import mcjty.rftools.items.storage.DimletTypeItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
@@ -14,13 +17,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModularStorageBlock extends GenericContainerBlock {
+    private Map<Class<? extends TypeModule>, IIcon> icons = new HashMap<Class<? extends TypeModule>, IIcon>();
 
     public ModularStorageBlock() {
         super(Material.iron, ModularStorageTileEntity.class);
@@ -45,32 +53,20 @@ public class ModularStorageBlock extends GenericContainerBlock {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This modular storage system can store a lot");
-            list.add(EnumChatFormatting.WHITE + "of items and allows easy searching and filtering");
+            list.add(EnumChatFormatting.WHITE + "of items and allows easy searching and filtering.");
+            list.add(EnumChatFormatting.WHITE + "You must first insert a storage module item before");
+            list.add(EnumChatFormatting.WHITE + "you can use it");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
-//    @Override
-//    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-//        TileEntity tileEntity = world.getTileEntity(x, y, z);
-//
-//        if (tileEntity instanceof ModularStorageTileEntity) {
-//            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) tileEntity;
-//            modularStorageTileEntity.copyToModule();
-//            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
-//            NBTTagCompound tagCompound = new NBTTagCompound();
-//            ((GenericTileEntity)tileEntity).writeRestorableToNBT(tagCompound);
-//
-//            stack.setTagCompound(tagCompound);
-//            ArrayList<ItemStack> result = new ArrayList<ItemStack>();
-//            result.add(stack);
-//            return result;
-//        } else {
-//            return super.getDrops(world, x, y, z, metadata, fortune);
-//        }
-//    }
-//
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        icons.put(DimletTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageDimlet"));
+        super.registerBlockIcons(iconRegister);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
@@ -84,4 +80,19 @@ public class ModularStorageBlock extends GenericContainerBlock {
         return new ModularStorageContainer(entityPlayer, (ModularStorageTileEntity) tileEntity);
     }
 
+    @Override
+    public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
+        TileEntity te = blockAccess.getTileEntity(x, y, z);
+        if (te instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
+            ItemStack stack = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+            if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof TypeModule) {
+                IIcon icon = icons.get(stack.getItem().getClass());
+                if (icon != null) {
+                    return icon;
+                }
+            }
+        }
+        return super.getIconInd(blockAccess, x, y, z, meta);
+    }
 }
