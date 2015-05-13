@@ -47,6 +47,15 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
         return this;
     }
 
+    public void clear() {
+        choiceList.clear();
+        tooltipList.clear();
+        imageList.clear();
+        uList.clear();
+        vList.clear();
+        currentChoice = -1;
+    }
+
     @Override
     public Widget mouseClick(Window window, int x, int y, int button) {
         if (isEnabledAndVisible()) {
@@ -66,7 +75,7 @@ public class ImageChoiceLabel extends ImageLabel<ImageChoiceLabel> {
         setImage(imageList.get(currentChoice), uList.get(currentChoice), vList.get(currentChoice));
     }
 
-    private int findChoice(String choice) {
+    public int findChoice(String choice) {
         if (choice == null) {
             return -1;
         }

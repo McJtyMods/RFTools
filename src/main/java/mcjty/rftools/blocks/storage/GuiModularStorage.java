@@ -10,6 +10,9 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
+import mcjty.rftools.blocks.storage.modules.TypeModule;
+import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +22,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -31,8 +33,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public static final String VIEW_COLUMNS = "columns";
     public static final String VIEW_ICONS = "icons";
 
-    public static final String SORT_NAME = "name";
-    public static final String SORT_COUNT = "count";
+    private TypeModule typeModule;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorage.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -66,10 +67,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         viewMode.addChoice(VIEW_ICONS, "Items are shown with icons", guiElements, 11 * 16, 16);
         viewMode.setCurrentChoice(VIEW_LIST);
 
+        typeModule = new DefaultTypeModule();
+
         sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(28, 170, 16, 16)).setTooltips("Control how items are sorted", "in the view");
-        sortMode.addChoice(SORT_NAME, "Sort on name", guiElements, 12 * 16, 16);
-        sortMode.addChoice(SORT_COUNT, "Sort on count", guiElements, 13 * 16, 16);
-        sortMode.setCurrentChoice(SORT_NAME);
+        for (ItemSorter sorter : typeModule.getSorters()) {
+            sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
+        }
+        sortMode.setCurrentChoice(0);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).addChild(viewMode).addChild(sortMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -132,8 +136,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             spacing = 3;
         }
 
-        String sort = sortMode.getCurrentChoice();
-
         List<Pair<ItemStack,Integer>> items = new ArrayList<Pair<ItemStack, Integer>>();
         for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
             ItemStack stack = tileEntity.getStackInSlot(i);
@@ -145,30 +147,34 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
         }
 
-        if (SORT_NAME.equals(sort)) {
-            Collections.sort(items, new Comparator<Pair<ItemStack, Integer>>() {
-                @Override
-                public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                    String name1 = o1.getLeft().getDisplayName().toLowerCase();
-                    String name2 = o2.getLeft().getDisplayName().toLowerCase();
-                    return name1.compareTo(name2);
-                }
-            });
-        } else {
-            Collections.sort(items, new Comparator<Pair<ItemStack, Integer>>() {
-                @Override
-                public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                    Integer c1 = o1.getLeft().stackSize;
-                    Integer c2 = o2.getLeft().stackSize;
-                    return c2.compareTo(c1);
-                }
-            });
-        }
+        int sort = updateTypeModule();
+
+        Collections.sort(items, typeModule.getSorters().get(sort).getComparator());
 
         Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
         for (Pair<ItemStack, Integer> item : items) {
             currentPos = addItemToList(item.getKey(), itemList, currentPos, numcolumns, labelWidth, spacing, item.getValue());
         }
+    }
+
+    private int updateTypeModule() {
+        ItemStack typeStack = tileEntity.getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+        if (typeStack == null || typeStack.stackSize == 0 || !(typeStack.getItem() instanceof TypeModule)) {
+            typeModule = new DefaultTypeModule();
+        } else {
+            typeModule = (TypeModule) typeStack.getItem();
+        }
+        String sortName = sortMode.getCurrentChoice();
+        sortMode.clear();
+        for (ItemSorter sorter : typeModule.getSorters()) {
+            sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
+        }
+        int sort = sortMode.findChoice(sortName);
+        if (sort == -1) {
+            sort = 0;
+        }
+        sortMode.setCurrentChoice(sort);
+        return sort;
     }
 
     private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int labelWidth, int spacing, int slot) {

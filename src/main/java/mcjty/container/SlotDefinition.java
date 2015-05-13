@@ -7,10 +7,18 @@ import java.util.Arrays;
 public class SlotDefinition {
     private final SlotType type;
     private final ItemStack[] itemStacks;
+    private final Class itemClass;
 
     public SlotDefinition(SlotType type, ItemStack... itemStacks) {
         this.type = type;
         this.itemStacks = itemStacks;
+        this.itemClass = null;
+    }
+
+    public SlotDefinition(SlotType type, Class itemClass) {
+        this.type = type;
+        this.itemStacks = new ItemStack[0];
+        this.itemClass = itemClass;
     }
 
     public SlotType getType() {
@@ -22,6 +30,9 @@ public class SlotDefinition {
             if (itemStack.getItem() == stack.getItem()) {
                 return true;
             }
+        }
+        if (itemClass != null && itemClass.isInstance(stack.getItem())) {
+            return true;
         }
         return false;
     }

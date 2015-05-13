@@ -40,6 +40,7 @@ public class StorageModuleItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        int max = MAXSIZE[itemStack.getItemDamage()];
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -50,11 +51,11 @@ public class StorageModuleItem extends Item {
                     cnt++;
                 }
             }
-            int max = MAXSIZE[itemStack.getItemDamage()];
             list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block");
+            list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block.");
+            list.add(EnumChatFormatting.WHITE + "This module supports " + max + " stacks");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
