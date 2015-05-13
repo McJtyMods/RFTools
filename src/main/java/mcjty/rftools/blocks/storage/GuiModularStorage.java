@@ -60,7 +60,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         super.initGui();
 
         itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
-                setFilledBackground(0xff8090a0).setLeftMargin(0).setRowheight(-1);
+                setFilledBackground(ModularStorageConfiguration.itemListBackground).setLeftMargin(0).setRowheight(-1);
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, 147)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
         filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items").addTextEvent(new TextEvent() {
@@ -241,7 +241,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {
-                itemList.addChild(new Label(mc, this).setText(groupName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(0xffeedd33).setDesiredHeight(10));
+                itemList.addChild(new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground).
+                        setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10));
             }
 
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
