@@ -3,19 +3,30 @@ package mcjty.rftools.blocks.storage;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Map;
+
 public class ModularStorageTileEntity extends GenericTileEntity implements ISidedInventory {
+
+    public static final String CMD_SETTINGS = "settings";
 
     private int[] accessible = null;
     private int maxSize;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
+
+    private String sortMode;
+    private String viewMode;
+    private boolean groupMode;
+    private String filter;
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
@@ -26,6 +37,42 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
         }
         return accessible;
+    }
+
+    public boolean isGroupMode() {
+        return groupMode;
+    }
+
+    public void setGroupMode(boolean groupMode) {
+        this.groupMode = groupMode;
+        markDirty();
+    }
+
+    public String getSortMode() {
+        return sortMode;
+    }
+
+    public void setSortMode(String sortMode) {
+        this.sortMode = sortMode;
+        markDirty();
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+        markDirty();
+    }
+
+    public String getViewMode() {
+        return viewMode;
+    }
+
+    public void setViewMode(String viewMode) {
+        this.viewMode = viewMode;
+        markDirty();
     }
 
     @Override
@@ -152,6 +199,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, 0);
         maxSize = tagCompound.getInteger("maxSize");
+        sortMode = tagCompound.getString("sortMode");
+        viewMode = tagCompound.getString("viewMode");
+        groupMode = tagCompound.getBoolean("groupMode");
+        filter = tagCompound.getString("filter");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound, int offset) {
@@ -172,6 +223,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, 0);
         tagCompound.setInteger("maxSize", maxSize);
+        tagCompound.setString("sortMode", sortMode);
+        tagCompound.setString("viewMode", viewMode);
+        tagCompound.setBoolean("groupMode", groupMode);
+        tagCompound.setString("filter", filter);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
@@ -186,4 +241,23 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         tagCompound.setTag("Items", bufferTagList);
     }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETTINGS.equals(command)) {
+            setFilter(args.get("filter").getString());
+            setViewMode(args.get("viewMode").getString());
+            setSortMode(args.get("sortMode").getString());
+            setGroupMode(args.get("groupMode").getBoolean());
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            return true;
+        }
+        return false;
+    }
+
+
 }
