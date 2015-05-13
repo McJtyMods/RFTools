@@ -7,6 +7,7 @@ import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.items.storage.DimletTypeItem;
+import mcjty.rftools.items.storage.OreDictTypeItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -64,6 +65,7 @@ public class ModularStorageBlock extends GenericContainerBlock {
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icons.put(DimletTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageDimlet"));
+        icons.put(OreDictTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageOre"));
         super.registerBlockIcons(iconRegister);
     }
 
