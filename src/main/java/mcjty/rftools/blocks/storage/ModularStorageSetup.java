@@ -32,17 +32,17 @@ public class ModularStorageSetup {
     public static void setupCrafting() {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'r', Items.redstone, 'q', Items.quartz);
 
-        GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, 0), " c ", "gig", " r ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
-                'g', Items.gold_nugget, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, 0), " c ", "gig", "qrq", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'g', Items.gold_nugget, 'c', Blocks.chest, 'q', Items.quartz);
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
                 null, new ItemStack(Blocks.chest), null,
                 new ItemStack(Items.gold_ingot), new ItemStack(storageModuleItem, 1, 0), new ItemStack(Items.gold_ingot),
-                null, new ItemStack(Items.redstone), null},
+                new ItemStack(Items.quartz), new ItemStack(Items.redstone), new ItemStack(Items.quartz)},
                 new ItemStack(storageModuleItem, 1, 1), 4));
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
                 null, new ItemStack(Blocks.chest), null,
                 new ItemStack(Blocks.gold_block), new ItemStack(storageModuleItem, 1, 1), new ItemStack(Blocks.gold_block),
-                null, new ItemStack(Items.redstone), null},
+                new ItemStack(Blocks.quartz_block), new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.quartz_block)},
                 new ItemStack(storageModuleItem, 1, 2), 4));
     }
 }
