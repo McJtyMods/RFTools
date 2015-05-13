@@ -40,17 +40,17 @@ public class DimletTypeItemSorter implements ItemSorter {
         };
     }
 
+    @Override
+    public boolean isSameGroup(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+        DimletType type1 = getDimletType(o1);
+        DimletType type2 = getDimletType(o2);
+        return type1 == type2;
+    }
+
     public static int compareTypes(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-        DimletType type1 = null;
-        if (o1.getKey().getItem() == DimletSetup.knownDimlet) {
-            DimletKey key = KnownDimletConfiguration.getDimletKey(o1.getKey(), null);
-            type1 = key.getType();
-        }
-        DimletType type2 = null;
-        if (o2.getKey().getItem() == DimletSetup.knownDimlet) {
-            DimletKey key = KnownDimletConfiguration.getDimletKey(o2.getKey(), null);
-            type2 = key.getType();
-        }
+        DimletType type1 = getDimletType(o1);
+        DimletType type2 = getDimletType(o2);
+
         if (type1 == null) {
             if (type2 == null) {
                 return NameItemSorter.compareNames(o1, o2);
@@ -66,4 +66,20 @@ public class DimletTypeItemSorter implements ItemSorter {
         }
         return type1.compareTo(type2);
     }
+
+    private static DimletType getDimletType(Pair<ItemStack, Integer> object) {
+        DimletType type = null;
+        if (object.getKey().getItem() == DimletSetup.knownDimlet) {
+            DimletKey key = KnownDimletConfiguration.getDimletKey(object.getKey(), null);
+            type = key.getType();
+        }
+        return type;
+    }
+
+    @Override
+    public String getGroupName(Pair<ItemStack, Integer> object) {
+        DimletType type = getDimletType(object);
+        return "Type " + (type == null ? "unknown" : type.dimletType.getName());
+    }
+
 }

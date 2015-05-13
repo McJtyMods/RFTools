@@ -36,22 +36,8 @@ public class DimletRarityItemSorter implements ItemSorter {
         return new Comparator<Pair<ItemStack, Integer>>() {
             @Override
             public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                int rarity1 = -1;
-                if (o1.getKey().getItem() == DimletSetup.knownDimlet) {
-                    DimletKey key = KnownDimletConfiguration.getDimletKey(o1.getKey(), null);
-                    DimletEntry entry = KnownDimletConfiguration.getEntry(key);
-                    if (entry != null) {
-                        rarity1 = entry.getRarity();
-                    }
-                }
-                int rarity2 = -1;
-                if (o2.getKey().getItem() == DimletSetup.knownDimlet) {
-                    DimletKey key = KnownDimletConfiguration.getDimletKey(o2.getKey(), null);
-                    DimletEntry entry = KnownDimletConfiguration.getEntry(key);
-                    if (entry != null) {
-                        rarity2 = entry.getRarity();
-                    }
-                }
+                int rarity1 = getRarity(o1);
+                int rarity2 = getRarity(o2);
 
                 if (rarity1 == rarity2) {
                     return DimletTypeItemSorter.compareTypes(o1, o2);
@@ -60,5 +46,30 @@ public class DimletRarityItemSorter implements ItemSorter {
                 return new Integer(rarity1).compareTo(rarity2);
             }
         };
+    }
+
+    private int getRarity(Pair<ItemStack, Integer> object) {
+        int rarity = -1;
+        if (object.getKey().getItem() == DimletSetup.knownDimlet) {
+            DimletKey key = KnownDimletConfiguration.getDimletKey(object.getKey(), null);
+            DimletEntry entry = KnownDimletConfiguration.getEntry(key);
+            if (entry != null) {
+                rarity = entry.getRarity();
+            }
+        }
+        return rarity;
+    }
+
+    @Override
+    public boolean isSameGroup(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+        int rarity1 = getRarity(o1);
+        int rarity2 = getRarity(o2);
+        return rarity1 == rarity2;
+    }
+
+    @Override
+    public String getGroupName(Pair<ItemStack, Integer> object) {
+        int rarity = getRarity(object);
+        return "Rarity " + (rarity == -1 ? "unknown" : rarity);
     }
 }

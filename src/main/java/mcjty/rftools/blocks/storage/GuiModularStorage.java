@@ -34,7 +34,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public static final String VIEW_ICONS = "icons";
 
     private TypeModule typeModule;
-    private boolean makeGroups = true;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorage.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -44,6 +43,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private TextField filter;
     private ImageChoiceLabel viewMode;
     private ImageChoiceLabel sortMode;
+    private ImageChoiceLabel groupMode;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         super(modularStorageTileEntity, container);
@@ -57,7 +57,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         super.initGui();
 
         itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
-                setFilledBackground(0xff8090a0).setLeftMargin(0);
+                setFilledBackground(0xff8090a0).setLeftMargin(0).setRowheight(-1);
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, 147)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
         filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items");
@@ -76,7 +76,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
         sortMode.setCurrentChoice(0);
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).addChild(viewMode).addChild(sortMode);
+        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 170, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium");
+        groupMode.addChoice("Off", "Don't show groups", guiElements, 13 * 16, 0);
+        groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
+        groupMode.setCurrentChoice(0);
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
+                addChild(viewMode).addChild(sortMode).addChild(groupMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -150,11 +156,17 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         int sort = updateTypeModule();
 
-        Collections.sort(items, typeModule.getSorters().get(sort).getComparator());
+        boolean dogroups = groupMode.getCurrentChoiceIndex() == 1;
+
+        ItemSorter itemSorter = typeModule.getSorters().get(sort);
+        Collections.sort(items, itemSorter.getComparator());
 
         Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
+        Pair<ItemStack, Integer> prevItem = null;
         for (Pair<ItemStack, Integer> item : items) {
-            currentPos = addItemToList(item.getKey(), itemList, currentPos, numcolumns, labelWidth, spacing, item.getValue());
+            currentPos = addItemToList(item.getKey(), itemList, currentPos, numcolumns, labelWidth, spacing, item.getValue(),
+                    dogroups && (prevItem == null || !itemSorter.isSameGroup(prevItem, item)), itemSorter.getGroupName(item));
+            prevItem = item;
         }
     }
 
@@ -178,10 +190,15 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         return sort;
     }
 
-    private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int labelWidth, int spacing, int slot) {
+    private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int labelWidth, int spacing, int slot,
+                                              boolean newgroup, String groupName) {
         Panel panel = currentPos.getKey();
-        if (panel == null || currentPos.getValue() >= numcolumns) {
-            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1));
+        if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
+            if (newgroup && groupName != null) {
+                itemList.addChild(new Label(mc, this).setText(groupName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(0xffeedd33).setDesiredHeight(10));
+            }
+
+            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }

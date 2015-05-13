@@ -37,4 +37,16 @@ public class CountItemSorter implements ItemSorter {
             }
         };
     }
+
+    @Override
+    public boolean isSameGroup(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+        Integer c1 = o1.getLeft().stackSize;
+        Integer c2 = o2.getLeft().stackSize;
+        return c2.compareTo(c1) == 0;
+    }
+
+    @Override
+    public String getGroupName(Pair<ItemStack, Integer> object) {
+        return "Count " + object.getKey().stackSize;
+    }
 }

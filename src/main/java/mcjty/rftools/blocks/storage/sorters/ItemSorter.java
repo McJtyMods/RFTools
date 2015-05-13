@@ -15,4 +15,10 @@ public interface ItemSorter {
     int getV();
 
     Comparator<Pair<ItemStack,Integer>> getComparator();
+
+    // Return true if these items belong to the same group.
+    boolean isSameGroup(Pair<ItemStack,Integer> o1, Pair<ItemStack,Integer> o2);
+
+    // Return a name of the group for this item (this is basically the primary key on which we sort)
+    String getGroupName(Pair<ItemStack,Integer> object);
 }

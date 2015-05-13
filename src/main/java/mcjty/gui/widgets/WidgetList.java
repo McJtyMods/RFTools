@@ -34,6 +34,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         return rowheight;
     }
 
+    // Setting rowheight to -1 will use variable height depending on the desired height of every row
     public WidgetList setRowheight(int rowheight) {
         this.rowheight = rowheight;
         return this;
@@ -109,14 +110,15 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
         for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
             Widget child = children.get(i);
-            child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rowheight));
+            int rh = rowheight == -1 ? child.getDesiredHeight() : rowheight;
+            child.setBounds(new Rectangle(0 /*@@@ margin?*/, top, bounds.width, rh));
             boolean hilighted = hilightedRows.contains(i);
             if (i == selected && hilighted) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xff888844, 0xff666622);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rh, 0xff888844, 0xff666622);
             } else if (i == selected) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xff666666, 0xff444444);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rh, 0xff666666, 0xff444444);
             } else if (hilighted) {
-                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rowheight, 0xffbbbb00, 0xff999900);
+                RenderHelper.drawHorizontalGradientRect(xx, yy + top, xx + bounds.width - 4, yy + top + rh, 0xffbbbb00, 0xff999900);
             }
             if (isEnabledAndVisible()) {
                 child.draw(window, xx, yy);
@@ -126,7 +128,7 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
                 child.draw(window, xx, yy);
                 child.setEnabled(en);
             }
-            top += rowheight;
+            top += rh;
         }
     }
 
@@ -144,12 +146,13 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
         int top = bounds.y;        // Margin@@@?
 
         for (int i = first ; i < first+getCountSelected() && i < children.size(); i++) {
-            Rectangle r = new Rectangle(bounds.x, top, bounds.width, rowheight);
+            int rh = rowheight == -1 ? children.get(i).getDesiredHeight() : rowheight;
+            Rectangle r = new Rectangle(bounds.x, top, bounds.width, rh);
             if (r.contains(x, y)) {
                 newSelected = i;
                 break;
             }
-            top += rowheight;
+            top += rh;
         }
         if (newSelected != selected) {
             selected = newSelected;
@@ -208,7 +211,21 @@ public class WidgetList extends AbstractContainerWidget<WidgetList> implements S
 
     @Override
     public int getCountSelected() {
-        return bounds.height / rowheight;
+        if (rowheight != -1) {
+            return bounds.height / rowheight;
+        } else {
+            int totalh = 0;
+            int cnt = 0;
+            for (int i = first; i < children.size(); i++) {
+                int rh = children.get(i).getDesiredHeight();
+                if (totalh + rh > bounds.height) {
+                    break;
+                }
+                totalh += rh;
+                cnt++;
+            }
+            return cnt;
+        }
     }
 
     @Override
