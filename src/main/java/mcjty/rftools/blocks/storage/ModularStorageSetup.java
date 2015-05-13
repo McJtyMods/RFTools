@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.storage.DimletTypeItem;
+import mcjty.rftools.items.storage.GenericTypeItem;
 import mcjty.rftools.items.storage.OreDictTypeItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.init.Blocks;
@@ -19,6 +20,7 @@ public class ModularStorageSetup {
     public static StorageModuleItem storageModuleItem;
     public static DimletTypeItem dimletTypeItem;
     public static OreDictTypeItem oreDictTypeItem;
+    public static GenericTypeItem genericTypeItem;
 
     public static void setupBlocks() {
         modularStorageBlock = new ModularStorageBlock();
@@ -44,6 +46,12 @@ public class ModularStorageSetup {
         oreDictTypeItem.setCreativeTab(RFTools.tabRfTools);
         oreDictTypeItem.setTextureName(RFTools.MODID + ":storage/oreDictModule");
         GameRegistry.registerItem(oreDictTypeItem, "oreDictTypeItem");
+
+        genericTypeItem = new GenericTypeItem();
+        genericTypeItem.setUnlocalizedName("GenericModule");
+        genericTypeItem.setCreativeTab(RFTools.tabRfTools);
+        genericTypeItem.setTextureName(RFTools.MODID + ":storage/genericModule");
+        GameRegistry.registerItem(genericTypeItem, "genericTypeItem");
     }
 
     public static void setupCrafting() {
@@ -51,6 +59,7 @@ public class ModularStorageSetup {
 
         GameRegistry.addRecipe(new ItemStack(dimletTypeItem), " u ", "rir", " p ", 'u', DimletSetup.unknownDimlet, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.iron_ore, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(genericTypeItem), " p ", "rir", " p ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
 
         GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, 0), " c ", "gig", "qrq", 'r', Items.redstone, 'i', Items.iron_ingot,
                 'g', Items.gold_nugget, 'c', Blocks.chest, 'q', Items.quartz);

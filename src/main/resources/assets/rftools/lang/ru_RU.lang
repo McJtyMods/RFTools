@@ -61,6 +61,7 @@ item.StorageModule1.name=Storage Module Tier 2
 item.StorageModule2.name=Storage Module Tier 3
 item.DimletModule.name=Dimlet Storage Module
 item.OreDictModule.name=Ore Dictionary Storage Module
+item.GenericModule.name=Generic Storage Module
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»

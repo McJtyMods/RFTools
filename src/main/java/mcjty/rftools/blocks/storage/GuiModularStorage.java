@@ -249,7 +249,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }
-        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(slot));
+        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(slot)).setOffsetX(-1).setOffsetY(-1);
         panel.addChild(blockRender);
         if (labelWidth > 0) {
             String displayName;
