@@ -35,24 +35,35 @@ public class DimletTypeItemSorter implements ItemSorter {
         return new Comparator<Pair<ItemStack, Integer>>() {
             @Override
             public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                DimletType type1 = null;
-                if (o1.getKey().getItem() == DimletSetup.knownDimlet) {
-                    DimletKey key = KnownDimletConfiguration.getDimletKey(o1.getKey(), null);
-                    type1 = key.getType();
-                }
-                DimletType type2 = null;
-                if (o2.getKey().getItem() == DimletSetup.knownDimlet) {
-                    DimletKey key = KnownDimletConfiguration.getDimletKey(o2.getKey(), null);
-                    type2 = key.getType();
-                }
-                if (type1 == null) {
-                    return type2 == null ? 0 : -1;
-                }
-                if (type2 == null) {
-                    return 1;
-                }
-                return type1.compareTo(type2);
+                return compareTypes(o1, o2);
             }
         };
+    }
+
+    public static int compareTypes(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+        DimletType type1 = null;
+        if (o1.getKey().getItem() == DimletSetup.knownDimlet) {
+            DimletKey key = KnownDimletConfiguration.getDimletKey(o1.getKey(), null);
+            type1 = key.getType();
+        }
+        DimletType type2 = null;
+        if (o2.getKey().getItem() == DimletSetup.knownDimlet) {
+            DimletKey key = KnownDimletConfiguration.getDimletKey(o2.getKey(), null);
+            type2 = key.getType();
+        }
+        if (type1 == null) {
+            if (type2 == null) {
+                return NameItemSorter.compareNames(o1, o2);
+            } else {
+                return -1;
+            }
+        }
+        if (type2 == null) {
+            return 1;
+        }
+        if (type1 == type2) {
+            return NameItemSorter.compareNames(o1, o2);
+        }
+        return type1.compareTo(type2);
     }
 }

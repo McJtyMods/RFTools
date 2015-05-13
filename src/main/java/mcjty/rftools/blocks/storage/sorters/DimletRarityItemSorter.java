@@ -52,6 +52,11 @@ public class DimletRarityItemSorter implements ItemSorter {
                         rarity2 = entry.getRarity();
                     }
                 }
+
+                if (rarity1 == rarity2) {
+                    return DimletTypeItemSorter.compareTypes(o1, o2);
+                }
+
                 return new Integer(rarity1).compareTo(rarity2);
             }
         };

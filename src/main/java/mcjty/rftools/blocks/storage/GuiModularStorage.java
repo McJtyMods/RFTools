@@ -34,6 +34,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public static final String VIEW_ICONS = "icons";
 
     private TypeModule typeModule;
+    private boolean makeGroups = true;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorage.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
