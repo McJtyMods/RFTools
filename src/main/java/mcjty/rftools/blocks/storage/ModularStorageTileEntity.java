@@ -23,10 +23,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
 
-    private String sortMode;
-    private String viewMode;
-    private boolean groupMode;
-    private String filter;
+    private String sortMode = "";
+    private String viewMode = "";
+    private boolean groupMode = false;
+    private String filter = "";
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {

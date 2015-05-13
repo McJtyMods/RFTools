@@ -57,6 +57,7 @@ item.StorageModule0.name=Storage Module Tier 1
 item.StorageModule1.name=Storage Module Tier 2
 item.StorageModule2.name=Storage Module Tier 3
 item.DimletModule.name=Dimlet Storage Module
+item.OreDictModule.name=Ore Dictionary Storage Module
 
 item.RegenerationEModule.name=再生模块
 item.RegenerationPlusEModule.name=再生+模块
