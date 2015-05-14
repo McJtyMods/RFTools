@@ -193,7 +193,6 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
         WrenchUsage wrenchUsed = testWrenchUsage(x, y, z, player);
-        System.out.println("wrenchUsed = " + wrenchUsed);
         switch (wrenchUsed) {
             case NOT:          return openGui(world, x, y, z, player);
             case NORMAL:       return wrenchUse(world, x, y, z, player);
