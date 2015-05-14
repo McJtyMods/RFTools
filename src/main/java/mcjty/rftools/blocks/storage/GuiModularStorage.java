@@ -16,11 +16,16 @@ import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.network.Argument;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -156,6 +161,32 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         return super.getSlotAtPosition(x, y);
+    }
+
+    private void dumpClasses(String name, Object o) {
+        RFTools.log(name + ":" + o.getClass().getCanonicalName());
+        Class<?>[] classes = o.getClass().getClasses();
+        for (Class<?> a : classes) {
+            RFTools.log("        " + a.getCanonicalName());
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+            Slot slot = getSlotAtPosition(x, y);
+            if (slot != null && slot.getHasStack()) {
+                ItemStack stack = slot.getStack();
+                Item item = stack.getItem();
+                if (item instanceof ItemBlock) {
+                    Block block = ((ItemBlock) item).field_150939_a;
+                    dumpClasses("Block", block);
+                } else {
+                    dumpClasses("Item", item);
+                }
+            }
+        }
+        super.mouseClicked(x, y, button);
     }
 
     private void updateList() {
