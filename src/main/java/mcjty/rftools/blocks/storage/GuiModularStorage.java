@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,6 +170,11 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         for (Class<?> a : classes) {
             RFTools.log("        " + a.getCanonicalName());
         }
+        RFTools.log("        Super:" + o.getClass().getGenericSuperclass());
+        for (Type type : o.getClass().getGenericInterfaces()) {
+            RFTools.log("        type:" + type.getClass().getCanonicalName());
+        }
+
     }
 
     @Override
