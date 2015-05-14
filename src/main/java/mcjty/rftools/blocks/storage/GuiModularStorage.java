@@ -17,7 +17,6 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.network.Argument;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -53,6 +52,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private ImageChoiceLabel viewMode;
     private ImageChoiceLabel sortMode;
     private ImageChoiceLabel groupMode;
+    private Label amountLabel;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         super(modularStorageTileEntity, container);
@@ -121,8 +121,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
         groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
 
+        amountLabel = new Label(mc, this);
+        amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(8, 188, 80, 12));
+        amountLabel.setTooltips("Amount of stacks / maximum amount");
+        amountLabel.setText("? / ?");
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
-                addChild(viewMode).addChild(sortMode).addChild(groupMode);
+                addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -199,6 +205,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         itemList.removeChildren();
 
         if (!inventorySlots.getSlot(0).getHasStack()) {
+            amountLabel.setText("(no storage)");
             return;
         }
 
@@ -232,6 +239,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 }
             }
         }
+        amountLabel.setText(items.size() + " / " + (tileEntity.getSizeInventory() - 2));
 
         int sort = getCurrentSortMode();
 
