@@ -26,6 +26,7 @@ public class GenericTypeItem extends StorageTypeItem {
             sorters.add(new NameItemSorter());
             sorters.add(new CountItemSorter());
             sorters.add(new GenericItemSorter());
+            sorters.add(new ModItemSorter());
         }
         return sorters;
     }

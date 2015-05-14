@@ -33,7 +33,7 @@ public class GenericItemSorter implements ItemSorter {
         return new Comparator<Pair<ItemStack, Integer>>() {
             @Override
             public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                return compareOreType(o1, o2);
+                return compareCategory(o1, o2);
             }
         };
     }
@@ -45,7 +45,7 @@ public class GenericItemSorter implements ItemSorter {
         return name1.equals(name2);
     }
 
-    public static int compareOreType(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
+    public static int compareCategory(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
         String name1 = getName(o1);
         String name2 = getName(o2);
 
