@@ -126,6 +126,7 @@ public class RFTools {
     public static final int GUI_SPACE_PROJECTOR = modGuiIndex++;
     public static final int GUI_BLOCK_PROTECTOR = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
+    public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
 
 
     public static void logError(String msg) {

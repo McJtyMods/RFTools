@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 
 public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
+    public static RemoteStorageBlock remoteStorageBlock;
 
     public static StorageModuleItem storageModuleItem;
     public static DimletTypeItem dimletTypeItem;
@@ -26,6 +27,10 @@ public class ModularStorageSetup {
         modularStorageBlock = new ModularStorageBlock();
         GameRegistry.registerBlock(modularStorageBlock, GenericItemBlock.class, "modularStorageBlock");
         GameRegistry.registerTileEntity(ModularStorageTileEntity.class, "ModularStorageTileEntity");
+
+        remoteStorageBlock = new RemoteStorageBlock();
+        GameRegistry.registerBlock(remoteStorageBlock, GenericItemBlock.class, "remoteStorageBlock");
+        GameRegistry.registerTileEntity(RemoteStorageTileEntity.class, "RemoteStorageTileEntity");
     }
 
     public static void setupItems() {
@@ -56,6 +61,7 @@ public class ModularStorageSetup {
 
     public static void setupCrafting() {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'r', Items.redstone, 'q', Items.quartz);
+        GameRegistry.addRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'e', Items.ender_pearl, 'q', Items.quartz);
 
         GameRegistry.addRecipe(new ItemStack(dimletTypeItem), " u ", "rir", " p ", 'u', DimletSetup.unknownDimlet, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.iron_ore, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);

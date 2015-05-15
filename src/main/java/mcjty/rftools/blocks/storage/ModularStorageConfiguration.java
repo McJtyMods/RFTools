@@ -17,6 +17,13 @@ public class ModularStorageConfiguration {
     public static int itemListBackground = 0xff8090a0;
     public static int groupBackground = 0xffeedd33;
     public static int groupForeground = 0xff000000;
+
+    public static int REMOTE_MAXENERGY = 100000;
+    public static int REMOTE_RECEIVEPERTICK = 500;
+
+    public static int remoteShareLocal = 6;         // RF/tick to share this inventory locally (same dimension).
+    public static int remoteShareGlobal = 30;       // RF/tick to share this inventory to other dimensions.
+
     public static Map<String,String> categoryMapper = new HashMap<String, String>();
 
     public static void init(Configuration cfg) {
@@ -26,6 +33,15 @@ public class ModularStorageConfiguration {
                 "Background color for group lines").getInt();
         groupForeground = cfg.get(CATEGORY_STORAGE, "groupForeground", groupForeground,
                 "Foreground color for group lines").getInt();
+
+        REMOTE_MAXENERGY = cfg.get(CATEGORY_STORAGE, "remoteStorageMaxRF", REMOTE_MAXENERGY,
+                "Maximum RF storage that the remote storage block can hold").getInt();
+        REMOTE_RECEIVEPERTICK = cfg.get(CATEGORY_STORAGE, "remoteStorageRFPerTick", REMOTE_RECEIVEPERTICK,
+                "RF per tick that the remote storage block can receive").getInt();
+        remoteShareLocal = cfg.get(CATEGORY_STORAGE, "remoteShareLocal", remoteShareLocal,
+                "RF/tick to share an inventory to the same dimension").getInt();
+        remoteShareGlobal = cfg.get(CATEGORY_STORAGE, "remoteShareGlobal", remoteShareGlobal,
+                "RF/tick to share an inventory to all dimensions").getInt();
 
         initCategories();
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);

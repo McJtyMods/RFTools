@@ -29,26 +29,6 @@ public class ModularStorageRenderer extends DefaultISBRH {
             new Quad(new Vt(1+OFFS, U, 1-L), new Vt(1+OFFS, U, 1-R), new Vt(1+OFFS, D, 1-R), new Vt(1+OFFS, D, 1-L)),   // EAST
     };
 
-    private Vt getMiddle(Quad quad, ForgeDirection side, float factor) {
-        switch (side) {
-            case DOWN:
-                break;
-            case UP:
-                break;
-            case NORTH:
-                break;
-            case SOUTH:
-                break;
-            case WEST:
-                break;
-            case EAST:
-                break;
-            case UNKNOWN:
-                break;
-        }
-        return null;
-    }
-
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
         boolean rc = renderer.renderStandardBlock(block, x, y, z);

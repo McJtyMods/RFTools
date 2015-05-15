@@ -18,6 +18,8 @@ import mcjty.rftools.blocks.spawner.MatterBeamerRenderer;
 import mcjty.rftools.blocks.spawner.MatterBeamerTileEntity;
 import mcjty.rftools.blocks.storage.ModularStorageBlock;
 import mcjty.rftools.blocks.storage.ModularStorageRenderer;
+import mcjty.rftools.blocks.storage.RemoteStorageBlock;
+import mcjty.rftools.blocks.storage.RemoteStorageRenderer;
 import mcjty.rftools.blocks.teleporter.BeamRenderer;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -37,6 +39,9 @@ public final class ModRenderers {
 
         ModularStorageBlock.RENDERID_MODULARSTORAGE = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(ModularStorageBlock.RENDERID_MODULARSTORAGE, new ModularStorageRenderer());
+
+        RemoteStorageBlock.RENDERID_REMOTESTORAGE = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(RemoteStorageBlock.RENDERID_REMOTESTORAGE, new RemoteStorageRenderer());
 
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(MatterBeamerTileEntity.class, new MatterBeamerRenderer());
