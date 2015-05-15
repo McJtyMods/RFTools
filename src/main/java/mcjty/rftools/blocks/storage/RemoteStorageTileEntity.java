@@ -49,6 +49,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -60,6 +61,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
