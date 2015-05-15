@@ -6,7 +6,9 @@ import net.minecraftforge.common.config.Property;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ModularStorageConfiguration {
     public static final String CATEGORY_STORAGE = "storage";
@@ -25,17 +27,21 @@ public class ModularStorageConfiguration {
         groupForeground = cfg.get(CATEGORY_STORAGE, "groupForeground", groupForeground,
                 "Foreground color for group lines").getInt();
 
+        initCategories();
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
-        if (category.isEmpty()) {
-            initCategories();
-            for (Map.Entry<String, String> entry : categoryMapper.entrySet()) {
-                category.put(entry.getKey(), new Property(entry.getKey(), entry.getValue(), Property.Type.STRING));
-            }
-        } else {
-            for (Map.Entry<String, Property> entry : category.entrySet()) {
-                categoryMapper.put(entry.getKey(), entry.getValue().getString());
-            }
 
+        // Make a copy of the keys we already have.
+        Set<String> keys = new HashSet<String>(categoryMapper.keySet());
+        // Scan the config to see if there were updates.
+        for (String key : keys) {
+            categoryMapper.put(key, cfg.get(CATEGORY_STORAGE_CONFIG, key, categoryMapper.get(key)).getString());
+        }
+        // Now find all new keys in the config and add those.
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            String key = entry.getKey();
+            if (!categoryMapper.containsKey(key)) {
+                categoryMapper.put(key, entry.getValue().getString());
+            }
         }
     }
 
