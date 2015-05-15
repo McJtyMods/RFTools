@@ -120,7 +120,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         } else {
             numStacks++;
         }
-        System.out.println("numStacks = " + numStacks);
         int rlnew = getRenderLevel();
         if (rlold != rlnew) {
             markDirty();
