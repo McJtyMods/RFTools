@@ -15,7 +15,7 @@ import java.util.Map;
  * Generic container support.
  */
 public class GenericContainer extends Container {
-    private Map<String,IInventory> inventories = new HashMap<String, IInventory>();
+    protected Map<String,IInventory> inventories = new HashMap<String, IInventory>();
     private ContainerFactory factory;
     private GenericCrafter crafter = null;
 

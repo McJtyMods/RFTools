@@ -10,11 +10,17 @@ public class InventoryHelper {
     private final TileEntity tileEntity;
     private final ContainerFactory containerFactory;
     private final ItemStack stacks[];
+    private int count;
 
     public InventoryHelper(TileEntity tileEntity, ContainerFactory containerFactory, int count) {
         this.tileEntity = tileEntity;
         this.containerFactory = containerFactory;
         stacks = new ItemStack[count];
+        this.count = count;
+    }
+
+    public void setNewCount(int newcount) {
+        this.count = newcount;
     }
 
     public static class SlotModifier {
@@ -98,6 +104,10 @@ public class InventoryHelper {
 
     public ItemStack[] getStacks() {
         return stacks;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public ItemStack decrStackSize(int index, int amount) {

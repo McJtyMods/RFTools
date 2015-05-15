@@ -19,7 +19,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public static final String CMD_SETTINGS = "settings";
 
     private int[] accessible = null;
-    private int maxSize;
+    private int maxSize = 0;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
 
@@ -75,6 +75,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         markDirty();
     }
 
+    public int getMaxSize() {
+        return maxSize;
+    }
+
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
         return index >= 2;
@@ -92,12 +96,19 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public ItemStack getStackInSlot(int index) {
+        if (index >= getSizeInventory()) {
+            return null;
+        }
         return inventoryHelper.getStacks()[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        return inventoryHelper.decrStackSize(index, amount);
+        ItemStack itemStack = inventoryHelper.decrStackSize(index, amount);
+        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
+            copyFromModule(inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE]);
+        }
+        return itemStack;
     }
 
     @Override
@@ -107,7 +118,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE && stack != null) {
+        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
             copyFromModule(stack);
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
@@ -148,6 +159,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index >= getSizeInventory()) {
+            return false;
+        }
         return true;
     }
 
@@ -173,12 +187,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     public void copyFromModule(ItemStack stack) {
-        if (stack == null || stack.stackSize == 0) {
-            return;
-        }
-
         for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
             inventoryHelper.setInventorySlotContents(0, i, null);
+        }
+
+        if (stack == null || stack.stackSize == 0) {
+            setMaxSize(0);
+            return;
         }
 
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -186,7 +201,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             readBufferFromNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
         }
 
-        maxSize = StorageModuleItem.MAXSIZE[stack.getItemDamage()];
+        setMaxSize(StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
+    }
+
+    private void setMaxSize(int ms) {
+        maxSize = ms;
+        System.out.println("SET: maxSize = " + maxSize);
+        inventoryHelper.setNewCount(2 + maxSize);
+        accessible = null;
 
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -202,10 +224,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, 0);
         maxSize = tagCompound.getInteger("maxSize");
+        System.out.println("maxSize = " + maxSize);
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
         groupMode = tagCompound.getBoolean("groupMode");
         filter = tagCompound.getString("filter");
+        inventoryHelper.setNewCount(2 + maxSize);
+        accessible = null;
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound, int offset) {
@@ -234,7 +259,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = offset ; i < inventoryHelper.getStacks().length ; i++) {
+        for (int i = offset ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStacks()[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
