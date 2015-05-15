@@ -19,9 +19,9 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class StorageModuleItem extends Item {
-    private final IIcon[] icons = new IIcon[3];
+    private final IIcon[] icons = new IIcon[4];
 
-    public static final int MAXSIZE[] = new int[] { 100, 200, 300 };
+    public static final int MAXSIZE[] = new int[] { 100, 200, 300, -1 };
 
     public StorageModuleItem() {
         setMaxStackSize(1);
@@ -31,7 +31,7 @@ public class StorageModuleItem extends Item {
 
     @Override
     public void registerIcons(IIconRegister iconRegister) {
-        for (int i = 0 ; i < 3 ; i++) {
+        for (int i = 0 ; i < 4 ; i++) {
             icons[i] = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule" + i);
         }
     }
@@ -43,19 +43,34 @@ public class StorageModuleItem extends Item {
         int max = MAXSIZE[itemStack.getItemDamage()];
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            int cnt = 0;
-            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                NBTTagCompound tagAt = bufferTagList.getCompoundTagAt(i);
-                if (ItemStack.loadItemStackFromNBT(tagAt) != null) {
-                    cnt++;
+            if (max == -1) {
+                // This is a remote storage module.
+                if (tagCompound.hasKey("id")) {
+                    int id = tagCompound.getInteger("id");
+                    list.add(EnumChatFormatting.GREEN + "Remote id: " + id);
+                } else {
+                    list.add(EnumChatFormatting.YELLOW + "Unlinked");
                 }
+            } else {
+                NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                int cnt = 0;
+                for (int i = 0; i < bufferTagList.tagCount(); i++) {
+                    NBTTagCompound tagAt = bufferTagList.getCompoundTagAt(i);
+                    if (ItemStack.loadItemStackFromNBT(tagAt) != null) {
+                        cnt++;
+                    }
+                }
+                list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
             }
-            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block.");
-            list.add(EnumChatFormatting.WHITE + "This module supports " + max + " stacks");
+            if (max == -1) {
+                list.add(EnumChatFormatting.WHITE + "This module supports a remote inventory.");
+                list.add(EnumChatFormatting.WHITE + "Link to another storage module in the remote storage block.");
+            } else {
+                list.add(EnumChatFormatting.WHITE + "This module supports " + max + " stacks");
+            }
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -73,7 +88,7 @@ public class StorageModuleItem extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (int i = 0 ; i < 3 ; i++) {
+        for (int i = 0 ; i < 4 ; i++) {
             list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
         }
     }

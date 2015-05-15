@@ -79,5 +79,7 @@ public class ModularStorageSetup {
                 new ItemStack(Blocks.gold_block), new ItemStack(storageModuleItem, 1, 1), new ItemStack(Blocks.gold_block),
                 new ItemStack(Blocks.quartz_block), new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.quartz_block)},
                 new ItemStack(storageModuleItem, 1, 2), 4));
+        GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, 3), "ece", "gig", "qrq", 'r', Items.redstone, 'i', Items.iron_ingot,
+                'g', Items.gold_nugget, 'c', Blocks.chest, 'q', Items.quartz, 'e', Items.ender_pearl);
     }
 }
