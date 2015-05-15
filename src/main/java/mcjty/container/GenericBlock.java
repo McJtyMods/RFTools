@@ -417,12 +417,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     @Override
     public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
         int meta = blockAccess.getBlockMetadata(x, y, z);
-        ForgeDirection k;
-        if (horizRotation) {
-            k = BlockTools.getOrientationHoriz(meta);
-        } else {
-            k = BlockTools.getOrientation(meta);
-        }
+        ForgeDirection k = getOrientation(meta);
         if (iconInd != null && side == k.ordinal()) {
             return getIconInd(blockAccess, x, y, z, meta);
         } else if (iconTop != null && side == BlockTools.getTopDirection(k).ordinal()) {
@@ -432,6 +427,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
         } else {
             return iconSide;
         }
+    }
+
+    public ForgeDirection getOrientation(int meta) {
+        ForgeDirection k;
+        if (horizRotation) {
+            k = BlockTools.getOrientationHoriz(meta);
+        } else {
+            k = BlockTools.getOrientation(meta);
+        }
+        return k;
     }
 
     @Override

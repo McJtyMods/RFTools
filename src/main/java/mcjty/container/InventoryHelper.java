@@ -110,6 +110,10 @@ public class InventoryHelper {
         return count;
     }
 
+    public boolean containsItem(int index) {
+        return stacks[index] != null && stacks[index].stackSize > 0;
+    }
+
     public ItemStack decrStackSize(int index, int amount) {
         if (containerFactory.isGhostSlot(index) || containerFactory.isGhostOutputSlot(index)) {
             ItemStack old = stacks[index];

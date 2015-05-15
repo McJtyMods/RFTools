@@ -10,19 +10,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
 
-    private static class Vt {
-        public final int x;
-        public final int y;
-        public final int z;
+    protected static class Vt {
+        public final float x;
+        public final float y;
+        public final float z;
 
-        public Vt(int x, int y, int z) {
+        public Vt(float x, float y, float z) {
             this.x = x;
             this.y = y;
             this.z = z;
         }
     }
 
-    private static class Quad {
+    protected static class Quad {
         public final Vt v1;
         public final Vt v2;
         public final Vt v3;
@@ -46,7 +46,7 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
         }
     }
 
-    private static final Quad quads[] = new Quad[] {
+    protected static final Quad quads[] = new Quad[] {
             new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
             new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
             new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // NORTH

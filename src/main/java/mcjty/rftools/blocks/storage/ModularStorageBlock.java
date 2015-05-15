@@ -3,33 +3,34 @@ package mcjty.rftools.blocks.storage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
-import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.items.storage.DimletTypeItem;
 import mcjty.rftools.items.storage.GenericTypeItem;
 import mcjty.rftools.items.storage.OreDictTypeItem;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ModularStorageBlock extends GenericContainerBlock {
+
+    public static int RENDERID_MODULARSTORAGE;
+
+    private IIcon overlayIcon;
     private Map<Class<? extends TypeModule>, IIcon> icons = new HashMap<Class<? extends TypeModule>, IIcon>();
 
     public ModularStorageBlock() {
@@ -41,6 +42,16 @@ public class ModularStorageBlock extends GenericContainerBlock {
     @Override
     public int getGuiID() {
         return RFTools.GUI_MODULAR_STORAGE;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public int getRenderType() {
+        return RENDERID_MODULARSTORAGE;
     }
 
     @Override
@@ -63,12 +74,34 @@ public class ModularStorageBlock extends GenericContainerBlock {
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
+            int maxSize = modularStorageTileEntity.getMaxSize();
+            if (maxSize == 0) {
+                currenttip.add(EnumChatFormatting.YELLOW + "No storage module!");
+            } else {
+                currenttip.add(EnumChatFormatting.GREEN + (modularStorageTileEntity.getNumStacks() + " out of " + maxSize));
+            }
+        }
+        return currenttip;
+    }
+
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         icons.put(DimletTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageDimlet"));
         icons.put(OreDictTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageOre"));
         icons.put(GenericTypeItem.class, iconRegister.registerIcon(RFTools.MODID + ":" + "machineModularStorageGeneric"));
+        overlayIcon = iconRegister.registerIcon(RFTools.MODID + ":" + "modularStorageOverlay");
         super.registerBlockIcons(iconRegister);
+    }
+
+    public IIcon getOverlayIcon() {
+        return overlayIcon;
     }
 
     @Override
