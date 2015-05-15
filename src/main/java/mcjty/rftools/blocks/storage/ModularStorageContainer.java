@@ -22,7 +22,7 @@ public class ModularStorageContainer extends GenericContainer {
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModularStorageSetup.storageModuleItem)), CONTAINER_INVENTORY, SLOT_STORAGE_MODULE, 5, 215, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageTypeItem.class), CONTAINER_INVENTORY, SLOT_TYPE_MODULE, 23, 215, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_STORAGE, -20, -20, 30, 0, 10, 0);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_STORAGE, -500, -500, 30, 0, 10, 0);
             layoutPlayerInventorySlots(91, 157);
         }
     };
@@ -35,6 +35,7 @@ public class ModularStorageContainer extends GenericContainer {
         generateSlots();
     }
 
+    @Override
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
