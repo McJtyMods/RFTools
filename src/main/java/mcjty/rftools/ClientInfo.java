@@ -1,6 +1,9 @@
 package mcjty.rftools;
 
 import mcjty.varia.Coordinate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.world.World;
 
 /**
  * This class holds information on client-side only which are global to the mod.
@@ -39,5 +42,9 @@ public class ClientInfo {
 
     public void setDestinationTE(Coordinate destinationTE) {
         this.destinationTE = destinationTE;
+    }
+
+    public static World getWorld() {
+        return Minecraft.getMinecraft().theWorld;
     }
 }

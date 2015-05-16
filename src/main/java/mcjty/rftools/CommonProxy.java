@@ -1,5 +1,11 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
@@ -24,19 +30,13 @@ import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
 import mcjty.rftools.network.PacketHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
 
-public class CommonProxy {
+public abstract class CommonProxy {
 
     public static File modConfigDir;
     private Configuration mainConfig;

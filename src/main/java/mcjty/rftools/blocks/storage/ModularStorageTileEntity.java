@@ -1,7 +1,11 @@
 package mcjty.rftools.blocks.storage;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.ClientInfo;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
@@ -108,19 +112,25 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     private boolean containsItem(int index) {
-        if ((!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+        if (isStorageAvailableRemotely(index)) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return false;
             }
+            index -= ModularStorageContainer.SLOT_STORAGE;
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || (index-ModularStorageContainer.SLOT_STORAGE) >= slots.length) {
+            if (slots == null || index >= slots.length) {
                 return false;
             }
-            return slots[index-ModularStorageContainer.SLOT_STORAGE] != null && slots[index-ModularStorageContainer.SLOT_STORAGE].stackSize > 0;
+            return slots[index] != null && slots[index].stackSize > 0;
         } else {
             return inventoryHelper.containsItem(index);
         }
+    }
+
+    // On server, and if we have a remote storage module and if we're accessing a remote slot we check the remote storage.
+    private boolean isStorageAvailableRemotely(int index) {
+        return (!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE;
     }
 
     @Override
@@ -128,16 +138,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         if (index >= getSizeInventory()) {
             return null;
         }
-        if ((!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+        if (isStorageAvailableRemotely(index)) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return null;
             }
+            index -= ModularStorageContainer.SLOT_STORAGE;
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || (index-ModularStorageContainer.SLOT_STORAGE) >= slots.length) {
+            if (slots == null || index >= slots.length) {
                 return null;
             }
-            return slots[index-ModularStorageContainer.SLOT_STORAGE];
+            return slots[index];
         }
         return inventoryHelper.getStacks()[index];
     }
@@ -177,7 +188,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     private ItemStack decrStackSizeHelper(int index, int amount) {
-        if ((!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+        if (isStorageAvailableRemotely(index)) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return null;
@@ -227,7 +238,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     private void setInventorySlotContentsHelper(int limit, int index, ItemStack stack) {
-        if ((!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+        if (isStorageAvailableRemotely(index)) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return;
@@ -246,6 +257,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         } else {
             inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         }
+    }
+
+    public void syncToClient() {
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
     }
 
     @Override
@@ -369,12 +386,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     private RemoteStorageTileEntity getRemoteStorage(int id) {
-        if (worldObj == null) {
-            return null;
-        }
-        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
+        World world = getWorld();
+        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
         if (registry == null) {
-            if (!worldObj.isRemote) {
+            if (!world.isRemote) {
                 System.out.println("ModularStorageTileEntity.getRemoteStorage 1 : " + id);
             }
             return null;
@@ -410,7 +425,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private void updateStackCount() {
         numStacks = 0;
-        if (remoteId != 0) {
+        World world = getWorld();
+        if ((!world.isRemote) && remoteId != 0) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 System.out.println("ModularStorageTileEntity.updateStackCount 1: " + remoteId);
@@ -436,6 +452,18 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
     }
 
+    private World getWorld() {
+        World world = worldObj;
+        if (world == null) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+                world = ClientInfo.getWorld();
+            } else {
+                world = DimensionManager.getWorld(0);
+            }
+        }
+        return world;
+    }
+
     private void setMaxSize(int ms) {
         maxSize = ms;
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
@@ -453,7 +481,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, 0);
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
         remoteId = tagCompound.getInteger("remoteId");
@@ -461,6 +488,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         viewMode = tagCompound.getString("viewMode");
         groupMode = tagCompound.getBoolean("groupMode");
         filter = tagCompound.getString("filter");
+        readBufferFromNBT(tagCompound, 0);
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
         accessible = null;
 

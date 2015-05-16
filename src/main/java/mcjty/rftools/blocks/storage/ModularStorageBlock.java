@@ -114,7 +114,10 @@ public class ModularStorageBlock extends GenericContainerBlock {
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new ModularStorageContainer(entityPlayer, (ModularStorageTileEntity) tileEntity);
+        ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) tileEntity;
+        // Make sure the client has sufficient information to show the data.
+        modularStorageTileEntity.syncToClient();
+        return new ModularStorageContainer(entityPlayer, modularStorageTileEntity);
     }
 
     @Override
