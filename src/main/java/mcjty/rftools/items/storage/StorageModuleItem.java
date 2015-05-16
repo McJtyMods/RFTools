@@ -19,9 +19,10 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class StorageModuleItem extends Item {
-    private final IIcon[] icons = new IIcon[4];
+    private final IIcon[] icons = new IIcon[7];
 
-    public static final int MAXSIZE[] = new int[] { 100, 200, 300, -1 };
+    public static final int STORAGE_REMOTE = 6;
+    public static final int MAXSIZE[] = new int[] { 100, 200, 300, 0, 0, 0, -1 };
 
     public StorageModuleItem() {
         setMaxStackSize(1);
@@ -31,8 +32,10 @@ public class StorageModuleItem extends Item {
 
     @Override
     public void registerIcons(IIconRegister iconRegister) {
-        for (int i = 0 ; i < 4 ; i++) {
-            icons[i] = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule" + i);
+        for (int i = 0 ; i < 7 ; i++) {
+            if (MAXSIZE[i] != 0) {
+                icons[i] = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule" + i);
+            }
         }
     }
 
@@ -59,6 +62,10 @@ public class StorageModuleItem extends Item {
                     if (ItemStack.loadItemStackFromNBT(tagAt) != null) {
                         cnt++;
                     }
+                }
+                if (tagCompound.hasKey("id")) {
+                    int id = tagCompound.getInteger("id");
+                    list.add(EnumChatFormatting.GREEN + "Contents id: " + id);
                 }
                 list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
             }
@@ -88,8 +95,10 @@ public class StorageModuleItem extends Item {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (int i = 0 ; i < 4 ; i++) {
-            list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+        for (int i = 0 ; i < 7 ; i++) {
+            if (MAXSIZE[i] != 0) {
+                list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+            }
         }
     }
 }

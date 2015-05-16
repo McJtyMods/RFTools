@@ -13,6 +13,8 @@ public class RemoteStorageContainer extends GenericContainer {
     public static final int SLOT_STORAGE = 0;
     public static final int SLOT_LINKER = 4;
 
+    private RemoteStorageTileEntity remoteStorageTileEntity;
+
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
@@ -32,8 +34,17 @@ public class RemoteStorageContainer extends GenericContainer {
 
     public RemoteStorageContainer(EntityPlayer player, RemoteStorageTileEntity containerInventory) {
         super(factory);
+        remoteStorageTileEntity = containerInventory;
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
+    }
+
+    @Override
+    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+        if (index >= 0 && index < SLOT_LINKER && !player.worldObj.isRemote) {
+            remoteStorageTileEntity.copyToModule(index);
+        }
+        return super.slotClick(index, button, mode, player);
     }
 }

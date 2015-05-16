@@ -4,12 +4,17 @@ import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
+import mcjty.varia.Coordinate;
+import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Map;
@@ -29,6 +34,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private String filter = "";
 
     private int numStacks = -1;       // -1 means no storage cell.
+    private int remoteId = 0;
+
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
@@ -96,10 +107,37 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         return 2 + maxSize;
     }
 
+    private boolean containsItem(int index) {
+        if (remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return false;
+            }
+            ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
+            if (slots == null || (index-2) >= slots.length) {
+                return false;
+            }
+            return slots[index-2] != null && slots[index-2].stackSize > 0;
+        } else {
+            return inventoryHelper.containsItem(index);
+        }
+    }
+
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getSizeInventory()) {
             return null;
+        }
+        if (remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return null;
+            }
+            ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
+            if (slots == null || (index-2) >= slots.length) {
+                return null;
+            }
+            return slots[index-2];
         }
         return inventoryHelper.getStacks()[index];
     }
@@ -108,7 +146,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         if (index < ModularStorageContainer.SLOT_STORAGE) {
             return;
         }
-        boolean s2 = inventoryHelper.containsItem(index);
+        boolean s2 = containsItem(index);
         if (s1 == s2) {
             return;
         }
@@ -138,10 +176,43 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         return numStacks;
     }
 
+    private ItemStack decrStackSizeHelper(int index, int amount) {
+        if (remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return null;
+            }
+            index -= 2;
+
+            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
+            if (stacks == null || index >= stacks.length) {
+                return null;
+            }
+
+            if (stacks[index] != null) {
+                if (stacks[index].stackSize <= amount) {
+                    ItemStack old = stacks[index];
+                    stacks[index] = null;
+                    storageTileEntity.markDirty();
+                    return old;
+                }
+                ItemStack its = stacks[index].splitStack(amount);
+                if (stacks[index].stackSize == 0) {
+                    stacks[index] = null;
+                }
+                storageTileEntity.markDirty();
+                return its;
+            }
+            return null;
+        } else {
+            return inventoryHelper.decrStackSize(index, amount);
+        }
+    }
+
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        boolean s1 = inventoryHelper.containsItem(index);
-        ItemStack itemStack = inventoryHelper.decrStackSize(index, amount);
+        boolean s1 = containsItem(index);
+        ItemStack itemStack = decrStackSizeHelper(index, amount);
         handleNewAmount(s1, index);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
@@ -155,6 +226,28 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         return null;
     }
 
+    private void setInventorySlotContentsHelper(int limit, int index, ItemStack stack) {
+        if (remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return;
+            }
+            index -= 2;
+
+            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
+            if (stacks == null || index >= stacks.length) {
+                return;
+            }
+            stacks[index] = stack;
+            if (stack != null && stack.stackSize > limit) {
+                stack.stackSize = limit;
+            }
+            storageTileEntity.markDirty();
+        } else {
+            inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        }
+    }
+
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
@@ -163,8 +256,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             // Make sure front side is updated.
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
-        boolean s1 = inventoryHelper.containsItem(index);
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        boolean s1 = containsItem(index);
+        setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
         handleNewAmount(s1, index);
     }
 
@@ -212,6 +305,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             // Should be impossible.
             return;
         }
+        if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
+            return;
+        }
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -223,6 +319,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             inventoryHelper.setInventorySlotContents(0, i, null);
         }
         numStacks = -1;
+        remoteId = 0;
 
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -238,21 +335,101 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             numStacks = -1;
             return;
         }
-
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound != null) {
-            readBufferFromNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+        remoteId = 0;
+        if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound == null || !tagCompound.hasKey("id")) {
+                setMaxSize(0);
+                numStacks = -1;
+                return;
+            }
+            remoteId = tagCompound.getInteger("id");
+            RemoteStorageTileEntity remoteStorageTileEntity = getRemoteStorage(remoteId);
+            if (remoteStorageTileEntity == null) {
+                setMaxSize(0);
+                numStacks = -1;
+                return;
+            }
+            ItemStack storageStack = remoteStorageTileEntity.findStorageWithId(remoteId);
+            if (storageStack == null) {
+                setMaxSize(0);
+                numStacks = -1;
+                return;
+            }
+            setMaxSize(StorageModuleItem.MAXSIZE[storageStack.getItemDamage()]);
+        } else {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound != null) {
+                readBufferFromNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+            }
+            setMaxSize(StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
         }
 
-        setMaxSize(StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
         updateStackCount();
+    }
+
+    private RemoteStorageTileEntity getRemoteStorage(int id) {
+        if (worldObj == null) {
+            return null;
+        }
+        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
+        if (registry == null) {
+            if (!worldObj.isRemote) {
+                System.out.println("ModularStorageTileEntity.getRemoteStorage 1 : " + id);
+            }
+            return null;
+        }
+        GlobalCoordinate coordinate = registry.getStorage(id);
+        if (coordinate == null) {
+            System.out.println("ModularStorageTileEntity.getRemoteStorage 2 : " + id);
+
+            return null;
+        }
+        World w = DimensionManager.getWorld(coordinate.getDimension());
+        if (w == null) {
+            System.out.println("ModularStorageTileEntity.getRemoteStorage 3 : " + id);
+
+            return null;
+        }
+        Coordinate c = coordinate.getCoordinate();
+        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        if (!exists) {
+            System.out.println("ModularStorageTileEntity.getRemoteStorage 4 : " + id);
+
+            return null;
+        }
+        TileEntity te = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (te instanceof RemoteStorageTileEntity) {
+            return (RemoteStorageTileEntity) te;
+        } else {
+            System.out.println("ModularStorageTileEntity.getRemoteStorage 5 : " + id);
+
+            return null;
+        }
     }
 
     private void updateStackCount() {
         numStacks = 0;
-        for (int i = 2 ; i < 2+maxSize ; i++) {
-            if (inventoryHelper.containsItem(i)) {
-                numStacks++;
+        if (remoteId != 0) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return;
+            }
+            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
+            if (stacks == null) {
+                return;
+            }
+
+            for (int i = 0; i < maxSize; i++) {
+                if (stacks[i] != null && stacks[i].stackSize > 0) {
+                    numStacks++;
+                }
+            }
+        } else {
+            for (int i = 2; i < 2 + maxSize; i++) {
+                if (inventoryHelper.containsItem(i)) {
+                    numStacks++;
+                }
             }
         }
     }
@@ -277,6 +454,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         readBufferFromNBT(tagCompound, 0);
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
+        remoteId = tagCompound.getInteger("remoteId");
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
         groupMode = tagCompound.getBoolean("groupMode");
@@ -306,6 +484,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         writeBufferToNBT(tagCompound, 0);
         tagCompound.setInteger("numStacks", numStacks);
         tagCompound.setInteger("maxSize", maxSize);
+        tagCompound.setInteger("remoteId", remoteId);
         tagCompound.setString("sortMode", sortMode);
         tagCompound.setString("viewMode", viewMode);
         tagCompound.setBoolean("groupMode", groupMode);
