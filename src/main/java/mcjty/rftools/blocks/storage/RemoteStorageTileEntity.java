@@ -227,7 +227,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
-        writeSlotsToNBT(tagCompound, index);
+        writeSlotsToNBT(tagCompound, "Items", index);
 
         for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
             slots[index][i] = null;
@@ -250,7 +250,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
-            readSlotsFromNBT(tagCompound, index);
+            readSlotsFromNBT(tagCompound, "Items", index);
         }
 
         setMaxSize(index, StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
@@ -271,7 +271,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         for (int i = 0 ; i < 4 ; i++) {
-            readSlotsFromNBT(tagCompound, i);
+            readSlotsFromNBT(tagCompound, "Slots" + i, i);
             maxsize[i] = tagCompound.getInteger("maxSize" + i);
         }
     }
@@ -284,8 +284,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         }
     }
 
-    private void readSlotsFromNBT(NBTTagCompound tagCompound, int index) {
-        NBTTagList bufferTagList = tagCompound.getTagList("Slots" + index, Constants.NBT.TAG_COMPOUND);
+    private void readSlotsFromNBT(NBTTagCompound tagCompound, String tagname, int index) {
+        NBTTagList bufferTagList = tagCompound.getTagList(tagname, Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             slots[index][i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
@@ -303,7 +303,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         for (int i = 0 ; i < 4 ; i++) {
-            writeSlotsToNBT(tagCompound, i);
+            writeSlotsToNBT(tagCompound, "Slots" + i, i);
             tagCompound.setInteger("maxSize" + i, maxsize[i]);
         }
     }
@@ -321,7 +321,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         tagCompound.setTag("Items", bufferTagList);
     }
 
-    private void writeSlotsToNBT(NBTTagCompound tagCompound, int index) {
+    private void writeSlotsToNBT(NBTTagCompound tagCompound, String tagname, int index) {
         NBTTagList bufferTagList = new NBTTagList();
         for (int i = 0 ; i < slots[index].length ; i++) {
             ItemStack stack = slots[index][i];
@@ -331,7 +331,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        tagCompound.setTag("Slots" + index, bufferTagList);
+        tagCompound.setTag(tagname, bufferTagList);
     }
 
 }
