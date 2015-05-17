@@ -46,6 +46,8 @@ public class ModularStorageRenderer extends DefaultISBRH {
 
             IIcon icon = ModularStorageSetup.modularStorageBlock.getOverlayIcon();
 
+            int remoteId = modularStorageTileEntity.getRemoteId();
+
             float pct = level / 7.0f;
             float u1 = icon.getMinU();
             float u2 = icon.getMaxU();
@@ -56,7 +58,12 @@ public class ModularStorageRenderer extends DefaultISBRH {
 
             float v1 = icon.getMinV();
             float v2 = icon.getMaxV();
-            v2 = v1 + (v2-v1) / 8;
+            float dv = (v2-v1) / 2;
+            v2 = v1 + dv / 8;
+            if (remoteId != 0) {
+                v1 += dv;
+                v2 += dv;
+            }
 
             Quad quad = quadsBar[front.ordinal()];
             tessellator.addVertexWithUV(quad.v1.x, quad.v1.y, quad.v1.z, u1, v1);

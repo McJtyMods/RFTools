@@ -133,6 +133,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         return (!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE;
     }
 
+    public int getRemoteId() {
+        return remoteId;
+    }
+
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getSizeInventory()) {
