@@ -113,11 +113,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private boolean containsItem(int index) {
         if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return false;
             }
-            index -= ModularStorageContainer.SLOT_STORAGE;
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
             if (slots == null || index >= slots.length) {
                 return false;
@@ -139,11 +139,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             return null;
         }
         if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return null;
             }
-            index -= ModularStorageContainer.SLOT_STORAGE;
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
             if (slots == null || index >= slots.length) {
                 return null;
@@ -189,11 +189,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private ItemStack decrStackSizeHelper(int index, int amount) {
         if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return null;
             }
-            index -= ModularStorageContainer.SLOT_STORAGE;
 
             ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
             if (stacks == null || index >= stacks.length) {
@@ -239,11 +239,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private void setInventorySlotContentsHelper(int limit, int index, ItemStack stack) {
         if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return;
             }
-            index -= ModularStorageContainer.SLOT_STORAGE;
 
             ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
             if (stacks == null || index >= stacks.length) {
@@ -312,6 +312,19 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index >= getSizeInventory()) {
             return false;
+        }
+
+        if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return false;
+            }
+
+            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
+            if (stacks == null || index >= stacks.length) {
+                return false;
+            }
         }
         return true;
     }
@@ -389,36 +402,25 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         World world = getWorld();
         RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
         if (registry == null) {
-            if (!world.isRemote) {
-                System.out.println("ModularStorageTileEntity.getRemoteStorage 1 : " + id);
-            }
             return null;
         }
         GlobalCoordinate coordinate = registry.getStorage(id);
         if (coordinate == null) {
-            System.out.println("ModularStorageTileEntity.getRemoteStorage 2 : " + id);
-
             return null;
         }
         World w = DimensionManager.getWorld(coordinate.getDimension());
         if (w == null) {
-            System.out.println("ModularStorageTileEntity.getRemoteStorage 3 : " + id);
-
             return null;
         }
         Coordinate c = coordinate.getCoordinate();
         boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
         if (!exists) {
-            System.out.println("ModularStorageTileEntity.getRemoteStorage 4 : " + id);
-
             return null;
         }
         TileEntity te = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (te instanceof RemoteStorageTileEntity) {
             return (RemoteStorageTileEntity) te;
         } else {
-            System.out.println("ModularStorageTileEntity.getRemoteStorage 5 : " + id);
-
             return null;
         }
     }
