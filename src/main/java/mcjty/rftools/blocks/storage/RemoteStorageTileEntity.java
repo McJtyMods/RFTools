@@ -1,7 +1,10 @@
 package mcjty.rftools.blocks.storage;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -10,6 +13,8 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
@@ -23,6 +28,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             new ItemStack[ModularStorageContainer.MAXSIZE_STORAGE]
     };
     private int[] maxsize = { 0, 0, 0, 0 };
+    private int[] numStacks = { 0, 0, 0, 0 };
 
 
     public RemoteStorageTileEntity() {
@@ -178,6 +184,84 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return true;
     }
 
+    public int findRemoteIndex(int id) {
+        for (int i = 0 ; i < 4 ; i++) {
+            if (inventoryHelper.containsItem(i)) {
+                ItemStack stack = inventoryHelper.getStacks()[i];
+                if (stack.getItemDamage() != StorageModuleItem.STORAGE_REMOTE) {
+                    NBTTagCompound tagCompound = stack.getTagCompound();
+                    if (tagCompound != null && tagCompound.hasKey("id")) {
+                        if (id == tagCompound.getInteger("id")) {
+                            return i;
+                        }
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public ItemStack[] getRemoteStacks(int si) {
+        return slots[si];
+    }
+
+    public void updateCount(int si, int cnt) {
+        numStacks[si] = cnt;
+    }
+
+    public int getCount(int si) {
+        return numStacks[si];
+    }
+
+    public ItemStack decrStackSizeRemote(int si, int index, int amount) {
+        if (index >= slots[si].length) {
+            return null;
+        }
+        ItemStack[] stacks = slots[si];
+        boolean hasOld = stacks[index] != null && stacks[index].stackSize > 0;
+        ItemStack its = null;
+        if (stacks[index] != null) {
+            if (stacks[index].stackSize <= amount) {
+                ItemStack old = stacks[index];
+                stacks[index] = null;
+                its = old;
+            } else {
+                its = stacks[index].splitStack(amount);
+                if (stacks[index].stackSize == 0) {
+                    stacks[index] = null;
+                }
+            }
+        }
+
+        boolean hasNew = stacks[index] != null && stacks[index].stackSize > 0;
+        if (hasOld && !hasNew) {
+            numStacks[si]--;
+        } else if (hasNew && !hasOld) {
+            numStacks[si]++;
+        }
+        markDirty();
+        return its;
+    }
+
+    public boolean updateRemoteSlot(int si, int limit, int index, ItemStack stack) {
+        if (index >= slots[si].length) {
+            return false;
+        }
+        boolean hasOld = slots[si][index] != null && slots[si][index].stackSize > 0;
+        slots[si][index] = stack;
+        if (stack != null && stack.stackSize > limit) {
+            stack.stackSize = limit;
+        }
+        boolean hasNew = stack != null && stack.stackSize > 0;
+        if (hasOld && !hasNew) {
+            numStacks[si]--;
+        } else if (hasNew && !hasOld) {
+            numStacks[si]++;
+        }
+        markDirty();
+        return true;
+    }
+
     public ItemStack findStorageWithId(int id) {
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
@@ -213,8 +297,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
 
-    public void copyToModule(int index) {
-        ItemStack stack = inventoryHelper.getStacks()[index];
+    public void copyToModule(int si) {
+        ItemStack stack = inventoryHelper.getStacks()[si];
         if (stack == null || stack.stackSize == 0) {
             // Should be impossible.
             return;
@@ -227,39 +311,50 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
-        writeSlotsToNBT(tagCompound, "Items", index);
+        writeSlotsToNBT(tagCompound, "Items", si);
 
         for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            slots[index][i] = null;
+            slots[si][i] = null;
         }
     }
 
-    public void copyFromModule(ItemStack stack, int index) {
+    public void copyFromModule(ItemStack stack, int si) {
         for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            slots[index][i] = null;
+            slots[si][i] = null;
         }
+        numStacks[si] = 0;
 
         if (stack == null || stack.stackSize == 0) {
-            setMaxSize(index, 0);
+            setMaxSize(si, 0);
             return;
         }
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
-            setMaxSize(index, 0);
+            setMaxSize(si, 0);
             return;
         }
 
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
-            readSlotsFromNBT(tagCompound, "Items", index);
+            readSlotsFromNBT(tagCompound, "Items", si);
         }
 
-        setMaxSize(index, StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
+        setMaxSize(si, StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
+        updateStackCount(si);
     }
 
     private void setMaxSize(int index, int ms) {
         maxsize[index] = ms;
     }
 
+    private void updateStackCount(int si) {
+        numStacks[si] = 0;
+        ItemStack[] stacks = slots[si];
+        for (ItemStack stack : stacks) {
+            if (stack != null && stack.stackSize > 0) {
+                numStacks[si]++;
+            }
+        }
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -273,6 +368,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = 0 ; i < 4 ; i++) {
             readSlotsFromNBT(tagCompound, "Slots" + i, i);
             maxsize[i] = tagCompound.getInteger("maxSize" + i);
+            updateStackCount(i);
         }
     }
 

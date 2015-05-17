@@ -40,9 +40,43 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private int numStacks = -1;       // -1 means no storage cell.
     private int remoteId = 0;
 
+    private int prevLevel = -2;
+    private int timer = 10;
+
     @Override
-    public boolean canUpdate() {
-        return false;
+    protected void checkStateServer() {
+        timer--;
+        if (timer > 0) {
+            return;
+        }
+        timer = 10;
+
+        if (remoteId != 0) {
+            // Only if we have a remote storage module do we have to do anything.
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            int si = -1;
+            if (storageTileEntity != null) {
+                si = storageTileEntity.findRemoteIndex(remoteId);
+            }
+            if (si == -1) {
+                if (prevLevel != -2) {
+                    markDirty();
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                    prevLevel = -2;
+                    numStacks = -1;
+                    maxSize = 0;
+                }
+                return;
+            }
+
+            numStacks = storageTileEntity.getCount(si);
+            int level = getRenderLevel();
+            if (level != prevLevel) {
+                prevLevel = level;
+                markDirty();
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            }
+        }
     }
 
     @Override
@@ -199,26 +233,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 return null;
             }
 
-            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
-            if (stacks == null || index >= stacks.length) {
+            int si = storageTileEntity.findRemoteIndex(remoteId);
+            if (si == -1) {
                 return null;
             }
-
-            if (stacks[index] != null) {
-                if (stacks[index].stackSize <= amount) {
-                    ItemStack old = stacks[index];
-                    stacks[index] = null;
-                    storageTileEntity.markDirty();
-                    return old;
-                }
-                ItemStack its = stacks[index].splitStack(amount);
-                if (stacks[index].stackSize == 0) {
-                    stacks[index] = null;
-                }
-                storageTileEntity.markDirty();
-                return its;
-            }
-            return null;
+            return storageTileEntity.decrStackSizeRemote(si, index, amount);
         } else {
             return inventoryHelper.decrStackSize(index, amount);
         }
@@ -249,15 +268,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 return;
             }
 
-            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
-            if (stacks == null || index >= stacks.length) {
+            int si = storageTileEntity.findRemoteIndex(remoteId);
+            if (si == -1) {
                 return;
             }
-            stacks[index] = stack;
-            if (stack != null && stack.stackSize > limit) {
-                stack.stackSize = limit;
-            }
-            storageTileEntity.markDirty();
+            storageTileEntity.updateRemoteSlot(si, limit, index, stack);
         } else {
             inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         }
@@ -435,20 +450,19 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         if ((!world.isRemote) && remoteId != 0) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
-                System.out.println("ModularStorageTileEntity.updateStackCount 1: " + remoteId);
                 return;
             }
-            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
-            if (stacks == null) {
-                System.out.println("ModularStorageTileEntity.updateStackCount 2: " + remoteId);
+            int si = storageTileEntity.findRemoteIndex(remoteId);
+            if (si == -1) {
                 return;
             }
-
+            ItemStack[] stacks = storageTileEntity.getRemoteStacks(si);
             for (int i = 0; i < maxSize; i++) {
                 if (stacks[i] != null && stacks[i].stackSize > 0) {
                     numStacks++;
                 }
             }
+            storageTileEntity.updateCount(si, numStacks);
         } else {
             for (int i = 2; i < 2 + maxSize; i++) {
                 if (inventoryHelper.containsItem(i)) {
@@ -531,7 +545,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         // If sendToClient is true we have to send dummy information to the client
         // so that it can remotely open gui's.
         boolean sendToClient = (!worldObj.isRemote) && offset == 0 && remoteId != 0;
-System.out.println("sendToClient = " + sendToClient);
 
         NBTTagList bufferTagList = new NBTTagList();
         if (sendToClient) {
@@ -546,13 +559,14 @@ System.out.println("sendToClient = " + sendToClient);
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity != null) {
                 ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
-System.out.println("slots.length = " + slots.length);
-                for (ItemStack stack : slots) {
-                    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                    if (stack != null) {
-                        stack.writeToNBT(nbtTagCompound);
+                if (slots != null) {
+                    for (ItemStack stack : slots) {
+                        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+                        if (stack != null) {
+                            stack.writeToNBT(nbtTagCompound);
+                        }
+                        bufferTagList.appendTag(nbtTagCompound);
                     }
-                    bufferTagList.appendTag(nbtTagCompound);
                 }
             }
         } else {
