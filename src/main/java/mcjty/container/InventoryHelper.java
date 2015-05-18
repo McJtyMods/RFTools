@@ -111,7 +111,7 @@ public class InventoryHelper {
     }
 
     public boolean containsItem(int index) {
-        return stacks[index] != null && stacks[index].stackSize > 0;
+        return stacks[index] != null;
     }
 
     public ItemStack decrStackSize(int index, int amount) {

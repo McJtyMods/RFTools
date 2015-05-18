@@ -218,7 +218,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             return null;
         }
         ItemStack[] stacks = slots[si];
-        boolean hasOld = stacks[index] != null && stacks[index].stackSize > 0;
+        boolean hasOld = stacks[index] != null;
         ItemStack its = null;
         if (stacks[index] != null) {
             if (stacks[index].stackSize <= amount) {
@@ -233,7 +233,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             }
         }
 
-        boolean hasNew = stacks[index] != null && stacks[index].stackSize > 0;
+        boolean hasNew = stacks[index] != null;
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -249,12 +249,12 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (index >= slots[si].length) {
             return false;
         }
-        boolean hasOld = slots[si][index] != null && slots[si][index].stackSize > 0;
+        boolean hasOld = slots[si][index] != null;
         slots[si][index] = stack;
         if (stack != null && stack.stackSize > limit) {
             stack.stackSize = limit;
         }
-        boolean hasNew = stack != null && stack.stackSize > 0;
+        boolean hasNew = stack != null;
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -303,7 +303,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public void copyToModule(int si) {
         ItemStack stack = inventoryHelper.getStacks()[si];
-        if (stack == null || stack.stackSize == 0) {
+        if (stack == null) {
             // Should be impossible.
             return;
         }
@@ -329,7 +329,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         }
         numStacks[si] = 0;
 
-        if (stack == null || stack.stackSize == 0) {
+        if (stack == null) {
             setMaxSize(si, 0);
             return;
         }
@@ -355,7 +355,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         numStacks[si] = 0;
         ItemStack[] stacks = slots[si];
         for (ItemStack stack : stacks) {
-            if (stack != null && stack.stackSize > 0) {
+            if (stack != null) {
                 numStacks[si]++;
             }
         }

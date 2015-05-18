@@ -156,7 +156,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             if (slots == null || index >= slots.length) {
                 return false;
             }
-            return slots[index] != null && slots[index].stackSize > 0;
+            return slots[index] != null;
         } else {
             return inventoryHelper.containsItem(index);
         }
@@ -357,7 +357,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     public void copyToModule() {
         ItemStack stack = inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE];
-        if (stack == null || stack.stackSize == 0) {
+        if (stack == null) {
             // Should be impossible.
             return;
         }
@@ -387,7 +387,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             inventoryHelper.setInventorySlotContents(0, i, null);
         }
 
-        if (stack == null || stack.stackSize == 0) {
+        if (stack == null) {
             setMaxSize(0);
             numStacks = -1;
             return;
@@ -465,7 +465,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
             ItemStack[] stacks = storageTileEntity.getRemoteStacks(si);
             for (int i = 0; i < maxSize; i++) {
-                if (stacks[i] != null && stacks[i].stackSize > 0) {
+                if (stacks[i] != null) {
                     numStacks++;
                 }
             }
