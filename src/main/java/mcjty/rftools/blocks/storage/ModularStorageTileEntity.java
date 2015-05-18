@@ -132,17 +132,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
-        return index >= ModularStorageContainer.SLOT_STORAGE;
+        return index >= ModularStorageContainer.SLOT_STORAGE && isItemValidForSlot(index, item);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack item, int side) {
-        return index >= ModularStorageContainer.SLOT_STORAGE;
+        return index >= ModularStorageContainer.SLOT_STORAGE && isItemValidForSlot(index, item);
     }
 
     @Override
     public int getSizeInventory() {
-        return 2 + maxSize;
+        return ModularStorageContainer.SLOT_STORAGE + maxSize;
     }
 
     private boolean containsItem(int index) {
