@@ -3,16 +3,23 @@ package mcjty.rftools.blocks.storage;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Map;
 
 public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
+
+    public static final String CMD_SETGLOBAL = "setGlobal";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, RemoteStorageContainer.factory, 8);
 
@@ -24,7 +31,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     };
     private int[] maxsize = { 0, 0, 0, 0 };
     private int[] numStacks = { 0, 0, 0, 0 };
-
+    private boolean[] global = { false, false, false, false };
 
     public RemoteStorageTileEntity() {
         super(ModularStorageConfiguration.REMOTE_MAXENERGY, ModularStorageConfiguration.REMOTE_RECEIVEPERTICK);
@@ -46,6 +53,19 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                 ItemStack stack = inventoryHelper.getStacks()[i];
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound != null && tagCompound.hasKey("id")) {
+                    int rf;
+                    if (isGlobal(i)) {
+                        rf = ModularStorageConfiguration.remoteShareGlobal;
+                    } else {
+                        rf = ModularStorageConfiguration.remoteShareLocal;
+                    }
+                    rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+
+                    if (getEnergyStored(ForgeDirection.DOWN) < rf) {
+                        return;
+                    }
+                    consumeEnergy(rf);
+
                     int id = tagCompound.getInteger("id");
                     registry.publishStorage(id, new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId));
                 }
@@ -194,6 +214,16 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             }
         }
         return -1;
+    }
+
+    public boolean isGlobal(int index) {
+        return global[index];
+    }
+
+    public void setGlobal(int index, boolean global) {
+        this.global[index] = global;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public ItemStack[] getRemoteStacks(int si) {
@@ -373,6 +403,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = 0 ; i < 4 ; i++) {
             readSlotsFromNBT(tagCompound, "Slots" + i, i);
             maxsize[i] = tagCompound.getInteger("maxSize" + i);
+            global[i] = tagCompound.getBoolean("global" + i);
             updateStackCount(i);
         }
     }
@@ -406,6 +437,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = 0 ; i < 4 ; i++) {
             writeSlotsToNBT(tagCompound, "Slots" + i, i);
             tagCompound.setInteger("maxSize" + i, maxsize[i]);
+            tagCompound.setBoolean("global" + i, global[i]);
         }
     }
 
@@ -440,4 +472,18 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return cnt;
     }
 
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return rc;
+        }
+        if (CMD_SETGLOBAL.equals(command)) {
+            int index = args.get("index").getInteger();
+            boolean global = args.get("global").getBoolean();
+            setGlobal(index, global);
+            return true;
+        }
+        return false;
+    }
 }

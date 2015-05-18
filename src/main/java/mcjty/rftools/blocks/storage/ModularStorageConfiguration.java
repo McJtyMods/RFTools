@@ -21,8 +21,8 @@ public class ModularStorageConfiguration {
     public static int REMOTE_MAXENERGY = 100000;
     public static int REMOTE_RECEIVEPERTICK = 500;
 
-    public static int remoteShareLocal = 6;         // RF/tick to share this inventory locally (same dimension).
-    public static int remoteShareGlobal = 30;       // RF/tick to share this inventory to other dimensions.
+    public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
+    public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.
 
     public static Map<String,String> categoryMapper = new HashMap<String, String>();
 

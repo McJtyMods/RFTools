@@ -446,7 +446,16 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         TileEntity te = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (te instanceof RemoteStorageTileEntity) {
-            return (RemoteStorageTileEntity) te;
+            RemoteStorageTileEntity remoteStorageTileEntity = (RemoteStorageTileEntity) te;
+            int index = remoteStorageTileEntity.findRemoteIndex(id);
+            if (index == -1) {
+                return null;
+            }
+            if (remoteStorageTileEntity.isGlobal(index) || world.provider.dimensionId == coordinate.getDimension()) {
+                return remoteStorageTileEntity;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

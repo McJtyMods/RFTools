@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
@@ -22,7 +23,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RemoteStorageBlock extends GenericContainerBlock {
+public class RemoteStorageBlock extends GenericContainerBlock implements Infusable {
 
     public static int RENDERID_REMOTESTORAGE;
 
