@@ -1,10 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -13,8 +10,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
@@ -207,6 +202,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public void updateCount(int si, int cnt) {
         numStacks[si] = cnt;
+        StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
     }
 
     public int getCount(int si) {
@@ -243,6 +239,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         } else if (hasNew && !hasOld) {
             numStacks[si]++;
         }
+        StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
+
         markDirty();
         return its;
     }
@@ -262,6 +260,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         } else if (hasNew && !hasOld) {
             numStacks[si]++;
         }
+        StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
+
         markDirty();
         return true;
     }
@@ -315,7 +315,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
-        writeSlotsToNBT(tagCompound, "Items", si);
+        int cnt = writeSlotsToNBT(tagCompound, "Items", si);
+        tagCompound.setInteger("count", cnt);
 
         for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
             slots[si][i] = null;
@@ -421,17 +422,22 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         tagCompound.setTag("Items", bufferTagList);
     }
 
-    private void writeSlotsToNBT(NBTTagCompound tagCompound, String tagname, int index) {
+    private int writeSlotsToNBT(NBTTagCompound tagCompound, String tagname, int index) {
         NBTTagList bufferTagList = new NBTTagList();
+        int cnt = 0;
         for (int i = 0 ; i < slots[index].length ; i++) {
             ItemStack stack = slots[index][i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
+                if (stack.stackSize > 0) {
+                    cnt++;
+                }
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag(tagname, bufferTagList);
+        return cnt;
     }
 
 }

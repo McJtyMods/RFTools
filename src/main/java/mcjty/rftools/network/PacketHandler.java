@@ -1,5 +1,8 @@
 package mcjty.rftools.network;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
@@ -21,9 +24,6 @@ import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.PacketAllReceiversReady;
 import mcjty.rftools.items.teleportprobe.PacketForceTeleport;
 import mcjty.rftools.items.teleportprobe.PacketGetAllReceivers;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 
 public class PacketHandler {
     public static SimpleNetworkWrapper INSTANCE;

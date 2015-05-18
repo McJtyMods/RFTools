@@ -4,8 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,6 +41,19 @@ public class StorageModuleItem extends Item {
         activeIcon = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule6Active");
     }
 
+    // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.
+    public static void updateStackSize(ItemStack stack, int numStacks) {
+        if (stack == null || stack.stackSize == 0) {
+            return;
+        }
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            stack.setTagCompound(tagCompound);
+        }
+        tagCompound.setInteger("count", numStacks);
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
@@ -59,14 +70,7 @@ public class StorageModuleItem extends Item {
                     list.add(EnumChatFormatting.YELLOW + "Unlinked");
                 }
             } else {
-                NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-                int cnt = 0;
-                for (int i = 0; i < bufferTagList.tagCount(); i++) {
-                    NBTTagCompound tagAt = bufferTagList.getCompoundTagAt(i);
-                    if (ItemStack.loadItemStackFromNBT(tagAt) != null) {
-                        cnt++;
-                    }
-                }
+                int cnt = tagCompound.getInteger("count");
                 if (tagCompound.hasKey("id")) {
                     int id = tagCompound.getInteger("id");
                     list.add(EnumChatFormatting.GREEN + "Contents id: " + id);

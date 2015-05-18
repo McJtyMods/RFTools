@@ -211,6 +211,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         } else {
             numStacks++;
         }
+        StorageModuleItem.updateStackSize(getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE), numStacks);
+
         int rlnew = getRenderLevel();
         if (rlold != rlnew) {
             markDirty();
@@ -365,7 +367,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
-        writeBufferToNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+        int cnt = writeBufferToNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
+        tagCompound.setInteger("count", cnt);
 
         for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
             inventoryHelper.setInventorySlotContents(0, i, null);
@@ -472,6 +475,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 }
             }
         }
+        StorageModuleItem.updateStackSize(getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE), numStacks);
     }
 
     private boolean isServer() {
@@ -554,11 +558,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         tagCompound.setString("filter", filter);
     }
 
-    private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
+    private int writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
         // If sendToClient is true we have to send dummy information to the client
         // so that it can remotely open gui's.
         boolean sendToClient = isServer() && offset == 0 && isRemote();
 
+        int cnt = 0;
         NBTTagList bufferTagList = new NBTTagList();
         if (sendToClient) {
             for (int i = 0 ; i < ModularStorageContainer.SLOT_STORAGE ; i++) {
@@ -577,6 +582,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                         NBTTagCompound nbtTagCompound = new NBTTagCompound();
                         if (stack != null) {
                             stack.writeToNBT(nbtTagCompound);
+                            if (stack.stackSize > 0) {
+                                cnt++;
+                            }
                         }
                         bufferTagList.appendTag(nbtTagCompound);
                     }
@@ -588,11 +596,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
                 if (stack != null) {
                     stack.writeToNBT(nbtTagCompound);
+                    if (stack.stackSize > 0) {
+                        cnt++;
+                    }
                 }
                 bufferTagList.appendTag(nbtTagCompound);
             }
         }
         tagCompound.setTag("Items", bufferTagList);
+        return cnt;
     }
 
     @Override
