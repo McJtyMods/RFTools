@@ -213,6 +213,10 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return numStacks[si];
     }
 
+    public int getMaxStacks(int si) {
+        return maxsize[si];
+    }
+
     public ItemStack decrStackSizeRemote(int si, int index, int amount) {
         if (index >= slots[si].length) {
             return null;

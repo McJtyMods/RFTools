@@ -40,7 +40,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private int numStacks = -1;       // -1 means no storage cell.
     private int remoteId = 0;
 
-    private int prevLevel = -2;
+    private int prevLevel = -3;     // -3 means to check, -2 means invalid
     private int timer = 10;
 
     @Override
@@ -51,7 +51,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         timer = 10;
 
-        if (remoteId != 0) {
+        if (isRemote()) {
             // Only if we have a remote storage module do we have to do anything.
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             int si = -1;
@@ -60,16 +60,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
             if (si == -1) {
                 if (prevLevel != -2) {
-                    markDirty();
-                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
                     prevLevel = -2;
                     numStacks = -1;
                     maxSize = 0;
+                    markDirty();
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
                 }
                 return;
             }
 
             numStacks = storageTileEntity.getCount(si);
+            maxSize = storageTileEntity.getMaxStacks(si);
             int level = getRenderLevel();
             if (level != prevLevel) {
                 prevLevel = level;
@@ -164,7 +165,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     // On server, and if we have a remote storage module and if we're accessing a remote slot we check the remote storage.
     private boolean isStorageAvailableRemotely(int index) {
-        return (!worldObj.isRemote) && remoteId != 0 && index >= ModularStorageContainer.SLOT_STORAGE;
+        return isServer() && isRemote() && index >= ModularStorageContainer.SLOT_STORAGE;
+    }
+
+    private boolean isRemote() {
+        return remoteId != 0;
     }
 
     public int getRemoteId() {
@@ -281,7 +286,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     public void syncToClient() {
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-
     }
 
     @Override
@@ -446,8 +450,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private void updateStackCount() {
         numStacks = 0;
-        World world = getWorld();
-        if ((!world.isRemote) && remoteId != 0) {
+        if (isServer() && isRemote()) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
                 return;
@@ -469,6 +472,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                     numStacks++;
                 }
             }
+        }
+    }
+
+    private boolean isServer() {
+        if (worldObj != null) {
+            return !worldObj.isRemote;
+        } else {
+            return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
         }
     }
 
@@ -512,7 +523,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
         accessible = null;
 
-        updateStackCount();
+        if (isServer()) {
+            updateStackCount();
+        }
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound, int offset) {
@@ -544,7 +557,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private void writeBufferToNBT(NBTTagCompound tagCompound, int offset) {
         // If sendToClient is true we have to send dummy information to the client
         // so that it can remotely open gui's.
-        boolean sendToClient = (!worldObj.isRemote) && offset == 0 && remoteId != 0;
+        boolean sendToClient = isServer() && offset == 0 && isRemote();
 
         NBTTagList bufferTagList = new NBTTagList();
         if (sendToClient) {
