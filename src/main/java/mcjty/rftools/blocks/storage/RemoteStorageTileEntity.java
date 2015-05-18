@@ -38,6 +38,11 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     private int timer = 0;
+    private int powercheck = -1;
+
+    public boolean isPowerLow() {
+        return getEnergyStored(ForgeDirection.DOWN) < ModularStorageConfiguration.remoteShareLocal;
+    }
 
     @Override
     protected void checkStateServer() {
@@ -46,6 +51,13 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             return;
         }
         timer = 5;
+
+        int powerLow = isPowerLow() ? 1 : 0;
+        if (powercheck != powerLow) {
+            powercheck = powerLow;
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
 
         RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
         for (int i = 0 ; i < 4 ; i++) {
@@ -65,6 +77,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                         return;
                     }
                     consumeEnergy(rf);
+                    markDirty();
 
                     int id = tagCompound.getInteger("id");
                     registry.publishStorage(id, new GlobalCoordinate(new Coordinate(xCoord, yCoord, zCoord), worldObj.provider.dimensionId));
