@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.Side;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.ClientInfo;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
@@ -514,6 +513,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         super.readRestorableFromNBT(tagCompound);
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
+//        System.out.println((isServer() ? "SERVER" : "CLIENT") + ": loc=" + xCoord + "," + yCoord + "," + zCoord + ", #stacks=" + numStacks + ", max=" + maxSize);
         remoteId = tagCompound.getInteger("remoteId");
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
