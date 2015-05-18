@@ -4,6 +4,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class StorageModuleItem extends Item {
     private final IIcon[] icons = new IIcon[7];
+    private IIcon activeIcon;
 
     public static final int STORAGE_REMOTE = 6;
     public static final int MAXSIZE[] = new int[] { 100, 200, 300, 0, 0, 0, -1 };
@@ -37,6 +40,7 @@ public class StorageModuleItem extends Item {
                 icons[i] = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule" + i);
             }
         }
+        activeIcon = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule6Active");
     }
 
     @SideOnly(Side.CLIENT)
@@ -83,9 +87,20 @@ public class StorageModuleItem extends Item {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIconFromDamage(int damage) {
-        return icons[damage];
+    public IIcon getIconIndex(ItemStack stack) {
+        int damage = stack.getItemDamage();
+        if (damage == 6) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound != null && tagCompound.hasKey("id")) {
+                return activeIcon;
+            } else {
+                return icons[damage];
+            }
+        } else {
+            return icons[damage];
+        }
     }
 
     @Override
