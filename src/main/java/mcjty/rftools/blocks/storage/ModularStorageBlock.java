@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.items.storage.DimletTypeItem;
 import mcjty.rftools.items.storage.GenericTypeItem;
 import mcjty.rftools.items.storage.OreDictTypeItem;
+import mcjty.rftools.network.PacketHandler;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -74,6 +75,8 @@ public class ModularStorageBlock extends GenericContainerBlock {
         }
     }
 
+    private static long lastTime = 0;
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -85,7 +88,17 @@ public class ModularStorageBlock extends GenericContainerBlock {
             if (maxSize == 0) {
                 currenttip.add(EnumChatFormatting.YELLOW + "No storage module!");
             } else {
-                currenttip.add(EnumChatFormatting.GREEN + (modularStorageTileEntity.getNumStacks() + " out of " + maxSize));
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    PacketHandler.INSTANCE.sendToServer(new PacketGetCountInfo(modularStorageTileEntity.getWorldObj().provider.dimensionId,
+                            modularStorageTileEntity.xCoord, modularStorageTileEntity.yCoord, modularStorageTileEntity.zCoord));
+                }
+                int stacks = ReturnCountInfoHelper.cnt;
+                if (stacks == -1) {
+                    currenttip.add(EnumChatFormatting.YELLOW + "Maximum size: " + maxSize);
+                } else {
+                    currenttip.add(EnumChatFormatting.GREEN + "" + stacks + " out of " + maxSize);
+                }
             }
         }
         return currenttip;
