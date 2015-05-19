@@ -61,6 +61,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         ySize = STORAGE_HEIGHT;
     }
 
+    public GuiModularStorage(ModularStorageItemContainer container) {
+        super(null, container);
+
+        xSize = STORAGE_WIDTH;
+        ySize = STORAGE_HEIGHT;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -75,7 +82,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 updateSettings();
             }
         });
-        filter.setText(tileEntity.getFilter());
 
         viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 170, 16, 16)).setTooltips("Control how items are shown", "in the view").addChoiceEvent(new ChoiceEvent() {
             @Override
@@ -86,12 +92,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         viewMode.addChoice(VIEW_LIST, "Items are shown in a list view", guiElements, 9 * 16, 16);
         viewMode.addChoice(VIEW_COLUMNS, "Items are shown in columns", guiElements, 10 * 16, 16);
         viewMode.addChoice(VIEW_ICONS, "Items are shown with icons", guiElements, 11 * 16, 16);
-        int idx = viewMode.findChoice(tileEntity.getViewMode());
-        if (idx == -1) {
-            viewMode.setCurrentChoice(VIEW_LIST);
-        } else {
-            viewMode.setCurrentChoice(idx);
-        }
 
         updateTypeModule();
 
@@ -104,12 +104,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         for (ItemSorter sorter : typeModule.getSorters()) {
             sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
         }
-        idx = sortMode.findChoice(tileEntity.getSortMode());
-        if (idx == -1) {
-            sortMode.setCurrentChoice(0);
-        } else {
-            sortMode.setCurrentChoice(idx);
-        }
 
         groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 170, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium").addChoiceEvent(new ChoiceEvent() {
             @Override
@@ -119,13 +113,29 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         });
         groupMode.addChoice("Off", "Don't show groups", guiElements, 13 * 16, 0);
         groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
-        groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
 
         amountLabel = new Label(mc, this);
         amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(8, 188, 80, 12));
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("? / ?");
+
+        if (tileEntity != null) {
+            filter.setText(tileEntity.getFilter());
+            int idx = viewMode.findChoice(tileEntity.getViewMode());
+            if (idx == -1) {
+                viewMode.setCurrentChoice(VIEW_LIST);
+            } else {
+                viewMode.setCurrentChoice(idx);
+            }
+            idx = sortMode.findChoice(tileEntity.getSortMode());
+            if (idx == -1) {
+                sortMode.setCurrentChoice(0);
+            } else {
+                sortMode.setCurrentChoice(idx);
+            }
+            groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
+        }
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
                 addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel);
@@ -135,11 +145,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private void updateSettings() {
-        sendServerCommand(ModularStorageTileEntity.CMD_SETTINGS,
-                new Argument("sortMode", sortMode.getCurrentChoice()),
-                new Argument("viewMode", viewMode.getCurrentChoice()),
-                new Argument("filter", filter.getText()),
-                new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
+        if (tileEntity != null) {
+            sendServerCommand(ModularStorageTileEntity.CMD_SETTINGS,
+                    new Argument("sortMode", sortMode.getCurrentChoice()),
+                    new Argument("viewMode", viewMode.getCurrentChoice()),
+                    new Argument("filter", filter.getText()),
+                    new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
+        }
     }
 
     private Slot findEmptySlot() {
@@ -229,17 +241,32 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             spacing = 3;
         }
 
+        int max;
         List<Pair<ItemStack,Integer>> items = new ArrayList<Pair<ItemStack, Integer>>();
-        for (int i = 2 ; i < tileEntity.getSizeInventory() ; i++) {
-            ItemStack stack = tileEntity.getStackInSlot(i);
-            if (stack != null && stack.stackSize > 0) {
-                String displayName = stack.getDisplayName();
-                if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
-                    items.add(Pair.of(stack, i));
+        if (tileEntity != null) {
+            for (int i = 2; i < tileEntity.getSizeInventory(); i++) {
+                ItemStack stack = tileEntity.getStackInSlot(i);
+                if (stack != null && stack.stackSize > 0) {
+                    String displayName = stack.getDisplayName();
+                    if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+                        items.add(Pair.of(stack, i));
+                    }
                 }
             }
+            max = tileEntity.getSizeInventory() - 2;
+        } else {
+            for (int i = 0; i < inventorySlots.inventorySlots.size() ; i++) {
+                ItemStack stack = inventorySlots.getSlot(i).getStack();
+                if (stack != null && stack.stackSize > 0) {
+                    String displayName = stack.getDisplayName();
+                    if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+                        items.add(Pair.of(stack, i));
+                    }
+                }
+            }
+            max = inventorySlots.inventorySlots.size();
         }
-        amountLabel.setText(items.size() + " / " + (tileEntity.getSizeInventory() - 2));
+        amountLabel.setText(items.size() + " / " + max);
 
         int sort = getCurrentSortMode();
 
@@ -273,11 +300,15 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private void updateTypeModule() {
-        ItemStack typeStack = tileEntity.getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
-        if (typeStack == null || typeStack.stackSize == 0 || !(typeStack.getItem() instanceof TypeModule)) {
-            typeModule = new DefaultTypeModule();
+        if (tileEntity != null) {
+            ItemStack typeStack = tileEntity.getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+            if (typeStack == null || typeStack.stackSize == 0 || !(typeStack.getItem() instanceof TypeModule)) {
+                typeModule = new DefaultTypeModule();
+            } else {
+                typeModule = (TypeModule) typeStack.getItem();
+            }
         } else {
-            typeModule = (TypeModule) typeStack.getItem();
+            typeModule = new DefaultTypeModule();
         }
     }
 

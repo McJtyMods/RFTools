@@ -427,38 +427,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private RemoteStorageTileEntity getRemoteStorage(int id) {
         World world = getWorld();
-        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
-        if (registry == null) {
-            return null;
-        }
-        GlobalCoordinate coordinate = registry.getStorage(id);
-        if (coordinate == null) {
-            return null;
-        }
-        World w = DimensionManager.getWorld(coordinate.getDimension());
-        if (w == null) {
-            return null;
-        }
-        Coordinate c = coordinate.getCoordinate();
-        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
-        if (!exists) {
-            return null;
-        }
-        TileEntity te = w.getTileEntity(c.getX(), c.getY(), c.getZ());
-        if (te instanceof RemoteStorageTileEntity) {
-            RemoteStorageTileEntity remoteStorageTileEntity = (RemoteStorageTileEntity) te;
-            int index = remoteStorageTileEntity.findRemoteIndex(id);
-            if (index == -1) {
-                return null;
-            }
-            if (remoteStorageTileEntity.isGlobal(index) || world.provider.dimensionId == coordinate.getDimension()) {
-                return remoteStorageTileEntity;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
+        return RemoteStorageIdRegistry.getRemoteStorage(world, id);
+
     }
 
     private void updateStackCount() {

@@ -4,6 +4,7 @@ import mcjty.rftools.apideps.ComputerCraftHelper;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
 import mcjty.rftools.commands.CommandRftDb;
@@ -126,6 +127,7 @@ public class RFTools {
     public static final int GUI_SPACE_PROJECTOR = modGuiIndex++;
     public static final int GUI_BLOCK_PROTECTOR = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
+    public static final int GUI_MODULAR_STORAGE_ITEM = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
 
 
@@ -203,6 +205,7 @@ public class RFTools {
         DimletMapping.clearInstance();
         RedstoneChannels.clearInstance();
         BlockProtectors.clearInstance();
+        RemoteStorageIdRegistry.clearInstance();
     }
 
     /**

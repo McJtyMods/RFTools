@@ -1,9 +1,12 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +45,43 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
         }
         return instance;
     }
+
+    public static RemoteStorageTileEntity getRemoteStorage(World world, int id) {
+        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
+        if (registry == null) {
+            return null;
+        }
+        GlobalCoordinate coordinate = registry.getStorage(id);
+        if (coordinate == null) {
+            return null;
+        }
+        World w = DimensionManager.getWorld(coordinate.getDimension());
+        if (w == null) {
+            return null;
+        }
+        Coordinate c = coordinate.getCoordinate();
+        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        if (!exists) {
+            return null;
+        }
+        TileEntity te = w.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (te instanceof RemoteStorageTileEntity) {
+            RemoteStorageTileEntity remoteStorageTileEntity = (RemoteStorageTileEntity) te;
+            int index = remoteStorageTileEntity.findRemoteIndex(id);
+            if (index == -1) {
+                return null;
+            }
+            if (remoteStorageTileEntity.isGlobal(index) || world.provider.dimensionId == coordinate.getDimension()) {
+                return remoteStorageTileEntity;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
 
     public void publishStorage(int id, GlobalCoordinate coordinate) {
         long time = System.currentTimeMillis();
