@@ -16,12 +16,16 @@ import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.network.PacketUpdateNBTItem;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -123,19 +127,15 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         if (tileEntity != null) {
             filter.setText(tileEntity.getFilter());
-            int idx = viewMode.findChoice(tileEntity.getViewMode());
-            if (idx == -1) {
-                viewMode.setCurrentChoice(VIEW_LIST);
-            } else {
-                viewMode.setCurrentChoice(idx);
-            }
-            idx = sortMode.findChoice(tileEntity.getSortMode());
-            if (idx == -1) {
-                sortMode.setCurrentChoice(0);
-            } else {
-                sortMode.setCurrentChoice(idx);
-            }
+            setViewMode(tileEntity.getViewMode());
+            setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
+        } else {
+            NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound();
+            filter.setText(tagCompound.getString("filter"));
+            setViewMode(tagCompound.getString("viewMode"));
+            setSortMode(tagCompound.getString("sortMode"));
+            groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
         }
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
@@ -145,6 +145,25 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         window = new Window(this, toplevel);
     }
 
+    private void setSortMode(String sortMode) {
+        int idx;
+        idx = this.sortMode.findChoice(sortMode);
+        if (idx == -1) {
+            this.sortMode.setCurrentChoice(0);
+        } else {
+            this.sortMode.setCurrentChoice(idx);
+        }
+    }
+
+    private void setViewMode(String viewMode) {
+        int idx = this.viewMode.findChoice(viewMode);
+        if (idx == -1) {
+            this.viewMode.setCurrentChoice(VIEW_LIST);
+        } else {
+            this.viewMode.setCurrentChoice(idx);
+        }
+    }
+
     private void updateSettings() {
         if (tileEntity != null) {
             sendServerCommand(ModularStorageTileEntity.CMD_SETTINGS,
@@ -152,6 +171,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     new Argument("viewMode", viewMode.getCurrentChoice()),
                     new Argument("filter", filter.getText()),
                     new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
+        } else {
+            PacketHandler.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+                    new Argument("sortMode", sortMode.getCurrentChoice()),
+                    new Argument("viewMode", viewMode.getCurrentChoice()),
+                    new Argument("filter", filter.getText()),
+                    new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1)));
         }
     }
 

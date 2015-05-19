@@ -20,6 +20,20 @@ public class AbstractServerCommand implements IMessage {
         y = buf.readInt();
         z = buf.readInt();
         command = NetworkTools.readString(buf);
+        args = readArguments(buf);
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(x);
+        buf.writeInt(y);
+        buf.writeInt(z);
+        NetworkTools.writeString(buf, command);
+        writeArguments(buf, args);
+    }
+
+    public static Map<String,Argument> readArguments(ByteBuf buf) {
+        Map<String,Argument> args;
         int size = buf.readInt();
         if (size == 0) {
             args = null;
@@ -54,14 +68,10 @@ public class AbstractServerCommand implements IMessage {
                 }
             }
         }
+        return args;
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(x);
-        buf.writeInt(y);
-        buf.writeInt(z);
-        NetworkTools.writeString(buf, command);
+    public static void writeArguments(ByteBuf buf, Map<String,Argument> args) {
         if (args == null) {
             buf.writeInt(0);
         } else {

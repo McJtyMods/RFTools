@@ -62,6 +62,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetCountInfo.class, PacketGetCountInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetScreenData.class, PacketGetScreenData.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketUpdateNBTItem.class, PacketUpdateNBTItem.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);
