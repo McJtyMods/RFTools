@@ -43,21 +43,21 @@ public class StorageModuleItem extends Item {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
             if (stack.getItemDamage() != STORAGE_REMOTE) {
                 RFTools.message(player, EnumChatFormatting.YELLOW + "This is not a remote storage module!");
-                return true;
+                return stack;
             }
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("id")) {
                 RFTools.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
-                return true;
+                return stack;
             }
             player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            return true;
+            return stack;
         }
-        return true;
+        return stack;
     }
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.

@@ -179,21 +179,6 @@ contents of that inventory. Scanning the environment uses energy
 and can take a while if you select a big radius. It also uses
 RF to perform this scan.
 {-------------------------------------------------------------}
-{b}Storage System
-{n:storage}
-{rb:modularStorageBlock}
-The Modular Storage Block is an advanced chest. Before you can
-use it you must insert a storage module. There are three tiers:
-100 stacks, 200 stacks, or 300 stacks.
-You can also insert modules to make the chest work better
-with various types of items.
-{-------------------------------------------------------------}
-When you remove a storage module from a Modular Storage Block the
-contents will be copied to the module.
-
-The various item modules allow you to sort and group your
-items based on various criteria.
-{-------------------------------------------------------------}
 If you open the user interface of this scanner you get two lists.
 The top list is initially empty but will be filled when you press
 the 'Scan' button. It contains all the inventories (chests, furnaces
@@ -207,7 +192,7 @@ show the contents of that inventory.
 
 Doubleclick on an inventory in the top list will close this
 window and hilight it in the world for 5 seconds (by default).
-{-------------------------------------------------------------} 
+{-------------------------------------------------------------}
 You can search for items in all inventories that it scanned. It will
 mark all the inventories where it found an item that matches what
 you typed with a yellow color. This gives you an easy way to find
@@ -217,7 +202,31 @@ The slider next to the 'Scan' button allows you to select the radius
 that this machine will use to scan the area. A value of '4' means
 that an area of 9x9x9 will be scanned. Note that this operation can
 take a while.
-{-------------------------------------------------------------} 
+{-------------------------------------------------------------}
+{b}Storage System
+{n:storage}
+{rb:modularStorageBlock}
+The Modular Storage Block is an advanced chest. Before you can use it
+you must insert a storage module. There are three tiers: 100, 200,
+or 300 stacks. You can insert modules to make the chest work better
+with various types of items. When you remove a storage module from a
+Modular Storage Block the contents will be copied to the module.
+
+The various item modules allow you to sort and group your
+items based on various criteria.
+{-------------------------------------------------------------}
+There is also a Remote Storage Block:
+{rb:remoteStorageBlock}
+With this block you can make a storage module available remotely.
+You can put up to four storage modules in the remote storage block.
+Then you can create Remote Storage Module items. These need
+to be linked first to de right storage item. To do that place
+the remote storage module in the appropriate slot next to the
+item.
+
+You can then use the remote storage module by simply right clicking it
+in your hotbar or you can insert the module in a modular chest block.
+{-------------------------------------------------------------}
 {b}Automatic Crafter
 {n:crafte}
 {rb:crafterBlock1}
