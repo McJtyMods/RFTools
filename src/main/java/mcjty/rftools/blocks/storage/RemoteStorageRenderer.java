@@ -78,11 +78,13 @@ public class RemoteStorageRenderer extends DefaultISBRH {
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
         boolean rc = renderer.renderStandardBlock(block, x, y, z);
         if (rc) {
-            RemoteStorageTileEntity remoteStorageTileEntity = (RemoteStorageTileEntity) world.getTileEntity(x, y, z);
-
-            if (remoteStorageTileEntity.isPowerLow()) {
-                return true;
+            int meta = world.getBlockMetadata(x, y, z);
+            if ((meta & 0x8) == 0) {
+                // No power.
+                return rc;
             }
+
+            RemoteStorageTileEntity remoteStorageTileEntity = (RemoteStorageTileEntity) world.getTileEntity(x, y, z);
 
             ForgeDirection front = ModularStorageSetup.remoteStorageBlock.getOrientation(world.getBlockMetadata(x, y, z));
             Tessellator tessellator = Tessellator.instance;

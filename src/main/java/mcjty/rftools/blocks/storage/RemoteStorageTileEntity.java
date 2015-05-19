@@ -52,11 +52,11 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         }
         timer = 5;
 
-        int powerLow = isPowerLow() ? 1 : 0;
-        if (powercheck != powerLow) {
-            powercheck = powerLow;
-            markDirty();
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        int hasPower = isPowerLow() ? 0 : 8;
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        int newmeta = (meta & 0x7) | hasPower;
+        if (newmeta != meta) {
+            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newmeta, 2);
         }
 
         RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
