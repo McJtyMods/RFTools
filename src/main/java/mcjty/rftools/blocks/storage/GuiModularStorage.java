@@ -138,8 +138,17 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
         }
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
                 addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel);
+
+        if (tileEntity == null) {
+            // We must hide two slots.
+            ImageLabel hideLabel = new ImageLabel(mc, this);
+            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 213, 40, 21));
+            hideLabel.setImage(guiElements, 32, 32);
+            toplevel.addChild(hideLabel);
+        }
+
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

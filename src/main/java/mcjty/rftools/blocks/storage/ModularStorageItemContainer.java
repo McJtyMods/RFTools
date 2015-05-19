@@ -1,9 +1,10 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.container.*;
-import mcjty.rftools.items.storage.StorageTypeItem;
+import mcjty.container.ContainerFactory;
+import mcjty.container.GenericContainer;
+import mcjty.container.SlotDefinition;
+import mcjty.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ModularStorageItemContainer extends GenericContainer {
@@ -38,52 +39,4 @@ public class ModularStorageItemContainer extends GenericContainer {
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }
-
-    @Override
-    public void generateSlots() {
-        for (SlotFactory slotFactory : factory.getSlots()) {
-            Slot slot;
-            if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERINV || slotFactory.getSlotType() == SlotType.SLOT_PLAYERHOTBAR) {
-                slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-            } else {
-                slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-
-//                slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
-//                    @Override
-//                    public boolean getHasStack() {
-//                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
-//                            return false;
-//                        }
-//                        return super.getHasStack();
-//                    }
-//
-//                    @Override
-//                    public ItemStack getStack() {
-//                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
-//                            return null;
-//                        }
-//                        return super.getStack();
-//                    }
-//
-//                    @Override
-//                    public boolean canTakeStack(EntityPlayer player) {
-//                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
-//                            return false;
-//                        }
-//                        return super.canTakeStack(player);
-//                    }
-//
-//                    @Override
-//                    public boolean isItemValid(ItemStack stack) {
-//                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
-//                            return false;
-//                        }
-//                        return super.isItemValid(stack);
-//                    }
-//                };
-            }
-            addSlotToContainer(slot);
-        }
-    }
-
 }
