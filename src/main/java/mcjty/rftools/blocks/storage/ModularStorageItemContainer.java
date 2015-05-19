@@ -26,7 +26,15 @@ public class ModularStorageItemContainer extends GenericContainer {
         ItemStack stack = player.getHeldItem();
         // We assume the item is right here
         id = stack.getTagCompound().getInteger("id");
-        addInventory(CONTAINER_INVENTORY, new ModularStorageItemInventory(player.worldObj, id));
+        RemoteStorageTileEntity remoteStorageTileEntity = RemoteStorageIdRegistry.getRemoteStorage(player.worldObj, id);
+        if (remoteStorageTileEntity != null) {
+            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            if (si != -1) {
+                stack.getTagCompound().setInteger("maxSize", remoteStorageTileEntity.getMaxStacks(si));
+            }
+        }
+
+        addInventory(CONTAINER_INVENTORY, new ModularStorageItemInventory(player, id));
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }

@@ -17,6 +17,7 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.network.Argument;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -216,7 +217,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private void updateList() {
         itemList.removeChildren();
 
-        if (!inventorySlots.getSlot(0).getHasStack()) {
+        if (tileEntity != null && !inventorySlots.getSlot(0).getHasStack()) {
             amountLabel.setText("(no storage)");
             return;
         }
@@ -255,8 +256,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
             max = tileEntity.getSizeInventory() - 2;
         } else {
-            for (int i = 0; i < inventorySlots.inventorySlots.size() ; i++) {
-                ItemStack stack = inventorySlots.getSlot(i).getStack();
+            for (int i = 0; i < ModularStorageItemContainer.MAXSIZE_STORAGE ; i++) {
+                Slot slot = inventorySlots.getSlot(i);
+                ItemStack stack = slot.getStack();
                 if (stack != null && stack.stackSize > 0) {
                     String displayName = stack.getDisplayName();
                     if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
@@ -264,7 +266,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     }
                 }
             }
-            max = inventorySlots.inventorySlots.size();
+            max = mc.thePlayer.getHeldItem().getTagCompound().getInteger("maxSize");
         }
         amountLabel.setText(items.size() + " / " + max);
 
