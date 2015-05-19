@@ -1,8 +1,9 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.world.World;
 
 /**
@@ -44,6 +45,7 @@ public class ClientInfo {
         this.destinationTE = destinationTE;
     }
 
+    @SideOnly(Side.CLIENT)
     public static World getWorld() {
         return Minecraft.getMinecraft().theWorld;
     }
