@@ -501,7 +501,7 @@ public class DimensionInformation {
 
     private void setBlockMeta(NBTTagCompound tagCompound, BlockMeta blockMeta, String name) {
         tagCompound.setInteger(name, Block.blockRegistry.getIDForObject(blockMeta.getBlock()));
-        tagCompound.setInteger(name+"_meta", blockMeta.getMeta());
+        tagCompound.setInteger(name + "_meta", blockMeta.getMeta());
     }
 
     private static void writeFluidsToNBT(NBTTagCompound tagCompound, Block[] fluids, String name) {
@@ -569,22 +569,30 @@ public class DimensionInformation {
         }
         if (featureTypes.contains(FeatureType.FEATURE_ORBS)) {
             for (BlockMeta block : sphereBlocks) {
-                logDebug(player, "        Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                if (block != null) {
+                    logDebug(player, "        Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                }
             }
         }
         if (featureTypes.contains(FeatureType.FEATURE_HUGEORBS)) {
             for (BlockMeta block : hugeSphereBlocks) {
-                logDebug(player, "        Huge Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                if (block != null) {
+                    logDebug(player, "        Huge Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                }
             }
         }
         if (featureTypes.contains(FeatureType.FEATURE_LIQUIDORBS)) {
             for (BlockMeta block : liquidSphereBlocks) {
-                logDebug(player, "        Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                if (block != null) {
+                    logDebug(player, "        Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                }
             }
         }
         if (featureTypes.contains(FeatureType.FEATURE_HUGELIQUIDORBS)) {
             for (BlockMeta block : hugeLiquidSphereBlocks) {
-                logDebug(player, "        Huge Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                if (block != null) {
+                    logDebug(player, "        Huge Liquid Orb blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                }
             }
         }
         if (featureTypes.contains(FeatureType.FEATURE_CANYONS)) {

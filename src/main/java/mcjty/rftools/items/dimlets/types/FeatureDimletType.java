@@ -220,6 +220,11 @@ public class FeatureDimletType implements IDimletType {
                 fluids.clear();
             }
             fluidsForLakes = fluids.toArray(new Block[fluids.size()]);
+            for (int i = 0 ; i < fluidsForLakes.length ; i++) {
+                if (fluidsForLakes[i] == null) {
+                    fluidsForLakes[i] = Blocks.water;
+                }
+            }
         } else {
             fluidsForLakes = new Block[0];
         }
@@ -251,6 +256,11 @@ public class FeatureDimletType implements IDimletType {
             }
 
             blockArray = blocks.toArray(new BlockMeta[blocks.size()]);
+            for (int i = 0 ; i < blockArray.length ; i++) {
+                if (blockArray[i] == null) {
+                    blockArray[i] = BlockMeta.STONE;
+                }
+            }
         } else {
             blockArray = new BlockMeta[0];
         }
