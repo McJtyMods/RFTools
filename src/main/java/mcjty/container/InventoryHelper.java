@@ -89,7 +89,9 @@ public class InventoryHelper {
                     if (undo != null) {
                         undo.add(new SlotModifier(k, null));
                     }
-                    inventory.setInventorySlotContents(k, result.copy());
+                    ItemStack copy = result.copy();
+                    copy.stackSize = itemsToPlace;
+                    inventory.setInventorySlotContents(k, copy);
                     inventory.markDirty();
                     itemsToPlace = 0;
                     break;
