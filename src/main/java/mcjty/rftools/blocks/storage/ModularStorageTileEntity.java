@@ -23,6 +23,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
+    public static final String CMD_CYCLE = "cycle";
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -602,8 +603,24 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         } else if (CMD_COMPACT.equals(command)) {
             compact();
             return true;
+        } else if (CMD_CYCLE.equals(command)) {
+            cycle();
+            return true;
         }
         return false;
+    }
+
+    private void cycle() {
+        if (isRemote()) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return;
+            }
+            remoteId = storageTileEntity.cycle(remoteId);
+            getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getTagCompound().setInteger("id", remoteId);
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     private void compact() {

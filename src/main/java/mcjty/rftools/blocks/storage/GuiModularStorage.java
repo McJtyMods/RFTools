@@ -17,6 +17,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
+import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
@@ -135,6 +136,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
         });
 
+        cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(66, 170, 16, 16)).
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        cycleStorage();
+                    }
+                });
+
         if (tileEntity != null) {
             filter.setText(tileEntity.getFilter());
             setViewMode(tileEntity.getViewMode());
@@ -149,32 +158,19 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
-                addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel).addChild(compactButton);
+                addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel).addChild(compactButton).addChild(cycleButton);
 
         if (tileEntity == null) {
-            // We must hide two slots and add a cycle button.
+            // We must hide two slots.
             ImageLabel hideLabel = new ImageLabel(mc, this);
             hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 213, 40, 21));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
-
-            cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(66, 170, 16, 16)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        cycleStorage();
-                    }
-                });
-            toplevel.addChild(cycleButton);
         }
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-    }
-
-    private void cycleStorage() {
-        PacketHandler.INSTANCE.sendToServer(new PacketCycleStorage());
     }
 
     private void setSortMode(String sortMode) {
@@ -193,6 +189,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             this.viewMode.setCurrentChoice(VIEW_LIST);
         } else {
             this.viewMode.setCurrentChoice(idx);
+        }
+    }
+
+    private void cycleStorage() {
+        if (tileEntity != null) {
+            sendServerCommand(ModularStorageTileEntity.CMD_CYCLE);
+        } else {
+            PacketHandler.INSTANCE.sendToServer(new PacketCycleStorage());
         }
     }
 
@@ -282,11 +286,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private void updateList() {
         itemList.removeChildren();
 
-        if (tileEntity != null && !inventorySlots.getSlot(0).getHasStack()) {
+        if (tileEntity != null && !inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getHasStack()) {
             amountLabel.setText("(no storage)");
             compactButton.setEnabled(false);
+            cycleButton.setEnabled(false);
             return;
         }
+
+        cycleButton.setEnabled(tileEntity == null || isRemote());
 
         String filterText = filter.getText().toLowerCase().trim();
 
@@ -351,6 +358,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     dogroups && (prevItem == null || !itemSorter.isSameGroup(prevItem, item)), itemSorter.getGroupName(item));
             prevItem = item;
         }
+    }
+
+    private boolean isRemote() {
+        return inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getStack().getItemDamage() == StorageModuleItem.STORAGE_REMOTE;
     }
 
     private int getCurrentSortMode() {
