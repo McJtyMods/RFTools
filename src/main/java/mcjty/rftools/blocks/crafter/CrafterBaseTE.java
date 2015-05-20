@@ -280,13 +280,16 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         // that doesn't fit we undo everything.
         int amountLeft = placeResult(craftingRecipe.isCraftInternal(), craftingRecipe.getResult(), undo);
         if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
-//            // We have container items.
-//            for (ItemStack stack : craftingRecipe.getContainerItems()) {
-//                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undo);
-//                if (amountLeft != 0) {
-//                    break;      // Not enough room.
-//                }
-//            }
+            // We have container items.
+            List<InventoryHelper.SlotModifier> undoContainers = new ArrayList<InventoryHelper.SlotModifier>();
+            for (ItemStack stack : craftingRecipe.getContainerItems()) {
+                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undoContainers);
+                if (amountLeft != 0) {
+                    break;      // Not enough room.
+                }
+            }
+            // We always undo the container placement since we will place these again while doing the actual crafting.
+            undo(undoContainers);
         }
 
         if (amountLeft == 0) {
@@ -294,10 +297,15 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             return true;
         } else {
             // We don't have place. Undo the operation.
-            for (InventoryHelper.SlotModifier modifier : undo) {
-                inventoryHelper.getStacks()[modifier.getSlot()] = modifier.getOld();
-            }
+            undo(undo);
             return false;
+        }
+    }
+
+    private void undo(List<InventoryHelper.SlotModifier> undo) {
+        while (!undo.isEmpty()) {
+            InventoryHelper.SlotModifier toUndo = undo.remove(undo.size() - 1);
+            inventoryHelper.getStacks()[toUndo.getSlot()] = toUndo.getOld();
         }
     }
 
@@ -342,11 +350,10 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                     if (OreDictionary.itemMatches(stack, input, false)) {
                         if (input.getItem().hasContainerItem(input)) {
                             ItemStack containerItem = input.getItem().getContainerItem(input);
-                            if (containerItem != null && containerItem.isItemStackDamageable() && containerItem.getItemDamage() > containerItem.getMaxDamage()) {
-//                                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
-//                                continue;
-                            } else {
-                                placeResult(internal, containerItem, null);
+                            if (containerItem != null) {
+                                if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
+                                    placeResult(internal, containerItem, null);
+                                }
                             }
                         }
                         int ss = count;

@@ -50,7 +50,17 @@ public class CraftingRecipe {
             if (stack != null && stack.getItem() != null) {
                 ItemStack containerItem = stack.getItem().getContainerItem(stack);
                 if (containerItem != null) {
-                    containerItems.add(containerItem);
+                    boolean found = false;
+                    for (ItemStack item : containerItems) {
+                        if (item.isItemEqual(containerItem)) {
+                            item.stackSize += containerItem.stackSize;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        containerItems.add(containerItem);
+                    }
                 }
             }
         }
