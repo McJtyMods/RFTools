@@ -7,19 +7,21 @@ import net.minecraft.world.World;
 
 public class ModularStorageItemInventory implements IInventory {
     private ItemStack stacks[] = new ItemStack[ModularStorageItemContainer.MAXSIZE_STORAGE];
-    private final int id;
     private final RemoteStorageTileEntity remoteStorageTileEntity;
-    private final  EntityPlayer entityPlayer;
+    private final EntityPlayer entityPlayer;
 
     public ModularStorageItemInventory(EntityPlayer player, int id) {
         this.entityPlayer = player;
-        this.id = id;
         remoteStorageTileEntity = RemoteStorageIdRegistry.getRemoteStorage(player.worldObj, id);
+    }
+
+    private int getStorageID() {
+        return entityPlayer.getHeldItem().getTagCompound().getInteger("id");
     }
 
     private ItemStack[] getStacks() {
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return new ItemStack[0];
             }
@@ -36,7 +38,7 @@ public class ModularStorageItemInventory implements IInventory {
     @Override
     public int getSizeInventory() {
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return 0;
             }
@@ -50,7 +52,7 @@ public class ModularStorageItemInventory implements IInventory {
     @Override
     public ItemStack getStackInSlot(int index) {
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return null;
             }
@@ -63,7 +65,7 @@ public class ModularStorageItemInventory implements IInventory {
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return null;
             }
@@ -97,7 +99,7 @@ public class ModularStorageItemInventory implements IInventory {
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return;
             }
@@ -159,7 +161,7 @@ public class ModularStorageItemInventory implements IInventory {
             return false;
         }
         if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(id);
+            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return false;
             }

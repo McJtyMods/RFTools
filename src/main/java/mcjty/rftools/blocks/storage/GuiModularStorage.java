@@ -2,12 +2,14 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.container.GenericGuiContainer;
 import mcjty.gui.Window;
+import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
@@ -20,7 +22,6 @@ import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -58,6 +59,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private ImageChoiceLabel sortMode;
     private ImageChoiceLabel groupMode;
     private Label amountLabel;
+    private Button cycleButton;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         super(modularStorageTileEntity, container);
@@ -142,16 +144,29 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel);
 
         if (tileEntity == null) {
-            // We must hide two slots.
+            // We must hide two slots and add a cycle button.
             ImageLabel hideLabel = new ImageLabel(mc, this);
             hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 213, 40, 21));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
+
+            cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(66, 170, 16, 16)).
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        cycleStorage();
+                    }
+                });
+            toplevel.addChild(cycleButton);
         }
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void cycleStorage() {
+        PacketHandler.INSTANCE.sendToServer(new PacketCycleStorage());
     }
 
     private void setSortMode(String sortMode) {

@@ -38,7 +38,6 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     private int timer = 0;
-    private int powercheck = -1;
 
     public boolean isPowerLow() {
         return getEnergyStored(ForgeDirection.DOWN) < ModularStorageConfiguration.remoteShareLocal;
@@ -124,6 +123,30 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
         return null;
+    }
+
+    // Find another storage on the same block.
+    public int cycle(int id) {
+        int si = findRemoteIndex(id);
+        if (si == -1) {
+            for (int i = 0 ; i < 4 ; i++) {
+                ItemStack stack = getStackInSlot(i);
+                if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+                    int id2 = stack.getTagCompound().getInteger("id");
+                    return id2;
+                }
+            }
+            return -1;
+        }
+        for (int i = si+1 ; i < si + 4 ; i++) {
+            int ii = i % 4;
+            ItemStack stack = getStackInSlot(ii);
+            if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+                int id2 = stack.getTagCompound().getInteger("id");
+                return id2;
+            }
+        }
+        return id;
     }
 
     private void link(int index) {
