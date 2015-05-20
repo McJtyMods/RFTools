@@ -11,10 +11,7 @@ import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenDataHandler;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
-import mcjty.rftools.blocks.storage.PacketCycleStorage;
-import mcjty.rftools.blocks.storage.PacketGetCountInfo;
-import mcjty.rftools.blocks.storage.PacketReturnCountInfo;
-import mcjty.rftools.blocks.storage.PacketReturnCountInfoHandler;
+import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.PacketGetInventory;
 import mcjty.rftools.blocks.storagemonitor.PacketInventoryReady;
 import mcjty.rftools.blocks.storagemonitor.PacketSearchItems;
@@ -65,6 +62,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketUpdateNBTItem.class, PacketUpdateNBTItem.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketCycleStorage.class, PacketCycleStorage.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketCompact.class, PacketCompact.class, nextID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketInventoryReady.class, PacketInventoryReady.class, nextID(), Side.CLIENT);

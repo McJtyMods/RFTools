@@ -1,6 +1,7 @@
 package mcjty.container;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -155,6 +156,23 @@ public class InventoryHelper {
                 stack.stackSize = stackLimit;
             }
             tileEntity.markDirty();
+        }
+    }
+
+    public static void compactStacks(ItemStack[] stacks, int start, int max) {
+        InventoryBasic inv = new InventoryBasic("temp", true, max);
+        for (int i = 0 ; i < max ; i++) {
+            ItemStack stack = stacks[i+start];
+            if (stack != null) {
+                mergeItemStack(inv, stack, 0, max, null);
+            }
+        }
+        for (int i = 0 ; i < max ; i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && stack.stackSize == 0) {
+                stack = null;
+            }
+            stacks[i+start] = stack;
         }
     }
 }

@@ -7,15 +7,12 @@ import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -25,6 +22,7 @@ import java.util.Map;
 public class ModularStorageTileEntity extends GenericTileEntity implements ISidedInventory {
 
     public static final String CMD_SETTINGS = "settings";
+    public static final String CMD_COMPACT = "compact";
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -601,8 +599,27 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             setGroupMode(args.get("groupMode").getBoolean());
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             return true;
+        } else if (CMD_COMPACT.equals(command)) {
+            compact();
+            return true;
         }
         return false;
+    }
+
+    private void compact() {
+        if (isRemote()) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return;
+            }
+            storageTileEntity.compact(remoteId);
+        } else {
+            InventoryHelper.compactStacks(inventoryHelper.getStacks(), ModularStorageContainer.SLOT_STORAGE, maxSize);
+        }
+
+        updateStackCount();
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
 

@@ -125,6 +125,18 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return null;
     }
 
+    // Compact slots.
+    public void compact(int id) {
+        int si = findRemoteIndex(id);
+        if (si == -1) {
+            return;
+        }
+        ItemStack[] s = findStacksForId(id);
+        InventoryHelper.compactStacks(s, 0, maxsize[si]);
+        updateStackCount(si);
+        markDirty();
+    }
+
     // Find another storage on the same block.
     public int cycle(int id) {
         int si = findRemoteIndex(id);
@@ -132,8 +144,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             for (int i = 0 ; i < 4 ; i++) {
                 ItemStack stack = getStackInSlot(i);
                 if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
-                    int id2 = stack.getTagCompound().getInteger("id");
-                    return id2;
+                    return stack.getTagCompound().getInteger("id");
                 }
             }
             return -1;
@@ -142,8 +153,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             int ii = i % 4;
             ItemStack stack = getStackInSlot(ii);
             if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
-                int id2 = stack.getTagCompound().getInteger("id");
-                return id2;
+                return stack.getTagCompound().getInteger("id");
             }
         }
         return id;

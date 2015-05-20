@@ -60,6 +60,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private ImageChoiceLabel groupMode;
     private Label amountLabel;
     private Button cycleButton;
+    private Button compactButton;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         super(modularStorageTileEntity, container);
@@ -123,9 +124,16 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         amountLabel = new Label(mc, this);
         amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(8, 188, 80, 12));
+        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(22, 188, 66, 12));
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("? / ?");
+
+        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 188, 12, 12)).setText("z").setTooltips("Compact equal stacks").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                compact();
+            }
+        });
 
         if (tileEntity != null) {
             filter.setText(tileEntity.getFilter());
@@ -141,7 +149,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
-                addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel);
+                addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel).addChild(compactButton);
 
         if (tileEntity == null) {
             // We must hide two slots and add a cycle button.
@@ -188,6 +196,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
     }
 
+    private void compact() {
+        if (tileEntity != null) {
+            sendServerCommand(ModularStorageTileEntity.CMD_COMPACT);
+        } else {
+            PacketHandler.INSTANCE.sendToServer(new PacketCompact());
+        }
+    }
+
     private void updateSettings() {
         if (tileEntity != null) {
             sendServerCommand(ModularStorageTileEntity.CMD_SETTINGS,
@@ -207,7 +223,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private Slot findEmptySlot() {
         for (Object slotObject : inventorySlots.inventorySlots) {
             Slot slot = (Slot) slotObject;
-            if (!slot.getHasStack()) {
+            if ((!slot.getHasStack()) || slot.getStack().stackSize == 0) {
                 return slot;
             }
         }
