@@ -322,9 +322,9 @@ public class KnownDimletConfiguration {
 
         DimletKey keyMaterialNone = new DimletKey(DimletType.DIMLET_MATERIAL, "None");
         registerDimlet(cfg, keyMaterialNone, mapping, master, null);
-        idToDisplayName.put(keyMaterialNone, DimletType.DIMLET_MATERIAL.dimletType.getName() + " None Dimlet");
+        idToDisplayName.put(keyMaterialNone, DimletType.DIMLET_MATERIAL.dimletType.getName() + " Default Dimlet");
         DimletObjectMapping.idToBlock.put(keyMaterialNone, null);
-        addExtraInformation(keyMaterialNone, "Use this material none dimlet to get normal", "biome specific stone generation");
+        addExtraInformation(keyMaterialNone, "Use this material default dimlet to get normal", "biome specific stone generation");
 
         initMaterialDimlets(cfg, mapping, master);
 
@@ -333,8 +333,8 @@ public class KnownDimletConfiguration {
         DimletKey keyLiquidNone = new DimletKey(DimletType.DIMLET_LIQUID, "None");
         registerDimlet(cfg, keyLiquidNone, mapping, master, null);
         DimletObjectMapping.idToFluid.put(keyLiquidNone, null);
-        idToDisplayName.put(keyLiquidNone, DimletType.DIMLET_LIQUID.dimletType.getName() + " None Dimlet");
-        addExtraInformation(keyLiquidNone, "Use this liquid none dimlet to get normal", "water generation");
+        idToDisplayName.put(keyLiquidNone, DimletType.DIMLET_LIQUID.dimletType.getName() + " Default Dimlet");
+        addExtraInformation(keyLiquidNone, "Use this liquid default dimlet to get normal", "water generation");
 
         initSpecialItem(cfg, "Peaceful", SpecialType.SPECIAL_PEACEFUL, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Peaceful"), "Normal mob spawning is disabled", "if you use this dimlet");
