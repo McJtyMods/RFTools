@@ -44,7 +44,7 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
             scrambling--;
             if (scrambling == 0) {
                 DimletKey key = DimletRandomizer.getRandomDimlet(bonus, worldObj.rand);
-                InventoryHelper.mergeItemStack(this, KnownDimletConfiguration.makeKnownDimlet(key, worldObj), 3, 4, new ArrayList<InventoryHelper.SlotModifier>());
+                InventoryHelper.mergeItemStack(this, KnownDimletConfiguration.makeKnownDimlet(key, worldObj), 3, 4, null);
             }
             markDirty();
         } else {

@@ -8,18 +8,16 @@ import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ISidedInventory {
@@ -259,10 +257,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             CraftingRecipe craftingRecipe = recipes[index];
 
             if (craftingRecipe != null) {
-                if (checkIfRecipeWorks(craftingRecipe)) {
-                    if (craftOneItem(craftingRecipe)) {
-                        energyConsumed = true;
-                    }
+                if (craftOneItemNew(craftingRecipe)) {
+                    energyConsumed = true;
                 }
             }
         }
@@ -272,28 +268,23 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         }
     }
 
-    private boolean craftOneItem(CraftingRecipe craftingRecipe) {
-        // First check if we have room for the result. If yes we can actually craft.
-        List<InventoryHelper.SlotModifier> undo = new ArrayList<InventoryHelper.SlotModifier>();
-
-        // Try to merge the output and the secondary outputs (buckets and such). If there is something
-        // that doesn't fit we undo everything.
-        int amountLeft = placeResult(craftingRecipe.isCraftInternal(), craftingRecipe.getResult(), undo);
-        if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
-            // We have container items.
-            List<InventoryHelper.SlotModifier> undoContainers = new ArrayList<InventoryHelper.SlotModifier>();
-            for (ItemStack stack : craftingRecipe.getContainerItems()) {
-                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undoContainers);
-                if (amountLeft != 0) {
-                    break;      // Not enough room.
-                }
-            }
-            // We always undo the container placement since we will place these again while doing the actual crafting.
-            undo(undoContainers);
+    private boolean craftOneItemNew(CraftingRecipe craftingRecipe) {
+        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        if (recipe == null) {
+            return false;
         }
 
-        if (amountLeft == 0) {
-            consumeCraftingItems(craftingRecipe.isCraftInternal(), craftingRecipe.getStacksWithCount(), craftingRecipe.isKeepOne() ? 1 : 0);
+        Map<Integer,ItemStack> undo = new HashMap<Integer, ItemStack>();
+
+        if (!testAndConsumeCraftingItems(craftingRecipe, undo)) {
+            undo(undo);
+            return false;
+        }
+
+        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
+
+        // Try to merge the output. If there is something that doesn't fit we undo everything.
+        if (placeResult(craftingRecipe.isCraftInternal(), result, undo)) {
             return true;
         } else {
             // We don't have place. Undo the operation.
@@ -302,76 +293,65 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         }
     }
 
-    private void undo(List<InventoryHelper.SlotModifier> undo) {
-        while (!undo.isEmpty()) {
-            InventoryHelper.SlotModifier toUndo = undo.remove(undo.size() - 1);
-            inventoryHelper.getStacks()[toUndo.getSlot()] = toUndo.getOld();
-        }
-    }
-
-    private boolean checkIfRecipeWorks(CraftingRecipe craftingRecipe) {
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-        if (recipe == null) {
-            return false;
-        }
-
-        List<CraftingRecipe.StackWithCount> stackWithCounts = craftingRecipe.getStacksWithCount();
+    private boolean testAndConsumeCraftingItems(CraftingRecipe craftingRecipe, Map<Integer,ItemStack> undo) {
+        boolean internal = craftingRecipe.isCraftInternal();
         int keep = craftingRecipe.isKeepOne() ? 1 : 0;
-        for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
-            ItemStack stack = stackWithCount.getStack();
-            int count = stackWithCount.getCount();
-            for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
-                ItemStack input = inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j];
-                if (input != null && input.stackSize > keep) {
-                    if (OreDictionary.itemMatches(stack, input, false)) {
-                        int ss = count;
-                        if (input.stackSize - ss < keep) {
-                            ss = input.stackSize - keep;
-                        }
-                        count -= ss;
-                    }
-                }
-            }
-            if (count > 0) {
-                return false;       // We couldn't find all needed items
-            }
-        }
-        ItemStack result = craftingRecipe.getResult();
-        return result != null;
-    }
+        InventoryCrafting inventory = craftingRecipe.getInventory();
 
-    private void consumeCraftingItems(boolean internal, List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
-        for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
-            ItemStack stack = stackWithCount.getStack();
-            int count = stackWithCount.getCount();
-            for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
-                ItemStack input = inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j];
-                if (input != null && input.stackSize > keep) {
-                    if (OreDictionary.itemMatches(stack, input, false)) {
-                        if (input.getItem().hasContainerItem(input)) {
-                            ItemStack containerItem = input.getItem().getContainerItem(input);
-                            if (containerItem != null) {
-                                if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
-                                    placeResult(internal, containerItem, null);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack != null) {
+                int count = stack.stackSize;
+                for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
+                    int slotIdx = CrafterContainer.SLOT_BUFFER + j;
+                    ItemStack input = inventoryHelper.getStacks()[(slotIdx)];
+                    if (input != null && input.stackSize > keep) {
+                        if (OreDictionary.itemMatches(stack, input, false)) {
+                            if (input.getItem().hasContainerItem(input)) {
+                                ItemStack containerItem = input.getItem().getContainerItem(input);
+                                if (containerItem != null) {
+                                    if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
+                                        if (!placeResult(internal, containerItem, undo)) {
+                                            // Not enough room.
+                                            return false;
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        int ss = count;
-                        if (input.stackSize - ss < keep) {
-                            ss = input.stackSize - keep;
-                        }
-                        count -= ss;
-                        input.splitStack(ss);        // This consumes the items
-                        if (input.stackSize == 0) {
-                            inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j] = null;
+                            int ss = count;
+                            if (input.stackSize - ss < keep) {
+                                ss = input.stackSize - keep;
+                            }
+                            count -= ss;
+                            if (!undo.containsKey(slotIdx)) {
+                                undo.put(slotIdx, input.copy());
+                            }
+                            input.splitStack(ss);        // This consumes the items
+                            if (input.stackSize == 0) {
+                                inventoryHelper.getStacks()[(slotIdx)] = null;
+                            }
                         }
                     }
+                    if (count == 0) {
+                        break;
+                    }
+                }
+                if (count > 0) {
+                    return false;   // Couldn't find all items.
                 }
             }
         }
+        return true;
     }
 
-    private int placeResult(boolean internal, ItemStack result, List<InventoryHelper.SlotModifier> undo) {
+
+    private void undo(Map<Integer,ItemStack> undo) {
+        for (Map.Entry<Integer, ItemStack> entry : undo.entrySet()) {
+            inventoryHelper.getStacks()[entry.getKey()] = entry.getValue();
+        }
+    }
+
+    private boolean placeResult(boolean internal, ItemStack result, Map<Integer,ItemStack> undo) {
         int start;
         int stop;
         if (internal) {
@@ -381,7 +361,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             start = CrafterContainer.SLOT_BUFFEROUT;
             stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
-        return InventoryHelper.mergeItemStack(this, result, start, stop, undo);
+        return InventoryHelper.mergeItemStack(this, result, start, stop, undo) == 0;
     }
 
     @Override

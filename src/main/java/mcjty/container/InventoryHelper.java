@@ -4,7 +4,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.List;
+import java.util.Map;
 
 public class InventoryHelper {
     private final TileEntity tileEntity;
@@ -23,29 +23,11 @@ public class InventoryHelper {
         this.count = newcount;
     }
 
-    public static class SlotModifier {
-        private final int slot;
-        private final ItemStack old;
-
-        public SlotModifier(int slot, ItemStack old) {
-            this.slot = slot;
-            this.old = old;
-        }
-
-        public int getSlot() {
-            return slot;
-        }
-
-        public ItemStack getOld() {
-            return old;
-        }
-    }
-
     /**
      * Merges provided ItemStack with the first available one in this inventory. It will return the amount
      * of items that could not be merged. Also fills the undo buffer in case you want to undo the operation.
      */
-    public static int mergeItemStack(IInventory inventory, ItemStack result, int start, int stop, List<SlotModifier> undo) {
+    public static int mergeItemStack(IInventory inventory, ItemStack result, int start, int stop, Map<Integer,ItemStack> undo) {
         int k = start;
 
         ItemStack itemstack1;
@@ -60,14 +42,19 @@ public class InventoryHelper {
 
                     if (l <= result.getMaxStackSize()) {
                         if (undo != null) {
-                            undo.add(new SlotModifier(k, itemstack1.copy()));
+                            // Only put on undo map if the key is not already present.
+                            if (!undo.containsKey(k)) {
+                                undo.put(k, itemstack1.copy());
+                            }
                         }
                         itemsToPlace = 0;
                         itemstack1.stackSize = l;
                         inventory.markDirty();
                     } else if (itemstack1.stackSize < result.getMaxStackSize()) {
                         if (undo != null) {
-                            undo.add(new SlotModifier(k, itemstack1.copy()));
+                            if (!undo.containsKey(k)) {
+                                undo.put(k, itemstack1.copy());
+                            }
                         }
                         itemsToPlace -= result.getMaxStackSize() - itemstack1.stackSize;
                         itemstack1.stackSize = result.getMaxStackSize();
@@ -87,7 +74,9 @@ public class InventoryHelper {
 
                 if (itemstack1 == null) {
                     if (undo != null) {
-                        undo.add(new SlotModifier(k, null));
+                        if (!undo.containsKey(k)) {
+                            undo.put(k, null);
+                        }
                     }
                     ItemStack copy = result.copy();
                     copy.stackSize = itemsToPlace;

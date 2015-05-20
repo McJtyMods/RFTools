@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CraftingRecipe {
@@ -22,11 +21,9 @@ public class CraftingRecipe {
         }
     }, 3, 3);
     private ItemStack result;
-    private List<ItemStack> containerItems = null; // Possible container items that are output by the recipe.
 
     private boolean recipePresent = false;
     private IRecipe recipe = null;
-    private List<StackWithCount> stacksWithCount = new ArrayList<StackWithCount>();
 
     private boolean keepOne = false;
     private boolean craftInternal = false;
@@ -41,29 +38,6 @@ public class CraftingRecipe {
             }
         }
         return null;
-    }
-
-    private void findContainerItems() {
-        containerItems = new ArrayList<ItemStack>();
-        for (int i = 0 ; i < inv.getSizeInventory() ; i++) {
-            ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null && stack.getItem() != null) {
-                ItemStack containerItem = stack.getItem().getContainerItem(stack);
-                if (containerItem != null) {
-                    boolean found = false;
-                    for (ItemStack item : containerItems) {
-                        if (item.isItemEqual(containerItem)) {
-                            item.stackSize += containerItem.stackSize;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        containerItems.add(containerItem);
-                    }
-                }
-            }
-        }
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -81,7 +55,6 @@ public class CraftingRecipe {
         keepOne = tagCompound.getBoolean("Keep");
         craftInternal = tagCompound.getBoolean("Int");
         recipePresent = false;
-        findContainerItems();
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
@@ -110,7 +83,6 @@ public class CraftingRecipe {
         }
         this.result = result;
         recipePresent = false;
-        findContainerItems();
     }
 
     public InventoryCrafting getInventory() {
@@ -125,37 +97,10 @@ public class CraftingRecipe {
         return result;
     }
 
-    public List<ItemStack> getContainerItems() {
-        return containerItems;
-    }
-
-    private void putStackInCache(ItemStack stack) {
-        for (StackWithCount aStacksWithCount : stacksWithCount) {
-            if (stack.isItemEqual(aStacksWithCount.stack)) {
-                aStacksWithCount.count++;
-                return;
-            }
-        }
-        stacksWithCount.add(new StackWithCount(stack, 1));
-    }
-
-    public List<StackWithCount> getStacksWithCount() {
-        return stacksWithCount;
-    }
-
     public IRecipe getCachedRecipe(World world) {
         if (!recipePresent) {
             recipePresent = true;
             recipe = findRecipe(world, inv);
-            stacksWithCount.clear();
-            if (recipe != null) {
-                for (int i = 0 ; i < 9 ; i++) {
-                    ItemStack stack = inv.getStackInSlot(i);
-                    if (stack != null) {
-                        putStackInCache(stack);
-                    }
-                }
-            }
         }
         return recipe;
     }
@@ -175,23 +120,4 @@ public class CraftingRecipe {
     public void setCraftInternal(boolean craftInternal) {
         this.craftInternal = craftInternal;
     }
-
-    public class StackWithCount {
-        ItemStack stack;
-        int count;
-
-        private StackWithCount(ItemStack stack, int count) {
-            this.stack = stack;
-            this.count = count;
-        }
-
-        public ItemStack getStack() {
-            return stack;
-        }
-
-        public int getCount() {
-            return count;
-        }
-    }
-
 }

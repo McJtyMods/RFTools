@@ -42,7 +42,7 @@ public class DimletResearcherTileEntity extends GenericEnergyReceiverTileEntity 
             researching--;
             if (researching == 0) {
                 DimletKey key = DimletRandomizer.getRandomDimlet(worldObj.rand);
-                InventoryHelper.mergeItemStack(this, KnownDimletConfiguration.makeKnownDimlet(key, worldObj), 1, 2, new ArrayList<InventoryHelper.SlotModifier>());
+                InventoryHelper.mergeItemStack(this, KnownDimletConfiguration.makeKnownDimlet(key, worldObj), 1, 2, null);
             }
             markDirty();
         } else {
