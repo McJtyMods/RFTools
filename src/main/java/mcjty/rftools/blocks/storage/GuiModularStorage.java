@@ -227,6 +227,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private Slot findEmptySlot() {
         for (Object slotObject : inventorySlots.inventorySlots) {
             Slot slot = (Slot) slotObject;
+            // Skip the first two slots if we are on a modular storage block.
+            if (tileEntity != null && slot.getSlotIndex() < ModularStorageContainer.SLOT_STORAGE) {
+                continue;
+            }
             if ((!slot.getHasStack()) || slot.getStack().stackSize == 0) {
                 return slot;
             }
