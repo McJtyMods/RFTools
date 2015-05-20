@@ -53,7 +53,9 @@ public class DimletWorkbenchContainer extends GenericContainer {
     @Override
     public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
         if (index == SLOT_OUTPUT) {
-            Achievements.trigger(player, Achievements.dimletMaster);
+            if (getSlot(index).getHasStack()) {
+                Achievements.trigger(player, Achievements.dimletMaster);
+            }
         }
         return super.slotClick(index, button, mode, player);
     }
