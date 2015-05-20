@@ -284,6 +284,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         if (tileEntity != null && !inventorySlots.getSlot(0).getHasStack()) {
             amountLabel.setText("(no storage)");
+            compactButton.setEnabled(false);
             return;
         }
 
@@ -334,6 +335,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             max = mc.thePlayer.getHeldItem().getTagCompound().getInteger("maxSize");
         }
         amountLabel.setText(items.size() + " / " + max);
+        compactButton.setEnabled(max > 0);
 
         int sort = getCurrentSortMode();
 
