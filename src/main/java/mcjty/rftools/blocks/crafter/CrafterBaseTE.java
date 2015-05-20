@@ -12,8 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
@@ -278,17 +280,17 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         // that doesn't fit we undo everything.
         int amountLeft = placeResult(craftingRecipe.isCraftInternal(), craftingRecipe.getResult(), undo);
         if (amountLeft == 0 && !craftingRecipe.getContainerItems().isEmpty()) {
-            // We have container items.
-            for (ItemStack stack : craftingRecipe.getContainerItems()) {
-                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undo);
-                if (amountLeft != 0) {
-                    break;      // Not enough room.
-                }
-            }
+//            // We have container items.
+//            for (ItemStack stack : craftingRecipe.getContainerItems()) {
+//                amountLeft = placeResult(craftingRecipe.isCraftInternal(), stack, undo);
+//                if (amountLeft != 0) {
+//                    break;      // Not enough room.
+//                }
+//            }
         }
 
         if (amountLeft == 0) {
-            consumeCraftingItems(craftingRecipe.getStacksWithCount(), craftingRecipe.isKeepOne() ? 1 : 0);
+            consumeCraftingItems(craftingRecipe.isCraftInternal(), craftingRecipe.getStacksWithCount(), craftingRecipe.isKeepOne() ? 1 : 0);
             return true;
         } else {
             // We don't have place. Undo the operation.
@@ -330,7 +332,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         return result != null;
     }
 
-    private void consumeCraftingItems(List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
+    private void consumeCraftingItems(boolean internal, List<CraftingRecipe.StackWithCount> stackWithCounts, int keep) {
         for (CraftingRecipe.StackWithCount stackWithCount : stackWithCounts) {
             ItemStack stack = stackWithCount.getStack();
             int count = stackWithCount.getCount();
@@ -338,6 +340,15 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                 ItemStack input = inventoryHelper.getStacks()[CrafterContainer.SLOT_BUFFER + j];
                 if (input != null && input.stackSize > keep) {
                     if (OreDictionary.itemMatches(stack, input, false)) {
+                        if (input.getItem().hasContainerItem(input)) {
+                            ItemStack containerItem = input.getItem().getContainerItem(input);
+                            if (containerItem != null && containerItem.isItemStackDamageable() && containerItem.getItemDamage() > containerItem.getMaxDamage()) {
+//                                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
+//                                continue;
+                            } else {
+                                placeResult(internal, containerItem, null);
+                            }
+                        }
                         int ss = count;
                         if (input.stackSize - ss < keep) {
                             ss = input.stackSize - keep;
