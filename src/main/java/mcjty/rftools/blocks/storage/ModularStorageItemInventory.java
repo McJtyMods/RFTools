@@ -7,25 +7,35 @@ import net.minecraft.world.World;
 
 public class ModularStorageItemInventory implements IInventory {
     private ItemStack stacks[] = new ItemStack[ModularStorageItemContainer.MAXSIZE_STORAGE];
-    private final RemoteStorageTileEntity remoteStorageTileEntity;
     private final EntityPlayer entityPlayer;
 
-    public ModularStorageItemInventory(EntityPlayer player, int id) {
+    public ModularStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
-        remoteStorageTileEntity = RemoteStorageIdRegistry.getRemoteStorage(player.worldObj, id);
+    }
+
+    private RemoteStorageTileEntity getRemoteStorage() {
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, getStorageID());
     }
 
     private int getStorageID() {
         return entityPlayer.getHeldItem().getTagCompound().getInteger("id");
     }
 
+    private boolean isServer() {
+        return !entityPlayer.worldObj.isRemote;
+    }
+
     private ItemStack[] getStacks() {
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return new ItemStack[0];
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return new ItemStack[0];
             }
-            return remoteStorageTileEntity.getRemoteStacks(si);
+            return storage.getRemoteStacks(si);
         } else {
             int maxSize = entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
             if (maxSize != stacks.length) {
@@ -37,26 +47,35 @@ public class ModularStorageItemInventory implements IInventory {
 
     @Override
     public int getSizeInventory() {
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return 0;
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return 0;
             }
-            return remoteStorageTileEntity.getMaxStacks(si);
+            int maxStacks = storage.getMaxStacks(si);
+            entityPlayer.getHeldItem().getTagCompound().setInteger("maxSize", maxStacks);
+            return maxStacks;
         } else {
-            int maxSize = entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
-            return maxSize;
+            return entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
         }
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return null;
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return null;
             }
-            return remoteStorageTileEntity.getRemoteStacks(si)[index];
+            return storage.getRemoteStacks(si)[index];
         } else {
             return stacks[index];
         }
@@ -64,12 +83,16 @@ public class ModularStorageItemInventory implements IInventory {
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return null;
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return null;
             }
-            return remoteStorageTileEntity.decrStackSizeRemote(si, index, amount);
+            return storage.decrStackSizeRemote(si, index, amount);
         } else {
             if (index >= stacks.length) {
                 return null;
@@ -98,12 +121,16 @@ public class ModularStorageItemInventory implements IInventory {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return;
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return;
             }
-            remoteStorageTileEntity.updateRemoteSlot(si, getInventoryStackLimit(), index, stack);
+            storage.updateRemoteSlot(si, getInventoryStackLimit(), index, stack);
         } else {
             if (index >= stacks.length) {
                 return;
@@ -133,10 +160,10 @@ public class ModularStorageItemInventory implements IInventory {
 
     @Override
     public void markDirty() {
-        if (remoteStorageTileEntity != null) {
-            remoteStorageTileEntity.markDirty();
+        RemoteStorageTileEntity storage = getRemoteStorage();
+        if (storage != null) {
+            storage.markDirty();
         }
-
     }
 
     @Override
@@ -160,12 +187,16 @@ public class ModularStorageItemInventory implements IInventory {
         if (index >= s.length) {
             return false;
         }
-        if (remoteStorageTileEntity != null) {
-            int si = remoteStorageTileEntity.findRemoteIndex(getStorageID());
+        if (isServer()) {
+            RemoteStorageTileEntity storage = getRemoteStorage();
+            if (storage == null) {
+                return false;
+            }
+            int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
                 return false;
             }
-            if (index >= remoteStorageTileEntity.getMaxStacks(si)) {
+            if (index >= storage.getMaxStacks(si)) {
                 return false;
             }
         }
