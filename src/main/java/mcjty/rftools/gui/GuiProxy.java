@@ -3,7 +3,7 @@ package mcjty.rftools.gui;
 import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
-import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
+import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.items.devdelight.GuiDevelopersDelight;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
@@ -23,7 +23,7 @@ public class GuiProxy implements IGuiHandler {
         }
 
         if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
-            return new ModularStorageItemContainer(entityPlayer);
+            return new RemoteStorageItemContainer(entityPlayer);
         }
 
         Block block = world.getBlock(x, y, z);
@@ -48,7 +48,7 @@ public class GuiProxy implements IGuiHandler {
         } else if (guiid == RFTools.GUI_MANUAL_DIMENSION) {
             return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_DIMENSION);
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
-            return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
+            return new GuiModularStorage(new RemoteStorageItemContainer(entityPlayer));
         }
 
         Block block = world.getBlock(x, y, z);

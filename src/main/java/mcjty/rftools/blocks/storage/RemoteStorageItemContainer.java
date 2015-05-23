@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ModularStorageItemContainer extends GenericContainer {
+public class RemoteStorageItemContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
     public static final int MAXSIZE_STORAGE = 300;
@@ -20,7 +20,7 @@ public class ModularStorageItemContainer extends GenericContainer {
         }
     };
 
-    public ModularStorageItemContainer(EntityPlayer player) {
+    public RemoteStorageItemContainer(EntityPlayer player) {
         super(factory);
         this.entityPlayer = player;
         if (isServer()) {
@@ -36,7 +36,7 @@ public class ModularStorageItemContainer extends GenericContainer {
             stack.getTagCompound().setInteger("maxSize", maxStacks);
         }
 
-        addInventory(CONTAINER_INVENTORY, new ModularStorageItemInventory(player));
+        addInventory(CONTAINER_INVENTORY, new RemoteStorageItemInventory(player));
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }

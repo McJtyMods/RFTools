@@ -3,13 +3,12 @@ package mcjty.rftools.blocks.storage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
-public class ModularStorageItemInventory implements IInventory {
-    private ItemStack stacks[] = new ItemStack[ModularStorageItemContainer.MAXSIZE_STORAGE];
+public class RemoteStorageItemInventory implements IInventory {
+    private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
     private final EntityPlayer entityPlayer;
 
-    public ModularStorageItemInventory(EntityPlayer player) {
+    public RemoteStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
     }
 
