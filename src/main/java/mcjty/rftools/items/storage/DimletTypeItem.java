@@ -43,7 +43,9 @@ public class DimletTypeItem extends StorageTypeItem {
             DimletKey key = KnownDimletConfiguration.getDimletKey(stack, null);
             if (key != null) {
                 DimletEntry entry = KnownDimletConfiguration.getEntry(key);
-                return PATTERN.matcher(stack.getDisplayName()).replaceAll("") + " (R" + entry.getRarity() + ")";
+                if (entry != null) {
+                    return PATTERN.matcher(stack.getDisplayName()).replaceAll("") + " (R" + entry.getRarity() + ")";
+                }
             }
         }
         return stack.getDisplayName();
