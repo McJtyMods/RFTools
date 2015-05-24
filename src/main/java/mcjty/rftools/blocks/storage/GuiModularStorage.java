@@ -77,6 +77,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         ySize = STORAGE_HEIGHT;
     }
 
+    public GuiModularStorage(ModularStorageItemContainer container) {
+        super(null, container);
+
+        xSize = STORAGE_WIDTH;
+        ySize = STORAGE_HEIGHT;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -333,6 +340,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
             max = tileEntity.getSizeInventory() - 2;
         } else {
+            // Also works for ModularStorageItemContainer
             for (int i = 0; i < RemoteStorageItemContainer.MAXSIZE_STORAGE ; i++) {
                 Slot slot = inventorySlots.getSlot(i);
                 ItemStack stack = slot.getStack();
