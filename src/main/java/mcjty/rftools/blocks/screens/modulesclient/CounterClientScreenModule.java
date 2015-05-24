@@ -42,7 +42,7 @@ public class CounterClientScreenModule implements ClientScreenModule {
 
         if (coordinate.isValid()) {
             int counter;
-            if (screenData != null && screenData.length > 0) {
+            if (screenData != null && screenData.length > 0 && screenData[0] instanceof Integer) {
                 counter = (Integer) screenData[0];
             } else {
                 counter = 0;

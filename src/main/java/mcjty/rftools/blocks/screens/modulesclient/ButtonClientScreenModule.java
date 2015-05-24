@@ -41,7 +41,7 @@ public class ButtonClientScreenModule implements ClientScreenModule {
 
         boolean act = false;
         if (toggle) {
-            if (screenData != null && screenData.length >= 1) {
+            if (screenData != null && screenData.length >= 1 && screenData[0] instanceof Integer) {
                 act = ((Integer) screenData[0]) > 0;
             }
         } else {

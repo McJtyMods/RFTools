@@ -51,7 +51,7 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
             xoffset = 7;
         }
 
-        if (coordinate.isValid() && screenData != null && screenData.length >= 1) {
+        if (coordinate.isValid() && screenData != null && screenData.length >= 1 && screenData[0] instanceof String) {
             fontRenderer.drawString((String)screenData[0], xoffset, currenty, txtcolor);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);

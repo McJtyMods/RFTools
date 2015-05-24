@@ -40,7 +40,7 @@ public class RedstoneClientScreenModule implements ClientScreenModule {
             xoffset = 7;
         }
 
-        if (screenData != null && screenData.length > 0) {
+        if (screenData != null && screenData.length > 0 && screenData[0] instanceof Boolean) {
             boolean rs = (Boolean) screenData[0];
             fontRenderer.drawString(rs ? yestext : notext, xoffset, currenty, rs ? yescolor : nocolor);
         } else {
