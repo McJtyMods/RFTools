@@ -17,6 +17,10 @@ public class ModularStorageItemInventory implements IInventory {
         int maxSize = getMaxSize();
         stacks = new ItemStack[maxSize];
         NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            entityPlayer.getHeldItem().setTagCompound(tagCompound);
+        }
         tagCompound.setInteger("maxSize", maxSize);
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
