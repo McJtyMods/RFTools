@@ -104,16 +104,21 @@ public class ModularStorageItemInventory implements IInventory {
     @Override
     public void markDirty() {
         NBTTagList bufferTagList = new NBTTagList();
+        int numStacks = 0;
         for (int i = 0 ; i < getMaxSize() ; i++) {
             ItemStack stack = stacks[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
+                if (stack.stackSize > 0) {
+                    numStacks++;
+                }
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
         NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
+        tagCompound.setInteger("count", numStacks);
     }
 
     @Override
