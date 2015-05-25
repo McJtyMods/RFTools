@@ -14,6 +14,19 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         }
     }
 
+    protected boolean fetchBool(ICommandSender sender, String[] args, int index, boolean defaultValue) {
+        boolean value;
+        try {
+            value = Boolean.valueOf(args[index]);
+        } catch (NumberFormatException e) {
+            value = false;
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Parameter is not a valid boolean!"));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     protected int fetchInt(ICommandSender sender, String[] args, int index, int defaultValue) {
         int value;
         try {

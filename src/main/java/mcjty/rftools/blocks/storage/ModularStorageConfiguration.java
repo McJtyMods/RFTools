@@ -65,16 +65,24 @@ public class ModularStorageConfiguration {
 
 
 
-    public static void dumpClasses() {
+    public static void dumpClasses(boolean docode) {
         RFTools.log("#### Dumping item and block classification");
         for (Object o : Block.blockRegistry) {
             Block block = (Block) o;
-            formatClassification("B", BlockInfo.getReadableName(block, 0), block.getClass(), getCategory(block.getClass()));
+            if (docode) {
+                formateAsCode(block.getClass(), getCategory(block.getClass()));
+            } else {
+                formatClassification("B", BlockInfo.getReadableName(block, 0), block.getClass(), getCategory(block.getClass()));
+            }
         }
 
         for (Object o : Item.itemRegistry) {
             Item item = (Item) o;
-            formatClassification("I", BlockInfo.getReadableName(item, 0), item.getClass(), getCategory(item.getClass()));
+            if (docode) {
+                formateAsCode(item.getClass(), getCategory(item.getClass()));
+            } else {
+                formatClassification("I", BlockInfo.getReadableName(item, 0), item.getClass(), getCategory(item.getClass()));
+            }
         }
     }
 
@@ -85,6 +93,12 @@ public class ModularStorageConfiguration {
         RFTools.log(sb.toString());
     }
 
+    private static void formateAsCode(Class clz, String group) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb, Locale.US);
+        formatter.format("categoryMapper.put(\"%1$s\", \"%2$s\");", clz.getCanonicalName(), group);
+        RFTools.log(sb.toString());
+    }
 
     public static String getCategory(Class cls) {
         if (cls == null) {

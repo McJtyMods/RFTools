@@ -6,7 +6,7 @@ import net.minecraft.command.ICommandSender;
 public class CmdDumpClasses extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
-        return "";
+        return "[<code>]";
     }
 
     @Override
@@ -26,6 +26,7 @@ public class CmdDumpClasses extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        ModularStorageConfiguration.dumpClasses();
+        boolean docode = fetchBool(sender, args, 1, false);
+        ModularStorageConfiguration.dumpClasses(docode);
     }
 }
