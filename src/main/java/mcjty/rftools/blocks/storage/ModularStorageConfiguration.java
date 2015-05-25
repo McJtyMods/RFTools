@@ -1,14 +1,16 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.rftools.BlockInfo;
+import mcjty.rftools.RFTools;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ModularStorageConfiguration {
     public static final String CATEGORY_STORAGE = "storage";
@@ -60,6 +62,29 @@ public class ModularStorageConfiguration {
             }
         }
     }
+
+
+
+    public static void dumpClasses() {
+        RFTools.log("#### Dumping item and block classification");
+        for (Object o : Block.blockRegistry) {
+            Block block = (Block) o;
+            formatClassification("B", BlockInfo.getReadableName(block, 0), block.getClass(), getCategory(block.getClass()));
+        }
+
+        for (Object o : Item.itemRegistry) {
+            Item item = (Item) o;
+            formatClassification("I", BlockInfo.getReadableName(item, 0), item.getClass(), getCategory(item.getClass()));
+        }
+    }
+
+    private static void formatClassification(String type, String name, Class clz, String group) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb, Locale.US);
+        formatter.format("%1$-1.1s Name:%2$-30.30s Class:%3$-50.50s Group:%4$-20.20s", type, name, clz.getCanonicalName(), group);
+        RFTools.log(sb.toString());
+    }
+
 
     public static String getCategory(Class cls) {
         if (cls == null) {
