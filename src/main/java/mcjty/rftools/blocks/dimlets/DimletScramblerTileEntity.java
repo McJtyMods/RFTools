@@ -48,10 +48,10 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
             }
             markDirty();
         } else {
-            ItemStack input1 = inventoryHelper.getStacks()[0];
-            ItemStack input2 = inventoryHelper.getStacks()[1];
-            ItemStack input3 = inventoryHelper.getStacks()[2];
-            ItemStack outputStack = inventoryHelper.getStacks()[3];
+            ItemStack input1 = inventoryHelper.getStackInSlot(0);
+            ItemStack input2 = inventoryHelper.getStackInSlot(1);
+            ItemStack input3 = inventoryHelper.getStackInSlot(2);
+            ItemStack outputStack = inventoryHelper.getStackInSlot(3);
             if (isValidInput(input1, input2, input3) && outputStack == null) {
                 startScrambling();
             }
@@ -83,11 +83,13 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
             return;
         }
 
-        ItemStack[] input = inventoryHelper.getStacks();
+        ItemStack input0 = inventoryHelper.getStackInSlot(0);
+        ItemStack input1 = inventoryHelper.getStackInSlot(1);
+        ItemStack input2 = inventoryHelper.getStackInSlot(2);
 
-        DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input[0], worldObj);
-        DimletKey key2 =  KnownDimletConfiguration.getDimletKey(input[1], worldObj);
-        DimletKey key3 =  KnownDimletConfiguration.getDimletKey(input[2], worldObj);
+        DimletKey key1 =  KnownDimletConfiguration.getDimletKey(input0, worldObj);
+        DimletKey key2 =  KnownDimletConfiguration.getDimletKey(input1, worldObj);
+        DimletKey key3 =  KnownDimletConfiguration.getDimletKey(input2, worldObj);
         DimletEntry entry1 = KnownDimletConfiguration.getEntry(key1);
         if (entry1 == null) {   // Protect against blacklisted dimlets.
             return;
@@ -103,17 +105,17 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
 
         consumeEnergy(rf);
 
-        input[0].splitStack(1);
-        if (input[0].stackSize == 0) {
-            input[0] = null;
+        input0.splitStack(1);
+        if (input0.stackSize == 0) {
+            inventoryHelper.setStackInSlot(0, null);
         }
-        input[1].splitStack(1);
-        if (input[1].stackSize == 0) {
-            input[1] = null;
+        input1.splitStack(1);
+        if (input1.stackSize == 0) {
+            inventoryHelper.setStackInSlot(1, null);
         }
-        input[2].splitStack(1);
-        if (input[2].stackSize == 0) {
-            input[2] = null;
+        input2.splitStack(1);
+        if (input2.stackSize == 0) {
+            inventoryHelper.setStackInSlot(2, null);
         }
 
         int rarity1 = entry1.getRarity();
@@ -176,12 +178,12 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -251,7 +253,7 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -270,8 +272,8 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);

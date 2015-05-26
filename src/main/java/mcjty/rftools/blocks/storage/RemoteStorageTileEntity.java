@@ -61,7 +61,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound != null && tagCompound.hasKey("id")) {
                     int rf;
@@ -106,12 +106,12 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -169,8 +169,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (!inventoryHelper.containsItem(index+4)) {
             return;
         }
-        ItemStack source = inventoryHelper.getStacks()[index];
-        ItemStack dest = inventoryHelper.getStacks()[index+4];
+        ItemStack source = inventoryHelper.getStackInSlot(index);
+        ItemStack dest = inventoryHelper.getStackInSlot(index+4);
         if (dest.getItemDamage() != StorageModuleItem.STORAGE_REMOTE) {
             return;
         }
@@ -248,7 +248,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     public int findRemoteIndex(int id) {
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 if (stack.getItemDamage() != StorageModuleItem.STORAGE_REMOTE) {
                     NBTTagCompound tagCompound = stack.getTagCompound();
                     if (tagCompound != null && tagCompound.hasKey("id")) {
@@ -345,7 +345,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     public ItemStack findStorageWithId(int id) {
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 if (stack.getItemDamage() != StorageModuleItem.STORAGE_REMOTE) {
                     NBTTagCompound tagCompound = stack.getTagCompound();
                     if (tagCompound != null && tagCompound.hasKey("id")) {
@@ -362,7 +362,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     public ItemStack[] findStacksForId(int id) {
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 if (stack.getItemDamage() != StorageModuleItem.STORAGE_REMOTE) {
                     NBTTagCompound tagCompound = stack.getTagCompound();
                     if (tagCompound != null && tagCompound.hasKey("id")) {
@@ -378,7 +378,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
 
     public void copyToModule(int si) {
-        ItemStack stack = inventoryHelper.getStacks()[si];
+        ItemStack stack = inventoryHelper.getStackInSlot(si);
         if (stack == null) {
             // Should be impossible.
             return;
@@ -458,7 +458,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -490,7 +490,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);

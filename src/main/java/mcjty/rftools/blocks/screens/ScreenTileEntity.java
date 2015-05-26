@@ -133,12 +133,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < bufferTagList.tagCount(); i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i + ScreenContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i + ScreenContainer.SLOT_MODULES, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
         resetModules();
     }
@@ -304,8 +304,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = ScreenContainer.SLOT_MODULES; i < inventoryHelper.getStacks().length; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = ScreenContainer.SLOT_MODULES; i < inventoryHelper.getCount(); i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -372,7 +372,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     }
 
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {
-        ItemStack stack = inventoryHelper.getStacks()[slot];
+        ItemStack stack = inventoryHelper.getStackInSlot(slot);
         stack.setTagCompound(tagCompound);
         screenModules = null;
         clientScreenModules = null;
@@ -385,7 +385,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         if (clientScreenModules == null) {
             needsServerData = false;
             clientScreenModules = new ArrayList<ClientScreenModule>();
-            for (ItemStack itemStack : inventoryHelper.getStacks()) {
+            for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+                ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
                     ModuleProvider moduleProvider = (ModuleProvider) itemStack.getItem();
                     ClientScreenModule clientScreenModule;
@@ -428,7 +429,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         if (screenModules == null) {
             totalRfPerTick = 0;
             screenModules = new ArrayList<ScreenModule>();
-            for (ItemStack itemStack : inventoryHelper.getStacks()) {
+            for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+                ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (itemStack != null && itemStack.getItem() instanceof ModuleProvider) {
                     ModuleProvider moduleProvider = (ModuleProvider) itemStack.getItem();
                     ScreenModule screenModule;

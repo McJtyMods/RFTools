@@ -62,12 +62,12 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
     private void checkCrafting() {
         if (inhibitCrafting == 0) {
             if (!checkDimletCrafting()) {
-                if (inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_OUTPUT] != null) {
+                if (inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_OUTPUT) != null) {
                     inventoryHelper.setInventorySlotContents(0, DimletWorkbenchContainer.SLOT_OUTPUT, null);
                 }
             }
@@ -154,27 +154,27 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
     }
 
     private boolean checkDimletCrafting() {
-        ItemStack stackBase = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_BASE];
+        ItemStack stackBase = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_BASE);
         if (stackBase == null) {
             return false;
         }
-        ItemStack stackController = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_CONTROLLER];
+        ItemStack stackController = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_CONTROLLER);
         if (stackController == null) {
             return false;
         }
-        ItemStack stackTypeController = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_TYPE_CONTROLLER];
+        ItemStack stackTypeController = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_TYPE_CONTROLLER);
         if (stackTypeController == null) {
             return false;
         }
-        ItemStack stackMemory = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_MEMORY];
+        ItemStack stackMemory = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_MEMORY);
         if (stackMemory == null) {
             return false;
         }
-        ItemStack stackEnergy = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_ENERGY];
+        ItemStack stackEnergy = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_ENERGY);
         if (stackEnergy == null) {
             return false;
         }
-        ItemStack stackEssence = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_ESSENCE];
+        ItemStack stackEssence = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_ESSENCE);
         if (stackEssence == null) {
             return false;
         }
@@ -206,7 +206,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
             // Already extracting
             return;
         }
-        ItemStack stack = inventoryHelper.getStacks()[DimletWorkbenchContainer.SLOT_INPUT];
+        ItemStack stack = inventoryHelper.getStackInSlot(DimletWorkbenchContainer.SLOT_INPUT);
         if (stack != null) {
             if (DimletSetup.knownDimlet.equals(stack.getItem())) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
@@ -310,7 +310,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -333,8 +333,8 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);

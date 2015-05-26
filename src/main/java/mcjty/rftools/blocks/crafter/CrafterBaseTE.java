@@ -75,12 +75,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i+CrafterContainer.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i+CrafterContainer.SLOT_BUFFER, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -197,8 +197,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = CrafterContainer.SLOT_BUFFER ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = CrafterContainer.SLOT_BUFFER ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -304,7 +304,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                 int count = stack.stackSize;
                 for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
                     int slotIdx = CrafterContainer.SLOT_BUFFER + j;
-                    ItemStack input = inventoryHelper.getStacks()[(slotIdx)];
+                    ItemStack input = inventoryHelper.getStackInSlot(slotIdx);
                     if (input != null && input.stackSize > keep) {
                         if (OreDictionary.itemMatches(stack, input, false)) {
                             if (input.getItem().hasContainerItem(input)) {
@@ -328,7 +328,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                             }
                             input.splitStack(ss);        // This consumes the items
                             if (input.stackSize == 0) {
-                                inventoryHelper.getStacks()[(slotIdx)] = null;
+                                inventoryHelper.setStackInSlot(slotIdx, null);
                             }
                         }
                     }
@@ -347,7 +347,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     private void undo(Map<Integer,ItemStack> undo) {
         for (Map.Entry<Integer, ItemStack> entry : undo.entrySet()) {
-            inventoryHelper.getStacks()[entry.getKey()] = entry.getValue();
+            inventoryHelper.setStackInSlot(entry.getKey(), entry.getValue());
         }
     }
 

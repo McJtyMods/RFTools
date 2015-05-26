@@ -49,12 +49,12 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -139,8 +139,8 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -153,7 +153,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
     private void storeDimlets() {
         DimensionDescriptor descriptor = convertToDimensionDescriptor();
         ItemStack realizedTab = createRealizedTab(descriptor, worldObj);
-        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = realizedTab;
+        inventoryHelper.setStackInSlot(DimensionEnscriberContainer.SLOT_TAB, realizedTab);
 
         markDirty();
     }
@@ -189,7 +189,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         long forcedSeed = 0;
 
         for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS];
+            ItemStack stack = inventoryHelper.getStackInSlot(i + DimensionEnscriberContainer.SLOT_DIMLETS);
             if (stack != null && stack.stackSize > 0) {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
                 DimletEntry entry = KnownDimletConfiguration.getEntry(key);
@@ -202,28 +202,28 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
                     }
                 }
             }
-            inventoryHelper.getStacks()[i + DimensionEnscriberContainer.SLOT_DIMLETS] = null;
+            inventoryHelper.setStackInSlot(i + DimensionEnscriberContainer.SLOT_DIMLETS, null);
         }
         return new DimensionDescriptor(descriptors, forcedSeed);
     }
 
     private void extractDimlets() {
-        ItemStack realizedTab = inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB];
+        ItemStack realizedTab = inventoryHelper.getStackInSlot(DimensionEnscriberContainer.SLOT_TAB);
         NBTTagCompound tagCompound = realizedTab.getTagCompound();
         if (tagCompound != null) {
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
             String descriptionString = tagCompound.getString("descriptionString");
             for (DimletKey descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
-                inventoryHelper.getStacks()[idx++] = KnownDimletConfiguration.makeKnownDimlet(descriptor, worldObj);
+                inventoryHelper.setStackInSlot(idx++, KnownDimletConfiguration.makeKnownDimlet(descriptor, worldObj));
             }
         }
 
-        inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB] = new ItemStack(DimletSetup.emptyDimensionTab);
+        inventoryHelper.setStackInSlot(DimensionEnscriberContainer.SLOT_TAB, new ItemStack(DimletSetup.emptyDimensionTab));
         markDirty();
     }
 
     private void setName(String name) {
-        ItemStack realizedTab = inventoryHelper.getStacks()[DimensionEnscriberContainer.SLOT_TAB];
+        ItemStack realizedTab = inventoryHelper.getStackInSlot(DimensionEnscriberContainer.SLOT_TAB);
         if (realizedTab != null) {
             NBTTagCompound tagCompound = realizedTab.getTagCompound();
             if (tagCompound == null) {

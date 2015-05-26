@@ -64,7 +64,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
             return;
         }
 
-        ItemStack itemStack = inventoryHelper.getStacks()[0];
+        ItemStack itemStack = inventoryHelper.getStackInSlot(0);
         if (itemStack == null || itemStack.stackSize == 0) {
             disableBlockGlow();
             return;
@@ -196,7 +196,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -214,8 +214,8 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -242,12 +242,12 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override

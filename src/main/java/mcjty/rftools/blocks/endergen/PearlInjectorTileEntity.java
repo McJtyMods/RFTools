@@ -56,8 +56,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
     }
 
     private boolean takePearl() {
-        for (int i = 0 ; i < inventoryHelper.getStacks().length ; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             if (stack != null && Items.ender_pearl.equals(stack.getItem()) && stack.stackSize > 0) {
                 decrStackSize(i, 1);
                 return true;
@@ -98,7 +98,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i+PearlInjectorContainer.SLOT_BUFFER] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i+PearlInjectorContainer.SLOT_BUFFER, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -116,7 +116,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (ItemStack stack : inventoryHelper.getStacks()) {
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -129,12 +130,12 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override

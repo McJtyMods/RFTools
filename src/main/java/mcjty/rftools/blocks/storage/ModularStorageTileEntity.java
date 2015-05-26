@@ -191,7 +191,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
             return slots[index];
         }
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     private void handleNewAmount(boolean s1, int index) {
@@ -255,7 +255,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         handleNewAmount(s1, index);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            copyFromModule(inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE]);
+            copyFromModule(inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE));
         }
         return itemStack;
     }
@@ -355,7 +355,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     public void copyToModule() {
-        ItemStack stack = inventoryHelper.getStacks()[ModularStorageContainer.SLOT_STORAGE_MODULE];
+        ItemStack stack = inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
         if (stack == null) {
             // Should be impossible.
             return;
@@ -371,7 +371,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         int cnt = writeBufferToNBT(tagCompound, ModularStorageContainer.SLOT_STORAGE);
         tagCompound.setInteger("count", cnt);
 
-        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
+        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getCount() ; i++) {
             inventoryHelper.setInventorySlotContents(0, i, null);
         }
         numStacks = -1;
@@ -382,7 +382,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     }
 
     public void copyFromModule(ItemStack stack) {
-        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getStacks().length ; i++) {
+        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getCount() ; i++) {
             inventoryHelper.setInventorySlotContents(0, i, null);
         }
 
@@ -516,7 +516,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i+offset] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i+offset, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -547,7 +547,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         NBTTagList bufferTagList = new NBTTagList();
         if (sendToClient) {
             for (int i = 0 ; i < ModularStorageContainer.SLOT_STORAGE ; i++) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
                 if (stack != null) {
                     stack.writeToNBT(nbtTagCompound);
@@ -572,7 +572,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
         } else {
             for (int i = offset; i < inventoryHelper.getCount(); i++) {
-                ItemStack stack = inventoryHelper.getStacks()[i];
+                ItemStack stack = inventoryHelper.getStackInSlot(i);
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
                 if (stack != null) {
                     stack.writeToNBT(nbtTagCompound);
@@ -631,7 +631,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
             storageTileEntity.compact(remoteId);
         } else {
-            InventoryHelper.compactStacks(inventoryHelper.getStacks(), ModularStorageContainer.SLOT_STORAGE, maxSize);
+            InventoryHelper.compactStacks(inventoryHelper, ModularStorageContainer.SLOT_STORAGE, maxSize);
         }
 
         updateStackCount();

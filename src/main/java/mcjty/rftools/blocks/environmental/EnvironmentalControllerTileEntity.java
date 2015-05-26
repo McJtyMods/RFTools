@@ -180,7 +180,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             int volume = getVolume();
             totalRfPerTick = 0;
             environmentModules = new ArrayList<EnvironmentModule>();
-            for (ItemStack itemStack : inventoryHelper.getStacks()) {
+            for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+                ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (itemStack != null && itemStack.getItem() instanceof EnvModuleProvider) {
                     EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
                     Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
@@ -220,12 +221,12 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -304,7 +305,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < bufferTagList.tagCount(); i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i + EnvironmentalControllerContainer.SLOT_MODULES] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i + EnvironmentalControllerContainer.SLOT_MODULES, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
         environmentModules = null;
     }
@@ -329,8 +330,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = EnvironmentalControllerContainer.SLOT_MODULES; i < inventoryHelper.getStacks().length; i++) {
-            ItemStack stack = inventoryHelper.getStacks()[i];
+        for (int i = EnvironmentalControllerContainer.SLOT_MODULES; i < inventoryHelper.getCount(); i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);

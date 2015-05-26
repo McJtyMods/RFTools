@@ -94,12 +94,21 @@ public class InventoryHelper {
         return itemsToPlace;
     }
 
-    public ItemStack[] getStacks() {
-        return stacks;
-    }
-
     public int getCount() {
         return count;
+    }
+
+    public ItemStack getStackInSlot(int index) {
+        return stacks[index];
+    }
+
+    /**
+     * This function sets a stack in a slot but doesn't check if this slot allows it.
+     * @param index
+     * @param stack
+     */
+    public void setStackInSlot(int index, ItemStack stack) {
+        stacks[index] = stack;
     }
 
     public boolean containsItem(int index) {
@@ -157,6 +166,10 @@ public class InventoryHelper {
             }
             tileEntity.markDirty();
         }
+    }
+
+    public static void compactStacks(InventoryHelper helper, int start, int max) {
+        compactStacks(helper.stacks, start, max);
     }
 
     public static void compactStacks(ItemStack[] stacks, int start, int max) {

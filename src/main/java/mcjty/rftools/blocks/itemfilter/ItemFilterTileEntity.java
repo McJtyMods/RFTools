@@ -55,8 +55,8 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
             // First move the six items from the old positions to the new positions.
             for (int i = ItemFilterContainer.SLOT_BUFFER+5 ; i >= ItemFilterContainer.SLOT_BUFFER ; i--) {
-                inventoryHelper.getStacks()[i] = inventoryHelper.getStacks()[i-3];
-                inventoryHelper.getStacks()[i-3] = null;
+                inventoryHelper.setStackInSlot(i, inventoryHelper.getStackInSlot(i-3));
+                inventoryHelper.setStackInSlot(i-3, null);
             }
 
             // Now convert the modes to the new system.
@@ -82,7 +82,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.getStacks()[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            inventoryHelper.setStackInSlot(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
     }
 
@@ -101,7 +101,8 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (ItemStack stack : inventoryHelper.getStacks()) {
+        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (stack != null) {
                 stack.writeToNBT(nbtTagCompound);
@@ -141,12 +142,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
     @Override
     public int getSizeInventory() {
-        return inventoryHelper.getStacks().length;
+        return inventoryHelper.getCount();
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStacks()[index];
+        return inventoryHelper.getStackInSlot(index);
     }
 
     @Override
@@ -199,7 +200,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
         if (index < ItemFilterContainer.SLOT_BUFFER) {
             return true;
         }
-        ItemStack ghostStack = inventoryHelper.getStacks()[index - ItemFilterContainer.SLOT_BUFFER];
+        ItemStack ghostStack = inventoryHelper.getStackInSlot(index - ItemFilterContainer.SLOT_BUFFER);
         return ghostStack == null || ghostStack.isItemEqual(stack);
     }
 
@@ -220,13 +221,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements ISidedInv
 
         int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
 
-        ItemStack ghostStack = inventoryHelper.getStacks()[ghostIndex];
+        ItemStack ghostStack = inventoryHelper.getStackInSlot(ghostIndex);
         if (ghostStack == null) {
             // First check if there are other ghosted items for this side that match.
             // In that case we don't allow input here.
             int im = inputMode[side];
             for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
-                ItemStack g = inventoryHelper.getStacks()[i];
+                ItemStack g = inventoryHelper.getStackInSlot(i);
                 if (g != null && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
                 }
