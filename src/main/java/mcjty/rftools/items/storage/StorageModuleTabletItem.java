@@ -69,6 +69,20 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
             }
 
             int moduleDamage = tagCompound.getInteger("childDamage");
+            int rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+            if (moduleDamage != StorageModuleItem.STORAGE_REMOTE) {
+                rfNeeded += ModularStorageConfiguration.TABLET_EXTRACONSUME * (moduleDamage + 1);
+            }
+
+            int energy = tagCompound.getInteger("Energy");
+            if (energy < rfNeeded) {
+                RFTools.message(player, EnumChatFormatting.YELLOW + "Not enough energy to open the contents!");
+                return stack;
+            }
+
+            energy -= rfNeeded;
+            tagCompound.setInteger("Energy", energy);
+
             if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
                     RFTools.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");

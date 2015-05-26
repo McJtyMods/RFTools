@@ -25,7 +25,8 @@ public class ModularStorageConfiguration {
 
     public static int TABLET_MAXENERGY = 20000;
     public static int TABLET_RECEIVEPERTICK = 500;
-    public static int TABLET_CONSUMEPERUSE = 200;
+    public static int TABLET_CONSUMEPERUSE = 100;    // Base consumption per usage for the remote storage unit.
+    public static int TABLET_EXTRACONSUME = 100;     // Extra RF usage per storage tier.
 
     public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
     public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.
@@ -51,6 +52,8 @@ public class ModularStorageConfiguration {
                 "RF per tick that the storage tablet can receive").getInt();
         TABLET_CONSUMEPERUSE = cfg.get(CATEGORY_STORAGE, "tabletRFUsage", TABLET_CONSUMEPERUSE,
                 "RF per usage of the storage tablet").getInt();
+        TABLET_EXTRACONSUME = cfg.get(CATEGORY_STORAGE, "tabletExtraRFUsage", TABLET_EXTRACONSUME,
+                "Extra RF per usage per storage tier").getInt();
 
         remoteShareLocal = cfg.get(CATEGORY_STORAGE, "remoteShareLocal", remoteShareLocal,
                 "RF/tick to share an inventory to the same dimension").getInt();
