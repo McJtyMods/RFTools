@@ -25,7 +25,7 @@ public class ModularStorageConfiguration {
 
     public static int TABLET_MAXENERGY = 20000;
     public static int TABLET_RECEIVEPERTICK = 500;
-    public static int TABLET_CONSUMEPERUSE = 100;
+    public static int TABLET_CONSUMEPERUSE = 200;
 
     public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
     public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.

@@ -21,6 +21,9 @@ public class StorageModuleItem extends Item {
     private final IIcon[] icons = new IIcon[7];
     private IIcon activeIcon;
 
+    public static final int STORAGE_TIER1 = 0;
+    public static final int STORAGE_TIER2 = 1;
+    public static final int STORAGE_TIER3 = 2;
     public static final int STORAGE_REMOTE = 6;
     public static final int MAXSIZE[] = new int[] { 100, 200, 300, 0, 0, 0, -1 };
 
@@ -43,16 +46,7 @@ public class StorageModuleItem extends Item {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-            if (stack.getItemDamage() == STORAGE_REMOTE) {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                if (tagCompound == null || !tagCompound.hasKey("id")) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
-                    return stack;
-                }
-                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            } else {
-                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            }
+            RFTools.message(player, EnumChatFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
             return stack;
         }
         return stack;
@@ -78,22 +72,7 @@ public class StorageModuleItem extends Item {
         int max = MAXSIZE[itemStack.getItemDamage()];
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            if (max == -1) {
-                // This is a remote storage module.
-                if (tagCompound.hasKey("id")) {
-                    int id = tagCompound.getInteger("id");
-                    list.add(EnumChatFormatting.GREEN + "Remote id: " + id);
-                } else {
-                    list.add(EnumChatFormatting.YELLOW + "Unlinked");
-                }
-            } else {
-                int cnt = tagCompound.getInteger("count");
-                if (tagCompound.hasKey("id")) {
-                    int id = tagCompound.getInteger("id");
-                    list.add(EnumChatFormatting.GREEN + "Contents id: " + id);
-                }
-                list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
-            }
+            addModuleInformation(list, max, tagCompound);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block.");
@@ -105,6 +84,25 @@ public class StorageModuleItem extends Item {
             }
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    public static void addModuleInformation(List list, int max, NBTTagCompound tagCompound) {
+        if (max == -1) {
+            // This is a remote storage module.
+            if (tagCompound.hasKey("id")) {
+                int id = tagCompound.getInteger("id");
+                list.add(EnumChatFormatting.GREEN + "Remote id: " + id);
+            } else {
+                list.add(EnumChatFormatting.YELLOW + "Unlinked");
+            }
+        } else {
+            int cnt = tagCompound.getInteger("count");
+            if (tagCompound.hasKey("id")) {
+                int id = tagCompound.getInteger("id");
+                list.add(EnumChatFormatting.GREEN + "Contents id: " + id);
+            }
+            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
         }
     }
 

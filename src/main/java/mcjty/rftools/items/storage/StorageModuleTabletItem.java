@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -24,6 +26,9 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
     private IIcon iconFull;
     private IIcon iconEmpty;
+
+    public static final int DAMAGE_EMPTY = 0;
+    public static final int DAMAGE_FULL = 1;
 
     public StorageModuleTabletItem() {
         setMaxStackSize(1);
@@ -44,11 +49,51 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         iconEmpty = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModuleTabletEmpty");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIconIndex(ItemStack stack) {
-//        NBTTagCompound tagCompound = stack.getTagCompound();
-        return iconFull;
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int damage) {
+        if (damage == DAMAGE_EMPTY) {
+            return iconEmpty;
+        } else {
+            return iconFull;
+        }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!world.isRemote) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
+                RFTools.message(player, EnumChatFormatting.YELLOW + "This tablet contains no storage module!");
+                return stack;
+            }
+
+            int moduleDamage = tagCompound.getInteger("childDamage");
+            if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
+                if (!tagCompound.hasKey("id")) {
+                    RFTools.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
+                    return stack;
+                }
+                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            } else {
+                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            }
+            return stack;
+        }
+        return stack;
+    }
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        if (stack.getItemDamage() == DAMAGE_FULL) {
+            return true;
+        }
+        return super.hasContainerItem(stack);
+    }
+
+    @Override
+    public Item getContainerItem() {
+        return ModularStorageSetup.storageModuleTabletItem;
     }
 
     @Override
@@ -57,6 +102,12 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(EnumChatFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
+            if (itemStack.getItemDamage() == DAMAGE_FULL) {
+                int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("moduleDamage")];
+                StorageModuleItem.addModuleInformation(list, max, tagCompound);
+            } else {
+                list.add(EnumChatFormatting.YELLOW + "No storage module installed!");
+            }
         }
         list.add("This RF/charged module can hold a storage module");
         list.add("and allows the wielder to manipulate the contents of");

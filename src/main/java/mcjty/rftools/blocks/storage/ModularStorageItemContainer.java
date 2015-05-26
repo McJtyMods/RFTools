@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 public class ModularStorageItemContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
-    public static final int MAXSIZE_STORAGE = 300;
-
     private EntityPlayer entityPlayer;
 
     public static final ContainerFactory factory = new ContainerFactory() {
@@ -30,7 +28,7 @@ public class ModularStorageItemContainer extends GenericContainer {
     }
 
     private int getMaxSize() {
-        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getItemDamage()];
+        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getTagCompound().getInteger("childDamage")];
     }
 
     @Override

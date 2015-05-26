@@ -30,7 +30,7 @@ public class ModularStorageItemInventory implements IInventory {
     }
 
     private int getMaxSize() {
-        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getItemDamage()];
+        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getTagCompound().getInteger("childDamage")];
     }
 
     @Override
