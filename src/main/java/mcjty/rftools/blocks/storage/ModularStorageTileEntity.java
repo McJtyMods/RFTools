@@ -60,15 +60,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 if (prevLevel != -2) {
                     prevLevel = -2;
                     numStacks = -1;
-                    maxSize = 0;
-                    markDirty();
-                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                    setMaxSize(0);
                 }
                 return;
             }
 
             numStacks = storageTileEntity.getCount(si);
-            maxSize = storageTileEntity.getMaxStacks(si);
+
+            int newMaxSize = storageTileEntity.getMaxStacks(si);
+            if (newMaxSize != maxSize) {
+                setMaxSize(newMaxSize);
+            }
             int level = getRenderLevel();
             if (level != prevLevel) {
                 prevLevel = level;

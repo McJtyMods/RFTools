@@ -10,7 +10,7 @@ import java.util.Map;
 public class InventoryHelper {
     private final TileEntity tileEntity;
     private final ContainerFactory containerFactory;
-    private final ItemStack stacks[];
+    private ItemStack stacks[];
     private int count;
 
     public InventoryHelper(TileEntity tileEntity, ContainerFactory containerFactory, int count) {
@@ -22,6 +22,9 @@ public class InventoryHelper {
 
     public void setNewCount(int newcount) {
         this.count = newcount;
+        ItemStack newstacks[] = new ItemStack[newcount];
+        System.arraycopy(stacks, 0, newstacks, 0, Math.min(stacks.length, newstacks.length));
+        stacks = newstacks;
     }
 
     /**
@@ -99,6 +102,10 @@ public class InventoryHelper {
     }
 
     public ItemStack getStackInSlot(int index) {
+        if (index >= stacks.length) {
+            return null;
+        }
+
         return stacks[index];
     }
 
@@ -108,14 +115,24 @@ public class InventoryHelper {
      * @param stack
      */
     public void setStackInSlot(int index, ItemStack stack) {
+        if (index >= stacks.length) {
+            return;
+        }
         stacks[index] = stack;
     }
 
     public boolean containsItem(int index) {
+        if (index >= stacks.length) {
+            return false;
+        }
         return stacks[index] != null;
     }
 
     public ItemStack decrStackSize(int index, int amount) {
+        if (index >= stacks.length) {
+            return null;
+        }
+
         if (containerFactory.isGhostSlot(index) || containerFactory.isGhostOutputSlot(index)) {
             ItemStack old = stacks[index];
             stacks[index] = null;
@@ -144,6 +161,10 @@ public class InventoryHelper {
     }
 
     public void setInventorySlotContents(int stackLimit, int index, ItemStack stack) {
+        if (index >= stacks.length) {
+            return;
+        }
+
         if (containerFactory.isGhostSlot(index)) {
             if (stack != null) {
                 stacks[index] = stack.copy();
