@@ -224,8 +224,17 @@ to be linked first to de right storage item. To do that place
 the remote storage module in the appropriate slot next to the
 item.
 
-You can then use the remote storage module by simply right clicking it
-in your hotbar or you can insert the module in a modular chest block.
+You can then use the remote storage module by combining it with a tablet
+or you can insert the module in a modular chest block.
+{-------------------------------------------------------------}
+Offline access with the Tablet:
+{ri:storageModuleTabletItem}
+With this item you can open the contents of a remote or normal
+storage module from within your hotbar. To use it you need to
+craft the tablet together with the storage module and you must
+charge it with sufficient energy. Higher storage tiers will cost
+more RF to open. To get the storage module and empty tablet
+back you just put the tablet in your crafting grid.
 {-------------------------------------------------------------}
 {b}Automatic Crafter
 {n:crafte}
