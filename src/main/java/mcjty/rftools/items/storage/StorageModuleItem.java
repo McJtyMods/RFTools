@@ -43,10 +43,6 @@ public class StorageModuleItem extends Item {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-//            if (stack.getItemDamage() != STORAGE_REMOTE) {
-//                RFTools.message(player, EnumChatFormatting.YELLOW + "This is not a remote storage module!");
-//                return stack;
-//            }
             if (stack.getItemDamage() == STORAGE_REMOTE) {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null || !tagCompound.hasKey("id")) {

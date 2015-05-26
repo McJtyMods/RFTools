@@ -6,10 +6,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
-import mcjty.rftools.items.storage.DimletTypeItem;
-import mcjty.rftools.items.storage.GenericTypeItem;
-import mcjty.rftools.items.storage.OreDictTypeItem;
-import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.items.storage.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -17,6 +14,8 @@ import net.minecraft.item.ItemStack;
 public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
     public static RemoteStorageBlock remoteStorageBlock;
+
+    public static StorageModuleTabletItem storageModuleTabletItem;
 
     public static StorageModuleItem storageModuleItem;
     public static DimletTypeItem dimletTypeItem;
@@ -34,6 +33,11 @@ public class ModularStorageSetup {
     }
 
     public static void setupItems() {
+        storageModuleTabletItem = new StorageModuleTabletItem();
+        storageModuleTabletItem.setUnlocalizedName("StorageModuleTablet");
+        storageModuleTabletItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(storageModuleTabletItem, "storageModuleTabletItem");
+
         storageModuleItem = new StorageModuleItem();
         storageModuleItem.setUnlocalizedName("StorageModule");
         storageModuleItem.setCreativeTab(RFTools.tabRfTools);
@@ -66,6 +70,8 @@ public class ModularStorageSetup {
         GameRegistry.addRecipe(new ItemStack(dimletTypeItem), " u ", "rir", " p ", 'u', DimletSetup.unknownDimlet, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.iron_ore, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(genericTypeItem), " p ", "rir", " p ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
+
+        GameRegistry.addRecipe(new ItemStack(storageModuleTabletItem), "geg", "rqr", "grg", 'g', Items.gold_nugget, 'e', Items.emerald, 'r', Blocks.redstone_block, 'q', Blocks.quartz_block);
 
         GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, 0), " c ", "gig", "qrq", 'r', Items.redstone, 'i', Items.iron_ingot,
                 'g', Items.gold_nugget, 'c', Blocks.chest, 'q', Items.quartz);
