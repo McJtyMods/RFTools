@@ -129,7 +129,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         if (tagCompound != null) {
             list.add(EnumChatFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
             if (itemStack.getItemDamage() == DAMAGE_FULL) {
-                int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("moduleDamage")];
+                int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("childDamage")];
                 StorageModuleItem.addModuleInformation(list, max, tagCompound);
             } else {
                 list.add(EnumChatFormatting.YELLOW + "No storage module installed!");
