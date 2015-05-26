@@ -102,7 +102,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         if (stack.getItemDamage() == DAMAGE_FULL) {
             return true;
         }
-        return super.hasContainerItem(stack);
+        return false;
     }
 
     @Override
