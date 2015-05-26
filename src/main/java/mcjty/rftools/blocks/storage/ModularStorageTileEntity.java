@@ -444,7 +444,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 return;
             }
             ItemStack[] stacks = storageTileEntity.getRemoteStacks(si);
-            for (int i = 0; i < maxSize; i++) {
+            for (int i = 0 ; i < Math.min(maxSize, stacks.length) ; i++) {
                 if (stacks[i] != null) {
                     numStacks++;
                 }

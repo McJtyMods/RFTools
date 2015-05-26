@@ -74,7 +74,7 @@ public class RemoteStorageItemInventory implements IInventory {
             if (si == -1) {
                 return null;
             }
-            return storage.getRemoteStacks(si)[index];
+            return storage.getRemoteSlot(si, index);
         } else {
             return stacks[index];
         }

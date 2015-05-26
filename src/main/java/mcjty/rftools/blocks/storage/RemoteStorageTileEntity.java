@@ -24,10 +24,10 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private InventoryHelper inventoryHelper = new InventoryHelper(this, RemoteStorageContainer.factory, 8);
 
     private ItemStack[][] slots = new ItemStack[][] {
-            new ItemStack[ModularStorageContainer.MAXSIZE_STORAGE],
-            new ItemStack[ModularStorageContainer.MAXSIZE_STORAGE],
-            new ItemStack[ModularStorageContainer.MAXSIZE_STORAGE],
-            new ItemStack[ModularStorageContainer.MAXSIZE_STORAGE]
+            new ItemStack[0],
+            new ItemStack[0],
+            new ItemStack[0],
+            new ItemStack[0]
     };
     private int[] maxsize = { 0, 0, 0, 0 };
     private int[] numStacks = { 0, 0, 0, 0 };
@@ -276,6 +276,13 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return slots[si];
     }
 
+    public ItemStack getRemoteSlot(int si, int index) {
+        if (index >= slots[si].length) {
+            return null;
+        }
+        return slots[si][index];
+    }
+
     public void updateCount(int si, int cnt) {
         numStacks[si] = cnt;
         StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
@@ -394,17 +401,10 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         int cnt = writeSlotsToNBT(tagCompound, "Items", si);
         tagCompound.setInteger("count", cnt);
 
-        for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            slots[si][i] = null;
-        }
+        setMaxSize(si, 0);
     }
 
     public void copyFromModule(ItemStack stack, int si) {
-        for (int i = 0 ; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            slots[si][i] = null;
-        }
-        numStacks[si] = 0;
-
         if (stack == null) {
             setMaxSize(si, 0);
             return;
@@ -414,17 +414,20 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             return;
         }
 
+        setMaxSize(si, StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
+
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
             readSlotsFromNBT(tagCompound, "Items", si);
         }
 
-        setMaxSize(si, StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
         updateStackCount(si);
     }
 
-    private void setMaxSize(int index, int ms) {
-        maxsize[index] = ms;
+    private void setMaxSize(int si, int ms) {
+        maxsize[si] = ms;
+        slots[si] = new ItemStack[ms];
+        numStacks[si] = 0;
     }
 
     private void updateStackCount(int si) {
@@ -447,8 +450,9 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         for (int i = 0 ; i < 4 ; i++) {
+            int max = tagCompound.getInteger("maxSize" + i);
+            setMaxSize(i, max);
             readSlotsFromNBT(tagCompound, "Slots" + i, i);
-            maxsize[i] = tagCompound.getInteger("maxSize" + i);
             global[i] = tagCompound.getBoolean("global" + i);
             updateStackCount(i);
         }
@@ -464,7 +468,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     private void readSlotsFromNBT(NBTTagCompound tagCompound, String tagname, int index) {
         NBTTagList bufferTagList = tagCompound.getTagList(tagname, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+        for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), slots[index].length) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             slots[index][i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
