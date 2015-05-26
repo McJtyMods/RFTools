@@ -9,10 +9,12 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ContainerAndItemRecipe extends ShapedRecipes {
     private Object objectToInheritFrom;
+    private Object objectToGetEnergyFrom;
 
     public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output) {
         super(2, 2, new ItemStack[] { container, item, null, null }, output);
         objectToInheritFrom = getObjectFromStack(item.getItem());
+        objectToGetEnergyFrom = getObjectFromStack(container.getItem());
     }
 
     private Object getObjectFromStack(Item item) {
@@ -23,12 +25,12 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
         }
     }
 
-    private NBTTagCompound getNBTFromObject(InventoryCrafting inventoryCrafting) {
+    private NBTTagCompound getNBTFromObject(InventoryCrafting inventoryCrafting, Object obj) {
         for (int i = 0 ; i < inventoryCrafting.getSizeInventory() ; i++) {
             ItemStack stack = inventoryCrafting.getStackInSlot(i);
             if (stack != null && stack.getItem() != null) {
                 Object o = getObjectFromStack(stack.getItem());
-                if (objectToInheritFrom.equals(o)) {
+                if (obj.equals(o)) {
                     return stack.getTagCompound();
                 }
             }
@@ -49,20 +51,29 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
         return null;
     }
 
+    private static NBTTagCompound getCompound(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        return stack.getTagCompound();
+    }
+
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
         ItemStack stack = super.getCraftingResult(inventoryCrafting);
         if (stack != null) {
-            NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting);
+            NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting, objectToInheritFrom);
             if (tagCompound != null) {
                 stack.setTagCompound(tagCompound);
             }
+            NBTTagCompound tagCompoundEnergy = getNBTFromObject(inventoryCrafting, objectToGetEnergyFrom);
+            if (tagCompoundEnergy != null) {
+                getCompound(stack).setInteger("Energy", tagCompoundEnergy.getInteger("Energy"));
+            }
+
             Integer damage = getDamageFromObject(inventoryCrafting);
             if (damage != null) {
-                if (stack.getTagCompound() == null) {
-                    stack.setTagCompound(new NBTTagCompound());
-                }
-                stack.getTagCompound().setInteger("childDamage", damage);
+                getCompound(stack).setInteger("childDamage", damage);
             }
         }
         return stack;
