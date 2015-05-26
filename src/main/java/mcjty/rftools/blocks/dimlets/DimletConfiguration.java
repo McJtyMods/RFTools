@@ -69,6 +69,8 @@ public class DimletConfiguration {
     public static int unknownDimletChestLootMaximum = 3;
     public static int unknownDimletChestLootRarity = 50;
 
+    public static boolean dimensionalShardRecipe = false;
+
 	public static void init(Configuration cfg) {
         EXTRACTOR_MAXENERGY = cfg.get(CATEGORY_DIMLETS, "energyExtractorMaxRF", EXTRACTOR_MAXENERGY,
                 "Maximum RF storage that the energy extractor can hold").getInt();
@@ -197,6 +199,9 @@ public class DimletConfiguration {
                 "Randomize the seed when the dimension is created").getBoolean();
         normalTerrainInheritsOverworld = cfg.get(CATEGORY_DIMLETS, "normalTerrainInheritsOverworld", normalTerrainInheritsOverworld,
                 "Set this to true if you want terrains with dimlet 'normal' to generate like the overworld (i.e. amplified if the overworld is amplified)").getBoolean();
+
+        dimensionalShardRecipe = cfg.get(CATEGORY_DIMLETS, "dimensionalShardRecipe", dimensionalShardRecipe,
+                "Set this to true if you want a recipe for dimensional shards. Useful on servers that disallow dimensions").getBoolean();
     }
 
 }

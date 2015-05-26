@@ -178,5 +178,10 @@ public class DimletSetup {
         GameRegistry.addRecipe(new ItemStack(phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', dimensionalShard);
 
         GameRegistry.addRecipe(new ItemStack(dimletTemplate), "sss", "sps", "sss", 's', dimensionalShard, 'p', Items.paper);
+
+        if (DimletConfiguration.dimensionalShardRecipe) {
+            GameRegistry.addRecipe(new ItemStack(dimensionalShard, 8), "deg", "irG", "qcL", 'd', Items.diamond, 'e', Items.emerald, 'g', Items.gold_ingot,
+                    'i', Items.iron_ingot, 'r', Items.redstone, 'G', Items.glowstone_dust, 'q', Items.quartz, 'c', Items.coal, 'L', Blocks.glass);
+        }
     }
 }
