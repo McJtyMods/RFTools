@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.Side;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.ClientInfo;
+import mcjty.rftools.items.storage.StorageFilterCache;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +29,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
 
     private int[] accessible = null;
     private int maxSize = 0;
+
+    private StorageFilterCache filterCache = null;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, ModularStorageContainer.SLOT_STORAGE + ModularStorageContainer.MAXSIZE_STORAGE);
 
@@ -299,6 +303,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        } else if (index == ModularStorageContainer.SLOT_FILTER_MODULE) {
+            filterCache = null;
         }
         boolean s1 = containsItem(index);
         setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
@@ -341,6 +347,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             return false;
         }
 
+        if (index < ModularStorageContainer.SLOT_STORAGE) {
+            return true;
+        }
+
         if (isStorageAvailableRemotely(index)) {
             index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
@@ -355,10 +365,19 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
 
         if (inventoryHelper.containsItem(ModularStorageContainer.SLOT_FILTER_MODULE)) {
-            // @todo
+            getFilterCache();
+            if (filterCache != null) {
+                return filterCache.match(stack);
+            }
         }
 
         return true;
+    }
+
+    private void getFilterCache() {
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_FILTER_MODULE));
+        }
     }
 
     public void copyToModule() {

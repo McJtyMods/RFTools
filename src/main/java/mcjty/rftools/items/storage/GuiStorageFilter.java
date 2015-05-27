@@ -28,7 +28,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
 
     private ImageChoiceLabel blacklistMode;
     private ImageChoiceLabel oredictMode;
-    private ImageChoiceLabel metadataMode;
+    private ImageChoiceLabel damageMode;
 
     public GuiStorageFilter(StorageFilterContainer container) {
         super(null, container);
@@ -58,23 +58,23 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
         oredictMode.addChoice("Off", "Oredict matching off", guiElements, 10 * 16, 32);
         oredictMode.addChoice("On", "Oredict matching on", guiElements, 11 * 16, 32);
 
-        metadataMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(130, 45, 16, 16)).setTooltips("Filter ignoring damage/metadata").addChoiceEvent(new ChoiceEvent() {
+        damageMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(130, 45, 16, 16)).setTooltips("Filter ignoring damage").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateSettings();
             }
         });
-        metadataMode.addChoice("Off", "Ignore damage/metadata", guiElements, 12 * 16, 32);
-        metadataMode.addChoice("On", "Damage/metadata must match", guiElements, 13 * 16, 32);
+        damageMode.addChoice("Off", "Ignore damage", guiElements, 12 * 16, 32);
+        damageMode.addChoice("On", "Damage must match", guiElements, 13 * 16, 32);
 
         NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound();
         if (tagCompound != null) {
             setBlacklistMode(tagCompound.getString("blacklistMode"));
             oredictMode.setCurrentChoice(tagCompound.getBoolean("oredictMode") ? 1 : 0);
-            metadataMode.setCurrentChoice(tagCompound.getBoolean("metadataMode") ? 1 : 0);
+            damageMode.setCurrentChoice(tagCompound.getBoolean("damageMode") ? 1 : 0);
         }
 
-        Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(iconLocation).addChild(blacklistMode).addChild(oredictMode).addChild(metadataMode);
+        Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(iconLocation).addChild(blacklistMode).addChild(oredictMode).addChild(damageMode);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -95,7 +95,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
         PacketHandler.INSTANCE.sendToServer(new PacketUpdateNBTItem(
                 new Argument("blacklistMode", blacklistMode.getCurrentChoice()),
                 new Argument("oredictMode", oredictMode.getCurrentChoiceIndex() == 1),
-                new Argument("metadataMode", metadataMode.getCurrentChoiceIndex() == 1)));
+                new Argument("damageMode", damageMode.getCurrentChoiceIndex() == 1)));
    }
 
     @Override
