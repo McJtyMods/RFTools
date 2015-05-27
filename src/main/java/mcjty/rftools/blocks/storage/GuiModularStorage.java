@@ -194,7 +194,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity == null) {
             // We must hide two slots.
             ImageLabel hideLabel = new ImageLabel(mc, this);
-            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-23, 40, 21));
+            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-23, 62, 21));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
         }
