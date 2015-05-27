@@ -194,7 +194,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity == null) {
             // We must hide two slots.
             ImageLabel hideLabel = new ImageLabel(mc, this);
-            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-23, 72, 21));
+            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-23, 62, 21));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
         }
@@ -353,7 +353,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         int max;
         List<Pair<ItemStack,Integer>> items = new ArrayList<Pair<ItemStack, Integer>>();
         if (tileEntity != null) {
-            for (int i = 2; i < tileEntity.getSizeInventory(); i++) {
+            for (int i = ModularStorageContainer.SLOT_STORAGE; i < tileEntity.getSizeInventory(); i++) {
                 ItemStack stack = tileEntity.getStackInSlot(i);
                 if (stack != null && stack.stackSize > 0) {
                     String displayName = stack.getDisplayName();
@@ -362,7 +362,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     }
                 }
             }
-            max = tileEntity.getSizeInventory() - 2;
+            max = tileEntity.getSizeInventory() - ModularStorageContainer.SLOT_STORAGE;
         } else {
             // Also works for ModularStorageItemContainer
             for (int i = 0; i < RemoteStorageItemContainer.MAXSIZE_STORAGE ; i++) {
