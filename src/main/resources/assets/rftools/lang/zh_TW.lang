@@ -58,6 +58,7 @@ item.StorageModule1.name=Storage Module Tier 2
 item.StorageModule2.name=Storage Module Tier 3
 item.StorageModule6.name=Remote Storage Module
 item.StorageModuleTablet.name=Storage Module Tablet
+item.FilterModule.name=Storage Filter Module
 item.DimletModule.name=Dimlet Storage Module
 item.OreDictModule.name=Ore Dictionary Storage Module
 item.GenericModule.name=Generic Storage Module

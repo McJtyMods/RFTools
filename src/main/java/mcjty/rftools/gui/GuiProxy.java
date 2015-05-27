@@ -8,6 +8,8 @@ import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.items.devdelight.GuiDevelopersDelight;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.items.netmonitor.GuiNetworkMonitor;
+import mcjty.rftools.items.storage.GuiStorageFilter;
+import mcjty.rftools.items.storage.StorageFilterContainer;
 import mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
@@ -25,6 +27,8 @@ public class GuiProxy implements IGuiHandler {
             return new RemoteStorageItemContainer(entityPlayer);
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
             return new ModularStorageItemContainer(entityPlayer);
+        } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
+            return new StorageFilterContainer(entityPlayer);
         }
 
         Block block = world.getBlock(x, y, z);
@@ -52,6 +56,8 @@ public class GuiProxy implements IGuiHandler {
             return new GuiModularStorage(new RemoteStorageItemContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
             return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
+        } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
+            return new GuiStorageFilter(new StorageFilterContainer(entityPlayer));
         }
 
         Block block = world.getBlock(x, y, z);

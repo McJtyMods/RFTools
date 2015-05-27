@@ -23,6 +23,7 @@ public class ModularStorageSetup {
     public static DimletTypeItem dimletTypeItem;
     public static OreDictTypeItem oreDictTypeItem;
     public static GenericTypeItem genericTypeItem;
+    public static StorageFilterItem storageFilterItem;
 
     public static void setupBlocks() {
         modularStorageBlock = new ModularStorageBlock();
@@ -63,6 +64,12 @@ public class ModularStorageSetup {
         genericTypeItem.setCreativeTab(RFTools.tabRfTools);
         genericTypeItem.setTextureName(RFTools.MODID + ":storage/genericModule");
         GameRegistry.registerItem(genericTypeItem, "genericTypeItem");
+
+        storageFilterItem = new StorageFilterItem();
+        storageFilterItem.setUnlocalizedName("FilterModule");
+        storageFilterItem.setCreativeTab(RFTools.tabRfTools);
+        storageFilterItem.setTextureName(RFTools.MODID + ":storage/filterModule");
+        GameRegistry.registerItem(storageFilterItem, "storageFilterItem");
     }
 
     public static void setupCrafting() {
@@ -72,6 +79,7 @@ public class ModularStorageSetup {
         GameRegistry.addRecipe(new ItemStack(dimletTypeItem), " u ", "rir", " p ", 'u', DimletSetup.unknownDimlet, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.iron_ore, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(genericTypeItem), " p ", "rir", " p ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(storageFilterItem), " h ", "rir", " p ", 'h', Blocks.hopper, 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot);
 
         GameRegistry.addRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), "geg", "rqr", "grg", 'g', Items.gold_nugget, 'e', Items.emerald, 'r', Blocks.redstone_block, 'q', Blocks.quartz_block);
         GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1),
