@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.container.*;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -11,7 +12,8 @@ public class ModularStorageContainer extends GenericContainer {
 
     public static final int SLOT_STORAGE_MODULE = 0;
     public static final int SLOT_TYPE_MODULE = 1;
-    public static final int SLOT_STORAGE = 2;
+    public static final int SLOT_FILTER_MODULE = 2;
+    public static final int SLOT_STORAGE = 3;
     public static final int MAXSIZE_STORAGE = 300;
 
     private ModularStorageTileEntity modularStorageTileEntity;
@@ -21,6 +23,7 @@ public class ModularStorageContainer extends GenericContainer {
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModularStorageSetup.storageModuleItem)), CONTAINER_INVENTORY, SLOT_STORAGE_MODULE, 5, 215, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageTypeItem.class), CONTAINER_INVENTORY, SLOT_TYPE_MODULE, 23, 215, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 41, 215, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_STORAGE, -500, -500, 30, 0, 10, 0);
             layoutPlayerInventorySlots(91, 157);
         }
