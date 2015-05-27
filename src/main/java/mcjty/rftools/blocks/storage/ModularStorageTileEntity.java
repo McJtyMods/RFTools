@@ -353,6 +353,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
                 return false;
             }
         }
+
+        if (inventoryHelper.containsItem(ModularStorageContainer.SLOT_FILTER_MODULE)) {
+            // @todo
+        }
+
         return true;
     }
 
