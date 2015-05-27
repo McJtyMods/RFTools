@@ -23,7 +23,9 @@ import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.Slot;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.inventory.*;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -42,7 +44,9 @@ import java.util.List;
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
     public static final int STORAGE_WIDTH = 256;
-    public static final int STORAGE_HEIGHT = 236;
+    public static final int STORAGE_HEIGHT0 = 236;
+    public static final int STORAGE_HEIGHT1 = 320;
+    public static final int STORAGE_HEIGHT2 = 490;
 
     public static final String VIEW_LIST = "list";
     public static final String VIEW_COLUMNS = "columns";
@@ -50,6 +54,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private TypeModule typeModule;
 
+    private static final ResourceLocation iconLocationTop = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorageTop.png");
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorage.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
@@ -64,42 +69,58 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private Button compactButton;
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
-        super(modularStorageTileEntity, container);
-
-        xSize = STORAGE_WIDTH;
-        ySize = STORAGE_HEIGHT;
+        this(modularStorageTileEntity, (Container) container);
     }
 
     public GuiModularStorage(RemoteStorageItemContainer container) {
-        super(null, container);
-
-        xSize = STORAGE_WIDTH;
-        ySize = STORAGE_HEIGHT;
+        this(null, container);
     }
 
     public GuiModularStorage(ModularStorageItemContainer container) {
-        super(null, container);
+        this(null, container);
+    }
 
+    public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
+        super(modularStorageTileEntity, container);
         xSize = STORAGE_WIDTH;
-        ySize = STORAGE_HEIGHT;
+
+        int width = Minecraft.getMinecraft().displayWidth;
+        int height = Minecraft.getMinecraft().displayHeight;
+        ScaledResolution scaledresolution = new ScaledResolution(Minecraft.getMinecraft(), width, height);
+        width = scaledresolution.getScaledWidth();
+        height = scaledresolution.getScaledHeight();
+
+        if (height > 510) {
+            ySize = STORAGE_HEIGHT2;
+        } else  if (height > 340) {
+            ySize = STORAGE_HEIGHT1;
+        } else {
+            ySize = STORAGE_HEIGHT0;
+        }
+
+        for (Object o : container.inventorySlots) {
+            Slot slot = (Slot) o;
+            slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
+        }
+
     }
 
     @Override
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, 147)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
                 setFilledBackground(ModularStorageConfiguration.itemListBackground).setLeftMargin(0).setRowheight(-1);
-        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, 147)).setDesiredWidth(11).setVertical().setScrollable(itemList);
+        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize-89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
-        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 157, 80, 12)).setTooltips("Name based filter for items").addTextEvent(new TextEvent() {
+        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, ySize-79, 80, 12)).setTooltips("Name based filter for items").addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 updateSettings();
             }
         });
 
-        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 170, 16, 16)).setTooltips("Control how items are shown", "in the view").addChoiceEvent(new ChoiceEvent() {
+        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, ySize-66, 16, 16)).setTooltips("Control how items are shown", "in the view").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateSettings();
@@ -111,7 +132,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         updateTypeModule();
 
-        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(28, 170, 16, 16)).setTooltips("Control how items are sorted", "in the view").addChoiceEvent(new ChoiceEvent() {
+        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(28, ySize-66, 16, 16)).setTooltips("Control how items are sorted", "in the view").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateSettings();
@@ -121,7 +142,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
         }
 
-        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 170, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium").addChoiceEvent(new ChoiceEvent() {
+        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, ySize-66, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateSettings();
@@ -132,18 +153,18 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         amountLabel = new Label(mc, this);
         amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(22, 188, 66, 12));
+        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(22, ySize-48, 66, 12));
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("? / ?");
 
-        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 188, 12, 12)).setText("z").setTooltips("Compact equal stacks").addButtonEvent(new ButtonEvent() {
+        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, ySize-48, 12, 12)).setText("z").setTooltips("Compact equal stacks").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 compact();
             }
         });
 
-        cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(66, 170, 16, 16)).
+        cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(66, ySize-66, 16, 16)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -164,13 +185,16 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
         }
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
+        Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider).addChild(filter).
                 addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel).addChild(compactButton).addChild(cycleButton);
+
+        toplevel.setBackgrounds(iconLocationTop, iconLocation);
+        toplevel.setBackgroundLayout(false, ySize-STORAGE_HEIGHT0+2);
 
         if (tileEntity == null) {
             // We must hide two slots.
             ImageLabel hideLabel = new ImageLabel(mc, this);
-            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 213, 40, 21));
+            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-23, 40, 21));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
         }

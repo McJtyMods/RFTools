@@ -28,6 +28,8 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
 
     private ResourceLocation background1 = null;
     private ResourceLocation background2 = null;
+    private boolean background2Horizontal = true;
+    private int backgroundOffset = 256;
     private int filledRectThickness = 0;
     private int filledBackground = -1;
 
@@ -130,12 +132,20 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
      * @return
      */
     public P setBackground(ResourceLocation bg) {
-        return setBackground(bg, null);
+        return setBackgrounds(bg, null);
     }
 
-    public P setBackground(ResourceLocation bg1, ResourceLocation bg2) {
+    public P setBackgrounds(ResourceLocation bg1, ResourceLocation bg2) {
         this.background1 = bg1;
         this.background2 = bg2;
+        this.background2Horizontal = true;
+        this.backgroundOffset = 256;
+        return (P) this;
+    }
+
+    public P setBackgroundLayout(boolean horizontal, int offset) {
+        this.background2Horizontal = horizontal;
+        this.backgroundOffset = offset;
         return (P) this;
     }
 
@@ -190,9 +200,15 @@ public abstract class AbstractWidget<P extends AbstractWidget> implements Widget
             if (background2 == null) {
                 gui.drawTexturedModalRect(xx, yy, 0, 0, bounds.width, bounds.height);
             } else {
-                gui.drawTexturedModalRect(xx, yy, 0, 0, 256, bounds.height);
-                mc.getTextureManager().bindTexture(background2);
-                gui.drawTexturedModalRect(xx + 256, yy, 0, 0, bounds.width - 256, bounds.height);
+                if (background2Horizontal) {
+                    gui.drawTexturedModalRect(xx, yy, 0, 0, backgroundOffset, bounds.height);
+                    mc.getTextureManager().bindTexture(background2);
+                    gui.drawTexturedModalRect(xx + backgroundOffset, yy, 0, 0, bounds.width - backgroundOffset, bounds.height);
+                } else {
+                    gui.drawTexturedModalRect(xx, yy, 0, 0, bounds.width, backgroundOffset);
+                    mc.getTextureManager().bindTexture(background2);
+                    gui.drawTexturedModalRect(xx, yy + backgroundOffset, 0, 0, bounds.width, bounds.height - backgroundOffset);
+                }
             }
         } else if (filledRectThickness > 0) {
             RenderHelper.drawThickBeveledBox(xx, yy, xx + bounds.width - 1, yy + bounds.height - 1, filledRectThickness, 0xffffffff, 0xff555555, 0xffc6c6c6);
