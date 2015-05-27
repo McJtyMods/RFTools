@@ -28,7 +28,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     private int[] accessible = null;
     private int maxSize = 0;
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, 2 + ModularStorageContainer.MAXSIZE_STORAGE);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, ModularStorageContainer.SLOT_STORAGE + ModularStorageContainer.MAXSIZE_STORAGE);
 
     private String sortMode = "";
     private String viewMode = "";
@@ -85,7 +85,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         if (accessible == null) {
             accessible = new int[maxSize];
             for (int i = 0 ; i < maxSize ; i++) {
-                accessible[i] = 2 + i;
+                accessible[i] = ModularStorageContainer.SLOT_STORAGE + i;
             }
         }
         return accessible;
@@ -451,7 +451,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             }
             storageTileEntity.updateCount(si, numStacks);
         } else {
-            for (int i = 2; i < 2 + maxSize; i++) {
+            for (int i = ModularStorageContainer.SLOT_STORAGE; i < ModularStorageContainer.SLOT_STORAGE + maxSize; i++) {
                 if (inventoryHelper.containsItem(i)) {
                     numStacks++;
                 }

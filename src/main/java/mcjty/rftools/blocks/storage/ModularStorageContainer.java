@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.storage;
 import mcjty.container.*;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -53,7 +52,7 @@ public class ModularStorageContainer extends GenericContainer {
                 slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                     @Override
                     public boolean getHasStack() {
-                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
+                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
                             return false;
                         }
                         return super.getHasStack();
@@ -61,7 +60,7 @@ public class ModularStorageContainer extends GenericContainer {
 
                     @Override
                     public ItemStack getStack() {
-                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
+                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
                             return null;
                         }
                         return super.getStack();
@@ -69,7 +68,7 @@ public class ModularStorageContainer extends GenericContainer {
 
                     @Override
                     public boolean canTakeStack(EntityPlayer player) {
-                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
+                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
                             return false;
                         }
                         return super.canTakeStack(player);
@@ -77,7 +76,7 @@ public class ModularStorageContainer extends GenericContainer {
 
                     @Override
                     public boolean isItemValid(ItemStack stack) {
-                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + 2)) {
+                        if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
                             return false;
                         }
                         return super.isItemValid(stack);
