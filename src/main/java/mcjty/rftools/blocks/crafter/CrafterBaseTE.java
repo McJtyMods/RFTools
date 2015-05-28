@@ -4,6 +4,8 @@ import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.rftools.items.storage.StorageFilterCache;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,9 +29,11 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     public static final String CMD_MODE = "mode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
-            10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
+            10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
     private CraftingRecipe recipes[];
     private int supportedRecipes;
+
+    private StorageFilterCache filterCache = null;
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
@@ -95,6 +99,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == CrafterContainer.SLOT_FILTER_MODULE) {
+            filterCache = null;
+        }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
@@ -128,8 +135,23 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     }
 
+    private void getFilterCache() {
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(CrafterContainer.SLOT_FILTER_MODULE));
+        }
+    }
+
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
+            if (inventoryHelper.containsItem(CrafterContainer.SLOT_FILTER_MODULE)) {
+                getFilterCache();
+                if (filterCache != null) {
+                    return filterCache.match(stack);
+                }
+            }
+        }
+
         return true;
     }
 
@@ -140,6 +162,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     @Override
     public boolean canInsertItem(int index, ItemStack item, int side) {
+        if (!isItemValidForSlot(index, item)) {
+            return false;
+        }
         return CrafterContainer.factory.isInputSlot(index);
     }
 

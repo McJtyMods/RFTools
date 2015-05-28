@@ -51,26 +51,36 @@ public class GenericContainer extends Container {
 
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
-            Slot slot;
-            if (slotFactory.getSlotType() == SlotType.SLOT_GHOST) {
-                slot = new GhostSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-            } else if (slotFactory.getSlotType() == SlotType.SLOT_GHOSTOUT) {
-                slot = new GhostOutputSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-            } else if (slotFactory.getSlotType() == SlotType.SLOT_SPECIFICITEM) {
-                final SlotDefinition slotDefinition = slotFactory.getSlotDefinition();
-                slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
-                    @Override
-                    public boolean isItemValid(ItemStack stack) {
-                        return slotDefinition.itemStackMatches(stack);
-                    }
-                };
-            } else if (slotFactory.getSlotType() == SlotType.SLOT_CRAFTRESULT) {
-                slot = new CraftingSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY(), crafter);
-            } else {
-                slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
-            }
+            IInventory inventory = inventories.get(slotFactory.getInventoryName());
+            int index = slotFactory.getIndex();
+            int x = slotFactory.getX();
+            int y = slotFactory.getY();
+            SlotType slotType = slotFactory.getSlotType();
+            Slot slot = createSlot(slotFactory, inventory, index, x, y, slotType);
             addSlotToContainer(slot);
         }
+    }
+
+    protected Slot createSlot(SlotFactory slotFactory, final IInventory inventory, final int index, final int x, final int y, SlotType slotType) {
+        Slot slot;
+        if (slotType == SlotType.SLOT_GHOST) {
+            slot = new GhostSlot(inventory, index, x, y);
+        } else if (slotType == SlotType.SLOT_GHOSTOUT) {
+            slot = new GhostOutputSlot(inventory, index, x, y);
+        } else if (slotType == SlotType.SLOT_SPECIFICITEM) {
+            final SlotDefinition slotDefinition = slotFactory.getSlotDefinition();
+            slot = new Slot(inventory, index, x, y) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    return slotDefinition.itemStackMatches(stack);
+                }
+            };
+        } else if (slotType == SlotType.SLOT_CRAFTRESULT) {
+            slot = new CraftingSlot(inventory, index, x, y, crafter);
+        } else {
+            slot = new BaseSlot(inventory, index, x, y);
+        }
+        return slot;
     }
 
     private boolean mergeItemStacks(ItemStack itemStack, SlotType slotType, boolean reverse) {
