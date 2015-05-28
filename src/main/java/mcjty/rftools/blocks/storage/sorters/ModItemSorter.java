@@ -86,7 +86,12 @@ public class ModItemSorter implements ItemSorter {
 
 
     private static String getMod(Pair<ItemStack, Integer> object) {
-        Item item = object.getKey().getItem();
+        ItemStack stack = object.getKey();
+        return getMod(stack);
+    }
+
+    public static String getMod(ItemStack stack) {
+        Item item = stack.getItem();
         if (item instanceof ItemBlock) {
             Block block = ((ItemBlock) item).field_150939_a;
             if (block != null) {

@@ -33,6 +33,12 @@ public class StorageFilterItem extends Item {
             if (tagCompound.getBoolean("damageMode")) {
                 modeLine += ", Damage";
             }
+            if (tagCompound.getBoolean("nbtMode")) {
+                modeLine += ", NBT";
+            }
+            if (tagCompound.getBoolean("modMode")) {
+                modeLine += ", Mod";
+            }
             list.add(EnumChatFormatting.BLUE + modeLine);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
