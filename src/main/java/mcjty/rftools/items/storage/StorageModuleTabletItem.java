@@ -112,7 +112,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-        if (hasContainerItem(stack)) {
+        if (hasContainerItem(stack) && stack.hasTagCompound()) {
             NBTTagCompound tagCompound = new NBTTagCompound();
             tagCompound.setInteger("Energy", stack.getTagCompound().getInteger("Energy"));
             ItemStack container = new ItemStack(getContainerItem());
