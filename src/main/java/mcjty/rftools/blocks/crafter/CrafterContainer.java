@@ -43,7 +43,7 @@ public class CrafterContainer extends GenericContainer {
 
     @Override
     protected Slot createSlot(SlotFactory slotFactory, IInventory inventory, int index, int x, int y, SlotType slotType) {
-        if (index >= SLOT_BUFFER && index < SLOT_BUFFEROUT) {
+        if (index >= SLOT_BUFFER && index < SLOT_BUFFEROUT && slotType == SlotType.SLOT_INPUT) {
             return new BaseSlot(inventory, index, x, y) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
