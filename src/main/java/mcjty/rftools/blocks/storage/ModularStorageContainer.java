@@ -82,6 +82,9 @@ public class ModularStorageContainer extends GenericContainer {
                         if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
                             return false;
                         }
+                        if (!modularStorageTileEntity.isItemValidForSlot(getSlotIndex(), stack)) {
+                            return false;
+                        }
                         return super.isItemValid(stack);
                     }
                 };

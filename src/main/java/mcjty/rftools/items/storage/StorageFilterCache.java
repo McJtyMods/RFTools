@@ -7,7 +7,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class StorageFilterCache {
-    private boolean ignoreDamage = true;
+    private boolean matchDamage = true;
     private boolean oredictMode = false;
     private boolean blacklistMode = true;
     private ItemStack stacks[];
@@ -16,7 +16,7 @@ public class StorageFilterCache {
     StorageFilterCache(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
-            ignoreDamage = tagCompound.getBoolean("damageMode");
+            matchDamage = tagCompound.getBoolean("damageMode");
             oredictMode = tagCompound.getBoolean("oredictMode");
             blacklistMode = "Black".equals(tagCompound.getString("blacklistMode"));
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -44,19 +44,16 @@ public class StorageFilterCache {
         if (stack != null) {
             boolean match = false;
             for (ItemStack itemStack : stacks) {
-                if (!ignoreDamage) {
-                    if (itemStack.isItemEqual(stack)) {
+                if (matchDamage && itemStack.getItemDamage() != stack.getItemDamage()) {
+                    continue;
+                }
+                if (oredictMode) {
+                    if (OreDictionary.itemMatches(itemStack, stack, false)) {
                         match = true;
                         break;
                     }
                 } else {
                     if (itemStack.getItem().equals(stack.getItem())) {
-                        match = true;
-                        break;
-                    }
-                }
-                if (oredictMode) {
-                    if (OreDictionary.itemMatches(itemStack, stack, false)) {
                         match = true;
                         break;
                     }
