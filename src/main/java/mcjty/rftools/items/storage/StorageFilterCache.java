@@ -10,7 +10,7 @@ public class StorageFilterCache {
     private boolean ignoreDamage = true;
     private boolean oredictMode = false;
     private boolean blacklistMode = true;
-    private ItemStack stacks[] = new ItemStack[StorageFilterContainer.FILTER_SLOTS];
+    private ItemStack stacks[];
 
     // Parameter is the filter item.
     StorageFilterCache(ItemStack stack) {
@@ -20,9 +20,22 @@ public class StorageFilterCache {
             oredictMode = tagCompound.getBoolean("oredictMode");
             blacklistMode = "Black".equals(tagCompound.getString("blacklistMode"));
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            int cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+                ItemStack s = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+                if (s != null && s.stackSize > 0) {
+                    cnt++;
+                }
+            }
+            stacks = new ItemStack[cnt];
+            cnt = 0;
+            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+                ItemStack s = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+                if (s != null && s.stackSize > 0) {
+                    stacks[cnt++] = s;
+                }
             }
         }
     }
