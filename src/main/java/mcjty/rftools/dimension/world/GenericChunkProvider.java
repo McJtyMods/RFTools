@@ -175,7 +175,6 @@ public class GenericChunkProvider implements IChunkProvider {
             Class<? extends EntityLiving> entityClass = mob.getEntityClass();
             extraSpawns.add(new BiomeGenBase.SpawnListEntry(entityClass, mob.getSpawnChance(), mob.getMinGroup(), mob.getMaxGroup()));
             extraSpawnsMax.add(mob.getMaxLoaded());
-            System.out.println("MOB: entityClass = " + entityClass);
         }
 
     }
