@@ -12,7 +12,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class DimletSetup {
     public static DimletResearcherBlock dimletResearcherBlock;
@@ -106,7 +105,6 @@ public class DimletSetup {
         knownDimlet.setUnlocalizedName("KnownDimlet");
         knownDimlet.setCreativeTab(RFTools.tabRfToolsDimlets);
         GameRegistry.registerItem(knownDimlet, "knownDimlet");
-        OreDictionary.registerOre("dimlet", knownDimlet);
 
         dimletTemplate = new DimletTemplate();
         dimletTemplate.setUnlocalizedName("DimletTemplate");
