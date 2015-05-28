@@ -212,8 +212,9 @@ or 300 stacks. You can insert modules to make the chest work better
 with various types of items. When you remove a storage module from a
 Modular Storage Block the contents will be copied to the module.
 
-The various item modules allow you to sort and group your
-items based on various criteria.
+The various item modules allow you to sort and group your items based
+on various criteria. There is also a third slot where you can insert
+a filter module to restrict items going into the storage.
 {-------------------------------------------------------------}
 There is also a Remote Storage Block:
 {rb:remoteStorageBlock}
@@ -236,6 +237,18 @@ charge it with sufficient energy. Higher storage tiers will cost
 more RF to open. To get the storage module and empty tablet
 back you just put the tablet in your crafting grid.
 {-------------------------------------------------------------}
+Filtering items for your storage:
+{ri:storageFilterItem}
+With this item you can control what is allowed in the chest and
+what not. You can whitelist or blacklist and also filter with
+NBT, damage, ore dictionary or even based on mod.
+
+This filter module is also usable in the crafter to control what
+goes into the crafter buffer.
+
+The storage filter item has its own GUI which you can only access
+by having the filter in your hand (outside of the machine).
+{-------------------------------------------------------------}
 {b}Automatic Crafter
 {n:crafte}
 {rb:crafterBlock1}
@@ -251,8 +264,9 @@ recipes. If you select a recipe you can edit it in the right grid
 by dragging over the right items.
 
 The crafter also has an internal inventory and four output slots
-for crafting results.
-{-------------------------------------------------------------} 
+for crafting results. By inserting a storage filter item you can
+also prevent unwanted items from being inserted into this inventory.
+{-------------------------------------------------------------}
 The 'Keep/All' button is only active when a recipe is selected and
 allows you to control if this recipe will always keep at least a single
 item in the internal inventory.
