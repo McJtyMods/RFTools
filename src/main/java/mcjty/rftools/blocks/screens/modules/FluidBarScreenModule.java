@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -10,7 +11,6 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 public class FluidBarScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
@@ -67,7 +67,7 @@ public class FluidBarScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.FLUID_RFPERTICK;
     }
 
     @Override

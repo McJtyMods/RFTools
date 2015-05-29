@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class RedstoneScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     private int channel = -1;
     private Coordinate coordinate = Coordinate.INVALID;
     private int dim = 0;
@@ -64,7 +64,7 @@ public class RedstoneScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.REDSTONE_RFPERTICK;
     }
 
     @Override

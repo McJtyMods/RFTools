@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidBarScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
@@ -51,7 +52,7 @@ public class FluidModuleItem extends Item implements ModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + FluidBarScreenModule.RFPERTICK + " RF/tick");
+        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.FLUID_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

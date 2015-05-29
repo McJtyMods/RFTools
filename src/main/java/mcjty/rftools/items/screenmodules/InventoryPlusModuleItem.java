@@ -3,8 +3,8 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
-import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
@@ -32,7 +32,7 @@ public class InventoryPlusModuleItem extends Item implements ModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + ItemStackScreenModule.RFPERTICK + " RF/tick");
+        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.ITEMSTACK_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

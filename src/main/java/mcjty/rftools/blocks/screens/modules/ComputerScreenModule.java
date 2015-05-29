@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -7,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ComputerScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     private String tag = "";
 
     private final List<ColoredText> textList = new ArrayList<ColoredText>();
@@ -38,7 +38,7 @@ public class ComputerScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.COMPUTER_RFPERTICK;
     }
 
     @Override

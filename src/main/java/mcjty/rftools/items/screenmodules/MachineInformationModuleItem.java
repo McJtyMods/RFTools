@@ -4,6 +4,7 @@ import mcjty.api.MachineInformation;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
@@ -51,7 +52,7 @@ public class MachineInformationModuleItem extends Item implements ModuleProvider
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + MachineInformationScreenModule.RFPERTICK + " RF/tick");
+        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.MACHINEINFO_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

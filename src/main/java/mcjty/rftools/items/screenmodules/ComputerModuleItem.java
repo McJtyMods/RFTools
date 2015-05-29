@@ -1,6 +1,7 @@
 package mcjty.rftools.items.screenmodules;
 
 import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
@@ -24,7 +25,7 @@ public class ComputerModuleItem extends Item implements ModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + ComputerScreenModule.RFPERTICK + " RF/tick");
+        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK + " RF/tick");
     }
 
     @Override

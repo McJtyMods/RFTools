@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class ItemStackPlusScreenModule extends ItemStackScreenModule {
-    public static final int RFPERTICK = 30;
 
     @Override
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
@@ -18,7 +18,7 @@ public class ItemStackPlusScreenModule extends ItemStackScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.ITEMSTACKPLUS_RFPERTICK;
     }
 
     @Override

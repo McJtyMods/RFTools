@@ -1,11 +1,10 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class TextScreenModule implements ScreenModule {
-
-    public static final int RFPERTICK = 0;
 
     @Override
     public Object[] getData(World worldObj, long millis) {
@@ -19,7 +18,7 @@ public class TextScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.TEXT_RFPERTICK;
     }
 
     @Override

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.MFRCompatibility;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class ItemStackScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     private int slot1 = -1;
     private int slot2 = -1;
     private int slot3 = -1;
@@ -96,7 +96,7 @@ public class ItemStackScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.ITEMSTACK_RFPERTICK;
     }
 
     @Override

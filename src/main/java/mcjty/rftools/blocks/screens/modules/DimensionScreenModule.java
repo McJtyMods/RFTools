@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class DimensionScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 6;
     private int dim = 0;
     private ScreenModuleHelper helper = new ScreenModuleHelper();
 
@@ -27,7 +27,7 @@ public class DimensionScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.DIMENSION_RFPERTICK;
     }
 
     @Override

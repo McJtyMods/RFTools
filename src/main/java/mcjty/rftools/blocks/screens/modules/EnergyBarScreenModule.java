@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import mcjty.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class EnergyBarScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
@@ -56,7 +56,7 @@ public class EnergyBarScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.ENERGY_RFPERTICK;
     }
 
     @Override

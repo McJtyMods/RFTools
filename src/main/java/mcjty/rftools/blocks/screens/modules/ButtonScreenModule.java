@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -8,8 +9,6 @@ public class ButtonScreenModule implements ScreenModule {
     private String line = "";
     private int channel = -1;
     private boolean toggle;
-
-    public static final int RFPERTICK = 0;
 
     @Override
     public Object[] getData(World worldObj, long millis) {
@@ -61,6 +60,6 @@ public class ButtonScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.BUTTON_RFPERTICK;
     }
 }

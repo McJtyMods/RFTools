@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class CounterPlusScreenModule extends CounterScreenModule {
-    public static final int RFPERTICK = 30;
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
@@ -20,7 +20,7 @@ public class CounterPlusScreenModule extends CounterScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.COUNTERPLUS_RFPERTICK;
     }
 
     @Override

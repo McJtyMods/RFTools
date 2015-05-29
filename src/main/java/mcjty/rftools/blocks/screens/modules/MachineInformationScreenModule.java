@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.api.MachineInformation;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -8,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class MachineInformationScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     private int tag;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
@@ -56,7 +56,7 @@ public class MachineInformationScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.MACHINEINFO_RFPERTICK;
     }
 
     @Override

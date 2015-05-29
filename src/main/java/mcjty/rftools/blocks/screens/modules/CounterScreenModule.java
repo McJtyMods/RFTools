@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.blocks.logic.CounterTileEntity;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -8,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class CounterScreenModule implements ScreenModule {
-    public static final int RFPERTICK = 4;
     protected int dim = 0;
     protected Coordinate coordinate = Coordinate.INVALID;
 
@@ -54,7 +54,7 @@ public class CounterScreenModule implements ScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return RFPERTICK;
+        return ScreenConfiguration.COUNTER_RFPERTICK;
     }
 
     @Override
