@@ -90,10 +90,8 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof ShieldTEBase) {
-            ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
-            BlockTools.emptyInventoryInWorld(world, x, y, z, block, shieldTileEntity);
-
             if (!world.isRemote) {
+                ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
                 if (shieldTileEntity.isShieldComposed()) {
                     shieldTileEntity.decomposeShield();
                 }
