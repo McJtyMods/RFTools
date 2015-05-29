@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import net.minecraft.potion.Potion;
 
 public class SpeedEModule extends PotionEffectModule {
-    public static final float RFPERTICK = 0.001f;
 
     public SpeedEModule() {
         super(Potion.moveSpeed.getId(), 0);
@@ -12,7 +12,7 @@ public class SpeedEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return RFPERTICK;
+        return EnvironmentalConfiguration.SPEED_RFPERTICK;
     }
 
     @Override

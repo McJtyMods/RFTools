@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.world.World;
 
 public class PeacefulEModule extends BuffEModule {
-    public static final float RFPERTICK = 0.001f;
 
     public PeacefulEModule() {
         super(PlayerBuff.BUFF_PEACEFUL);
@@ -15,7 +15,7 @@ public class PeacefulEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return RFPERTICK;
+        return EnvironmentalConfiguration.REGENERATION_RFPERTICK;
     }
 
     @Override

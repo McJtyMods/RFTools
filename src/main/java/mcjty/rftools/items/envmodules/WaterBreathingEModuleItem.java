@@ -3,6 +3,7 @@ package mcjty.rftools.items.envmodules;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.WaterBreathingEModule;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +25,7 @@ public class WaterBreathingEModuleItem extends Item implements EnvModuleProvider
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives water breathing bonus");
         list.add("when used in the environmental controller.");
-        list.add(EnumChatFormatting.GREEN + "Uses " + WaterBreathingEModule.RFPERTICK + " RF/tick (per cubic block)");
+        list.add(EnumChatFormatting.GREEN + "Uses " + EnvironmentalConfiguration.WATERBREATHING_RFPERTICK + " RF/tick (per cubic block)");
     }
 
     @Override

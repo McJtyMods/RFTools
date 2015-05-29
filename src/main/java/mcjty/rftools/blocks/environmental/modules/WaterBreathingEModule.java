@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import net.minecraft.potion.Potion;
 
 public class WaterBreathingEModule extends PotionEffectModule {
-    public static final float RFPERTICK = 0.001f;
 
     public WaterBreathingEModule() {
         super(Potion.waterBreathing.getId(), 0);
@@ -12,7 +12,7 @@ public class WaterBreathingEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return RFPERTICK;
+        return EnvironmentalConfiguration.WATERBREATHING_RFPERTICK;
     }
 
     @Override

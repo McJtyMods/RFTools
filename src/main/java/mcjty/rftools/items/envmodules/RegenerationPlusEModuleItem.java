@@ -1,6 +1,7 @@
 package mcjty.rftools.items.envmodules;
 
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.RegenerationPlusEModule;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +25,7 @@ public class RegenerationPlusEModuleItem extends Item implements EnvModuleProvid
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives regeneration III bonus when");
         list.add("used in the environmental controller.");
-        list.add(EnumChatFormatting.GREEN + "Uses " + RegenerationPlusEModule.RFPERTICK + " RF/tick (per cubic block)");
+        list.add(EnumChatFormatting.GREEN + "Uses " + EnvironmentalConfiguration.REGENERATIONPLUS_RFPERTICK + " RF/tick (per cubic block)");
     }
 
     @Override

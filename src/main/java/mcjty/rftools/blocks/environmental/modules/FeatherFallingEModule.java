@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 
 public class FeatherFallingEModule extends BuffEModule {
-    public static final float RFPERTICK = 0.001f;
 
     public FeatherFallingEModule() {
         super(PlayerBuff.BUFF_FEATHERFALLING);
@@ -11,6 +11,6 @@ public class FeatherFallingEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return RFPERTICK;
+        return EnvironmentalConfiguration.FEATHERFALLING_RFPERTICK;
     }
 }

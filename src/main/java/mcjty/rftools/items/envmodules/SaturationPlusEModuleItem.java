@@ -1,6 +1,7 @@
 package mcjty.rftools.items.envmodules;
 
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.SaturationPlusEModule;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +25,7 @@ public class SaturationPlusEModuleItem extends Item implements EnvModuleProvider
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives saturation III bonus when");
         list.add("used in the environmental controller.");
-        list.add(EnumChatFormatting.GREEN + "Uses " + SaturationPlusEModule.RFPERTICK + " RF/tick (per cubic block)");
+        list.add(EnumChatFormatting.GREEN + "Uses " + EnvironmentalConfiguration.SATURATIONPLUS_RFPERTICK + " RF/tick (per cubic block)");
     }
 
     @Override

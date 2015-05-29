@@ -1,6 +1,7 @@
 package mcjty.rftools.items.envmodules;
 
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
+import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.FeatherFallingPlusEModule;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +25,7 @@ public class FeatherFallingPlusEModuleItem extends Item implements EnvModuleProv
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives feather falling bonus");
         list.add("when used in the environmental controller.");
-        list.add(EnumChatFormatting.GREEN + "Uses " + FeatherFallingPlusEModule.RFPERTICK + " RF/tick (per cubic block)");
+        list.add(EnumChatFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FEATHERFALLINGPLUS_RFPERTICK + " RF/tick (per cubic block)");
     }
 
     @Override
