@@ -31,33 +31,33 @@ public class EnvironmentalConfiguration {
         MIN_USAGE = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMinRFUsage", MIN_USAGE,
                 "The minimum RF/tick usage that an active controller consumes").getInt();
 
-        FEATHERFALLING_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingRFPerTick", FEATHERFALLING_RFPERTICK,
-                "RF per tick/per block for the feather falling module").getInt();
-        FEATHERFALLINGPLUS_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingPlusRFPerTick", FEATHERFALLINGPLUS_RFPERTICK,
-                "RF per tick/per block for the feather falling plus module").getInt();
-        FLIGHT_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "flightRFPerTick", FLIGHT_RFPERTICK,
-                "RF per tick/per block for the flight module").getInt();
-        HASTE_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "hasteRFPerTick", HASTE_RFPERTICK,
-                "RF per tick/per block for the haste module").getInt();
-        HASTEPLUS_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "hastePlusRFPerTick", HASTEPLUS_RFPERTICK,
-                "RF per tick/per block for the haste plus module").getInt();
-        NIGHTVISION_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "nightvisionRFPerTick", NIGHTVISION_RFPERTICK,
-                "RF per tick/per block for the night vision module").getInt();
-        PEACEFUL_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "peacefulRFPerTick", PEACEFUL_RFPERTICK,
-                "RF per tick/per block for the peaceful module").getInt();
-        REGENERATION_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationRFPerTick", REGENERATION_RFPERTICK,
-                "RF per tick/per block for the regeneration module").getInt();
-        REGENERATIONPLUS_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationPlusRFPerTick", REGENERATIONPLUS_RFPERTICK,
-                "RF per tick/per block for the regeneration plus module").getInt();
-        SATURATION_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "saturationRFPerTick", SATURATION_RFPERTICK,
-                "RF per tick/per block for the saturation module").getInt();
-        SATURATIONPLUS_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "saturationPlusRFPerTick", SATURATIONPLUS_RFPERTICK,
-                "RF per tick/per block for the saturation plus module").getInt();
-        SPEED_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "speedRFPerTick", SPEED_RFPERTICK,
-                "RF per tick/per block for the speed module").getInt();
-        SPEEDPLUS_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "speedPlusRFPerTick", SPEEDPLUS_RFPERTICK,
-                "RF per tick/per block for the speed plus module").getInt();
-        WATERBREATHING_RFPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "watherBreathingRFPerTick", WATERBREATHING_RFPERTICK,
-                "RF per tick/per block for the wather breathing module").getInt();
+        FEATHERFALLING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingRFPerTick", FEATHERFALLING_RFPERTICK,
+                "RF per tick/per block for the feather falling module").getDouble();
+        FEATHERFALLINGPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingPlusRFPerTick", FEATHERFALLINGPLUS_RFPERTICK,
+                "RF per tick/per block for the feather falling plus module").getDouble();
+        FLIGHT_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "flightRFPerTick", FLIGHT_RFPERTICK,
+                "RF per tick/per block for the flight module").getDouble();
+        HASTE_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hasteRFPerTick", HASTE_RFPERTICK,
+                "RF per tick/per block for the haste module").getDouble();
+        HASTEPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hastePlusRFPerTick", HASTEPLUS_RFPERTICK,
+                "RF per tick/per block for the haste plus module").getDouble();
+        NIGHTVISION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "nightvisionRFPerTick", NIGHTVISION_RFPERTICK,
+                "RF per tick/per block for the night vision module").getDouble();
+        PEACEFUL_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "peacefulRFPerTick", PEACEFUL_RFPERTICK,
+                "RF per tick/per block for the peaceful module").getDouble();
+        REGENERATION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationRFPerTick", REGENERATION_RFPERTICK,
+                "RF per tick/per block for the regeneration module").getDouble();
+        REGENERATIONPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationPlusRFPerTick", REGENERATIONPLUS_RFPERTICK,
+                "RF per tick/per block for the regeneration plus module").getDouble();
+        SATURATION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "saturationRFPerTick", SATURATION_RFPERTICK,
+                "RF per tick/per block for the saturation module").getDouble();
+        SATURATIONPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "saturationPlusRFPerTick", SATURATIONPLUS_RFPERTICK,
+                "RF per tick/per block for the saturation plus module").getDouble();
+        SPEED_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "speedRFPerTick", SPEED_RFPERTICK,
+                "RF per tick/per block for the speed module").getDouble();
+        SPEEDPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "speedPlusRFPerTick", SPEEDPLUS_RFPERTICK,
+                "RF per tick/per block for the speed plus module").getDouble();
+        WATERBREATHING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "watherBreathingRFPerTick", WATERBREATHING_RFPERTICK,
+                "RF per tick/per block for the wather breathing module").getDouble();
     }
 }
