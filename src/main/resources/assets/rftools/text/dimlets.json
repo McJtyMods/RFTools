@@ -13,6 +13,7 @@
         [ "Foliage", "Oak" ]
     ],
     "dimlets": [
+        [ "Material", "None", 200, 5, 50, 1, 0 ],
         [ "Material", "tile.blockDiamond", 90000, 25000, 1000, 5, 0 ],
         [ "Material", "tile.blockEmerald", 90000, 25000, 1000, 5, 0 ],
         [ "Material", "tile.blockGold", 30000, 10000, 500, 5, 0 ],
@@ -169,6 +170,7 @@
         [ "Biome", "Desert Oil Field", 16000, 3500, 300, 3, 0 ],
         [ "Biome", "Biome.Ocean Oil Field", 16000, 3500, 300, 3, 0 ],
 
+        [ "Liquid", "None", 300, 200, 100, 2, 0 ],
         [ "Liquid", "witchery:fluidspirit", 50000, 20000, 1000, 6, 1 ],
         [ "Liquid", "pyrotheum", 30000, 10000, 800, 5, 0 ],
         [ "Liquid", "redstone", 30000, 10000, 800, 5, 0 ],
