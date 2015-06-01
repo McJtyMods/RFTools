@@ -954,9 +954,12 @@ public class DimensionInformation {
         int rfMaintainCost = dimletEntry.getRfMaintainCost();
 
         if (rfMaintainCost < 0) {
+            int nominalCost = descriptor.calculateNominalCost();
+            int rfMinimum = Math.max(10, nominalCost * DimletConfiguration.minimumCostPercentage / 100);
+
             actualRfCost = actualRfCost - (actualRfCost * (-rfMaintainCost) / 100);
-            if (actualRfCost < 10) {
-                actualRfCost = 10;        // Never consume less then 10 RF/tick
+            if (actualRfCost < rfMinimum) {
+                actualRfCost = rfMinimum;        // Never consume less then this
             }
         } else {
             actualRfCost += rfMaintainCost;

@@ -1,6 +1,7 @@
 package mcjty.rftools.dimension.description;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.items.dimlets.*;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +40,17 @@ public class DimensionDescriptor {
 
         tickCost = calculateTickCost(dimlets);
         rfCreateCost = calculateCreationRfCost(dimlets, currentModifiers, tickCost);
-        rfMaintainCost = calculateMaintenanceRfCost(dimlets);
+
+        int rf = calculateMaintenanceRfCost(dimlets);
+        int rfGain = calculateBonus(dimlets);
+        if (rfGain > 0) {
+            int rfMinimum = Math.max(10, rf * DimletConfiguration.minimumCostPercentage / 100);
+            rf = rf - (rf * rfGain / 100);
+            if (rf < rfMinimum) {
+                rf = rfMinimum;        // Never consume less then this
+            }
+        }
+        rfMaintainCost = rf;
     }
 
     private void constructDescriptionStringNew(StringBuilder s, List<Pair<DimletKey,List<DimletKey>>> dimlets, List<DimletKey> currentModifiers) {
@@ -303,9 +314,24 @@ public class DimensionDescriptor {
         return cost;
     }
 
+    // Calculate the cost of this dimension without taking bonus dimlets into account.
+    public int calculateNominalCost() {
+        List<DimletKey> dimletKeys = parseDescriptionString(descriptionString);
+
+        // List of all non-modifier dimlets with all associated modifiers.
+        List<Pair<DimletKey,List<DimletKey>>> dimlets = new ArrayList<Pair<DimletKey, List<DimletKey>>>();
+
+        // A list of all current modifier that haven't been fitted into a type yet.
+        List<DimletKey> currentModifiers = new ArrayList<DimletKey>();
+
+        groupDimletsAndModifiers(dimletKeys, dimlets, currentModifiers);
+
+        return calculateMaintenanceRfCost(dimlets);
+    }
+
+    // Calculate the maintenance cost of a dimension without bonus dimlets.
     private int calculateMaintenanceRfCost(List<Pair<DimletKey,List<DimletKey>>> dimlets) {
         int rf = DimletCosts.baseDimensionMaintenanceCost;
-        int rfGain = 0;
 
         for (Pair<DimletKey, List<DimletKey>> dimletWithModifier : dimlets) {
             DimletKey key = dimletWithModifier.getLeft();
@@ -320,21 +346,28 @@ public class DimensionDescriptor {
             }
 
             int c = getMaintenanceCost(type, key);
-            if (c < 0) {
-                rfGain -= c;        // This dimlet gives a bonus in cost. This value is a percentage.
-            } else {
+            if (c > 0) {
                 rf += c;
             }
         }
 
-        if (rfGain > 0) {
-            rf = rf - (rf * rfGain / 100);
-            if (rf < 10) {
-                rf = 10;        // Never consume less then 10 RF/tick
+        return rf;
+    }
+
+    private int calculateBonus(List<Pair<DimletKey,List<DimletKey>>> dimlets) {
+        int rfGain = 0;
+
+        for (Pair<DimletKey, List<DimletKey>> dimletWithModifier : dimlets) {
+            DimletKey key = dimletWithModifier.getLeft();
+            DimletType type = key.getType();
+
+            int c = getMaintenanceCost(type, key);
+            if (c < 0) {
+                rfGain -= c;        // This dimlet gives a bonus in cost. This value is a percentage.
             }
         }
 
-        return rf;
+        return rfGain;
     }
 
     private int getTickCost(DimletType type, DimletKey key) {
