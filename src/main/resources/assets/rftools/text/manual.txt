@@ -307,8 +307,9 @@ protector itself.
 The Power Relay allows you to control how much RF to output based on a
 redstone signal. In its GUI you can set the amount of RF/tick to give
 in case redstone signal is off and also in case redstone signal is on.
-Typically you would use 0 in case the redstone signal is off and some
-other value in case the redstone signal is on. You can use this in
+This can be configured per side. You can also mark sides as being
+input-only. This is where you typically connect the power coming
+from a capacitor or power generator. You can use this in block in
 combination with the RF Monitor to turn off a portion of your RF network
 in case power is low. For example, to turn off ore processing machines.
 {-------------------------------------------------------------} 
