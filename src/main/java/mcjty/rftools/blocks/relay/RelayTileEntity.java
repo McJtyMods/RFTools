@@ -44,7 +44,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
         }
 
         for (int i = 0 ; i < 6 ; i++) {
-            if (rf[i] > 0 && !inputMode[i]) {
+            int side = BlockTools.reorient(ForgeDirection.values()[i], meta).ordinal();
+            if (rf[side] > 0 && !inputMode[side]) {
                 ForgeDirection dir = ForgeDirection.getOrientation(i);
                 TileEntity te = worldObj.getTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
                 if (EnergyTools.isEnergyTE(te)) {
@@ -52,8 +53,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
                     ForgeDirection opposite = dir.getOpposite();
                     if (connection.canConnectEnergy(opposite)) {
                         int rfToGive;
-                        if (rf[i] <= energyStored) {
-                            rfToGive = rf[i];
+                        if (rf[side] <= energyStored) {
+                            rfToGive = rf[side];
                         } else {
                             rfToGive = energyStored;
                         }
@@ -75,7 +76,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity {
         boolean redstoneSignal = BlockTools.getRedstoneSignal(meta);
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
-        int side = from.ordinal();
+        int side = BlockTools.reorient(from, meta).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
             return super.receiveEnergy(from, Math.min(maxReceive, rf[side]), simulate);

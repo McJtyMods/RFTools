@@ -13,6 +13,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Random;
 
+import static net.minecraftforge.common.util.ForgeDirection.*;
+
 public class BlockTools {
     private static final Random random = new Random();
 
@@ -28,6 +30,68 @@ public class BlockTools {
 
     public static ForgeDirection getOrientation(int metadata) {
         return ForgeDirection.getOrientation(metadata & MASK_ORIENTATION);
+    }
+
+    // Given the metavalue of a block, reorient the world direction to the internal block direction
+    // so that the front side will be SOUTH.
+    public static ForgeDirection reorient(ForgeDirection side, int meta) {
+        ForgeDirection k = getOrientation(meta);
+        switch (k) {
+            case DOWN:
+                switch (side) {
+                    case DOWN: return SOUTH;
+                    case UP: return NORTH;
+                    case NORTH: return UP;
+                    case SOUTH: return DOWN;
+                    case WEST: return EAST;
+                    case EAST: return WEST;
+                    case UNKNOWN: return side;
+                }
+            case UP:
+                switch (side) {
+                    case DOWN: return NORTH;
+                    case UP: return SOUTH;
+                    case NORTH: return UP;
+                    case SOUTH: return DOWN;
+                    case WEST: return WEST;
+                    case EAST: return EAST;
+                    case UNKNOWN: return side;
+                }
+            case NORTH:
+                if (side == DOWN || side == UP) {
+                    return side;
+                }
+                return side.getOpposite();
+            case SOUTH:
+                return side;
+            case WEST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return SOUTH;
+                } else if (side == NORTH) {
+                    return WEST;
+                } else if (side == EAST) {
+                    return NORTH;
+                } else {
+                    return EAST;
+                }
+            case EAST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return NORTH;
+                } else if (side == NORTH) {
+                    return EAST;
+                } else if (side == EAST) {
+                    return SOUTH;
+                } else {
+                    return WEST;
+                }
+            case UNKNOWN:
+                return side;
+        }
+        return side;
     }
 
     public static ForgeDirection getTopDirection(ForgeDirection direction) {
@@ -48,7 +112,7 @@ public class BlockTools {
             case UP:
                 return ForgeDirection.SOUTH;
             default:
-                return ForgeDirection.DOWN;
+                return DOWN;
         }
     }
 
@@ -117,16 +181,16 @@ public class BlockTools {
             }
 
             if (y - d0 > 0.0D) {
-                return ForgeDirection.DOWN;
+                return DOWN;
             }
         }
         int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
+        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : DOWN)));
     }
 
     public static ForgeDirection determineOrientationHoriz(EntityLivingBase entityLivingBase) {
         int l = MathHelper.floor_double((entityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : ForgeDirection.DOWN)));
+        return l == 0 ? ForgeDirection.NORTH : (l == 1 ? ForgeDirection.EAST : (l == 2 ? ForgeDirection.SOUTH : (l == 3 ? ForgeDirection.WEST : DOWN)));
     }
 
 

@@ -17,12 +17,14 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
 public class RelayBlock extends GenericBlock {
 
+    private IIcon icons[] = new IIcon[6];
     private IIcon iconFrontOff;
 
     public RelayBlock() {
@@ -57,6 +59,12 @@ public class RelayBlock extends GenericBlock {
     public void registerBlockIcons(IIconRegister iconRegister) {
         super.registerBlockIcons(iconRegister);
         iconFrontOff = iconRegister.registerIcon(RFTools.MODID + ":" + "machineRelay");
+        icons[ForgeDirection.DOWN.ordinal()] = iconRegister.registerIcon(RFTools.MODID + ":machineRelayD");
+        icons[ForgeDirection.UP.ordinal()] = iconRegister.registerIcon(RFTools.MODID + ":machineRelayU");
+        icons[ForgeDirection.NORTH.ordinal()] = iconRegister.registerIcon(RFTools.MODID + ":machineRelayN");
+        icons[ForgeDirection.SOUTH.ordinal()] = null;//iconRegister.registerIcon(RFTools.MODID + ":machineRelay_on");
+        icons[ForgeDirection.WEST.ordinal()] = iconRegister.registerIcon(RFTools.MODID + ":machineRelayW");
+        icons[ForgeDirection.EAST.ordinal()] = iconRegister.registerIcon(RFTools.MODID + ":machineRelayE");
     }
 
     @SideOnly(Side.CLIENT)
@@ -72,6 +80,27 @@ public class RelayBlock extends GenericBlock {
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
+        int meta = blockAccess.getBlockMetadata(x, y, z);
+        ForgeDirection direction = BlockTools.reorient(ForgeDirection.values()[side], meta);
+        if (direction == ForgeDirection.SOUTH) {
+            return getIconInd(blockAccess, x, y, z, meta);
+        }
+        return icons[direction.ordinal()];
+//
+//        ForgeDirection k = getOrientation(meta);
+//        if (iconInd != null && side == k.ordinal()) {
+//            return getIconInd(blockAccess, x, y, z, meta);
+//        } else if (iconTop != null && side == BlockTools.getTopDirection(k).ordinal()) {
+//            return iconTop;
+//        } else if (iconBottom != null && side ==  BlockTools.getBottomDirection(k).ordinal()) {
+//            return iconBottom;
+//        } else {
+//            return iconSide;
+//        }
     }
 
     @Override
