@@ -293,6 +293,8 @@
         [ "Feature", "Maze", 100, 1, 1, 1, 0 ],
         [ "Feature", "Dense Caves", 100, 1, 1, 1, 0 ],
         [ "Feature", "Volcanoes", 100, 1, 1, 1, 0 ],
-        [ "Feature", "No Dimlet Buildings", 100, 1, 1, 2, 1 ]
+        [ "Feature", "No Dimlet Buildings", 100, 1, 1, 2, 1 ],
+
+        [ "Patreon", "McJty", 10, 0, 1, 2, 1 ]
     ]
 }

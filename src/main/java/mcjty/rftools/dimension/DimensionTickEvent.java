@@ -8,7 +8,12 @@ import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -25,6 +30,8 @@ public class DimensionTickEvent {
     private static final int EFFECTS_MAX = 18;
     private int counterEffects = EFFECTS_MAX;
 
+    private static Random random = new Random();
+
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent evt) {
         if (evt.phase == TickEvent.Phase.START) {
@@ -40,11 +47,11 @@ public class DimensionTickEvent {
                 counterEffects = EFFECTS_MAX;
                 doEffects = true;
             }
-            handlePower(doEffects);
+            serverTick(doEffects);
         }
     }
 
-    private void handlePower(boolean doEffects) {
+    private void serverTick(boolean doEffects) {
         World entityWorld = MinecraftServer.getServer().getEntityWorld();
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(entityWorld);
 
@@ -55,32 +62,116 @@ public class DimensionTickEvent {
                 Integer id = entry.getKey();
                 // If there is an activity probe we only drain power if the dimension is loaded (a player is there or a chunkloader)
                 DimensionInformation information = dimensionManager.getDimensionInformation(id);
-                if (DimensionManager.getWorld(id) != null || information.getProbeCounter() == 0) {
-                    int cost = 0;
-                    if (DimletConfiguration.dimensionDifficulty != -1) {
-                        cost = information.getActualRfCost();
-                        if (cost == 0) {
-                            cost = entry.getValue().getRfMaintainCost();
-                        }
-                    }
+                WorldServer world = DimensionManager.getWorld(id);
 
-                    int power = dimensionStorage.getEnergyLevel(id);
-                    power -= cost * MAXTICKS;
-                    if (power < 0) {
-                        power = 0;
-                    }
+                // Power handling.
+                if (world != null || information.getProbeCounter() == 0) {
+                    handlePower(doEffects, dimensionStorage, entry, id, information);
+                }
 
-                    handleLowPower(id, power, doEffects);
-                    if (doEffects && power > 0) {
-                        handleEffectsForDimension(power, id, information);
-                    }
-
-                    dimensionStorage.setEnergyLevel(id, power);
+                // Special effect handling.
+                if (world != null && !world.playerEntities.isEmpty()) {
+                    handleRandomEffects(world, information);
                 }
             }
 
             dimensionStorage.save(entityWorld);
         }
+    }
+
+    private void handlePower(boolean doEffects, DimensionStorage dimensionStorage, Map.Entry<Integer, DimensionDescriptor> entry, Integer id, DimensionInformation information) {
+        int cost = 0;
+        if (DimletConfiguration.dimensionDifficulty != -1) {
+            cost = information.getActualRfCost();
+            if (cost == 0) {
+                cost = entry.getValue().getRfMaintainCost();
+            }
+        }
+
+        int power = dimensionStorage.getEnergyLevel(id);
+        power -= cost * MAXTICKS;
+        if (power < 0) {
+            power = 0;
+        }
+
+        handleLowPower(id, power, doEffects);
+        if (doEffects && power > 0) {
+            handleEffectsForDimension(power, id, information);
+        }
+
+        dimensionStorage.setEnergyLevel(id, power);
+    }
+
+    private void handleRandomEffects(WorldServer world, DimensionInformation information) {
+        // The world is loaded and there are players there.
+        if (information.hasFireworks()) {
+            handleFireworks(world);
+        }
+    }
+
+    private void handleFireworks(WorldServer world) {
+        if (random.nextFloat() < 0.05) {
+            // Calculate a bounding box for all players in the world.
+            double minPosX = 1000000000.0f;
+            double minPosZ = 1000000000.0f;
+            double maxPosX = -1000000000.0f;
+            double maxPosZ = -1000000000.0f;
+            for (Object playerEntity : world.playerEntities) {
+                EntityPlayer player = (EntityPlayer) playerEntity;
+                if (player.posX > maxPosX) {
+                    maxPosX = player.posX;
+                }
+                if (player.posX < minPosX) {
+                    minPosX = player.posX;
+                }
+                if (player.posZ > maxPosZ) {
+                    maxPosZ = player.posZ;
+                }
+                if (player.posZ < minPosZ) {
+                    minPosZ = player.posZ;
+                }
+            }
+            double posX = random.nextFloat() * (maxPosX - minPosX + 60.0f) + minPosX - 30.0f;
+            double posZ = random.nextFloat() * (maxPosZ - minPosZ + 60.0f) + minPosZ - 30.0f;
+
+            ItemStack fireworkStack = new ItemStack(Items.fireworks);
+            NBTTagCompound tag = new NBTTagCompound();
+
+            NBTTagCompound fireworks = new NBTTagCompound();
+            fireworks.setByte("Flight", (byte) 2);
+
+            NBTTagList explosions = new NBTTagList();
+            explosions.appendTag(makeExplosion(tag));
+            fireworks.setTag("Explosions", explosions);
+
+            tag.setTag("Fireworks", fireworks);
+
+            fireworkStack.setTagCompound(tag);
+
+            int y = world.getTopSolidOrLiquidBlock((int) posX, (int) posZ);
+            if (y == -1) {
+                y = 64;
+            } else {
+                y += 3;
+            }
+            EntityFireworkRocket entityfireworkrocket = new EntityFireworkRocket(world, posX, y, posZ, fireworkStack);
+            world.spawnEntityInWorld(entityfireworkrocket);
+        }
+    }
+
+    private static int[] colors = new int[] {
+            0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff,
+            0xff5555, 0x55ff55, 0x5555ff, 0xffff55, 0xff55ff, 0x55ffff, 0x555555
+    };
+
+    private NBTTagCompound makeExplosion(NBTTagCompound tag) {
+        NBTTagCompound explosion = new NBTTagCompound();
+        explosion.setBoolean("Flicker", true);
+        explosion.setBoolean("Tail", true);
+        explosion.setByte("Type", (byte) (random.nextInt(4)+1));
+        explosion.setIntArray("Colors", new int[]{colors[random.nextInt(colors.length)], colors[random.nextInt(colors.length)], colors[random.nextInt(colors.length)]});
+        tag.setTag("Explosion", explosion);
+        return explosion;
     }
 
     static final Map<EffectType,Integer> effectsMap = new HashMap<EffectType, Integer>();

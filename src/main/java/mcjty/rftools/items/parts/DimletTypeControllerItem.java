@@ -42,6 +42,7 @@ public class DimletTypeControllerItem extends Item {
         icons.put(DimletType.DIMLET_TERRAIN, iconRegister.registerIcon(RFTools.MODID + ":parts/dimletTypeControllerTerrain"));
         icons.put(DimletType.DIMLET_TIME, iconRegister.registerIcon(RFTools.MODID + ":parts/dimletTypeControllerTime"));
         icons.put(DimletType.DIMLET_WEATHER, iconRegister.registerIcon(RFTools.MODID + ":parts/dimletTypeControllerWeather"));
+        icons.put(DimletType.DIMLET_PATREON, iconRegister.registerIcon(RFTools.MODID + ":parts/dimletTypeControllerPatreon"));
     }
 
     @SideOnly(Side.CLIENT)

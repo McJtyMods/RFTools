@@ -542,6 +542,8 @@ public class KnownDimletConfiguration {
         initBiomeItems(cfg, mapping, master);
         initLiquidItems(cfg, mapping, master);
 
+        initPatreonItem(cfg, "McJty", mapping, master, "McJty's Support Dimlet");
+
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_WEATHER, "Default"));
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_EFFECT, "None"));
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_FEATURE, "None"));
@@ -980,6 +982,16 @@ public class KnownDimletConfiguration {
         if (id != -1) {
             idToDisplayName.put(key, DimletType.DIMLET_MOBS.dimletType.getName() + " " + name + " Dimlet");
             DimletObjectMapping.idtoMob.put(key, MobConfiguration.mobClasses.get(name));
+        }
+        return id;
+    }
+
+    private static int initPatreonItem(Configuration cfg, String name, DimletMapping mapping, boolean master, String... extraInformation) {
+        DimletKey key = new DimletKey(DimletType.DIMLET_PATREON, name);
+        int id = registerDimlet(cfg, key, mapping, master, null);
+        if (id != -1) {
+            idToDisplayName.put(key, DimletType.DIMLET_PATREON.dimletType.getName() + " " + name + " Dimlet");
+            addExtraInformation(key, extraInformation);
         }
         return id;
     }

@@ -82,6 +82,9 @@ public class DimensionInformation {
     private SkyDescriptor skyDescriptor;
     private List<CelestialBodyDescriptor> celestialBodyDescriptors;
 
+    // Random effects.
+    private boolean fireworks = false;
+
     private String[] dimensionTypes = new String[0];    // Used for Recurrent Complex if that's present.
 
     private WeatherDescriptor weatherDescriptor;
@@ -123,6 +126,7 @@ public class DimensionInformation {
         DimletType.DIMLET_DIGIT.dimletType.constructDimension(dimlets, random, this);
 
         DimletType.DIMLET_SKY.dimletType.constructDimension(dimlets, random, this);
+        DimletType.DIMLET_PATREON.dimletType.constructDimension(dimlets, random, this);
 
         DimletType.DIMLET_MOBS.dimletType.constructDimension(dimlets, random, this);
         DimletType.DIMLET_SPECIAL.dimletType.constructDimension(dimlets, random, this);
@@ -349,6 +353,8 @@ public class DimensionInformation {
         skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
         calculateCelestialBodyDescriptors();
 
+        fireworks = tagCompound.getBoolean("fireworks");
+
         weatherDescriptor = new WeatherDescriptor.Builder().fromNBT(tagCompound).build();
 
         extraMobs.clear();
@@ -478,6 +484,8 @@ public class DimensionInformation {
 
         skyDescriptor.writeToNBT(tagCompound);
         weatherDescriptor.writeToNBT(tagCompound);
+
+        tagCompound.setBoolean("fireworks", fireworks);
 
         NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
@@ -691,6 +699,9 @@ public class DimensionInformation {
         if (probeCounter > 0) {
             logDebug(player, "    Probes: " + probeCounter);
         }
+        if (fireworks) {
+            logDebug(player, "    Fireworks!");
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -742,6 +753,8 @@ public class DimensionInformation {
 
         skyDescriptor.toBytes(buf);
         weatherDescriptor.toBytes(buf);
+
+        buf.writeBoolean(fireworks);
 
         buf.writeInt(extraMobs.size());
         for (MobDescriptor mob : extraMobs) {
@@ -837,6 +850,8 @@ public class DimensionInformation {
         calculateCelestialBodyDescriptors();
 
         weatherDescriptor = new WeatherDescriptor.Builder().fromBytes(buf).build();
+
+        fireworks = buf.readBoolean();
 
         extraMobs.clear();
         size = buf.readInt();
@@ -1267,6 +1282,14 @@ public class DimensionInformation {
 
     public void setNoanimals(boolean noanimals) {
         this.noanimals = noanimals;
+    }
+
+    public boolean hasFireworks() {
+        return fireworks;
+    }
+
+    public void setFireworks(boolean fireworks) {
+        this.fireworks = fireworks;
     }
 
     public boolean isShelter() {

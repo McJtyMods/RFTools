@@ -90,17 +90,6 @@ public class RelayBlock extends GenericBlock {
             return getIconInd(blockAccess, x, y, z, meta);
         }
         return icons[direction.ordinal()];
-//
-//        ForgeDirection k = getOrientation(meta);
-//        if (iconInd != null && side == k.ordinal()) {
-//            return getIconInd(blockAccess, x, y, z, meta);
-//        } else if (iconTop != null && side == BlockTools.getTopDirection(k).ordinal()) {
-//            return iconTop;
-//        } else if (iconBottom != null && side ==  BlockTools.getBottomDirection(k).ordinal()) {
-//            return iconBottom;
-//        } else {
-//            return iconSide;
-//        }
     }
 
     @Override

@@ -20,7 +20,8 @@ public enum DimletType {
     DIMLET_EFFECT(new EffectDimletType()),
     DIMLET_SPECIAL(new SpecialDimletType()),
     DIMLET_CONTROLLER(new ControllerDimletType()),
-    DIMLET_WEATHER(new WeatherDimletType());
+    DIMLET_WEATHER(new WeatherDimletType()),
+    DIMLET_PATREON(new PatreonDimletType());
 
     public final IDimletType dimletType;
 
