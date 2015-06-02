@@ -122,9 +122,7 @@ public class ScreenBlock extends GenericContainerBlock {
         }
     }
 
-    private void clearInvisibleBlocks(World world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
-
+    private void clearInvisibleBlocks(World world, int x, int y, int z, int meta) {
         if (meta == 2) {
             clearInvisibleBlockSafe(world, x - 1, y, z);
             clearInvisibleBlockSafe(world, x, y - 1, z);
@@ -157,7 +155,8 @@ public class ScreenBlock extends GenericContainerBlock {
             screenTileEntity.setTransparent(false);
         } else if (screenTileEntity.isLarge()) {
             screenTileEntity.setLarge(false);
-            clearInvisibleBlocks(world, x, y, z);
+            int meta = world.getBlockMetadata(x, y, z);
+            clearInvisibleBlocks(world, x, y, z, meta);
         } else if (screenTileEntity.isTransparent()) {
             screenTileEntity.setLarge(true);
             setInvisibleBlocks(world, x, y, z);
@@ -320,7 +319,7 @@ public class ScreenBlock extends GenericContainerBlock {
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
             if (screenTileEntity.isLarge()) {
-                clearInvisibleBlocks(world, x, y, z);
+                clearInvisibleBlocks(world, x, y, z, meta);
             }
         }
         super.breakBlock(world, x, y, z, block, meta);
