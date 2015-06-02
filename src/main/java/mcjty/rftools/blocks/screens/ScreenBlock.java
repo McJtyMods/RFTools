@@ -311,6 +311,13 @@ public class ScreenBlock extends GenericContainerBlock {
         if (entityLivingBase instanceof EntityPlayer) {
             Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
         }
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity instanceof ScreenTileEntity) {
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
+            if (screenTileEntity.isLarge()) {
+                setInvisibleBlocks(world, x, y, z);
+            }
+        }
     }
 
     @Override
