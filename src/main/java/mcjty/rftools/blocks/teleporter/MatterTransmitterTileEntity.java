@@ -552,7 +552,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             RFTools.message(player, "Start teleportation...");
             teleportingPlayer = player;
             teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, dest);
-            teleportTimer = (int) (teleportTimer * (2.0f - getInfusedFactor()) / 2.0f);
+            teleportTimer = (int) (teleportTimer * (1.2f - getInfusedFactor()) / 1.2f);
 
             int rf = TeleportConfiguration.rfTeleportPerTick;
             rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
