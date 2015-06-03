@@ -9,6 +9,7 @@ public class SpaceProjectorSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static SpaceProjectorBlock spaceProjectorBlock;
+    public static BuilderBlock builderBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
 
@@ -27,6 +28,10 @@ public class SpaceProjectorSetup {
         spaceProjectorBlock = new SpaceProjectorBlock();
         GameRegistry.registerBlock(spaceProjectorBlock, GenericItemBlock.class, "spaceProjectorBlock");
         GameRegistry.registerTileEntity(SpaceProjectorTileEntity.class, "SpaceProjectorTileEntity");
+
+        builderBlock = new BuilderBlock();
+        GameRegistry.registerBlock(builderBlock, GenericItemBlock.class, "builderBlock");
+        GameRegistry.registerTileEntity(BuilderTileEntity.class, "BuilderTileEntity");
     }
 
     public static void setupItems() {

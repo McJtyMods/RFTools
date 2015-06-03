@@ -170,6 +170,7 @@ tile.volcanicBlock.name=Вулканический блок
 tile.proxyBlock.name=Прокси-блок
 tile.spaceChamberBlock.name=Блок угла космической камеры
 tile.spaceChamberControllerBlock.name=Блок контроллера космической камеры
+tile.builderBlock.name=Builder Block
 tile.spaceProjectorBlock.name=Блок космического проектировщика
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage

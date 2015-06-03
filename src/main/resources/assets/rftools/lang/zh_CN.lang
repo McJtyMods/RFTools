@@ -166,6 +166,7 @@ tile.volcanicBlock.name=火山方块
 tile.proxyBlock.name=代理方块
 tile.spaceChamberBlock.name=空间角落方块
 tile.spaceChamberControllerBlock.name=空间控制方块
+tile.builderBlock.name=Builder Block
 tile.spaceProjectorBlock.name=空间投影方块
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage
