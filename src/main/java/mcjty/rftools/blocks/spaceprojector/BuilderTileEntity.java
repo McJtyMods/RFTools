@@ -40,6 +40,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String MODE_MOVE = "Move";
     public static final String MODE_COPY = "Copy";
+    public static final String MODE_SWAP = "Swap";
+    public static final String MODE_BACK = "Back";
 
     private String mode = MODE_MOVE;
     private int powered = 0;

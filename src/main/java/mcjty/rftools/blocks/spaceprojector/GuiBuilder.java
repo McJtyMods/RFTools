@@ -23,7 +23,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/builder.png");
+    private ToggleButton anchor[] = new ToggleButton[9];
+    private String[] anchorLabels= new String[] { "SW", "SC", "SE", "CW", "WC", "WE", "NW", "NC", "NE" };
+    private ChoiceLabel rotateButton;
+
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
         super(builderTileEntity, container);
@@ -41,7 +45,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        modeChoice = new ChoiceLabel(mc, this).addChoices("Move", "Copy").setTooltips("Set the mode to copy or move").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 70, 16)).
+        modeChoice = new ChoiceLabel(mc, this).addChoices(BuilderTileEntity.MODE_MOVE, BuilderTileEntity.MODE_COPY, BuilderTileEntity.MODE_SWAP, BuilderTileEntity.MODE_BACK).
+                setTooltips("Set the building mode").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 50, 14)).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -50,12 +55,36 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 });
         modeChoice.setChoice(tileEntity.getMode());
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice);
+        rotateButton = new ChoiceLabel(mc, this).addChoices("0°", "90°", "180°", "270°").setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14));
+
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+                addChild(modeChoice).addChild(rotateButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+
+        for (int y = 0 ; y <= 2 ; y++) {
+            for (int x = 0 ; x <= 2 ; x++) {
+                final int index = x + y * 3;
+                anchor[index] = new ToggleButton(mc, this).setText(anchorLabels[index]).setLayoutHint(new PositionalLayout.PositionalHint(100 + x * 20, 24 + y * 15, 18, 13));
+                anchor[index].addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        selectAnchor(index);
+                    }
+                });
+                toplevel.addChild(anchor[index]);
+            }
+        }
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
+    }
+
+    private void selectAnchor(int index) {
+        for (int i = 0 ; i < anchor.length ; i++) {
+            if (i != index) {
+                anchor[i].setPressed(false);
+            }
+        }
     }
 
     private void updateMode() {
