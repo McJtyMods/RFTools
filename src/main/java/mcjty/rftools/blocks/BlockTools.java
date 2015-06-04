@@ -35,8 +35,17 @@ public class BlockTools {
     // Given the metavalue of a block, reorient the world direction to the internal block direction
     // so that the front side will be SOUTH.
     public static ForgeDirection reorient(ForgeDirection side, int meta) {
-        ForgeDirection k = getOrientation(meta);
-        switch (k) {
+        return reorient(side, getOrientation(meta));
+    }
+
+    // Given the metavalue of a block, reorient the world direction to the internal block direction
+    // so that the front side will be SOUTH.
+    public static ForgeDirection reorientHoriz(ForgeDirection side, int meta) {
+        return reorient(side, getOrientationHoriz(meta));
+    }
+
+    public static ForgeDirection reorient(ForgeDirection side, ForgeDirection blockDirection) {
+        switch (blockDirection) {
             case DOWN:
                 switch (side) {
                     case DOWN: return SOUTH;

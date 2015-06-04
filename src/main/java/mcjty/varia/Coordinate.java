@@ -45,6 +45,10 @@ public class Coordinate implements ByteBufConverter {
         return new Coordinate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
     }
 
+    public static Coordinate center(Coordinate c1, Coordinate c2) {
+        return new Coordinate((c1.getX() + c2.getX()) / 2, (c1.getY() + c2.getY()) / 2, (c1.getZ() + c2.getZ()) / 2);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

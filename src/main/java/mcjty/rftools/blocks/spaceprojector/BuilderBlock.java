@@ -23,6 +23,7 @@ public class BuilderBlock extends GenericContainerBlock {
         super(Material.iron, BuilderTileEntity.class);
         setBlockName("builderBlock");
         setCreativeTab(RFTools.tabRfTools);
+        setHorizRotation(true);
     }
 
     @Override

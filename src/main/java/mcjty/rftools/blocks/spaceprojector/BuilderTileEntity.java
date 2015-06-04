@@ -11,6 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -20,10 +21,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 
@@ -35,6 +36,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String COMPONENT_NAME = "builder";
 
     public static final String CMD_SETMODE = "setMode";
+    public static final String CMD_SETANCHOR = "setAnchor";
+    public static final String CMD_SETROTATE = "setRotate";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -43,13 +46,28 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String MODE_SWAP = "Swap";
     public static final String MODE_BACK = "Back";
 
+    public static final String ROTATE_0 = "0°";
+    public static final String ROTATE_90 = "90°";
+    public static final String ROTATE_180 = "180°";
+    public static final String ROTATE_270 = "270°";
+
+    public static final int ANCHOR_SW = 0;
+    public static final int ANCHOR_SE = 1;
+    public static final int ANCHOR_NW = 2;
+    public static final int ANCHOR_NE = 3;
+
     private String mode = MODE_MOVE;
+    private int rotate = 0;
+    private int anchor = ANCHOR_SW;
     private int powered = 0;
 
     private boolean boxValid = false;
     private Coordinate minBox = null;
     private Coordinate maxBox = null;
     private Coordinate scan = null;
+    private int projDx;
+    private int projDy;
+    private int proyDz;
 
     public BuilderTileEntity() {
         super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
@@ -64,7 +82,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "hasCard", "getMode", "setMode" };
+        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor" };
     }
 
     @Override
@@ -74,6 +92,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case 0: return new Object[] { hasCard() != null };
             case 1: return new Object[] { getMode() };
             case 2: setMode((String) arguments[0]); return null;
+            case 3: return new Object[] { getRotate() };
+            case 4: setRotate(((Double) arguments[0]).intValue()); return null;
+            case 5: return new Object[] { getAnchor() };
+            case 6: setAnchor(((Double) arguments[0]).intValue()); return null;
         }
         return new Object[0];
     }
@@ -122,6 +144,34 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRotate(Context context, Arguments args) throws Exception {
+        return new Object[] { getRotate() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRotate(Context context, Arguments args) throws Exception {
+        Integer angle = args.checkInteger(0);
+        setRotate(angle);
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getAnchor(Context context, Arguments args) throws Exception {
+        return new Object[] { getAnchor() };
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setAnchor(Context context, Arguments args) throws Exception {
+        Integer angle = args.checkInteger(0);
+        setAnchor(angle);
+        return null;
+    }
+
     private NBTTagCompound hasCard() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
         if (itemStack == null || itemStack.stackSize == 0) {
@@ -139,6 +189,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setMode(String mode) {
         this.mode = mode;
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(int anchor) {
+        boxValid = false;
+        this.anchor = anchor;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getRotate() {
+        return rotate;
+    }
+
+    public void setRotate(int rotate) {
+        boxValid = false;
+        this.rotate = rotate;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -147,6 +220,37 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             this.powered = powered;
             markDirty();
         }
+    }
+
+    private void createProjection(SpaceChamberRepository.SpaceChamberChannel chamberChannel) {
+        Coordinate minCorner = chamberChannel.getMinCorner();
+        Coordinate maxCorner = chamberChannel.getMaxCorner();
+
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection direction = BlockTools.getOrientationHoriz(meta);
+        switch (direction) {
+            case SOUTH:
+                projDx = xCoord + ForgeDirection.NORTH.offsetX - minCorner.getX();
+                proyDz = zCoord + ForgeDirection.NORTH.offsetZ - minCorner.getZ() - (maxCorner.getZ() - minCorner.getZ() + 1);
+                break;
+            case NORTH:
+                projDx = xCoord + ForgeDirection.SOUTH.offsetX - minCorner.getX() - (maxCorner.getX() - minCorner.getX() + 1);
+                proyDz = zCoord + ForgeDirection.SOUTH.offsetZ - minCorner.getZ();
+                break;
+            case WEST:
+                projDx = xCoord + ForgeDirection.EAST.offsetX - minCorner.getX();
+                proyDz = zCoord + ForgeDirection.EAST.offsetZ - minCorner.getZ();
+                break;
+            case EAST:
+                projDx = xCoord + ForgeDirection.WEST.offsetX - minCorner.getX() - (maxCorner.getX() - minCorner.getX() + 1);
+                proyDz = zCoord + ForgeDirection.WEST.offsetZ - minCorner.getZ() - (maxCorner.getZ() - minCorner.getZ() + 1);
+                break;
+            case DOWN:
+            case UP:
+            case UNKNOWN:
+                break;
+        }
+        projDy = yCoord - minCorner.getY();
     }
 
     private void calculateBox(NBTTagCompound cardCompound) {
@@ -166,14 +270,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         boxValid = true;
 
-        int dx = xCoord + 1 - minCorner.getX();
-        int dy = yCoord + 1 - minCorner.getY();
-        int dz = zCoord + 1 - minCorner.getZ();
+        createProjection(chamberChannel);
 
-        minBox = new Coordinate(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
-        maxBox = new Coordinate(maxCorner.getX() + dx, maxCorner.getY() + dy, maxCorner.getZ() + dz);
-
-        scan = minBox;
+        scan = minCorner;
+        minBox = minCorner;
+        maxBox = maxCorner;
     }
 
     @Override
@@ -208,11 +309,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        Coordinate minCorner = chamberChannel.getMinCorner();
-        int dx = xCoord + 1 - minCorner.getX();
-        int dy = yCoord + 1 - minCorner.getY();
-        int dz = zCoord + 1 - minCorner.getZ();
-
         int dimension = chamberChannel.getDimension();
         World world = DimensionManager.getWorld(dimension);
         if (world == null) {
@@ -223,11 +319,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int x = scan.getX();
         int y = scan.getY();
         int z = scan.getZ();
-        if (worldObj.isAirBlock(x, y, z)) {
-            Block origBlock = world.getBlock(x - dx, y - dy, z - dz);
-            int origMeta = world.getBlockMetadata(x - dx, y - dy, z - dz);
-            worldObj.setBlock(x, y, z, origBlock, origMeta, 3);
-            worldObj.setBlockMetadataWithNotify(x, y, z, origMeta, 3);
+        int destX = x + projDx;
+        int destY = y + projDy;
+        int destZ = z + proyDz;
+        if (worldObj.isAirBlock(destX, destY, destZ)) {
+            Block origBlock = world.getBlock(x, y, z);
+            int origMeta = world.getBlockMetadata(x, y, z);
+            worldObj.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
+            worldObj.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
         }
 
         nextLocation();
@@ -340,6 +439,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
         mode = tagCompound.getString("mode");
+        anchor = tagCompound.getInteger("anchor");
+        rotate = tagCompound.getInteger("rotate");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -361,6 +462,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
         tagCompound.setString("mode", mode);
+        tagCompound.setInteger("anchor", anchor);
+        tagCompound.setInteger("rotate", rotate);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -384,6 +487,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (CMD_SETMODE.equals(command)) {
             setMode(args.get("mode").getString());
+            return true;
+        } else if (CMD_SETANCHOR.equals(command)) {
+            setAnchor(args.get("anchor").getInteger());
+            return true;
+        } else if (CMD_SETROTATE.equals(command)) {
+            setRotate(args.get("rotate").getInteger());
             return true;
         }
         return false;
