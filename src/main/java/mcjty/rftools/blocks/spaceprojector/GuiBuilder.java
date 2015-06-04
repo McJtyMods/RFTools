@@ -23,7 +23,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/builder.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
         super(builderTileEntity, container);

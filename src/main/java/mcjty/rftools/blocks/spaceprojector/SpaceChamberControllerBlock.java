@@ -13,6 +13,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -51,9 +52,10 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof SpaceChamberControllerTileEntity) {
+            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
+            int channel = spaceChamberControllerTileEntity.getChannel();
             currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
         }
         return currenttip;
