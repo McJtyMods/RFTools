@@ -27,7 +27,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         int x2 = x1;
         int y2 = y1;
         int z2 = z1;
-        for (int i = 1 ; i < 64 ; i++) {
+        for (int i = 1 ; i < SpaceProjectorConfiguration.maxSpaceChamberDimension; i++) {
             if (x2 == x1) {
                 if (worldObj.getBlock(x1-i, y1, z1) == SpaceProjectorSetup.spaceChamberBlock) {
                     x2 = x1-i;
@@ -54,7 +54,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        for (int i = 1 ; i < 64 ; i++) {
+        for (int i = 1 ; i < SpaceProjectorConfiguration.maxSpaceChamberDimension; i++) {
             if (worldObj.getBlock(x1, y1-i, z1) == SpaceProjectorSetup.spaceChamberBlock) {
                 y2 = y1-i;
                 break;

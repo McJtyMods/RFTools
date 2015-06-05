@@ -14,6 +14,8 @@ public class SpaceProjectorConfiguration {
     public static int builderRfPerOperation = 500;
     public static boolean ignoreTileEntities = false;
 
+    public static int maxSpaceChamberDimension = 128;
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -27,5 +29,7 @@ public class SpaceProjectorConfiguration {
                 "RF per block operation for the builder").getInt();
         ignoreTileEntities = cfg.get(CATEGORY_SPACEPROJECTOR, "ignoreTileEntities", ignoreTileEntities,
                 "If false then the builder will move/swap tile entities. Otherwise it will leave these blocks alone").getBoolean();
+        maxSpaceChamberDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxSpaceChamberDimension", maxSpaceChamberDimension,
+                "Maximum dimension for the space chamber").getInt();
     }
 }
