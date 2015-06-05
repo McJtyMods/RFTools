@@ -1,16 +1,14 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.S29PacketSoundEffect;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
@@ -56,24 +54,6 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
         int m = worldObj.getBlockMetadata(c2.getX(), c2.getY(), c2.getZ());
         int id = Block.blockRegistry.getIDForObject(block);
         return (id == blockID && m == meta) ? block : null;
-    }
-
-    // Server side: play a sound to all nearby players
-    private void playSound(String soundName, double x, double y, double z, double volume, double pitch) {
-        S29PacketSoundEffect soundEffect = new S29PacketSoundEffect(soundName, x, y, z, (float) volume, (float) pitch);
-
-        for (int j = 0; j < worldObj.playerEntities.size(); ++j) {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP)worldObj.playerEntities.get(j);
-            ChunkCoordinates chunkcoordinates = entityplayermp.getPlayerCoordinates();
-            double d7 = x - chunkcoordinates.posX;
-            double d8 = y - chunkcoordinates.posY;
-            double d9 = z - chunkcoordinates.posZ;
-            double d10 = d7 * d7 + d8 * d8 + d9 * d9;
-
-            if (d10 <= 256.0D) {
-                entityplayermp.playerNetServerHandler.sendPacket(soundEffect);
-            }
-        }
     }
 
     private Block isValidSourceBlock(Coordinate coordinate) {
@@ -122,7 +102,7 @@ public class MaterialAbsorberTileEntity extends GenericTileEntity {
 
                     Block block = blockMatches(c);
                     if (block != null) {
-                        playSound(block.stepSound.getBreakSound(), xCoord, yCoord, zCoord, 1.0f, 1.0f);
+                        RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), xCoord, yCoord, zCoord, 1.0f, 1.0f);
                         worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
                         absorbing--;
                         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);

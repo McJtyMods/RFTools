@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.api.Infusable;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
@@ -17,7 +18,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class BuilderBlock extends GenericContainerBlock {
+public class BuilderBlock extends GenericContainerBlock implements Infusable {
 
     public BuilderBlock() {
         super(Material.iron, BuilderTileEntity.class);
@@ -37,8 +38,10 @@ public class BuilderBlock extends GenericContainerBlock {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This block is linked to a space chamber and");
-            list.add(EnumChatFormatting.WHITE + "can move/copy the blocks from the space chamber");
-            list.add(EnumChatFormatting.WHITE + "to here. Insert a chamber card to make a link");
+            list.add(EnumChatFormatting.WHITE + "can move/copy/swap the blocks from the space chamber");
+            list.add(EnumChatFormatting.WHITE + "to here. Insert a chamber card to make a link.");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(EnumChatFormatting.YELLOW + "increased building speed.");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

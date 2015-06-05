@@ -12,15 +12,20 @@ import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -41,10 +46,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
-    public static final String MODE_MOVE = "Move";
-    public static final String MODE_COPY = "Copy";
-    public static final String MODE_SWAP = "Swap";
-    public static final String MODE_BACK = "Back";
+    public static final int MODE_COPY = 0;
+    public static final int MODE_MOVE = 1;
+    public static final int MODE_SWAP = 2;
+    public static final int MODE_BACK = 3;
+
+    public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back" };
 
     public static final String ROTATE_0 = "0�";
     public static final String ROTATE_90 = "90�";
@@ -56,10 +63,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int ANCHOR_NW = 2;
     public static final int ANCHOR_NE = 3;
 
-    private String mode = MODE_COPY;
+    private int mode = MODE_COPY;
     private int rotate = 0;
     private int anchor = ANCHOR_SW;
     private int powered = 0;
+    private int tickCounter = 0;
 
     private boolean boxValid = false;
     private Coordinate minBox = null;
@@ -91,7 +99,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         switch (method) {
             case 0: return new Object[] { hasCard() != null };
             case 1: return new Object[] { getMode() };
-            case 2: setMode((String) arguments[0]); return null;
+            case 2: setMode(((Double) arguments[0]).intValue()); return null;
             case 3: return new Object[] { getRotate() };
             case 4: setRotate(((Double) arguments[0]).intValue()); return null;
             case 5: return new Object[] { getAnchor() };
@@ -139,7 +147,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] setMode(Context context, Arguments args) throws Exception {
-        String mode = args.checkString(0);
+        int mode = args.checkInteger(0);
         setMode(mode);
         return null;
     }
@@ -147,7 +155,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] getRotate(Context context, Arguments args) throws Exception {
-        return new Object[] { getRotate() };
+        return new Object[] { getRotate()};
     }
 
     @Callback
@@ -161,7 +169,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] getAnchor(Context context, Arguments args) throws Exception {
-        return new Object[] { getAnchor() };
+        return new Object[] { getAnchor()};
     }
 
     @Callback
@@ -182,12 +190,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return tagCompound;
     }
 
-    public String getMode() {
+    public int getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(int mode) {
         this.mode = mode;
+        scan = minBox;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -327,10 +336,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
+        float factor = getInfusedFactor();
+        tickCounter++;
+        if (tickCounter <= ((1.0-factor)*4)) {
+            return;
+        }
+        tickCounter = 0;
+
         int dimension = chamberChannel.getDimension();
         World world = DimensionManager.getWorld(dimension);
         if (world == null) {
             // The other location must be loaded.
+            return;
+        }
+
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - factor) / 4.0f);
+
+        if (rfNeeded > rf) {
+            // Not enough energy.
             return;
         }
 
@@ -341,14 +365,147 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int destX = dest.getX();
         int destY = dest.getY();
         int destZ = dest.getZ();
-        if (worldObj.isAirBlock(destX, destY, destZ)) {
-            Block origBlock = world.getBlock(x, y, z);
-            int origMeta = world.getBlockMetadata(x, y, z);
-            worldObj.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
-            worldObj.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
+        boolean success = false;
+        switch (mode) {
+            case MODE_COPY:
+                success = copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                break;
+            case MODE_MOVE:
+                success = moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                break;
+            case MODE_BACK:
+                success = moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
+                break;
+            case MODE_SWAP:
+                success = swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                break;
+        }
+
+        if (success) {
+            consumeEnergy(rfNeeded);
         }
 
         nextLocation();
+    }
+
+    private boolean findAndConsumeBlock(IInventory inventory, Block block, int meta) {
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                ItemBlock itemBlock = (ItemBlock) stack.getItem();
+                if (itemBlock.field_150939_a == block && (meta == -1 || stack.getItemDamage() == meta)) {
+                    inventory.decrStackSize(i, 1);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean consumeBlock(Block block, int meta) {
+        TileEntity te = worldObj.getTileEntity(xCoord, yCoord+1, zCoord);
+        if (te instanceof IInventory) {
+            if (findAndConsumeBlock((IInventory) te, block, meta)) {
+                return true;
+            }
+        }
+        te = worldObj.getTileEntity(xCoord, yCoord-1, zCoord);
+        if (te instanceof IInventory) {
+            if (findAndConsumeBlock((IInventory) te, block, meta)) {
+                return true;
+            }
+        }
+        if (meta != -1) {
+            // Try a second time with meta equal to -1 (which means to ignore meta).
+            return consumeBlock(block, -1);
+        }
+        return false;
+    }
+
+    private boolean copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        if (destWorld.isAirBlock(destX, destY, destZ)) {
+            Block origBlock = world.getBlock(x, y, z);
+            int origMeta = world.getBlockMetadata(x, y, z);
+            if (origBlock == null || origBlock.getMaterial() == Material.air) {
+                return false;
+            }
+            if (!consumeBlock(origBlock, origMeta)) {
+                return false;
+            }
+            destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
+            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
+            RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        if (destWorld.isAirBlock(destX, destY, destZ)) {
+            Block origBlock = world.getBlock(x, y, z);
+            if (origBlock == null || origBlock.getMaterial() == Material.air) {
+                return false;
+            }
+            int origMeta = world.getBlockMetadata(x, y, z);
+            TileEntity origTileEntity = world.getTileEntity(x, y, z);
+            if (origTileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
+                return false;
+            }
+            world.removeTileEntity(x, y, z);
+            world.setBlockToAir(x, y, z);
+            destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
+            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
+            if (origTileEntity != null) {
+                origTileEntity.validate();
+                destWorld.setTileEntity(destX, destY, destZ, origTileEntity);
+            }
+            RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
+            RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean swapBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        Block srcBlock = world.getBlock(x, y, z);
+        int srcMeta = world.getBlockMetadata(x, y, z);
+        TileEntity srcTileEntity = world.getTileEntity(x, y, z);
+
+        Block dstBlock = destWorld.getBlock(destX, destY, destZ);
+        int dstMeta = destWorld.getBlockMetadata(destX, destY, destZ);
+        TileEntity dstTileEntity = destWorld.getTileEntity(destX, destY, destZ);
+
+        if ((srcTileEntity != null || dstTileEntity != null) && SpaceProjectorConfiguration.ignoreTileEntities) {
+            return false;
+        }
+
+        world.removeTileEntity(x, y, z);
+        world.setBlockToAir(x, y, z);
+        destWorld.removeTileEntity(destX, destY, destZ);
+        destWorld.setBlockToAir(destX, destY, destZ);
+
+        destWorld.setBlock(destX, destY, destZ, srcBlock, srcMeta, 3);
+        destWorld.setBlockMetadataWithNotify(destX, destY, destZ, srcMeta, 3);
+        if (srcTileEntity != null) {
+            srcTileEntity.validate();
+            destWorld.setTileEntity(destX, destY, destZ, srcTileEntity);
+        }
+
+        world.setBlock(x, y, z, dstBlock, dstMeta, 3);
+        world.setBlockMetadataWithNotify(x, y, z, dstMeta, 3);
+        if (dstTileEntity != null) {
+            dstTileEntity.validate();
+            world.setTileEntity(x, y, z, dstTileEntity);
+        }
+
+        if (srcBlock != null) {
+            RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
+        }
+        if (dstBlock != null) {
+            RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+        }
+
+        return true;
     }
 
     private Coordinate sourceToDest(Coordinate source) {
@@ -362,14 +519,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int y = scan.getY();
             int z = scan.getZ();
             if (x >= maxBox.getX()) {
-                if (y >= maxBox.getY()) {
-                    if (z >= maxBox.getZ()) {
-                        scan = minBox;
+                if (z >= maxBox.getZ()) {
+                    if (y >= maxBox.getY()) {
+                        if (mode != MODE_SWAP) {
+                            // We don't restart in swap mode.
+                            scan = minBox;
+                        }
                     } else {
-                        scan = new Coordinate(minBox.getX(), minBox.getY(), z+1);
+                        scan = new Coordinate(minBox.getX(), y+1, minBox.getZ());
                     }
                 } else {
-                    scan = new Coordinate(minBox.getX(), y+1, z);
+                    scan = new Coordinate(minBox.getX(), y, z+1);
                 }
             } else {
                 scan = new Coordinate(x+1, y, z);
@@ -462,9 +622,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        mode = tagCompound.getString("mode");
+        mode = tagCompound.getInteger("mode");
         anchor = tagCompound.getInteger("anchor");
         rotate = tagCompound.getInteger("rotate");
+        scan = Coordinate.readFromNBT(tagCompound, "scan");
+        minBox = Coordinate.readFromNBT(tagCompound, "minBox");
+        maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -485,9 +648,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setString("mode", mode);
+        tagCompound.setInteger("mode", mode);
         tagCompound.setInteger("anchor", anchor);
         tagCompound.setInteger("rotate", rotate);
+        Coordinate.writeToNBT(tagCompound, "scan", scan);
+        Coordinate.writeToNBT(tagCompound, "minBox", minBox);
+        Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -510,7 +676,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         if (CMD_SETMODE.equals(command)) {
-            setMode(args.get("mode").getString());
+            setMode(args.get("mode").getInteger());
             return true;
         } else if (CMD_SETANCHOR.equals(command)) {
             setAnchor(args.get("anchor").getInteger());

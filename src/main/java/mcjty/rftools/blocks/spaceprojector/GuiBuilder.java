@@ -14,6 +14,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.awt.*;
 
+import static mcjty.rftools.blocks.spaceprojector.BuilderTileEntity.*;
+
 public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     public static final int BUILDER_WIDTH = 180;
     public static final int BUILDER_HEIGHT = 152;
@@ -43,7 +45,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        modeChoice = new ChoiceLabel(mc, this).addChoices(BuilderTileEntity.MODE_MOVE, BuilderTileEntity.MODE_COPY, BuilderTileEntity.MODE_SWAP, BuilderTileEntity.MODE_BACK).
+        modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK]).
                 setTooltips("Set the building mode").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 50, 14)).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -51,9 +53,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                         updateMode();
                     }
                 });
-        modeChoice.setChoice(tileEntity.getMode());
+        modeChoice.setChoice(MODES[tileEntity.getMode()]);
 
-        rotateButton = new ChoiceLabel(mc, this).addChoices(BuilderTileEntity.ROTATE_0, BuilderTileEntity.ROTATE_90, BuilderTileEntity.ROTATE_180, BuilderTileEntity.ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14)).
+        rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14)).
                 setTooltips("Set the horizontal rotation angle").
                 addChoiceEvent(
                 new ChoiceEvent() {
@@ -64,10 +66,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 }
         );
         switch (tileEntity.getRotate()) {
-            case 0: rotateButton.setChoice(BuilderTileEntity.ROTATE_0); break;
-            case 1: rotateButton.setChoice(BuilderTileEntity.ROTATE_90); break;
-            case 2: rotateButton.setChoice(BuilderTileEntity.ROTATE_180); break;
-            case 3: rotateButton.setChoice(BuilderTileEntity.ROTATE_270); break;
+            case 0: rotateButton.setChoice(ROTATE_0); break;
+            case 1: rotateButton.setChoice(ROTATE_90); break;
+            case 2: rotateButton.setChoice(ROTATE_180); break;
+            case 3: rotateButton.setChoice(ROTATE_270); break;
         }
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
@@ -100,26 +102,34 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 anchor[i].setPressed(i == index);
             }
         }
-        sendServerCommand(BuilderTileEntity.CMD_SETANCHOR, new Argument("anchor", index));
+        sendServerCommand(CMD_SETANCHOR, new Argument("anchor", index));
     }
 
     private void updateMode() {
-        sendServerCommand(BuilderTileEntity.CMD_SETMODE, new Argument("mode", modeChoice.getCurrentChoice()));
+        String currentChoice = modeChoice.getCurrentChoice();
+        int mode = 0;
+        for (int i = 0 ; i < MODES.length ; i++) {
+            if (currentChoice.equals(MODES[i])) {
+                mode = i;
+                break;
+            }
+        }
+        sendServerCommand(CMD_SETMODE, new Argument("mode", mode));
     }
 
     private void updateRotate() {
         String choice = rotateButton.getCurrentChoice();
         int index = 0;
-        if (BuilderTileEntity.ROTATE_0.equals(choice)) {
+        if (ROTATE_0.equals(choice)) {
             index = 0;
-        } else if (BuilderTileEntity.ROTATE_90.equals(choice)) {
+        } else if (ROTATE_90.equals(choice)) {
             index = 1;
-        } else if (BuilderTileEntity.ROTATE_180.equals(choice)) {
+        } else if (ROTATE_180.equals(choice)) {
             index = 2;
-        } else if (BuilderTileEntity.ROTATE_270.equals(choice)) {
+        } else if (ROTATE_270.equals(choice)) {
             index = 3;
         }
-        sendServerCommand(BuilderTileEntity.CMD_SETROTATE, new Argument("rotate", index));
+        sendServerCommand(CMD_SETROTATE, new Argument("rotate", index));
     }
 
     @Override

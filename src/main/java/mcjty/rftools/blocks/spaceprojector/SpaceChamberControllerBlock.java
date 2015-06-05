@@ -42,7 +42,7 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This block is one of the eight corners of an");
-            list.add(EnumChatFormatting.WHITE + "area of space you want to project elsewhere");
+            list.add(EnumChatFormatting.WHITE + "area of space you want to copy/move elsewhere");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

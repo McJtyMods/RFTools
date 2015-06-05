@@ -40,7 +40,7 @@ public class SpaceChamberCardItem extends Item {
         }
         list.add(EnumChatFormatting.WHITE + "Sneak right-click on a space chamber controller");
         list.add(EnumChatFormatting.WHITE + "to set the channel for this card.");
-        list.add(EnumChatFormatting.WHITE + "Insert it in a space projector to project the");
+        list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
         list.add(EnumChatFormatting.WHITE + "linked area");
     }
 
