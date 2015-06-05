@@ -60,7 +60,7 @@ you how much RF is in each of the blocks and the coordinate. You
 can use this item to help debug RF related network problems.
 {-------------------------------------------------------------}
 Doubleclick on a line in the list of blocks will close the window and
-the block will be hilighted for 5 seconds (configurable).
+the block will be highlighted for 5 seconds (configurable).
 
 You can toggle the display between RF/tick or RF and you can also
 filter the output.
@@ -192,7 +192,7 @@ If you select an inventory in the top list then the bottom list will
 show the contents of that inventory.
 
 Doubleclick on an inventory in the top list will close this
-window and hilight it in the world for 5 seconds (by default).
+window and highlight it in the world for 5 seconds (by default).
 {-------------------------------------------------------------}
 You can search for items in all inventories that it scanned. It will
 mark all the inventories where it found an item that matches what
