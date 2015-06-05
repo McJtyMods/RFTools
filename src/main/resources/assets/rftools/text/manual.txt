@@ -23,6 +23,7 @@ Table of contents:
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
 {l:spawner}Spawner System
+{l:builder}Builder
 {l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
@@ -677,6 +678,31 @@ can beam matter (and thus the spawning rate).
 The leaf block in the spawner GUI indicates any type of living
 material (meat, wheat, seeds, ...). Some types of living material
 give a bigger bonus.
+{-------------------------------------------------------------}
+{b}Builder
+{n:builder}
+Using the Builder it is possible to copy, move, or swap areas in the
+world to other locations. It needs energy to do that and in case of the
+'copy' mode it also needs an inventory on top or below it containing
+the blocks to build with.
+{rb:builderBlock}
+Using the GUI you can control where the builder should place the
+blocks (always at the back of the builder).
+{-------------------------------------------------------------}
+You can use Space Chamber blocks to mark the corners of the source
+area that you want to work. One of these corners should be a
+Space Chamber Controller block.
+{rb:spaceChamberBlock}
+{rb:spaceChamberControllerBlock}
+{-------------------------------------------------------------}
+Right selecting the controller block with a wrench will let it form the
+chamber. If all is correct you will get a message saying so. Then you
+need to use a Space Chamber Card (right click it on the controller) to
+link the controller to the card.
+{ri:spaceChamberCardItem}
+
+Then put that card in the builder, set the right mode and other
+parameters and give it a redstone signal.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}

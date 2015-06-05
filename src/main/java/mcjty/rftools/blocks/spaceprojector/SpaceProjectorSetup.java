@@ -3,6 +3,11 @@ package mcjty.rftools.blocks.spaceprojector;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ModBlocks;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class SpaceProjectorSetup {
     public static ProxyBlock proxyBlock;
@@ -41,4 +46,16 @@ public class SpaceProjectorSetup {
         spaceChamberCardItem.setTextureName(RFTools.MODID + ":spaceChamberCardItem");
         GameRegistry.registerItem(spaceChamberCardItem, "spaceChamberCardItem");
     }
+
+    public static void setupCrafting() {
+        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
+        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
+        GameRegistry.addRecipe(new ItemStack(spaceChamberBlock), "lgl", "gMg", "lgl", 'M', ModBlocks.machineFrame, 'g', Blocks.glass, 'l', lapisStack);
+        GameRegistry.addRecipe(new ItemStack(spaceChamberControllerBlock), " e ", "tMt", " e ", 'M', spaceChamberBlock, 't', redstoneTorch, 'e', Items.ender_pearl);
+        GameRegistry.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ender_pearl, 'r', Items.redstone, 'b', Blocks.brick_block);
+
+        GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'p', Items.paper, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', Items.brick);
+    }
+
 }

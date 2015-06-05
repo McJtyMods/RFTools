@@ -15,6 +15,7 @@ import mcjty.rftools.blocks.monitor.MonitorSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
+import mcjty.rftools.blocks.spaceprojector.SpaceProjectorSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
@@ -56,6 +57,7 @@ public final class ModCrafting {
         DimletConstructionSetup.setupCrafting();
         BlockProtectorSetup.setupCrafting();
         ModularStorageSetup.setupCrafting();
+        SpaceProjectorSetup.setupCrafting();
     }
 
     private static void initItemCrafting() {

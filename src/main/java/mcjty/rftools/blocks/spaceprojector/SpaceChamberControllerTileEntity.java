@@ -1,20 +1,16 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 
-public class SpaceChamberControllerTileEntity extends GenericEnergyReceiverTileEntity {
+public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     private Coordinate minCorner;
     private Coordinate maxCorner;
     private int channel = -1;
-
-    public SpaceChamberControllerTileEntity() {
-        super(SpaceProjectorConfiguration.CHAMBERCONTROLLER_MAXENERGY, SpaceProjectorConfiguration.CHAMBERCONTROLLER_RECEIVEPERTICK);
-    }
 
     public Coordinate getMinCorner() {
         return minCorner;
