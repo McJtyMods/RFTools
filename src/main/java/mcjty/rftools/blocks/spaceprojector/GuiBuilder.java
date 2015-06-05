@@ -21,8 +21,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
 
-    private ToggleButton anchor[] = new ToggleButton[9];
-    private String[] anchorLabels = new String[] { "SW", "SE", "NW", "NE" };
+    private ToggleButton anchor[] = new ToggleButton[4];
+    private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
     private ChoiceLabel rotateButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
@@ -77,7 +77,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         for (int y = 0 ; y <= 1 ; y++) {
             for (int x = 0 ; x <= 1 ; x++) {
                 final int index = x + y * 2;
-                anchor[index] = new ToggleButton(mc, this).setText(anchorLabels[index]).setLayoutHint(new PositionalLayout.PositionalHint(100 + x * 20, 24 + y * 15, 18, 13)).
+                anchor[index] = new ToggleButton(mc, this).setText(anchorLabels[index]).setLayoutHint(new PositionalLayout.PositionalHint(100 + x * 20, 24 + (1-y) * 15, 18, 13)).
                     setTooltips("Set the anchor where you want to", "place the blocks in front of the", "builder");
                 anchor[index].addButtonEvent(new ButtonEvent() {
                     @Override

@@ -46,10 +46,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String MODE_SWAP = "Swap";
     public static final String MODE_BACK = "Back";
 
-    public static final String ROTATE_0 = "0°";
-    public static final String ROTATE_90 = "90°";
-    public static final String ROTATE_180 = "180°";
-    public static final String ROTATE_270 = "270°";
+    public static final String ROTATE_0 = "0ï¿½";
+    public static final String ROTATE_90 = "90ï¿½";
+    public static final String ROTATE_180 = "180ï¿½";
+    public static final String ROTATE_270 = "270ï¿½";
 
     public static final int ANCHOR_SW = 0;
     public static final int ANCHOR_SE = 1;
@@ -228,36 +228,35 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         ForgeDirection direction = BlockTools.getOrientationHoriz(meta);
+        int spanX = maxCorner.getX() - minCorner.getX();
+        int spanY = maxCorner.getY() - minCorner.getY();
+        int spanZ = maxCorner.getZ() - minCorner.getZ();
         switch (direction) {
             case SOUTH:
-                projDx = xCoord + ForgeDirection.NORTH.offsetX - minCorner.getX();
-                proyDz = zCoord + ForgeDirection.NORTH.offsetZ - minCorner.getZ() - (maxCorner.getZ() - minCorner.getZ() + 1);
+                projDx = xCoord + ForgeDirection.NORTH.offsetX - minCorner.getX() - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX : 0);
+                proyDz = zCoord + ForgeDirection.NORTH.offsetZ - minCorner.getZ() - spanZ;
                 break;
             case NORTH:
-                projDx = xCoord + ForgeDirection.SOUTH.offsetX - minCorner.getX() - (maxCorner.getX() - minCorner.getX() + 1);
+                projDx = xCoord + ForgeDirection.SOUTH.offsetX - minCorner.getX() - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX : 0);
                 proyDz = zCoord + ForgeDirection.SOUTH.offsetZ - minCorner.getZ();
                 break;
             case WEST:
                 projDx = xCoord + ForgeDirection.EAST.offsetX - minCorner.getX();
-                proyDz = zCoord + ForgeDirection.EAST.offsetZ - minCorner.getZ();
+                proyDz = zCoord + ForgeDirection.EAST.offsetZ - minCorner.getZ() - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
                 break;
             case EAST:
-                projDx = xCoord + ForgeDirection.WEST.offsetX - minCorner.getX() - (maxCorner.getX() - minCorner.getX() + 1);
-                proyDz = zCoord + ForgeDirection.WEST.offsetZ - minCorner.getZ() - (maxCorner.getZ() - minCorner.getZ() + 1);
+                projDx = xCoord + ForgeDirection.WEST.offsetX - minCorner.getX() - spanX;
+                proyDz = zCoord + ForgeDirection.WEST.offsetZ - minCorner.getZ() - spanZ + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
                 break;
             case DOWN:
             case UP:
             case UNKNOWN:
                 break;
         }
-        projDy = yCoord - minCorner.getY();
+        projDy = yCoord - minCorner.getY() - ((anchor == ANCHOR_NE || anchor == ANCHOR_NW) ? spanY : 0);
     }
 
     private void calculateBox(NBTTagCompound cardCompound) {
-        if (boxValid) {
-            return;
-        }
-
         int channel = cardCompound.getInteger("channel");
 
         SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
@@ -266,6 +265,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Coordinate maxCorner = chamberChannel.getMaxCorner();
         if (minCorner == null || maxCorner == null) {
             return;
+        }
+
+        if (boxValid) {
+            // Double check if the box is indeed still valid.
+            if (minCorner.equals(minBox) && maxCorner.equals(maxBox)) {
+                return;
+            }
         }
 
         boxValid = true;
@@ -337,9 +343,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int x = scan.getX();
             int y = scan.getY();
             int z = scan.getZ();
-            if (x > maxBox.getX()) {
-                if (y > maxBox.getY()) {
-                    if (z > maxBox.getZ()) {
+            if (x >= maxBox.getX()) {
+                if (y >= maxBox.getY()) {
+                    if (z >= maxBox.getZ()) {
                         scan = minBox;
                     } else {
                         scan = new Coordinate(minBox.getX(), minBox.getY(), z+1);
