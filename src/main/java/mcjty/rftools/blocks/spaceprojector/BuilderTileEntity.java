@@ -53,10 +53,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back" };
 
-    public static final String ROTATE_0 = "0�";
-    public static final String ROTATE_90 = "90�";
-    public static final String ROTATE_180 = "180�";
-    public static final String ROTATE_270 = "270�";
+    public static final String ROTATE_0 = "0";
+    public static final String ROTATE_90 = "90";
+    public static final String ROTATE_180 = "180";
+    public static final String ROTATE_270 = "270";
 
     public static final int ANCHOR_SW = 0;
     public static final int ANCHOR_SE = 1;
