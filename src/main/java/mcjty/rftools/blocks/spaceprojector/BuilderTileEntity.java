@@ -464,17 +464,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    private boolean isMovable(Block block, TileEntity tileEntity) {
+        if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
+            return false;
+        }
+//        System.out.println("block.getUnlocalizedName() = " + block.getUnlocalizedName());
+        return true;
+    }
+
     private boolean moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         if (destWorld.isAirBlock(destX, destY, destZ)) {
             Block origBlock = world.getBlock(x, y, z);
             if (origBlock == null || origBlock.getMaterial() == Material.air) {
                 return false;
             }
-            int origMeta = world.getBlockMetadata(x, y, z);
             TileEntity origTileEntity = world.getTileEntity(x, y, z);
-            if (origTileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
+            if (!isMovable(origBlock, origTileEntity)) {
                 return false;
             }
+            int origMeta = world.getBlockMetadata(x, y, z);
             world.removeTileEntity(x, y, z);
             world.setBlockToAir(x, y, z);
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
@@ -494,16 +502,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private boolean swapBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         Block srcBlock = world.getBlock(x, y, z);
-        int srcMeta = world.getBlockMetadata(x, y, z);
         TileEntity srcTileEntity = world.getTileEntity(x, y, z);
 
         Block dstBlock = destWorld.getBlock(destX, destY, destZ);
-        int dstMeta = destWorld.getBlockMetadata(destX, destY, destZ);
         TileEntity dstTileEntity = destWorld.getTileEntity(destX, destY, destZ);
 
-        if ((srcTileEntity != null || dstTileEntity != null) && SpaceProjectorConfiguration.ignoreTileEntities) {
+        if ((!isMovable(srcBlock, srcTileEntity)) || !isMovable(dstBlock, dstTileEntity)) {
             return false;
         }
+
+        int srcMeta = world.getBlockMetadata(x, y, z);
+        int dstMeta = destWorld.getBlockMetadata(destX, destY, destZ);
 
         world.removeTileEntity(x, y, z);
         world.setBlockToAir(x, y, z);
