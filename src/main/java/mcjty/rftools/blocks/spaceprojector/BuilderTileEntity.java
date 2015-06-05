@@ -43,6 +43,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETMODE = "setMode";
     public static final String CMD_SETANCHOR = "setAnchor";
     public static final String CMD_SETROTATE = "setRotate";
+    public static final String CMD_SETSILENT = "setSilent";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -66,6 +67,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int mode = MODE_COPY;
     private int rotate = 0;
     private int anchor = ANCHOR_SW;
+    private boolean silent = false;
+
     private int powered = 0;
     private int tickCounter = 0;
 
@@ -188,6 +191,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         return tagCompound;
+    }
+
+    public boolean isSilent() {
+        return silent;
+    }
+
+    public void setSilent(boolean silent) {
+        this.silent = silent;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public int getMode() {
@@ -434,7 +447,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
             destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
-            RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            if (!silent) {
+                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            }
             return true;
         }
         return false;
@@ -459,8 +474,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 origTileEntity.validate();
                 destWorld.setTileEntity(destX, destY, destZ, origTileEntity);
             }
-            RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
-            RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            if (!silent) {
+                RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            }
             return true;
         }
         return false;
@@ -498,11 +515,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             world.setTileEntity(x, y, z, dstTileEntity);
         }
 
-        if (srcBlock != null) {
-            RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
-        }
-        if (dstBlock != null) {
-            RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+        if (!silent) {
+            if (srcBlock != null) {
+                RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
+            }
+            if (dstBlock != null) {
+                RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+            }
         }
 
         return true;
@@ -625,6 +644,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         mode = tagCompound.getInteger("mode");
         anchor = tagCompound.getInteger("anchor");
         rotate = tagCompound.getInteger("rotate");
+        silent = tagCompound.getBoolean("silent");
         scan = Coordinate.readFromNBT(tagCompound, "scan");
         minBox = Coordinate.readFromNBT(tagCompound, "minBox");
         maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
@@ -651,6 +671,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setInteger("mode", mode);
         tagCompound.setInteger("anchor", anchor);
         tagCompound.setInteger("rotate", rotate);
+        tagCompound.setBoolean("silent", silent);
         Coordinate.writeToNBT(tagCompound, "scan", scan);
         Coordinate.writeToNBT(tagCompound, "minBox", minBox);
         Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
@@ -683,6 +704,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         } else if (CMD_SETROTATE.equals(command)) {
             setRotate(args.get("rotate").getInteger());
+            return true;
+        } else if (CMD_SETSILENT.equals(command)) {
+            setSilent(args.get("silent").getBoolean());
             return true;
         }
         return false;

@@ -22,6 +22,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
+    private ToggleButton silentMode;
 
     private ToggleButton anchor[] = new ToggleButton[4];
     private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
@@ -72,8 +73,18 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             case 3: rotateButton.setChoice(ROTATE_270); break;
         }
 
+        silentMode = new ToggleButton(mc, this).setCheckMarker(true).setText("Silent").setLayoutHint(new PositionalLayout.PositionalHint(48, 23, 45, 14)).
+                setTooltips("Suppress the placement/breaking sound", "when moving blocks").
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        setSilentMode();
+                    }
+                });
+        silentMode.setPressed(tileEntity.isSilent());
+
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice).addChild(rotateButton);
+                addChild(modeChoice).addChild(rotateButton).addChild(silentMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         for (int y = 0 ; y <= 1 ; y++) {
@@ -94,6 +105,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
+    }
+
+    private void setSilentMode() {
+        sendServerCommand(CMD_SETSILENT, new Argument("silent", silentMode.isPressed()));
     }
 
     private void selectAnchor(int index) {
