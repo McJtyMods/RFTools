@@ -56,7 +56,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int ANCHOR_NW = 2;
     public static final int ANCHOR_NE = 3;
 
-    private String mode = MODE_MOVE;
+    private String mode = MODE_COPY;
     private int rotate = 0;
     private int anchor = ANCHOR_SW;
     private int powered = 0;
@@ -67,7 +67,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private Coordinate scan = null;
     private int projDx;
     private int projDy;
-    private int proyDz;
+    private int projDz;
 
     public BuilderTileEntity() {
         super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
@@ -222,9 +222,21 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private Coordinate rotate(Coordinate c) {
+        switch (rotate) {
+            case 0: return c;
+            case 1: return new Coordinate(-c.getZ(), c.getY(), c.getX());
+            case 2: return new Coordinate(-c.getX(), c.getY(), -c.getZ());
+            case 3: return new Coordinate(c.getZ(), c.getY(), -c.getX());
+        }
+        return c;
+    }
+
     private void createProjection(SpaceChamberRepository.SpaceChamberChannel chamberChannel) {
-        Coordinate minCorner = chamberChannel.getMinCorner();
-        Coordinate maxCorner = chamberChannel.getMaxCorner();
+        Coordinate minC = rotate(chamberChannel.getMinCorner());
+        Coordinate maxC = rotate(chamberChannel.getMaxCorner());
+        Coordinate minCorner = new Coordinate(Math.min(minC.getX(), maxC.getX()), Math.min(minC.getY(), maxC.getY()), Math.min(minC.getZ(), maxC.getZ()));
+        Coordinate maxCorner = new Coordinate(Math.max(minC.getX(), maxC.getX()), Math.max(minC.getY(), maxC.getY()), Math.max(minC.getZ(), maxC.getZ()));
 
         int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
         ForgeDirection direction = BlockTools.getOrientationHoriz(meta);
@@ -234,19 +246,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         switch (direction) {
             case SOUTH:
                 projDx = xCoord + ForgeDirection.NORTH.offsetX - minCorner.getX() - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX : 0);
-                proyDz = zCoord + ForgeDirection.NORTH.offsetZ - minCorner.getZ() - spanZ;
+                projDz = zCoord + ForgeDirection.NORTH.offsetZ - minCorner.getZ() - spanZ;
                 break;
             case NORTH:
                 projDx = xCoord + ForgeDirection.SOUTH.offsetX - minCorner.getX() - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX : 0);
-                proyDz = zCoord + ForgeDirection.SOUTH.offsetZ - minCorner.getZ();
+                projDz = zCoord + ForgeDirection.SOUTH.offsetZ - minCorner.getZ();
                 break;
             case WEST:
                 projDx = xCoord + ForgeDirection.EAST.offsetX - minCorner.getX();
-                proyDz = zCoord + ForgeDirection.EAST.offsetZ - minCorner.getZ() - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
+                projDz = zCoord + ForgeDirection.EAST.offsetZ - minCorner.getZ() - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
                 break;
             case EAST:
                 projDx = xCoord + ForgeDirection.WEST.offsetX - minCorner.getX() - spanX;
-                proyDz = zCoord + ForgeDirection.WEST.offsetZ - minCorner.getZ() - spanZ + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
+                projDz = zCoord + ForgeDirection.WEST.offsetZ - minCorner.getZ() - spanZ + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ : 0);
                 break;
             case DOWN:
             case UP:
@@ -322,12 +334,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
+        Coordinate dest = sourceToDest(scan);
         int x = scan.getX();
         int y = scan.getY();
         int z = scan.getZ();
-        int destX = x + projDx;
-        int destY = y + projDy;
-        int destZ = z + proyDz;
+        int destX = dest.getX();
+        int destY = dest.getY();
+        int destZ = dest.getZ();
         if (worldObj.isAirBlock(destX, destY, destZ)) {
             Block origBlock = world.getBlock(x, y, z);
             int origMeta = world.getBlockMetadata(x, y, z);
@@ -336,6 +349,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         nextLocation();
+    }
+
+    private Coordinate sourceToDest(Coordinate source) {
+        Coordinate c = rotate(source);
+        return new Coordinate(c.getX() + projDx, c.getY() + projDy, c.getZ() + projDz);
     }
 
     private void nextLocation() {
