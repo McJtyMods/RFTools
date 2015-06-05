@@ -363,6 +363,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
+        handleBlock(world);
+        if (factor > .95 && scan != null) {
+            handleBlock(world);
+        }
+    }
+
+    private void handleBlock(World world) {
+        float factor = getInfusedFactor();
+
         int rf = getEnergyStored(ForgeDirection.DOWN);
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - factor) / 4.0f);
 
