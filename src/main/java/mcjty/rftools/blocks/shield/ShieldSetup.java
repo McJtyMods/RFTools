@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shield;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
@@ -47,19 +48,21 @@ public class ShieldSetup {
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
 
-        GameRegistry.addRecipe(new ItemStack(shieldBlock), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
-                'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot);
+        if (GeneralConfiguration.enableShieldProjectorRecipe) {
+            GameRegistry.addRecipe(new ItemStack(shieldBlock), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
+                    'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot);
 
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block),
-                new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock), new ItemStack(Blocks.obsidian),
-                new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block)
-        }, new ItemStack(shieldBlock2), 4));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard),
-                new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
-                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard)
-        }, new ItemStack(shieldBlock3), 4));
+            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                    new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block),
+                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock), new ItemStack(Blocks.obsidian),
+                    new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block)
+            }, new ItemStack(shieldBlock2), 4));
+            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                    new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard),
+                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
+                    new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard)
+            }, new ItemStack(shieldBlock3), 4));
+        }
 
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
     }

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
@@ -61,17 +62,26 @@ public class TeleporterSetup {
 
     public static void setupCrafting() {
         Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
-        GameRegistry.addRecipe(new ItemStack(matterTransmitterBlock), "ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
-                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new ItemStack(matterReceiverBlock), "iii", "rMr", "ooo", 'M', ModBlocks.machineFrame,
-                'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new ItemStack(dialingDeviceBlock), "rrr", "TMT", "rrr", 'M', ModBlocks.machineFrame, 'r', Items.redstone,
-                'T', redstoneTorch);
+
+        if (GeneralConfiguration.enableMatterTransmitterRecipe) {
+            GameRegistry.addRecipe(new ItemStack(matterTransmitterBlock), "ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
+                    'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot);
+        }
+        if (GeneralConfiguration.enableMatterReceiverRecipe) {
+            GameRegistry.addRecipe(new ItemStack(matterReceiverBlock), "iii", "rMr", "ooo", 'M', ModBlocks.machineFrame,
+                    'o', Items.ender_pearl, 'r', Items.redstone, 'i', Items.iron_ingot);
+        }
+        if (GeneralConfiguration.enableDialingDeviceRecipe) {
+            GameRegistry.addRecipe(new ItemStack(dialingDeviceBlock), "rrr", "TMT", "rrr", 'M', ModBlocks.machineFrame, 'r', Items.redstone,
+                    'T', redstoneTorch);
+        }
         GameRegistry.addRecipe(new ItemStack(destinationAnalyzerBlock), "o o", " M ", "o o", 'M', ModBlocks.machineFrame,
                 'o', Items.ender_pearl);
         GameRegistry.addRecipe(new ItemStack(matterBoosterBlock), " B ", "BMB", " B ", 'M', destinationAnalyzerBlock,
                 'B', Blocks.redstone_block);
         GameRegistry.addRecipe(new ItemStack(chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
+        if (GeneralConfiguration.enableDialingDeviceRecipe) {
+            GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
+        }
     }
 }

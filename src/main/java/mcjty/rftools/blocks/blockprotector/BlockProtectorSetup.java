@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import net.minecraft.init.Blocks;
@@ -17,6 +18,8 @@ public class BlockProtectorSetup {
     }
 
     public static void setupCrafting() {
-        GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian, 't', ShieldSetup.shieldTemplateBlock);
+        if (GeneralConfiguration.enableBlockProtectorRecipe) {
+            GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian, 't', ShieldSetup.shieldTemplateBlock);
+        }
     }
 }

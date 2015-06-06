@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shards.*;
@@ -151,10 +152,14 @@ public class DimletSetup {
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
         GameRegistry.addRecipe(new ItemStack(dimensionEnscriberBlock), "rpr", "bMb", "iii", 'r', Items.redstone, 'p', Items.paper, 'b', inkSac,
                 'M', ModBlocks.machineFrame, 'i', Items.iron_ingot);
-        GameRegistry.addRecipe(new ItemStack(dimensionBuilderBlock), "oEo", "DMD", "ggg", 'o', Items.ender_pearl, 'E', Items.emerald, 'D', Items.diamond,
-                'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
-        GameRegistry.addRecipe(new ItemStack(dimensionEditorBlock), "oEo", "DMD", "ggg", 'o', Items.redstone, 'E', Items.emerald, 'D', Items.diamond,
-                'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
+        if (GeneralConfiguration.enableDimensionBuilderRecipe) {
+            GameRegistry.addRecipe(new ItemStack(dimensionBuilderBlock), "oEo", "DMD", "ggg", 'o', Items.ender_pearl, 'E', Items.emerald, 'D', Items.diamond,
+                    'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
+        }
+        if (GeneralConfiguration.enableDimensionEditorRecipe) {
+            GameRegistry.addRecipe(new ItemStack(dimensionEditorBlock), "oEo", "DMD", "ggg", 'o', Items.redstone, 'E', Items.emerald, 'D', Items.diamond,
+                    'M', ModBlocks.machineFrame, 'g', Items.gold_ingot);
+        }
         GameRegistry.addRecipe(new ItemStack(activityProbeBlock), "sss", "oMo", "sss", 'o', Items.ender_pearl, 's', dimensionalShard,
                 'M', ModBlocks.machineFrame);
         GameRegistry.addRecipe(new ItemStack(energyExtractorBlock), "RoR", "sMs", "RsR", 'o', Items.ender_pearl, 's', dimensionalShard,
