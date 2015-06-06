@@ -6,6 +6,7 @@ public class CommandRftDb extends DefaultCommand {
         registerCommand(new CmdDebugToggle());
         registerCommand(new CmdRefreshWorld());
         registerCommand(new CmdListEntities());
+        registerCommand(new CmdRCC());
     }
 
     @Override

@@ -490,6 +490,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (origTileEntity != null) {
                 origTileEntity.validate();
                 destWorld.setTileEntity(destX, destY, destZ, origTileEntity);
+                origTileEntity.markDirty();
+                destWorld.markBlockForUpdate(destX, destY, destZ);
             }
             if (!silent) {
                 RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
@@ -524,6 +526,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (srcTileEntity != null) {
             srcTileEntity.validate();
             destWorld.setTileEntity(destX, destY, destZ, srcTileEntity);
+            srcTileEntity.markDirty();
+            destWorld.markBlockForUpdate(destX, destY, destZ);
         }
 
         world.setBlock(x, y, z, dstBlock, dstMeta, 3);
@@ -531,6 +535,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (dstTileEntity != null) {
             dstTileEntity.validate();
             world.setTileEntity(x, y, z, dstTileEntity);
+            dstTileEntity.markDirty();
+            world.markBlockForUpdate(x, y, z);
         }
 
         if (!silent) {
