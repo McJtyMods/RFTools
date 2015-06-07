@@ -95,7 +95,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor" };
+        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode" };
     }
 
     @Override
@@ -109,6 +109,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case 4: setRotate(((Double) arguments[0]).intValue()); return null;
             case 5: return new Object[] { getAnchor() };
             case 6: setAnchor(((Double) arguments[0]).intValue()); return null;
+            case 7: return new Object[] { hasSupportMode() };
+            case 8: setSupportMode(((Double) arguments[0]).intValue() > 0); return null;
         }
         return new Object[0];
     }
@@ -182,6 +184,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public Object[] setAnchor(Context context, Arguments args) throws Exception {
         Integer angle = args.checkInteger(0);
         setAnchor(angle);
+        return null;
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getSupportMode(Context context, Arguments args) throws Exception {
+        return new Object[] { hasSupportMode()};
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setSupportMode(Context context, Arguments args) throws Exception {
+        boolean support = args.checkBoolean(0);
+        setSupportMode(support);
         return null;
     }
 
