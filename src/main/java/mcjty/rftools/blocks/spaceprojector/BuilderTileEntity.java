@@ -44,6 +44,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETANCHOR = "setAnchor";
     public static final String CMD_SETROTATE = "setRotate";
     public static final String CMD_SETSILENT = "setSilent";
+    public static final String CMD_SETSUPPORT = "setSupport";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -68,6 +69,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int rotate = 0;
     private int anchor = ANCHOR_SW;
     private boolean silent = false;
+    private boolean supportMode = false;
 
     private int powered = 0;
     private int tickCounter = 0;
@@ -193,6 +195,84 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return tagCompound;
     }
 
+    private void makeSupportBlocks() {
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
+        if (chamberChannel != null) {
+            int dimension = chamberChannel.getDimension();
+            World world = DimensionManager.getWorld(dimension);
+            if (world == null) {
+                return;
+            }
+
+            for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
+                for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
+                    for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
+                        Coordinate src = new Coordinate(x, y, z);
+                        Coordinate dest = sourceToDest(src);
+                        Block srcBlock = world.getBlock(src.getX(), src.getY(), src.getZ());
+                        Block dstBlock = worldObj.getBlock(dest.getX(), dest.getY(), dest.getZ());
+                        int error = 0;
+                        if (mode != MODE_COPY) {
+                            TileEntity srcTileEntity = world.getTileEntity(src.getX(), src.getY(), src.getZ());
+                            TileEntity dstTileEntity = worldObj.getTileEntity(dest.getX(), dest.getY(), dest.getZ());
+                            if ((!isMovable(srcBlock, srcTileEntity)) || (!isMovable(dstBlock, dstTileEntity))) {
+                                error = 1;
+                            }
+                        }
+                        if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
+                            world.setBlock(src.getX(), src.getY(), src.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
+                        }
+                        if (isEmpty(dstBlock) && !isEmpty(srcBlock)) {
+                            worldObj.setBlock(dest.getX(), dest.getY(), dest.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void clearSupportBlocks() {
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
+        if (chamberChannel != null) {
+            int dimension = chamberChannel.getDimension();
+            World world = DimensionManager.getWorld(dimension);
+
+            for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
+                for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
+                    for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
+                        Coordinate src = new Coordinate(x, y, z);
+                        if (world != null) {
+                            Block srcBlock = world.getBlock(src.getX(), src.getY(), src.getZ());
+                            if (srcBlock == SpaceProjectorSetup.supportBlock) {
+                                world.setBlockToAir(src.getX(), src.getY(), src.getZ());
+                            }
+                        }
+                        Coordinate dest = sourceToDest(src);
+                        Block dstBlock = worldObj.getBlock(dest.getX(), dest.getY(), dest.getZ());
+                        if (dstBlock == SpaceProjectorSetup.supportBlock) {
+                            worldObj.setBlockToAir(dest.getX(), dest.getY(), dest.getZ());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean hasSupportMode() {
+        return supportMode;
+    }
+
+    public void setSupportMode(boolean supportMode) {
+        this.supportMode = supportMode;
+        if (supportMode) {
+            makeSupportBlocks();
+        } else {
+            clearSupportBlocks();
+        }
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
     public boolean isSilent() {
         return silent;
     }
@@ -219,8 +299,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public void setAnchor(int anchor) {
+        if (supportMode) {
+            clearSupportBlocks();
+        }
         boxValid = false;
         this.anchor = anchor;
+        if (supportMode) {
+            makeSupportBlocks();
+        }
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -230,8 +316,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public void setRotate(int rotate) {
+        if (supportMode) {
+            clearSupportBlocks();
+        }
         boxValid = false;
         this.rotate = rotate;
+        if (supportMode) {
+            makeSupportBlocks();
+        }
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -323,27 +415,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        NBTTagCompound tc = hasCard();
-        if (tc == null) {
-            return;
-        }
-
-        int channel = tc.getInteger("channel");
-        if (channel == -1) {
-            return;
-        }
-
-        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
-        SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
-        if (chamberChannel == null) {
-            return;
-        }
-
-        calculateBox(tc);
-
-        if (!boxValid) {
-            return;
-        }
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
+        if (chamberChannel == null) return;
 
         if (scan == null) {
             return;
@@ -367,6 +440,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (factor > .95 && scan != null) {
             handleBlock(world);
         }
+    }
+
+    private SpaceChamberRepository.SpaceChamberChannel calculateBox() {
+        NBTTagCompound tc = hasCard();
+        if (tc == null) {
+            return null;
+        }
+
+        int channel = tc.getInteger("channel");
+        if (channel == -1) {
+            return null;
+        }
+
+        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
+        if (chamberChannel == null) {
+            return null;
+        }
+
+        calculateBox(tc);
+
+        if (!boxValid) {
+            return null;
+        }
+        return chamberChannel;
     }
 
     private void handleBlock(World world) {
@@ -444,8 +542,39 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    private boolean isMovable(Block block, TileEntity tileEntity) {
+        if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
+            return false;
+        }
+//        System.out.println("block.getUnlocalizedName() = " + block.getUnlocalizedName());
+        return true;
+    }
+
+    // True if this block can just be overwritten (i.e. are or support block)
+    private boolean isEmpty(Block block) {
+        if (block == null) {
+            return true;
+        }
+        if (block.getMaterial() == Material.air) {
+            return true;
+        }
+        if (block == SpaceProjectorSetup.supportBlock) {
+            return true;
+        }
+        return false;
+    }
+
+    private void clearBlock(World world, int x, int y, int z) {
+        if (supportMode) {
+            world.setBlock(x, y, z, SpaceProjectorSetup.supportBlock, 0, 3);
+        } else {
+            world.setBlockToAir(x, y, z);
+        }
+    }
+
     private boolean copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        if (destWorld.isAirBlock(destX, destY, destZ)) {
+        Block destBlock = destWorld.getBlock(destX, destY, destZ);
+        if (isEmpty(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
             int origMeta = world.getBlockMetadata(x, y, z);
             if (origBlock == null || origBlock.getMaterial() == Material.air) {
@@ -464,18 +593,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean isMovable(Block block, TileEntity tileEntity) {
-        if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
-            return false;
-        }
-//        System.out.println("block.getUnlocalizedName() = " + block.getUnlocalizedName());
-        return true;
-    }
-
     private boolean moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        if (destWorld.isAirBlock(destX, destY, destZ)) {
+        Block destBlock = destWorld.getBlock(destX, destY, destZ);
+        if (isEmpty(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
-            if (origBlock == null || origBlock.getMaterial() == Material.air) {
+            if (isEmpty(origBlock)) {
                 return false;
             }
             TileEntity origTileEntity = world.getTileEntity(x, y, z);
@@ -484,7 +606,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             int origMeta = world.getBlockMetadata(x, y, z);
             world.removeTileEntity(x, y, z);
-            world.setBlockToAir(x, y, z);
+            clearBlock(world, x, y, z);
+
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
             destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (origTileEntity != null) {
@@ -669,6 +792,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         anchor = tagCompound.getInteger("anchor");
         rotate = tagCompound.getInteger("rotate");
         silent = tagCompound.getBoolean("silent");
+        supportMode = tagCompound.getBoolean("support");
         scan = Coordinate.readFromNBT(tagCompound, "scan");
         minBox = Coordinate.readFromNBT(tagCompound, "minBox");
         maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
@@ -696,6 +820,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setInteger("anchor", anchor);
         tagCompound.setInteger("rotate", rotate);
         tagCompound.setBoolean("silent", silent);
+        tagCompound.setBoolean("support", supportMode);
         Coordinate.writeToNBT(tagCompound, "scan", scan);
         Coordinate.writeToNBT(tagCompound, "minBox", minBox);
         Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
@@ -731,6 +856,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         } else if (CMD_SETSILENT.equals(command)) {
             setSilent(args.get("silent").getBoolean());
+            return true;
+        } else if (CMD_SETSUPPORT.equals(command)) {
+            setSupportMode(args.get("support").getBoolean());
             return true;
         }
         return false;

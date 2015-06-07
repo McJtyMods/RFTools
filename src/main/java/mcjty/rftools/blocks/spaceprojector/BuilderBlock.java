@@ -70,4 +70,18 @@ public class BuilderBlock extends GenericContainerBlock implements Infusable {
         return new BuilderContainer(entityPlayer, (BuilderTileEntity) tileEntity);
     }
 
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof BuilderTileEntity) {
+            if (!world.isRemote) {
+                BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
+                if (builderTileEntity.hasSupportMode()) {
+                    builderTileEntity.clearSupportBlocks();
+                }
+            }
+        }
+
+        super.breakBlock(world, x, y, z, block, meta);
+    }
 }

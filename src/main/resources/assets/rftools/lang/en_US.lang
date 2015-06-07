@@ -172,6 +172,7 @@ tile.spaceChamberBlock.name=Space Chamber Corner Block
 tile.spaceChamberControllerBlock.name=Space Chamber Controller Block
 tile.spaceProjectorBlock.name=Space Projector Block (WIP)
 tile.builderBlock.name=Builder Block
+tile.supportBlock.name=Support Block
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage
 tile.remoteStorageBlock.name=Remote Storage

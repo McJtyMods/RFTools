@@ -167,6 +167,7 @@ tile.proxyBlock.name=代理方塊
 tile.spaceChamberBlock.name=空間角落方塊
 tile.spaceChamberControllerBlock.name=空間控制方塊
 tile.builderBlock.name=Builder Block
+tile.supportBlock.name=Support Block
 tile.spaceProjectorBlock.name=空間投影方塊
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage

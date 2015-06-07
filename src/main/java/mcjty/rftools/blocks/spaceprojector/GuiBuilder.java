@@ -23,6 +23,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
     private ToggleButton silentMode;
+    private ToggleButton supportMode;
 
     private ToggleButton anchor[] = new ToggleButton[4];
     private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
@@ -59,13 +60,13 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14)).
                 setTooltips("Set the horizontal rotation angle").
                 addChoiceEvent(
-                new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        updateRotate();
-                    }
-                }
-        );
+                        new ChoiceEvent() {
+                            @Override
+                            public void choiceChanged(Widget parent, String newChoice) {
+                                updateRotate();
+                            }
+                        }
+                );
         switch (tileEntity.getRotate()) {
             case 0: rotateButton.setChoice(ROTATE_0); break;
             case 1: rotateButton.setChoice(ROTATE_90); break;
@@ -83,8 +84,18 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 });
         silentMode.setPressed(tileEntity.isSilent());
 
+        supportMode = new ToggleButton(mc, this).setCheckMarker(true).setText("Support").setLayoutHint(new PositionalLayout.PositionalHint(48, 40, 45, 14)).
+                setTooltips("Use supporting blocks when moving.", "Useful for liquids, gravel, ...").
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        setSupportMode();
+                    }
+                });
+        supportMode.setPressed(tileEntity.hasSupportMode());
+
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice).addChild(rotateButton).addChild(silentMode);
+                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         for (int y = 0 ; y <= 1 ; y++) {
@@ -109,6 +120,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private void setSilentMode() {
         sendServerCommand(CMD_SETSILENT, new Argument("silent", silentMode.isPressed()));
+    }
+
+    private void setSupportMode() {
+        sendServerCommand(CMD_SETSUPPORT, new Argument("support", supportMode.isPressed()));
     }
 
     private void selectAnchor(int index) {
