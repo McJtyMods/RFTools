@@ -445,7 +445,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         float factor = getInfusedFactor();
-        for (int i = 0 ; i < 1 + (factor * 10) ; i++) {
+        for (int i = 0 ; i < 1 + (factor * 20) ; i++) {
             if (scan != null) {
                 handleBlock(world);
             }
