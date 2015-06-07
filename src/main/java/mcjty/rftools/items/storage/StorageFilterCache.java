@@ -51,6 +51,8 @@ public class StorageFilterCache {
                     }
                 }
             }
+        } else {
+            stacks = new ItemStack[0];
         }
     }
 
@@ -69,7 +71,7 @@ public class StorageFilterCache {
                         break;
                     }
                 }
-            } else {
+            } else if (stacks != null) {
                 for (ItemStack itemStack : stacks) {
                     if (matchDamage && itemStack.getItemDamage() != stack.getItemDamage()) {
                         continue;
