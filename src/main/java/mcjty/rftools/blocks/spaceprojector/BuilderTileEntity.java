@@ -226,13 +226,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         Coordinate dest = sourceToDest(src);
                         Block srcBlock = world.getBlock(src.getX(), src.getY(), src.getZ());
                         Block dstBlock = worldObj.getBlock(dest.getX(), dest.getY(), dest.getZ());
-                        int error = 0;
+                        int error = SupportBlock.STATUS_OK;
                         if (mode != MODE_COPY) {
                             TileEntity srcTileEntity = world.getTileEntity(src.getX(), src.getY(), src.getZ());
                             TileEntity dstTileEntity = worldObj.getTileEntity(dest.getX(), dest.getY(), dest.getZ());
-                            if ((!isMovable(srcBlock, srcTileEntity)) || (!isMovable(dstBlock, dstTileEntity))) {
-                                error = 1;
-                            }
+
+                            int error1 = isMovable(srcBlock, srcTileEntity);
+                            int error2 = isMovable(dstBlock, dstTileEntity);
+                            error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
                             world.setBlock(src.getX(), src.getY(), src.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
@@ -552,12 +553,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean isMovable(Block block, TileEntity tileEntity) {
+    private int isMovable(Block block, TileEntity tileEntity) {
         if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
-            return false;
+            return SupportBlock.STATUS_ERROR;
         }
-//        System.out.println("block.getUnlocalizedName() = " + block.getUnlocalizedName());
-        return true;
+        SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.blockInformationMap.get(block.getUnlocalizedName());
+        if (blockInformation != null) {
+            return blockInformation.blockLevel;
+        }
+        return SupportBlock.STATUS_OK;
     }
 
     // True if this block can just be overwritten (i.e. are or support block)
@@ -611,7 +615,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return false;
             }
             TileEntity origTileEntity = world.getTileEntity(x, y, z);
-            if (!isMovable(origBlock, origTileEntity)) {
+            if (isMovable(origBlock, origTileEntity) == SupportBlock.STATUS_ERROR) {
                 return false;
             }
             int origMeta = world.getBlockMetadata(x, y, z);
@@ -642,7 +646,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Block dstBlock = destWorld.getBlock(destX, destY, destZ);
         TileEntity dstTileEntity = destWorld.getTileEntity(destX, destY, destZ);
 
-        if ((!isMovable(srcBlock, srcTileEntity)) || !isMovable(dstBlock, dstTileEntity)) {
+        if (isMovable(srcBlock, srcTileEntity) == SupportBlock.STATUS_ERROR) {
+            return false;
+        }
+        if (isMovable(dstBlock, dstTileEntity) == SupportBlock.STATUS_ERROR) {
             return false;
         }
 

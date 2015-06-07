@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
 import mcjty.rftools.GeneralConfiguration;
@@ -9,6 +11,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpaceProjectorSetup {
     public static ProxyBlock proxyBlock;
@@ -42,6 +51,8 @@ public class SpaceProjectorSetup {
 
         supportBlock = new SupportBlock();
         GameRegistry.registerBlock(supportBlock, "supportBlock");
+
+        readBuilderBlocks();
     }
 
     public static void setupItems() {
@@ -65,4 +76,47 @@ public class SpaceProjectorSetup {
                 'b', Items.brick);
     }
 
+    private static void readBuilderBlocks() {
+        try {
+            InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+            JsonParser parser = new JsonParser();
+            JsonElement element = parser.parse(br);
+            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
+                if ("movables".equals(entry.getKey())) {
+                    readMovablesFromJson(entry.getValue());
+//                } else if ("dimlets".equals(entry.getKey())) {
+//                    readDimletsFromJson(entry.getValue());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void readMovablesFromJson(JsonElement element) {
+        for (JsonElement entry : element.getAsJsonArray()) {
+            String blockName = entry.getAsJsonArray().get(0).getAsString();
+            String warningType = entry.getAsJsonArray().get(1).getAsString();
+            int status = SupportBlock.STATUS_OK;
+            if ("E".equals(warningType)) {
+                status = SupportBlock.STATUS_ERROR;
+            } else if ("W".equals(warningType)) {
+                status = SupportBlock.STATUS_WARN;
+            }
+            blockInformationMap.put(blockName, new BlockInformation(blockName, status));
+        }
+    }
+
+    public static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
+
+    public static class BlockInformation {
+        String blockName;
+        int blockLevel; // One of SupportBlock.SUPPORT_ERROR/WARN
+
+        public BlockInformation(String blockName, int blockLevel) {
+            this.blockName = blockName;
+            this.blockLevel = blockLevel;
+        }
+    }
 }

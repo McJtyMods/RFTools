@@ -17,6 +17,11 @@ public class SupportBlock extends Block {
 
     private IIcon icon;
     private IIcon iconRed;
+    private IIcon iconYellow;
+
+    public static int STATUS_OK = 0;
+    public static int STATUS_WARN = 1;
+    public static int STATUS_ERROR = 2;
 
     public SupportBlock() {
         super(Material.glass);
@@ -48,11 +53,18 @@ public class SupportBlock extends Block {
     public void registerBlockIcons(IIconRegister iconRegister) {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "supportBlock");
         iconRed = iconRegister.registerIcon(RFTools.MODID + ":" + "supportRedBlock");
+        iconYellow = iconRegister.registerIcon(RFTools.MODID + ":" + "supportYellowBlock");
     }
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        return meta == 1 ? iconRed : icon;
+        if (meta == STATUS_ERROR) {
+            return iconRed;
+        } else if (meta == STATUS_WARN) {
+            return iconYellow;
+        } else {
+            return icon;
+        }
     }
 
     /**
