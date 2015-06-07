@@ -72,7 +72,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean supportMode = false;
 
     private int powered = 0;
-    private int tickCounter = 0;
 
     private boolean boxValid = false;
     private Coordinate minBox = null;
@@ -438,13 +437,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        float factor = getInfusedFactor();
-        tickCounter++;
-        if (tickCounter <= ((1.0-factor)*4)) {
-            return;
-        }
-        tickCounter = 0;
-
         int dimension = chamberChannel.getDimension();
         World world = DimensionManager.getWorld(dimension);
         if (world == null) {
@@ -452,9 +444,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        handleBlock(world);
-        if (factor > .95 && scan != null) {
-            handleBlock(world);
+        float factor = getInfusedFactor();
+        for (int i = 0 ; i < 1 + (factor * 10) ; i++) {
+            if (scan != null) {
+                handleBlock(world);
+            }
         }
     }
 
