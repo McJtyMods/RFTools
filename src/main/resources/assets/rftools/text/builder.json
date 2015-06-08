@@ -1,8 +1,7 @@
 {
     "movables": [
-        [ "tile.blockGold", "W"]
+        [ "tile.mobSpawner","+",50.0]
     ],
     "rotatables": [
-        [ "tile.blockGold", "W"]
     ]
 }

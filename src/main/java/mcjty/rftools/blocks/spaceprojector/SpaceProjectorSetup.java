@@ -98,25 +98,45 @@ public class SpaceProjectorSetup {
         for (JsonElement entry : element.getAsJsonArray()) {
             String blockName = entry.getAsJsonArray().get(0).getAsString();
             String warningType = entry.getAsJsonArray().get(1).getAsString();
-            int status = SupportBlock.STATUS_OK;
-            if ("E".equals(warningType)) {
+            double costFactor = entry.getAsJsonArray().get(2).getAsDouble();
+            int status;
+            if ("-".equals(warningType)) {
                 status = SupportBlock.STATUS_ERROR;
-            } else if ("W".equals(warningType)) {
+            } else if ("+".equals(warningType)) {
+                status = SupportBlock.STATUS_OK;
+            } else {
                 status = SupportBlock.STATUS_WARN;
             }
-            blockInformationMap.put(blockName, new BlockInformation(blockName, status));
+            blockInformationMap.put(blockName, new BlockInformation(blockName, status, costFactor));
         }
     }
 
     public static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
 
     public static class BlockInformation {
-        String blockName;
-        int blockLevel; // One of SupportBlock.SUPPORT_ERROR/WARN
+        private final String blockName;
+        private final int blockLevel; // One of SupportBlock.SUPPORT_ERROR/WARN
+        private final double costFactor;
 
-        public BlockInformation(String blockName, int blockLevel) {
+        public static BlockInformation INVALID = new BlockInformation("", SupportBlock.STATUS_ERROR, 1.0);
+        public static BlockInformation OK = new BlockInformation("", SupportBlock.STATUS_OK, 1.0);
+
+        public BlockInformation(String blockName, int blockLevel, double costFactor) {
             this.blockName = blockName;
             this.blockLevel = blockLevel;
+            this.costFactor = costFactor;
+        }
+
+        public int getBlockLevel() {
+            return blockLevel;
+        }
+
+        public String getBlockName() {
+            return blockName;
+        }
+
+        public double getCostFactor() {
+            return costFactor;
         }
     }
 }

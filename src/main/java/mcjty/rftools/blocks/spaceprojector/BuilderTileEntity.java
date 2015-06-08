@@ -336,7 +336,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public void setMode(int mode) {
         this.mode = mode;
-        scan = minBox;
+        restartScan();
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -379,7 +379,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setPowered(int powered) {
         if (this.powered != powered) {
             this.powered = powered;
-            scan = minBox;
+            restartScan();
             markDirty();
         }
     }
@@ -452,9 +452,32 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         createProjection(chamberChannel);
 
-        scan = minCorner;
         minBox = minCorner;
         maxBox = maxCorner;
+        restartScan();
+    }
+
+    // Calculate a good starting point to avoid problems with overlapping areas.
+    private void restartScan() {
+        scan = minBox;
+//        if (boxValid) {
+//            // This is the default.
+//            scan = minBox;
+//
+//            NBTTagCompound tc = hasCard();
+//            if (tc == null) {
+//                return;
+//            }
+//            int channel = tc.getInteger("channel");
+//            SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
+//            SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
+//            if (chamberChannel.getDimension() == worldObj.provider.dimensionId) {
+//                // Same dimension so we have to check for overlap
+//                Coordinate destMin = new Coordinate(1000000000, 1000000000, 1000000000);
+//                Coordinate destMax = new Coordinate(-1000000000, -1000000000, -1000000000);
+//
+//            }
+//        }
     }
 
     @Override
@@ -511,16 +534,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void handleBlock(World world) {
-        float factor = getInfusedFactor();
-
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - factor) / 4.0f);
-
-        if (rfNeeded > rf) {
-            // Not enough energy.
-            return;
-        }
-
         Coordinate dest = sourceToDest(scan);
         int x = scan.getX();
         int y = scan.getY();
@@ -528,33 +541,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int destX = dest.getX();
         int destY = dest.getY();
         int destZ = dest.getZ();
-        boolean success = false;
+
         switch (mode) {
             case MODE_COPY:
-                success = copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_MOVE:
                 if (entityMode) {
                     moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 }
-                success = moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_BACK:
                 if (entityMode) {
                     moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
                 }
-                success = moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
+                moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
                 break;
             case MODE_SWAP:
                 if (entityMode) {
                     swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 }
-                success = swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
-        }
-
-        if (success) {
-            consumeEnergy(rfNeeded);
         }
 
         nextLocation();
@@ -594,15 +603,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private int isMovable(Block block, TileEntity tileEntity) {
+    private SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
         if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
-            return SupportBlock.STATUS_ERROR;
+            return SpaceProjectorSetup.BlockInformation.INVALID;
         }
         SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.blockInformationMap.get(block.getUnlocalizedName());
         if (blockInformation != null) {
-            return blockInformation.blockLevel;
+            return blockInformation;
         }
-        return SupportBlock.STATUS_OK;
+        return SpaceProjectorSetup.BlockInformation.OK;
+    }
+
+    private int isMovable(Block block, TileEntity tileEntity) {
+        return getBlockInformation(block, tileEntity).getBlockLevel();
     }
 
     // True if this block can just be overwritten (i.e. are or support block)
@@ -627,25 +640,32 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private boolean copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+    private void copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return;
+        }
+
         Block destBlock = destWorld.getBlock(destX, destY, destZ);
         if (isEmpty(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
             int origMeta = world.getBlockMetadata(x, y, z);
             if (origBlock == null || origBlock.getMaterial() == Material.air) {
-                return false;
+                return;
             }
             if (!consumeBlock(origBlock, origMeta)) {
-                return false;
+                return;
             }
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
             destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
                 RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
             }
-            return true;
+
+            consumeEnergy(rfNeeded);
         }
-        return false;
     }
 
 
@@ -662,7 +682,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         // Check for entities.
         List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
-        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(destX-.1, destY-.1, destZ-.1, destX + 1.1, destY + 1.1, destZ + 1.1));
+        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(destX - .1, destY - .1, destZ - .1, destX + 1.1, destY + 1.1, destZ + 1.1));
         for (Object o : entitiesSrc) {
             Entity entity = (Entity) o;
             entity.setWorld(destWorld);
@@ -675,17 +695,28 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private boolean moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+    private void moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         Block destBlock = destWorld.getBlock(destX, destY, destZ);
         if (isEmpty(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
             if (isEmpty(origBlock)) {
-                return false;
+                return;
             }
             TileEntity origTileEntity = world.getTileEntity(x, y, z);
-            if (isMovable(origBlock, origTileEntity) == SupportBlock.STATUS_ERROR) {
-                return false;
+            SpaceProjectorSetup.BlockInformation information = getBlockInformation(origBlock, origTileEntity);
+            if (information.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+                return;
             }
+
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            if (rfNeeded > rf) {
+                // Not enough energy.
+                return;
+            } else {
+                consumeEnergy(rfNeeded);
+            }
+
             int origMeta = world.getBlockMetadata(x, y, z);
             world.removeTileEntity(x, y, z);
             clearBlock(world, x, y, z);
@@ -702,12 +733,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
                 RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
             }
-            return true;
         }
-        return false;
     }
 
-    private boolean swapBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+    private void swapBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         Block srcBlock = world.getBlock(x, y, z);
         TileEntity srcTileEntity = world.getTileEntity(x, y, z);
 
@@ -715,14 +744,27 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         TileEntity dstTileEntity = destWorld.getTileEntity(destX, destY, destZ);
 
         if (isEmpty(srcBlock) && isEmpty(dstBlock)) {
-            return false;
+            return;
         }
 
-        if (isMovable(srcBlock, srcTileEntity) == SupportBlock.STATUS_ERROR) {
-            return false;
+        SpaceProjectorSetup.BlockInformation srcInformation = getBlockInformation(srcBlock, srcTileEntity);
+        if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+            return;
         }
-        if (isMovable(dstBlock, dstTileEntity) == SupportBlock.STATUS_ERROR) {
-            return false;
+
+        SpaceProjectorSetup.BlockInformation dstInformation = getBlockInformation(dstBlock, dstTileEntity);
+        if (dstInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+            return;
+        }
+
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        rfNeeded += (int) (SpaceProjectorConfiguration.builderRfPerOperation * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return;
+        } else {
+            consumeEnergy(rfNeeded);
         }
 
         int srcMeta = world.getBlockMetadata(x, y, z);
@@ -759,8 +801,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
             }
         }
-
-        return true;
     }
 
     private Coordinate sourceToDest(Coordinate source) {
@@ -778,7 +818,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (y >= maxBox.getY()) {
                         if (mode != MODE_SWAP) {
                             // We don't restart in swap mode.
-                            scan = minBox;
+                            restartScan();
                         } else {
                             scan = null;
                         }
