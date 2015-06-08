@@ -348,6 +348,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setPowered(int powered) {
         if (this.powered != powered) {
             this.powered = powered;
+            scan = minBox;
             markDirty();
         }
     }
