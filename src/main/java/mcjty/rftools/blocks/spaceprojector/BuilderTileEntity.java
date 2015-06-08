@@ -646,6 +646,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Block dstBlock = destWorld.getBlock(destX, destY, destZ);
         TileEntity dstTileEntity = destWorld.getTileEntity(destX, destY, destZ);
 
+        if (isEmpty(srcBlock) && isEmpty(dstBlock)) {
+            return false;
+        }
+
         if (isMovable(srcBlock, srcTileEntity) == SupportBlock.STATUS_ERROR) {
             return false;
         }
@@ -680,10 +684,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (!silent) {
-            if (srcBlock != null) {
+            if (!isEmpty(srcBlock)) {
                 RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
             }
-            if (dstBlock != null) {
+            if (!isEmpty(dstBlock)) {
                 RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
             }
         }
@@ -707,6 +711,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         if (mode != MODE_SWAP) {
                             // We don't restart in swap mode.
                             scan = minBox;
+                        } else {
+                            scan = null;
                         }
                     } else {
                         scan = new Coordinate(minBox.getX(), y+1, minBox.getZ());
