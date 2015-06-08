@@ -22,14 +22,16 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private EnergyBar energyBar;
     private ChoiceLabel modeChoice;
-    private ToggleButton silentMode;
-    private ToggleButton supportMode;
+    private ImageChoiceLabel silentMode;
+    private ImageChoiceLabel supportMode;
+    private ImageChoiceLabel entityMode;
 
     private ToggleButton anchor[] = new ToggleButton[4];
     private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
     private ChoiceLabel rotateButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
+    private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
         super(builderTileEntity, container);
@@ -48,7 +50,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         energyBar.setValue(tileEntity.getCurrentRF());
 
         modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK]).
-                setTooltips("Set the building mode").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 50, 14)).
+                setTooltips("Set the building mode").setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14)).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -57,7 +59,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 });
         modeChoice.setChoice(MODES[tileEntity.getMode()]);
 
-        rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(48, 7, 45, 14)).
+        rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(130, 7, 40, 14)).
                 setTooltips("Set the horizontal rotation angle").
                 addChoiceEvent(
                         new ChoiceEvent() {
@@ -74,34 +76,50 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             case 3: rotateButton.setChoice(ROTATE_270); break;
         }
 
-        silentMode = new ToggleButton(mc, this).setCheckMarker(true).setText("Silent").setLayoutHint(new PositionalLayout.PositionalHint(48, 23, 45, 14)).
+        silentMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 24, 16, 16)).
                 setTooltips("Suppress the placement/breaking sound", "when moving blocks").
-                addButtonEvent(new ButtonEvent() {
+                addChoiceEvent(new ChoiceEvent() {
                     @Override
-                    public void buttonClicked(Widget parent) {
+                    public void choiceChanged(Widget parent, String newChoice) {
                         setSilentMode();
                     }
                 });
-        silentMode.setPressed(tileEntity.isSilent());
+        silentMode.addChoice("off", "Moving blocks make sound", guiElements, 11*16, 3*16);
+        silentMode.addChoice("on", "Block sounds are muted", guiElements, 10 * 16, 3 * 16);
+        silentMode.setCurrentChoice(tileEntity.isSilent() ? 1 : 0);
 
-        supportMode = new ToggleButton(mc, this).setCheckMarker(true).setText("Support").setLayoutHint(new PositionalLayout.PositionalHint(48, 40, 45, 14)).
+        supportMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(66, 24, 16, 16)).
                 setTooltips("Use supporting blocks when moving.", "Useful for liquids, gravel, ...").
-                addButtonEvent(new ButtonEvent() {
+                addChoiceEvent(new ChoiceEvent() {
                     @Override
-                    public void buttonClicked(Widget parent) {
+                    public void choiceChanged(Widget parent, String newChoice) {
                         setSupportMode();
                     }
                 });
-        supportMode.setPressed(tileEntity.hasSupportMode());
+        supportMode.addChoice("off", "Support mode is disabled", guiElements, 7*16, 3*16);
+        supportMode.addChoice("on", "Support mode is enabled", guiElements, 6*16, 3*16);
+        supportMode.setCurrentChoice(tileEntity.hasSupportMode() ? 1 : 0);
+
+        entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 42, 16, 16)).
+                setTooltips("Move entities").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setEntityMode();
+                    }
+                });
+        entityMode.addChoice("off", "Entities are not moved", guiElements, 9*16, 3*16);
+        entityMode.addChoice("on", "Entities are moved", guiElements, 8*16, 3*16);
+        entityMode.setCurrentChoice(tileEntity.hasEntityMode() ? 1 : 0);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode);
+                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode).addChild(entityMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         for (int y = 0 ; y <= 1 ; y++) {
             for (int x = 0 ; x <= 1 ; x++) {
                 final int index = x + y * 2;
-                anchor[index] = new ToggleButton(mc, this).setText(anchorLabels[index]).setLayoutHint(new PositionalLayout.PositionalHint(100 + x * 20, 24 + (1-y) * 15, 18, 13)).
+                anchor[index] = new ToggleButton(mc, this).setText(anchorLabels[index]).setLayoutHint(new PositionalLayout.PositionalHint(132 + x * 20, 24 + (1-y) * 15, 18, 13)).
                     setTooltips("Set the anchor where you want to", "place the blocks in front of the", "builder");
                 anchor[index].addButtonEvent(new ButtonEvent() {
                     @Override
@@ -119,11 +137,15 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void setSilentMode() {
-        sendServerCommand(CMD_SETSILENT, new Argument("silent", silentMode.isPressed()));
+        sendServerCommand(CMD_SETSILENT, new Argument("silent", silentMode.getCurrentChoiceIndex() == 1));
     }
 
     private void setSupportMode() {
-        sendServerCommand(CMD_SETSUPPORT, new Argument("support", supportMode.isPressed()));
+        sendServerCommand(CMD_SETSUPPORT, new Argument("support", supportMode.getCurrentChoiceIndex() == 1));
+    }
+
+    private void setEntityMode() {
+        sendServerCommand(CMD_SETENTITIES, new Argument("entities", entityMode.getCurrentChoiceIndex() == 1));
     }
 
     private void selectAnchor(int index) {

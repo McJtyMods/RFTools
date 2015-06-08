@@ -48,6 +48,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETROTATE = "setRotate";
     public static final String CMD_SETSILENT = "setSilent";
     public static final String CMD_SETSUPPORT = "setSupport";
+    public static final String CMD_SETENTITIES = "setEntities";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -73,6 +74,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int anchor = ANCHOR_SW;
     private boolean silent = false;
     private boolean supportMode = false;
+    private boolean entityMode = false;
 
     private int powered = 0;
 
@@ -97,7 +99,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode" };
+        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode", "getEntityMode", "setEntityMode" };
     }
 
     @Override
@@ -113,6 +115,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case 6: setAnchor(((Double) arguments[0]).intValue()); return null;
             case 7: return new Object[] { hasSupportMode() };
             case 8: setSupportMode(((Double) arguments[0]).intValue() > 0); return null;
+            case 9: return new Object[] { hasEntityMode() };
+            case 10: setEntityMode(((Double) arguments[0]).intValue() > 0); return null;
         }
         return new Object[0];
     }
@@ -203,6 +207,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getEntityMode(Context context, Arguments args) throws Exception {
+        return new Object[] { hasEntityMode()};
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setEntityMode(Context context, Arguments args) throws Exception {
+        boolean ent = args.checkBoolean(0);
+        setEntityMode(ent);
+        return null;
+    }
+
     private NBTTagCompound hasCard() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
         if (itemStack == null || itemStack.stackSize == 0) {
@@ -275,6 +293,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
+    }
+
+    public boolean hasEntityMode() {
+        return entityMode;
+    }
+
+    public void setEntityMode(boolean entityMode) {
+        this.entityMode = entityMode;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public boolean hasSupportMode() {
@@ -506,15 +534,21 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 success = copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_MOVE:
-                moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                if (entityMode) {
+                    moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                }
                 success = moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_BACK:
-                moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
+                if (entityMode) {
+                    moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
+                }
                 success = moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
                 break;
             case MODE_SWAP:
-                swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                if (entityMode) {
+                    swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                }
                 success = swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
         }
@@ -850,6 +884,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         rotate = tagCompound.getInteger("rotate");
         silent = tagCompound.getBoolean("silent");
         supportMode = tagCompound.getBoolean("support");
+        entityMode = tagCompound.getBoolean("entityMode");
         scan = Coordinate.readFromNBT(tagCompound, "scan");
         minBox = Coordinate.readFromNBT(tagCompound, "minBox");
         maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
@@ -878,6 +913,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setInteger("rotate", rotate);
         tagCompound.setBoolean("silent", silent);
         tagCompound.setBoolean("support", supportMode);
+        tagCompound.setBoolean("entityMode", entityMode);
         Coordinate.writeToNBT(tagCompound, "scan", scan);
         Coordinate.writeToNBT(tagCompound, "minBox", minBox);
         Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
@@ -916,6 +952,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         } else if (CMD_SETSUPPORT.equals(command)) {
             setSupportMode(args.get("support").getBoolean());
+            return true;
+        } else if (CMD_SETENTITIES.equals(command)) {
+            setEntityMode(args.get("entities").getBoolean());
             return true;
         }
         return false;
