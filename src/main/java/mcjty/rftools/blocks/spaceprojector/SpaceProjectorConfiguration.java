@@ -13,6 +13,8 @@ public class SpaceProjectorConfiguration {
 
     public static int builderRfPerOperation = 500;
     public static int builderRfPerEntity = 5000;
+    public static double dimensionCostFactor = 5.0f;
+
     public static boolean ignoreTileEntities = false;
 
     public static int maxSpaceChamberDimension = 128;
@@ -34,5 +36,7 @@ public class SpaceProjectorConfiguration {
                 "If false then the builder will move/swap tile entities. Otherwise it will leave these blocks alone").getBoolean();
         maxSpaceChamberDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxSpaceChamberDimension", maxSpaceChamberDimension,
                 "Maximum dimension for the space chamber").getInt();
+        dimensionCostFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "dimensionCostFactor", dimensionCostFactor,
+                "How much more expensive a move accross dimensions is").getDouble();
     }
 }

@@ -680,7 +680,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         int rf = getEnergyStored(ForgeDirection.DOWN);
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -710,9 +710,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private double getDimensionCostFactor(World world, World destWorld) {
+        return destWorld.provider.dimensionId == world.provider.dimensionId ? 1.0 : SpaceProjectorConfiguration.dimensionCostFactor;
+    }
+
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
@@ -732,7 +736,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
@@ -779,7 +783,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             int rf = getEnergyStored(ForgeDirection.DOWN);
-            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return;
@@ -830,8 +834,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         int rf = getEnergyStored(ForgeDirection.DOWN);
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        rfNeeded += (int) (SpaceProjectorConfiguration.builderRfPerOperation * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        rfNeeded += (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
