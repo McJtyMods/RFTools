@@ -17,6 +17,7 @@ import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -26,11 +27,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.List;
 import java.util.Map;
 
 @Optional.InterfaceList({
@@ -503,12 +506,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 success = copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_MOVE:
+                moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 success = moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
             case MODE_BACK:
+                moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
                 success = moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
                 break;
             case MODE_SWAP:
+                swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 success = swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
                 break;
         }
@@ -606,6 +612,33 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         return false;
+    }
+
+
+    private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        // Check for entities.
+        List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
+        for (Object o : entities) {
+            Entity entity = (Entity) o;
+            entity.setWorld(destWorld);
+            entity.setPosition(destX + (entity.posX-x), destY + (entity.posY-y), destZ + (entity.posZ-z));
+        }
+    }
+
+    private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+        // Check for entities.
+        List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
+        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(destX-.1, destY-.1, destZ-.1, destX + 1.1, destY + 1.1, destZ + 1.1));
+        for (Object o : entitiesSrc) {
+            Entity entity = (Entity) o;
+            entity.setWorld(destWorld);
+            entity.setPosition(destX + (entity.posX-x), destY + (entity.posY-y), destZ + (entity.posZ-z));
+        }
+        for (Object o : entitiesDst) {
+            Entity entity = (Entity) o;
+            entity.setWorld(world);
+            entity.setPosition(x + (entity.posX-destX), y + (entity.posY-destY), z + (entity.posZ-destZ));
+        }
     }
 
     private boolean moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
