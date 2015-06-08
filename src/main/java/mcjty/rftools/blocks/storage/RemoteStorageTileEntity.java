@@ -200,10 +200,12 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+
         if (index < RemoteStorageContainer.SLOT_LINKER) {
             copyFromModule(stack, index);
         }
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         if (!worldObj.isRemote) {
             link(index);
@@ -400,8 +402,6 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         }
         int cnt = writeSlotsToNBT(tagCompound, "Items", si);
         tagCompound.setInteger("count", cnt);
-
-        setMaxSize(si, 0);
     }
 
     public void copyFromModule(ItemStack stack, int si) {

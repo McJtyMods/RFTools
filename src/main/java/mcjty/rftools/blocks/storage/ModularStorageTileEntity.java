@@ -297,9 +297,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            if (isServer()) {
-                copyFromModule(stack);
-            }
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -307,7 +304,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             filterCache = null;
         }
         boolean s1 = containsItem(index);
+
         setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
+
+        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
+            if (isServer()) {
+                copyFromModule(stack);
+            }
+        }
+
         handleNewAmount(s1, index);
     }
 
@@ -386,6 +391,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             // Should be impossible.
             return;
         }
+
+        System.out.println("copyToModule: stack = " + stack);
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
             return;
         }
@@ -396,15 +403,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
         }
         int cnt = writeBufferToItemNBT(tagCompound);
         tagCompound.setInteger("count", cnt);
-
-        for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getCount() ; i++) {
-            inventoryHelper.setInventorySlotContents(0, i, null);
-        }
-        numStacks = -1;
-        remoteId = 0;
-
-        markDirty();
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public void copyFromModule(ItemStack stack) {
@@ -417,6 +415,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             numStacks = -1;
             return;
         }
+
+        System.out.println("copyFromModule: stack = " + stack);
+
         remoteId = 0;
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
             NBTTagCompound tagCompound = stack.getTagCompound();
