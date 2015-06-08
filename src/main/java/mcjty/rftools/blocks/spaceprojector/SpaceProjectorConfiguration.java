@@ -8,10 +8,11 @@ public class SpaceProjectorConfiguration {
     public static int SPACEPROJECTOR_MAXENERGY = 100000;
     public static int SPACEPROJECTOR_RECEIVEPERTICK = 1000;
 
-    public static int BUILDER_MAXENERGY = 500000;
-    public static int BUILDER_RECEIVEPERTICK = 5000;
+    public static int BUILDER_MAXENERGY = 10000000;
+    public static int BUILDER_RECEIVEPERTICK = 50000;
 
     public static int builderRfPerOperation = 500;
+    public static int builderRfPerEntity = 5000;
     public static boolean ignoreTileEntities = false;
 
     public static int maxSpaceChamberDimension = 128;
@@ -27,6 +28,8 @@ public class SpaceProjectorConfiguration {
                 "RF per tick that the builder can receive").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder").getInt();
+        builderRfPerEntity = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerEntity", builderRfPerEntity,
+                "RF per entity operation for the builder").getInt();
         ignoreTileEntities = cfg.get(CATEGORY_SPACEPROJECTOR, "ignoreTileEntities", ignoreTileEntities,
                 "If false then the builder will move/swap tile entities. Otherwise it will leave these blocks alone").getBoolean();
         maxSpaceChamberDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxSpaceChamberDimension", maxSpaceChamberDimension,
