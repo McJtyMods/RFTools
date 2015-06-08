@@ -96,7 +96,10 @@ public class PatreonDimletType implements IDimletType {
     @Override
     public void inject(DimletKey key, DimensionInformation dimensionInformation) {
         if ("McJty".equals(key.getName())) {
-            dimensionInformation.setFireworks(true);
+            dimensionInformation.setPatreonBit(Patreons.PATREON_FIREWORKS);
+        } else if ("SickHippie".equals(key.getName())) {
+            dimensionInformation.setPatreonBit(Patreons.PATREON_SICKMOON);
+            dimensionInformation.setPatreonBit(Patreons.PATREON_SICKSUN);
         }
     }
 

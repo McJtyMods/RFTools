@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -104,7 +105,7 @@ public class DimensionTickEvent {
 
     private void handleRandomEffects(WorldServer world, DimensionInformation information) {
         // The world is loaded and there are players there.
-        if (information.hasFireworks()) {
+        if (information.isPatreonBitSet(Patreons.PATREON_FIREWORKS)) {
             handleFireworks(world);
         }
     }

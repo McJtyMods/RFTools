@@ -6,6 +6,8 @@ import mcjty.rftools.dimension.description.*;
 import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
+import mcjty.rftools.items.dimlets.types.PatreonDimletType;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import mcjty.rftools.network.NetworkTools;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
@@ -82,8 +84,8 @@ public class DimensionInformation {
     private SkyDescriptor skyDescriptor;
     private List<CelestialBodyDescriptor> celestialBodyDescriptors;
 
-    // Random effects.
-    private boolean fireworks = false;
+    // Patreon effects.
+    private long patreon1 = 0;
 
     private String[] dimensionTypes = new String[0];    // Used for Recurrent Complex if that's present.
 
@@ -353,7 +355,7 @@ public class DimensionInformation {
         skyDescriptor = new SkyDescriptor.Builder().fromNBT(tagCompound).build();
         calculateCelestialBodyDescriptors();
 
-        fireworks = tagCompound.getBoolean("fireworks");
+        patreon1 = tagCompound.getLong("patreon1");
 
         weatherDescriptor = new WeatherDescriptor.Builder().fromNBT(tagCompound).build();
 
@@ -485,7 +487,7 @@ public class DimensionInformation {
         skyDescriptor.writeToNBT(tagCompound);
         weatherDescriptor.writeToNBT(tagCompound);
 
-        tagCompound.setBoolean("fireworks", fireworks);
+        tagCompound.setLong("patreon1", patreon1);
 
         NBTTagList list = new NBTTagList();
         for (MobDescriptor mob : extraMobs) {
@@ -699,8 +701,8 @@ public class DimensionInformation {
         if (probeCounter > 0) {
             logDebug(player, "    Probes: " + probeCounter);
         }
-        if (fireworks) {
-            logDebug(player, "    Fireworks!");
+        if (patreon1 != 0) {
+            logDebug(player, "    Patreon: " + patreon1);
         }
     }
 
@@ -754,7 +756,7 @@ public class DimensionInformation {
         skyDescriptor.toBytes(buf);
         weatherDescriptor.toBytes(buf);
 
-        buf.writeBoolean(fireworks);
+        buf.writeLong(patreon1);
 
         buf.writeInt(extraMobs.size());
         for (MobDescriptor mob : extraMobs) {
@@ -851,7 +853,7 @@ public class DimensionInformation {
 
         weatherDescriptor = new WeatherDescriptor.Builder().fromBytes(buf).build();
 
-        fireworks = buf.readBoolean();
+        patreon1 = buf.readLong();
 
         extraMobs.clear();
         size = buf.readInt();
@@ -1284,12 +1286,20 @@ public class DimensionInformation {
         this.noanimals = noanimals;
     }
 
-    public boolean hasFireworks() {
-        return fireworks;
+    public long getPatreon1() {
+        return patreon1;
     }
 
-    public void setFireworks(boolean fireworks) {
-        this.fireworks = fireworks;
+    public boolean isPatreonBitSet(Patreons patreon) {
+        return (patreon1 & (1L << patreon.getBit())) != 0;
+    }
+
+    public void setPatreon1(long patreon1) {
+        this.patreon1 = patreon1;
+    }
+
+    public void setPatreonBit(Patreons patreon) {
+        patreon1 |= (1L << patreon.getBit());
     }
 
     public boolean isShelter() {
