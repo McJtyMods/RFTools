@@ -1,6 +1,7 @@
 {
     "movables": [
-        [ "tile.mobSpawner","+",50.0 ]
+        [ "tile.mobSpawner","+",50.0 ],
+        [ "tile.blockAiry","+",2000.0 ]
     ],
     "rotatables": [
         [ "tile.chest","mfff" ],
