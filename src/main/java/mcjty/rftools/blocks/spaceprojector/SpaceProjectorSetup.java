@@ -1,9 +1,11 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.CommonProxy;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
@@ -11,11 +13,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +52,8 @@ public class SpaceProjectorSetup {
         supportBlock = new SupportBlock();
         GameRegistry.registerBlock(supportBlock, "supportBlock");
 
-        readBuilderBlocks();
+        readBuilderBlocksInternal();
+        readBuilderBlocksConfig();
     }
 
     public static void setupItems() {
@@ -76,21 +77,34 @@ public class SpaceProjectorSetup {
                 'b', Items.brick);
     }
 
-    private static void readBuilderBlocks() {
+    private static void readBuilderBlocksInternal() {
         try {
             InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json");
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(br);
-            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-                if ("movables".equals(entry.getKey())) {
-                    readMovablesFromJson(entry.getValue());
-//                } else if ("dimlets".equals(entry.getKey())) {
-//                    readDimletsFromJson(entry.getValue());
-                }
-            }
+            parseBuilderJson(inputstream);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void readBuilderBlocksConfig() {
+        File modConfigDir = CommonProxy.modConfigDir;
+        try {
+            File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
+            FileInputStream inputstream = new FileInputStream(file);
+            parseBuilderJson(inputstream);
+        } catch (IOException e) {
+            RFTools.log("Could not read 'userbuilder.json', this is not an error!");
+        }
+    }
+
+    private static void parseBuilderJson(InputStream inputstream) throws UnsupportedEncodingException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(br);
+        for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
+            if ("movables".equals(entry.getKey())) {
+                readMovablesFromJson(entry.getValue());
+            }
         }
     }
 
