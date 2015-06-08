@@ -607,6 +607,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
             return SpaceProjectorSetup.BlockInformation.INVALID;
         }
+        if (isEmpty(block)) {
+            return SpaceProjectorSetup.BlockInformation.FREE;
+        }
         SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.blockInformationMap.get(block.getUnlocalizedName());
         if (blockInformation != null) {
             return blockInformation;

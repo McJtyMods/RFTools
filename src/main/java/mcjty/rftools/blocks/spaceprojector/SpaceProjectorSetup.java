@@ -118,8 +118,9 @@ public class SpaceProjectorSetup {
         private final int blockLevel; // One of SupportBlock.SUPPORT_ERROR/WARN
         private final double costFactor;
 
-        public static BlockInformation INVALID = new BlockInformation("", SupportBlock.STATUS_ERROR, 1.0);
-        public static BlockInformation OK = new BlockInformation("", SupportBlock.STATUS_OK, 1.0);
+        public static final BlockInformation INVALID = new BlockInformation("", SupportBlock.STATUS_ERROR, 1.0);
+        public static final BlockInformation OK = new BlockInformation("", SupportBlock.STATUS_OK, 1.0);
+        public static final BlockInformation FREE = new BlockInformation("", SupportBlock.STATUS_OK, 0.0);
 
         public BlockInformation(String blockName, int blockLevel, double costFactor) {
             this.blockName = blockName;

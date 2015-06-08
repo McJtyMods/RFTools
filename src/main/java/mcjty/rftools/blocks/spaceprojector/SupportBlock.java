@@ -19,9 +19,9 @@ public class SupportBlock extends Block {
     private IIcon iconRed;
     private IIcon iconYellow;
 
-    public static int STATUS_OK = 0;
-    public static int STATUS_WARN = 1;
-    public static int STATUS_ERROR = 2;
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_WARN = 1;
+    public static final int STATUS_ERROR = 2;
 
     public SupportBlock() {
         super(Material.glass);
