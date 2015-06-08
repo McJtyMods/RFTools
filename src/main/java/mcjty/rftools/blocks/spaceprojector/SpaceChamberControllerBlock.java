@@ -57,6 +57,10 @@ public class SpaceChamberControllerBlock extends GenericContainerBlock {
             SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
             int channel = spaceChamberControllerTileEntity.getChannel();
             currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            if (channel != -1) {
+                int size = spaceChamberControllerTileEntity.getChamberSize();
+                currenttip.add(EnumChatFormatting.GREEN + "Area: " + size + " blocks");
+            }
         }
         return currenttip;
     }

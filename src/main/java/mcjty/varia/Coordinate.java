@@ -30,6 +30,10 @@ public class Coordinate implements ByteBufConverter {
         return (x1-x) * (x1-x) + (y1-y) * (y1-y) + (z1-z) * (z1-z);
     }
 
+    public static int area(Coordinate c1, Coordinate c2) {
+        return (c2.getX()-c1.getX()+1) * (c2.getY()-c1.getY()+1) * (c2.getZ()-c1.getZ()+1);
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(x);

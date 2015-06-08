@@ -1,5 +1,8 @@
 {
     "movables": [
         [ "tile.blockGold", "W"]
+    ],
+    "rotatables": [
+        [ "tile.blockGold", "W"]
     ]
 }

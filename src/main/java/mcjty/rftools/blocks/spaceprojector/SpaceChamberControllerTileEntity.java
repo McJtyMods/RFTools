@@ -116,6 +116,13 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         return channel;
     }
 
+    public int getChamberSize() {
+        if (channel == -1) {
+            return 0;
+        }
+        return Coordinate.area(maxCorner, maxCorner);
+    }
+
     public void setChannel(int channel) {
         this.channel = channel;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
