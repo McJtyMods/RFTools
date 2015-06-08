@@ -739,34 +739,45 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
-        List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
-        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(destX - .1, destY - .1, destZ - .1, destX + 1.1, destY + 1.1, destZ + 1.1));
+        List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
+        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(destX, destY, destZ, destX + 1, destY + 1, destZ + 1));
         for (Object o : entitiesSrc) {
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rfNeeded > rf) {
-                // Not enough energy.
-                return;
-            } else {
-                consumeEnergy(rfNeeded);
-            }
-
             Entity entity = (Entity) o;
-            entity.setWorld(destWorld);
-            entity.setPosition(destX + (entity.posX-x), destY + (entity.posY-y), destZ + (entity.posZ-z));
+            if (isEntityInBlock(x, y, z, entity)) {
+                int rf = getEnergyStored(ForgeDirection.DOWN);
+                if (rfNeeded > rf) {
+                    // Not enough energy.
+                    return;
+                } else {
+                    consumeEnergy(rfNeeded);
+                }
+
+                entity.setWorld(destWorld);
+                entity.setPosition(destX + (entity.posX - x), destY + (entity.posY - y), destZ + (entity.posZ - z));
+            }
         }
         for (Object o : entitiesDst) {
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rfNeeded > rf) {
-                // Not enough energy.
-                return;
-            } else {
-                consumeEnergy(rfNeeded);
-            }
-
             Entity entity = (Entity) o;
-            entity.setWorld(world);
-            entity.setPosition(x + (entity.posX-destX), y + (entity.posY-destY), z + (entity.posZ-destZ));
+            if (isEntityInBlock(destX, destY, destZ, entity)) {
+                int rf = getEnergyStored(ForgeDirection.DOWN);
+                if (rfNeeded > rf) {
+                    // Not enough energy.
+                    return;
+                } else {
+                    consumeEnergy(rfNeeded);
+                }
+
+                entity.setWorld(world);
+                entity.setPosition(x + (entity.posX - destX), y + (entity.posY - destY), z + (entity.posZ - destZ));
+            }
         }
+    }
+
+    private boolean isEntityInBlock(int x, int y, int z, Entity entity) {
+        if (entity.posX >= x && entity.posX < x+1 && entity.posY >= y && entity.posY < y+1 && entity.posZ >= z && entity.posZ < z+1) {
+            return true;
+        }
+        return false;
     }
 
     private void moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ, int rotMode) {
