@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
+import mcjty.rftools.BlockInfo;
 import mcjty.rftools.CommonProxy;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Configuration;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,6 +27,8 @@ public class SpaceProjectorSetup {
     public static SupportBlock supportBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
+
+    public static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
 
     public static void setupBlocks() {
         proxyBlock = new ProxyBlock();
@@ -104,6 +105,8 @@ public class SpaceProjectorSetup {
         for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
             if ("movables".equals(entry.getKey())) {
                 readMovablesFromJson(entry.getValue());
+            } else if ("rotatables".equals(entry.getKey())) {
+                readRotatablesFromJson(entry.getValue());
             }
         }
     }
@@ -121,25 +124,71 @@ public class SpaceProjectorSetup {
             } else {
                 status = SupportBlock.STATUS_WARN;
             }
-            blockInformationMap.put(blockName, new BlockInformation(blockName, status, costFactor));
+            BlockInformation old = blockInformationMap.get(blockName);
+            if (old == null) {
+                old = BlockInformation.OK;
+            }
+
+            blockInformationMap.put(blockName, new BlockInformation(old, blockName, status, costFactor));
         }
     }
 
-    public static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
+    private static void readRotatablesFromJson(JsonElement element) {
+        for (JsonElement entry : element.getAsJsonArray()) {
+            String blockName = entry.getAsJsonArray().get(0).getAsString();
+            String rotatable = entry.getAsJsonArray().get(1).getAsString();
+            BlockInformation old = blockInformationMap.get(blockName);
+            if (old == null) {
+                old = BlockInformation.OK;
+            }
+            blockInformationMap.put(blockName, new BlockInformation(old, rotatable));
+        }
+    }
 
     public static class BlockInformation {
         private final String blockName;
         private final int blockLevel; // One of SupportBlock.SUPPORT_ERROR/WARN
         private final double costFactor;
+        private final int rotateInfo;
+
+        public static final int ROTATE_invalid = -1;
+        public static final int ROTATE_mmmm = 0;
+        public static final int ROTATE_mfff = 1;
 
         public static final BlockInformation INVALID = new BlockInformation("", SupportBlock.STATUS_ERROR, 1.0);
-        public static final BlockInformation OK = new BlockInformation("", SupportBlock.STATUS_OK, 1.0);
-        public static final BlockInformation FREE = new BlockInformation("", SupportBlock.STATUS_OK, 0.0);
+        public static final BlockInformation OK = new BlockInformation("", SupportBlock.STATUS_OK, 1.0, ROTATE_mmmm);
+        public static final BlockInformation FREE = new BlockInformation("", SupportBlock.STATUS_OK, 0.0, ROTATE_mmmm);
+
+        private static int rotateStringToId(String rotateString) {
+            if ("mmmm".equals(rotateString)) {
+                return ROTATE_mmmm;
+            } else if ("mfff".equals(rotateString)) {
+                return ROTATE_mfff;
+            } else {
+                return ROTATE_invalid;
+            }
+        }
 
         public BlockInformation(String blockName, int blockLevel, double costFactor) {
             this.blockName = blockName;
             this.blockLevel = blockLevel;
             this.costFactor = costFactor;
+            this.rotateInfo = ROTATE_mmmm;
+        }
+
+        public BlockInformation(String blockName, int blockLevel, double costFactor, int rotateInfo) {
+            this.blockName = blockName;
+            this.blockLevel = blockLevel;
+            this.costFactor = costFactor;
+            this.rotateInfo = rotateInfo;
+        }
+
+        public BlockInformation(BlockInformation other, String rotateInfo) {
+            this(other.blockName, other.blockLevel, other.costFactor, rotateStringToId(rotateInfo));
+        }
+
+        public BlockInformation(BlockInformation other, String blockName, int blockLevel, double costFactor) {
+            this(blockName, blockLevel, costFactor, other.rotateInfo);
         }
 
         public int getBlockLevel() {
@@ -152,6 +201,10 @@ public class SpaceProjectorSetup {
 
         public double getCostFactor() {
             return costFactor;
+        }
+
+        public int getRotateInfo() {
+            return rotateInfo;
         }
     }
 }

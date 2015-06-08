@@ -550,13 +550,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (entityMode) {
                     moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 }
-                moveBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                moveBlock(world, x, y, z, worldObj, destX, destY, destZ, rotate);
                 break;
             case MODE_BACK:
                 if (entityMode) {
                     moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
                 }
-                moveBlock(worldObj, destX, destY, destZ, world, x, y, z);
+                moveBlock(worldObj, destX, destY, destZ, world, x, y, z, oppositeRotate());
                 break;
             case MODE_SWAP:
                 if (entityMode) {
@@ -643,6 +643,41 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private int oppositeRotate() {
+        switch (rotate) {
+            case 1:
+                return 3;
+            case 3:
+                return 1;
+        }
+        return rotate;
+    }
+
+    private int rotateMeta(int meta, SpaceProjectorSetup.BlockInformation information, int rotMode) {
+        switch (information.getRotateInfo()) {
+            case SpaceProjectorSetup.BlockInformation.ROTATE_mfff:
+                switch (rotMode) {
+                    case 0: return meta;
+                    case 1: {
+                        ForgeDirection dir = ForgeDirection.values()[meta & 7];
+                        return (meta & 8) | dir.getRotation(ForgeDirection.UP).ordinal();
+                    }
+                    case 2: {
+                        ForgeDirection dir = ForgeDirection.values()[meta & 7];
+                        return (meta & 8) | dir.getOpposite().ordinal();
+                    }
+                    case 3: {
+                        ForgeDirection dir = ForgeDirection.values()[meta & 7];
+                        return (meta & 8) | dir.getOpposite().getRotation(ForgeDirection.UP).ordinal();
+                    }
+                }
+                break;
+            case SpaceProjectorSetup.BlockInformation.ROTATE_mmmm:
+                return meta;
+        }
+        return meta;
+    }
+
     private void copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         int rf = getEnergyStored(ForgeDirection.DOWN);
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
@@ -661,6 +696,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (!consumeBlock(origBlock, origMeta)) {
                 return;
             }
+
+            SpaceProjectorSetup.BlockInformation information = getBlockInformation(origBlock, null);
+            origMeta = rotateMeta(origMeta, information, rotate);
+
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
             destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
@@ -698,7 +737,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private void moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+    private void moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ, int rotMode) {
         Block destBlock = destWorld.getBlock(destX, destY, destZ);
         if (isEmpty(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
@@ -721,6 +760,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             int origMeta = world.getBlockMetadata(x, y, z);
+            origMeta = rotateMeta(origMeta, information, rotMode);
+
             world.removeTileEntity(x, y, z);
             clearBlock(world, x, y, z);
 
@@ -771,7 +812,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         int srcMeta = world.getBlockMetadata(x, y, z);
+        srcMeta = rotateMeta(srcMeta, srcInformation, oppositeRotate());
         int dstMeta = destWorld.getBlockMetadata(destX, destY, destZ);
+        dstMeta = rotateMeta(dstMeta, dstInformation, rotate);
 
         world.removeTileEntity(x, y, z);
         world.setBlockToAir(x, y, z);
