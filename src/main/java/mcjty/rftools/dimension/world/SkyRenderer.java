@@ -29,6 +29,8 @@ public class SkyRenderer {
 
     private static final ResourceLocation locationMoonPhasesPng = new ResourceLocation("textures/environment/moon_phases.png");
     private static final ResourceLocation locationSunPng = new ResourceLocation("textures/environment/sun.png");
+    private static final ResourceLocation locationSickSunPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/sicksun.png");
+    private static final ResourceLocation locationSickMoonPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/sickmoon.png");
     private static final ResourceLocation locationPlanetPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/planet1.png");
 //    private static final ResourceLocation locationCloudsPng = new ResourceLocation("textures/environment/clouds.png");
 
