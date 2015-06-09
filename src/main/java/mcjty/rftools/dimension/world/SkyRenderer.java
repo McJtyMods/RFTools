@@ -5,6 +5,7 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.CelestialBodyDescriptor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -414,6 +415,8 @@ public class SkyRenderer {
         GL11.glPushMatrix();
 
         float f6 = 1.0F - world.getRainStrength(partialTickTime);
+        boolean sicksun = information.isPatreonBitSet(Patreons.PATREON_SICKSUN);
+        boolean sickmoon = information.isPatreonBitSet(Patreons.PATREON_SICKMOON);
 
         if (celestialBodies.isEmpty()) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
@@ -421,7 +424,11 @@ public class SkyRenderer {
             GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(world.getCelestialAngle(partialTickTime) * 360.0F, 1.0F, 0.0F, 0.0F);
             float f10 = 30.0F;
-            renderEngine.bindTexture(locationSunPng);
+            if (sicksun) {
+                renderEngine.bindTexture(locationSickSunPng);
+            } else {
+                renderEngine.bindTexture(locationSunPng);
+            }
             tessellator.startDrawingQuads();
             tessellator.addVertexWithUV((-f10), 100.0D, (-f10), 0.0D, 0.0D);
             tessellator.addVertexWithUV(f10, 100.0D, (-f10), 1.0D, 0.0D);
@@ -429,14 +436,23 @@ public class SkyRenderer {
             tessellator.addVertexWithUV((-f10), 100.0D, f10, 0.0D, 1.0D);
             tessellator.draw();
             f10 = 20.0F;
-            renderEngine.bindTexture(locationMoonPhasesPng);
-            int k = world.getMoonPhase();
-            int l = k % 4;
-            int i1 = k / 4 % 2;
-            float f14 = (l + 0) / 4.0F;
-            float f15 = (i1 + 0) / 2.0F;
-            float f16 = (l + 1) / 4.0F;
-            float f17 = (i1 + 1) / 2.0F;
+            float f14, f15, f16, f17;
+            if (sickmoon) {
+                renderEngine.bindTexture(locationSickMoonPng);
+                f14 = 0.0f;
+                f15 = 0.0f;
+                f16 = 1.0f;
+                f17 = 1.0f;
+            } else {
+                renderEngine.bindTexture(locationMoonPhasesPng);
+                int k = world.getMoonPhase();
+                int l = k % 4;
+                int i1 = k / 4 % 2;
+                f14 = (l + 0) / 4.0F;
+                f15 = (i1 + 0) / 2.0F;
+                f16 = (l + 1) / 4.0F;
+                f17 = (i1 + 1) / 2.0F;
+            }
             tessellator.startDrawingQuads();
             tessellator.addVertexWithUV((-f10), -100.0D, f10, f16, f17);
             tessellator.addVertexWithUV(f10, -100.0D, f10, f14, f17);
@@ -459,35 +475,35 @@ public class SkyRenderer {
                         break;
                     case BODY_SUN:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 30.0F);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 30.0F, sicksun);
                         break;
                     case BODY_LARGESUN:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 80.0F);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 80.0F, sicksun);
                         break;
                     case BODY_SMALLSUN:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 10.0F);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 10.0F, sicksun);
                         break;
                     case BODY_REDSUN:
                         GL11.glColor4f(1.0F, 0.0F, 0.0F, f6);
-                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 30.0F);
+                        renderSun(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 30.0F, sicksun);
                         break;
                     case BODY_MOON:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 20.0F);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 20.0F, sickmoon);
                         break;
                     case BODY_LARGEMOON:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 60.0F);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 60.0F, sickmoon);
                         break;
                     case BODY_SMALLMOON:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
-                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 10.0F);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 10.0F, sickmoon);
                         break;
                     case BODY_REDMOON:
                         GL11.glColor4f(1.0F, 0.0F, 0.0F, f6);
-                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 20.0F);
+                        renderMoon(partialTickTime, world, renderEngine, tessellator, offset, factor, yangle, 20.0F, sickmoon);
                         break;
                     case BODY_PLANET:
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
@@ -519,20 +535,30 @@ public class SkyRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
-    private static void renderMoon(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, float offset, float factor, float yangle, float size) {
+    private static void renderMoon(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, float offset, float factor, float yangle, float size, boolean sickmoon) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(yangle, 0.0F, 1.0F, 0.0F);
         float angle = world.provider.calculateCelestialAngle(world.getWorldInfo().getWorldTime(), partialTickTime);
         angle = angle * factor + offset;
         GL11.glRotatef(angle * 360.0F, 1.0F, 0.0F, 0.0F);
-        renderEngine.bindTexture(locationMoonPhasesPng);
-        int k = world.getMoonPhase();
-        int l = k % 4;
-        int i1 = k / 4 % 2;
-        float f14 = (l + 0) / 4.0F;
-        float f15 = (i1 + 0) / 2.0F;
-        float f16 = (l + 1) / 4.0F;
-        float f17 = (i1 + 1) / 2.0F;
+
+        float f14, f15, f16, f17;
+        if (sickmoon) {
+            renderEngine.bindTexture(locationSickMoonPng);
+            f14 = 0.0f;
+            f15 = 0.0f;
+            f16 = 1.0f;
+            f17 = 1.0f;
+        } else {
+            renderEngine.bindTexture(locationMoonPhasesPng);
+            int k = world.getMoonPhase();
+            int l = k % 4;
+            int i1 = k / 4 % 2;
+            f14 = (l + 0) / 4.0F;
+            f15 = (i1 + 0) / 2.0F;
+            f16 = (l + 1) / 4.0F;
+            f17 = (i1 + 1) / 2.0F;
+        }
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV((-size), -100.0D, size, f16, f17);
         tessellator.addVertexWithUV(size, -100.0D, size, f14, f17);
@@ -541,13 +567,17 @@ public class SkyRenderer {
         tessellator.draw();
     }
 
-    private static void renderSun(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, float offset, float factor, float yangle, float size) {
+    private static void renderSun(float partialTickTime, WorldClient world, TextureManager renderEngine, Tessellator tessellator, float offset, float factor, float yangle, float size, boolean sicksun) {
         GL11.glTranslatef(0.0F, 0.0F, 0.0F);
         GL11.glRotatef(yangle, 0.0F, 1.0F, 0.0F);
         float angle = world.provider.calculateCelestialAngle(world.getWorldInfo().getWorldTime(), partialTickTime);
         angle = angle * factor + offset;
         GL11.glRotatef(angle * 360.0F, 1.0F, 0.0F, 0.0F);
-        renderEngine.bindTexture(locationSunPng);
+        if (sicksun) {
+            renderEngine.bindTexture(locationSickSunPng);
+        } else {
+            renderEngine.bindTexture(locationSunPng);
+        }
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV((-size), 100.0D, (-size), 0.0D, 0.0D);
         tessellator.addVertexWithUV(size, 100.0D, (-size), 1.0D, 0.0D);
