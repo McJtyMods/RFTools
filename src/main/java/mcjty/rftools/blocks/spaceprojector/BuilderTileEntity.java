@@ -49,6 +49,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETSILENT = "setSilent";
     public static final String CMD_SETSUPPORT = "setSupport";
     public static final String CMD_SETENTITIES = "setEntities";
+    public static final String CMD_SETLOOP = "setLoop";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -75,6 +76,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean silent = false;
     private boolean supportMode = false;
     private boolean entityMode = false;
+    private boolean loopMode = false;
 
     private int powered = 0;
 
@@ -99,7 +101,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode", "getEntityMode", "setEntityMode" };
+        return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode", "getEntityMode", "setEntityMode",
+            "getLoopMode", "setLoopMode" };
     }
 
     @Override
@@ -117,6 +120,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case 8: setSupportMode(((Double) arguments[0]).intValue() > 0); return null;
             case 9: return new Object[] { hasEntityMode() };
             case 10: setEntityMode(((Double) arguments[0]).intValue() > 0); return null;
+            case 11: return new Object[] { hasLoopMode() };
+            case 12: setLoopMode(((Double) arguments[0]).intValue() > 0); return null;
         }
         return new Object[0];
     }
@@ -221,6 +226,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getLoopMode(Context context, Arguments args) throws Exception {
+        return new Object[] { hasLoopMode()};
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setLoopMode(Context context, Arguments args) throws Exception {
+        boolean ent = args.checkBoolean(0);
+        setLoopMode(ent);
+        return null;
+    }
+
     private NBTTagCompound hasCard() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
         if (itemStack == null || itemStack.stackSize == 0) {
@@ -293,6 +312,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
+    }
+
+    public boolean hasLoopMode() {
+        return loopMode;
+    }
+
+    public void setLoopMode(boolean loopMode) {
+        this.loopMode = loopMode;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public boolean hasEntityMode() {
@@ -457,9 +486,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         restartScan();
     }
 
-    // Calculate a good starting point to avoid problems with overlapping areas.
     private void restartScan() {
         scan = minBox;
+        // Calculate a good starting point to avoid problems with overlapping areas.
 //        if (boxValid) {
 //            // This is the default.
 //            scan = minBox;
@@ -483,15 +512,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     protected void checkStateServer() {
         if (powered == 0) {
+            if (loopMode) {
+                return;
+            }
+        }
+
+        if (scan == null) {
             return;
         }
 
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel == null) return;
-
-        if (scan == null) {
-            return;
-        }
 
         int dimension = chamberChannel.getDimension();
         World world = DimensionManager.getWorld(dimension);
@@ -906,9 +937,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (z >= maxBox.getZ()) {
                     if (y >= maxBox.getY()) {
                         if (mode != MODE_SWAP) {
-                            // We don't restart in swap mode.
                             restartScan();
                         } else {
+                            // We don't restart in swap mode.
                             scan = null;
                         }
                     } else {
@@ -1014,6 +1045,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         silent = tagCompound.getBoolean("silent");
         supportMode = tagCompound.getBoolean("support");
         entityMode = tagCompound.getBoolean("entityMode");
+        loopMode = tagCompound.getBoolean("loopMode");
         scan = Coordinate.readFromNBT(tagCompound, "scan");
         minBox = Coordinate.readFromNBT(tagCompound, "minBox");
         maxBox = Coordinate.readFromNBT(tagCompound, "maxBox");
@@ -1043,6 +1075,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setBoolean("silent", silent);
         tagCompound.setBoolean("support", supportMode);
         tagCompound.setBoolean("entityMode", entityMode);
+        tagCompound.setBoolean("loopMode", loopMode);
         Coordinate.writeToNBT(tagCompound, "scan", scan);
         Coordinate.writeToNBT(tagCompound, "minBox", minBox);
         Coordinate.writeToNBT(tagCompound, "maxBox", maxBox);
@@ -1084,6 +1117,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         } else if (CMD_SETENTITIES.equals(command)) {
             setEntityMode(args.get("entities").getBoolean());
+            return true;
+        } else if (CMD_SETLOOP.equals(command)) {
+            setLoopMode(args.get("loop").getBoolean());
             return true;
         }
         return false;

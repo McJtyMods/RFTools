@@ -25,6 +25,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel silentMode;
     private ImageChoiceLabel supportMode;
     private ImageChoiceLabel entityMode;
+    private ImageChoiceLabel loopMode;
 
     private ToggleButton anchor[] = new ToggleButton[4];
     private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
@@ -112,8 +113,20 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         entityMode.addChoice("on", "Entities are moved", guiElements, 8*16, 3*16);
         entityMode.setCurrentChoice(tileEntity.hasEntityMode() ? 1 : 0);
 
+        loopMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(66, 42, 16, 16)).
+                setTooltips("Loop mode").
+                addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setLoopMode();
+                    }
+                });
+        loopMode.addChoice("off", "Do a single run and stop", guiElements, 13*16, 3*16);
+        loopMode.addChoice("on", "Keep running with redstone signal", guiElements, 12*16, 3*16);
+        loopMode.setCurrentChoice(tileEntity.hasLoopMode() ? 1 : 0);
+
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode).addChild(entityMode);
+                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode).addChild(entityMode).addChild(loopMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         for (int y = 0 ; y <= 1 ; y++) {
@@ -134,6 +147,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer();
+    }
+
+    private void setLoopMode() {
+        sendServerCommand(CMD_SETLOOP, new Argument("loop", loopMode.getCurrentChoiceIndex() == 1));
     }
 
     private void setSilentMode() {
