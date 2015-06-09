@@ -97,16 +97,21 @@ public class GuiChamberDetails extends GuiScreen {
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
             Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-            nameLabel.setText(stack.getDisplayName()).setDesiredWidth(120);
+            nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
 
-            Label countLabel = new Label(mc, this);
+            Label countLabel = new Label(mc, this).setText(String.valueOf(count));
+            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
+
+            Label costLabel = new Label(mc, this);
+            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+
             if (cost == -1) {
-                countLabel.setText(String.valueOf(count) + "    NOT MOVABLE!");
+                costLabel.setText("NOT MOVABLE!");
             } else {
-                countLabel.setText(String.valueOf(count) + "    Move Cost " + cost + " RF");
+                costLabel.setText("Move Cost " + cost + " RF");
                 totalCost += cost;
             }
-            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel);
+            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel).addChild(costLabel);
             blockList.addChild(panel);
         }
 
@@ -138,16 +143,21 @@ public class GuiChamberDetails extends GuiScreen {
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
 
             Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-            nameLabel.setText(aClass.getSimpleName()).setDesiredWidth(120);
+            nameLabel.setText(aClass.getSimpleName()).setDesiredWidth(160);
 
-            Label countLabel = new Label(mc, this);
+            Label countLabel = new Label(mc, this).setText(String.valueOf(count));
+            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
+
+            Label costLabel = new Label(mc, this);
+            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+
             if (cost == -1) {
-                countLabel.setText(String.valueOf(count) + "    NOT MOVABLE!");
+                costLabel.setText("NOT MOVABLE!");
             } else {
-                countLabel.setText(String.valueOf(count) + "    Move Cost " + cost + " RF");
+                costLabel.setText("Move Cost " + cost + " RF");
                 totalCostEntities += cost;
             }
-            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel);
+            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel).addChild(costLabel);
             blockList.addChild(panel);
         }
 
