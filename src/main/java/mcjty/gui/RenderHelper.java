@@ -6,6 +6,9 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -13,7 +16,53 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class RenderHelper {
+    public static float rot = 0.0f;
+
+    public static void renderEntity(Entity entity, int xPos, int yPos) {
+        GL11.glPushMatrix();
+        GL11.glColor3f(1F, 1F, 1F);
+        GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
+        GL11.glEnable(2903 /* GL_COLOR_MATERIAL */);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(xPos + 8, yPos + 16, 50F);
+        float f1 = 10F;
+        GL11.glScalef(-f1, f1, f1);
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(rot, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(0.0F, 1.0F, 0.0F, 0.0F);
+//        entity.renderYawOffset = entity.rotationYaw = entity.prevRotationYaw = entity.prevRotationYawHead = entity.rotationYawHead = 0;//this.rotateTurret;
+        entity.rotationPitch = 0.0F;
+        GL11.glTranslatef(0.0F, entity.yOffset, 0.0F);
+        RenderManager.instance.playerViewY = 180F;
+        RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D,
+                0.0F, 1.0F);
+        GL11.glPopMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+
+        GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+        GL11.glTranslatef(0F, 0F, 0.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
+        int i1 = 240;
+        int k1 = 240;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
+                i1 / 1.0F, k1 / 1.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(2896 /* GL_LIGHTING */);
+        GL11.glDisable(2929 /* GL_DEPTH_TEST */);
+        GL11.glPopMatrix();
+    }
+
     public static boolean renderObject(Minecraft mc, int x, int y, Object itm, boolean highlight) {
+        if (itm instanceof Entity) {
+            renderEntity((Entity) itm, x, y);
+            return true;
+        }
         RenderItem itemRender = new RenderItem();
         return renderObject(mc, itemRender, x, y, itm, highlight, 200);
     }

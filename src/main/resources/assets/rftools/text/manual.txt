@@ -704,6 +704,10 @@ link the controller to the card.
 Then put that card in the builder, set the right mode and other
 parameters and give it a redstone signal.
 {-------------------------------------------------------------}
+If you right click a linked space chamber card it will give you
+an overview of all blocks and entities together with the cost
+of moving them.
+{-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
 

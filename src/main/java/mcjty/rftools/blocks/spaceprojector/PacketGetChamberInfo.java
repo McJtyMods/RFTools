@@ -8,10 +8,17 @@ import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Counter;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PacketGetChamberInfo implements IMessage, IMessageHandler<PacketGetChamberInfo, PacketChamberInfoReady> {
     @Override
@@ -51,6 +58,7 @@ public class PacketGetChamberInfo implements IMessage, IMessageHandler<PacketGet
         }
 
         Counter<BlockMeta> blocks = new Counter<BlockMeta>();
+        Counter<BlockMeta> costs = new Counter<BlockMeta>();
         Coordinate minCorner = chamberChannel.getMinCorner();
         Coordinate maxCorner = chamberChannel.getMaxCorner();
         for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
@@ -61,11 +69,30 @@ public class PacketGetChamberInfo implements IMessage, IMessageHandler<PacketGet
                         int meta = world.getBlockMetadata(x, y, z);
                         BlockMeta bm = new BlockMeta(block, meta);
                         blocks.increment(bm);
+
+                        TileEntity te = world.getTileEntity(x, y, z);
+                        SpaceProjectorSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(block, te);
+                        if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+                            costs.put(bm, -1);
+                        } else {
+                            costs.increment(bm, (int) (SpaceProjectorConfiguration.builderRfPerOperation * info.getCostFactor()));
+                        }
                     }
                 }
             }
         }
 
-        return new PacketChamberInfoReady(blocks);
+        Counter<String> entitiesWithCount = new Counter<String>();
+        Counter<String> entitiesWithCost = new Counter<String>();
+        List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(
+                minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX()+1, maxCorner.getY()+1, maxCorner.getZ()+1));
+        for (Object o : entities) {
+            Entity entity = (Entity) o;
+            String canonicalName = entity.getClass().getCanonicalName();
+            entitiesWithCount.increment(canonicalName);
+            entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerEntity);
+        }
+
+        return new PacketChamberInfoReady(blocks, costs, entitiesWithCount, entitiesWithCost);
     }
 }

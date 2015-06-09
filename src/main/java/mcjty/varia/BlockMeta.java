@@ -26,4 +26,24 @@ public class BlockMeta {
     public byte getMeta() {
         return meta;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlockMeta blockMeta = (BlockMeta) o;
+
+        if (meta != blockMeta.meta) return false;
+        if (!block.equals(blockMeta.block)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Block.blockRegistry.getIDForObject(block);
+        result = 31 * result + meta;
+        return result;
+    }
 }

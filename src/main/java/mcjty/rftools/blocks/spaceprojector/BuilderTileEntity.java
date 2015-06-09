@@ -603,7 +603,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
+    public static SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
         if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
             return SpaceProjectorSetup.BlockInformation.INVALID;
         }
