@@ -202,6 +202,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.setTextFocus(filter);
     }
 
     private void setSortMode(String sortMode) {
