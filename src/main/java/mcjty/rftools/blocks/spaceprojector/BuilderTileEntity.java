@@ -622,7 +622,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     // True if this block can just be overwritten (i.e. are or support block)
-    private boolean isEmpty(Block block) {
+    public static boolean isEmpty(Block block) {
         if (block == null) {
             return true;
         }

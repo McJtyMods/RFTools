@@ -135,6 +135,7 @@ public class RFTools {
     public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
     public static final int GUI_STORAGE_FILTER = modGuiIndex++;
     public static final int GUI_BUILDER = modGuiIndex++;
+    public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
 
 
     public static void logError(String msg) {

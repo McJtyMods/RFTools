@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -38,10 +39,24 @@ public class SpaceChamberCardItem extends Item {
         } else {
             list.add(EnumChatFormatting.YELLOW + "Channel is not set!");
         }
-        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a space chamber controller");
-        list.add(EnumChatFormatting.WHITE + "to set the channel for this card.");
-        list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
-        list.add(EnumChatFormatting.WHITE + "linked area");
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.WHITE + "Sneak right-click on a space chamber controller");
+            list.add(EnumChatFormatting.WHITE + "to set the channel for this card.");
+            list.add(EnumChatFormatting.WHITE + "Right-click in the air to show an overview of");
+            list.add(EnumChatFormatting.WHITE + "the area contents.");
+            list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
+            list.add(EnumChatFormatting.WHITE + "linked area");
+        } else {
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!player.isSneaking()) {
+            showDetails(world, player, stack);
+        }
+        return super.onItemRightClick(stack, world, player);
     }
 
     @Override
@@ -52,16 +67,14 @@ public class SpaceChamberCardItem extends Item {
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
+
         int channel = -1;
         if (te instanceof SpaceChamberControllerTileEntity) {
             channel = ((SpaceChamberControllerTileEntity) te).getChannel();
         }
 
         if (channel == -1) {
-            tagCompound.removeTag("channel");
-            if (world.isRemote) {
-                RFTools.message(player, "Card is cleared");
-            }
+            showDetails(world, player, stack);
         } else {
             tagCompound.setInteger("channel", channel);
             if (world.isRemote) {
@@ -70,4 +83,22 @@ public class SpaceChamberCardItem extends Item {
         }
         return true;
     }
+
+    private void showDetails(World world, EntityPlayer player, ItemStack stack) {
+        if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("channel")) {
+            int channel = stack.getTagCompound().getInteger("channel");
+            if (channel != -1) {
+                showDetailsGui(world, player);
+            } else {
+                RFTools.message(player, EnumChatFormatting.YELLOW + "Card is not linked!");
+            }
+        }
+    }
+
+    private void showDetailsGui(World world, EntityPlayer player) {
+        if (world.isRemote) {
+            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        }
+    }
+
 }

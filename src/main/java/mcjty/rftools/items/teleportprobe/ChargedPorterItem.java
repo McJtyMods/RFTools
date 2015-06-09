@@ -18,6 +18,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -170,10 +171,14 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                 list.add(EnumChatFormatting.RED + "No target set! Sneak-Right click on receiver to set.");
             }
         }
-        list.add("This RF/charged item allows you to teleport to a");
-        list.add("previously set matter receiver. Sneak-right click");
-        list.add("on a receiver to set the destination.");
-        list.add("Right click to perform the teleport.");
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add("This RF/charged item allows you to teleport to a");
+            list.add("previously set matter receiver. Sneak-right click");
+            list.add("on a receiver to set the destination.");
+            list.add("Right click to perform the teleport.");
+        } else {
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
     }
 
 

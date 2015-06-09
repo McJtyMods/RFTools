@@ -118,9 +118,12 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
 
     public int getChamberSize() {
         if (channel == -1) {
-            return 0;
+            return -1;
         }
-        return Coordinate.area(maxCorner, maxCorner);
+        if (minCorner == null) {
+            return -1;
+        }
+        return Coordinate.area(minCorner, maxCorner);
     }
 
     public void setChannel(int channel) {

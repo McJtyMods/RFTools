@@ -2,6 +2,7 @@ package mcjty.rftools.gui;
 
 import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.spaceprojector.GuiChamberDetails;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
@@ -21,7 +22,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_DEVELOPERS_DELIGHT ||
-                guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_MANUAL_DIMENSION) {
+                guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_MANUAL_DIMENSION || guiid == RFTools.GUI_CHAMBER_DETAILS) {
             return null;
         } else if (guiid == RFTools.GUI_REMOTE_STORAGE_ITEM) {
             return new RemoteStorageItemContainer(entityPlayer);
@@ -58,6 +59,8 @@ public class GuiProxy implements IGuiHandler {
             return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
             return new GuiStorageFilter(new StorageFilterContainer(entityPlayer));
+        } else if (guiid == RFTools.GUI_CHAMBER_DETAILS) {
+            return new GuiChamberDetails();
         }
 
         Block block = world.getBlock(x, y, z);
