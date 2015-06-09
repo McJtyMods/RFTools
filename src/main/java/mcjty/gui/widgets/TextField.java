@@ -39,6 +39,9 @@ public class TextField extends AbstractWidget<TextField> {
     public Widget mouseClick(Window window, int x, int y, int button) {
         if (isEnabledAndVisible()) {
             window.setTextFocus(this);
+            if (button == 1) {
+                setText("");
+            }
             return this;
         }
         return null;
