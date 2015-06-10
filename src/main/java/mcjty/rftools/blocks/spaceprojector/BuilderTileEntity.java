@@ -280,9 +280,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
                             world.setBlock(src.getX(), src.getY(), src.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
+                            world.setBlockMetadataWithNotify(src.getX(), src.getY(), src.getZ(), error, 3);
                         }
                         if (isEmpty(dstBlock) && !isEmpty(srcBlock)) {
                             worldObj.setBlock(dest.getX(), dest.getY(), dest.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
+                            worldObj.setBlockMetadataWithNotify(dest.getX(), dest.getY(), dest.getZ(), error, 3);
                         }
                     }
                 }
@@ -648,13 +650,28 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public static SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
-        if (tileEntity != null && SpaceProjectorConfiguration.ignoreTileEntities) {
-            return SpaceProjectorSetup.BlockInformation.INVALID;
-        }
         if (isEmpty(block)) {
             return SpaceProjectorSetup.BlockInformation.FREE;
         }
         SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.blockInformationMap.get(block.getUnlocalizedName());
+        if (tileEntity != null) {
+            switch (SpaceProjectorConfiguration.teMode) {
+                case MOVE_FORBIDDEN:
+                    return SpaceProjectorSetup.BlockInformation.INVALID;
+                case MOVE_WHITELIST:
+                    if (blockInformation == null || blockInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+                        return SpaceProjectorSetup.BlockInformation.INVALID;
+                    }
+                    break;
+                case MOVE_BLACKLIST:
+                    if (blockInformation != null && blockInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+                        return SpaceProjectorSetup.BlockInformation.INVALID;
+                    }
+                    break;
+                case MOVE_ALLOWED:
+                    break;
+            }
+        }
         if (blockInformation != null) {
             return blockInformation;
         }

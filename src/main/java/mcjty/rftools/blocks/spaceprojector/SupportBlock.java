@@ -71,6 +71,7 @@ public class SupportBlock extends Block {
      * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
      * coordinates.  Args: blockAccess, x, y, z, side
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
         Block block = blockAccess.getBlock(x, y, z);

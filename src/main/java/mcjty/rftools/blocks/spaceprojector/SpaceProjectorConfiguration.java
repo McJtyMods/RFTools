@@ -15,7 +15,7 @@ public class SpaceProjectorConfiguration {
     public static int builderRfPerEntity = 5000;
     public static double dimensionCostFactor = 5.0f;
 
-    public static boolean ignoreTileEntities = false;
+    public static BuilderTileEntityMode teMode = BuilderTileEntityMode.MOVE_WHITELIST;
 
     public static int maxSpaceChamberDimension = 128;
 
@@ -32,8 +32,8 @@ public class SpaceProjectorConfiguration {
                 "RF per block operation for the builder").getInt();
         builderRfPerEntity = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerEntity", builderRfPerEntity,
                 "RF per entity operation for the builder").getInt();
-        ignoreTileEntities = cfg.get(CATEGORY_SPACEPROJECTOR, "ignoreTileEntities", ignoreTileEntities,
-                "If false then the builder will move/swap tile entities. Otherwise it will leave these blocks alone").getBoolean();
+        teMode = BuilderTileEntityMode.find(cfg.get(CATEGORY_SPACEPROJECTOR, "tileEntityMode", teMode.getName(),
+                "Can Tile Entities be moved? 'forbidden' means never, 'whitelist' means only whitelisted, 'blacklist' means all except blacklisted, 'allowed' means all").getString());
         maxSpaceChamberDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxSpaceChamberDimension", maxSpaceChamberDimension,
                 "Maximum dimension for the space chamber").getInt();
         dimensionCostFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "dimensionCostFactor", dimensionCostFactor,
