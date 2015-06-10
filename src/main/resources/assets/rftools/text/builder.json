@@ -1,7 +1,11 @@
 {
     "movables": [
         [ "tile.mobSpawner","+",50.0 ],
-        [ "tile.blockAiry","+",2000.0 ]
+        [ "tile.blockAiry","+",2000.0 ],
+        [ "tile.furnace","+",1.0 ],
+
+        [ "modid:ThermalExpansion","+",1.0 ],
+        [ "modid:EnderIO","+",1.0 ]
     ],
     "rotatables": [
         [ "tile.chest","mfff" ],

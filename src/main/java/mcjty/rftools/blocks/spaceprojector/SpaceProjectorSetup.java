@@ -9,6 +9,8 @@ import mcjty.rftools.CommonProxy;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.RFToolsTools;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -28,7 +30,7 @@ public class SpaceProjectorSetup {
 
     public static SpaceChamberCardItem spaceChamberCardItem;
 
-    public static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
+    private static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
 
     public static void setupBlocks() {
         proxyBlock = new ProxyBlock();
@@ -143,6 +145,15 @@ public class SpaceProjectorSetup {
             }
             blockInformationMap.put(blockName, new BlockInformation(old, rotatable));
         }
+    }
+
+    public static BlockInformation getBlockInformation(Block block) {
+        BlockInformation blockInformation = blockInformationMap.get(block.getUnlocalizedName());
+        if (blockInformation == null) {
+            String modid = RFToolsTools.getModidForBlock(block);
+            blockInformation = blockInformationMap.get("modid:" + modid);
+        }
+        return blockInformation;
     }
 
     public static class BlockInformation {

@@ -653,7 +653,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmpty(block)) {
             return SpaceProjectorSetup.BlockInformation.FREE;
         }
-        SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.blockInformationMap.get(block.getUnlocalizedName());
+        SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.getBlockInformation(block);
         if (tileEntity != null) {
             switch (SpaceProjectorConfiguration.teMode) {
                 case MOVE_FORBIDDEN:
