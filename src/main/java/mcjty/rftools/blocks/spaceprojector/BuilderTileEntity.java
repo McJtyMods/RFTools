@@ -494,6 +494,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void restartScan() {
         if (loopMode || (powered > 0 && scan == null)) {
+            calculateBox();
             scan = minBox;
         } else {
             scan = null;
