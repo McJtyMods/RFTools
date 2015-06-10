@@ -46,7 +46,8 @@ public class DevelopersDelightItem extends Item {
             return;
         }
         int meta = world.getBlockMetadata(x, y, z);
-        RFTools.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta);
+        String modid = RFToolsTools.getModidForBlock(block);
+        RFTools.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             NBTTagCompound tag = new NBTTagCompound();
