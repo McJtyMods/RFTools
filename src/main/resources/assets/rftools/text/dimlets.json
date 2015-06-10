@@ -115,7 +115,7 @@
         [ "Material", "tile.netherores.ore.09", 12000, 2000, 500, 4, 1 ],
         [ "Material", "tile.netherores.ore.11", 10000, 2100, 500, 3, 1 ],
         [ "Material", "tile.netherores.ore.12", 18000, 2200, 500, 3, 1 ],
-        [ "Material", "tile.netherores.ore.13", 8000, 1800, 400, 3, 1 ],
+        [ "Material", "tile.netherores.ore.13", 200000, 100000, 2000, 6, 1 ],
         [ "Material", "tile.netherores.ore.14", 8000, 1800, 400, 3, 1 ],
         [ "Material", "tile.netherores.ore.15", 5000, 1000, 400, 3, 1 ],
         [ "Material", "tile.netherores.ore.16", 10000, 1800, 400, 3, 1 ],
