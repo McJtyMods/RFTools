@@ -1,12 +1,12 @@
 package mcjty.rftools.dimension;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.description.*;
 import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
-import mcjty.rftools.items.dimlets.types.PatreonDimletType;
 import mcjty.rftools.items.dimlets.types.Patreons;
 import mcjty.rftools.network.NetworkTools;
 import mcjty.varia.BlockMeta;
@@ -160,56 +160,12 @@ public class DimensionInformation {
         return null;
     }
 
-    private static StringBuffer appendIndent(StringBuffer buffer, int indent) {
-        return buffer.append("                                                  ".substring(0, indent));
-    }
-
-    private static void convertNBTtoJson(StringBuffer buffer, NBTTagList tagList, int indent) {
-        for (int i = 0 ; i < tagList.tagCount() ; i++) {
-            NBTTagCompound compound = tagList.getCompoundTagAt(i);
-            appendIndent(buffer, indent).append("{\n");
-            convertNBTtoJson(buffer, compound, indent + 4);
-            appendIndent(buffer, indent).append("},\n");
-        }
-    }
-
-    private static void convertNBTtoJson(StringBuffer buffer, NBTTagCompound tagCompound, int indent) {
-        boolean first = true;
-        for (Object o : tagCompound.func_150296_c()) {
-            if (!first) {
-                buffer.append(",\n");
-            }
-            first = false;
-
-            String key = (String) o;
-            NBTBase tag = tagCompound.getTag(key);
-            appendIndent(buffer, indent).append(key).append(':');
-            if (tag instanceof NBTTagCompound) {
-                NBTTagCompound compound = (NBTTagCompound) tag;
-                buffer.append("{\n");
-                convertNBTtoJson(buffer, compound, indent + 4);
-                appendIndent(buffer, indent).append('}');
-            } else if (tag instanceof NBTTagList) {
-                NBTTagList list = (NBTTagList) tag;
-                buffer.append("[\n");
-                convertNBTtoJson(buffer, list, indent + 4);
-                appendIndent(buffer, indent).append(']');
-            } else {
-                buffer.append(tag);
-            }
-        }
-        if (!first) {
-            buffer.append("\n");
-        }
-    }
-
-
     public String buildJson(String filename) {
         NBTTagCompound tagCompound = new NBTTagCompound();
         writeToNBT(tagCompound);
         StringBuffer buffer = new StringBuffer();
         buffer.append("{\n");
-        convertNBTtoJson(buffer, tagCompound, 4);
+        RFToolsTools.convertNBTtoJson(buffer, tagCompound, 4);
         buffer.append("}");
         String json = buffer.toString();
 //        String json = tagCompound.toString();
