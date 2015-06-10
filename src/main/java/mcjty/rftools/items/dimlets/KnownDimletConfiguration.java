@@ -3,10 +3,10 @@ package mcjty.rftools.items.dimlets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.rftools.CommonProxy;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.KnownDimletShapedRecipe;
@@ -766,19 +766,6 @@ public class KnownDimletConfiguration {
         return id;
     }
 
-    public static String getModidForBlock(Block block) {
-        String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
-        if (nameForObject == null) {
-            return "?";
-        }
-        String[] lst = StringUtils.split(nameForObject, ":");
-        if (lst.length >= 2) {
-            return lst[0];
-        } else {
-            return "?";
-        }
-    }
-
     private static int initMaterialItem(Configuration cfg, Block block, int meta, DimletMapping mapping, boolean master) {
         String unlocalizedName = block.getUnlocalizedName();
         if (unlocalizedName != null && !unlocalizedName.isEmpty()) {
@@ -787,7 +774,7 @@ public class KnownDimletConfiguration {
             }
             DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
 
-            String modid = getModidForBlock(block);
+            String modid = RFToolsTools.getModidForBlock(block);
             int id = registerDimlet(cfg, key, mapping, master, modid);
             if (id != -1) {
                 ItemStack stack = new ItemStack(block, 1, meta);
@@ -948,7 +935,7 @@ public class KnownDimletConfiguration {
                     try {
                         Block block = me.getValue().getBlock();
                         if (block != null) {
-                            String modid = getModidForBlock(block);
+                            String modid = RFToolsTools.getModidForBlock(block);
                             String displayName = new FluidStack(me.getValue(), 1).getLocalizedName();
                             DimletKey key = new DimletKey(DimletType.DIMLET_LIQUID, name);
                             int id = registerDimlet(cfg, key, mapping, master, modid);

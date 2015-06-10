@@ -1,5 +1,6 @@
 package mcjty.rftools.commands;
 
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.varia.BlockMeta;
@@ -81,12 +82,12 @@ public class CmdDimletCfg extends AbstractRfToolsCommand {
             if (type == DimletType.DIMLET_MATERIAL) {
                 BlockMeta blockMeta = DimletObjectMapping.idToBlock.get(key);
                 if (blockMeta != null) {
-                    modid = KnownDimletConfiguration.getModidForBlock(blockMeta.getBlock());
+                    modid = RFToolsTools.getModidForBlock(blockMeta.getBlock());
                 }
             } else if (type == DimletType.DIMLET_LIQUID) {
                 Block block = DimletObjectMapping.idToFluid.get(key);
                 if (block != null) {
-                    modid = KnownDimletConfiguration.getModidForBlock(block);
+                    modid = RFToolsTools.getModidForBlock(block);
                 }
             }
             if (modid != null && !"?".equals(modid)) {

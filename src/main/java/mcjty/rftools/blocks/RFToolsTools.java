@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks;
 
+import cpw.mods.fml.common.registry.GameData;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -68,6 +70,19 @@ public class RFToolsTools {
         }
         if (!first) {
             buffer.append("\n");
+        }
+    }
+
+    public static String getModidForBlock(Block block) {
+        String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        if (nameForObject == null) {
+            return "?";
+        }
+        String[] lst = StringUtils.split(nameForObject, ":");
+        if (lst.length >= 2) {
+            return lst[0];
+        } else {
+            return "?";
         }
     }
 }
