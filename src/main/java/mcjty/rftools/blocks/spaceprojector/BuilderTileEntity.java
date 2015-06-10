@@ -364,10 +364,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public void setMode(int mode) {
-        this.mode = mode;
-        restartScan();
-        markDirty();
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        if (mode != this.mode) {
+            this.mode = mode;
+            restartScan();
+            markDirty();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     }
 
     public int getAnchor() {
@@ -378,7 +380,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (supportMode) {
             clearSupportBlocks();
         }
-        boxValid = false;
         this.anchor = anchor;
         if (supportMode) {
             makeSupportBlocks();
@@ -408,7 +409,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setPowered(int powered) {
         if (this.powered != powered) {
             this.powered = powered;
-            restartScan();
+            if (loopMode || (powered > 0 && scan == null)) {
+                restartScan();
+            }
             markDirty();
         }
     }
@@ -487,7 +490,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void restartScan() {
-        scan = minBox;
+        if (loopMode || (powered > 0 && scan == null)) {
+            scan = minBox;
+        } else {
+            scan = null;
+        }
         // Calculate a good starting point to avoid problems with overlapping areas.
 //        if (boxValid) {
 //            // This is the default.
@@ -511,10 +518,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     protected void checkStateServer() {
-        if (powered == 0) {
-            if (loopMode) {
-                return;
-            }
+        if (powered == 0 && loopMode) {
+            return;
         }
 
         if (scan == null) {
@@ -522,7 +527,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
-        if (chamberChannel == null) return;
+        if (chamberChannel == null) {
+            scan = null;
+            markDirty();
+            return;
+        }
 
         int dimension = chamberChannel.getDimension();
         World world = DimensionManager.getWorld(dimension);
