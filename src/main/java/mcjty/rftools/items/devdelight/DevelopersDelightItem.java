@@ -51,10 +51,14 @@ public class DevelopersDelightItem extends Item {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             NBTTagCompound tag = new NBTTagCompound();
-            tileEntity.writeToNBT(tag);
-            StringBuffer buffer = new StringBuffer();
-            RFToolsTools.convertNBTtoJson(buffer, tag, 0);
-            RFTools.log(buffer.toString());
+            try {
+                tileEntity.writeToNBT(tag);
+                StringBuffer buffer = new StringBuffer();
+                RFToolsTools.convertNBTtoJson(buffer, tag, 0);
+                RFTools.log(buffer.toString());
+            } catch (Exception e) {
+                RFTools.log("Catched a crash during dumping of NBT");
+            }
         }
     }
 

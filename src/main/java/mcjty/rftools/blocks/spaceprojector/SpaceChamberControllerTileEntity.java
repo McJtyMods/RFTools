@@ -105,6 +105,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         chamberRepository.save(worldObj);
 
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
