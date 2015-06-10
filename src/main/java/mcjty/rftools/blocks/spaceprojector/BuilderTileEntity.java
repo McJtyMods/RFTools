@@ -13,6 +13,7 @@ import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.RFToolsTools;
+import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -26,9 +27,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -770,8 +773,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             Entity entity = (Entity) o;
-            entity.setWorld(destWorld);
-            entity.setPosition(destX + (entity.posX-x), destY + (entity.posY-y), destZ + (entity.posZ-z));
+
+            double newX = destX + (entity.posX - x);
+            double newY = destY + (entity.posY - y);
+            double newZ = destZ + (entity.posZ - z);
+
+            teleportEntity(world, destWorld, entity, newX, newY, newZ);
         }
     }
 
@@ -792,8 +799,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     consumeEnergy(rfNeeded);
                 }
 
-                entity.setWorld(destWorld);
-                entity.setPosition(destX + (entity.posX - x), destY + (entity.posY - y), destZ + (entity.posZ - z));
+                double newX = destX + (entity.posX - x);
+                double newY = destY + (entity.posY - y);
+                double newZ = destZ + (entity.posZ - z);
+                teleportEntity(world, destWorld, entity, newX, newY, newZ);
             }
         }
         for (Object o : entitiesDst) {
@@ -807,10 +816,21 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     consumeEnergy(rfNeeded);
                 }
 
-                entity.setWorld(world);
-                entity.setPosition(x + (entity.posX - destX), y + (entity.posY - destY), z + (entity.posZ - destZ));
+                double newX = x + (entity.posX - destX);
+                double newY = y + (entity.posY - destY);
+                double newZ = z + (entity.posZ - destZ);
+                teleportEntity(destWorld, world, entity, newX, newY, newZ);
             }
         }
+    }
+
+    private void teleportEntity(World world, World destWorld, Entity entity, double newX, double newY, double newZ) {
+        if (world.provider.dimensionId != destWorld.provider.dimensionId) {
+            MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, destWorld.provider.dimensionId, (WorldServer) world, (WorldServer) destWorld,
+                    new RfToolsTeleporter((WorldServer) destWorld, newX, newY, newZ));
+        }
+
+        entity.setPosition(newX, newY, newZ);
     }
 
     private boolean isEntityInBlock(int x, int y, int z, Entity entity) {
