@@ -689,6 +689,18 @@ the blocks to build with.
 Using the GUI you can control where the builder should place the
 blocks (always at the back of the builder).
 {-------------------------------------------------------------}
+Other GUI options are:
+{i:textures/gui/guielements.png,160,48,Silent mode: mute sounds from moving blocks}
+{i:textures/gui/guielements.png,96,48,Support mode}
+In this mode support blocks are created at the source and destination
+areas. This helps to see where the end result will go as well as
+support sand/gravel and liquids during the move.
+{i:textures/gui/guielements.png,128,48,Entity mode: also move entities}
+{i:textures/gui/guielements.png,192,48,Loop mode}
+In this mode the builder will keep running as long as it has a redstone
+signal and keep on moving or copying if there is room to do so. If
+this is off the builder will do one pass and stop.
+{-------------------------------------------------------------}
 You can use Space Chamber blocks to mark the corners of the source
 area that you want to work. One of these corners should be a
 Space Chamber Controller block.

@@ -15,6 +15,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -217,53 +218,87 @@ public class TextPage extends AbstractWidget<TextPage> {
                 tabCounter++;
             }
             else if (line.recipe != null) {
-                y += 4;
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                // @TODO: need support for shapeless and better error checking
-                ShapedRecipes shapedRecipes = (ShapedRecipes) line.recipe;
-                if (craftingGridImage != null) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(craftingGridImage);
-                    gui.drawTexturedModalRect(25+x, y, craftU, craftV, 19*3, 19*3);
-                }
-                for (int i = 0 ; i < 3 ; i++) {
-                    for (int j = 0 ; j < 3 ; j++) {
-                        if (i < shapedRecipes.recipeWidth && j < shapedRecipes.recipeHeight) {
-                            RenderHelper.renderObject(mc, 26 + x + i * 18, 1 + y + j * 18, shapedRecipes.recipeItems[i + j * 3], false);
-                        }
-                    }
-                }
-                if (arrowImage != null) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(arrowImage);
-                    gui.drawTexturedModalRect(x+25+67, y+18, arrowU, arrowV, 16, 16);
-                }
-                if (craftingGridImage != null) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(craftingGridImage);
-                    gui.drawTexturedModalRect(x+25+92, y + 16, craftU, craftV, 18, 18);
-                }
-                RenderHelper.renderObject(mc, x+25+93, y + 17, shapedRecipes.getRecipeOutput(), false);
-                y -= 4;
+                y = renderRecipe(x, y, line);
+            } else if (line.resourceLocation != null) {
+                renderImage(x, y, line);
             } else if (line.line != null) {
-                String s = "";
-                int col = 0xFF000000;
-                dx = 0;
-                if (line.isBold()) {
-                    char c = 167;
-                    s = Character.toString(c) + "l";
-                }
-                if (line.isLink()) {
-                    char c = 167;
-                    s = Character.toString(c) + "n";
-                    col = 0xFF0040AA;
-                    dx = 25;
-                }
-                s += line.line;
-                mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, bounds.width-dx), x + dx + bounds.x, y + bounds.y, col);
+                renderLine(x, y, line);
             }
             y += line.height;
         }
+    }
+
+    private void renderImage(int x, int y, Line line) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.getTextureManager().bindTexture(line.resourceLocation);
+        gui.drawTexturedModalRect(x+4, y+1, line.u, line.v, 16, 16);
+
+        int dx = 22;
+        String s = "";
+        int col = 0xFF000000;
+        if (line.isBold()) {
+            char c = 167;
+            s = Character.toString(c) + "l";
+        }
+        if (line.isLink()) {
+            char c = 167;
+            s = Character.toString(c) + "n";
+            col = 0xFF0040AA;
+            dx = 25;
+        }
+        s += line.line;
+        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, bounds.width-dx), x + dx + bounds.x, y + bounds.y + 3, col);
+    }
+
+    private void renderLine(int x, int y, Line line) {
+        int dx;
+        String s = "";
+        int col = 0xFF000000;
+        dx = 0;
+        if (line.isBold()) {
+            char c = 167;
+            s = Character.toString(c) + "l";
+        }
+        if (line.isLink()) {
+            char c = 167;
+            s = Character.toString(c) + "n";
+            col = 0xFF0040AA;
+            dx = 25;
+        }
+        s += line.line;
+        mc.fontRenderer.drawString(mc.fontRenderer.trimStringToWidth(s, bounds.width-dx), x + dx + bounds.x, y + bounds.y, col);
+    }
+
+    private int renderRecipe(int x, int y, Line line) {
+        y += 4;
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        // @TODO: need support for shapeless and better error checking
+        ShapedRecipes shapedRecipes = (ShapedRecipes) line.recipe;
+        if (craftingGridImage != null) {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            mc.getTextureManager().bindTexture(craftingGridImage);
+            gui.drawTexturedModalRect(25+x, y, craftU, craftV, 19*3, 19*3);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            for (int j = 0 ; j < 3 ; j++) {
+                if (i < shapedRecipes.recipeWidth && j < shapedRecipes.recipeHeight) {
+                    RenderHelper.renderObject(mc, 26 + x + i * 18, 1 + y + j * 18, shapedRecipes.recipeItems[i + j * 3], false);
+                }
+            }
+        }
+        if (arrowImage != null) {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            mc.getTextureManager().bindTexture(arrowImage);
+            gui.drawTexturedModalRect(x+25+67, y+18, arrowU, arrowV, 16, 16);
+        }
+        if (craftingGridImage != null) {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            mc.getTextureManager().bindTexture(craftingGridImage);
+            gui.drawTexturedModalRect(x+25+92, y + 16, craftU, craftV, 18, 18);
+        }
+        RenderHelper.renderObject(mc, x+25+93, y + 17, shapedRecipes.getRecipeOutput(), false);
+        y -= 4;
+        return y;
     }
 
     private static class Line {
@@ -274,6 +309,9 @@ public class TextPage extends AbstractWidget<TextPage> {
         String node;
         String line;
         IRecipe recipe;
+        ResourceLocation resourceLocation;
+        int u;
+        int v;
         int height;
 
         public boolean isBold() {
@@ -300,6 +338,7 @@ public class TextPage extends AbstractWidget<TextPage> {
             this.line = null;
             recipe = null;
             height = 14;
+            resourceLocation = null;
 
             if (line.startsWith("{b}")) {
                 bold = true;
@@ -308,62 +347,106 @@ public class TextPage extends AbstractWidget<TextPage> {
                 nexttab = true;
                 height = 0;
             } else if (line.startsWith("{n:")) {
-                int end = line.indexOf('}');
-                if (end == -1) {
-                    // Error, just put in the entire line
-                    this.line = line;
-                } else {
-                    node = line.substring(3, end);
-                    isnode = true;
-                    this.line = null;
-                }
-                height = 0;
+                parseNode(line);
             } else if (line.startsWith("{l:")) {
-                int end = line.indexOf('}');
-                if (end == -1) {
-                    // Error, just put in the entire line
-                    this.line = line;
-                } else {
-                    node = line.substring(3, end);
-                    islink = true;
-                    this.line = line.substring(end+1);
-                }
+                parseLink(line);
+            } else if (line.startsWith("{i:")) {
+                parseImage(line);
             } else if (line.startsWith("{ri:")) {
-                int end = line.indexOf('}');
-                if (end == -1) {
-                    // Error, just put in the entire line
-                    this.line = line;
-                } else {
-                    Item item = GameRegistry.findItem(RFTools.MODID, line.substring(4, end));
-                    recipe = findRecipe(new ItemStack(item));
-                    if (recipe == null) {
-                        // Error,
-                        this.line = line;
-                    } else if (!(recipe instanceof ShapedRecipes)) {
-                        recipe = null;
-                        // Error,
-                        this.line = line;
-                    } else {
-                        height = 18*3+8;
-                    }
-                }
+                parseItemRecipe(line);
             } else if (line.startsWith("{rb:")) {
-                int end = line.indexOf('}');
-                if (end == -1) {
-                    // Error, just put in the entire line
-                    this.line = line;
-                } else {
-                    Block block = GameRegistry.findBlock(RFTools.MODID, line.substring(4, end));
-                    recipe = findRecipe(new ItemStack(block));
-                    if (recipe == null) {
-                        // Error,
-                        this.line = line;
-                    } else {
-                        height = 18*3+8;
-                    }
-                }
+                parseBlockRecipe(line);
             } else {
                 this.line = line;
+            }
+        }
+
+        private void parseNode(String line) {
+            int end = line.indexOf('}');
+            if (end == -1) {
+                // Error, just put in the entire line
+                this.line = line;
+            } else {
+                node = line.substring(3, end);
+                isnode = true;
+                this.line = null;
+            }
+            height = 0;
+        }
+
+        private void parseLink(String line) {
+            int end = line.indexOf('}');
+            if (end == -1) {
+                // Error, just put in the entire line
+                this.line = line;
+            } else {
+                node = line.substring(3, end);
+                islink = true;
+                this.line = line.substring(end + 1);
+            }
+        }
+
+        private void parseBlockRecipe(String line) {
+            int end = line.indexOf('}');
+            if (end == -1) {
+                // Error, just put in the entire line
+                this.line = line;
+            } else {
+                Block block = GameRegistry.findBlock(RFTools.MODID, line.substring(4, end));
+                recipe = findRecipe(new ItemStack(block));
+                if (recipe == null) {
+                    // Error,
+                    this.line = line;
+                } else {
+                    height = 18*3+8;
+                }
+            }
+        }
+
+        private void parseItemRecipe(String line) {
+            int end = line.indexOf('}');
+            if (end == -1) {
+                // Error, just put in the entire line
+                this.line = line;
+            } else {
+                Item item = GameRegistry.findItem(RFTools.MODID, line.substring(4, end));
+                recipe = findRecipe(new ItemStack(item));
+                if (recipe == null) {
+                    // Error,
+                    this.line = line;
+                } else if (!(recipe instanceof ShapedRecipes)) {
+                    recipe = null;
+                    // Error,
+                    this.line = line;
+                } else {
+                    height = 18*3+8;
+                }
+            }
+        }
+
+        private void parseImage(String line) {
+            int end = line.indexOf('}');
+            if (end == -1) {
+                // Error, just put in the entire line
+                this.line = line;
+            } else {
+                String substring = line.substring(3, end);
+                String[] split = StringUtils.split(substring, ',');
+                u = 0;
+                v = 0;
+                try {
+                    u = Integer.parseInt(split[1]);
+                    v = Integer.parseInt(split[2]);
+                } catch (IndexOutOfBoundsException e) {
+                } catch (NumberFormatException e) {
+                }
+                resourceLocation = new ResourceLocation(RFTools.MODID, split[0]);
+                try {
+                    this.line = split[3];
+                } catch (IndexOutOfBoundsException e) {
+                    this.line = "<error>";
+                }
+                height = 16+2;
             }
         }
     }
