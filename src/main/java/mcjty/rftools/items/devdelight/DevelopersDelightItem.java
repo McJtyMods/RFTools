@@ -45,7 +45,8 @@ public class DevelopersDelightItem extends Item {
         if (block == null || block.getMaterial() == Material.air) {
             return;
         }
-        RFTools.log("Block: " + block.getUnlocalizedName());
+        int meta = world.getBlockMetadata(x, y, z);
+        RFTools.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta);
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             NBTTagCompound tag = new NBTTagCompound();
