@@ -123,7 +123,6 @@ public class GuiChamberDetails extends GuiScreen {
             try {
                 aClass = Class.forName(className);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
             int count = entry.getValue();
             int cost = entityCosts.get(className);
@@ -132,13 +131,9 @@ public class GuiChamberDetails extends GuiScreen {
             try {
                 entity = (Entity) aClass.getConstructor(World.class).newInstance(mc.theWorld);
             } catch (InstantiationException e) {
-                e.printStackTrace();
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
             }
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
 
