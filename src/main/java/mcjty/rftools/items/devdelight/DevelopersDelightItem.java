@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Set;
 
@@ -26,15 +27,13 @@ public class DevelopersDelightItem extends Item {
 //        return super.itemInteractionForEntity(p_111207_1_, p_111207_2_, p_111207_3_);
 //    }
 
+
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
         if (world.isRemote) {
-            if (player.isSneaking()) {
-                dumpInfo(world, x, y, z);
-            } else {
-                GuiDevelopersDelight.setSelected(x, y, z);
-                player.openGui(RFTools.instance, RFTools.GUI_DEVELOPERS_DELIGHT, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            }
+            dumpInfo(world, x, y, z);
+            GuiDevelopersDelight.setSelected(x, y, z);
+            player.openGui(RFTools.instance, RFTools.GUI_DEVELOPERS_DELIGHT, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return true;
         }
         return true;
