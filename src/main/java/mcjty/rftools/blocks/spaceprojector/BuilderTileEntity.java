@@ -14,6 +14,7 @@ import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -843,12 +844,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void teleportEntity(World world, World destWorld, Entity entity, double newX, double newY, double newZ) {
-        if (world.provider.dimensionId != destWorld.provider.dimensionId) {
-            MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, destWorld.provider.dimensionId, (WorldServer) world, (WorldServer) destWorld,
-                    new RfToolsTeleporter((WorldServer) destWorld, newX, newY, newZ));
+        if (entity instanceof EntityPlayer) {
+            if (world.provider.dimensionId != destWorld.provider.dimensionId) {
+                TeleportationTools.teleportToDimension((EntityPlayer) entity, destWorld.provider.dimensionId, newX, newY, newZ);
+            }
+            ((EntityPlayer) entity).setPositionAndUpdate(newX, newY, newZ);
+        } else {
+            if (world.provider.dimensionId != destWorld.provider.dimensionId) {
+                MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, destWorld.provider.dimensionId, (WorldServer) world, (WorldServer) destWorld,
+                        new RfToolsTeleporter((WorldServer) destWorld, newX, newY, newZ));
+            }
+            entity.setPosition(newX, newY, newZ);
         }
-
-        entity.setPosition(newX, newY, newZ);
     }
 
     private boolean isEntityInBlock(int x, int y, int z, Entity entity) {
