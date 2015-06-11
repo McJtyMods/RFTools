@@ -238,7 +238,14 @@ public class DimensionInformation {
 
         biomes.clear();
         for (int a : getIntArraySafe(tagCompound, "biomes")) {
-            biomes.add(BiomeGenBase.getBiome(a));
+            BiomeGenBase biome = BiomeGenBase.getBiome(a);
+            if (biome != null) {
+                biomes.add(biome);
+            } else {
+                // Protect against deleted biomes (i.e. a mod with biomes gets removed and this dimension still uses it).
+                // We will pick a replacement biome here.
+                biomes.add(BiomeGenBase.plains);
+            }
         }
         if (tagCompound.hasKey("controller")) {
             controllerType = ControllerType.values()[tagCompound.getInteger("controller")];
@@ -387,7 +394,11 @@ public class DimensionInformation {
 
         List<Integer> c = new ArrayList<Integer>(biomes.size());
         for (BiomeGenBase t : biomes) {
-            c.add(t.biomeID);
+            if (t != null) {
+                c.add(t.biomeID);
+            } else {
+                c.add(BiomeGenBase.plains.biomeID);
+            }
         }
         tagCompound.setIntArray("biomes", ArrayUtils.toPrimitive(c.toArray(new Integer[c.size()])));
         tagCompound.setInteger("controller", controllerType == null ? ControllerType.CONTROLLER_DEFAULT.ordinal() : controllerType.ordinal());
@@ -567,7 +578,9 @@ public class DimensionInformation {
         logDebug(player, "        Base fluid: " + new ItemStack(fluidForTerrain).getDisplayName());
         logDebug(player, "    Biome controller: " + (controllerType == null ? "<null>" : controllerType.name()));
         for (BiomeGenBase biome : getBiomes()) {
-            logDebug(player, "    Biome: " + biome.biomeName);
+            if (biome != null) {
+                logDebug(player, "    Biome: " + biome.biomeName);
+            }
         }
         for (FeatureType featureType : getFeatureTypes()) {
             logDebug(player, "    Feature: " + featureType.toString());
@@ -670,7 +683,11 @@ public class DimensionInformation {
 
         buf.writeInt(biomes.size());
         for (BiomeGenBase entry : biomes) {
-            buf.writeInt(entry.biomeID);
+            if (entry != null) {
+                buf.writeInt(entry.biomeID);
+            } else {
+                buf.writeInt(BiomeGenBase.plains.biomeID);
+            }
         }
         NetworkTools.writeEnum(buf, controllerType, ControllerType.CONTROLLER_DEFAULT);
 
@@ -761,7 +778,12 @@ public class DimensionInformation {
         biomes.clear();
         int size = buf.readInt();
         for (int i = 0 ; i < size ; i++) {
-            biomes.add(BiomeGenBase.getBiome(buf.readInt()));
+            BiomeGenBase biome = BiomeGenBase.getBiome(buf.readInt());
+            if (biome != null) {
+                biomes.add(biome);
+            } else {
+                biomes.add(BiomeGenBase.plains);
+            }
         }
         controllerType = NetworkTools.readEnum(buf, ControllerType.values());
         digitString = NetworkTools.readString(buf);
@@ -1017,7 +1039,11 @@ public class DimensionInformation {
             BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
             final Set<Integer> ids = new HashSet<Integer>();
             for (BiomeGenBase biome : biomes) {
-                ids.add(biome.biomeID);
+                if (biome != null) {
+                    ids.add(biome.biomeID);
+                } else {
+                    ids.add(BiomeGenBase.plains.biomeID);
+                }
             }
 
             ControllerType.BiomeFilter biomeFilter = new ControllerType.BiomeFilter() {
