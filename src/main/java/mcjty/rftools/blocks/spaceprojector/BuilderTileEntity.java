@@ -775,22 +775,33 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return destWorld.provider.dimensionId == world.provider.dimensionId ? 1.0 : SpaceProjectorConfiguration.dimensionCostFactor;
     }
 
+    private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfn;
+        if (entity instanceof EntityPlayer) {
+            rfn = rfNeededPlayer;
+        } else {
+            rfn = rfNeeded;
+        }
+        if (rfn > rf) {
+            // Not enough energy.
+            return true;
+        } else {
+            consumeEnergy(rfn);
+        }
+        return false;
+    }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (SpaceProjectorConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x-.1, y-.1, z-.1, x + 1.1, y + 1.1, z + 1.1));
         for (Object o : entities) {
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            if (rfNeeded > rf) {
-                // Not enough energy.
-                return;
-            } else {
-                consumeEnergy(rfNeeded);
-            }
-
             Entity entity = (Entity) o;
+
+            if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
 
             double newX = destX + (entity.posX - x);
             double newY = destY + (entity.posY - y);
@@ -802,6 +813,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (SpaceProjectorConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
@@ -809,13 +821,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Object o : entitiesSrc) {
             Entity entity = (Entity) o;
             if (isEntityInBlock(x, y, z, entity)) {
-                int rf = getEnergyStored(ForgeDirection.DOWN);
-                if (rfNeeded > rf) {
-                    // Not enough energy.
-                    return;
-                } else {
-                    consumeEnergy(rfNeeded);
-                }
+                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
 
                 double newX = destX + (entity.posX - x);
                 double newY = destY + (entity.posY - y);
@@ -826,13 +832,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Object o : entitiesDst) {
             Entity entity = (Entity) o;
             if (isEntityInBlock(destX, destY, destZ, entity)) {
-                int rf = getEnergyStored(ForgeDirection.DOWN);
-                if (rfNeeded > rf) {
-                    // Not enough energy.
-                    return;
-                } else {
-                    consumeEnergy(rfNeeded);
-                }
+                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
 
                 double newX = x + (entity.posX - destX);
                 double newY = y + (entity.posY - destY);

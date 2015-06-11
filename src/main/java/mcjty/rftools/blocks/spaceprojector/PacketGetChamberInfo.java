@@ -90,7 +90,11 @@ public class PacketGetChamberInfo implements IMessage, IMessageHandler<PacketGet
             Entity entity = (Entity) o;
             String canonicalName = entity.getClass().getCanonicalName();
             entitiesWithCount.increment(canonicalName);
-            entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerEntity);
+            if (entity instanceof EntityPlayer) {
+                entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerPlayer);
+            } else {
+                entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerEntity);
+            }
         }
 
         return new PacketChamberInfoReady(blocks, costs, entitiesWithCount, entitiesWithCost);
