@@ -460,6 +460,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        if (typedChar >= '1' && typedChar <= '9') {
+            return;
+        }
+        super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateList();
         window.draw();
