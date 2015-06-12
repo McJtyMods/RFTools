@@ -618,17 +618,17 @@ public class KnownDimletConfiguration {
 
         initOreDictionaryDimlets(cfg, mapping, master);
 
-        initModMaterialItem(cfg, "chisel", "marble", 0, mapping, master);
-        initModMaterialItem(cfg, "chisel", "limestone", 0, mapping, master);
+        initModMaterialItem(cfg, "chisel", "marble", 0, mapping, master, false);
+        initModMaterialItem(cfg, "chisel", "limestone", 0, mapping, master, false);
 
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.nether", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.bloodstained", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 5, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.abyssal", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.sandy", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.quarried", 2, mapping, master);
-        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.frostbound", 2, mapping, master);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.nether", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.bloodstained", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.infernal", 5, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.abyssal", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.sandy", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.quarried", 2, mapping, master, false);
+        initModMaterialItem(cfg, "Railcraft", "tile.railcraft.brick.frostbound", 2, mapping, master, false);
     }
 
     private static void initOreDictionaryDimlets(Configuration cfg, DimletMapping mapping, boolean master) {
@@ -720,11 +720,14 @@ public class KnownDimletConfiguration {
         GameRegistry.addRecipe(new KnownDimletShapedRecipe(new DimletKey(DimletType.DIMLET_DIGIT, "0"), " r ", "rtr", "ppp", 'r', Items.redstone, 't', redstoneTorch, 'p', Items.paper));
     }
 
-    private static int initModMaterialItem(Configuration cfg, String modid, String blockname, int meta, DimletMapping mapping, boolean master) {
+    private static int initModMaterialItem(Configuration cfg, String modid, String blockname, int meta, DimletMapping mapping, boolean master, boolean warn) {
         Block block = GameRegistry.findBlock(modid, blockname);
         if (block != null) {
             return initMaterialItem(cfg, block, meta, mapping, master);
         } else {
+            if (warn) {
+                RFTools.log("Warning Custom dimlet: Could not find block '" + blockname + "' from mod '" + modid + "'!");
+            }
             return -1;
         }
     }
@@ -804,7 +807,7 @@ public class KnownDimletConfiguration {
                     String modid = array.get(1).getAsString();
                     String name = array.get(2).getAsString();
                     Integer meta = array.get(3).getAsInt();
-                    initModMaterialItem(cfg, modid, name, meta, mapping, master);
+                    initModMaterialItem(cfg, modid, name, meta, mapping, master, true);
                 }
             }
         } catch (IOException e) {
