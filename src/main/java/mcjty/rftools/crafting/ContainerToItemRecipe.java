@@ -44,8 +44,15 @@ public class ContainerToItemRecipe extends ShapedRecipes {
             NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting);
             if (tagCompound != null) {
                 int damage = tagCompound.getInteger("childDamage");
-                tagCompound.removeTag("childDamage");
-                stack.setTagCompound(tagCompound);
+                NBTTagCompound newtag = new NBTTagCompound();
+                for (Object o : tagCompound.func_150296_c()) {
+                    String tag = (String) o;
+                    if (!"childDamage".equals(tag)) {
+                        newtag.setTag(tag, tagCompound.getTag(tag));
+                    }
+                }
+
+                stack.setTagCompound(newtag);
                 stack.setItemDamage(damage);
             }
         }
