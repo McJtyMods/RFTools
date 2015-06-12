@@ -6,10 +6,12 @@ import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Facing;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
@@ -54,6 +56,37 @@ public class SupportBlock extends Block {
         icon = iconRegister.registerIcon(RFTools.MODID + ":" + "supportBlock");
         iconRed = iconRegister.registerIcon(RFTools.MODID + ":" + "supportRedBlock");
         iconYellow = iconRegister.registerIcon(RFTools.MODID + ":" + "supportYellowBlock");
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+        if (!world.isRemote) {
+            // Find all connected blocks and remove them.
+            removeBlock(world, x, y, z);
+        }
+        return super.onBlockActivated(world, x, y, z, player, side, sidex, sidey, sidez);
+    }
+
+    private void removeBlock(World world, int x, int y, int z) {
+        world.setBlockToAir(x, y, z);
+        if (world.getBlock(x-1, y, z) == this) {
+            removeBlock(world, x-1, y, z);
+        }
+        if (world.getBlock(x+1, y, z) == this) {
+            removeBlock(world, x+1, y, z);
+        }
+        if (world.getBlock(x, y-1, z) == this) {
+            removeBlock(world, x, y-1, z);
+        }
+        if (world.getBlock(x, y+1, z) == this) {
+            removeBlock(world, x, y+1, z);
+        }
+        if (world.getBlock(x, y, z-1) == this) {
+            removeBlock(world, x, y, z-1);
+        }
+        if (world.getBlock(x, y, z+1) == this) {
+            removeBlock(world, x, y, z+1);
+        }
     }
 
     @Override
