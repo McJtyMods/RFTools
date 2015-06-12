@@ -55,7 +55,8 @@ public class TextField extends AbstractWidget<TextField> {
         }
         if (isEnabledAndVisible()) {
             if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
-                window.setTextFocus(null);
+//                window.setTextFocus(null);
+                return false;
             } else if (keyCode == Keyboard.KEY_BACK) {
                 if (!text.isEmpty() && cursor > 0) {
                     text = text.substring(0, cursor-1) + text.substring(cursor);
