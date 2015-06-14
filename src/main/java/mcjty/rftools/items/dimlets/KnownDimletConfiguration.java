@@ -778,9 +778,12 @@ public class KnownDimletConfiguration {
             DimletKey key = new DimletKey(DimletType.DIMLET_MATERIAL, unlocalizedName);
 
             String modid = RFToolsTools.getModidForBlock(block);
+            ItemStack stack = new ItemStack(block, 1, meta);
+            if (stack.getItem() == null) {
+                return -1;
+            }
             int id = registerDimlet(cfg, key, mapping, master, modid);
             if (id != -1) {
-                ItemStack stack = new ItemStack(block, 1, meta);
                 idToDisplayName.put(key, DimletType.DIMLET_MATERIAL.dimletType.getName() + " " + stack.getDisplayName() + " Dimlet");
                 DimletObjectMapping.idToBlock.put(key, new BlockMeta(block, (byte)meta));
             }
