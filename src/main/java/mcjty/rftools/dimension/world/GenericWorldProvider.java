@@ -136,7 +136,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
         if (dimensionInformation != null) {
             ControllerType type = dimensionInformation.getControllerType();
             if (type == ControllerType.CONTROLLER_SINGLE) {
-                worldChunkMgr = new SingleBiomeWorldChunkManager(worldObj, seed, terrainType);
+                worldChunkMgr = new SingleBiomeWorldChunkManager(seed, terrainType, dimensionInformation);
             } else if (type == ControllerType.CONTROLLER_DEFAULT) {
                 worldChunkMgr = new WorldChunkManager(seed, worldObj.getWorldInfo().getTerrainType());
             } else {

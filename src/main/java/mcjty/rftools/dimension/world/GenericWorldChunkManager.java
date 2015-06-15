@@ -2,9 +2,13 @@ package mcjty.rftools.dimension.world;
 
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.ControllerType;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.ColorizerGrass;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
@@ -41,7 +45,15 @@ public class GenericWorldChunkManager extends WorldChunkManager {
 
     @Override
     public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] p_76937_1_, int p_76937_2_, int p_76937_3_, int p_76937_4_, int p_76937_5_) {
-        return super.getBiomesForGeneration(p_76937_1_, p_76937_2_, p_76937_3_, p_76937_4_, p_76937_5_);
+        BiomeGenBase[] biomesForGeneration = super.getBiomesForGeneration(p_76937_1_, p_76937_2_, p_76937_3_, p_76937_4_, p_76937_5_);
+        if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
+            for (int i = 0 ; i < biomesForGeneration.length ; i++) {
+                if (!(biomesForGeneration[i] instanceof RfToolsBiomeMutator)) {
+                    biomesForGeneration[i] = BiomeMutator.mutateBiome(i, biomesForGeneration[i]);
+                }
+            }
+        }
+        return biomesForGeneration;
     }
 
     /**

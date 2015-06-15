@@ -544,6 +544,7 @@ public class KnownDimletConfiguration {
 
         initPatreonItem(cfg, "McJty", mapping, master, "McJty's Support Dimlet");
         initPatreonItem(cfg, "SickHippie", mapping, master, "SickHippie's Support Dimlet");
+        initPatreonItem(cfg, "Lockesly", mapping, master, "Lockesly's Support Dimlet");
 
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_WEATHER, "Default"));
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_EFFECT, "None"));
