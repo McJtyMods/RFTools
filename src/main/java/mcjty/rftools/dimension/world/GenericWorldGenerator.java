@@ -48,7 +48,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
-        } else if (Math.abs(chunkX) > 6 && Math.abs(chunkZ) > 6 && !information.hasFeatureType(FeatureType.FEATURE_NODIMLETBUILDINGS)) {
+        } else if ((Math.abs(chunkX) > 6 || Math.abs(chunkZ) > 6) && !information.hasFeatureType(FeatureType.FEATURE_NODIMLETBUILDINGS)) {
             // Not too close to starting platform we possibly generate dungeons.
             if (random.nextInt(DimletConfiguration.dungeonChance) == 1) {
                 int midx = chunkX * 16 + 8;
@@ -64,7 +64,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
-        if (Math.abs(chunkX) >= 3 && Math.abs(chunkZ) >= 3 && information.hasFeatureType(FeatureType.FEATURE_VOLCANOES)) {
+//        if (Math.abs(chunkX) > 1 && Math.abs(ch))
+
+        if ((Math.abs(chunkX) >= 3 || Math.abs(chunkZ) >= 3) && information.hasFeatureType(FeatureType.FEATURE_VOLCANOES)) {
             if (random.nextInt(DimletConfiguration.volcanoChance) == 1) {
                 int x = chunkX * 16 + random.nextInt(16);
                 int z = chunkZ * 16 + random.nextInt(16);

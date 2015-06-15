@@ -101,7 +101,7 @@ public class PatreonDimletType implements IDimletType {
             dimensionInformation.setPatreonBit(Patreons.PATREON_SICKMOON);
             dimensionInformation.setPatreonBit(Patreons.PATREON_SICKSUN);
         } else if ("Lockesly".equals(key.getName())) {
-            dimensionInformation.setPatreonBit(Patreons.PATREON_PINKGRASS);
+            dimensionInformation.setPatreonBit(Patreons.PATREON_PINKPILLARS);
         }
     }
 

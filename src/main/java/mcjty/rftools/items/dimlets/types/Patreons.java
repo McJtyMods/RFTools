@@ -4,7 +4,7 @@ public enum Patreons {
     PATREON_FIREWORKS(0),
     PATREON_SICKMOON(1),
     PATREON_SICKSUN(2),
-    PATREON_PINKGRASS(3);
+    PATREON_PINKPILLARS(3);
 
     private final int bit;
 
