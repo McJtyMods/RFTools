@@ -444,6 +444,8 @@ of dimlet that you want to make:
     - Syringe for mob dimlets
     - Peaceful essence (made out of 9 filled syringes of a
       specific type) for the peaceful dimlet
+    - Efficiency/mediocre efficiency items for the corresponding
+      efficiency dimlets
 {-------------------------------------------------------------}
 So, if you wanted to create a Biome: Forest dimlet, you would
 place the Biome Absorber within a Forest Biome. Slowly, the
