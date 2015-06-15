@@ -254,6 +254,9 @@ public class TeleportationTools {
      * @return
      */
     public static int calculateSeverity(int bad, int total) {
+        if (total == 0) {
+            total = 1;
+        }
         int severity = bad * 10 / total;
         if (mustInterrupt(bad, total)) {
             // If an interrupt was done then severity is worse.
