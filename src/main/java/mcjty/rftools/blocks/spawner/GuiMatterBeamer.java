@@ -18,7 +18,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
 
     private EnergyBar energyBar;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/matterbeamer.png");
 
     public GuiMatterBeamer(MatterBeamerTileEntity beamerTileEntity, MatterBeamerContainer container) {
         super(beamerTileEntity, container);
