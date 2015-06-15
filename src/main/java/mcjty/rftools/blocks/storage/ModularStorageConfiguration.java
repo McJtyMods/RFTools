@@ -4,7 +4,6 @@ import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -16,7 +15,6 @@ public class ModularStorageConfiguration {
     public static final String CATEGORY_STORAGE = "storage";
     public static final String CATEGORY_STORAGE_CONFIG = "storageconfig";
 
-    public static int itemListBackground = 0xff8090a0;
     public static int groupBackground = 0xffeedd33;
     public static int groupForeground = 0xff000000;
 
@@ -34,8 +32,6 @@ public class ModularStorageConfiguration {
     public static Map<String,String> categoryMapper = new HashMap<String, String>();
 
     public static void init(Configuration cfg) {
-        itemListBackground = cfg.get(CATEGORY_STORAGE, "itemListBackground", itemListBackground,
-                "Color for the item background").getInt();
         groupBackground = cfg.get(CATEGORY_STORAGE, "groupBackground", groupBackground,
                 "Background color for group lines").getInt();
         groupForeground = cfg.get(CATEGORY_STORAGE, "groupForeground", groupForeground,

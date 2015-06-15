@@ -17,6 +17,8 @@ public class GeneralConfiguration {
     public static boolean enableEndergenRecipe = true;
     public static boolean enableBlockProtectorRecipe = true;
 
+    public static int itemListBackground = 0xff909090;
+
     public static void init(Configuration cfg) {
         doLogging = cfg.get(CATEGORY_GENERAL, "logging", doLogging,
                 "If true dump a lot of logging information about various things in RFTools. Useful for debugging.").getBoolean();
@@ -39,6 +41,9 @@ public class GeneralConfiguration {
                 "Enable the endergenic generator recipe.").getBoolean();
         enableBlockProtectorRecipe = cfg.get(CATEGORY_GENERAL, "enableBlockProtectorRecipe", enableBlockProtectorRecipe,
                 "Enable the block protector recipe.").getBoolean();
+
+        itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", itemListBackground,
+                "Color for some list backgrounds").getInt();
     }
 
 }

@@ -13,6 +13,7 @@ import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
@@ -110,7 +111,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         super.initGui();
 
         itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
-                setFilledBackground(ModularStorageConfiguration.itemListBackground).setLeftMargin(0).setRowheight(-1);
+                setFilledBackground(GeneralConfiguration.itemListBackground).setLeftMargin(0).setRowheight(-1);
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize-89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
         filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, ySize-79, 80, 12)).setTooltips("Name based filter for items").addTextEvent(new TextEvent() {
