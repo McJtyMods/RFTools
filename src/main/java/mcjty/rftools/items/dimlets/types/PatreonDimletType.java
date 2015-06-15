@@ -100,6 +100,9 @@ public class PatreonDimletType implements IDimletType {
         } else if ("SickHippie".equals(key.getName())) {
             dimensionInformation.setPatreonBit(Patreons.PATREON_SICKMOON);
             dimensionInformation.setPatreonBit(Patreons.PATREON_SICKSUN);
+        } else if ("Nissenfeld".equals(key.getName())) {
+            dimensionInformation.setPatreonBit(Patreons.PATREON_RABBITMOON);
+            dimensionInformation.setPatreonBit(Patreons.PATREON_RABBITSUN);
         } else if ("Lockesly".equals(key.getName())) {
             dimensionInformation.setPatreonBit(Patreons.PATREON_PINKPILLARS);
         }
