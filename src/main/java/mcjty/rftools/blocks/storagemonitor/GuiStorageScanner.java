@@ -60,7 +60,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(60).setMaxValue(maxEnergyStored).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(8).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
@@ -76,22 +76,22 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 hilightSelectedContainer(index);
             }
         }).setFilledRectThickness(1);
-        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(storageList);
+        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
-        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
                 setDesiredHeight(90).
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
         itemList = new WidgetList(mc, this).setFilledRectThickness(1);
-        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(itemList);
-        Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
+        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
+        Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
                 addChild(itemList).addChild(itemListSlider);
 
         scanButton = new Button(mc, this).
                 setText("Scan").
                 setDesiredWidth(50).
-                setDesiredHeight(16).
+                setDesiredHeight(14).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -122,15 +122,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 startSearch(newText);
             }
         });
-        Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
+        Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
 
         Slider radiusSlider = new Slider(mc, this).
                 setHorizontal().
                 setTooltips("Radius of scan").
                 setScrollable(radiusLabel);
-        Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(20).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
+        Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(topPanel).addChild(midPanel).addChild(searchPanel).addChild(scanPanel);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(topPanel).addChild(midPanel).addChild(searchPanel).addChild(scanPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
