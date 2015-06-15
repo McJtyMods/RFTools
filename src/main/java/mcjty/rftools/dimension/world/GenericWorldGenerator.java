@@ -11,6 +11,7 @@ import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -64,7 +65,19 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
-//        if (Math.abs(chunkX) > 1 && Math.abs(ch))
+        if ((Math.abs(chunkX) >= 1 || Math.abs(chunkZ) >= 1) && information.isPatreonBitSet(Patreons.PATREON_PINKPILLARS)) {
+            if (random.nextInt(2) == 1) {
+                int x = chunkX * 16 + random.nextInt(16);
+                int z = chunkZ * 16 + random.nextInt(16);
+                int y = world.getTopSolidOrLiquidBlock(x, z);
+                if (y > 10 && y < 240) {
+                    for (int i = 0 ; i < random.nextInt(3) + 2 ; i++) {
+                        world.setBlock(x, y++, z, Blocks.stained_hardened_clay, 6, 2);
+                    }
+                    world.setBlock(x, y, z, Blocks.stained_glass, 6, 2);
+                }
+            }
+        }
 
         if ((Math.abs(chunkX) >= 3 || Math.abs(chunkZ) >= 3) && information.hasFeatureType(FeatureType.FEATURE_VOLCANOES)) {
             if (random.nextInt(DimletConfiguration.volcanoChance) == 1) {
