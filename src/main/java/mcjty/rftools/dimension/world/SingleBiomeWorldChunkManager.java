@@ -55,6 +55,10 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
                     biomeArray[i] = BiomeMutator.mutateBiome(i, this.biomeGenBase);
                 }
             }
+        } else {
+            for (int i = 0; i < sizex * sizez; i++) {
+                biomeArray[i] = this.biomeGenBase;
+            }
         }
 
         return biomeArray;
@@ -77,15 +81,26 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
      * Returns biomes to use for the blocks and loads the other data like temperature and humidity onto the
      * WorldChunkManager Args: oldBiomeList, x, z, width, depth
      */
-//    @Override
-//    public BiomeGenBase[] loadBlockGeneratorData(BiomeGenBase[] p_76933_1_, int p_76933_2_, int p_76933_3_, int p_76933_4_, int p_76933_5_) {
-//        if (p_76933_1_ == null || p_76933_1_.length < p_76933_4_ * p_76933_5_) {
-//            p_76933_1_ = new BiomeGenBase[p_76933_4_ * p_76933_5_];
-//        }
-//
-//        Arrays.fill(p_76933_1_, 0, p_76933_4_ * p_76933_5_, this.biomeGenBase);
-//        return p_76933_1_;
-//    }
+    @Override
+    public BiomeGenBase[] loadBlockGeneratorData(BiomeGenBase[] biomeArray, int x, int z, int sizex, int sizez) {
+        if (biomeArray == null || biomeArray.length < sizex * sizez) {
+            biomeArray = new BiomeGenBase[sizex * sizez];
+        }
+
+        for (int i = 0; i < sizex * sizez; i++) {
+            if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
+                if (!(biomeArray[i] instanceof RfToolsBiomeMutator)) {
+                    biomeArray[i] = BiomeMutator.mutateBiome(i, this.biomeGenBase);
+                } else {
+                    biomeArray[i] = this.biomeGenBase;
+                }
+            } else {
+                biomeArray[i] = this.biomeGenBase;
+            }
+        }
+
+        return biomeArray;
+    }
 
     /**
      * Return a list of biomes for the specified blocks. Args: listToReuse, x, y, width, length, cacheFlag (if false,
