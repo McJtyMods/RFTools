@@ -18,6 +18,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.Coordinate;
@@ -75,7 +76,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             public void doubleClick(Widget parent, int index) {
                 hilightSelectedContainer(index);
             }
-        }).setFilledRectThickness(1);
+        })./*setFilledRectThickness(1).*/setFilledBackground(ModularStorageConfiguration.itemListBackground);
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
         Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
@@ -83,7 +84,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this).setFilledRectThickness(1);
+        itemList = new WidgetList(mc, this)./*setFilledRectThickness(1).*/setFilledBackground(ModularStorageConfiguration.itemListBackground);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
                 addChild(itemList).addChild(itemListSlider);
