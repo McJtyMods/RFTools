@@ -40,27 +40,11 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
      * Returns an array of biomes for the location input.
      */
     @Override
-    public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] biomeArray, int p_76937_2_, int p_76937_3_, int sizex, int sizez) {
+    public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] biomeArray, int x, int z, int sizex, int sizez) {
         if (biomeArray == null || biomeArray.length < sizex * sizez) {
             biomeArray = new BiomeGenBase[sizex * sizez];
         }
-
-        if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
-            if (this.biomeGenBase instanceof RfToolsBiomeMutator) {
-                for (int i = 0; i < sizex * sizez; i++) {
-                    biomeArray[i] = this.biomeGenBase;
-                }
-            } else {
-                for (int i = 0; i < sizex * sizez; i++) {
-                    biomeArray[i] = BiomeMutator.mutateBiome(i, this.biomeGenBase);
-                }
-            }
-        } else {
-            for (int i = 0; i < sizex * sizez; i++) {
-                biomeArray[i] = this.biomeGenBase;
-            }
-        }
-
+        Arrays.fill(biomeArray, 0, sizex * sizez, this.biomeGenBase);
         return biomeArray;
     }
 
@@ -81,26 +65,26 @@ public class SingleBiomeWorldChunkManager extends WorldChunkManager {
      * Returns biomes to use for the blocks and loads the other data like temperature and humidity onto the
      * WorldChunkManager Args: oldBiomeList, x, z, width, depth
      */
-    @Override
-    public BiomeGenBase[] loadBlockGeneratorData(BiomeGenBase[] biomeArray, int x, int z, int sizex, int sizez) {
-        if (biomeArray == null || biomeArray.length < sizex * sizez) {
-            biomeArray = new BiomeGenBase[sizex * sizez];
-        }
-
-        for (int i = 0; i < sizex * sizez; i++) {
-            if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
-                if (!(biomeArray[i] instanceof RfToolsBiomeMutator)) {
-                    biomeArray[i] = BiomeMutator.mutateBiome(i, this.biomeGenBase);
-                } else {
-                    biomeArray[i] = this.biomeGenBase;
-                }
-            } else {
-                biomeArray[i] = this.biomeGenBase;
-            }
-        }
-
-        return biomeArray;
-    }
+//    @Override
+//    public BiomeGenBase[] loadBlockGeneratorData(BiomeGenBase[] biomeArray, int x, int z, int sizex, int sizez) {
+//        if (biomeArray == null || biomeArray.length < sizex * sizez || dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
+//            biomeArray = new BiomeGenBase[sizex * sizez];
+//        }
+//
+//        for (int i = 0; i < sizex * sizez; i++) {
+//            if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_PINKGRASS)) {
+//                if (!(biomeArray[i] instanceof RfToolsBiomeMutator)) {
+//                    biomeArray[i] = BiomeMutator.mutateBiome(i, this.biomeGenBase);
+//                } else {
+//                    biomeArray[i] = this.biomeGenBase;
+//                }
+//            } else {
+//                biomeArray[i] = this.biomeGenBase;
+//            }
+//        }
+//
+//        return biomeArray;
+//    }
 
     /**
      * Return a list of biomes for the specified blocks. Args: listToReuse, x, y, width, length, cacheFlag (if false,
