@@ -7,10 +7,13 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class PreferencesProperties {
 
+    private static final int DEFAULT_BUFFX = 2;
+    private static final int DEFAULT_BUFFY = 2;
+
     private Entity entity = null;
 
-    private int buffX = 2;
-    private int buffY = 2;
+    private int buffX = DEFAULT_BUFFX;
+    private int buffY = DEFAULT_BUFFY;
 
     private boolean dirty = true;
 
@@ -40,6 +43,12 @@ public class PreferencesProperties {
     public void loadNBTData(NBTTagCompound compound) {
         buffX = compound.getInteger("buffX");
         buffY = compound.getInteger("buffY");
+        dirty = true;
+    }
+
+    public void reset() {
+        buffX = DEFAULT_BUFFX;
+        buffY = DEFAULT_BUFFY;
         dirty = true;
     }
 
