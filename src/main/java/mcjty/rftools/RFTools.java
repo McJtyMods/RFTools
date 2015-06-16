@@ -201,13 +201,13 @@ public class RFTools {
 
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
-        System.out.println("###### RFTools.serverStarted");
+        log("RFTools: server is starting");
         ModDimensions.initDimensions();
     }
 
     @EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
-        System.out.println("###### RFTools.serverStopped");
+        log("RFTools: server is stopping. Shutting down gracefully");
         RfToolsDimensionManager.cleanupDimensionInformation();
         TeleportDestinations.clearInstance();
         RfToolsDimensionManager.clearInstance();
