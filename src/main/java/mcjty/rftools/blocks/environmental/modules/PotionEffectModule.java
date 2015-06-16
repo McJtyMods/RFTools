@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
-import mcjty.rftools.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
@@ -49,7 +49,7 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                     player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS*3, amplifier, true));
                     PlayerBuff buff = getBuff();
                     if (buff != null) {
-                        PlayerExtendedProperties.addBuff(player, buff, MAXTICKS);
+                        BuffProperties.addBuff(player, buff, MAXTICKS);
                     }
                 }
             }

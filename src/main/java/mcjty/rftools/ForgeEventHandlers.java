@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
@@ -227,9 +228,9 @@ public class ForgeEventHandlers {
             EntityPlayer player = (EntityPlayer) event.entity;
             PlayerExtendedProperties playerExtendedProperties = PlayerExtendedProperties.getProperties(player);
             if (!player.worldObj.isRemote) {
-                if (playerExtendedProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
+                if (playerExtendedProperties.getBuffProperties().hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
                     event.distance /= 2.0f;
-                } else if (playerExtendedProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
+                } else if (playerExtendedProperties.getBuffProperties().hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
                     event.distance /= 8.0f;
                 }
             }

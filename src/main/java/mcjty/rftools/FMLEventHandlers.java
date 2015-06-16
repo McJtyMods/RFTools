@@ -11,6 +11,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

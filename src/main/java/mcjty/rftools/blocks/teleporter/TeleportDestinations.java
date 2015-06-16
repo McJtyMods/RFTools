@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.rftools.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
@@ -121,7 +121,7 @@ public class TeleportDestinations extends WorldSavedData {
                 }
             }
             if (properties != null) {
-                destinationClientInfo.setFavorite(properties.isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
+                destinationClientInfo.setFavorite(properties.getFavoriteDestinationsProperties().isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
             }
             result.add(destinationClientInfo);
         }

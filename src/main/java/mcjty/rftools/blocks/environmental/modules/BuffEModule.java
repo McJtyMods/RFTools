@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
-import mcjty.rftools.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -44,7 +44,7 @@ public abstract class BuffEModule implements EnvironmentModule {
                 double pz = player.posZ;
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
-                    PlayerExtendedProperties.addBuff(player, buff, MAXTICKS);
+                    BuffProperties.addBuff(player, buff, MAXTICKS);
                 }
             }
         }

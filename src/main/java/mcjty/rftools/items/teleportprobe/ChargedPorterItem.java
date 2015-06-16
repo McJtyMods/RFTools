@@ -1,7 +1,7 @@
 package mcjty.rftools.items.teleportprobe;
 
 import cofh.api.energy.IEnergyContainerItem;
-import mcjty.rftools.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.varia.Coordinate;
@@ -98,7 +98,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         if (!world.isRemote) {
             IExtendedEntityProperties properties = player.getExtendedProperties(PlayerExtendedProperties.ID);
             PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
-            if (playerExtendedProperties.isTeleporting()) {
+            if (playerExtendedProperties.getPorterProperties().isTeleporting()) {
                 RFTools.message(player, EnumChatFormatting.RED + "Already teleporting!");
                 return;
             }
@@ -124,7 +124,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             extractEnergyNoMax(stack, cost, false);
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
-            playerExtendedProperties.startTeleport(target, ticks);
+            playerExtendedProperties.getPorterProperties().startTeleport(target, ticks);
             RFTools.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
         }
     }

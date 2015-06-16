@@ -10,7 +10,7 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -506,7 +506,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
             EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
             if (playerName.equals(entityplayermp.getDisplayName())) {
                 PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
-                properties.setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
+                properties.getFavoriteDestinationsProperties().setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
                 return;
             }
         }
