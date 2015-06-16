@@ -21,6 +21,8 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.playerprops.GuiStyle;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -60,11 +62,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public void initGui() {
         super.initGui();
 
+
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(8).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        storageList = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 itemList.removeChildren();
@@ -76,7 +79,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             public void doubleClick(Widget parent, int index) {
                 hilightSelectedContainer(index);
             }
-        })./*setFilledRectThickness(1).*/setFilledBackground(GeneralConfiguration.itemListBackground);
+        });
+
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
         Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
@@ -84,7 +88,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this)./*setFilledRectThickness(1).*/setFilledBackground(GeneralConfiguration.itemListBackground);
+        itemList = createStyledList();
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
                 addChild(itemList).addChild(itemListSlider);

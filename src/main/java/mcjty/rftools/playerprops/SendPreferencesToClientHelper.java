@@ -12,5 +12,6 @@ public class SendPreferencesToClientHelper {
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(player);
         properties.getPreferencesProperties().setBuffXY(buffs.getBuffX(), buffs.getBuffY());
+        properties.getPreferencesProperties().setStyle(buffs.getStyle().getStyle());
     }
 }

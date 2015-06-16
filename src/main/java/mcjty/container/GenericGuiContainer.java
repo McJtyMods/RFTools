@@ -2,9 +2,13 @@ package mcjty.container;
 
 import mcjty.entity.GenericTileEntity;
 import mcjty.gui.Window;
+import mcjty.gui.widgets.WidgetList;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
+import mcjty.rftools.playerprops.GuiStyle;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Keyboard;
@@ -14,9 +18,27 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
     protected Window window;
     protected final T tileEntity;
 
+    protected GuiStyle style;
+
     public GenericGuiContainer(T tileEntity, Container container) {
         super(container);
         this.tileEntity = tileEntity;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        style = PlayerExtendedProperties.getProperties(mc.thePlayer).getPreferencesProperties().getStyle();
+    }
+
+    protected WidgetList createStyledList() {
+        WidgetList list = new WidgetList(mc, this);
+        if (style == GuiStyle.STYLE_EDGED) {
+            list.setFilledRectThickness(1);
+        } else {
+            list.setFilledBackground(GeneralConfiguration.itemListBackground);
+        }
+        return list;
     }
 
     @Override
