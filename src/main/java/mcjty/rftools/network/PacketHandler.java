@@ -27,6 +27,10 @@ import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.PacketAllReceiversReady;
 import mcjty.rftools.items.teleportprobe.PacketForceTeleport;
 import mcjty.rftools.items.teleportprobe.PacketGetAllReceivers;
+import mcjty.rftools.playerprops.PacketSendBuffsToClient;
+import mcjty.rftools.playerprops.PacketSendBuffsToClientHandler;
+import mcjty.rftools.playerprops.PacketSendPreferencesToClient;
+import mcjty.rftools.playerprops.PacketSendPreferencesToClientHandler;
 
 public class PacketHandler {
     public static SimpleNetworkWrapper INSTANCE;
@@ -89,5 +93,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketReturnScreenDataHandler.class, PacketReturnScreenData.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketRegisterDimensionsHandler.class, PacketRegisterDimensions.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketSendBuffsToClientHandler.class, PacketSendBuffsToClient.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketSendPreferencesToClientHandler.class, PacketSendPreferencesToClient.class, nextID(), Side.CLIENT);
     }
 }

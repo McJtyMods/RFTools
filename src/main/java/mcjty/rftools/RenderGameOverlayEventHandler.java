@@ -2,7 +2,9 @@ package mcjty.rftools;
 
 import mcjty.gui.RenderHelper;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
@@ -33,8 +35,12 @@ public class RenderGameOverlayEventHandler {
             return;
         }
 
-        int x = Preferences.getBuffBarX();
-        int y = Preferences.getBuffBarY();
+        EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+        PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(player);
+
+        int x = properties.getPreferencesProperties().getBuffX();
+        int y = properties.getPreferencesProperties().getBuffY();
+
         if (x == -1 || y == -1) {
             return;
         }

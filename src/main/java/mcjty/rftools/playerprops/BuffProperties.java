@@ -2,7 +2,6 @@ package mcjty.rftools.playerprops;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.network.PacketHandler;
-import mcjty.rftools.network.PacketSendBuffsToClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

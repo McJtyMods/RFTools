@@ -1,4 +1,4 @@
-package mcjty.rftools.network;
+package mcjty.rftools.playerprops;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
