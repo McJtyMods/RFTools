@@ -12,6 +12,7 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
     GlobalCoordinate transmitter;
     Integer receiver;
     private int prevValue = -1;
+    private boolean onceMode = false;
 
     public SimpleDialerTileEntity() {
     }
@@ -46,9 +47,19 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
                     }
                 }
 
-                TeleportationTools.dial(worldObj, null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, false);
+                TeleportationTools.dial(worldObj, null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, onceMode);
             }
         }
+    }
+
+    public boolean isOnceMode() {
+        return onceMode;
+    }
+
+    public void setOnceMode(boolean onceMode) {
+        this.onceMode = onceMode;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -69,6 +80,7 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
         } else {
             receiver = null;
         }
+        onceMode = tagCompound.getBoolean("once");
     }
 
     @Override
@@ -88,5 +100,6 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
         if (receiver != null) {
             tagCompound.setInteger("receiver", receiver);
         }
+        tagCompound.setBoolean("once", onceMode);
     }
 }

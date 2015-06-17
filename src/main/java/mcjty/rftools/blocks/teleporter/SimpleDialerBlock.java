@@ -41,6 +41,9 @@ public class SimpleDialerBlock extends LogicSlabBlock {
                 int receiver = tagCompound.getInteger("receiver");
                 list.add(EnumChatFormatting.GREEN + "Receiver: " + receiver);
             }
+            if (tagCompound.getBoolean("once")) {
+                list.add(EnumChatFormatting.GREEN + "Dial Once mode enabled");
+            }
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -68,9 +71,29 @@ public class SimpleDialerBlock extends LogicSlabBlock {
                 int receiver = tagCompound.getInteger("receiver");
                 currenttip.add(EnumChatFormatting.GREEN + "Receiver: " + receiver);
             }
+            if (tagCompound.getBoolean("once")) {
+                currenttip.add(EnumChatFormatting.GREEN + "Dial Once mode enabled");
+            }
         }
         return currenttip;
     }
+
+    @Override
+    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+        if (!world.isRemote) {
+            SimpleDialerTileEntity simpleDialerTileEntity = (SimpleDialerTileEntity) world.getTileEntity(x, y, z);
+            boolean onceMode = !simpleDialerTileEntity.isOnceMode();
+            simpleDialerTileEntity.setOnceMode(onceMode);
+            if (onceMode) {
+                RFTools.message(player, "Enabled 'dial once' mode");
+            } else {
+                RFTools.message(player, "Disabled 'dial once' mode");
+            }
+        }
+        return true;
+    }
+
+
 
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
