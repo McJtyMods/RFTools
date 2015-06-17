@@ -28,7 +28,8 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
     private ScrollableLabel alarmLabel;
     private int listDirty;
 
-    public static final int TEXT_COLOR = 0x19979f;
+    public static final int TEXT_COLOR = 0x000000;
+    public static final int TEXT_COLOR_SELECTED = 0xFFFFFF;
 
     // A copy of the adjacent blocks we're currently showing
     private List<Coordinate> adjacentBlocks = null;
@@ -47,15 +48,15 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
     public void initGui() {
         super.initGui();
 
-        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        list = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 setSelectedBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(list);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(list).addChild(listSlider);
 
         alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
@@ -140,17 +141,19 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
 
             String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 
+            if (coordinate.getX() == tileEntity.getMonitorX() &&
+                    coordinate.getY() == tileEntity.getMonitorY() &&
+                    coordinate.getZ() == tileEntity.getMonitorZ()) {
+                sel = index;
+                color = TEXT_COLOR_SELECTED;
+            }
+
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()).setColor(color));
             list.addChild(panel);
 
-            if (coordinate.getX() == tileEntity.getMonitorX() &&
-                    coordinate.getY() == tileEntity.getMonitorY() &&
-                    coordinate.getZ() == tileEntity.getMonitorZ()) {
-                sel = index;
-            }
             index++;
         }
 
