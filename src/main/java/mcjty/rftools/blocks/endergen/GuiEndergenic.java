@@ -9,6 +9,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -34,7 +35,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     private int timer = 10;
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
-        super(endergenicTileEntity, container);
+        super(endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
         endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(ForgeDirection.DOWN));
     }
 

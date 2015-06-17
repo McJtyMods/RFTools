@@ -9,6 +9,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.gui.widgets.Widget;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Container;
 
@@ -21,7 +22,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
     private TextField speedField;
 
     public GuiTimer(TimerTileEntity timerTileEntity, Container container) {
-        super(timerTileEntity, container);
+        super(timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
     }
 
     @Override

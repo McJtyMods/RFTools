@@ -29,7 +29,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionBuilder(DimensionBuilderTileEntity dimensionBuilderTileEntity, DimensionBuilderContainer container) {
-        super(dimensionBuilderTileEntity, container);
+        super(dimensionBuilderTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "builder");
         dimensionBuilderTileEntity.setCurrentRF(dimensionBuilderTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = BUILDER_WIDTH;

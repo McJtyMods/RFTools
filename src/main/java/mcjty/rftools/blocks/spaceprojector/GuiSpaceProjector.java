@@ -28,7 +28,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiSpaceProjector(SpaceProjectorTileEntity spaceProjectorTileEntity, SpaceProjectorContainer container) {
-        super(spaceProjectorTileEntity, container);
+        super(spaceProjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, null);
         spaceProjectorTileEntity.setCurrentRF(spaceProjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = PROJECTOR_WIDTH;

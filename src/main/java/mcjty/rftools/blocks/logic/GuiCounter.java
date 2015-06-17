@@ -9,6 +9,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.gui.widgets.Widget;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Container;
 
@@ -22,7 +23,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private TextField currentField;
 
     public GuiCounter(CounterTileEntity counterTileEntity, Container container) {
-        super(counterTileEntity, container);
+        super(counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
     }
 
     @Override

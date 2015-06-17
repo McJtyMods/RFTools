@@ -17,7 +17,7 @@ public class GuiPearlInjector  extends GenericGuiContainer<PearlInjectorTileEnti
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/pearlinjector.png");
 
     public GuiPearlInjector(PearlInjectorTileEntity pearlInjectorTileEntity, PearlInjectorContainer container) {
-        super(pearlInjectorTileEntity, container);
+        super(pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "powinjector");
 
         xSize = PEARLINJECTOR_WIDTH;
         ySize = PEARLINJECTOR_HEIGHT;

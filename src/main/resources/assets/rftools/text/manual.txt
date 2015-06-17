@@ -10,7 +10,7 @@ Table of contents:
 {l:stomon}Storage Scanner
 {l:storage}Storage System
 {l:filter}Item Filter
-{l:crafte}Automatic Crafter
+{l:crafter}Automatic Crafter
 {/}
 
 
@@ -165,6 +165,7 @@ redstone signal with the Power Relay (see below) to control
 parts of your RF network.
 {-------------------------------------------------------------} 
 {b}Liquid Monitor
+{n:liqmonitor}
 {rb:liquidMonitorBlock}
 The Liquid Monitor is a block that works like the RF Monitor except
 that it can examine the contents of a nearby liquid tank.
@@ -217,6 +218,7 @@ The various item modules allow you to sort and group your items based
 on various criteria. There is also a third slot where you can insert
 a filter module to restrict items going into the storage.
 {-------------------------------------------------------------}
+{n:remotestor}
 There is also a Remote Storage Block:
 {rb:remoteStorageBlock}
 With this block you can make a storage module available remotely.
@@ -229,6 +231,7 @@ item.
 You can then use the remote storage module by combining it with a tablet
 or you can insert the module in a modular chest block.
 {-------------------------------------------------------------}
+{n:storfilter}
 Offline access with the Tablet:
 {ri:storageModuleTabletItem}
 With this item you can open the contents of a remote or normal
@@ -251,7 +254,7 @@ The storage filter item has its own GUI which you can only access
 by having the filter in your hand (outside of the machine).
 {-------------------------------------------------------------}
 {b}Automatic Crafter
-{n:crafte}
+{n:crafter}
 {rb:crafterBlock1}
 The Crafter is a powerful automatic crafting machine that can handle
 up to eight different recipes in a single block. It can be used to

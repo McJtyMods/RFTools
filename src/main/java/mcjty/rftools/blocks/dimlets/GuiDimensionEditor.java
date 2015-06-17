@@ -25,7 +25,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionEditor(DimensionEditorTileEntity dimensionEditorTileEntity, DimensionEditorContainer container) {
-        super(dimensionEditorTileEntity, container);
+        super(dimensionEditorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "editor");
         GenericEnergyStorageTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = EDITOR_WIDTH;

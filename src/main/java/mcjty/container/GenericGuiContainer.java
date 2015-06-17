@@ -9,12 +9,15 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.gui.widgets.WidgetList;
 import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import mcjty.rftools.playerprops.GuiStyle;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -36,9 +39,14 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
     private int sideLeft;
     private int sideTop;
 
-    public GenericGuiContainer(T tileEntity, Container container) {
+    private int manual;
+    private String manualNode;
+
+    public GenericGuiContainer(T tileEntity, Container container, int manual, String manualNode) {
         super(container);
         this.tileEntity = tileEntity;
+        this.manual = manual;
+        this.manualNode = manualNode;
     }
 
     @Override
@@ -46,7 +54,15 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
         super.initGui();
         style = PlayerExtendedProperties.getProperties(mc.thePlayer).getPreferencesProperties().getStyle();
 
-        guiButton = new Button(mc, this).setText("s").setLayoutHint(new PositionalLayout.PositionalHint(1, 1, 16, 16)).
+        helpButton = new Button(mc, this).setText("?").setLayoutHint(new PositionalLayout.PositionalHint(1, 1, 16, 16)).
+                setTooltips("Open manual").
+                addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget parent) {
+                        help();
+                    }
+                });
+        guiButton = new Button(mc, this).setText("s").setLayoutHint(new PositionalLayout.PositionalHint(1, 19, 16, 16)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -54,11 +70,17 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
                     }
                 });
         setStyleTooltip();
-        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(guiButton);
+        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(guiButton).addChild(helpButton);
         sideLeft = guiLeft + xSize;
-        sideTop = guiTop + ySize / 2;
+        sideTop = guiTop + (ySize - 20) / 2;
         sidePanel.setBounds(new Rectangle(sideLeft, sideTop, 20, 40));
         sideWindow = new Window(this, sidePanel);
+    }
+
+    private void help() {
+        EntityPlayer player = mc.thePlayer;
+        GuiRFToolsManual.locatePage = manualNode;
+        player.openGui(RFTools.instance, manual, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 
     private void setStyleTooltip() {

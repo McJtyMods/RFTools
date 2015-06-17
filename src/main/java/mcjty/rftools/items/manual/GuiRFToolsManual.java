@@ -32,6 +32,9 @@ public class GuiRFToolsManual extends GuiScreen {
     public static int MANUAL_DIMENSION = 1;
     private ResourceLocation manualText;
 
+    // If this is set when the manual opens the given page will be located.
+    public static String locatePage = null;
+
     private static final ResourceLocation manualMainText = new ResourceLocation(RFTools.MODID, "text/manual.txt");
     private static final ResourceLocation manualDimensionText = new ResourceLocation(RFTools.MODID, "text/manual_dimension.txt");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -75,6 +78,11 @@ public class GuiRFToolsManual extends GuiScreen {
 
         window = new Window(this, toplevel);
         window.setTextFocus(textPage);
+
+        if (locatePage != null) {
+            textPage.gotoNode(locatePage);
+            locatePage = null;
+        }
     }
 
     @Override

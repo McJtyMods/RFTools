@@ -21,9 +21,9 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/machineinfuser.png");
 
-    public GuiMachineInfuser(MachineInfuserTileEntity pearlInjectorTileEntity, MachineInfuserContainer container) {
-        super(pearlInjectorTileEntity, container);
-        pearlInjectorTileEntity.setCurrentRF(pearlInjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
+    public GuiMachineInfuser(MachineInfuserTileEntity machineInfuserTileEntity, MachineInfuserContainer container) {
+        super(machineInfuserTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "infuser");
+        machineInfuserTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = INFUSER_WIDTH;
         ySize = INFUSER_HEIGHT;

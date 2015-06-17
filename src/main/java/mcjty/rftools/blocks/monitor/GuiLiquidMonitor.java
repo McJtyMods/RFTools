@@ -12,6 +12,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.BlockInfo;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
 
 
     public GuiLiquidMonitor(LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity, Container container) {
-        super(liquidMonitorBlockTileEntity, container);
+        super(liquidMonitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "liqmonitor");
     }
 
     @Override

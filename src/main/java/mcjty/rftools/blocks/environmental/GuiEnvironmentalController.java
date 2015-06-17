@@ -32,7 +32,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private ImageChoiceLabel redstoneMode;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity environmentalControllerTileEntity, EnvironmentalControllerContainer container) {
-        super(environmentalControllerTileEntity, container);
+        super(environmentalControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
 
         xSize = ENV_WIDTH;
         ySize = ENV_HEIGHT;

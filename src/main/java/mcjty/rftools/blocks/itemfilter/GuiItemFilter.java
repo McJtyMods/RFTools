@@ -24,7 +24,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterContainer.BUFFER_SIZE * 6];
 
     public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, ItemFilterContainer container) {
-        super(itemFilterTileEntity, container);
+        super(itemFilterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "filter");
 
         xSize = ITEMFILTER_WIDTH;
         ySize = ITEMFILTER_HEIGHT;

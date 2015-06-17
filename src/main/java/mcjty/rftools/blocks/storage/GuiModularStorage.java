@@ -82,7 +82,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
-        super(modularStorageTileEntity, container);
+        super(modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
         xSize = STORAGE_WIDTH;
 
         int width = Minecraft.getMinecraft().displayWidth;

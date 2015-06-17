@@ -32,7 +32,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private int selected = -1;
 
     public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
-        super(screenTileEntity, container);
+        super(screenTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
 
         xSize = SCREEN_WIDTH;
         ySize = SCREEN_HEIGHT;

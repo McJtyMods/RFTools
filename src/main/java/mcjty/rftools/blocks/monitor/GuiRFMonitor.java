@@ -12,6 +12,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.BlockInfo;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
 
 
     public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
-        super(monitorBlockTileEntity, container);
+        super(monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
     }
 
     @Override

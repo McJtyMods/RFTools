@@ -168,7 +168,12 @@ public class TextPage extends AbstractWidget<TextPage> {
     }
 
     private boolean gotoLink(Link link) {
-        Integer page = nodes.get(link.node);
+        String node = link.node;
+        return gotoNode(node);
+    }
+
+    public boolean gotoNode(String node) {
+        Integer page = nodes.get(node);
         if (page != null) {
             pageIndex = page;
             showCurrentPage();

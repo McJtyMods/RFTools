@@ -32,7 +32,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
     private ChoiceLabel[] craftable = new ChoiceLabel[6];
 
     public GuiDimletFilter(DimletFilterTileEntity dimletFilterTileEntity, DimletFilterContainer container) {
-        super(dimletFilterTileEntity, container);
+        super(dimletFilterTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "filter");
 
         xSize = DIMLETFILTER_WIDTH;
         ySize = DIMLETFILTER_HEIGHT;

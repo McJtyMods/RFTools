@@ -14,6 +14,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -51,7 +52,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
 
     public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer container) {
-        super(matterReceiverTileEntity, container);
+        super(matterReceiverTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpreceiver");
         matterReceiverTileEntity.setCurrentRF(matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;

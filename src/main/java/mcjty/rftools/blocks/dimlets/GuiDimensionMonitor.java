@@ -9,6 +9,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.ScrollableLabel;
 import mcjty.gui.widgets.Slider;
 import mcjty.gui.widgets.Widget;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Container;
 
@@ -21,7 +22,7 @@ public class GuiDimensionMonitor extends GenericGuiContainer<DimensionMonitorTil
     private ScrollableLabel alarmLevel;
 
     public GuiDimensionMonitor(DimensionMonitorTileEntity dimensionMonitorTileEntity, Container container) {
-        super(dimensionMonitorTileEntity, container);
+        super(dimensionMonitorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "monitor");
     }
 
     @Override

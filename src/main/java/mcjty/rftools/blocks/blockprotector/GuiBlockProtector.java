@@ -27,7 +27,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBlockProtector(BlockProtectorTileEntity blockProtectorTileEntity, BlockProtectorContainer container) {
-        super(blockProtectorTileEntity, container);
+        super(blockProtectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "protect");
         blockProtectorTileEntity.setCurrentRF(blockProtectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = PROTECTOR_WIDTH;

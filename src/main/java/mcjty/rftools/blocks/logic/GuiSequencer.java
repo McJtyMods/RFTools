@@ -32,7 +32,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiSequencer(SequencerTileEntity sequencerTileEntity, Container container) {
-        super(sequencerTileEntity, container);
+        super(sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
     }
 
     @Override

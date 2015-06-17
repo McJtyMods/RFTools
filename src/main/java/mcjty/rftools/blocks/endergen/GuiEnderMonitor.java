@@ -9,6 +9,7 @@ import mcjty.gui.widgets.ChoiceLabel;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Mouse;
@@ -22,7 +23,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
     private ChoiceLabel mode;
 
     public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity, Container container) {
-        super(enderMonitorTileEntity, container);
+        super(enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
     }
 
     @Override
