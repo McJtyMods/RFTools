@@ -139,7 +139,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         statusLabel.setDesiredWidth(180).setDesiredHeight(14).setFilledRectThickness(1);
         Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Status")).addChild(statusLabel).setDesiredHeight(16);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1)).
                 addChild(energyBar).addChild(transmitterPanel).
                 addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
@@ -155,7 +155,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private Panel setupReceiverPanel() {
-        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
+        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -166,12 +166,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedReceiver(index);
             }
         });
-        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(receiverList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(receiverList).addChild(receiverSlider);
+        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(10).setDesiredHeight(100).setVertical().setScrollable(receiverList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(receiverList).addChild(receiverSlider).setDesiredHeight(106);
     }
 
     private Panel setupTransmitterPanel() {
-        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(76).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -183,8 +183,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedTransmitter(index);
             }
         });
-        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(13).setVertical().setScrollable(transmitterList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(transmitterList).addChild(transmitterSlider);
+        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(10).setDesiredHeight(58).setVertical().setScrollable(transmitterList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(transmitterList).addChild(transmitterSlider).setDesiredHeight(64);
     }
 
     private void clearSelectedStatus() {
