@@ -72,7 +72,7 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
         setStyleTooltip();
         Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(guiButton).addChild(helpButton);
         sideLeft = guiLeft + xSize;
-        sideTop = guiTop + (ySize - 20) / 2;
+        sideTop = guiTop + (ySize - 20) / 2 - 8;
         sidePanel.setBounds(new Rectangle(sideLeft, sideTop, 20, 40));
         sideWindow = new Window(this, sidePanel);
     }
