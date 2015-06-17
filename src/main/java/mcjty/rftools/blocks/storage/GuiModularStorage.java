@@ -473,6 +473,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateList();
-        window.draw();
+        drawWindow();
     }
 }

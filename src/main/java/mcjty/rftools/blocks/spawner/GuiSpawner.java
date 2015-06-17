@@ -107,7 +107,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         showSyringeInfo();
 
-        window.draw();
+        drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer();

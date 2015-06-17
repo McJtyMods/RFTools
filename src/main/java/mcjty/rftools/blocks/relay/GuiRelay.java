@@ -174,6 +174,6 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

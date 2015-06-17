@@ -90,7 +90,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
         stages.setImage(iconStages, x * 48, y * 48);
         percentage.setText(pct + "%");
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

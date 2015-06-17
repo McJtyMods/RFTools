@@ -36,6 +36,6 @@ public class GuiPearlInjector  extends GenericGuiContainer<PearlInjectorTileEnti
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

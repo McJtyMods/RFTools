@@ -58,7 +58,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 //            arrow.setImage(iconGuiElements, 192, 0);
 //        }
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

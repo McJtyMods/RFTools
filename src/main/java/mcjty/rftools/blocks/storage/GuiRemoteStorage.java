@@ -71,7 +71,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
         energyBar.setValue(tileEntity.getCurrentRF());
         tileEntity.requestRfFromServer();
     }

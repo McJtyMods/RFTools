@@ -249,7 +249,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         updateStorageList();
         updateContentsList();
         updateScanButton();
-        window.draw();
+        drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer();

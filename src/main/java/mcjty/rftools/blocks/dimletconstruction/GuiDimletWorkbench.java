@@ -119,7 +119,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
             progressIcon.setImage(iconGuiElements, (extracting % 4) * 16, 16);
         }
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

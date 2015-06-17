@@ -60,7 +60,7 @@ public class GuiDimletScrambler extends GenericGuiContainer<DimletScramblerTileE
             progressIcon.setImage(iconGuiElements, (scrambling % 4) * 16, 16);
         }
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

@@ -140,6 +140,6 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         refreshButtons();
-        window.draw();
+        drawWindow();
     }
 }

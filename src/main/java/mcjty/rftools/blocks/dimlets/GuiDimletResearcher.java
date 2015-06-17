@@ -60,7 +60,7 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
             arrow.setImage(iconGuiElements, 192, 0);
         }
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

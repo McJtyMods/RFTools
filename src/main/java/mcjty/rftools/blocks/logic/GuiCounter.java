@@ -92,6 +92,6 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

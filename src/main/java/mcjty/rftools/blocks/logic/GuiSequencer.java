@@ -169,6 +169,6 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

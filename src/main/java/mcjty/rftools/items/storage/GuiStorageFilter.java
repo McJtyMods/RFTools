@@ -124,6 +124,6 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

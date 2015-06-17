@@ -249,7 +249,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
             setNameFromDimensionTab();
         }
 
-        window.draw();
+        drawWindow();
     }
 
     private void setNameFromDimensionTab() {

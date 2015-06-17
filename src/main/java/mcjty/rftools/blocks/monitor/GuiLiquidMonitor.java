@@ -168,6 +168,6 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
             listDirty = 5;
         }
 
-        window.draw();
+        drawWindow();
     }
 }

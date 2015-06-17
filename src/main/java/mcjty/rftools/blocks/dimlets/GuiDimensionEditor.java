@@ -66,7 +66,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         }
         percentage.setText(pct + "%");
 
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

@@ -168,6 +168,6 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
             listDirty = 5;
         }
 
-        window.draw();
+        drawWindow();
     }
 }

@@ -411,7 +411,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         requestListsIfNeeded();
         populateFilters();
         enableButtons();
-        window.draw();
+        drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer();

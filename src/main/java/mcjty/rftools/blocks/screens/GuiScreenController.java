@@ -67,7 +67,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
         infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");

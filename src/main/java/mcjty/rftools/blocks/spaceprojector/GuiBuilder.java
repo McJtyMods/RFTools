@@ -203,7 +203,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 

@@ -69,7 +69,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
         java.util.List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
             int x = Mouse.getEventX() * width / mc.displayWidth;

@@ -200,6 +200,6 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
     }
 }

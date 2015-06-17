@@ -177,7 +177,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         populatePlayers();
         enableButtons();
 
-        window.draw();
+        drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer();

@@ -86,7 +86,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        window.draw();
+        drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
