@@ -33,13 +33,13 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     public GuiSequencer(SequencerTileEntity sequencerTileEntity, Container container) {
         super(sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
+        xSize = SEQUENCER_WIDTH;
+        ySize = SEQUENCER_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - SEQUENCER_WIDTH) / 2;
-        int l = (this.height - SEQUENCER_HEIGHT) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
@@ -78,7 +78,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(label).addChild(speedField);
         toplevel.addChild(bottomPanel);
 
-        toplevel.setBounds(new Rectangle(k, l, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));
         window = new Window(this, toplevel);
     }
 

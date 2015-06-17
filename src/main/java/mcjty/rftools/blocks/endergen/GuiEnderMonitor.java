@@ -24,13 +24,13 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
 
     public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity, Container container) {
         super(enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
+        xSize = MONITOR_WIDTH;
+        ySize = MONITOR_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - MONITOR_WIDTH) / 2;
-        int l = (this.height - MONITOR_HEIGHT) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
@@ -40,7 +40,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(mode);
         toplevel.addChild(bottomPanel);
 
-        toplevel.setBounds(new Rectangle(k, l, MONITOR_WIDTH, MONITOR_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, MONITOR_WIDTH, MONITOR_HEIGHT));
         window = new Window(this, toplevel);
     }
 

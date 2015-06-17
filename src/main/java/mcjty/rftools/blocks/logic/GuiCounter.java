@@ -24,13 +24,13 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
     public GuiCounter(CounterTileEntity counterTileEntity, Container container) {
         super(counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
+        xSize = COUNTER_WIDTH;
+        ySize = COUNTER_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - COUNTER_WIDTH) / 2;
-        int l = (this.height - COUNTER_HEIGHT) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
@@ -63,7 +63,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
                 addChild(new Label(mc, this).setText("Current:")).addChild(currentField);
         toplevel.addChild(bottomPanel);
 
-        toplevel.setBounds(new Rectangle(k, l, COUNTER_WIDTH, COUNTER_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, COUNTER_WIDTH, COUNTER_HEIGHT));
         window = new Window(this, toplevel);
     }
 

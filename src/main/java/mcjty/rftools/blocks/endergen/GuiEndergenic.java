@@ -37,13 +37,13 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
         super(endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
         endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(ForgeDirection.DOWN));
+        xSize = ENDERGENIC_WIDTH;
+        ySize = ENDERGENIC_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - ENDERGENIC_WIDTH) / 2;
-        int l = (this.height - ENDERGENIC_HEIGHT) / 2;
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
@@ -66,7 +66,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
                 addChild(descriptionLabel).
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
-        toplevel.setBounds(new Rectangle(k, l, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new mcjty.gui.Window(this, toplevel);
         tileEntity.requestRfFromServer();
     }

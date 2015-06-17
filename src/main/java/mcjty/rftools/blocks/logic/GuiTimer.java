@@ -23,13 +23,13 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
 
     public GuiTimer(TimerTileEntity timerTileEntity, Container container) {
         super(timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
+        xSize = TIMER_WIDTH;
+        ySize = TIMER_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - TIMER_WIDTH) / 2;
-        int l = (this.height - TIMER_HEIGHT) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
@@ -49,7 +49,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(speedField);
         toplevel.addChild(bottomPanel);
 
-        toplevel.setBounds(new Rectangle(k, l, TIMER_WIDTH, TIMER_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, TIMER_WIDTH, TIMER_HEIGHT));
         window = new Window(this, toplevel);
     }
 

@@ -74,8 +74,6 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - DIALER_WIDTH) / 2;
-        int l = (this.height - DIALER_HEIGHT) / 2;
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
@@ -144,7 +142,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).
                 addChild(energyBar).addChild(transmitterPanel).
                 addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
-        toplevel.setBounds(new Rectangle(k, l, DIALER_WIDTH, DIALER_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
         window = new mcjty.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
 

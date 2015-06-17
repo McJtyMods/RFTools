@@ -39,17 +39,14 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
 
     public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
         super(monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
+
+        xSize = 256;
+        ySize = 180;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-
-        int xSize = 256;
-        int ySize = 180;
-
-        int k = (this.width - xSize) / 2;
-        int l = (this.height - ySize) / 2;
 
         list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
@@ -89,7 +86,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
-        toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
 
         fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>();

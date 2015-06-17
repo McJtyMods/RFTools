@@ -36,13 +36,14 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
     public GuiRelay(RelayTileEntity relayTileEntity, Container container) {
         super(relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
+
+        xSize = RELAY_WIDTH;
+        ySize = RELAY_HEIGHT;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - RELAY_WIDTH) / 2;
-        int l = (this.height - RELAY_HEIGHT) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
@@ -51,7 +52,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
             toplevel.addChild(createSidePanel(i));
         }
 
-        toplevel.setBounds(new Rectangle(k, l, RELAY_WIDTH, RELAY_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, RELAY_WIDTH, RELAY_HEIGHT));
         window = new Window(this, toplevel);
     }
 

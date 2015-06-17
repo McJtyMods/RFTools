@@ -62,8 +62,6 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
     @Override
     public void initGui() {
         super.initGui();
-        int k = (this.width - MATTER_WIDTH) / 2;
-        int l = (this.height - MATTER_HEIGHT) / 2;
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
@@ -118,7 +116,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(6).setVerticalMargin(6)).
                 addChild(energyBar).addChild(namePanel).addChild(privatePanel).addChild(allowedPlayersPanel).addChild(buttonPanel);
-        toplevel.setBounds(new Rectangle(k, l, MATTER_WIDTH, MATTER_HEIGHT));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
 
