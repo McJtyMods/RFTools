@@ -89,18 +89,17 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private Slider initRecipeList() {
-        recipeList = new WidgetList(mc, this).
-                setFilledRectThickness(1).
+        recipeList = createStyledList().
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
                         selectRecipe();
                     }
                 }).
-                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 125, 80));
+                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 80));
         populateList();
 
-        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 11, 80));
+        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(138, 7, 10, 80));
     }
 
     private void initInternalRecipe() {
@@ -186,9 +185,15 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void addRecipeLine(Object craftingResult) {
+        String readableName = BlockInfo.getReadableName(craftingResult, 0);
+        int color = 0xFF000000;
+        if (craftingResult == null) {
+            readableName = "<no recipe>";
+            color = 0xFF505050;
+        }
         Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
-                addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setText(BlockInfo.getReadableName(craftingResult, 0)));
+                addChild(new Label(mc, this).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setText(readableName));
         recipeList.addChild(panel);
     }
 
