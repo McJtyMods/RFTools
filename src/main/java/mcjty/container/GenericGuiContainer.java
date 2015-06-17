@@ -33,7 +33,7 @@ public abstract class GenericGuiContainer<T extends GenericTileEntity> extends G
 
     protected WidgetList createStyledList() {
         WidgetList list = new WidgetList(mc, this);
-        if (style == GuiStyle.STYLE_EDGED) {
+        if (style == GuiStyle.STYLE_BEVEL) {
             list.setFilledRectThickness(1);
         } else {
             list.setFilledBackground(GeneralConfiguration.itemListBackground);

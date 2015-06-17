@@ -1,7 +1,7 @@
 package mcjty.rftools.playerprops;
 
 public enum GuiStyle {
-    STYLE_EDGED("edged"),
+    STYLE_BEVEL("bevel"),
     STYLE_FLAT("flat");
 
     private final String style;
