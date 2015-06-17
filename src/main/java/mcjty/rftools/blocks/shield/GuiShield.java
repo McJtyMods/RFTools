@@ -87,14 +87,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         initRedstoneMode();
         initDamageType();
 
-        filterList = new WidgetList(mc, this).
-                setFilledRectThickness(1).setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 140, 115)).addSelectionEvent(new DefaultSelectionEvent() {
+        filterList = createStyledList().
+                setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 142, 115)).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 selectFilter();
             }
         });
-        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setLayoutHint(new PositionalLayout.PositionalHint(154, 12, 12, 115));
+        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setLayoutHint(new PositionalLayout.PositionalHint(156, 12, 10, 115));
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
                 setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(new ButtonEvent() {
