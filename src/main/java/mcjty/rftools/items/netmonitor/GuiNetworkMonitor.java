@@ -1,5 +1,6 @@
 package mcjty.rftools.items.netmonitor;
 
+import mcjty.gui.GuiItemScreen;
 import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.DefaultSelectionEvent;
@@ -17,15 +18,15 @@ import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class GuiNetworkMonitor extends GuiScreen {
+public class GuiNetworkMonitor extends GuiItemScreen {
+    private static final int MONITOR_XSIZE = 356;
+    private static final int MONITOR_YSIZE = 206;
+
     // A copy of the connected blocks we're currently showing
     private Map<Coordinate, BlockInfo> connectedBlocks;
     // The labels in our list containing the RF information.
@@ -44,15 +45,9 @@ public class GuiNetworkMonitor extends GuiScreen {
     private static int selectedY;
     private static int selectedZ;
 
-    /** The X size of the window in pixels. */
-    protected int xSize = 356;
-    /** The Y size of the window in pixels. */
-    protected int ySize = 206;
+    public static final int TEXT_COLOR = 0x000000;
+    public static final int SEL_TEXT_COLOR = 0xffffff;
 
-    public static final int TEXT_COLOR = 0x19979f;
-    public static final int SEL_TEXT_COLOR = 0x092020;
-
-    private Window window;
     private ToggleButton showRfPerTick;
     private WidgetList list;
     private TextField filterTextField;
@@ -67,6 +62,7 @@ public class GuiNetworkMonitor extends GuiScreen {
     }
 
     public GuiNetworkMonitor() {
+        super(MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
         listDirty = 0;
         previousRfMillis = 0;
     }
@@ -79,27 +75,18 @@ public class GuiNetworkMonitor extends GuiScreen {
         PacketHandler.INSTANCE.sendToServer(new PacketGetConnectedBlocks(selectedX, selectedY, selectedZ));
     }
 
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
-
     @Override
     public void initGui() {
         super.initGui();
 
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-
-        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        list = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
                 hilightBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(list);
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
 
         showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").addButtonEvent(new ButtonEvent() {
@@ -118,10 +105,10 @@ public class GuiNetworkMonitor extends GuiScreen {
                 connectedBlocks = null;
             }
         });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(16);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(18);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(buttonPanel).setDesiredHeight(13);
-        toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
 
@@ -242,30 +229,6 @@ public class GuiNetworkMonitor extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
@@ -275,15 +238,7 @@ public class GuiNetworkMonitor extends GuiScreen {
             listDirty = 10;
         }
 
-        window.draw();
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int guiLeft = (this.width - this.xSize) / 2;
-            int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
-        }
+        drawWindow();
     }
 
     private int getTextColor(BlockInfo blockInfo) {
