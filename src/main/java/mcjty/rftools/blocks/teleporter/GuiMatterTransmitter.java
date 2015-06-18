@@ -25,8 +25,8 @@ import java.util.*;
 import java.util.List;
 
 public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterTileEntity> {
-    public static final int MATTER_WIDTH = 200;
-    public static final int MATTER_HEIGHT = 180;
+    public static final int MATTER_WIDTH = 180;
+    public static final int MATTER_HEIGHT = 160;
     public static final String ACCESS_PRIVATE = "Private";
     public static final String ACCESS_PUBLIC = "Public";
 
@@ -69,7 +69,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(MATTER_WIDTH-10).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this transmitter", "in the dialer").addTextEvent(new TextEvent() {
@@ -97,9 +97,8 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         }
         Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
 
-        allowedPlayers = new WidgetList(mc, this).
-                setFilledRectThickness(1);
-        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(allowedPlayers);
+        allowedPlayers = createStyledList();
+        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
         Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(allowedPlayers).addChild(allowedPlayerSlider);
 
         nameField = new TextField(mc, this);
@@ -119,7 +118,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
             });
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(6).setVerticalMargin(6)).
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
                 addChild(energyBar).addChild(namePanel).addChild(privatePanel).addChild(allowedPlayersPanel).addChild(buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);

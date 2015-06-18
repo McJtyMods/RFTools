@@ -155,7 +155,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private Panel setupReceiverPanel() {
-        receiverList = new WidgetList(mc, this).setRowheight(14).setFilledRectThickness(1).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
+        receiverList = createStyledList().setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -171,7 +171,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private Panel setupTransmitterPanel() {
-        transmitterList = new WidgetList(mc, this).setRowheight(18).setFilledRectThickness(1).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = createStyledList().setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
