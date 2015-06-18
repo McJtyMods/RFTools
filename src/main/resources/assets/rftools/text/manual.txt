@@ -2,6 +2,7 @@
 
 Table of contents:
 {l:general}General Tips
+{l:security}Security
 {l:smartwrench}Smart Wrench
 {l:netmon}RF Network Monitor Item
 {l:base}Base Ingredients
@@ -36,6 +37,17 @@ All blocks in this mod can be picked up by using a wrench while
 sneaking. Most settings (like stored energy, possible inventory,
 recipes and so on) will be remembered and restored when the block
 is put back in the world.
+{-------------------------------------------------------------}
+{b}Security
+{n:security}
+If you place down a block from RFTools you will automatically be
+tagged as the owner. Being an owner does not prevent others from
+mining the block but they will not be able to change ownership
+(even after mining and placing it back). Using the Orphaning Card
+you can clear ownership for your own blocks (unless you are an
+admin, then you can do it all the time).
+
+{ri:orphaningCardItem}
 {-------------------------------------------------------------}
 {b}Smart Wrench
 {n:smartwrench}
