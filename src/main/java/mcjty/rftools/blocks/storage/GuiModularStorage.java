@@ -330,7 +330,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             return;
         }
 
-        cycleButton.setEnabled(tileEntity == null || isRemote());
+        cycleButton.setEnabled(isTabletWithRemote() || isRemote());
 
         String filterText = filter.getText().toLowerCase().trim();
 
@@ -400,6 +400,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private boolean isRemote() {
         return inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getStack().getItemDamage() == StorageModuleItem.STORAGE_REMOTE;
+    }
+
+    private boolean isTabletWithRemote() {
+        if (tileEntity != null) {
+            return false;
+        }
+        int storageType = mc.thePlayer.getHeldItem().getTagCompound().getInteger("childDamage");
+        return storageType == StorageModuleItem.STORAGE_REMOTE;
     }
 
     private int getCurrentSortMode() {
