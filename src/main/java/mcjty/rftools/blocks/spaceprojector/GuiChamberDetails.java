@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import mcjty.gui.GuiItemScreen;
 import mcjty.gui.RenderHelper;
 import mcjty.gui.Window;
 import mcjty.gui.layout.HorizontalAlignment;
@@ -8,44 +9,35 @@ import mcjty.gui.layout.VerticalLayout;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.varia.BlockMeta;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class GuiChamberDetails extends GuiScreen {
+public class GuiChamberDetails extends GuiItemScreen {
 
-    /** The X size of the window in pixels. */
-    protected int xSize = 410;
-    /** The Y size of the window in pixels. */
-    protected int ySize = 210;
+    private final static int CHAMBER_XSIZE = 390;
+    private final static int CHAMBER_YSIZE = 210;
 
     private static Map<BlockMeta,Integer> items = null;
     private static Map<BlockMeta,Integer> costs = null;
     private static Map<String,Integer> entities = null;
     private static Map<String,Integer> entityCosts = null;
 
-    private Window window;
     private WidgetList blockList;
     private Label infoLabel;
     private Label info2Label;
 
     public GuiChamberDetails() {
+        super(CHAMBER_XSIZE, CHAMBER_YSIZE, RFTools.GUI_MANUAL_MAIN, "chambercard");
         requestChamberInfoFromServer();
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
     }
 
     public static void setItemsWithCount(Map<BlockMeta,Integer> items, Map<BlockMeta,Integer> costs, Map<String,Integer> entities, Map<String,Integer> entityCosts) {
@@ -63,20 +55,17 @@ public class GuiChamberDetails extends GuiScreen {
     public void initGui() {
         super.initGui();
 
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-
-        blockList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(12).setVertical().setScrollable(blockList);
-        Panel listPanel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(blockList).addChild(listSlider);
+        blockList = createStyledList();
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(blockList);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(blockList).addChild(listSlider);
 
         infoLabel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        infoLabel.setDesiredWidth(400).setDesiredHeight(14);
+        infoLabel.setDesiredWidth(380).setDesiredHeight(14);
         info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        info2Label.setDesiredWidth(400).setDesiredHeight(14);
+        info2Label.setDesiredWidth(380).setDesiredHeight(14);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(infoLabel).addChild(info2Label);
-        toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(listPanel).addChild(infoLabel).addChild(info2Label);
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
     }
@@ -162,43 +151,11 @@ public class GuiChamberDetails extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
         populateLists();
 
-        window.draw();
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int guiLeft = (this.width - this.xSize) / 2;
-            int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
-        }
+        drawWindow();
     }
 }
