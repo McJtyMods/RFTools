@@ -10,6 +10,7 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import mcjty.rftools.items.devdelight.ShardWandItem;
+import mcjty.rftools.items.devdelight.OrphaningWandItem;
 import mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -22,6 +23,7 @@ public final class ModItems {
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
     public static ShardWandItem shardWandItem;
+    public static OrphaningWandItem orphaningWandItem;
     public static SmartWrenchItem smartWrenchItem;
 
     public static void init() {
@@ -72,6 +74,12 @@ public final class ModItems {
         shardWandItem.setCreativeTab(RFTools.tabRfTools);
         shardWandItem.setTextureName(RFTools.MODID + ":shardWandItem");
         GameRegistry.registerItem(shardWandItem, "shardWandItem");
+
+        orphaningWandItem = new OrphaningWandItem();
+        orphaningWandItem.setUnlocalizedName("OrphaningWand");
+        orphaningWandItem.setCreativeTab(RFTools.tabRfTools);
+        orphaningWandItem.setTextureName(RFTools.MODID + ":orphaningWandItem");
+        GameRegistry.registerItem(orphaningWandItem, "orphaningWandItem");
     }
 
 }
