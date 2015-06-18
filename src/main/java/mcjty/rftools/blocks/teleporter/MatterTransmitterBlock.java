@@ -141,6 +141,7 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         // We don't want what GenericContainerBlock does.
         restoreBlockFromNBT(world, x, y, z, itemStack);
+        setOwner(world, x, y, z, entityLivingBase);
     }
 
     @Override

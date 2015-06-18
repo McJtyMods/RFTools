@@ -112,6 +112,7 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
             matterReceiverTileEntity.getOrCalculateID();
             matterReceiverTileEntity.updateDestination();
         }
+        setOwner(world, x, y, z, entityLivingBase);
     }
 
     @Override

@@ -5,6 +5,7 @@ import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.ClientCommandHandler;
 import mcjty.rftools.network.CommandHandler;
 import mcjty.varia.Coordinate;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,12 +17,16 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class GenericTileEntity extends TileEntity implements CommandHandler, ClientCommandHandler {
 
     private List<SyncedObject> syncedObjects = new ArrayList<SyncedObject>();
     private Coordinate coordinate;
     private int infused = 0;
+
+    private String ownerName = "";
+    private UUID ownerUUID = null;
 
     public void setInvalid() {
         for (SyncedObject value : syncedObjects) {
@@ -133,6 +138,12 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
      */
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         infused = tagCompound.getInteger("infused");
+        ownerName = tagCompound.getString("owner");
+        if (tagCompound.hasKey("ownerM")) {
+            ownerUUID = new UUID(tagCompound.getLong("ownerM"), tagCompound.getLong("ownerL"));
+        } else {
+            ownerUUID = null;
+        }
     }
 
     @Override
@@ -149,6 +160,39 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
      */
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("infused", infused);
+        if (ownerUUID != null) {
+            tagCompound.setString("owner", ownerName);
+            tagCompound.setLong("ownerM", ownerUUID.getMostSignificantBits());
+            tagCompound.setLong("ownerL", ownerUUID.getLeastSignificantBits());
+        }
+    }
+
+    public boolean setOwner(EntityPlayer player) {
+        if (ownerUUID != null) {
+            // Already has an owner.
+            return false;
+        }
+        ownerUUID = player.getPersistentID();
+        ownerName = player.getDisplayName();
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+        return true;
+    }
+
+    public void clearOwner() {
+        ownerUUID = null;
+        ownerName = "";
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public UUID getOwnerUUID() {
+        return ownerUUID;
     }
 
     @Override

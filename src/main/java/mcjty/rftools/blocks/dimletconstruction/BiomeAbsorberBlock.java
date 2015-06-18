@@ -84,6 +84,7 @@ public class BiomeAbsorberBlock extends GenericBlock {
             BiomeAbsorberTileEntity biomeAbsorberTileEntity = (BiomeAbsorberTileEntity) world.getTileEntity(x, y, z);
             biomeAbsorberTileEntity.placeDown();
         }
+        setOwner(world, x, y, z, entityLivingBase);
     }
 
     @Override

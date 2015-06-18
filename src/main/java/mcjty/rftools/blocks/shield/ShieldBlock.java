@@ -69,6 +69,7 @@ public class ShieldBlock extends GenericContainerBlock implements Infusable {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         restoreBlockFromNBT(world, x, y, z, itemStack);
+        setOwner(world, x, y, z, entityLivingBase);
     }
 
     @Override

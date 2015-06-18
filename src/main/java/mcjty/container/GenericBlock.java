@@ -77,13 +77,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     @SideOnly(Side.CLIENT)
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         Block block = accessor.getBlock();
-        if (block instanceof Infusable) {
-            TileEntity tileEntity = accessor.getTileEntity();
-            if (tileEntity instanceof GenericTileEntity) {
-                GenericTileEntity genericTileEntity = (GenericTileEntity) tileEntity;
+        TileEntity tileEntity = accessor.getTileEntity();
+        if (tileEntity instanceof GenericTileEntity) {
+            GenericTileEntity genericTileEntity = (GenericTileEntity) tileEntity;
+            if (block instanceof Infusable) {
                 int infused = genericTileEntity.getInfused();
                 int pct = infused * 100 / DimletConfiguration.maxInfuse;
                 currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
+            }
+            if (genericTileEntity.getOwnerUUID() != null) {
+                currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName());
             }
         }
         return currenttip;
@@ -102,6 +105,10 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                 int infused = tagCompound.getInteger("infused");
                 int pct = infused * 100 / DimletConfiguration.maxInfuse;
                 list.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
+            }
+            if (tagCompound.hasKey("ownerM")) {
+                String owner = tagCompound.getString("owner");
+                list.add(EnumChatFormatting.YELLOW + "Owned by: " + owner);
             }
         }
     }
@@ -261,6 +268,18 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
         }
         restoreBlockFromNBT(world, x, y, z, itemStack);
+        if (!world.isRemote) {
+            setOwner(world, x, y, z, entityLivingBase);
+        }
+    }
+
+    protected void setOwner(World world, int x, int y, int z, EntityLivingBase entityLivingBase) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof GenericTileEntity && entityLivingBase instanceof EntityPlayer) {
+            GenericTileEntity genericTileEntity = (GenericTileEntity) te;
+            EntityPlayer player = (EntityPlayer) entityLivingBase;
+            genericTileEntity.setOwner(player);
+        }
     }
 
     /**
