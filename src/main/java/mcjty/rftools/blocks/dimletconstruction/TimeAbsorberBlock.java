@@ -50,10 +50,9 @@ public class TimeAbsorberBlock extends GenericBlock {
                 if (name == null) {
                     name = "<unknown>";
                 }
-                currenttip.add(EnumChatFormatting.GREEN + "Dimlet: " + name + " (" + angle + ")");
                 int absorbing = timeAbsorberTileEntity.getAbsorbing();
                 int pct = ((DimletConstructionConfiguration.maxTimeAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxTimeAbsorbtion;
-                currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                currenttip.add(EnumChatFormatting.GREEN + "Dimlet: " + name + " (" + angle + ", " + pct + "%)");
             }
         }
         return currenttip;

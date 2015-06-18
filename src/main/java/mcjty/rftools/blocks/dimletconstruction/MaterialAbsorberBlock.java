@@ -36,10 +36,9 @@ public class MaterialAbsorberBlock extends GenericBlock {
                 Block block = (Block) Block.blockRegistry.getObjectById(blockID);
                 if (block != null) {
                     int meta = tagCompound.getInteger("meta");
-                    currenttip.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block, 1, meta).getDisplayName());
                     int absorbing = tagCompound.getInteger("absorbing");
                     int pct = ((DimletConstructionConfiguration.maxBlockAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBlockAbsorbtion;
-                    currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                    currenttip.add(EnumChatFormatting.GREEN + "Block: " + new ItemStack(block, 1, meta).getDisplayName() + " (" + pct + "%)");
                 }
             }
         }

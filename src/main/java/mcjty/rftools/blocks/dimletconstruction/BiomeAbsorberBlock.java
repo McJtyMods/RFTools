@@ -38,10 +38,9 @@ public class BiomeAbsorberBlock extends GenericBlock {
             if (biomeID != -1) {
                 BiomeGenBase biome = BiomeGenBase.getBiome(biomeID);
                 if (biome != null) {
-                    currenttip.add(EnumChatFormatting.GREEN + "Biome: " + biome.biomeName);
                     int absorbing = tagCompound.getInteger("absorbing");
                     int pct = ((DimletConstructionConfiguration.maxBiomeAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxBiomeAbsorbtion;
-                    currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                    currenttip.add(EnumChatFormatting.GREEN + "Biome: " + biome.biomeName + " (" + pct + "%)");
                 }
             }
         }

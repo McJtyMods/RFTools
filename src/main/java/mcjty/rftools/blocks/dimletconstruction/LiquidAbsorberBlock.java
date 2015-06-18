@@ -39,10 +39,9 @@ public class LiquidAbsorberBlock extends GenericBlock {
                 Block block = (Block) Block.blockRegistry.getObjectById(blockID);
                 if (block != null) {
                     Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-                    currenttip.add(EnumChatFormatting.GREEN + "Liquid: " + new FluidStack(fluid, 1).getLocalizedName());
                     int absorbing = tagCompound.getInteger("absorbing");
                     int pct = ((DimletConstructionConfiguration.maxLiquidAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxLiquidAbsorbtion;
-                    currenttip.add(EnumChatFormatting.GREEN + "Absorbed: " + pct + "%");
+                    currenttip.add(EnumChatFormatting.GREEN + "Liquid: " + new FluidStack(fluid, 1).getLocalizedName() + " (" + pct + "%)");
                 }
             }
         }
