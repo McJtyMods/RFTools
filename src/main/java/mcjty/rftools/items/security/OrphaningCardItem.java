@@ -1,4 +1,4 @@
-package mcjty.rftools.items.devdelight;
+package mcjty.rftools.items.security;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

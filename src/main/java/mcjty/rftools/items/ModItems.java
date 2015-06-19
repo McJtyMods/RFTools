@@ -10,7 +10,7 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import mcjty.rftools.items.devdelight.ShardWandItem;
-import mcjty.rftools.items.devdelight.OrphaningCardItem;
+import mcjty.rftools.items.security.OrphaningCardItem;
 import mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
