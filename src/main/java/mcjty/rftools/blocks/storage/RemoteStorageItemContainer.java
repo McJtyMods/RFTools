@@ -11,6 +11,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
     public static final int MAXSIZE_STORAGE = 300;
 
     private EntityPlayer entityPlayer;
+    private int tabletIndex;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
@@ -38,6 +39,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
 
         addInventory(CONTAINER_INVENTORY, new RemoteStorageItemInventory(player));
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
+        tabletIndex = player.inventory.currentItem;
         generateSlots();
     }
 
@@ -58,7 +60,19 @@ public class RemoteStorageItemContainer extends GenericContainer {
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
-            if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERINV || slotFactory.getSlotType() == SlotType.SLOT_PLAYERHOTBAR) {
+            if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERHOTBAR) {
+                if (slotFactory.getIndex() == tabletIndex) {
+                    slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
+                        @Override
+                        public boolean canTakeStack(EntityPlayer player) {
+                            // We don't want to take the stack from this slot.
+                            return false;
+                        }
+                    };
+                } else {
+                    slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
+                }
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERINV) {
                 slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY());
             } else {
                 slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {

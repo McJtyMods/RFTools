@@ -399,7 +399,11 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private boolean isRemote() {
-        return inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getStack().getItemDamage() == StorageModuleItem.STORAGE_REMOTE;
+        ItemStack stack = inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getStack();
+        if (stack == null) {
+            return false;
+        }
+        return stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE;
     }
 
     private boolean isTabletWithRemote() {
