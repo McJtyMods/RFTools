@@ -177,6 +177,7 @@ tile.spaceProjectorBlock.name=Блок космического проектир
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage
 tile.remoteStorageBlock.name=Remote Storage
+tile.securityManagerBlock.name=Security Manager
 
 tile.dimensionalShardBlock.name=Руда осколков измерения
 tile.dimensionalBlankBlock.name=Чистый блок измерения

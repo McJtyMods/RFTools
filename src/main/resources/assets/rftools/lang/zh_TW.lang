@@ -173,6 +173,7 @@ tile.spaceProjectorBlock.name=空間投影方塊
 tile.blockProtectorBlock.name=Block Protector
 tile.modularStorageBlock.name=Modular Storage
 tile.remoteStorageBlock.name=Remote Storage
+tile.securityManagerBlock.name=Security Manager
 
 tile.dimensionalShardBlock.name=空間碎片礦
 tile.dimensionalBlankBlock.name=維度空方塊
