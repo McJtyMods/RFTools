@@ -552,7 +552,7 @@ public class KnownDimletConfiguration {
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_FEATURE, "None"));
         craftableDimlets.add(keyStructureNone);
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_TERRAIN, "Void"));
-        craftableDimlets.add(new DimletKey(DimletType.DIMLET_TERRAIN, "Void"));
+        craftableDimlets.add(new DimletKey(DimletType.DIMLET_TERRAIN, "Flat"));
         craftableDimlets.add(keyControllerDefault);
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_CONTROLLER, "Single"));
         craftableDimlets.add(keyMaterialNone);
