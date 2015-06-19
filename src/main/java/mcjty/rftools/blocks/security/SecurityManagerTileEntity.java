@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.security;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,7 +76,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return Items.ender_pearl.equals(stack.getItem());
+        return SecuritySetup.securityCardItem.equals(stack.getItem());
     }
 
 

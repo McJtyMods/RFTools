@@ -32,6 +32,7 @@ item.RFToolsManualDimension.name=RFTools Dimension Manual
 item.DevelopersDelight.name=Developers Delight
 item.ShardWand.name=Shard Wand
 item.OrphaningCard.name=Orphaning Card
+item.SecurityCard.name=Security Card
 item.UnknownDimlet.name=Unknown Dimlet
 item.KnownDimlet.name=Known Dimlet
 item.EmptyDimensionTab.name=Empty Dimension Tab

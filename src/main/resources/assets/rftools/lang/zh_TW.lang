@@ -29,6 +29,7 @@ item.RFToolsManualDimension.name=RF工具維度說明書
 item.DevelopersDelight.name=開發者指南工具
 item.ShardWand.name=空間碎片杖
 item.OrphaningCard.name=Orphaning Card
+item.SecurityCard.name=Security Card
 item.UnknownDimlet.name=未知的世界信息卡
 item.KnownDimlet.name=世界信息卡
 item.EmptyDimensionTab.name=空白世界構建模板

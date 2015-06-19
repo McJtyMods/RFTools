@@ -5,7 +5,6 @@ import mcjty.container.GenericContainer;
 import mcjty.container.SlotDefinition;
 import mcjty.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class SecurityManagerContainer extends GenericContainer {
@@ -20,8 +19,8 @@ public class SecurityManagerContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ender_pearl)), CONTAINER_INVENTORY, SLOT_CARD, 10, 7, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ender_pearl)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_CARD, 10, 7, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
             layoutPlayerInventorySlots(74, 124);
         }
     };
