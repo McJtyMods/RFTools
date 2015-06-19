@@ -40,7 +40,19 @@ public class PearlInjectorBlock extends GenericContainerBlock {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            list.add(EnumChatFormatting.GREEN + "Contents: " + bufferTagList.tagCount() + " stacks");
+
+            int rc = 0;
+            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
+                if (itemTag != null) {
+                    ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
+                    if (stack != null) {
+                        rc++;
+                    }
+                }
+            }
+
+            list.add(EnumChatFormatting.GREEN + "Contents: " + rc + " stacks");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
