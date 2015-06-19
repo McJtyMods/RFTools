@@ -14,6 +14,7 @@ import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.monitor.MonitorSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
@@ -58,6 +59,7 @@ public final class ModCrafting {
         BlockProtectorSetup.setupCrafting();
         ModularStorageSetup.setupCrafting();
         SpaceProjectorSetup.setupCrafting();
+        SecuritySetup.setupCrafting();
     }
 
     private static void initItemCrafting() {
@@ -70,9 +72,6 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualDimensionItem), "r r", " b ", "r r", 'r', Items.redstone, 'b', Items.book);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
-
-        GameRegistry.addRecipe(new ItemStack(ModItems.orphaningCardItem), " b ", "rir", " p ", 'r', Items.redstone, 'i', Items.iron_ingot,
-                'b', Items.book, 'p', Items.paper);
     }
 
     private static void intBaseCrafting() {

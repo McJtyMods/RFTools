@@ -5,12 +5,13 @@ import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import mcjty.rftools.items.devdelight.ShardWandItem;
-import mcjty.rftools.items.security.OrphaningCardItem;
+import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -23,7 +24,6 @@ public final class ModItems {
     public static RFToolsManualDimensionItem rfToolsManualDimensionItem;
     public static DevelopersDelightItem developersDelightItem;
     public static ShardWandItem shardWandItem;
-    public static OrphaningCardItem orphaningCardItem;
     public static SmartWrenchItem smartWrenchItem;
 
     public static void init() {
@@ -36,6 +36,7 @@ public final class ModItems {
         DimletSetup.setupItems();
         DimletConstructionSetup.setupItems();
         ModularStorageSetup.setupItems();
+        SecuritySetup.setupItems();
     }
 
     private static void setupVariousItems() {
@@ -74,12 +75,6 @@ public final class ModItems {
         shardWandItem.setCreativeTab(RFTools.tabRfTools);
         shardWandItem.setTextureName(RFTools.MODID + ":shardWandItem");
         GameRegistry.registerItem(shardWandItem, "shardWandItem");
-
-        orphaningCardItem = new OrphaningCardItem();
-        orphaningCardItem.setUnlocalizedName("OrphaningCard");
-        orphaningCardItem.setCreativeTab(RFTools.tabRfTools);
-        orphaningCardItem.setTextureName(RFTools.MODID + ":orphaningCardItem");
-        GameRegistry.registerItem(orphaningCardItem, "orphaningCardItem");
     }
 
 }
