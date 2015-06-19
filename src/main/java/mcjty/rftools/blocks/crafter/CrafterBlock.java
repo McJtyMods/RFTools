@@ -39,9 +39,21 @@ public class CrafterBlock extends GenericContainerBlock implements Infusable {
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
-            list.add(EnumChatFormatting.GREEN + "Contents: " + bufferTagList.tagCount() + " stacks");
 
             int rc = 0;
+            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
+                if (itemTag != null) {
+                    ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
+                    if (stack != null) {
+                        rc++;
+                    }
+                }
+            }
+
+            list.add(EnumChatFormatting.GREEN + "Contents: " + rc + " stacks");
+
+            rc = 0;
             for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
                 NBTTagCompound tagRecipe = recipeTagList.getCompoundTagAt(i);
                 NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
