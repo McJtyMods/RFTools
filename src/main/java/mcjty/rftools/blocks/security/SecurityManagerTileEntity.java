@@ -21,11 +21,20 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, SecurityManagerContainer.factory, SecurityManagerContainer.BUFFER_SIZE + 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, SecurityManagerContainer.factory, SecurityManagerContainer.BUFFER_SIZE + 2);
 
     @Override
     public boolean canUpdate() {
         return false;
+    }
+
+    private NBTTagCompound getOrCreateNBT(ItemStack cardStack) {
+        NBTTagCompound tagCompound = cardStack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            cardStack.setTagCompound(tagCompound);
+        }
+        return tagCompound;
     }
 
     private void updateCard(ItemStack cardStack) {
@@ -35,11 +44,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
         if (cardStack == null) {
             return;
         }
-        NBTTagCompound tagCompound = cardStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            cardStack.setTagCompound(tagCompound);
-        }
+        NBTTagCompound tagCompound = getOrCreateNBT(cardStack);
         if (!tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
             int id = securityChannels.newChannel();
@@ -47,6 +52,28 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
             securityChannels.save(worldObj);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
+    }
+
+    private void updateLinkedCard() {
+        if (worldObj.isRemote) {
+            return;
+        }
+        ItemStack masterCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
+        if (masterCard == null) {
+            return;
+        }
+        ItemStack linkerCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_LINKER);
+        if (linkerCard == null) {
+            return;
+        }
+
+        NBTTagCompound masterNBT = masterCard.getTagCompound();
+        if (masterNBT == null) {
+            return;
+        }
+        NBTTagCompound linkerNBT = getOrCreateNBT(linkerCard);
+        linkerNBT.setInteger("channel", masterNBT.getInteger("channel"));
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     private void addPlayer(String player) {
@@ -106,12 +133,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
         if (cardStack == null) {
             return null;
         }
-        NBTTagCompound tagCompound = cardStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            cardStack.setTagCompound(tagCompound);
-        }
-        return tagCompound;
+        return getOrCreateNBT(cardStack);
     }
 
     @Override
@@ -139,6 +161,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         if (index == SecurityManagerContainer.SLOT_CARD) {
             updateCard(stack);
+            updateLinkedCard();
+        } else if (index == SecurityManagerContainer.SLOT_LINKER) {
+            updateLinkedCard();
         }
     }
 

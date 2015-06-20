@@ -82,7 +82,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
             }
         });
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(32, 8, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent(new ChoiceEvent() {
+        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateSettings();
