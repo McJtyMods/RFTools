@@ -49,6 +49,45 @@ admin, then you can do it all the time).
 
 {ri:orphaningCardItem}
 {-------------------------------------------------------------}
+Only if you are the owner of a block can you change the security
+settings of that block. Basically that means you can control
+who can access the user interface. To change the security settings
+of a block you have to right click it with a properly set up
+Security Card:
+
+{ri:securityCardItem}
+{-------------------------------------------------------------}
+Security Cards need to be configured in the Security Manager:
+{rb:securityManagerBlock}
+
+You insert the card you want to configure in the top-left slot
+and then you can change the name of the channel, add players
+to that channel and switch between blacklist or whitelist mode.
+
+The security manager has a small secondary inventory where you
+can keep your different security cards.
+{-------------------------------------------------------------}
+Once a security card is configured you can right select it on a block to
+assign that block to this channel. You can only do that if you are the
+owner of that block. The block will be linked to that security channel.
+If you make changes to the security channel later (in the security
+manager) these changes will automatically be reflected in all
+linked blocks.
+
+If somehow you lose a security card then you can make a new unlinked one
+and right select the block for which you want to make a new card (only
+the owner can do that).
+
+If you want to make a copy of a security card you can place a fresh
+card into the top right slot of the security manager.
+{-------------------------------------------------------------}
+Players cannot change the security channel on a block they don't
+own. However, if you give them a security card that is already linked
+to the same channel as the block then they can alter the security
+settings for that channel in their own security manager. This
+way you can give some users more privileges to allow adding and
+removing others to a channel.
+{-------------------------------------------------------------}
 {b}Smart Wrench
 {n:smartwrench}
 {ri:smartWrenchItem}
