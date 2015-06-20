@@ -114,11 +114,21 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private void updateChannelName() {
-        sendServerCommand(SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelNameField.getText()));
+        listDirty = 20;     // Make sure we don't request new info from server too fast
+        String channelName = channelNameField.getText();
+        if (channelFromServer != null) {
+            channelFromServer.setName(channelName);
+        }
+        sendServerCommand(SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelName));
     }
 
     private void updateSettings() {
-        sendServerCommand(SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", blacklistMode.getCurrentChoiceIndex() == 0));
+        listDirty = 20;     // Make sure we don't request new info from server too fast
+        boolean whitelist = blacklistMode.getCurrentChoiceIndex() == 0;
+        if (channelFromServer != null) {
+            channelFromServer.setWhitelist(whitelist);
+        }
+        sendServerCommand(SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", whitelist));
     }
 
     private void populatePlayers() {
