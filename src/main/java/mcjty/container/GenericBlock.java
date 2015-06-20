@@ -266,7 +266,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                         SecurityChannels securityChannels = SecurityChannels.getChannels(world);
                         SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
                         boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
-                        if (playerListed != channel.isWhitelist()) {
+                        if (channel.isWhitelist()) {
+                            if (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID())) {
+                                if (!playerListed) {
+                                    RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
+                                    return true;
+                                }
+                            }
+                        } else if (playerListed) {
                             RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
                             return true;
                         }
