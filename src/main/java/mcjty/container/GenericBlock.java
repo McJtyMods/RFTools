@@ -86,7 +86,12 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                 currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
             if (genericTileEntity.getOwnerUUID() != null) {
-                currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName());
+                int securityChannel = genericTileEntity.getSecurityChannel();
+                if (securityChannel == -1) {
+                    currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName());
+                } else {
+                    currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName() + " (channel " + securityChannel + ")");
+                }
             }
         }
         return currenttip;

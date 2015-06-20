@@ -46,7 +46,7 @@ public class OrphaningCardItem extends Item {
             if (te instanceof GenericTileEntity) {
                 GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                 if (genericTileEntity.getOwnerUUID() == null) {
-                    RFTools.message(player, "This block has no owner!");
+                    RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
                     if (player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile())) {
                         genericTileEntity.clearOwner();
@@ -55,11 +55,11 @@ public class OrphaningCardItem extends Item {
                         genericTileEntity.clearOwner();
                         RFTools.message(player, "Cleared owner!");
                     } else {
-                        RFTools.message(player, "You cannot clear ownership of a block you don't own!");
+                        RFTools.message(player, EnumChatFormatting.RED + "You cannot clear ownership of a block you don't own!");
                     }
                 }
             } else {
-                RFTools.message(player, "Onwership is not supported on this block!");
+                RFTools.message(player, EnumChatFormatting.RED + "Onwership is not supported on this block!");
             }
             return true;
         }

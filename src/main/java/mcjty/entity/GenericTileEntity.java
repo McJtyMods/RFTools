@@ -27,6 +27,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
 
     private String ownerName = "";
     private UUID ownerUUID = null;
+    private int securityChannel = -1;
 
     public void setInvalid() {
         for (SyncedObject value : syncedObjects) {
@@ -144,6 +145,11 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         } else {
             ownerUUID = null;
         }
+        if (tagCompound.hasKey("secChannel")) {
+            securityChannel = tagCompound.getInteger("secChannel");
+        } else {
+            securityChannel = -1;
+        }
     }
 
     @Override
@@ -165,6 +171,9 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
             tagCompound.setLong("ownerM", ownerUUID.getMostSignificantBits());
             tagCompound.setLong("ownerL", ownerUUID.getLeastSignificantBits());
         }
+        if (securityChannel != -1) {
+            tagCompound.setInteger("secChannel", securityChannel);
+        }
     }
 
     public boolean setOwner(EntityPlayer player) {
@@ -185,6 +194,16 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
         ownerName = "";
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void setSecurityChannel(int id) {
+        securityChannel = id;
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public int getSecurityChannel() {
+        return securityChannel;
     }
 
     public String getOwnerName() {
