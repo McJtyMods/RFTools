@@ -52,7 +52,9 @@ public class SecurityCardItem extends Item {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "Manage security channels in the Security Manager");
             list.add(EnumChatFormatting.WHITE + "and link this card to a channel. Sneak right-click");
-            list.add(EnumChatFormatting.WHITE + "a block to link the channel to that block");
+            list.add(EnumChatFormatting.WHITE + "a block to link the channel to that block.");
+            list.add(EnumChatFormatting.WHITE + "If you want to copy the channel from a block to");
+            list.add(EnumChatFormatting.WHITE + "a card you can right click with an unlinked card");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -61,44 +63,52 @@ public class SecurityCardItem extends Item {
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
         if (!world.isRemote) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
-            if (tagCompound == null || !tagCompound.hasKey("channel")) {
-                RFTools.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
-            }
-            int channel = tagCompound.getInteger("channel");
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof GenericTileEntity) {
                 GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                 if (genericTileEntity.getOwnerUUID() == null) {
                     RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
-                    if (player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile())) {
-                        int sec = genericTileEntity.getSecurityChannel();
-                        if (sec == channel) {
-                            genericTileEntity.setSecurityChannel(-1);
-                            RFTools.message(player, "Security settings cleared!");
+                    NBTTagCompound tagCompound = stack.getTagCompound();
+                    if (tagCompound == null || !tagCompound.hasKey("channel")) {
+                        int blockSecurity = genericTileEntity.getSecurityChannel();
+                        if (blockSecurity == -1) {
+                            RFTools.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
                         } else {
-                            genericTileEntity.setSecurityChannel(channel);
-                            RFTools.message(player, "Security settings applied!");
-                        }
-                    } else if (genericTileEntity.getOwnerUUID().equals(player.getPersistentID())) {
-                        int sec = genericTileEntity.getSecurityChannel();
-                        if (sec == channel) {
-                            genericTileEntity.setSecurityChannel(-1);
-                            RFTools.message(player, "Security settings cleared!");
-                        } else {
-                            genericTileEntity.setSecurityChannel(channel);
-                            RFTools.message(player, "Security settings applied!");
+                            if (tagCompound == null) {
+                                tagCompound = new NBTTagCompound();
+                                stack.setTagCompound(tagCompound);
+                            }
+                            tagCompound.setInteger("channel", blockSecurity);
+                            RFTools.message(player, EnumChatFormatting.RED + "Copied security channel from block to card!");
                         }
                     } else {
-                        RFTools.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
+                        int channel = tagCompound.getInteger("channel");
+                        if (player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile())) {
+                            toggleSecuritySettings(player, genericTileEntity, channel);
+                        } else if (genericTileEntity.getOwnerUUID().equals(player.getPersistentID())) {
+                            toggleSecuritySettings(player, genericTileEntity, channel);
+                        } else {
+                            RFTools.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
+                        }
                     }
                 }
             } else {
-                RFTools.message(player, EnumChatFormatting.RED + "Onwership is not supported on this block!");
+                RFTools.message(player, EnumChatFormatting.RED + "Security is not supported on this block!");
             }
             return true;
         }
        return true;
+    }
+
+    private void toggleSecuritySettings(EntityPlayer player, GenericTileEntity genericTileEntity, int channel) {
+        int sec = genericTileEntity.getSecurityChannel();
+        if (sec == channel) {
+            genericTileEntity.setSecurityChannel(-1);
+            RFTools.message(player, "Security settings cleared from block!");
+        } else {
+            genericTileEntity.setSecurityChannel(channel);
+            RFTools.message(player, "Security settings applied on block!");
+        }
     }
 }
