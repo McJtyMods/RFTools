@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.security;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,9 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class SecurityCardItem extends Item {
+
+    public static String channelNameFromServer = "";
+    private static long lastTime = 0;
 
     public SecurityCardItem() {
         setMaxStackSize(1);
@@ -34,7 +38,11 @@ public class SecurityCardItem extends Item {
             channel = tagCompound.getInteger("channel");
         }
         if (channel != -1) {
-            list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                PacketHandler.INSTANCE.sendToServer(new PacketGetSecurityName(channel));
+            }
+            list.add(EnumChatFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
         } else {
             list.add(EnumChatFormatting.YELLOW + "Channel is not set!");
         }

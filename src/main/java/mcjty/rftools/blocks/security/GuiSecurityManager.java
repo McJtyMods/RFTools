@@ -160,6 +160,9 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         Slot slot = (Slot) inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
         if (slot.getHasStack()) {
             NBTTagCompound tagCompound = slot.getStack().getTagCompound();
+            if (tagCompound == null) {
+                return -1;
+            }
             if (tagCompound.hasKey("channel")) {
                 return tagCompound.getInteger("channel");
             }
