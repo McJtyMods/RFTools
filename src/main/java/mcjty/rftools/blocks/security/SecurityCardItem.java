@@ -79,28 +79,26 @@ public class SecurityCardItem extends Item {
                 if (genericTileEntity.getOwnerUUID() == null) {
                     RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
-                    NBTTagCompound tagCompound = stack.getTagCompound();
-                    if (tagCompound == null || !tagCompound.hasKey("channel")) {
-                        int blockSecurity = genericTileEntity.getSecurityChannel();
-                        if (blockSecurity == -1) {
-                            RFTools.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
-                        } else {
-                            if (tagCompound == null) {
-                                tagCompound = new NBTTagCompound();
-                                stack.setTagCompound(tagCompound);
+                    if (isAdmin(player) || isOwner(player, genericTileEntity)) {
+                        NBTTagCompound tagCompound = stack.getTagCompound();
+                        if (tagCompound == null || !tagCompound.hasKey("channel")) {
+                            int blockSecurity = genericTileEntity.getSecurityChannel();
+                            if (blockSecurity == -1) {
+                                RFTools.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
+                            } else {
+                                if (tagCompound == null) {
+                                    tagCompound = new NBTTagCompound();
+                                    stack.setTagCompound(tagCompound);
+                                }
+                                tagCompound.setInteger("channel", blockSecurity);
+                                RFTools.message(player, EnumChatFormatting.RED + "Copied security channel from block to card!");
                             }
-                            tagCompound.setInteger("channel", blockSecurity);
-                            RFTools.message(player, EnumChatFormatting.RED + "Copied security channel from block to card!");
+                        } else {
+                            int channel = tagCompound.getInteger("channel");
+                            toggleSecuritySettings(player, genericTileEntity, channel);
                         }
                     } else {
-                        int channel = tagCompound.getInteger("channel");
-                        if (player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile())) {
-                            toggleSecuritySettings(player, genericTileEntity, channel);
-                        } else if (genericTileEntity.getOwnerUUID().equals(player.getPersistentID())) {
-                            toggleSecuritySettings(player, genericTileEntity, channel);
-                        } else {
-                            RFTools.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
-                        }
+                        RFTools.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
                     }
                 }
             } else {
@@ -109,6 +107,14 @@ public class SecurityCardItem extends Item {
             return true;
         }
        return true;
+    }
+
+    private boolean isOwner(EntityPlayer player, GenericTileEntity genericTileEntity) {
+        return genericTileEntity.getOwnerUUID().equals(player.getPersistentID());
+    }
+
+    private boolean isAdmin(EntityPlayer player) {
+        return player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
     @SideOnly(Side.CLIENT)
