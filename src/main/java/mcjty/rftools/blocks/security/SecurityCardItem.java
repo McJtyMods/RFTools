@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,12 +13,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
 public class SecurityCardItem extends Item {
+
+    private IIcon activeIcon;
 
     public static String channelNameFromServer = "";
     private static long lastTime = 0;
@@ -29,6 +33,12 @@ public class SecurityCardItem extends Item {
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        super.registerIcons(iconRegister);
+        activeIcon = iconRegister.registerIcon(RFTools.MODID + ":securityCardItem_linked");
     }
 
     @SideOnly(Side.CLIENT)
@@ -100,6 +110,18 @@ public class SecurityCardItem extends Item {
         }
        return true;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIconIndex(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("channel")) {
+            return activeIcon;
+        } else {
+            return itemIcon;
+        }
+    }
+
 
     private void toggleSecuritySettings(EntityPlayer player, GenericTileEntity genericTileEntity, int channel) {
         int sec = genericTileEntity.getSecurityChannel();
