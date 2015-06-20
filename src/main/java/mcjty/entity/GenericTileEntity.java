@@ -192,6 +192,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     public void clearOwner() {
         ownerUUID = null;
         ownerName = "";
+        securityChannel = -1;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }

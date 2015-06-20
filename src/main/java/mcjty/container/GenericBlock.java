@@ -10,6 +10,7 @@ import mcjty.rftools.apideps.WailaInfoProvider;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -113,7 +114,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             }
             if (tagCompound.hasKey("ownerM")) {
                 String owner = tagCompound.getString("owner");
-                list.add(EnumChatFormatting.YELLOW + "Owned by: " + owner);
+                int securityChannel = -1;
+                if (tagCompound.hasKey("secChannel")) {
+                    securityChannel = tagCompound.getInteger("secChannel");
+                }
+
+                if (securityChannel == -1) {
+                    list.add(EnumChatFormatting.YELLOW + "Owned by: " + owner);
+                } else {
+                    list.add(EnumChatFormatting.YELLOW + "Owned by: " + owner + " (channel " + securityChannel + ")");
+                }
             }
         }
     }
@@ -248,6 +258,21 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                 if (world.isRemote) {
                     return true;
                 }
+
+                if (te instanceof GenericTileEntity) {
+                    GenericTileEntity genericTileEntity = (GenericTileEntity) te;
+                    int securityChannel = genericTileEntity.getSecurityChannel();
+                    if (securityChannel != -1) {
+                        SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                        SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
+                        boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
+                        if (playerListed != channel.isWhitelist()) {
+                            RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
+                            return true;
+                        }
+                    }
+                }
+
                 player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
 
             } else {
