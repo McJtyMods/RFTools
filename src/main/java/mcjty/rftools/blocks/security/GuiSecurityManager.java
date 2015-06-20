@@ -146,14 +146,11 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private void addPlayer() {
-//        sendServerCommand(MatterTransmitterTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
-//        listDirty = 0;
-        players.addChild(new Label(mc, this).setText(nameField.getText()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        sendServerCommand(SecurityManagerTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
     }
 
     private void delPlayer() {
-//        sendServerCommand(MatterTransmitterTileEntity.CMD_DELPLAYER, new Argument("player", players.get(allowedPlayers.getSelected())));
-//        listDirty = 0;
+        sendServerCommand(SecurityManagerTileEntity.CMD_DELPLAYER, new Argument("player", nameField.getText()));
     }
 
     private int getCardID() {
@@ -180,11 +177,15 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         nameField.setEnabled(id != -1);
         channelNameField.setEnabled(id != -1);
 
+        players.removeChildren();
+
         if (id != -1 && channelFromServer != null) {
             channelNameField.setText(channelFromServer.getName());
             blacklistMode.setCurrentChoice(channelFromServer.isWhitelist() ? 0 : 1);
+            for (String player : channelFromServer.getPlayers()) {
+                players.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            }
         } else {
-            players.removeChildren();
             channelNameField.setText("");
         }
     }

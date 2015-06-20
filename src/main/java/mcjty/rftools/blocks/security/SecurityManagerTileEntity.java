@@ -18,6 +18,8 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
 
     public static final String CMD_SETCHANNELNAME = "setChannelName";
     public static final String CMD_SETMODE = "setMode";
+    public static final String CMD_ADDPLAYER = "addPlayer";
+    public static final String CMD_DELPLAYER = "delPlayer";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SecurityManagerContainer.factory, SecurityManagerContainer.BUFFER_SIZE + 1);
 
@@ -42,6 +44,32 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
             SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
             int id = securityChannels.newChannel();
             tagCompound.setInteger("channel", id);
+            securityChannels.save(worldObj);
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
+
+    private void addPlayer(String player) {
+        NBTTagCompound tagCompound = getCardInfo();
+        if (tagCompound == null) return;
+        if (tagCompound.hasKey("channel")) {
+            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            int id = tagCompound.getInteger("channel");
+            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+            channel.addPlayer(player);
+            securityChannels.save(worldObj);
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
+
+    private void delPlayer(String player) {
+        NBTTagCompound tagCompound = getCardInfo();
+        if (tagCompound == null) return;
+        if (tagCompound.hasKey("channel")) {
+            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            int id = tagCompound.getInteger("channel");
+            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+            channel.delPlayer(player);
             securityChannels.save(worldObj);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
@@ -204,6 +232,12 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
             return true;
         } else if (CMD_SETMODE.equals(command)) {
             setWhiteListMode(args.get("whitelist").getBoolean());
+            return true;
+        } else if (CMD_ADDPLAYER.equals(command)) {
+            addPlayer(args.get("player").getString());
+            return true;
+        } else if (CMD_DELPLAYER.equals(command)) {
+            delPlayer(args.get("player").getString());
             return true;
         }
         return false;

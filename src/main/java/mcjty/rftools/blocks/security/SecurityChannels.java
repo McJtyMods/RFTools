@@ -2,11 +2,14 @@ package mcjty.rftools.blocks.security;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SecurityChannels extends WorldSavedData {
@@ -85,6 +88,16 @@ public class SecurityChannels extends WorldSavedData {
             SecurityChannel value = new SecurityChannel();
             value.setName(tc.getString("name"));
             value.setWhitelist(tc.getBoolean("whitelist"));
+
+            value.clearPlayers();
+            NBTTagList playerList = tc.getTagList("players", Constants.NBT.TAG_STRING);
+            if (playerList != null) {
+                for (int j = 0 ; j < playerList.tagCount() ; j++) {
+                    String player = playerList.getStringTagAt(j);
+                    value.addPlayer(player);
+                }
+            }
+
             channels.put(channel, value);
         }
         lastId = tagCompound.getInteger("lastId");
@@ -96,8 +109,16 @@ public class SecurityChannels extends WorldSavedData {
         for (Map.Entry<Integer, SecurityChannel> entry : channels.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
             tc.setInteger("channel", entry.getKey());
-            tc.setString("name", entry.getValue().getName());
-            tc.setBoolean("whitelist", entry.getValue().isWhitelist());
+            SecurityChannel channel = entry.getValue();
+            tc.setString("name", channel.getName());
+            tc.setBoolean("whitelist", channel.isWhitelist());
+
+            NBTTagList playerTagList = new NBTTagList();
+            for (String player : channel.getPlayers()) {
+                playerTagList.appendTag(new NBTTagString(player));
+            }
+            tc.setTag("players", playerTagList);
+
             lst.appendTag(tc);
         }
         tagCompound.setTag("channels", lst);
@@ -107,6 +128,7 @@ public class SecurityChannels extends WorldSavedData {
     public static class SecurityChannel {
         private String name = "";
         private boolean whitelist = true;
+        private final List<String> players = new ArrayList<String>();
 
         public String getName() {
             return name;
@@ -114,6 +136,22 @@ public class SecurityChannels extends WorldSavedData {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public List<String> getPlayers() {
+            return players;
+        }
+
+        public void addPlayer(String player) {
+            players.add(player);
+        }
+
+        public void delPlayer(String player) {
+            players.remove(player);
+        }
+
+        public void clearPlayers() {
+            players.clear();
         }
 
         public boolean isWhitelist() {

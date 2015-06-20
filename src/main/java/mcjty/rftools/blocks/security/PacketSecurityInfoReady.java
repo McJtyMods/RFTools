@@ -19,12 +19,23 @@ public class PacketSecurityInfoReady implements IMessage, IMessageHandler<Packet
         channel = new SecurityChannels.SecurityChannel();
         channel.setName(NetworkTools.readString(buf));
         channel.setWhitelist(buf.readBoolean());
+        int size = buf.readInt();
+        channel.clearPlayers();
+        for (int i = 0 ; i < size ; i++) {
+            channel.addPlayer(NetworkTools.readString(buf));
+        }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         NetworkTools.writeString(buf, channel.getName());
         buf.writeBoolean(channel.isWhitelist());
+        List<String> players = channel.getPlayers();
+        buf.writeInt(players.size());
+        for (String player : players) {
+            NetworkTools.writeString(buf, player);
+        }
+
     }
 
     public PacketSecurityInfoReady() {
