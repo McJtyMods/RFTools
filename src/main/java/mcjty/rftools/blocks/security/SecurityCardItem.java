@@ -6,6 +6,7 @@ import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
@@ -27,6 +28,16 @@ public class SecurityCardItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        int channel = -1;
+        if (tagCompound != null && tagCompound.hasKey("channel")) {
+            channel = tagCompound.getInteger("channel");
+        }
+        if (channel != -1) {
+            list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+        } else {
+            list.add(EnumChatFormatting.YELLOW + "Channel is not set!");
+        }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "Manage security channels in the Security Manager");
             list.add(EnumChatFormatting.WHITE + "and link this card to a channel. Sneak right-click");

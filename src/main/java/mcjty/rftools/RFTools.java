@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
@@ -215,6 +216,7 @@ public class RFTools {
         DimensionStorage.clearInstance();
         DimletMapping.clearInstance();
         RedstoneChannels.clearInstance();
+        SecurityChannels.clearInstance();
         BlockProtectors.clearInstance();
         RemoteStorageIdRegistry.clearInstance();
     }

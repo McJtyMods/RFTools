@@ -10,6 +10,8 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenDataHandler;
+import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
+import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.spaceprojector.PacketChamberInfoReady;
@@ -61,6 +63,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketGetAllReceivers.class, PacketGetAllReceivers.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketForceTeleport.class, PacketForceTeleport.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetPlayers.class, PacketGetPlayers.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketGetSecurityInfo.class, PacketGetSecurityInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetFilters.class, PacketGetFilters.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetDelightingInfo.class, PacketGetDelightingInfo.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketGetChamberInfo.class, PacketGetChamberInfo.class, nextID(), Side.SERVER);
@@ -84,6 +87,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketIntegerFromServer.class, PacketIntegerFromServer.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketAllReceiversReady.class, PacketAllReceiversReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketPlayersReady.class, PacketPlayersReady.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketSecurityInfoReady.class, PacketSecurityInfoReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketFiltersReady.class, PacketFiltersReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketDelightingInfoReady.class, PacketDelightingInfoReady.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketChamberInfoReady.class, PacketChamberInfoReady.class, nextID(), Side.CLIENT);

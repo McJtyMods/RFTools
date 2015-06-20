@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.security;
 import mcjty.container.GenericGuiContainer;
 import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
+import mcjty.gui.events.ChoiceEvent;
+import mcjty.gui.events.TextEvent;
 import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
@@ -12,6 +14,10 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.Argument;
+import mcjty.rftools.network.PacketHandler;
+import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -22,11 +28,18 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public static final int SECURITYMANAGER_HEIGHT = 206;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/securitymanager.png");
+    private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private WidgetList players;
     private Button addButton;
     private Button delButton;
     private TextField nameField;
+    private ImageChoiceLabel blacklistMode;
+    private TextField channelNameField;
+
+    private int listDirty = 0;
+
+    public static SecurityChannels.SecurityChannel channelFromServer = null;
 
     public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, SecurityManagerContainer container) {
         super(securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
@@ -41,8 +54,8 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
         players = createStyledList();
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(players).addChild(allowedPlayerSlider).
-                setLayoutHint(new PositionalLayout.PositionalHint(60, 10, SECURITYMANAGER_WIDTH - 70, 86));
+        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(players).addChild(allowedPlayerSlider).
+                setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
 
         nameField = new TextField(mc, this);
         addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").
@@ -59,13 +72,53 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
                         delPlayer();
                     }
                 });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16).
-                setLayoutHint(new PositionalLayout.PositionalHint(60, 100, SECURITYMANAGER_WIDTH - 70, 14));
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16).
+                setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel);
+        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent(new TextEvent() {
+            @Override
+            public void textChanged(Widget parent, String newText) {
+                updateChannelName();
+            }
+        });
+
+        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(32, 8, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent(new ChoiceEvent() {
+            @Override
+            public void choiceChanged(Widget parent, String newChoice) {
+                updateSettings();
+            }
+        });
+        blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
+        blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
+
+
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
+                addChild(blacklistMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
+
+        channelFromServer = null;
+    }
+
+    private void requestInfoIfNeeded() {
+        int id = getCardID();
+        if (id == -1) {
+            return;
+        }
+        listDirty--;
+        if (listDirty <= 0) {
+            PacketHandler.INSTANCE.sendToServer(new PacketGetSecurityInfo(id));
+            listDirty = 20;
+        }
+    }
+
+    private void updateChannelName() {
+        sendServerCommand(SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelNameField.getText()));
+    }
+
+    private void updateSettings() {
+        sendServerCommand(SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", blacklistMode.getCurrentChoiceIndex() == 0));
     }
 
     private void populatePlayers() {
@@ -93,9 +146,40 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 //        listDirty = 0;
     }
 
+    private int getCardID() {
+        Slot slot = (Slot) inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
+        if (slot.getHasStack()) {
+            NBTTagCompound tagCompound = slot.getStack().getTagCompound();
+            if (tagCompound.hasKey("channel")) {
+                return tagCompound.getInteger("channel");
+            }
+        }
+        return -1;
+    }
+
+
+    private void updateGui() {
+        int id = getCardID();
+        blacklistMode.setEnabled(id != -1);
+        players.setEnabled(id != -1);
+        addButton.setEnabled(id != -1);
+        delButton.setEnabled(id != -1);
+        nameField.setEnabled(id != -1);
+        channelNameField.setEnabled(id != -1);
+
+        if (id != -1 && channelFromServer != null) {
+            channelNameField.setText(channelFromServer.getName());
+            blacklistMode.setCurrentChoice(channelFromServer.isWhitelist() ? 0 : 1);
+        } else {
+            players.removeChildren();
+            channelNameField.setText("");
+        }
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        updateGui();
         drawWindow();
+        requestInfoIfNeeded();
     }
 }

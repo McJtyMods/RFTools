@@ -29,7 +29,7 @@ public class SecurityChannels extends WorldSavedData {
 
     public static void clearInstance() {
         if (instance != null) {
-//            instance.channels.clear();
+            instance.channels.clear();
             instance = null;
         }
     }
@@ -84,6 +84,7 @@ public class SecurityChannels extends WorldSavedData {
 
             SecurityChannel value = new SecurityChannel();
             value.setName(tc.getString("name"));
+            value.setWhitelist(tc.getBoolean("whitelist"));
             channels.put(channel, value);
         }
         lastId = tagCompound.getInteger("lastId");
@@ -96,6 +97,7 @@ public class SecurityChannels extends WorldSavedData {
             NBTTagCompound tc = new NBTTagCompound();
             tc.setInteger("channel", entry.getKey());
             tc.setString("name", entry.getValue().getName());
+            tc.setBoolean("whitelist", entry.getValue().isWhitelist());
             lst.appendTag(tc);
         }
         tagCompound.setTag("channels", lst);
@@ -104,6 +106,7 @@ public class SecurityChannels extends WorldSavedData {
 
     public static class SecurityChannel {
         private String name = "";
+        private boolean whitelist = true;
 
         public String getName() {
             return name;
@@ -111,6 +114,14 @@ public class SecurityChannels extends WorldSavedData {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public boolean isWhitelist() {
+            return whitelist;
+        }
+
+        public void setWhitelist(boolean whitelist) {
+            this.whitelist = whitelist;
         }
     }
 }
