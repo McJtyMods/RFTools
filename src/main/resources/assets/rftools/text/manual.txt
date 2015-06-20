@@ -87,6 +87,10 @@ to the same channel as the block then they can alter the security
 settings for that channel in their own security manager. This
 way you can give some users more privileges to allow adding and
 removing others to a channel.
+
+The owner of a block can always access the GUI regardless of the
+security settings on that block. An admin can also access the
+GUI in all cases.
 {-------------------------------------------------------------}
 {b}Smart Wrench
 {n:smartwrench}

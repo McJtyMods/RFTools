@@ -10,6 +10,7 @@ import mcjty.rftools.apideps.WailaInfoProvider;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
@@ -250,45 +251,36 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
 
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
         if (getGuiID() != -1) {
-            if (isBlockContainer) {
-                TileEntity te = world.getTileEntity(x, y, z);
-                if (!tileEntityClass.isInstance(te)) {
-                    return true;
-                }
-                if (world.isRemote) {
-                    return true;
-                }
+            if (world.isRemote) {
+                return true;
+            }
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (isBlockContainer && !tileEntityClass.isInstance(te)) {
+                return true;
+            }
+            if (checkAccess(world, player, te)) return true;
+            player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
+        }
+        return true;
+    }
 
-                if (te instanceof GenericTileEntity) {
-                    GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-                    int securityChannel = genericTileEntity.getSecurityChannel();
-                    if (securityChannel != -1) {
-                        SecurityChannels securityChannels = SecurityChannels.getChannels(world);
-                        SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
-                        boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
-                        if (channel.isWhitelist()) {
-                            if (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID())) {
-                                if (!playerListed) {
-                                    RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
-                                    return true;
-                                }
-                            }
-                        } else if (playerListed) {
-                            RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
-                            return true;
-                        }
+    private boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
+        if (te instanceof GenericTileEntity) {
+            GenericTileEntity genericTileEntity = (GenericTileEntity) te;
+            if ((!SecurityCardItem.isAdmin(player)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
+                int securityChannel = genericTileEntity.getSecurityChannel();
+                if (securityChannel != -1) {
+                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
+                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
+                    if (channel.isWhitelist() != playerListed) {
+                        RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
+                        return true;
                     }
-                }
-
-                player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
-
-            } else {
-                if (world.isRemote) {
-                    player.openGui(RFTools.instance, getGuiID(), player.worldObj, x, y, z);
                 }
             }
         }
-        return true;
+        return false;
     }
 
     @Override

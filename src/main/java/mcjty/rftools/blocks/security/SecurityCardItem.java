@@ -113,7 +113,7 @@ public class SecurityCardItem extends Item {
         return genericTileEntity.getOwnerUUID().equals(player.getPersistentID());
     }
 
-    private boolean isAdmin(EntityPlayer player) {
+    public static boolean isAdmin(EntityPlayer player) {
         return player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
