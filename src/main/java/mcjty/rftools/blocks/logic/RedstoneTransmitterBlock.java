@@ -37,6 +37,8 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This logic block accepts redstone signals and");
             list.add(EnumChatFormatting.WHITE + "sends them out wirelessly to linked receivers");
+            list.add(EnumChatFormatting.WHITE + "Place down to create a channel or else right");
+            list.add(EnumChatFormatting.WHITE + "click on receiver/transmitter to use that channel");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

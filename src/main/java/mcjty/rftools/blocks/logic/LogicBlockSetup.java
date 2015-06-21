@@ -29,7 +29,7 @@ public class LogicBlockSetup {
         GameRegistry.registerTileEntity(CounterTileEntity.class, "CounterTileEntity");
 
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
-        GameRegistry.registerBlock(redstoneTransmitterBlock, GenericItemBlock.class, "redstoneTransmitterBlock");
+        GameRegistry.registerBlock(redstoneTransmitterBlock, RedstoneReceiverItemBlock.class, "redstoneTransmitterBlock");
         GameRegistry.registerTileEntity(RedstoneTransmitterTileEntity.class, "RedstoneTransmitterTileEntity");
 
         redstoneReceiverBlock = new RedstoneReceiverBlock();
