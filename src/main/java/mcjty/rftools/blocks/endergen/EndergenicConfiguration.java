@@ -17,6 +17,8 @@ public class EndergenicConfiguration {
     public static int goodParticleCount = 10;
     public static int badParticleCount = 10;
 
+    public static double powergenFactor = 2.0;
+
     public static void init(Configuration cfg) {
         chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", chanceLost,
                 "The chance (in 1/10 percent, so 1000 = 100%) that an endergenic pearl is lost while trying to hold it").getInt();
@@ -30,5 +32,7 @@ public class EndergenicConfiguration {
                 "The amount of particles to spawn whenever energy is generated (use 0 to disable)").getInt();
         badParticleCount = cfg.get(CATEGORY_ENDERGENIC, "endergenicBadParticles", badParticleCount,
                 "The amount of particles to spawn whenever a pearl is lost (use 0 to disable)").getInt();
+        powergenFactor = cfg.get(CATEGORY_ENDERGENIC, "powergenFactor", powergenFactor,
+                "Multiplier for power generation").getDouble();
     }
 }
