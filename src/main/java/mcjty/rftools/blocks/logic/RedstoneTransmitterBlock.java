@@ -77,20 +77,6 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        if (!world.isRemote) {
-            RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
-            RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(x, y, z);
-            if (te.getChannel() != -1) {
-                redstoneChannels.deleteChannel(te.getChannel());
-                redstoneChannels.save(world);
-            }
-        }
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-
-    @Override
     public int getGuiID() {
         return -1;
     }
