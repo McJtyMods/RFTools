@@ -198,7 +198,10 @@ has to face away from the Endergenic Generator.
 {rb:redstoneTransmitterBlock}
 This block will wirelessly send out a redstone signal on a
 specific channel when it gets a redstone signal. Use this in
-combination with the redstone receiver block.
+combination with the redstone receiver block. If you place this
+block down it will create a channel. You can also link this
+transmitter to existing channels by right clicking on another
+transmitter or receiver.
 {-------------------------------------------------------------}
 {b}Redstone Receiver
 {n:redrec}
