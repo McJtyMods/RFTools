@@ -47,7 +47,7 @@ public class ContainerToItemRecipe extends ShapedRecipes {
                 NBTTagCompound newtag = new NBTTagCompound();
                 for (Object o : tagCompound.func_150296_c()) {
                     String tag = (String) o;
-                    if (!"childDamage".equals(tag)) {
+                    if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag))) {
                         newtag.setTag(tag, tagCompound.getTag(tag));
                     }
                 }
