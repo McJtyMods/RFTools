@@ -286,17 +286,23 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
         return false;
     }
 
+    protected ForgeDirection getOrientation(int x, int y, int z, EntityLivingBase entityLivingBase) {
+        if (horizRotation) {
+            return BlockTools.determineOrientationHoriz(entityLivingBase);
+        } else {
+            return BlockTools.determineOrientation(x, y, z, entityLivingBase);
+        }
+    }
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        ForgeDirection dir = getOrientation(x, y, z, entityLivingBase);
+        int meta = world.getBlockMetadata(x, y, z);
         if (horizRotation) {
-            ForgeDirection dir = BlockTools.determineOrientationHoriz(entityLivingBase);
-            int meta = world.getBlockMetadata(x, y, z);
             int power = world.isBlockProvidingPowerTo(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.ordinal());
             meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
             world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientationHoriz(meta, dir), 2);
         } else {
-            ForgeDirection dir = BlockTools.determineOrientation(x, y, z, entityLivingBase);
-            int meta = world.getBlockMetadata(x, y, z);
             world.setBlockMetadataWithNotify(x, y, z, BlockTools.setOrientation(meta, dir), 2);
         }
         restoreBlockFromNBT(world, x, y, z, itemStack);

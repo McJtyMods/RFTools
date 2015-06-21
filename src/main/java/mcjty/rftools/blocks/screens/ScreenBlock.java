@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.BlockTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -27,6 +28,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -204,19 +206,19 @@ public class ScreenBlock extends GenericContainerBlock {
         int meta = world.getBlockMetadata(x, y, z);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-        if (meta == 2) {
+        if (meta == ForgeDirection.NORTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
         }
 
-        if (meta == 3) {
+        if (meta == ForgeDirection.SOUTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
         }
 
-        if (meta == 4) {
+        if (meta == ForgeDirection.WEST.ordinal()) {
             this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         }
 
-        if (meta == 5) {
+        if (meta == ForgeDirection.EAST.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
         }
     }
@@ -306,8 +308,14 @@ public class ScreenBlock extends GenericContainerBlock {
     }
 
     @Override
+    protected ForgeDirection getOrientation(int x, int y, int z, EntityLivingBase entityLivingBase) {
+        return BlockTools.determineOrientationHoriz(entityLivingBase);
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+
         if (entityLivingBase instanceof EntityPlayer) {
             Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
         }
