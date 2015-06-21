@@ -27,6 +27,10 @@ public class GenericContainer extends Container {
         inventories.put(name, inventory);
     }
 
+    public IInventory getInventory(String name) {
+        return inventories.get(name);
+    }
+
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
         for (IInventory inventory : inventories.values()) {
