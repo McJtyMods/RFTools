@@ -33,6 +33,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,12 +88,14 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                 int pct = infused * 100 / DimletConfiguration.maxInfuse;
                 currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
-            if (genericTileEntity.getOwnerUUID() != null) {
-                int securityChannel = genericTileEntity.getSecurityChannel();
-                if (securityChannel == -1) {
-                    currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName());
-                } else {
-                    currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName() + " (channel " + securityChannel + ")");
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (genericTileEntity.getOwnerUUID() != null) {
+                    int securityChannel = genericTileEntity.getSecurityChannel();
+                    if (securityChannel == -1) {
+                        currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName());
+                    } else {
+                        currenttip.add(EnumChatFormatting.YELLOW + "Owned by: " + genericTileEntity.getOwnerName() + " (channel " + securityChannel + ")");
+                    }
                 }
             }
         }
