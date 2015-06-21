@@ -91,6 +91,9 @@ removing others to a channel.
 The owner of a block can always access the GUI regardless of the
 security settings on that block. An admin can also access the
 GUI in all cases.
+
+Note that if you press 'shift' you can see the security settings
+on a block in WAILA.
 {-------------------------------------------------------------}
 {b}Smart Wrench
 {n:smartwrench}
