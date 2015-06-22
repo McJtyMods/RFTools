@@ -29,6 +29,17 @@
         [ "Material", "tile.oreCoal", 5000, 1000, 500, 3, 0 ],
         [ "Material", "tile.oreRedstone", 8000, 4000, 700, 3, 0 ],
 
+        [ "Material", "tile.OreBlock", 12000, 2500, 400, 3, 0 ],
+
+        [ "Material", "tile.metal.block.utility.ore1", 5000, 600, 100, 2, 0 ],
+
+        [ "Material", "tile.FluoriteOre", 6000, 700, 120, 2, 0 ],
+
+        [ "Material", "tile.projectred.exploration.ore", 6000, 600, 100, 2, 0 ],
+        [ "Material", "tile.projectred.exploration.ore1", 6000, 600, 100, 2, 0 ],
+        [ "Material", "tile.projectred.exploration.ore2", 6000, 600, 100, 2, 0 ],
+
+
         [ "Material", "tile.thermalfoundation.ore", 8000, 1800, 400, 3, 0 ],
         [ "Material", "tile.thermalfoundation.ore1", 8000, 1800, 400, 3, 0 ],
         [ "Material", "tile.thermalfoundation.ore2", 10000, 2200, 500, 3, 0 ],
@@ -215,6 +226,14 @@
         [ "Liquid", "mobessence", 22000, 8000, 350, 4, 0 ],
         [ "Liquid", "pinkslime", 8000, 2000, 150, 3, 1 ],
         [ "Liquid", "life essence", 2000, 1000, 250, 3, 0 ],
+        [ "Liquid", "refined.glowstone.molten", 5000, 1000, 400, 4, 0 ],
+        [ "Liquid", "fairy.molten", 1000, 500, 200, 3, 0 ],
+        [ "Liquid", "ardite.molten", 20000, 10000, 1000, 5, 0 ],
+        [ "Liquid", "celenegil.molten", 15000, 8000, 900, 5, 0 ],
+        [ "Liquid", "enderium.molten", 20000, 10000, 1000, 5, 0 ],
+        [ "Liquid", "obsidian.molten", 5000, 1200, 300, 3, 0 ],
+        [ "Liquid", "manyullyn.molten", 20000, 10000, 900, 5, 0 ],
+        [ "Liquid", "fluidpure", 6000, 800, 200, 3, 0 ],
 
         [ "Mob", "Default", 300, 100, 200, 1, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0 ],
