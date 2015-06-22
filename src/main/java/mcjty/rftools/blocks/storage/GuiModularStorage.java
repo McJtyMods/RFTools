@@ -1,8 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.container.GenericContainer;
 import mcjty.container.GenericGuiContainer;
-import mcjty.container.InventoryHelper;
 import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.ChoiceEvent;
@@ -27,7 +25,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
