@@ -31,7 +31,7 @@ public class RFToolsTradeHandler implements VillagerRegistry.IVillageTradeHandle
         if (random.nextFloat() < DimletConstructionConfiguration.essenceTradeChance) {
             List<Integer> keys = new ArrayList<Integer>(StructureEssenceItem.structures.keySet());
             int structureType = keys.get(random.nextInt(keys.size()));
-            recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, 3), new ItemStack(DimletConstructionSetup.structureEssenceItem, 1, structureType)));
+            recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, 2 + random.nextInt(3)), new ItemStack(DimletConstructionSetup.structureEssenceItem, 1, structureType)));
         }
     }
 }

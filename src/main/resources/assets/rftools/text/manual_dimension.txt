@@ -446,6 +446,7 @@ of dimlet that you want to make:
       specific type) for the peaceful dimlet
     - Efficiency/mediocre efficiency items for the corresponding
       efficiency dimlets
+    - Structure Essence (from villagers) for structure dimlets
 {-------------------------------------------------------------}
 So, if you wanted to create a Biome: Forest dimlet, you would
 place the Biome Absorber within a Forest Biome. Slowly, the
