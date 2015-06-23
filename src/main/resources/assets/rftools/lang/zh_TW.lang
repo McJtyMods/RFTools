@@ -108,6 +108,12 @@ item.DimletTypeControllerTerrain.name=信息卡地形種類控制器
 item.DimletTypeControllerTime.name=信息卡時間種類控制器
 item.SyringeItem.name=注射器
 item.PeaceEssence.name=和平精華
+item.StructureEssenceVillage.name=Structure Village Essence
+item.StructureEssenceStronghold.name=Structure Stronghold Essence
+item.StructureEssenceDungeon.name=Structure Dungeon Essence
+item.StructureEssenceFortress.name=Structure Fortress Essence
+item.StructureEssenceMineshaft.name=Structure Mineshaft Essence
+item.StructureEssenceScattered.name=Structure Scattered Essence
 item.EfficiencyEssence.name=效率精華
 item.MediocreEfficiencyEssence.name=平庸的效率精華
  

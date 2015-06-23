@@ -1,5 +1,6 @@
 package mcjty.rftools.items.dimlets.types;
 
+import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.StructureType;
@@ -7,6 +8,8 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.DimletType;
+import mcjty.rftools.items.parts.StructureEssenceItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;
@@ -138,8 +141,35 @@ public class StructureDimletType implements IDimletType {
         return new String[] { "Control generation of various structures", "in the world." };
     }
 
+    private static boolean isValidStructureEssence(ItemStack stackEssence) {
+        Item item = stackEssence.getItem();
+
+        if (item != DimletConstructionSetup.structureEssenceItem) {
+            return false;
+        }
+        return true;
+    }
+
+    private static DimletKey findStructureDimlet(ItemStack stackEssence) {
+        StructureType structureType = StructureEssenceItem.structures.get(stackEssence.getItemDamage());
+        if (structureType == null) {
+            return null;
+        }
+        return new DimletKey(DimletType.DIMLET_STRUCTURE, structureType.getName());
+    }
+
     @Override
     public DimletKey attemptDimletCrafting(ItemStack stackController, ItemStack stackMemory, ItemStack stackEnergy, ItemStack stackEssence) {
-        return null;
+        if (!isValidStructureEssence(stackEssence)) {
+            return null;
+        }
+        DimletKey structureDimlet = findStructureDimlet(stackEssence);
+        if (structureDimlet == null) {
+            return null;
+        }
+        if (!DimletCraftingTools.matchDimletRecipe(structureDimlet, stackController, stackMemory, stackEnergy)) {
+            return null;
+        }
+        return structureDimlet;
     }
 }

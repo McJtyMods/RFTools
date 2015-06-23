@@ -426,13 +426,13 @@ public class KnownDimletConfiguration {
 
         addExtraInformation(new DimletKey(DimletType.DIMLET_WEATHER, "Default"), "Normal default weather");
 
-        initStructureItem(cfg, "None", StructureType.STRUCTURE_NONE, mapping, master);
-        initStructureItem(cfg, "Village", StructureType.STRUCTURE_VILLAGE, mapping, master);
-        initStructureItem(cfg, "Stronghold", StructureType.STRUCTURE_STRONGHOLD, mapping, master);
-        initStructureItem(cfg, "Dungeon", StructureType.STRUCTURE_DUNGEON, mapping, master);
-        initStructureItem(cfg, "Fortress", StructureType.STRUCTURE_FORTRESS, mapping, master);
-        initStructureItem(cfg, "Mineshaft", StructureType.STRUCTURE_MINESHAFT, mapping, master);
-        initStructureItem(cfg, "Scattered", StructureType.STRUCTURE_SCATTERED, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_NONE.getName(), StructureType.STRUCTURE_NONE, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_VILLAGE.getName(), StructureType.STRUCTURE_VILLAGE, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_STRONGHOLD.getName(), StructureType.STRUCTURE_STRONGHOLD, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_DUNGEON.getName(), StructureType.STRUCTURE_DUNGEON, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_FORTRESS.getName(), StructureType.STRUCTURE_FORTRESS, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_MINESHAFT.getName(), StructureType.STRUCTURE_MINESHAFT, mapping, master);
+        initStructureItem(cfg, StructureType.STRUCTURE_SCATTERED.getName(), StructureType.STRUCTURE_SCATTERED, mapping, master);
         DimletKey keyStructureNone = new DimletKey(DimletType.DIMLET_STRUCTURE, "None");
         addExtraInformation(keyStructureNone, "With this none dimlet you can disable", "all normal structure spawning");
         initRecurrentComplexStructures(cfg, mapping, master);

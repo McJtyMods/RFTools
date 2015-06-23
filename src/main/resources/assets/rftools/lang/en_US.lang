@@ -111,6 +111,12 @@ item.DimletTypeControllerTerrain.name=Dimlet Terrain Type Controller
 item.DimletTypeControllerTime.name=Dimlet Time Type Controller
 item.SyringeItem.name=Syringe
 item.PeaceEssence.name=Peace Essence
+item.StructureEssenceVillage.name=Structure Village Essence
+item.StructureEssenceStronghold.name=Structure Stronghold Essence
+item.StructureEssenceDungeon.name=Structure Dungeon Essence
+item.StructureEssenceFortress.name=Structure Fortress Essence
+item.StructureEssenceMineshaft.name=Structure Mineshaft Essence
+item.StructureEssenceScattered.name=Structure Scattered Essence
 item.EfficiencyEssence.name=Efficiency Essence
 item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 

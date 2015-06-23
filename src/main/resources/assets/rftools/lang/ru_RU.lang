@@ -111,6 +111,12 @@ item.DimletTypeControllerTerrain.name=Контроллер типа террит
 item.DimletTypeControllerTime.name=Контроллер типа времени димлета
 item.SyringeItem.name=Шприц
 item.PeaceEssence.name=Обычная эссенция
+item.StructureEssenceVillage.name=Structure Village Essence
+item.StructureEssenceStronghold.name=Structure Stronghold Essence
+item.StructureEssenceDungeon.name=Structure Dungeon Essence
+item.StructureEssenceFortress.name=Structure Fortress Essence
+item.StructureEssenceMineshaft.name=Structure Mineshaft Essence
+item.StructureEssenceScattered.name=Structure Scattered Essence
 item.EfficiencyEssence.name=Эссенция эффективности
 item.MediocreEfficiencyEssence.name=Посредственная эссенция эффективности
 

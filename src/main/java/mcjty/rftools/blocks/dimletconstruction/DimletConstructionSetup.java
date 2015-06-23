@@ -29,6 +29,7 @@ public class DimletConstructionSetup {
     public static PeaceEssenceItem peaceEssenceItem;
     public static EfficiencyEssenceItem efficiencyEssenceItem;
     public static MediocreEfficiencyEssenceItem mediocreEfficiencyEssenceItem;
+    public static StructureEssenceItem structureEssenceItem;
 
     public static void setupBlocks() {
         dimletWorkbenchBlock = new DimletWorkbenchBlock();
@@ -101,6 +102,12 @@ public class DimletConstructionSetup {
         mediocreEfficiencyEssenceItem.setCreativeTab(RFTools.tabRfTools);
         mediocreEfficiencyEssenceItem.setTextureName(RFTools.MODID + ":parts/mediocreEfficiencyEssence");
         GameRegistry.registerItem(mediocreEfficiencyEssenceItem, "mediocreEfficiencyEssenceItem");
+
+        structureEssenceItem = new StructureEssenceItem();
+        structureEssenceItem.setUnlocalizedName("StructureEssence");
+        structureEssenceItem.setCreativeTab(RFTools.tabRfTools);
+        structureEssenceItem.setTextureName(RFTools.MODID + ":parts/structureEssence");
+        GameRegistry.registerItem(structureEssenceItem, "structureEssenceItem");
     }
 
     public static void setupCrafting() {

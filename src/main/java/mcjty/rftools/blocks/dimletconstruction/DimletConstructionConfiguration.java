@@ -13,6 +13,8 @@ public class DimletConstructionConfiguration {
     public static int maxLiquidAbsorbtion = 128;    // Amount of liquid blocks to absorbe
     public static int maxMobInjections = 10;        // Maximum amount of injections we need to do a full mob extraction.
 
+    public static double essenceTradeChance = .05;  // Chance that a structure essence is added to a villager trade
+
     public static void init(Configuration cfg) {
         WORKBENCH_MAXENERGY = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "dimletWorkbenchMaxRF", WORKBENCH_MAXENERGY,
                 "Maximum RF storage that the dimlet workbench can hold").getInt();
@@ -32,5 +34,8 @@ public class DimletConstructionConfiguration {
 
         maxMobInjections = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "maxMobInjections", maxMobInjections,
                 "Amount of injections needed to get a fully absorbed mob essence").getInt();
+
+        essenceTradeChance = cfg.get(CATEGORY_DIMLET_CONSTRUCTION, "essenceTradeChance", essenceTradeChance,
+                "Chance that a structure essence is added to a villager trade").getDouble();
     }
 }
