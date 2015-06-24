@@ -62,13 +62,20 @@ public class RFToolsTradeHandler implements VillagerRegistry.IVillageTradeHandle
                 break;
         }
 
-        getRandomSellDimlet(villager, recipeList, random, 1.0f);
+        switch (random.nextInt(2)) {
+            case 0:
+                getRandomSellDimlet(villager, recipeList, random, 1.0f);
+                break;
+            case 1:
+                recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, 2 + random.nextInt(2)), new ItemStack(DimletSetup.dimensionalShard, 4 + random.nextInt(8))));
+                break;
+        }
     }
 
     private void getRandomBuyEssence(MerchantRecipeList recipeList, Random random) {
         List<Integer> keys = new ArrayList<Integer>(StructureEssenceItem.structures.keySet());
         int structureType = keys.get(random.nextInt(keys.size()));
-        recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, 2 + random.nextInt(3)), new ItemStack(DimletConstructionSetup.structureEssenceItem, 1, structureType)));
+        recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, 1 + random.nextInt(2)), new ItemStack(DimletConstructionSetup.structureEssenceItem, 1, structureType)));
     }
 
     private void getRandomSellEssence(MerchantRecipeList recipeList, Random random) {
@@ -85,7 +92,7 @@ public class RFToolsTradeHandler implements VillagerRegistry.IVillageTradeHandle
             if (entry != null) {
                 int rarity = entry.getRarity();
                 ItemStack dimletStack = KnownDimletConfiguration.makeKnownDimlet(dimlet, villager.worldObj);
-                recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, (2 + random.nextInt(2)) * (rarity + 1)), dimletStack));
+                recipeList.add(new MerchantRecipe(new ItemStack(Items.emerald, (1 + random.nextInt(2)) * (rarity/2 + 1)), dimletStack));
             }
         }
     }
@@ -97,7 +104,7 @@ public class RFToolsTradeHandler implements VillagerRegistry.IVillageTradeHandle
             if (entry != null) {
                 int rarity = entry.getRarity();
                 ItemStack dimletStack = KnownDimletConfiguration.makeKnownDimlet(dimlet, villager.worldObj);
-                recipeList.add(new MerchantRecipe(dimletStack, new ItemStack(Items.emerald, (bonus + random.nextInt(2)) * (rarity + 1))));
+                recipeList.add(new MerchantRecipe(dimletStack, new ItemStack(Items.emerald, (bonus + random.nextInt(2)) * (rarity/2 + 1))));
             }
         }
     }
