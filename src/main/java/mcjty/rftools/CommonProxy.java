@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
@@ -35,6 +36,7 @@ import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.Collection;
 
 public abstract class CommonProxy {
 
@@ -110,7 +112,7 @@ public abstract class CommonProxy {
 
     public void init(FMLInitializationEvent e) {
         ModEntities.init();
-        RFToolsTradeHandler.INSTANCE.load();
+        villagerSetup();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         FMLCommonHandler.instance().bus().register(new ClientDisconnectEvent());
@@ -118,6 +120,23 @@ public abstract class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         FMLCommonHandler.instance().bus().register(new FMLEventHandlers());
         FMLCommonHandler.instance().bus().register(new DimensionTickEvent());
+    }
+
+    private void villagerSetup() {
+        GeneralConfiguration.realVillagerId = GeneralConfiguration.villagerId;
+        if (GeneralConfiguration.realVillagerId != -1) {
+            if (GeneralConfiguration.realVillagerId == 0) {
+                int id = 10;
+                Collection<Integer> registeredVillagers = VillagerRegistry.getRegisteredVillagers();
+                while (registeredVillagers.contains(id)) {
+                    id++;
+                }
+                GeneralConfiguration.realVillagerId = id;
+            }
+            RFTools.log("RFTools villager registered with id: " + GeneralConfiguration.realVillagerId);
+            VillagerRegistry.instance().registerVillagerId(GeneralConfiguration.realVillagerId);
+            RFToolsTradeHandler.INSTANCE.load();
+        }
     }
 
     public void postInit(FMLPostInitializationEvent e) {

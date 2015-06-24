@@ -19,6 +19,9 @@ public class GeneralConfiguration {
 
     public static int itemListBackground = 0xff909090;
 
+    public static int realVillagerId;
+    public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
+
     public static void init(Configuration cfg) {
         doLogging = cfg.get(CATEGORY_GENERAL, "logging", doLogging,
                 "If true dump a lot of logging information about various things in RFTools. Useful for debugging.").getBoolean();
@@ -44,6 +47,9 @@ public class GeneralConfiguration {
 
         itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", itemListBackground,
                 "Color for some list backgrounds").getInt();
+
+        villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
+                "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();
     }
 
 }
