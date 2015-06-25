@@ -1,6 +1,7 @@
-package mcjty.rftools;
+package mcjty.rftools.village;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.DimletEntry;

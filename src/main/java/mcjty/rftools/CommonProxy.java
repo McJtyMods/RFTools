@@ -31,6 +31,10 @@ import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
 import mcjty.rftools.network.PacketHandler;
+import mcjty.rftools.village.RFToolsTradeHandler;
+import mcjty.rftools.village.VillageCreationHandler;
+import mcjty.rftools.village.VillagePiece;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
@@ -136,6 +140,8 @@ public abstract class CommonProxy {
             RFTools.log("RFTools villager registered with id: " + GeneralConfiguration.realVillagerId);
             VillagerRegistry.instance().registerVillagerId(GeneralConfiguration.realVillagerId);
             RFToolsTradeHandler.INSTANCE.load();
+            MapGenStructureIO.func_143031_a(VillagePiece.class, "Vrftools");
+            VillagerRegistry.instance().registerVillageCreationHandler(new VillageCreationHandler());
         }
     }
 
