@@ -86,7 +86,11 @@ public class GuiChamberDetails extends GuiItemScreen {
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
             Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-            nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
+            if (stack.getItem() == null) {
+                nameLabel.setText("?").setDesiredWidth(160);
+            } else {
+                nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
+            }
 
             Label countLabel = new Label(mc, this).setText(String.valueOf(count));
             countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
