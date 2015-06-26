@@ -110,6 +110,16 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
     }
 
     private void setSeed(int dim) {
+        if (dimensionInformation == null) {
+            if (worldObj == null) {
+                return;
+            }
+            dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
+            if (dimensionInformation == null) {
+                RFTools.log("Error: setSeed() called with null diminfo. Error ignored!");
+                return;
+            }
+        }
         long forcedSeed = dimensionInformation.getForcedDimensionSeed();
         if (forcedSeed != 0) {
             RFTools.log("Forced seed for dimension " + dim + ": " + forcedSeed);
