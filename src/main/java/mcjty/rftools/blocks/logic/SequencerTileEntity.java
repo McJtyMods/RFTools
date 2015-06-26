@@ -38,6 +38,7 @@ public class SequencerTileEntity extends GenericTileEntity {
     public void setDelay(int delay) {
         this.delay = delay;
         timer = delay;
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -60,6 +61,7 @@ public class SequencerTileEntity extends GenericTileEntity {
                 currentStep = 0;
                 break;
         }
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -73,6 +75,7 @@ public class SequencerTileEntity extends GenericTileEntity {
         } else {
             cycleBits &= ~(1L << bit);
         }
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -85,6 +88,7 @@ public class SequencerTileEntity extends GenericTileEntity {
                 cycleBits &= ~(1L << bit);
             }
         }
+        markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
