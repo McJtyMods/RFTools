@@ -25,8 +25,8 @@ public class ClientProxy extends CommonProxy {
         ModRenderers.init();
         MinecraftForge.EVENT_BUS.register(this);
 
-        if (GeneralConfiguration.realVillagerId != -1) {
-            VillagerRegistry.instance().registerVillagerSkin(GeneralConfiguration.realVillagerId, VILLAGER_TEXTURE);
+        if (GeneralConfiguration.villagerId != -1) {
+            VillagerRegistry.instance().registerVillagerSkin(GeneralConfiguration.villagerId, VILLAGER_TEXTURE);
         }
     }
 

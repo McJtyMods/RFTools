@@ -25,7 +25,7 @@ public class RFToolsTradeHandler implements VillagerRegistry.IVillageTradeHandle
     public static RFToolsTradeHandler INSTANCE = new RFToolsTradeHandler();
 
     public void load() {
-        VillagerRegistry.instance().registerVillageTradeHandler(GeneralConfiguration.realVillagerId, this);
+        VillagerRegistry.instance().registerVillageTradeHandler(GeneralConfiguration.villagerId, this);
     }
 
     @Override

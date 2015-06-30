@@ -30,7 +30,7 @@ import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
 import mcjty.rftools.network.PacketHandler;
-import mcjty.rftools.village.VillageHandler;
+import mcjty.rftools.village.VillageSetup;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
@@ -111,7 +111,7 @@ public abstract class CommonProxy {
 
     public void init(FMLInitializationEvent e) {
         ModEntities.init();
-        VillageHandler.villagerSetup();
+        VillageSetup.villagerSetup();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         FMLCommonHandler.instance().bus().register(new ClientDisconnectEvent());

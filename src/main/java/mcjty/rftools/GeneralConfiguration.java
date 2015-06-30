@@ -1,6 +1,13 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.common.registry.VillagerRegistry;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+
+import java.util.Collection;
+
+import static net.minecraftforge.common.config.Property.Type.INTEGER;
 
 public class GeneralConfiguration {
     public static final String CATEGORY_GENERAL = "general";
@@ -19,7 +26,6 @@ public class GeneralConfiguration {
 
     public static int itemListBackground = 0xff909090;
 
-    public static int realVillagerId;
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
     public static void init(Configuration cfg) {
@@ -50,6 +56,22 @@ public class GeneralConfiguration {
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();
+        if (villagerId == 0) {
+            villagerId = findFreeVillagerId();
+            ConfigCategory category = cfg.getCategory(CATEGORY_GENERAL);
+            Property property = new Property("villagerId", Integer.toString(GeneralConfiguration.villagerId), INTEGER);
+            property.comment = "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id";
+            category.put("villagerId", property);
+        }
+    }
+
+    private static int findFreeVillagerId() {
+        int id = 10;
+        Collection<Integer> registeredVillagers = VillagerRegistry.getRegisteredVillagers();
+        while (registeredVillagers.contains(id)) {
+            id++;
+        }
+        return id;
     }
 
 }

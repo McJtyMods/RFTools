@@ -242,6 +242,6 @@ public class VillagePiece extends StructureVillagePieces.Village {
      */
     @Override
     protected int getVillagerType(int count) {
-        return GeneralConfiguration.realVillagerId;
+        return GeneralConfiguration.villagerId;
     }
 }
