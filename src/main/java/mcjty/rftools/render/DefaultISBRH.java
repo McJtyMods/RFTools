@@ -67,11 +67,6 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
         tessellator.addVertexWithUV(quad.v4.x * mult + offset, quad.v4.y * mult + offset, quad.v4.z * mult + offset, u2, v1);
     }
 
-    public static void addSide(Block block, Tessellator tessellator, int side, int meta) {
-        IIcon c = block.getIcon(side, meta);
-        addSide(tessellator, side, c);
-    }
-
     public static void addSideConditionally(IBlockAccess world, int x, int y, int z, Block block, Tessellator tessellator, IIcon icon, ForgeDirection direction) {
         if (block.shouldSideBeRendered(world, x+direction.offsetX, y+direction.offsetY, z+direction.offsetZ, direction.ordinal())) {
             addSide(tessellator, direction.ordinal(), icon);
@@ -88,51 +83,6 @@ public abstract class DefaultISBRH implements ISimpleBlockRenderingHandler {
         tessellator.addVertexWithUV(quad.v2.x, quad.v2.y, quad.v2.z, u1, v2);
         tessellator.addVertexWithUV(quad.v3.x, quad.v3.y, quad.v3.z, u2, v2);
         tessellator.addVertexWithUV(quad.v4.x, quad.v4.y, quad.v4.z, u2, v1);
-    }
-
-    public static void addSideShifted(IIcon c, Tessellator tessellator, int side, double dx, double dy, double dz) {
-        float u1 = c.getMinU();
-        float v1 = c.getMinV();
-        float u2 = c.getMaxU();
-        float v2 = c.getMaxV();
-        Quad quad = quads[side];
-        tessellator.addVertexWithUV(quad.v1.x + dx, quad.v1.y + dy, quad.v1.z + dz, u1, v1);
-        tessellator.addVertexWithUV(quad.v2.x + dx, quad.v2.y + dy, quad.v2.z + dz, u1, v2);
-        tessellator.addVertexWithUV(quad.v3.x + dx, quad.v3.y + dy, quad.v3.z + dz, u2, v2);
-        tessellator.addVertexWithUV(quad.v4.x + dx, quad.v4.y + dy, quad.v4.z + dz, u2, v1);
-    }
-
-    public static void addSideHeight(Block block, Tessellator tessellator, int side, int meta, double height) {
-        IIcon c = block.getIcon(side, meta);
-        float u1 = c.getMinU();
-        float v1 = c.getMinV();
-        float u2 = c.getMaxU();
-        float v2 = c.getMaxV();
-
-        Quad quad = quads[side];
-        tessellator.addVertexWithUV(quad.v1.x, quad.v1.y * height, quad.v1.z, u1, v1);
-        tessellator.addVertexWithUV(quad.v2.x, quad.v2.y * height, quad.v2.z, u1, v2);
-        tessellator.addVertexWithUV(quad.v3.x, quad.v3.y * height, quad.v3.z, u2, v2);
-        tessellator.addVertexWithUV(quad.v4.x, quad.v4.y * height, quad.v4.z, u2, v1);
-    }
-
-    public static void addSideHeightWithRotation(Block block, Tessellator tessellator, int side, int meta, double height, ForgeDirection rotation) {
-        IIcon c = block.getIcon(side, meta);
-        addSideHeightWithRotation(tessellator, side, height, rotation, c);
-    }
-
-    public static void addSideHeightWithRotation(Tessellator tessellator, int side, double height, ForgeDirection rotation, IIcon c) {
-        float u1 = c.getMinU();
-        float v1 = c.getMinV();
-        float u2 = c.getMaxU();
-        float v2 = c.getMaxV();
-
-        Quad quad = quads[side].rotate(rotation);
-
-        tessellator.addVertexWithUV(quad.v1.x, quad.v1.y * height, quad.v1.z, u1, v1);
-        tessellator.addVertexWithUV(quad.v2.x, quad.v2.y * height, quad.v2.z, u1, v2);
-        tessellator.addVertexWithUV(quad.v3.x, quad.v3.y * height, quad.v3.z, u2, v2);
-        tessellator.addVertexWithUV(quad.v4.x, quad.v4.y * height, quad.v4.z, u2, v1);
     }
 
     protected void drawInventoryBlock(Block block, int meta, RenderBlocks renderer) {
