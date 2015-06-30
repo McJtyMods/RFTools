@@ -86,6 +86,7 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         }
 
         GL11.glDepthMask(false);
+        RenderHelper.enableStandardItemLighting();
     }
 
     @Override
