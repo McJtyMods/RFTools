@@ -64,6 +64,9 @@ public class CmdDimletCfg extends AbstractRfToolsCommand {
             if (entry.isRandomNotAllowed()) {
                 sender.addChatMessage(new ChatComponentText("    B:\"expensive." + type.dimletType.getName()+"."+key.getName() + "\"=true"));
             }
+            if (entry.isLootNotAllowed()) {
+                sender.addChatMessage(new ChatComponentText("    B:\"noloot." + type.dimletType.getName()+"."+key.getName() + "\"=true"));
+            }
             sender.addChatMessage(new ChatComponentText("}"));
             if (!entry.isRandomNotAllowed()) {
                 if (type == DimletType.DIMLET_MATERIAL || type == DimletType.DIMLET_LIQUID) {
@@ -73,6 +76,10 @@ public class CmdDimletCfg extends AbstractRfToolsCommand {
                     sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "If you don't want this dimlet to be generated random:"));
                     sender.addChatMessage(new ChatComponentText("    B:\"expensive." + type.dimletType.getName() + "." + key.getName() + "\"=true"));
                 }
+            }
+            if (!entry.isLootNotAllowed()) {
+                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "If you don't want this dimlet to be generated as loot:"));
+                sender.addChatMessage(new ChatComponentText("    B:\"noloot." + type.dimletType.getName() + "." + key.getName() + "\"=true"));
             }
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "In dimlets.cfg, if you want to blacklist this dimlet:"));
             sender.addChatMessage(new ChatComponentText("knowndimlets {"));

@@ -117,9 +117,18 @@ public class DimletRandomizer {
         }
     }
 
+    private static boolean isDimletNotAllowedForLoot(DimletKey key) {
+        DimletEntry entry = KnownDimletConfiguration.getEntry(key);
+        return entry.isLootNotAllowed();
+    }
+
+    private static boolean isDimletNotAllowedForWorldgen(boolean allowRandom, DimletKey key) {
+        return (!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed();
+    }
+
     public static DimletKey getRandomMob(Random random, boolean allowRandom) {
         DimletKey key = randomMobDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomMobDimlets.select(random);
         }
         return key;
@@ -127,7 +136,7 @@ public class DimletRandomizer {
 
     public static DimletKey getRandomEffect(Random random, boolean allowRandom) {
         DimletKey key = randomEffectDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomEffectDimlets.select(random);
         }
         return key;
@@ -135,7 +144,7 @@ public class DimletRandomizer {
 
     public static DimletKey getRandomFeature(Random random, boolean allowRandom) {
         DimletKey key = randomFeatureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomFeatureDimlets.select(random);
         }
         return key;
@@ -143,7 +152,7 @@ public class DimletRandomizer {
 
     public static DimletKey getRandomStructure(Random random, boolean allowRandom) {
         DimletKey key = randomStructureDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomStructureDimlets.select(random);
         }
         return key;
@@ -151,7 +160,7 @@ public class DimletRandomizer {
 
     public static DimletKey getRandomFluidBlock(Random random, boolean allowRandom) {
         DimletKey key = randomLiquidDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomLiquidDimlets.select(random);
         }
         return key;
@@ -159,7 +168,7 @@ public class DimletRandomizer {
 
     public static DimletKey getRandomMaterialBlock(Random random, boolean allowRandom) {
         DimletKey key = randomMaterialDimlets.select(random);
-        while ((!allowRandom) && KnownDimletConfiguration.getEntry(key).isRandomNotAllowed()) {
+        while (isDimletNotAllowedForWorldgen(allowRandom, key)) {
             key = randomMaterialDimlets.select(random);
         }
         return key;
@@ -178,17 +187,26 @@ public class DimletRandomizer {
 
     // Get a random dimlet. A bonus of 0.01 will already give a good increase in getting rare items. 0.0 is default.
     public static DimletKey getRandomDimlet(float bonus, Random random) {
-        return randomDimlets.select(randomDimlets.createDistribution(bonus), random);
+        WeightedRandomSelector.Distribution<Integer> distribution = randomDimlets.createDistribution(bonus);
+        return getRandomDimlet(distribution, random);
     }
 
     // Get a random dimlet with no bonus.
     public static DimletKey getRandomDimlet(Random random) {
-        return randomDimlets.select(random);
+        DimletKey key = randomDimlets.select(random);
+        while (isDimletNotAllowedForLoot(key)) {
+            key = randomDimlets.select(random);
+        }
+        return key;
     }
 
     // Get a random dimlet with the given distribution.
     public static DimletKey getRandomDimlet(WeightedRandomSelector.Distribution<Integer> distribution, Random random) {
-        return randomDimlets.select(distribution, random);
+        DimletKey key = randomDimlets.select(distribution, random);
+        while (isDimletNotAllowedForLoot(key)) {
+            key = randomDimlets.select(distribution, random);
+        }
+        return key;
     }
 
     public static void dumpRarityDistribution(float bonus) {

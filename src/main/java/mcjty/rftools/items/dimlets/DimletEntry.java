@@ -7,14 +7,16 @@ public class DimletEntry {
     private final int tickCost;         // Overrides the type default
     private final int rarity;           // Overrides the type default
     private final boolean randomNotAllowed;
+    private final boolean lootNotAllowed;
 
-    public DimletEntry(DimletKey key, int rfCreateCost, int rfMaintainCost, int tickCost, int rarity, boolean randomNotAllowed) {
+    public DimletEntry(DimletKey key, int rfCreateCost, int rfMaintainCost, int tickCost, int rarity, boolean randomNotAllowed, boolean lootNotAllowed) {
         this.key = key;
         this.rfCreateCost = rfCreateCost;
         this.rfMaintainCost = rfMaintainCost;
         this.tickCost = tickCost;
         this.rarity = rarity;
         this.randomNotAllowed = randomNotAllowed;
+        this.lootNotAllowed = lootNotAllowed;
     }
 
 
@@ -40,6 +42,10 @@ public class DimletEntry {
 
     public boolean isRandomNotAllowed() {
         return randomNotAllowed;
+    }
+
+    public boolean isLootNotAllowed() {
+        return lootNotAllowed;
     }
 
     @Override

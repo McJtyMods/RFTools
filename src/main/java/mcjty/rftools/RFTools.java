@@ -19,6 +19,7 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletDropsEvent;
 import mcjty.rftools.items.dimlets.DimletMapping;
+import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -39,6 +40,7 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -191,6 +193,31 @@ public class RFTools {
         channels = NetworkRegistry.INSTANCE.newChannel("RFToolsChannel", DimensionSyncChannelHandler.instance);
 
         Achievements.init();
+    }
+
+    @EventHandler
+    public void imcCallback(FMLInterModComms.IMCEvent event) {
+        for (FMLInterModComms.IMCMessage message : event.getMessages()) {
+            if (message.key.equalsIgnoreCase("dimlet_blacklist")) {
+                String dimletName = message.getStringValue();
+                KnownDimletConfiguration.blacklistDimlet(dimletName);
+            } else if (message.key.equalsIgnoreCase("dimlet_configure")) {
+                String value = message.getStringValue();
+                String[] splitted = StringUtils.split(value, "=");
+                if (splitted.length < 2) {
+                    RFTools.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+                    continue;
+                }
+                KnownDimletConfiguration.reconfigureDimlet(splitted[0], splitted[1]);
+            } else if (message.key.equalsIgnoreCase("dimlet_preventworldgen")) {
+                String dimletName = message.getStringValue();
+                KnownDimletConfiguration.preventDimletWorldGeneration(dimletName);
+            } else if (message.key.equalsIgnoreCase("dimlet_preventloot")) {
+                String dimletName = message.getStringValue();
+                KnownDimletConfiguration.preventDimletLootGeneration(dimletName);
+            }
+        }
+
     }
 
     @EventHandler

@@ -62,6 +62,7 @@ public class KnownDimletConfiguration {
 
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>(); // Note, the keys here can contain wildcards
     private static final Set<DimletKey> dimletRandomNotAllowed = new HashSet<DimletKey>();
+    private static final Set<DimletKey> dimletLootNotAllowed = new HashSet<DimletKey>();
 
     // A set of banned mods for a givem dimlet type.
     private static final Set<Pair<DimletType,String>> bannedMods = new HashSet<Pair<DimletType, String>>();
@@ -93,6 +94,110 @@ public class KnownDimletConfiguration {
         mapping.registerDimletKey(id, key);
         DimletRandomizer.dimletIds.add(key);
         idToDimletEntry.put(key, dimletEntry);
+    }
+
+    /**
+     * Blacklist a dimlet. Typically called by IMC.
+     * @param keyName is in the format 'Type.Name' (for example 'Liquid.cryotheum')
+     */
+    public static void blacklistDimlet(String keyName) {
+        DimletKey key = getDimletKey(keyName);
+        if (key == null) {
+            return;
+        }
+        dimletBlackList.add(key);
+        RFTools.log("IMC: Blacklisted dimlet with key: '" + keyName + "'");
+    }
+
+    /**
+     * Reconfigure a dimlet. Typically called by IMC.
+     * @param keyName is in the format 'Type.Name' (for example 'Liquid.cryotheum')
+     * @param config is a string in the format <createcost>,<maintaincost>,<ticktime>,<rarity>
+     */
+    public static void reconfigureDimlet(String keyName, String config) {
+        DimletKey key = getDimletKey(keyName);
+        if (key == null) {
+            return;
+        }
+
+        String[] splitted = StringUtils.split(config, ',');
+        if (splitted.length < 4) {
+            RFTools.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+            return;
+        }
+        try {
+            int rfcreate = Integer.parseInt(splitted[0]);
+            int rfmaintain = Integer.parseInt(splitted[1]);
+            int ticks = Integer.parseInt(splitted[2]);
+            int rarity = Integer.parseInt(splitted[3]);
+            if (rarity < 0 || rarity > 6) {
+                RFTools.logError("Rarity out of range in configdimlet!");
+                return;
+            }
+            if (rfcreate < 0) {
+                RFTools.logError("CreateCost out of range in configdimlet!");
+                return;
+            }
+            if (rfmaintain < 0) {
+                RFTools.logError("MaintainCost out of range in configdimlet!");
+                return;
+            }
+            if (ticks < 0) {
+                RFTools.logError("TickCost out of range in configdimlet!");
+                return;
+            }
+            DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
+            DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
+            DimletCosts.dimletBuiltinTickCost.put(key, ticks);
+            DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
+            RFTools.log("IMC: Reconfigured dimlet with key: '" + keyName + "' to " + config);
+        } catch (NumberFormatException e) {
+            RFTools.logError("Bad integers in configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+        }
+    }
+
+    /**
+     * Prevent a dimlet from being generated at random in worlds. Typically called by IMC.
+     * @param keyName is in the format 'Type.Name' (for example 'Liquid.cryotheum')
+     */
+    public static void preventDimletWorldGeneration(String keyName) {
+        DimletKey key = getDimletKey(keyName);
+        if (key == null) {
+            return;
+        }
+        dimletRandomNotAllowed.add(key);
+        RFTools.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in dimensions.");
+    }
+
+    /**
+     * Prevent a dimlet from being generated at random in worlds. Typically called by IMC.
+     * @param keyName is in the format 'Type.Name' (for example 'Liquid.cryotheum')
+     */
+    public static void preventDimletLootGeneration(String keyName) {
+        DimletKey key = getDimletKey(keyName);
+        if (key == null) {
+            return;
+        }
+        dimletLootNotAllowed.add(key);
+        RFTools.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in loot/chests.");
+    }
+
+    private static DimletKey getDimletKey(String keyName) {
+        String[] splitted = StringUtils.split(keyName, '.');
+        if (splitted.length < 2) {
+            RFTools.logError("Error parsing dimlet with key: '" + keyName + "'!");
+            return null;
+        }
+
+        String typeName = splitted[0];
+        DimletType type = DimletType.getTypeByName(typeName);
+        if (type == null) {
+            RFTools.logError("Error parsing dimlet with key: '" + keyName + "', Unknown type '" + typeName + "'!");
+            return null;
+        }
+
+        String name = StringUtils.join(splitted, '.', 1);
+        return new DimletKey(type, name);
     }
 
     private static boolean isBlacklistedKey(DimletKey key) {
@@ -194,6 +299,7 @@ public class KnownDimletConfiguration {
         int tickCost = checkCostConfig(cfg, "ticks.", key, DimletCosts.dimletBuiltinTickCost, key.getType().dimletType.getTickCost());
         int rarity = checkCostConfig(cfg, "rarity.", key, DimletRandomizer.dimletBuiltinRarity, key.getType().dimletType.getRarity());
         boolean randomNotAllowed = checkFlagConfig(cfg, "expensive.", key, dimletRandomNotAllowed);
+        boolean lootNotAllowed = checkFlagConfig(cfg, "noloot.", key, dimletLootNotAllowed);
 
         if (rfMaintainCost > 0) {
             float factor = DimletConfiguration.maintenanceCostPercentage / 100.0f;
@@ -203,7 +309,7 @@ public class KnownDimletConfiguration {
             rfMaintainCost += rfMaintainCost * factor;
         }
 
-        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, randomNotAllowed);
+        DimletEntry entry = new DimletEntry(key, rfCreateCost, rfMaintainCost, tickCost, rarity, randomNotAllowed, lootNotAllowed);
         registerDimletEntry(id, entry, mapping);
 
         return id;
@@ -246,6 +352,7 @@ public class KnownDimletConfiguration {
         craftableDimlets.clear();
         dimletBlackList.clear();
         dimletRandomNotAllowed.clear();
+        dimletLootNotAllowed.clear();
 
         DimletObjectMapping.clean();
         DimletRandomizer.clean();
@@ -864,18 +971,30 @@ public class KnownDimletConfiguration {
             Integer tickCost = array.get(4).getAsInt();
             Integer rarity = array.get(5).getAsInt();
             Integer expensive = array.get(6).getAsInt();
+            Integer noloot = array.get(7).getAsInt();
             DimletType type = DimletType.getTypeByName(typeName);
             if (type == null) {
                 RFTools.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
                 return;
             }
             DimletKey key = new DimletKey(type, name);
-            DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
-            DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
-            DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
-            DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
+            if (!DimletCosts.dimletBuiltinRfCreate.containsKey(key)) {
+                DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
+            }
+            if (!DimletCosts.dimletBuiltinRfMaintain.containsKey(key)) {
+                DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
+            }
+            if (!DimletCosts.dimletBuiltinTickCost.containsKey(key)) {
+                DimletCosts.dimletBuiltinTickCost.put(key, tickCost);
+            }
+            if (!DimletRandomizer.dimletBuiltinRarity.containsKey(key)) {
+                DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
+            }
             if (expensive != 0) {
                 dimletRandomNotAllowed.add(key);
+            }
+            if (noloot != 0) {
+                dimletLootNotAllowed.add(key);
             }
         }
     }
