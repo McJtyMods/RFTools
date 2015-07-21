@@ -45,9 +45,11 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
-        addOreSpawn(DimletSetup.dimensionalShardBlock, (byte)0, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
+        addOreSpawn(DimletSetup.dimensionalShardBlock, (byte) 0, Blocks.stone, world, random, chunkX * 16, chunkZ * 16, 5, 8, 3, 2, 40);
 
-        if (chunkX == 0 && chunkZ == 0) {
+        if (information.isPatreonBitSet(Patreons.PATREON_PUPPETEER) && Math.abs(chunkX) <= 1 && Math.abs(chunkZ) <= 1) {
+            generateBigSpawnPlatform(world, chunkX, chunkZ, puppeteerSpawnPlatform);
+        } else if (chunkX == 0 && chunkZ == 0) {
             generateSpawnPlatform(world);
         } else if ((Math.abs(chunkX) > 6 || Math.abs(chunkZ) > 6) && !information.hasFeatureType(FeatureType.FEATURE_NODIMLETBUILDINGS)) {
             // Not too close to starting platform we possibly generate dungeons.
@@ -102,6 +104,38 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
+    }
+
+    private static int[][] puppeteerSpawnPlatform = new int[][] {
+            { -1, -1, -1, -1, -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1 },
+            { -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1 },
+            { -1, -1, 15, 15, 15, 15,  0,  0,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1 },
+            { -1, 15, 15, 15, 15,  0,  0,  0,  0,  0, 15, 15, 15,  0, 15, 15, 15,  0, 15, 15, 15, 15, -1, -1 },
+            { -1, 15, 15, 15,  0,  0, 15,  0, 15,  0,  0, 15, 15, 15,  0, 15,  0, 15, 15, 15, 15, 15, -1, -1 },
+            { 15, 15, 15, 15,  0,  0,  0,  0,  0,  0,  0, 15, 15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15,  0,  0, 15,  0, 15,  0,  0, 15, 15, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15,  0,  0,  0,  0,  0, 15, 15, 15,  0, 15, 15, 15,  0, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15, 15,  0,  0,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { -1, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, -1, -1 },
+            { -1, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, -1, -1 },
+            { -1, -1, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, -1, -1, -1 },
+            { -1, -1, 15, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, -1, -1, -1 },
+            { -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, -1, -1, -1, -1, 15, 15, 15, 15, 15, 15, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+            { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
+    };
+
+    private void generateBigSpawnPlatform(World world, int chunkX, int chunkZ, int[][] platform) {
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
     }
 
     private void generateSpawnPlatform(World world) {
