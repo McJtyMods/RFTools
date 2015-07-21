@@ -34,7 +34,7 @@ public class LiquidMonitorBlock extends GenericBlock {
 
     @Override
     public String getIdentifyingIconName() {
-        return "machineFrontLiquid_0";
+        return "machineFrontLiquid";
     }
 
     @Override
