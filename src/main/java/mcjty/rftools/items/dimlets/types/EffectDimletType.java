@@ -100,7 +100,12 @@ public class EffectDimletType implements IDimletType {
     @Override
     public void inject(DimletKey key, DimensionInformation dimensionInformation) {
         Set<EffectType> effectTypes = dimensionInformation.getEffectTypes();
-        effectTypes.add(DimletObjectMapping.idToEffectType.get(key));
+        EffectType effectType = DimletObjectMapping.idToEffectType.get(key);
+        if (EffectType.EFFECT_NONE.equals(effectType)) {
+            effectTypes.clear();
+        } else {
+            effectTypes.add(effectType);
+        }
     }
 
     @Override

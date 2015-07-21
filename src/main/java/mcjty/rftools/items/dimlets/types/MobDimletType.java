@@ -104,6 +104,8 @@ public class MobDimletType implements IDimletType {
         MobDescriptor mobDescriptor = DimletObjectMapping.idtoMob.get(key);
         if (mobDescriptor != null && mobDescriptor.getEntityClass() != null) {
             dimensionInformation.getExtraMobs().add(mobDescriptor);
+        } else {
+            dimensionInformation.getExtraMobs().clear();
         }
     }
 
