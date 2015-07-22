@@ -120,7 +120,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
             { 15, 15, 15, 15, 15,  0,  0,  0,  0,  0, 15, 15, 15,  0, 15, 15, 15,  0, 15, 15, 15, 15, 15, -1 },
             { 15, 15, 15, 15, 15, 15,  0,  0,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
             { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
-            { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
+            { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -2, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
             { 15, 15, 15, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, -1 },
             { -1, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, -1, -1 },
             { -1, 15, 15, 15, 15, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15,  0, 15, 15, 15, 15, 15, -1, -1 },
@@ -136,6 +136,49 @@ public class GenericWorldGenerator implements IWorldGenerator {
     private void generateBigSpawnPlatform(World world, int chunkX, int chunkZ, int[][] platform) {
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
+
+        int midx = 8;
+        int midz = 8;
+        int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
+        if (starty == -1) {
+            // No suitable spot. We will carve something out.
+            starty = 64;
+        } else {
+            starty++;           // Go one up
+        }
+
+        int r = platform.length;
+        int sx = - r/2;
+        int sz = - r/2;
+        for (int x = sx ; x < sx + r ; x++) {
+            int cx = (x + midx) >> 4;
+            if (chunkX == cx) {
+                for (int z = sz; z < sz + r; z++) {
+                    int cz = (z + midz) >> 4;
+                    if (chunkZ == cz) {
+                        int color = platform[r - x - r / 2 -1][z + r / 2];
+                        if (color == -2) {
+                            world.setBlock(x + midx, starty, z + midz, TeleporterSetup.matterReceiverBlock, 0, 2);
+                            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(x + midx, starty, z + midz);
+                            matterReceiverTileEntity.modifyEnergyStored(TeleportConfiguration.RECEIVER_MAXENERGY);
+                            matterReceiverTileEntity.setName(information.getName());
+                            matterReceiverTileEntity.markDirty();
+                        } else if (color != -1) {
+                            world.setBlock(x+midx, starty, z+midz, Blocks.stained_hardened_clay, color, 2);
+                        } else {
+                            world.setBlockToAir(x+midx, starty, z+midz);
+                        }
+                        for (int y = 1 ; y <= 3 ; y++) {
+                            world.setBlockToAir(x+midx, starty+y, z+midz);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (chunkX == 0 && chunkZ == 0) {
+            createReceiver(world, dimensionManager, information, midx, midz, starty);
+        }
     }
 
     private void generateSpawnPlatform(World world) {
@@ -167,7 +210,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     matterReceiverTileEntity.setName(information.getName());
                     matterReceiverTileEntity.markDirty();
                 } else if (x == 0 && (z == 2 || z == -2)) {
-                    world.setBlock(x+midx, starty, z+midz, Blocks.glowstone, 0, 2);
+                    world.setBlock(x+midx, starty, z+midz, Blocks.glowstone, 0, 3);
                 } else {
                     world.setBlock(x+midx, starty, z+midz, Blocks.stained_hardened_clay, 3, 2);
                 }
@@ -215,6 +258,10 @@ public class GenericWorldGenerator implements IWorldGenerator {
             world.setBlock(midx-1, starty, midz-bounds-2, Blocks.stained_hardened_clay, 3, 2);
         }
 
+        createReceiver(world, dimensionManager, information, midx, midz, starty);
+    }
+
+    private void createReceiver(World world, RfToolsDimensionManager dimensionManager, DimensionInformation information, int midx, int midz, int starty) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         Coordinate spawnPoint = new Coordinate(midx, starty, midz);
         GlobalCoordinate gc = new GlobalCoordinate(spawnPoint, world.provider.dimensionId);
@@ -286,7 +333,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                     world.setBlock(x, starty+5, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+6, z, Blocks.iron_bars, 0, 2);
                     world.setBlock(x, starty+7, z, Blocks.iron_bars, 0, 2);
-                    world.setBlock(x, starty+8, z, Blocks.glowstone, 0, 2);
+                    world.setBlock(x, starty+8, z, Blocks.glowstone, 0, 3);
                 } else if (smallAntenna) {
                     world.setBlock(x, starty+4, z, Blocks.double_stone_slab, 0, 2);
                     world.setBlock(x, starty+5, z, Blocks.iron_bars, 0, 2);
