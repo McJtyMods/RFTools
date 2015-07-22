@@ -35,17 +35,35 @@ public class GridTerrainGenerator extends NormalTerrainGenerator {
                 if (filled) {
                     for (int y = 0 ; y < 128 ; y++) {
                         aBlock[index] = baseBlock;
-                        abyte[index++] = baseMeta;
+                        byte realMeta;
+                        if (baseMeta == 127) {
+                            realMeta = (byte)(y & 0xf);
+                        } else {
+                            realMeta = baseMeta;
+                        }
+                        abyte[index++] = realMeta;
                     }
                     index += 128;
                 } else if (x == borderx || z == borderz) {
                     for (int y = 0 ; y < 128 ; y+=32) {
                         if (y > 0) {
                             aBlock[index-1] = baseBlock;
-                            abyte[index-1] = baseMeta;
+                            byte realMeta;
+                            if (baseMeta == 127) {
+                                realMeta = (byte)((y/2 + x/2 + z/2) & 0xf);
+                            } else {
+                                realMeta = baseMeta;
+                            }
+                            abyte[index-1] = realMeta;
                         }
                         aBlock[index] = baseBlock;
-                        abyte[index] = baseMeta;
+                        byte realMeta;
+                        if (baseMeta == 127) {
+                            realMeta = (byte)((y/2 + x/2 + z/2) & 0xf);
+                        } else {
+                            realMeta = baseMeta;
+                        }
+                        abyte[index] = realMeta;
                         index += 32;
                     }
                     index += 128;

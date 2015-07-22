@@ -107,6 +107,8 @@ public class PatreonDimletType implements IDimletType {
             dimensionInformation.setPatreonBit(Patreons.PATREON_PINKPILLARS);
         } else if ("Puppeteer".equals(key.getName())) {
             dimensionInformation.setPatreonBit(Patreons.PATREON_PUPPETEER);
+        } else if ("Rouven".equals(key.getName())) {
+            dimensionInformation.setPatreonBit(Patreons.PATREON_LAYEREDMETA);
         }
     }
 

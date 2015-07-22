@@ -120,6 +120,8 @@ public class DimensionInformation {
 
         actualRfCost = 0;
 
+        DimletType.DIMLET_PATREON.dimletType.constructDimension(dimlets, random, this);
+
         DimletType.DIMLET_TERRAIN.dimletType.constructDimension(dimlets, random, this);
         DimletType.DIMLET_FEATURE.dimletType.constructDimension(dimlets, random, this);
 
@@ -128,7 +130,6 @@ public class DimensionInformation {
         DimletType.DIMLET_DIGIT.dimletType.constructDimension(dimlets, random, this);
 
         DimletType.DIMLET_SKY.dimletType.constructDimension(dimlets, random, this);
-        DimletType.DIMLET_PATREON.dimletType.constructDimension(dimlets, random, this);
 
         DimletType.DIMLET_MOBS.dimletType.constructDimension(dimlets, random, this);
         DimletType.DIMLET_SPECIAL.dimletType.constructDimension(dimlets, random, this);

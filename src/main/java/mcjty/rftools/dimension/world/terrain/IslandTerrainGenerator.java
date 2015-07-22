@@ -234,18 +234,25 @@ public class IslandTerrainGenerator implements BaseTerrainGenerator {
                         double d12 = (d3 - d1) * d9;
                         double d13 = (d4 - d2) * d9;
 
-                        for (int i2 = 0; i2 < 8; ++i2) {
-                            int height = (height32 * 4) + h;
-                            int index = ((i2 + (x2 * 8)) << 12) | ((0 + (z2 * 8)) << 8) | height;
+                        int height = (height32 * 4) + h;
+
+                        for (int x = 0; x < 8; ++x) {
+                            int index = ((x + (x2 * 8)) << 12) | ((0 + (z2 * 8)) << 8) | height;
                             short maxheight = 256;
                             double d14 = 0.125D;
                             double d15 = d10;
                             double d16 = (d11 - d10) * d14;
 
-                            for (int k2 = 0; k2 < 8; ++k2) {
+                            for (int z = 0; z < 8; ++z) {
                                 if (d15 > 0.0D) {
                                     aBlock[index] = baseBlock;
-                                    meta[index] = baseMeta;
+                                    byte realMeta;
+                                    if (baseMeta == 127) {
+                                        realMeta = (byte)((height/2 + x/2 + z/2) & 0xf);
+                                    } else {
+                                        realMeta = baseMeta;
+                                    }
+                                    meta[index] = realMeta;
                                 } else {
                                     aBlock[index] = null;
                                 }

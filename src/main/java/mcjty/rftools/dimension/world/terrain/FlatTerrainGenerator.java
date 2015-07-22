@@ -41,10 +41,18 @@ public class FlatTerrainGenerator extends NormalTerrainGenerator {
                     abyte[index++] = 0;
                     height++;
                 }
-                while (height < waterLevel) {
-                    aBlock[index] = baseBlock;
-                    abyte[index++] = baseMeta;
-                    height++;
+                if (baseMeta == 127) {
+                    while (height < waterLevel) {
+                        aBlock[index] = baseBlock;
+                        abyte[index++] = (byte) ((height/2 + x/2 + z/2) & 0xf);
+                        height++;
+                    }
+                } else {
+                    while (height < waterLevel) {
+                        aBlock[index] = baseBlock;
+                        abyte[index++] = baseMeta;
+                        height++;
+                    }
                 }
                 while (height < 256) {
                     aBlock[index++] = null;

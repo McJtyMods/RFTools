@@ -161,20 +161,24 @@ public class TerrainDimletType implements IDimletType {
         dimensionInformation.setTerrainType(terrainType);
 
         BlockMeta baseBlockForTerrain;
-        if (!blocks.isEmpty()) {
-            baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
-            if (baseBlockForTerrain == null) {
-                baseBlockForTerrain = BlockMeta.STONE;     // This is the default in case None was specified.
-            }
+        if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_LAYEREDMETA)) {
+            baseBlockForTerrain = new BlockMeta(Blocks.wool, 127);
         } else {
-            // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
-            // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
-            if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
-                DimletKey key = DimletRandomizer.getRandomMaterialBlock(random, false);
-                dimensionInformation.updateCostFactor(key);
-                baseBlockForTerrain = DimletObjectMapping.idToBlock.get(key);
+            if (!blocks.isEmpty()) {
+                baseBlockForTerrain = blocks.get(random.nextInt(blocks.size()));
+                if (baseBlockForTerrain == null) {
+                    baseBlockForTerrain = BlockMeta.STONE;     // This is the default in case None was specified.
+                }
             } else {
-                baseBlockForTerrain = BlockMeta.STONE;
+                // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
+                // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
+                if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
+                    DimletKey key = DimletRandomizer.getRandomMaterialBlock(random, false);
+                    dimensionInformation.updateCostFactor(key);
+                    baseBlockForTerrain = DimletObjectMapping.idToBlock.get(key);
+                } else {
+                    baseBlockForTerrain = BlockMeta.STONE;
+                }
             }
         }
         dimensionInformation.setBaseBlockForTerrain(baseBlockForTerrain);

@@ -46,4 +46,12 @@ public class BlockMeta {
         result = 31 * result + meta;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "BlockMeta{" +
+                "block=" + block +
+                ", meta=" + meta +
+                '}';
+    }
 }

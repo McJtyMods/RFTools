@@ -7,7 +7,8 @@ public enum Patreons {
     PATREON_PINKPILLARS(3),
     PATREON_RABBITMOON(4),
     PATREON_RABBITSUN(5),
-    PATREON_PUPPETEER(6);
+    PATREON_PUPPETEER(6),
+    PATREON_LAYEREDMETA(7);
 
     private final int bit;
 

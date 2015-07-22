@@ -214,18 +214,25 @@ public class CavernTerrainGenerator implements BaseTerrainGenerator {
                         double d12 = (d3 - d1) * d9;
                         double d13 = (d4 - d2) * d9;
 
+                        int height = (height32 * 8) + h;
+
                         for (int x = 0; x < 4; ++x) {
-                            int height = (height32 * 8) + h;
                             int index = ((x + (x4 * 4)) << 12) | ((0 + (z4 * 4)) << 8) | height;
                             short maxheight = 256;
                             double d14 = 0.25D;
                             double d15 = d10;
                             double d16 = (d11 - d10) * d14;
 
-                            for (int k2 = 0; k2 < 4; ++k2) {
+                            for (int z = 0; z < 4; ++z) {
                                 if (d15 > 0.0D) {
                                     aBlock[index] = baseBlock;
-                                    meta[index] = baseMeta;
+                                    byte realMeta;
+                                    if (baseMeta == 127) {
+                                        realMeta = (byte)((height/2 + x/2 + z/2) & 0xf);
+                                    } else {
+                                        realMeta = baseMeta;
+                                    }
+                                    meta[index] = realMeta;
                                 } else if (height < liquidlevel) {
                                     aBlock[index] = baseLiquid;
                                 } else {

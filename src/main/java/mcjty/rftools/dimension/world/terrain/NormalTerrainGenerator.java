@@ -261,9 +261,9 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                         double d11 = d2;
                         double d12 = (d3 - d1) * d9;
                         double d13 = (d4 - d2) * d9;
+                        int height = (height32 * 8) + h;
 
                         for (int x = 0; x < 4; ++x) {
-                            int height = (height32 * 8) + h;
                             int index = ((x + (x4 * 4)) << 12) | ((0 + (z4 * 4)) << 8) | height;
                             short maxheight = 256;
                             index -= maxheight;
@@ -275,7 +275,13 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
                                 index += maxheight;
                                 if ((d15 += d16) > 0.0D) {
                                     aBlock[index] = baseBlock;
-                                    meta[index] = baseMeta;
+                                    byte realMeta;
+                                    if (baseMeta == 127) {
+                                        realMeta = (byte)((height/2 + x/2 + z/2) & 0xf);
+                                    } else {
+                                        realMeta = baseMeta;
+                                    }
+                                    meta[index] = realMeta;
                                 } else if (height < waterLevel) {
                                     aBlock[index] = baseLiquid;
                                 } else {
