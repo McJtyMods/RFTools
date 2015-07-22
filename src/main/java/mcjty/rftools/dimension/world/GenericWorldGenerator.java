@@ -133,6 +133,23 @@ public class GenericWorldGenerator implements IWorldGenerator {
             { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
     };
 
+    private boolean isReceiverPresent(World world, int midx, int midz, int starty, int[][] platform) {
+        int r = platform.length;
+        int sx = -r / 2;
+        int sz = -r / 2;
+        for (int x = sx; x < sx + r; x++) {
+            for (int z = sz; z < sz + r; z++) {
+                int color = platform[r - x - r / 2 - 1][z + r / 2];
+                if (color == -2) {
+                    if (world.getBlock(x + midx, starty, z + midz) == TeleporterSetup.matterReceiverBlock) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private void generateBigSpawnPlatform(World world, int chunkX, int chunkZ, int[][] platform) {
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
@@ -145,6 +162,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
             starty = 64;
         } else {
             starty++;           // Go one up
+        }
+        if (isReceiverPresent(world, midx, midz, starty-1, platform)) {
+            starty--;
         }
 
         int r = platform.length;
