@@ -1,4 +1,4 @@
-package mcjty.rftools.apideps;
+package mcjty.varia;
 
 import mcjty.rftools.RFTools;
 import net.minecraft.item.Item;
