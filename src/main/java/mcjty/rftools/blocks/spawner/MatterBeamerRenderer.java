@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.render.DefaultISBRH;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;

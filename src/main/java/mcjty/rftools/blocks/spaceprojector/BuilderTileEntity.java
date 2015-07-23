@@ -11,7 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;

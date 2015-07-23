@@ -1,10 +1,9 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.container.GenericBlock;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimletconstruction;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.DimletCraftingTools;

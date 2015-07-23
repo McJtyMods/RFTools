@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.GenericContainerBlock;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;

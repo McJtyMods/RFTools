@@ -11,7 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueList;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.Argument;

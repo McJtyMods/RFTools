@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.EmptyContainer;
 import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

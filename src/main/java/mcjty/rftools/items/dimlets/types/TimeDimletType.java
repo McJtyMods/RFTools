@@ -1,6 +1,6 @@
 package mcjty.rftools.items.dimlets.types;
 
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimletconstruction.TimeAbsorberTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;

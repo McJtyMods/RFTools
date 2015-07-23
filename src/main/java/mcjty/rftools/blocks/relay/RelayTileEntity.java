@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.relay;
 
 import cofh.api.energy.IEnergyConnection;
 import mcjty.entity.GenericEnergyHandlerTileEntity;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class RedstoneTransmitterTileEntity extends GenericTileEntity {

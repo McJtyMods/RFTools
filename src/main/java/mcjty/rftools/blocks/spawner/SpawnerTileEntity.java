@@ -4,7 +4,7 @@ import mcjty.api.MachineInformation;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.items.dimlets.DimletKey;

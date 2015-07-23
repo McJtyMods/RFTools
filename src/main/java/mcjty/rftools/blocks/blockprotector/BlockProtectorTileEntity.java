@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.blockprotector;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.rftools.network.Argument;

@@ -1,8 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.blocks.BlockTools;
-import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;

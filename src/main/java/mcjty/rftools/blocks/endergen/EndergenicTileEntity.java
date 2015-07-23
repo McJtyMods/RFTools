@@ -4,7 +4,7 @@ import cofh.api.energy.IEnergyConnection;
 import mcjty.api.MachineInformation;
 import mcjty.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;

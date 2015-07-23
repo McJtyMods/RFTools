@@ -8,7 +8,7 @@ import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.wailasupport.WailaInfoProvider;
 import mcjty.varia.WrenchChecker;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;

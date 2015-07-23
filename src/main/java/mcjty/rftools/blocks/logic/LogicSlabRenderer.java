@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.render.DefaultISBRH;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;

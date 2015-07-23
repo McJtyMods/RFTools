@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;

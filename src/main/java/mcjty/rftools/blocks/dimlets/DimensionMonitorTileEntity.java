@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.entity.GenericTileEntity;
 import mcjty.entity.SyncedValue;
-import mcjty.rftools.blocks.BlockTools;
+import mcjty.varia.BlockTools;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
