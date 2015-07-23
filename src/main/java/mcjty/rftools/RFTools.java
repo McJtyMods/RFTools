@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.base.ModBase;
 import mcjty.rftools.apideps.ComputerCraftHelper;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -44,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.EnumMap;
 
 @Mod(modid = RFTools.MODID, name="RFTools", dependencies = "required-after:Forge@["+RFTools.MIN_FORGE_VER+",);required-after:CoFHCore@["+RFTools.MIN_COFHCORE_VER+",)", version = RFTools.VERSION)
-public class RFTools {
+public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "3.12beta1";
     public static final String MIN_FORGE_VER = "10.13.2.1291";

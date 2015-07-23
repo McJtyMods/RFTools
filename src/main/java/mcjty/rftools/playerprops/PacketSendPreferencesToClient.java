@@ -2,6 +2,7 @@ package mcjty.rftools.playerprops;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.gui.GuiStyle;
 
 public class PacketSendPreferencesToClient implements IMessage {
     private int buffX;

@@ -2,7 +2,7 @@ package mcjty.rftools.network;
 
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import mcjty.container.PacketSetGuiStyle;
+import mcjty.rftools.gui.PacketSetGuiStyle;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;

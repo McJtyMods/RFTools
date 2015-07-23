@@ -1,5 +1,6 @@
 package mcjty.rftools.playerprops;
 
+import mcjty.gui.GuiStyle;
 import mcjty.network.PacketHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;

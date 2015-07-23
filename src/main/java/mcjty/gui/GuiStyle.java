@@ -1,4 +1,4 @@
-package mcjty.rftools.playerprops;
+package mcjty.gui;
 
 public enum GuiStyle {
     STYLE_BEVEL("bevel"),

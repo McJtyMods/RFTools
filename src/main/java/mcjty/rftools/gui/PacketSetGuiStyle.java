@@ -1,4 +1,4 @@
-package mcjty.container;
+package mcjty.rftools.gui;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
