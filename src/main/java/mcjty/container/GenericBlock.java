@@ -6,14 +6,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.wailasupport.WailaInfoProvider;
-import mcjty.varia.WrenchChecker;
-import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
-import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
+import mcjty.varia.BlockTools;
+import mcjty.varia.SecurityTools;
+import mcjty.varia.WrenchChecker;
+import mcjty.wailasupport.WailaInfoProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -270,7 +270,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     private boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
         if (te instanceof GenericTileEntity) {
             GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-            if ((!SecurityCardItem.isAdmin(player)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
+            if ((!SecurityTools.isAdmin(player)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
                 int securityChannel = genericTileEntity.getSecurityChannel();
                 if (securityChannel != -1) {
                     SecurityChannels securityChannels = SecurityChannels.getChannels(world);

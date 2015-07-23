@@ -5,12 +5,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketHandler;
+import mcjty.varia.SecurityTools;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
@@ -79,7 +79,7 @@ public class SecurityCardItem extends Item {
                 if (genericTileEntity.getOwnerUUID() == null) {
                     RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
-                    if (isAdmin(player) || isOwner(player, genericTileEntity)) {
+                    if (SecurityTools.isAdmin(player) || isOwner(player, genericTileEntity)) {
                         NBTTagCompound tagCompound = stack.getTagCompound();
                         if (tagCompound == null || !tagCompound.hasKey("channel")) {
                             int blockSecurity = genericTileEntity.getSecurityChannel();
@@ -111,10 +111,6 @@ public class SecurityCardItem extends Item {
 
     private boolean isOwner(EntityPlayer player, GenericTileEntity genericTileEntity) {
         return genericTileEntity.getOwnerUUID().equals(player.getPersistentID());
-    }
-
-    public static boolean isAdmin(EntityPlayer player) {
-        return player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
     @SideOnly(Side.CLIENT)
