@@ -12,6 +12,7 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.monster.IMob;
@@ -125,7 +126,7 @@ public class ForgeEventHandlers {
             affectedBlocks.remove(block);
         }
 
-        RFTools.logDebug("RF Needed for one explosion:" + rf);
+        Logging.logDebug("RF Needed for one explosion:" + rf);
     }
 
     @SubscribeEvent
@@ -198,7 +199,7 @@ public class ForgeEventHandlers {
                 int energy = storage.getEnergyLevel(id);
                 if (energy <= 0) {
                     event.setResult(Event.Result.DENY);
-                    RFTools.logDebug("Dimension power low: Prevented a spawn of " + event.entity.getClass().getName());
+                    Logging.logDebug("Dimension power low: Prevented a spawn of " + event.entity.getClass().getName());
                }
             }
         }
@@ -207,17 +208,17 @@ public class ForgeEventHandlers {
             Coordinate coordinate = new Coordinate((int) event.entity.posX, (int) event.entity.posY, (int) event.entity.posZ);
             if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, id))) {
                 event.setResult(Event.Result.DENY);
-                RFTools.logDebug("Peaceful manager: Prevented a spawn of " + event.entity.getClass().getName());
+                Logging.logDebug("Peaceful manager: Prevented a spawn of " + event.entity.getClass().getName());
             } else if (dimensionInformation != null && dimensionInformation.isPeaceful()) {
                 // RFTools dimension.
                 event.setResult(Event.Result.DENY);
-                RFTools.logDebug("Peaceful dimension: Prevented a spawn of " + event.entity.getClass().getName());
+                Logging.logDebug("Peaceful dimension: Prevented a spawn of " + event.entity.getClass().getName());
             }
         } else if (event.entity instanceof IAnimals) {
             if (dimensionInformation != null && dimensionInformation.isNoanimals()) {
                 // RFTools dimension.
                 event.setResult(Event.Result.DENY);
-                RFTools.logDebug("Noanimals dimension: Prevented a spawn of " + event.entity.getClass().getName());
+                Logging.logDebug("Noanimals dimension: Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }

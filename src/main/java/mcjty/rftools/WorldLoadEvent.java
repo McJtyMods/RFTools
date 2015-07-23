@@ -3,6 +3,7 @@ package mcjty.rftools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mcjty.varia.Logging;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -18,14 +19,14 @@ public class WorldLoadEvent {
         if (MinecraftServer.getServer().isDedicatedServer()) {
             // If we are on a server then we initialize here.
             if (evt.world.provider.dimensionId == 0 && !KnownDimletConfiguration.isInitialized()) {
-                RFTools.log("Serverside World Load Event: initialize dimlets");
+                Logging.log("Serverside World Load Event: initialize dimlets");
                 KnownDimletConfiguration.init(evt.world, true);
                 KnownDimletConfiguration.initCrafting(evt.world);
             }
         } else {
             // If we are on a single player client then we connect here.
             if (!KnownDimletConfiguration.isInitialized()) {
-                RFTools.log("Single player World Load Event: initialize dimlets");
+                Logging.log("Single player World Load Event: initialize dimlets");
                 KnownDimletConfiguration.init(evt.world, true);
                 KnownDimletConfiguration.initCrafting(evt.world);
             }

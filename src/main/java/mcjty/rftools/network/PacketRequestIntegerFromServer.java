@@ -1,9 +1,9 @@
 package mcjty.rftools.network;
 
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mcjty.varia.Logging;
 import net.minecraft.tileentity.TileEntity;
 
 /**
@@ -40,13 +40,13 @@ public class PacketRequestIntegerFromServer extends AbstractServerCommand implem
     public PacketIntegerFromServer onMessage(PacketRequestIntegerFromServer message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof CommandHandler)) {
-            RFTools.log("createStartScanPacket: TileEntity is not a CommandHandler!");
+            Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
             return null;
         }
         CommandHandler commandHandler = (CommandHandler) te;
         Integer result = commandHandler.executeWithResultInteger(message.command, message.args);
         if (result == null) {
-            RFTools.log("Command "+message.command+" was not handled!");
+            Logging.log("Command " + message.command + " was not handled!");
             return null;
         }
         return new PacketIntegerFromServer(message.x, message.y, message.z, message.clientCommand, result);

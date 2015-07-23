@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -87,7 +87,7 @@ public class SpawnerConfiguration {
                         livingMatter.put(item, factor);
                     }
                 } catch (Exception e) {
-                    RFTools.logError("Badly formatted 'livingmatter' configuration option!");
+                    Logging.logError("Badly formatted 'livingmatter' configuration option!");
                     return;
                 }
             }
@@ -288,7 +288,7 @@ public class SpawnerConfiguration {
             meta = Integer.parseInt(splitted[2]);
             amount = Float.parseFloat(splitted[3]);
         } catch (NumberFormatException e) {
-            RFTools.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
+            Logging.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
             return;
         }
         ItemStack stack = null;

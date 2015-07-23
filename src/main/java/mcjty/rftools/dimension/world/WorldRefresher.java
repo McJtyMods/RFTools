@@ -1,6 +1,6 @@
 package mcjty.rftools.dimension.world;
 
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.LongHashMap;
@@ -54,7 +54,7 @@ public class WorldRefresher {
                 chunkProviderGenerate.populate(chunkProviderGenerate, oldChunk.xPosition, oldChunk.zPosition);
             }
         } catch (Exception e) {
-            RFTools.logError("Failed to regenerate chunks!");
+            Logging.logError("Failed to regenerate chunks!");
             e.printStackTrace();
         }
     }
@@ -125,7 +125,7 @@ public class WorldRefresher {
                 }
             }
         } catch (Exception e) {
-            RFTools.logError("Failed to regenerate chunks!");
+            Logging.logError("Failed to regenerate chunks!");
             e.printStackTrace();
         }
     }

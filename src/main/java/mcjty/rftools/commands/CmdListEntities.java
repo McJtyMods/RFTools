@@ -1,11 +1,10 @@
 package mcjty.rftools.commands;
 
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -49,7 +48,7 @@ public class CmdListEntities extends AbstractRfToolsCommand {
             StringBuilder sb = new StringBuilder();
             Formatter formatter = new Formatter(sb, Locale.US);
             formatter.format("Id:%1$-9d Name:%2$-50.50s Class:%3$-50.50s", id, name, clazz);
-            RFTools.log(sb.toString());
+            Logging.log(sb.toString());
         }
     }
 }

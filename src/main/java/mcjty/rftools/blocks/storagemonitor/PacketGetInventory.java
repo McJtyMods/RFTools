@@ -4,7 +4,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -55,7 +55,7 @@ public class PacketGetInventory implements IMessage, IMessageHandler<PacketGetIn
     public PacketInventoryReady onMessage(PacketGetInventory message, MessageContext ctx) {
         TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.x, message.y, message.z);
         if(!(te instanceof StorageScannerTileEntity)) {
-            RFTools.log("createGetInventoryPacket: TileEntity is not a StorageScannerTileEntity!");
+            Logging.log("createGetInventoryPacket: TileEntity is not a StorageScannerTileEntity!");
             return null;
         }
         StorageScannerTileEntity storageScannerTileEntity = (StorageScannerTileEntity) te;

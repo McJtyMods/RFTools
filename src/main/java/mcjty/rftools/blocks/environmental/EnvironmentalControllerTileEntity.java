@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.network.Argument;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
@@ -189,10 +189,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
                     try {
                         environmentModule = moduleClass.newInstance();
                     } catch (InstantiationException e) {
-                        RFTools.log("Failed to instantiate controller module!");
+                        Logging.log("Failed to instantiate controller module!");
                         continue;
                     } catch (IllegalAccessException e) {
-                        RFTools.log("Failed to instantiate controller module!");
+                        Logging.log("Failed to instantiate controller module!");
                         continue;
                     }
                     environmentModules.add(environmentModule);

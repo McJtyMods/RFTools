@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -45,7 +45,7 @@ public class EndergenicPearl {
                 EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) te;
                 endergenicTileEntity.receivePearl(age);
             } else {
-                RFTools.log("Pearl: where did the destination go?");
+                Logging.log("Pearl: where did the destination go?");
             }
             return true;
         }

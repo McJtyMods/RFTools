@@ -11,6 +11,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -200,16 +201,16 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         try {
             entityLiving = descriptor.getEntityClass().getConstructor(World.class).newInstance(worldObj);
         } catch (InstantiationException e) {
-            RFTools.logError("Fail to spawn mob: " + mobName);
+            Logging.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (IllegalAccessException e) {
-            RFTools.logError("Fail to spawn mob: " + mobName);
+            Logging.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (InvocationTargetException e) {
-            RFTools.logError("Fail to spawn mob: " + mobName);
+            Logging.logError("Fail to spawn mob: " + mobName);
             return;
         } catch (NoSuchMethodException e) {
-            RFTools.logError("Fail to spawn mob: " + mobName);
+            Logging.logError("Fail to spawn mob: " + mobName);
             return;
         }
 

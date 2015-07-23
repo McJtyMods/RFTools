@@ -1,10 +1,10 @@
 package mcjty.rftools.items.dimlets;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
 import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.dimension.world.types.StructureType;
+import mcjty.varia.Logging;
 import mcjty.varia.WeightedRandomSelector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
@@ -225,7 +225,7 @@ public class DimletRandomizer {
             counter.put(id, counter.get(id)+1);
         }
 
-        RFTools.log("#### Dumping with bonus=" + bonus);
+        Logging.log("#### Dumping with bonus=" + bonus);
         List<Pair<Integer,DimletKey>> sortedCounters = new ArrayList<Pair<Integer, DimletKey>>();
         for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
@@ -263,7 +263,7 @@ public class DimletRandomizer {
             counter.put(key, counter.get(key)+1);
         }
 
-        RFTools.log("#### Dumping material distribution");
+        Logging.log("#### Dumping material distribution");
         List<Pair<Integer,DimletKey>> sortedCounters = new ArrayList<Pair<Integer,DimletKey>>();
         for (Map.Entry<DimletKey, Integer> entry : counter.entrySet()) {
             sortedCounters.add(Pair.of(entry.getValue(), entry.getKey()));
@@ -295,6 +295,6 @@ public class DimletRandomizer {
             rarity = de.getRarity();
         }
         formatter.format("Id:%1$-5d  Key:%2$-40.40s Name:%3$-40.40s [Count:%4$-8d %5$g%% R:%6$d]", id, key.toString(), name, count, percentage, rarity);
-        RFTools.log(sb.toString());
+        Logging.log(sb.toString());
     }
 }

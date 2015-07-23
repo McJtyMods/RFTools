@@ -1,8 +1,8 @@
 package mcjty.rftools.items.dimlets;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.dimension.description.MobDescriptor;
+import mcjty.varia.Logging;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -111,7 +111,7 @@ public class MobConfiguration {
     private static Property checkProperty(ConfigCategory category, String name, String propname) {
         Property entityNameProperty = category.get(name + "." + propname);
         if (entityNameProperty == null) {
-            RFTools.logError("Invalid custom mob item: '" +  propname + "' property is missing!");
+            Logging.logError("Invalid custom mob item: '" + propname + "' property is missing!");
             return null;
         }
         return entityNameProperty;

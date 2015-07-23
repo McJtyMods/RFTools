@@ -12,6 +12,7 @@ import mcjty.rftools.network.NetworkTools;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -521,7 +522,7 @@ public class DimensionInformation {
 
     private void logDebug(EntityPlayer player, String message) {
         if (player == null) {
-            RFTools.log(message);
+            Logging.log(message);
         } else {
             RFTools.message(player, EnumChatFormatting.YELLOW + message);
         }
@@ -939,7 +940,7 @@ public class DimensionInformation {
     private int calculateCostFactor(DimletKey key) {
         DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(key);
         if (dimletEntry == null) {
-            RFTools.logError("Something went wrong for key: "+key);
+            Logging.logError("Something went wrong for key: " + key);
             return 0;
         }
         return (int) (dimletEntry.getRfMaintainCost() * DimletConfiguration.afterCreationCostFactor);

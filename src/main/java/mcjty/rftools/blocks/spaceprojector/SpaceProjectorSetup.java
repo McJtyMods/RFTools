@@ -4,12 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.container.GenericItemBlock;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.CommonProxy;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RFToolsTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -96,7 +96,7 @@ public class SpaceProjectorSetup {
             FileInputStream inputstream = new FileInputStream(file);
             parseBuilderJson(inputstream);
         } catch (IOException e) {
-            RFTools.log("Could not read 'userbuilder.json', this is not an error!");
+            Logging.log("Could not read 'userbuilder.json', this is not an error!");
         }
     }
 

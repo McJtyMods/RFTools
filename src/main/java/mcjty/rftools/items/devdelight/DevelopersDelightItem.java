@@ -2,19 +2,15 @@ package mcjty.rftools.items.devdelight;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RFToolsTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.input.Keyboard;
-
-import java.util.Set;
 
 public class DevelopersDelightItem extends Item {
 
@@ -46,7 +42,7 @@ public class DevelopersDelightItem extends Item {
         }
         int meta = world.getBlockMetadata(x, y, z);
         String modid = RFToolsTools.getModidForBlock(block);
-        RFTools.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
+        Logging.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null) {
             NBTTagCompound tag = new NBTTagCompound();
@@ -54,9 +50,9 @@ public class DevelopersDelightItem extends Item {
                 tileEntity.writeToNBT(tag);
                 StringBuffer buffer = new StringBuffer();
                 RFToolsTools.convertNBTtoJson(buffer, tag, 0);
-                RFTools.log(buffer.toString());
+                Logging.log(buffer.toString());
             } catch (Exception e) {
-                RFTools.log("Catched a crash during dumping of NBT");
+                Logging.log("Catched a crash during dumping of NBT");
             }
         }
     }

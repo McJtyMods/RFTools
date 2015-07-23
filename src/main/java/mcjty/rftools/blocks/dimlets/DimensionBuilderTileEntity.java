@@ -20,6 +20,7 @@ import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -267,8 +268,8 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
             counter--;
             if (counter < 0) {
                 counter = 20;
-                if (RFTools.debugMode) {
-                    RFTools.log("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
+                if (Logging.debugMode) {
+                    Logging.log("#################### id:" + id + ", rf:" + rf + ", energy:" + energy + ", max:" + maxEnergy);
                 }
             }
             if (!isCreative()) {

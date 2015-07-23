@@ -4,6 +4,7 @@ import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -144,7 +145,7 @@ public class TeleportationTools {
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {
-            RFTools.log("Teleport: Player " + player.getDisplayName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
+            Logging.log("Teleport: Player " + player.getDisplayName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
         }
         return boostNeeded;
     }

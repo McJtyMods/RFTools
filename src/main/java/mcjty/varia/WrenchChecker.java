@@ -1,6 +1,5 @@
 package mcjty.varia;
 
-import mcjty.rftools.RFTools;
 import net.minecraft.item.Item;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class WrenchChecker {
             try {
                 wrenchClasses.add(Class.forName(className));
             } catch (ClassNotFoundException e) {
-                RFTools.log("Failed to load wrench class " + className + " (this is not an error)");
+                Logging.log("Failed to load wrench class " + className + " (this is not an error)");
             }
         }
     }

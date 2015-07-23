@@ -1,6 +1,5 @@
 package mcjty.rftools.dimension.world;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.special.SpecialSetup;
@@ -12,10 +11,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.dimlets.types.Patreons;
-import mcjty.varia.BlockMeta;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.WeightedRandomSelector;
+import mcjty.varia.*;
 import cpw.mods.fml.common.IWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -93,7 +89,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
                         cntsolid++;
                         if (cntsolid > 5) {
                             world.setBlock(x, y, z, SpecialSetup.volcanicCoreBlock, 0, 3);
-                            RFTools.log("Spawned volcano block at " + x + "," + y + "," + z);
+                            Logging.log("Spawned volcano block at " + x + "," + y + "," + z);
                             break;
                         }
                     } else {

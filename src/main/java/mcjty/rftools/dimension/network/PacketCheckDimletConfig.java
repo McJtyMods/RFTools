@@ -1,11 +1,11 @@
 package mcjty.rftools.dimension.network;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.network.NetworkTools;
+import mcjty.varia.Logging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class PacketCheckDimletConfig implements IMessage {
             try {
                 dimlets.put(id, new DimletKey(DimletType.values()[typeOrdinal], name));
             } catch (Exception e) {
-                RFTools.logError("INTERNAL ERROR: name=" + name + ", i=" + i + ", size=" + size + "!");
+                Logging.logError("INTERNAL ERROR: name=" + name + ", i=" + i + ", size=" + size + "!");
                 throw new RuntimeException(e);
             }
         }

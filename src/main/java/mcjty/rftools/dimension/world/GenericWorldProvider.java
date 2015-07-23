@@ -1,6 +1,5 @@
 package mcjty.rftools.dimension.world;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -15,6 +14,7 @@ import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ivorius.reccomplex.dimensions.DimensionDictionary;
+import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Vec3;
@@ -53,7 +53,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
             int dim = worldObj.provider.dimensionId;
             dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
             if (dimensionInformation == null) {
-                RFTools.log("Dimension information for dimension " + dim + " is missing!");
+                Logging.log("Dimension information for dimension " + dim + " is missing!");
             } else {
                 setSeed(dim);
                 setupProviderInfo();
@@ -116,13 +116,13 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
             }
             dimensionInformation = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(dim);
             if (dimensionInformation == null) {
-                RFTools.log("Error: setSeed() called with null diminfo. Error ignored!");
+                Logging.log("Error: setSeed() called with null diminfo. Error ignored!");
                 return;
             }
         }
         long forcedSeed = dimensionInformation.getForcedDimensionSeed();
         if (forcedSeed != 0) {
-            RFTools.log("Forced seed for dimension " + dim + ": " + forcedSeed);
+            Logging.log("Forced seed for dimension " + dim + ": " + forcedSeed);
             seed = forcedSeed;
         } else {
             long baseSeed = dimensionInformation.getBaseSeed();

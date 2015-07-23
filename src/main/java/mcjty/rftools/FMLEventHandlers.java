@@ -12,6 +12,7 @@ import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -62,7 +63,7 @@ public class FMLEventHandlers {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        RFTools.log("SMP: Player logged in: Sync diminfo to clients");
+        Logging.log("SMP: Player logged in: Sync diminfo to clients");
         EntityPlayer player = event.player;
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
         manager.syncDimInfoToClients(player.getEntityWorld());
@@ -71,13 +72,13 @@ public class FMLEventHandlers {
 
     @SubscribeEvent
     public void onConnectionCreated(FMLNetworkEvent.ServerConnectionFromClientEvent event) {
-        RFTools.log("SMP: Sync dimensions to client");
+        Logging.log("SMP: Sync dimensions to client");
         DimensionSyncPacket packet = new DimensionSyncPacket();
 
         EntityPlayer player = ((NetHandlerPlayServer) event.handler).playerEntity;
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(player.getEntityWorld());
         for (Integer id : manager.getDimensions().keySet()) {
-            RFTools.log("Sending over dimension " + id + " to the client");
+            Logging.log("Sending over dimension " + id + " to the client");
             packet.addDimension(id);
         }
 

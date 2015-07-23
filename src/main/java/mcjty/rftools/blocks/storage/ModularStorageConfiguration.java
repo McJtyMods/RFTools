@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -77,7 +77,7 @@ public class ModularStorageConfiguration {
 
 
     public static void dumpClasses(boolean docode) {
-        RFTools.log("#### Dumping item and block classification");
+        Logging.log("#### Dumping item and block classification");
         for (Object o : Block.blockRegistry) {
             Block block = (Block) o;
             if (docode) {
@@ -101,14 +101,14 @@ public class ModularStorageConfiguration {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("%1$-1.1s Name:%2$-30.30s Class:%3$-50.50s Group:%4$-20.20s", type, name, clz.getCanonicalName(), group);
-        RFTools.log(sb.toString());
+        Logging.log(sb.toString());
     }
 
     private static void formateAsCode(Class clz, String group) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("categoryMapper.put(\"%1$s\", \"%2$s\");", clz.getCanonicalName(), group);
-        RFTools.log(sb.toString());
+        Logging.log(sb.toString());
     }
 
     public static String getCategory(Class cls) {

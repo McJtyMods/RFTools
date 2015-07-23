@@ -1,7 +1,7 @@
 package mcjty.container;
 
 import com.google.common.collect.Range;
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -167,7 +167,7 @@ public class GenericContainer extends Container {
                     }
                 }
             } else {
-                RFTools.log("Weird slot at index: " + index);
+                Logging.log("Weird slot at index: " + index);
             }
 
             if (origStack.stackSize == 0) {

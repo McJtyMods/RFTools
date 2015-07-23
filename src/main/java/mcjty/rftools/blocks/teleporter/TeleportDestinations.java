@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -50,7 +50,7 @@ public class TeleportDestinations extends WorldSavedData {
             World transWorld = RfToolsDimensionManager.getDimensionManager(world).getWorldForDimension(key.getDimension());
             boolean removed = false;
             if (transWorld == null) {
-                RFTools.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");
+                Logging.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");
                 removed = true;
             } else {
                 Coordinate c = key.getCoordinate();
@@ -61,7 +61,7 @@ public class TeleportDestinations extends WorldSavedData {
                     te = null;
                 }
                 if (!(te instanceof MatterReceiverTileEntity)) {
-                    RFTools.log("Receiver at " + c + " on dimension " + key.getDimension() + " removed because there is no receiver there!");
+                    Logging.log("Receiver at " + c + " on dimension " + key.getDimension() + " removed because there is no receiver there!");
                     removed = true;
                 }
             }

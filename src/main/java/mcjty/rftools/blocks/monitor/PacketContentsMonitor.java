@@ -4,8 +4,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.tileentity.TileEntity;
 
 public class PacketContentsMonitor implements IMessage, IMessageHandler<PacketContentsMonitor, IMessage> {
@@ -83,7 +83,7 @@ public class PacketContentsMonitor implements IMessage, IMessageHandler<PacketCo
                 liquidMonitorBlockTileEntity.setAlarm(message.alarmMode, message.alarmLevel);
             }
         } else {
-            RFTools.log("TileEntity is not a RFMonitorBlockTileEntity!");
+            Logging.log("TileEntity is not a RFMonitorBlockTileEntity!");
         }
         return null;
     }

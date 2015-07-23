@@ -21,6 +21,7 @@ import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -290,14 +291,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private void dumpClasses(String name, Object o) {
-        RFTools.log(name + ":" + o.getClass().getCanonicalName());
+        Logging.log(name + ":" + o.getClass().getCanonicalName());
         Class<?>[] classes = o.getClass().getClasses();
         for (Class<?> a : classes) {
-            RFTools.log("        " + a.getCanonicalName());
+            Logging.log("        " + a.getCanonicalName());
         }
-        RFTools.log("        Super:" + o.getClass().getGenericSuperclass());
+        Logging.log("        Super:" + o.getClass().getGenericSuperclass());
         for (Type type : o.getClass().getGenericInterfaces()) {
-            RFTools.log("        type:" + type.getClass().getCanonicalName());
+            Logging.log("        type:" + type.getClass().getCanonicalName());
         }
 
     }

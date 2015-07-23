@@ -15,6 +15,7 @@ import mcjty.rftools.dimension.description.SkyDescriptor;
 import mcjty.rftools.dimension.description.WeatherDescriptor;
 import mcjty.rftools.dimension.world.types.*;
 import mcjty.varia.BlockMeta;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
@@ -106,7 +107,7 @@ public class KnownDimletConfiguration {
             return;
         }
         dimletBlackList.add(key);
-        RFTools.log("IMC: Blacklisted dimlet with key: '" + keyName + "'");
+        Logging.log("IMC: Blacklisted dimlet with key: '" + keyName + "'");
     }
 
     /**
@@ -122,7 +123,7 @@ public class KnownDimletConfiguration {
 
         String[] splitted = StringUtils.split(config, ',');
         if (splitted.length < 4) {
-            RFTools.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+            Logging.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
             return;
         }
         try {
@@ -131,28 +132,28 @@ public class KnownDimletConfiguration {
             int ticks = Integer.parseInt(splitted[2]);
             int rarity = Integer.parseInt(splitted[3]);
             if (rarity < 0 || rarity > 6) {
-                RFTools.logError("Rarity out of range in configdimlet!");
+                Logging.logError("Rarity out of range in configdimlet!");
                 return;
             }
             if (rfcreate < 0) {
-                RFTools.logError("CreateCost out of range in configdimlet!");
+                Logging.logError("CreateCost out of range in configdimlet!");
                 return;
             }
             if (rfmaintain < 0) {
-                RFTools.logError("MaintainCost out of range in configdimlet!");
+                Logging.logError("MaintainCost out of range in configdimlet!");
                 return;
             }
             if (ticks < 0) {
-                RFTools.logError("TickCost out of range in configdimlet!");
+                Logging.logError("TickCost out of range in configdimlet!");
                 return;
             }
             DimletCosts.dimletBuiltinRfCreate.put(key, rfcreate);
             DimletCosts.dimletBuiltinRfMaintain.put(key, rfmaintain);
             DimletCosts.dimletBuiltinTickCost.put(key, ticks);
             DimletRandomizer.dimletBuiltinRarity.put(key, rarity);
-            RFTools.log("IMC: Reconfigured dimlet with key: '" + keyName + "' to " + config);
+            Logging.log("IMC: Reconfigured dimlet with key: '" + keyName + "' to " + config);
         } catch (NumberFormatException e) {
-            RFTools.logError("Bad integers in configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+            Logging.logError("Bad integers in configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
         }
     }
 
@@ -166,7 +167,7 @@ public class KnownDimletConfiguration {
             return;
         }
         dimletRandomNotAllowed.add(key);
-        RFTools.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in dimensions.");
+        Logging.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in dimensions.");
     }
 
     /**
@@ -179,20 +180,20 @@ public class KnownDimletConfiguration {
             return;
         }
         dimletLootNotAllowed.add(key);
-        RFTools.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in loot/chests.");
+        Logging.log("IMC: Prevent dimlet with key key: '" + keyName + "' from being generated randomly in loot/chests.");
     }
 
     private static DimletKey getDimletKey(String keyName) {
         String[] splitted = StringUtils.split(keyName, '.');
         if (splitted.length < 2) {
-            RFTools.logError("Error parsing dimlet with key: '" + keyName + "'!");
+            Logging.logError("Error parsing dimlet with key: '" + keyName + "'!");
             return null;
         }
 
         String typeName = splitted[0];
         DimletType type = DimletType.getTypeByName(typeName);
         if (type == null) {
-            RFTools.logError("Error parsing dimlet with key: '" + keyName + "', Unknown type '" + typeName + "'!");
+            Logging.logError("Error parsing dimlet with key: '" + keyName + "', Unknown type '" + typeName + "'!");
             return null;
         }
 
@@ -230,13 +231,13 @@ public class KnownDimletConfiguration {
                     String modid = lst[2];
                     DimletType dt = DimletType.getTypeByName(type);
                     if (dt == null) {
-                        RFTools.log("Bad dimlet type in configuration for 'modban': " + name);
+                        Logging.log("Bad dimlet type in configuration for 'modban': " + name);
                         continue;
                     }
                     bannedMods.add(Pair.of(dt, modid));
-                    RFTools.log("Banned dimlet type " + dt.dimletType.getName() + " for mod '" + modid + "'");
+                    Logging.log("Banned dimlet type " + dt.dimletType.getName() + " for mod '" + modid + "'");
                 } else {
-                    RFTools.log("Bad format in configuration for 'modban': " + name);
+                    Logging.log("Bad format in configuration for 'modban': " + name);
                 }
             }
         }
@@ -289,7 +290,7 @@ public class KnownDimletConfiguration {
         if (id == -1) {
             // Remove from mapping if it is there.
             mapping.removeKey(key);
-            RFTools.log("Blacklisted dimlet " + key.getType().dimletType.getName() + ", " + key.getName());
+            Logging.log("Blacklisted dimlet " + key.getType().dimletType.getName() + ", " + key.getName());
             blacklistedKeys.add(key);
             return id;
         }
@@ -837,7 +838,7 @@ public class KnownDimletConfiguration {
             return initMaterialItem(cfg, block, meta, mapping, master);
         } else {
             if (warn) {
-                RFTools.log("Warning Custom dimlet: Could not find block '" + blockname + "' from mod '" + modid + "'!");
+                Logging.log("Warning Custom dimlet: Could not find block '" + blockname + "' from mod '" + modid + "'!");
             }
             return -1;
         }
@@ -925,7 +926,7 @@ public class KnownDimletConfiguration {
                 }
             }
         } catch (IOException e) {
-            RFTools.log("Could not read 'userdimlets.json', this is not an error!");
+            Logging.log("Could not read 'userdimlets.json', this is not an error!");
         }
     }
 
@@ -956,7 +957,7 @@ public class KnownDimletConfiguration {
             String name = entry.getAsJsonArray().get(1).getAsString();
             DimletType type = DimletType.getTypeByName(typeName);
             if (type == null) {
-                RFTools.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
+                Logging.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
                 return;
             }
             dimletBlackList.add(new DimletKey(type, name));
@@ -976,7 +977,7 @@ public class KnownDimletConfiguration {
             Integer noloot = array.get(7).getAsInt();
             DimletType type = DimletType.getTypeByName(typeName);
             if (type == null) {
-                RFTools.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
+                Logging.logError("Error in dimlets.json! Unknown type '" + typeName + "'!");
                 return;
             }
             DimletKey key = new DimletKey(type, name);
@@ -1074,8 +1075,8 @@ public class KnownDimletConfiguration {
                             }
                         }
                     } catch (Exception e) {
-                        RFTools.logError("Something went wrong getting the name of a fluid:");
-                        RFTools.logError("Fluid: " + name + ", unlocalizedName: " + me.getValue().getUnlocalizedName());
+                        Logging.logError("Something went wrong getting the name of a fluid:");
+                        Logging.logError("Fluid: " + name + ", unlocalizedName: " + me.getValue().getUnlocalizedName());
                     }
                 }
             }

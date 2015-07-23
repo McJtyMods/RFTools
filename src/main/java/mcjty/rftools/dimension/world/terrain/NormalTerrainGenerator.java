@@ -1,10 +1,10 @@
 package mcjty.rftools.dimension.world.terrain;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
 import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.dimension.world.types.TerrainType;
 import cpw.mods.fml.common.eventhandler.Event;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -111,7 +111,7 @@ public class NormalTerrainGenerator implements BaseTerrainGenerator {
         }
 
         if (provider.biomesForGeneration == null) {
-            RFTools.log("Dimension " + world.provider.dimensionId + " has a problem! Ignoring for now.");
+            Logging.log("Dimension " + world.provider.dimensionId + " has a problem! Ignoring for now.");
             return;
         }
 

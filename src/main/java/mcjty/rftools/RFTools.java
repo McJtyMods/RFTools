@@ -30,20 +30,16 @@ import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.EnumMap;
 
@@ -67,14 +63,10 @@ public class RFTools {
     public boolean mekanism = false;
     public boolean draconicevolution = false;
 
-    public Logger logger;
-
     public static EnumMap<Side, FMLEmbeddedChannel> channels;
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
-
-    public static boolean debugMode = false;
 
     public ClientInfo clientInfo = new ClientInfo();
 
@@ -142,40 +134,12 @@ public class RFTools {
     public static final int GUI_SECURITY_MANAGER = modGuiIndex++;
 
 
-    public static void logError(String msg) {
-        instance.logger.log(Level.ERROR, msg);
-    }
-
-    public static long prevTicks = -1;
-    public static void log(World world, TileEntity te, String message) {
-        if (GeneralConfiguration.doLogging) {
-            long ticks = world.getTotalWorldTime();
-            if (ticks != prevTicks) {
-                prevTicks = ticks;
-                instance.logger.log(Level.INFO, "=== Time " + ticks + " ===");
-            }
-            String id = te.xCoord + "," + te.yCoord + "," + te.zCoord + ": ";
-            instance.logger.log(Level.INFO, id + message);
-        }
-    }
-
-    public static void log(String message) {
-        instance.logger.log(Level.INFO, message);
-    }
-
-    public static void logDebug(String message) {
-        if (debugMode) {
-            instance.logger.log(Level.INFO, message);
-        }
-    }
-
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
      * register them with the GameRegistry.
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        logger = LogManager.getLogger();
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
         FMLInterModComms.sendMessage("Waila", "register", "mcjty.rftools.apideps.WailaCompatibility.load");
@@ -205,7 +169,7 @@ public class RFTools {
                 String value = message.getStringValue();
                 String[] splitted = StringUtils.split(value, "=");
                 if (splitted.length < 2) {
-                    RFTools.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
+                    Logging.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
                     continue;
                 }
                 KnownDimletConfiguration.reconfigureDimlet(splitted[0], splitted[1]);
@@ -230,13 +194,13 @@ public class RFTools {
 
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
-        log("RFTools: server is starting");
+        Logging.log("RFTools: server is starting");
         ModDimensions.initDimensions();
     }
 
     @EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
-        log("RFTools: server is stopping. Shutting down gracefully");
+        Logging.log("RFTools: server is stopping. Shutting down gracefully");
         RfToolsDimensionManager.cleanupDimensionInformation();
         TeleportDestinations.clearInstance();
         RfToolsDimensionManager.clearInstance();
@@ -257,27 +221,27 @@ public class RFTools {
 
         enderio = Loader.isModLoaded("EnderIO");
         if (enderio) {
-            RFTools.log("RFTools Detected EnderIO: enabling support");
+            Logging.log("RFTools Detected EnderIO: enabling support");
         }
         mfr = Loader.isModLoaded("MineFactoryReloaded");
         if (mfr) {
-            RFTools.log("RFTools Detected MineFactory Reloaded: enabling support");
+            Logging.log("RFTools Detected MineFactory Reloaded: enabling support");
         }
         jabba = Loader.isModLoaded("JABBA");
         if (jabba) {
-            RFTools.log("RFTools Detected JABBA: enabling support");
+            Logging.log("RFTools Detected JABBA: enabling support");
         }
         mekanism = Loader.isModLoaded("Mekanism");
         if (mekanism) {
-            RFTools.log("RFTools Detected Mekanism: enabling support");
+            Logging.log("RFTools Detected Mekanism: enabling support");
         }
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
         if (draconicevolution) {
-            RFTools.log("RFTools Detected Draconic Evolution: enabling support");
+            Logging.log("RFTools Detected Draconic Evolution: enabling support");
         }
 
         if (Loader.isModLoaded("ComputerCraft")) {
-            RFTools.log("RFTools Detected ComputerCraft: enabling support");
+            Logging.log("RFTools Detected ComputerCraft: enabling support");
             ComputerCraftHelper.register();
         }
     }

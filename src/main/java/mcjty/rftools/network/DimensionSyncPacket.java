@@ -1,13 +1,10 @@
 package mcjty.rftools.network;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.world.GenericWorldProvider;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import mcjty.varia.Logging;
 import net.minecraftforge.common.DimensionManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DimensionSyncPacket {
 
@@ -34,7 +31,7 @@ public class DimensionSyncPacket {
     public void execute() {
         // Only do this on client side.
         for (int id : dimensions) {
-            RFTools.log("DimensionSyncPacket: Registering id: id = " + id);
+            Logging.log("DimensionSyncPacket: Registering id: id = " + id);
             if (!DimensionManager.isDimensionRegistered(id)) {
                 DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
                 DimensionManager.registerDimension(id, id);

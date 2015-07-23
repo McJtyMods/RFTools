@@ -1,6 +1,5 @@
 package mcjty.rftools.dimension;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -14,6 +13,7 @@ import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.PacketHandler;
 import mcjty.rftools.network.PacketRegisterDimensions;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -44,9 +44,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
     private final Set<Integer> reclaimedIds = new HashSet<Integer>();
 
     public void syncFromServer(Map<Integer, DimensionDescriptor> dims, Map<Integer, DimensionInformation> dimInfo) {
-        RFTools.log("RfToolsDimensionManager.syncFromServer");
+        Logging.log("RfToolsDimensionManager.syncFromServer");
         if (dims.isEmpty() || dimInfo.isEmpty()) {
-            RFTools.log("Dimension information from server is empty.");
+            Logging.log("Dimension information from server is empty.");
         }
 
         for (Map.Entry<Integer, DimensionDescriptor> entry : dims.entrySet()) {
@@ -82,7 +82,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
 
     public static void cleanupDimensionInformation() {
         if (instance != null) {
-            RFTools.log("Cleaning up RFTools dimensions");
+            Logging.log("Cleaning up RFTools dimensions");
             unregisterDimensions();
             instance.getDimensions().clear();
             instance.dimensionToID.clear();
@@ -96,21 +96,21 @@ public class RfToolsDimensionManager extends WorldSavedData {
         for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
             int id = me.getKey();
             if (DimensionManager.isDimensionRegistered(id)) {
-                RFTools.log("    Unregister dimension: " + id);
+                Logging.log("    Unregister dimension: " + id);
                 try {
                     DimensionManager.unregisterDimension(id);
                 } catch (Exception e) {
                     // We ignore this error.
-                    RFTools.log("        Could not unregister dimension: " + id);
+                    Logging.log("        Could not unregister dimension: " + id);
                 }
                 try {
                     DimensionManager.unregisterProviderType(id);
                 } catch (Exception e) {
                     // We ignore this error.
-                    RFTools.log("        Could not unregister provider: " + id);
+                    Logging.log("        Could not unregister provider: " + id);
                 }
             } else {
-                RFTools.log("    Already unregistered! Dimension: " + id);
+                Logging.log("    Already unregistered! Dimension: " + id);
             }
         }
     }
@@ -242,7 +242,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void checkDimletConfig(EntityPlayer player) {
         if (!player.getEntityWorld().isRemote) {
             // Send over dimlet configuration to the client so that the client can check that the id's match.
-            RFTools.log("Send validation data to the client");
+            Logging.log("Send validation data to the client");
             DimletMapping mapping = DimletMapping.getDimletMapping(player.getEntityWorld());
             Map<Integer, DimletKey> dimlets = new HashMap<Integer, DimletKey>();
             for (Integer id : mapping.getIds()) {
@@ -257,7 +257,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
      * Here the information from the server arrives. This code is executed on the client.
      */
     public void checkDimletConfigFromServer(Map<Integer, DimletKey> dimlets, World world) {
-        RFTools.log("Getting dimlet mapping from server");
+        Logging.log("Getting dimlet mapping from server");
         DimletMapping mapping = DimletMapping.getDimletMapping(world);
         mapping.overrideServerMapping(dimlets);
 
@@ -269,7 +269,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
     public void syncDimInfoToClients(World world) {
         if (!world.isRemote) {
             // Sync to clients.
-            RFTools.log("Sync dimension info to clients!");
+            Logging.log("Sync dimension info to clients!");
             PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionInformation));
         }
     }
@@ -279,10 +279,10 @@ public class RfToolsDimensionManager extends WorldSavedData {
     }
 
     public void registerDimensions() {
-        RFTools.log("Registering RFTools dimensions");
+        Logging.log("Registering RFTools dimensions");
         for (Map.Entry<Integer, DimensionDescriptor> me : dimensions.entrySet()) {
             int id = me.getKey();
-            RFTools.log("    Dimension: " + id);
+            Logging.log("    Dimension: " + id);
             registerDimensionToServerAndClient(id);
         }
     }
@@ -370,7 +370,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         }
 
         registerDimensionToServerAndClient(id);
-        RFTools.log("id = " + id + " for " + name + ", descriptor = " + descriptor.getDescriptionString());
+        Logging.log("id = " + id + " for " + name + ", descriptor = " + descriptor.getDescriptionString());
 
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
@@ -395,7 +395,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
                 providerServer.populate(providerServer, 0, 0);
                 providerServer.unloadChunksIfNotNearSpawn(0, 0);
             } catch (Exception e) {
-                RFTools.logError("Something went wrong during creation of the dimension!");
+                Logging.logError("Something went wrong during creation of the dimension!");
                 e.printStackTrace();
                 // We catch this exception to make sure our dimension tab is at least ok.
             }

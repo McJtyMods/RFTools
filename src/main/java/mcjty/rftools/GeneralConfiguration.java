@@ -1,6 +1,7 @@
 package mcjty.rftools;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.varia.Logging;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -11,8 +12,6 @@ import static net.minecraftforge.common.config.Property.Type.INTEGER;
 
 public class GeneralConfiguration {
     public static final String CATEGORY_GENERAL = "general";
-
-    public static boolean doLogging = false;
 
     public static boolean enableDimensionBuilderRecipe = true;
     public static boolean enableDimensionEditorRecipe = true;
@@ -29,7 +28,7 @@ public class GeneralConfiguration {
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
     public static void init(Configuration cfg) {
-        doLogging = cfg.get(CATEGORY_GENERAL, "logging", doLogging,
+        Logging.doLogging = cfg.get(CATEGORY_GENERAL, "logging", Logging.doLogging,
                 "If true dump a lot of logging information about various things in RFTools. Useful for debugging.").getBoolean();
 
         enableDimensionBuilderRecipe = cfg.get(CATEGORY_GENERAL, "enableDimensionBuilderRecipe", enableDimensionBuilderRecipe,
