@@ -16,7 +16,7 @@ import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;

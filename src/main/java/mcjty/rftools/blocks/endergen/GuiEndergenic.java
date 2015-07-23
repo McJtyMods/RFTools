@@ -10,7 +10,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraftforge.common.util.ForgeDirection;
 

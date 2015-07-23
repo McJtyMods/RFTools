@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.storage;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.network.NetworkTools;
 
 public class PacketReturnCountInfo implements IMessage {
     private int cnt;

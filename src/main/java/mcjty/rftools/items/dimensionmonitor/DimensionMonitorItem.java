@@ -6,7 +6,7 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;

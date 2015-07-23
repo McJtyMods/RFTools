@@ -15,7 +15,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;

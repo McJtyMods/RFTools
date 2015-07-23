@@ -1,5 +1,6 @@
 package mcjty.rftools.network;
 
+import mcjty.network.NetworkTools;
 import mcjty.varia.Coordinate;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;

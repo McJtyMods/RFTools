@@ -15,7 +15,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import mcjty.varia.Coordinate;
 import net.minecraft.util.ResourceLocation;

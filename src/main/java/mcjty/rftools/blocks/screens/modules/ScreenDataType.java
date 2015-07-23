@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.network.NetworkTools;
+import mcjty.network.NetworkTools;
 import mcjty.varia.Logging;
 import net.minecraft.item.ItemStack;
 

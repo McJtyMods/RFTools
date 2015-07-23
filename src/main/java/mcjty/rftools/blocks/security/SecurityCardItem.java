@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.varia.SecurityTools;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;

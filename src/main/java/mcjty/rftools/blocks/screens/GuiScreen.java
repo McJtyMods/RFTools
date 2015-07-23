@@ -10,7 +10,7 @@ import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;

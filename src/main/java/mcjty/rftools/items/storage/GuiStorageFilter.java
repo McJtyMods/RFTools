@@ -10,7 +10,7 @@ import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;

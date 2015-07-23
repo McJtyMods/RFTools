@@ -4,7 +4,7 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.network.NetworkTools;
+import mcjty.network.NetworkTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 

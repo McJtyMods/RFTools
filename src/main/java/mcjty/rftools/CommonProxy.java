@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
@@ -29,7 +30,7 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.village.VillageSetup;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -48,7 +49,8 @@ public abstract class CommonProxy {
 
         readMainConfig();
 
-        PacketHandler.registerMessages();
+        PacketHandler.registerMessages("rftools");
+        RFToolsMessages.registerNetworkMessages();
 
         ModItems.init();
         ModBlocks.init();

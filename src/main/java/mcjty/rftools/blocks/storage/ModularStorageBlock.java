@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.items.storage.DimletTypeItem;
 import mcjty.rftools.items.storage.GenericTypeItem;
 import mcjty.rftools.items.storage.OreDictTypeItem;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;

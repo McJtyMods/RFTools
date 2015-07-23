@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;

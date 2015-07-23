@@ -8,7 +8,7 @@ import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.items.dimlets.types.Patreons;
-import mcjty.rftools.network.NetworkTools;
+import mcjty.network.NetworkTools;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.Coordinate;
 import io.netty.buffer.ByteBuf;

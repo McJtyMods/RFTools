@@ -10,7 +10,7 @@ import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRegisterDimensions;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;

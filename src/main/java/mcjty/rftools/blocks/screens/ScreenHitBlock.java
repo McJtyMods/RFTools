@@ -1,9 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
-import mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

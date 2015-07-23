@@ -4,7 +4,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.network.NetworkTools;
+import mcjty.network.NetworkTools;
 import mcjty.varia.Logging;
 
 import java.util.HashMap;

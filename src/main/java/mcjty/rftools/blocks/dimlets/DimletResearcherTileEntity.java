@@ -6,7 +6,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class DimletResearcherTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {

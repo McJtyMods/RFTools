@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;

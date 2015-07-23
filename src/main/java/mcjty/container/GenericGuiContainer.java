@@ -4,7 +4,7 @@ import mcjty.entity.GenericTileEntity;
 import mcjty.gui.Window;
 import mcjty.gui.widgets.WidgetList;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;

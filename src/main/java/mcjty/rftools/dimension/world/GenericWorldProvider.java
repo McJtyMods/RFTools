@@ -9,7 +9,7 @@ import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.SkyType;
 import mcjty.rftools.dimension.world.types.StructureType;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

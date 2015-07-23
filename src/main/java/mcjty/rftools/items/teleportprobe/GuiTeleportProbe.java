@@ -8,7 +8,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.*;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;

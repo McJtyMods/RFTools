@@ -8,7 +8,7 @@ import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.DimletCraftingTools;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.network.Argument;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

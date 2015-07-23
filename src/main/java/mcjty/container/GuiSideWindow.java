@@ -10,7 +10,7 @@ import mcjty.gui.widgets.WidgetList;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
-import mcjty.rftools.network.PacketHandler;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.playerprops.GuiStyle;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
