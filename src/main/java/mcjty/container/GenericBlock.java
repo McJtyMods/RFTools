@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.apideps.WailaInfoProvider;
+import mcjty.wailasupport.WailaInfoProvider;
 import mcjty.rftools.apideps.WrenchChecker;
 import mcjty.rftools.blocks.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;

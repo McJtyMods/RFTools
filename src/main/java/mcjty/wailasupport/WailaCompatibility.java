@@ -1,7 +1,6 @@
-package mcjty.rftools.apideps;
+package mcjty.wailasupport;
 
 import mcjty.container.GenericBlock;
-import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;

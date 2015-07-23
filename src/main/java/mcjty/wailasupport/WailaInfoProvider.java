@@ -1,4 +1,4 @@
-package mcjty.rftools.apideps;
+package mcjty.wailasupport;
 
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
