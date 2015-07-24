@@ -7,7 +7,6 @@ import mcjty.api.Infusable;
 import mcjty.base.GeneralConfig;
 import mcjty.base.ModBaseRef;
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
@@ -417,11 +416,11 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         if (getIdentifyingIconName() != null) {
-            iconInd = iconRegister.registerIcon(RFTools.MODID + ":" + getIdentifyingIconName());
+            iconInd = iconRegister.registerIcon(ModBaseRef.MODID + ":" + getIdentifyingIconName());
         }
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + getSideIconName());
-        iconTop = iconRegister.registerIcon(RFTools.MODID + ":" + getTopIconName());
-        iconBottom = iconRegister.registerIcon(RFTools.MODID + ":" + getBottomIconName());
+        iconSide = iconRegister.registerIcon(ModBaseRef.MODID + ":" + getSideIconName());
+        iconTop = iconRegister.registerIcon(ModBaseRef.MODID + ":" + getTopIconName());
+        iconBottom = iconRegister.registerIcon(ModBaseRef.MODID + ":" + getBottomIconName());
     }
 
     public String getSideIconName() {

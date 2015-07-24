@@ -144,6 +144,7 @@ public class RFTools implements ModBase {
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         ModBaseRef.INSTANCE = this;
+        ModBaseRef.MODID = MODID;
 
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
