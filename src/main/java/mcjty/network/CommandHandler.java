@@ -1,4 +1,4 @@
-package mcjty.rftools.network;
+package mcjty.network;
 
 import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;

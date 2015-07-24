@@ -1,4 +1,4 @@
-package mcjty.rftools.network;
+package mcjty.network;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package mcjty.entity;
 
 import mcjty.base.GeneralConfig;
 import mcjty.network.Argument;
-import mcjty.rftools.network.ClientCommandHandler;
-import mcjty.rftools.network.CommandHandler;
+import mcjty.network.ClientCommandHandler;
+import mcjty.network.CommandHandler;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
