@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.rftools.network.PacketRequestListFromServer;
 import mcjty.varia.Coordinate;
 

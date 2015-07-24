@@ -1,7 +1,7 @@
 package mcjty.entity;
 
 import mcjty.base.GeneralConfig;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.rftools.network.ClientCommandHandler;
 import mcjty.rftools.network.CommandHandler;
 import mcjty.varia.Coordinate;

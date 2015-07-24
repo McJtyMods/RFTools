@@ -18,5 +18,6 @@ public class PacketHandler {
 
         // Server side
         INSTANCE.registerMessage(PacketSetGuiStyle.class, PacketSetGuiStyle.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketServerCommand.class, PacketServerCommand.class, nextID(), Side.SERVER);
     }
 }

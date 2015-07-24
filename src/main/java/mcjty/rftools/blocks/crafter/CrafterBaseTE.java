@@ -6,7 +6,7 @@ import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

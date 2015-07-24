@@ -14,7 +14,7 @@ import mcjty.entity.SyncedValueList;
 import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;

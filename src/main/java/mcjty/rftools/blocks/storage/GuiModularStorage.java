@@ -18,7 +18,7 @@ import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
 import mcjty.varia.Logging;

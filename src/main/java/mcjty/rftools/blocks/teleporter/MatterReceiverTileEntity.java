@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.block.Block;

@@ -9,7 +9,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketUpdateNBTItem;
 import net.minecraft.client.Minecraft;

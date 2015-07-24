@@ -12,7 +12,7 @@ import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

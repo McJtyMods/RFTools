@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.logic;
 import mcjty.entity.GenericTileEntity;
 import mcjty.entity.SyncedValue;
 import mcjty.varia.BlockTools;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 

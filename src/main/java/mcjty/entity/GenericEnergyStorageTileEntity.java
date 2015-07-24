@@ -1,7 +1,7 @@
 package mcjty.entity;
 
 import cofh.api.energy.EnergyStorage;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.nbt.NBTTagCompound;

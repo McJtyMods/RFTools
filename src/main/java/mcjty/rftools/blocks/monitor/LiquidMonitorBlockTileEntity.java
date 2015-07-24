@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.monitor;
 import mcjty.entity.GenericTileEntity;
 import mcjty.entity.SyncedValue;
 import mcjty.varia.BlockTools;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

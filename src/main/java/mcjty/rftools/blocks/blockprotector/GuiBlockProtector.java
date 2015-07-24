@@ -10,7 +10,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 

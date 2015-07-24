@@ -11,7 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

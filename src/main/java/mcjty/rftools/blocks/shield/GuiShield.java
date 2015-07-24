@@ -17,7 +17,7 @@ import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

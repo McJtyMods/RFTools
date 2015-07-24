@@ -1,5 +1,6 @@
 package mcjty.rftools.network;
 
+import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.List;

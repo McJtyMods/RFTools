@@ -4,7 +4,7 @@ import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedCoordinate;
 import mcjty.entity.SyncedValue;
 import mcjty.entity.SyncedValueList;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;

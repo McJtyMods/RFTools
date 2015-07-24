@@ -9,7 +9,7 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.WorldGenerationTools;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import net.minecraft.block.Block;

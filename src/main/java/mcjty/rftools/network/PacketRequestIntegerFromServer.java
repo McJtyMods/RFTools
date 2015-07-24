@@ -3,6 +3,7 @@ package mcjty.rftools.network;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mcjty.network.Argument;
 import mcjty.network.NetworkTools;
 import mcjty.varia.Logging;
 import net.minecraft.tileentity.TileEntity;

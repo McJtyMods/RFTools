@@ -10,7 +10,7 @@ import mcjty.gui.widgets.ScrollableLabel;
 import mcjty.gui.widgets.Slider;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import net.minecraft.inventory.Container;
 
 import java.awt.*;

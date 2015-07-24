@@ -14,7 +14,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;

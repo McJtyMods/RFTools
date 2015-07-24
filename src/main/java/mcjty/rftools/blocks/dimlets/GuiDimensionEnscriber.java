@@ -18,7 +18,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Counter;
 import mcjty.varia.Logging;
 import net.minecraft.client.Minecraft;

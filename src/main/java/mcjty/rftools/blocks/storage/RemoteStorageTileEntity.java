@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.rftools.network.Argument;
+import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
