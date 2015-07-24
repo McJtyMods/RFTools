@@ -1,6 +1,6 @@
 package mcjty.entity;
 
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+import mcjty.base.GeneralConfig;
 import mcjty.rftools.network.Argument;
 import mcjty.rftools.network.ClientCommandHandler;
 import mcjty.rftools.network.CommandHandler;
@@ -123,7 +123,7 @@ public class GenericTileEntity extends TileEntity implements CommandHandler, Cli
     }
 
     public float getInfusedFactor() {
-        return ((float) infused) / DimletConfiguration.maxInfuse;
+        return ((float) infused) / GeneralConfig.maxInfuse;
     }
 
     @Override

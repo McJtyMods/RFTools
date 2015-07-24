@@ -1,9 +1,9 @@
 package mcjty.rftools.items.devdelight;
 
+import mcjty.base.GeneralConfig;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.api.Infusable;
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -31,8 +31,8 @@ public class ShardWandItem extends Item {
                 if (te instanceof GenericTileEntity) {
                     GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                     int infused = genericTileEntity.getInfused();
-                    if (infused < DimletConfiguration.maxInfuse) {
-                        infused = DimletConfiguration.maxInfuse;
+                    if (infused < GeneralConfig.maxInfuse) {
+                        infused = GeneralConfig.maxInfuse;
                         RFTools.message(player, "Maximized infusion level!");
                     } else {
                         infused = 0;

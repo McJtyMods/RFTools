@@ -1,6 +1,7 @@
 package mcjty.rftools;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.base.GeneralConfig;
 import mcjty.gui.GuiConfig;
 import mcjty.varia.Logging;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -51,6 +52,10 @@ public class GeneralConfiguration {
 
         GuiConfig.itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", GuiConfig.itemListBackground,
                 "Color for some list backgrounds").getInt();
+
+        GeneralConfig.maxInfuse = cfg.get(CATEGORY_GENERAL, "maxInfuse", GeneralConfig.maxInfuse,
+                "The maximum amount of dimensional shards that can be infused in a single machine").getInt();
+
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();

@@ -4,9 +4,9 @@ import cofh.api.item.IToolHammer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
+import mcjty.base.GeneralConfig;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
@@ -86,7 +86,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             GenericTileEntity genericTileEntity = (GenericTileEntity) tileEntity;
             if (block instanceof Infusable) {
                 int infused = genericTileEntity.getInfused();
-                int pct = infused * 100 / DimletConfiguration.maxInfuse;
+                int pct = infused * 100 / GeneralConfig.maxInfuse;
                 currenttip.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -114,7 +114,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
             }
             if (this instanceof Infusable) {
                 int infused = tagCompound.getInteger("infused");
-                int pct = infused * 100 / DimletConfiguration.maxInfuse;
+                int pct = infused * 100 / GeneralConfig.maxInfuse;
                 list.add(EnumChatFormatting.YELLOW + "Infused: " + pct + "%");
             }
             if (tagCompound.hasKey("ownerM")) {

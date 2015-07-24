@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.infuser;
 
 import mcjty.api.Infusable;
+import mcjty.base.GeneralConfig;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
@@ -50,7 +51,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
             return false;
         }
         int infused = tagCompound.getInteger("infused");
-        if (infused >= DimletConfiguration.maxInfuse) {
+        if (infused >= GeneralConfig.maxInfuse) {
             return false;   // Already infused to the maximum.
         }
         return true;

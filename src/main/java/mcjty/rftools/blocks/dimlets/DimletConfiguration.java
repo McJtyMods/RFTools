@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.dimlets;
 
+import mcjty.base.GeneralConfig;
 import net.minecraftforge.common.config.Configuration;
 
 public class DimletConfiguration {
@@ -25,7 +26,6 @@ public class DimletConfiguration {
     public static int INFUSER_MAXENERGY = 60000;
     public static int INFUSER_RECEIVEPERTICK = 200;
     public static int rfInfuseOperation = 600;
-    public static int maxInfuse = 256;
     public static int dungeonChance = 200;
     public static int volcanoChance = 60;
     public static int dimensionDifficulty = 1;      // -1 == whimpy, 0 == easy, 1 == normal
@@ -134,9 +134,6 @@ public class DimletConfiguration {
                 "Percentage to add or subtract to the maintenance cost of all dimlets (100 would double the cost, -100 would set the cost to almost zero (complete zero is not allowed))").getDouble();
         minimumCostPercentage = cfg.get(CATEGORY_DIMLETS, "minimumCostPercentage", minimumCostPercentage,
                 "Bonus dimlets can never get the maintenance cost of a dimension below this percentage of the nominal cost without bonus dimlets").getInt();
-
-        maxInfuse = cfg.get(CATEGORY_DIMLETS, "maxInfuse", maxInfuse,
-                "The maximum amount of dimensional shards that can be infused in a single machine").getInt();
 
         dungeonChance = cfg.get(CATEGORY_DIMLETS, "dungeonChance", dungeonChance,
                 "The chance for a dungeon to spawn in a chunk. Higher numbers mean less chance (1 in 'dungeonChance' chance)").getInt();
