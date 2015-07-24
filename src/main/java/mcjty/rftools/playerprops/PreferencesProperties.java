@@ -72,6 +72,15 @@ public class PreferencesProperties {
         return true;
     }
 
+    public boolean setStyle(GuiStyle st) {
+        if (st == null) {
+            return false;
+        }
+        style = st;
+        dirty = true;
+        return true;
+    }
+
     public GuiStyle getStyle() {
         return style;
     }

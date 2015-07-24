@@ -37,6 +37,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -265,9 +266,14 @@ public class RFTools implements ModBase {
     // Implementation for ModBase
 
     @Override
-    public void setGuiStyle(EntityPlayerMP playerEntity, String style) {
+    public void setGuiStyle(EntityPlayerMP playerEntity, GuiStyle style) {
         PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(playerEntity);
         properties.getPreferencesProperties().setStyle(style);
+    }
+
+    @Override
+    public GuiStyle getGuiStyle(EntityPlayer player) {
+        return PlayerExtendedProperties.getProperties(player).getPreferencesProperties().getStyle();
     }
 
     @Override

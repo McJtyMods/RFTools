@@ -9,7 +9,6 @@ import mcjty.gui.widgets.Widget;
 import mcjty.gui.widgets.WidgetList;
 import mcjty.network.PacketHandler;
 import mcjty.network.PacketSetGuiStyle;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +36,7 @@ public class GuiSideWindow {
     }
 
     public void initGui(final Minecraft mc, GuiScreen gui, int guiLeft, int guiTop, int xSize, int ySize) {
-        style = PlayerExtendedProperties.getProperties(mc.thePlayer).getPreferencesProperties().getStyle();
+        style = ModBaseRef.INSTANCE.getGuiStyle(mc.thePlayer);
 
         helpButton = new Button(mc, gui).setText("?").setLayoutHint(new PositionalLayout.PositionalHint(1, 1, 16, 16)).
                 setTooltips("Open manual").
