@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -18,7 +18,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ScreenControllerBlock extends GenericBlock implements Infusable {
+public class ScreenControllerBlock extends GenericRFToolsBlock implements Infusable {
 
     public ScreenControllerBlock() {
         super(Material.iron, ScreenControllerTileEntity.class, false);

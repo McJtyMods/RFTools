@@ -7,12 +7,7 @@ import mcjty.api.Infusable;
 import mcjty.base.GeneralConfig;
 import mcjty.base.ModBaseRef;
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.blocks.security.SecurityChannels;
-import mcjty.rftools.items.smartwrench.SmartWrench;
-import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.varia.BlockTools;
-import mcjty.varia.Logging;
-import mcjty.varia.SecurityTools;
 import mcjty.varia.WrenchChecker;
 import mcjty.wailasupport.WailaInfoProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -187,33 +182,26 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
         if (itemStack != null) {
             Item item = itemStack.getItem();
             if (item != null) {
-                if (item instanceof IToolHammer) {
-                    IToolHammer hammer = (IToolHammer) item;
-                    if (hammer.isUsable(itemStack, player, x, y, z)) {
-                        hammer.toolUsed(itemStack, player, x, y, z);
-                        wrenchUsed = WrenchUsage.NORMAL;
-                    } else {
-                        // It is still possible it is a smart wrench.
-                        if (item instanceof SmartWrench) {
-                            SmartWrench smartWrench = (SmartWrench) item;
-                            SmartWrenchMode mode = smartWrench.getMode(itemStack);
-                            if (mode.equals(SmartWrenchMode.MODE_SELECT)) {
-                                if (player.isSneaking()) {
-                                    return WrenchUsage.SNEAK_SELECT;
-                                } else {
-                                    return WrenchUsage.SELECT;
-                                }
-                            }
-                        }
-                        wrenchUsed = WrenchUsage.DISABLED;
-                    }
-                } else if (WrenchChecker.isAWrench(item)) {
-                    wrenchUsed = WrenchUsage.NORMAL;
-                }
+                wrenchUsed = getWrenchUsage(x, y, z, player, itemStack, wrenchUsed, item);
             }
         }
         if (wrenchUsed == WrenchUsage.NORMAL && player.isSneaking()) {
             wrenchUsed = WrenchUsage.SNEAKING;
+        }
+        return wrenchUsed;
+    }
+
+    protected WrenchUsage getWrenchUsage(int x, int y, int z, EntityPlayer player, ItemStack itemStack, WrenchUsage wrenchUsed, Item item) {
+        if (item instanceof IToolHammer) {
+            IToolHammer hammer = (IToolHammer) item;
+            if (hammer.isUsable(itemStack, player, x, y, z)) {
+                hammer.toolUsed(itemStack, player, x, y, z);
+                wrenchUsed = WrenchUsage.NORMAL;
+            } else {
+                wrenchUsed = WrenchUsage.DISABLED;
+            }
+        } else if (WrenchChecker.isAWrench(item)) {
+            wrenchUsed = WrenchUsage.NORMAL;
         }
         return wrenchUsed;
     }
@@ -269,22 +257,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
         return true;
     }
 
-    private boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
-        if (te instanceof GenericTileEntity) {
-            GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-            if ((!SecurityTools.isAdmin(player)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
-                int securityChannel = genericTileEntity.getSecurityChannel();
-                if (securityChannel != -1) {
-                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
-                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
-                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
-                    if (channel.isWhitelist() != playerListed) {
-                        Logging.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
-                        return true;
-                    }
-                }
-            }
-        }
+    protected boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
         return false;
     }
 

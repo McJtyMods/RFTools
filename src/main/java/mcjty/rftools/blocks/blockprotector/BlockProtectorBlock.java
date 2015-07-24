@@ -3,10 +3,10 @@ package mcjty.rftools.blocks.blockprotector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import mcjty.varia.Logging;
@@ -30,7 +30,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class BlockProtectorBlock extends GenericBlock implements Infusable {
+public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusable {
 
     private IIcon iconFrontOn;
 

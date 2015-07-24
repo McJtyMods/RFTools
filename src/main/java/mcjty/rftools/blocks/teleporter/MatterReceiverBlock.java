@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -28,7 +28,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterReceiverBlock extends GenericBlock implements Infusable {
+public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusable {
 
     private IIcon iconTop;
 

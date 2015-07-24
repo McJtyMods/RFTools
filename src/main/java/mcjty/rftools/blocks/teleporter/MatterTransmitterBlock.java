@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.network.PacketHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.network.PacketGetDestinationInfo;
 import mcjty.rftools.dimension.network.ReturnDestinationInfoHelper;
-import mcjty.network.PacketHandler;
 import mcjty.varia.Coordinate;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -29,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterTransmitterBlock extends GenericBlock implements Infusable {
+public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infusable {
 
     private IIcon iconTop;
 

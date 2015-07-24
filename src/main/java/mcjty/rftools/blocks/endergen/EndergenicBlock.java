@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
@@ -24,7 +24,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EndergenicBlock extends GenericBlock implements Infusable {
+public class EndergenicBlock extends GenericRFToolsBlock implements Infusable {
 
     private IIcon icon;
     private IIcon iconUp;

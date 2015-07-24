@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -20,7 +20,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class PearlInjectorBlock extends GenericBlock {
+public class PearlInjectorBlock extends GenericRFToolsBlock {
 
     public PearlInjectorBlock() {
         super(Material.iron, PearlInjectorTileEntity.class, true);

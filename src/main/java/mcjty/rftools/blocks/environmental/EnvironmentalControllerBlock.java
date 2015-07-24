@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.environmental;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -22,7 +22,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EnvironmentalControllerBlock extends GenericBlock implements Infusable {
+public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements Infusable {
 
     public EnvironmentalControllerBlock() {
         super(Material.iron, EnvironmentalControllerTileEntity.class, true);

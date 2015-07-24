@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 /**
  * The superclass for all logic slabs in RFTools.
  */
-public abstract class LogicSlabBlock extends GenericBlock {
+public abstract class LogicSlabBlock extends GenericRFToolsBlock {
 
     public static int RENDERID_LOGICSLAB;
 

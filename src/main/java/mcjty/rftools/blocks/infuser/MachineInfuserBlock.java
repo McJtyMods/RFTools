@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.infuser;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,7 +16,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MachineInfuserBlock extends GenericBlock implements Infusable {
+public class MachineInfuserBlock extends GenericRFToolsBlock implements Infusable {
 
     public MachineInfuserBlock() {
         super(Material.iron, MachineInfuserTileEntity.class, true);

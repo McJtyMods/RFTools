@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimletconstruction;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -20,7 +20,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class LiquidAbsorberBlock extends GenericBlock {
+public class LiquidAbsorberBlock extends GenericRFToolsBlock {
 
     public LiquidAbsorberBlock() {
         super(Material.iron, LiquidAbsorberTileEntity.class, false);

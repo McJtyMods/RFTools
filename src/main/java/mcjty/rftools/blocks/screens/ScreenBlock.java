@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
@@ -33,7 +33,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ScreenBlock extends GenericBlock {
+public class ScreenBlock extends GenericRFToolsBlock {
 
     public ScreenBlock(String blockName, Class<? extends ScreenTileEntity> clazz) {
         super(Material.iron, clazz, true);

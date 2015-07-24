@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +12,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EnergyExtractorBlock extends GenericBlock {
+public class EnergyExtractorBlock extends GenericRFToolsBlock {
 
     public EnergyExtractorBlock() {
         super(Material.iron, EnergyExtractorTileEntity.class, false);

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimletconstruction;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -19,7 +19,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class BiomeAbsorberBlock extends GenericBlock {
+public class BiomeAbsorberBlock extends GenericRFToolsBlock {
 
     public BiomeAbsorberBlock() {
         super(Material.iron, BiomeAbsorberTileEntity.class, false);

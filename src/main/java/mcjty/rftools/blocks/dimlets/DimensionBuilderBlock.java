@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
@@ -22,7 +22,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DimensionBuilderBlock extends GenericBlock implements Infusable {
+public class DimensionBuilderBlock extends GenericRFToolsBlock implements Infusable {
 
     private IIcon iconFrontEmpty;
     private IIcon iconFrontBusy1;

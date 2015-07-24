@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.relay;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
@@ -22,7 +22,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RelayBlock extends GenericBlock {
+public class RelayBlock extends GenericRFToolsBlock {
 
     private IIcon icons[] = new IIcon[6];
     private IIcon iconFrontOff;

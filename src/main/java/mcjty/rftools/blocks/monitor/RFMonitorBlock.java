@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.monitor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import net.minecraft.block.material.Material;
@@ -19,7 +19,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RFMonitorBlock extends GenericBlock {
+public class RFMonitorBlock extends GenericRFToolsBlock {
     private IIcon iconFront0;
     private IIcon iconFront1;
     private IIcon iconFront2;

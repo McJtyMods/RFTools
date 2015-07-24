@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericBlock;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -22,7 +22,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpaceChamberControllerBlock extends GenericBlock {
+public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
 
     public SpaceChamberControllerBlock() {
         super(Material.iron, SpaceChamberControllerTileEntity.class, true);
