@@ -3,12 +3,8 @@ package mcjty.rftools.blocks.storage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.storage.modules.TypeModule;
-import mcjty.rftools.items.storage.DimletTypeItem;
-import mcjty.rftools.items.storage.GenericTypeItem;
-import mcjty.rftools.items.storage.OreDictTypeItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -18,19 +14,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RemoteStorageBlock extends GenericContainerBlock implements Infusable {
+public class RemoteStorageBlock extends GenericBlock implements Infusable {
 
     public static int RENDERID_REMOTESTORAGE;
 
     private IIcon overlayIcon;
 
     public RemoteStorageBlock() {
-        super(Material.iron, RemoteStorageTileEntity.class);
+        super(Material.iron, RemoteStorageTileEntity.class, true);
         setBlockName("remoteStorageBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

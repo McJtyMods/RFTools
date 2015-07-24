@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,10 +16,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageScannerBlock extends GenericContainerBlock implements Infusable {
+public class StorageScannerBlock extends GenericBlock implements Infusable {
 
     public StorageScannerBlock() {
-        super(Material.iron, StorageScannerTileEntity.class);
+        super(Material.iron, StorageScannerTileEntity.class, true);
         setBlockName("storageScannerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

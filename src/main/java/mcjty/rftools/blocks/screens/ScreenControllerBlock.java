@@ -21,7 +21,7 @@ import java.util.List;
 public class ScreenControllerBlock extends GenericBlock implements Infusable {
 
     public ScreenControllerBlock() {
-        super(Material.iron, ScreenControllerTileEntity.class);
+        super(Material.iron, ScreenControllerTileEntity.class, false);
         setBlockName("screenControllerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

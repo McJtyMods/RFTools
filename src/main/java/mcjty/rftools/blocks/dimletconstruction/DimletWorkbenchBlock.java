@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimletconstruction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -20,12 +20,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DimletWorkbenchBlock extends GenericContainerBlock implements Infusable {
+public class DimletWorkbenchBlock extends GenericBlock implements Infusable {
     private IIcon iconTop;
     private IIcon iconBottom;
 
     public DimletWorkbenchBlock() {
-        super(Material.iron, DimletWorkbenchTileEntity.class);
+        super(Material.iron, DimletWorkbenchTileEntity.class, true);
         setBlockName("dimletWorkbenchBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

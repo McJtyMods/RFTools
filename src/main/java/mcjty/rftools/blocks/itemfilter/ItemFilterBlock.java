@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.itemfilter;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -22,12 +22,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ItemFilterBlock extends GenericContainerBlock {
+public class ItemFilterBlock extends GenericBlock {
 
     private IIcon icons[] = new IIcon[6];
 
     public ItemFilterBlock() {
-        super(Material.iron, ItemFilterTileEntity.class);
+        super(Material.iron, ItemFilterTileEntity.class, true);
         setBlockName("itemFilterBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.items.storage.DimletTypeItem;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModularStorageBlock extends GenericContainerBlock {
+public class ModularStorageBlock extends GenericBlock {
 
     public static int RENDERID_MODULARSTORAGE;
 
@@ -35,7 +35,7 @@ public class ModularStorageBlock extends GenericContainerBlock {
     private Map<Class<? extends TypeModule>, IIcon> icons = new HashMap<Class<? extends TypeModule>, IIcon>();
 
     public ModularStorageBlock() {
-        super(Material.iron, ModularStorageTileEntity.class);
+        super(Material.iron, ModularStorageTileEntity.class, true);
         setBlockName("modularStorageBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

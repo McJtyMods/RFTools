@@ -24,7 +24,7 @@ import java.util.List;
 public class TimeAbsorberBlock extends GenericBlock {
 
     public TimeAbsorberBlock() {
-        super(Material.iron, TimeAbsorberTileEntity.class);
+        super(Material.iron, TimeAbsorberTileEntity.class, false);
         setBlockName("timeAbsorberBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

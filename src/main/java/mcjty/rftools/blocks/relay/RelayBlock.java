@@ -28,7 +28,7 @@ public class RelayBlock extends GenericBlock {
     private IIcon iconFrontOff;
 
     public RelayBlock() {
-        super(Material.iron, RelayTileEntity.class);
+        super(Material.iron, RelayTileEntity.class, false);
         setBlockName("relayBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

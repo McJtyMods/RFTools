@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.security;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -18,10 +18,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SecurityManagerBlock extends GenericContainerBlock {
+public class SecurityManagerBlock extends GenericBlock {
 
     public SecurityManagerBlock() {
-        super(Material.iron, SecurityManagerTileEntity.class);
+        super(Material.iron, SecurityManagerTileEntity.class, true);
         setBlockName("securityManagerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

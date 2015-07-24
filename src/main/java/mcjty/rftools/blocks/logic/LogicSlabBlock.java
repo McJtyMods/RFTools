@@ -21,7 +21,7 @@ public abstract class LogicSlabBlock extends GenericBlock {
     public static int RENDERID_LOGICSLAB;
 
     public LogicSlabBlock(Material material, String name, Class<? extends TileEntity> tileEntityClass) {
-        super(material, tileEntityClass);
+        super(material, tileEntityClass, false);
         setBlockName(name);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
         setHorizRotation(true);

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,10 +16,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DimletResearcherBlock extends GenericContainerBlock implements Infusable {
+public class DimletResearcherBlock extends GenericBlock implements Infusable {
 
     public DimletResearcherBlock() {
-        super(Material.iron, DimletResearcherTileEntity.class);
+        super(Material.iron, DimletResearcherTileEntity.class, true);
         setBlockName("dimletResearcherBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

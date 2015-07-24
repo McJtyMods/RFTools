@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -28,12 +28,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterReceiverBlock extends GenericContainerBlock implements Infusable {
+public class MatterReceiverBlock extends GenericBlock implements Infusable {
 
     private IIcon iconTop;
 
     public MatterReceiverBlock() {
-        super(Material.iron, MatterReceiverTileEntity.class);
+        super(Material.iron, MatterReceiverTileEntity.class, true);
         setBlockName("matterReceiverBlock");
         setCreativeTab(RFTools.tabRfTools);
     }
@@ -104,7 +104,7 @@ public class MatterReceiverBlock extends GenericContainerBlock implements Infusa
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
+        // We don't want what GenericBlock does.
         // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
         restoreBlockFromNBT(world, x, y, z, itemStack);
         if (!world.isRemote) {

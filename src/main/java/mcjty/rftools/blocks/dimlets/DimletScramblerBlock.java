@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,10 +16,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DimletScramblerBlock extends GenericContainerBlock implements Infusable {
+public class DimletScramblerBlock extends GenericBlock implements Infusable {
 
     public DimletScramblerBlock() {
-        super(Material.iron, DimletScramblerTileEntity.class);
+        super(Material.iron, DimletScramblerTileEntity.class, true);
         setBlockName("dimletScramblerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

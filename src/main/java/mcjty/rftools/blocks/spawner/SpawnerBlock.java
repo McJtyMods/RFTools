@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.spawner;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -19,10 +19,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpawnerBlock extends GenericContainerBlock implements Infusable {
+public class SpawnerBlock extends GenericBlock implements Infusable {
 
     public SpawnerBlock() {
-        super(Material.iron, SpawnerTileEntity.class);
+        super(Material.iron, SpawnerTileEntity.class, true);
         setBlockName("spawnerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

@@ -23,7 +23,7 @@ import java.util.List;
 public class LiquidAbsorberBlock extends GenericBlock {
 
     public LiquidAbsorberBlock() {
-        super(Material.iron, LiquidAbsorberTileEntity.class);
+        super(Material.iron, LiquidAbsorberTileEntity.class, false);
         setBlockName("liquidAbsorberBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

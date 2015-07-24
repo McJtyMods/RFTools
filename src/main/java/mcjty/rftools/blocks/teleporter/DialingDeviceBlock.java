@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,10 +16,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DialingDeviceBlock extends GenericContainerBlock implements Infusable {
+public class DialingDeviceBlock extends GenericBlock implements Infusable {
 
     public DialingDeviceBlock() {
-        super(Material.iron, DialingDeviceTileEntity.class);
+        super(Material.iron, DialingDeviceTileEntity.class, true);
         setBlockName("dialingDeviceBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

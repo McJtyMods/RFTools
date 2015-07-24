@@ -17,13 +17,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BiomeAbsorberBlock extends GenericBlock {
 
     public BiomeAbsorberBlock() {
-        super(Material.iron, BiomeAbsorberTileEntity.class);
+        super(Material.iron, BiomeAbsorberTileEntity.class, false);
         setBlockName("biomeAbsorberBlock");
         setCreativeTab(RFTools.tabRfTools);
     }
@@ -77,7 +76,7 @@ public class BiomeAbsorberBlock extends GenericBlock {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
+        // We don't want what GenericBlock does.
         restoreBlockFromNBT(world, x, y, z, itemStack);
         if (!world.isRemote) {
             BiomeAbsorberTileEntity biomeAbsorberTileEntity = (BiomeAbsorberTileEntity) world.getTileEntity(x, y, z);

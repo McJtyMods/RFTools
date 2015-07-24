@@ -27,7 +27,7 @@ public class LiquidMonitorBlock extends GenericBlock {
     private IIcon iconFront4;
 
     public LiquidMonitorBlock() {
-        super(Material.iron, LiquidMonitorBlockTileEntity.class);
+        super(Material.iron, LiquidMonitorBlockTileEntity.class, false);
         setBlockName("liquidMonitorBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

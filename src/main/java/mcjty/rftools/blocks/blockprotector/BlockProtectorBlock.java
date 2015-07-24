@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.blockprotector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -29,13 +29,13 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class BlockProtectorBlock extends GenericContainerBlock implements Infusable {
+public class BlockProtectorBlock extends GenericBlock implements Infusable {
 
     private IIcon iconFrontOn;
 
 
     public BlockProtectorBlock() {
-        super(Material.iron, BlockProtectorTileEntity.class);
+        super(Material.iron, BlockProtectorTileEntity.class, true);
         setBlockName("blockProtectorBlock");
         setHorizRotation(true);
         setCreativeTab(RFTools.tabRfTools);

@@ -15,7 +15,7 @@ import java.util.List;
 public class EnergyExtractorBlock extends GenericBlock {
 
     public EnergyExtractorBlock() {
-        super(Material.iron, EnergyExtractorTileEntity.class);
+        super(Material.iron, EnergyExtractorTileEntity.class, false);
         setBlockName("energyExtractorBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.spaceprojector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -18,10 +18,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class BuilderBlock extends GenericContainerBlock implements Infusable {
+public class BuilderBlock extends GenericBlock implements Infusable {
 
     public BuilderBlock() {
-        super(Material.iron, BuilderTileEntity.class);
+        super(Material.iron, BuilderTileEntity.class, true);
         setBlockName("builderBlock");
         setCreativeTab(RFTools.tabRfTools);
         setHorizRotation(true);

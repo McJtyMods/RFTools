@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.network.PacketGetDestinationInfo;
 import mcjty.rftools.dimension.network.ReturnDestinationInfoHelper;
@@ -29,12 +29,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterTransmitterBlock extends GenericContainerBlock implements Infusable {
+public class MatterTransmitterBlock extends GenericBlock implements Infusable {
 
     private IIcon iconTop;
 
     public MatterTransmitterBlock() {
-        super(Material.iron, MatterTransmitterTileEntity.class);
+        super(Material.iron, MatterTransmitterTileEntity.class, true);
         setBlockName("matterTransmitterBlock");
         setCreativeTab(RFTools.tabRfTools);
     }
@@ -137,7 +137,7 @@ public class MatterTransmitterBlock extends GenericContainerBlock implements Inf
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        // We don't want what GenericContainerBlock does.
+        // We don't want what GenericBlock does.
         restoreBlockFromNBT(world, x, y, z, itemStack);
         setOwner(world, x, y, z, entityLivingBase);
     }

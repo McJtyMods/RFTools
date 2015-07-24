@@ -20,7 +20,7 @@ import java.util.List;
 public class MaterialAbsorberBlock extends GenericBlock {
 
     public MaterialAbsorberBlock() {
-        super(Material.iron, MaterialAbsorberTileEntity.class);
+        super(Material.iron, MaterialAbsorberTileEntity.class, false);
         setBlockName("materialAbsorberBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

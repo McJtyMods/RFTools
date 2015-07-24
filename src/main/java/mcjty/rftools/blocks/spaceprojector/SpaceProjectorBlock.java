@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,12 +21,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpaceProjectorBlock extends GenericContainerBlock {
+public class SpaceProjectorBlock extends GenericBlock {
 
     private IIcon iconTop;
 
     public SpaceProjectorBlock() {
-        super(Material.iron, SpaceProjectorTileEntity.class);
+        super(Material.iron, SpaceProjectorTileEntity.class, true);
         setBlockName("spaceProjectorBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

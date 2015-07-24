@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.spawner;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -24,12 +24,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterBeamerBlock extends GenericContainerBlock implements Infusable {
+public class MatterBeamerBlock extends GenericBlock implements Infusable {
 
     private IIcon iconSideOn;
 
     public MatterBeamerBlock() {
-        super(Material.iron, MatterBeamerTileEntity.class);
+        super(Material.iron, MatterBeamerTileEntity.class, true);
         setBlockName("matterBeamerBlock");
         setCreativeTab(RFTools.tabRfTools);
     }

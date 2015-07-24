@@ -51,8 +51,9 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
     // Set this to true in case horizontal rotation is used (2 bits rotation as opposed to 3).
     private boolean horizRotation = false;
 
-    public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass) {
+    public GenericBlock(Material material, Class<? extends TileEntity> tileEntityClass, boolean isContainer) {
         super(material);
+        this.isBlockContainer = isContainer;
         this.creative = false;
         this.tileEntityClass = tileEntityClass;
         setHardness(2.0f);
@@ -511,5 +512,16 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
 
     public IIcon getIconInd(IBlockAccess blockAccess, int x, int y, int z, int meta) {
         return iconInd;
+    }
+
+    @Override
+    public boolean onBlockEventReceived(World world, int x, int y, int z, int eventId, int eventData) {
+        if (isBlockContainer) {
+            super.onBlockEventReceived(world, x, y, z, eventId, eventData);
+            TileEntity tileentity = world.getTileEntity(x, y, z);
+            return tileentity != null && tileentity.receiveClientEvent(eventId, eventData);
+        } else {
+            return super.onBlockEventReceived(world, x, y, z, eventId, eventData);
+        }
     }
 }

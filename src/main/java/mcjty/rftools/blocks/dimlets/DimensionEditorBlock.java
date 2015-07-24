@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.container.GenericContainerBlock;
+import mcjty.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import net.minecraft.block.material.Material;
@@ -20,14 +20,14 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DimensionEditorBlock extends GenericContainerBlock implements Infusable {
+public class DimensionEditorBlock extends GenericBlock implements Infusable {
 
     private IIcon iconFrontEmpty;
     private IIcon iconFrontBusy1;
     private IIcon iconFrontBusy2;
 
     public DimensionEditorBlock() {
-        super(Material.iron, DimensionEditorTileEntity.class);
+        super(Material.iron, DimensionEditorTileEntity.class, true);
         setBlockName("dimensionEditorBlock");
         setHorizRotation(true);
         setCreativeTab(RFTools.tabRfTools);
