@@ -23,6 +23,7 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.dimlets.DimletDropsEvent;
 import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -267,5 +268,11 @@ public class RFTools implements ModBase {
     public void setGuiStyle(EntityPlayerMP playerEntity, String style) {
         PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(playerEntity);
         properties.getPreferencesProperties().setStyle(style);
+    }
+
+    @Override
+    public void openManual(EntityPlayer player, int bookIndex, String page) {
+        GuiRFToolsManual.locatePage = page;
+        player.openGui(RFTools.instance, bookIndex, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 }

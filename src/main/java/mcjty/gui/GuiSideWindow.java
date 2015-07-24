@@ -1,5 +1,6 @@
 package mcjty.gui;
 
+import mcjty.base.ModBaseRef;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Button;
@@ -7,9 +8,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.gui.widgets.WidgetList;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.RFTools;
 import mcjty.network.PacketSetGuiStyle;
-import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -65,8 +64,7 @@ public class GuiSideWindow {
 
     private void help(Minecraft mc) {
         EntityPlayer player = mc.thePlayer;
-        GuiRFToolsManual.locatePage = manualNode;
-        player.openGui(RFTools.instance, manual, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        ModBaseRef.INSTANCE.openManual(player, manual, manualNode);
     }
 
     private void setStyleTooltip() {
