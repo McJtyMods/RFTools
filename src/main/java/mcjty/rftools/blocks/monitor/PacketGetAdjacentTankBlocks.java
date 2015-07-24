@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.rftools.network.PacketRequestListFromServer;
+import mcjty.network.PacketRequestListFromServer;
 import mcjty.varia.Coordinate;
 
 import java.util.List;

@@ -11,7 +11,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.network.PacketRequestIntegerFromServer;
+import mcjty.network.PacketRequestIntegerFromServer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.awt.*;

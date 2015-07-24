@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.shield;
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.blocks.shield.filters.AbstractShieldFilter;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
-import mcjty.rftools.network.PacketListFromServer;
+import mcjty.network.PacketListFromServer;
 
 import java.util.List;
 

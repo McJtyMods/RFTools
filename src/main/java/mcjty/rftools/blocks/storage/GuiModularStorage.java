@@ -20,7 +20,7 @@ import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.network.PacketUpdateNBTItem;
+import mcjty.network.PacketUpdateNBTItem;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

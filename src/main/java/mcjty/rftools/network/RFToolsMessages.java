@@ -50,7 +50,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetConnectedBlocks.class, PacketGetConnectedBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetTransmitters.class, PacketGetTransmitters.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetReceivers.class, PacketGetReceivers.class, PacketHandler.nextID(), Side.SERVER);
-        net.registerMessage(PacketRequestIntegerFromServer.class, PacketRequestIntegerFromServer.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetAllReceivers.class, PacketGetAllReceivers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketForceTeleport.class, PacketForceTeleport.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetPlayers.class, PacketGetPlayers.class, PacketHandler.nextID(), Side.SERVER);
@@ -64,7 +63,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetCountInfo.class, PacketGetCountInfo.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetScreenData.class, PacketGetScreenData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketModuleUpdate.class, PacketModuleUpdate.class, PacketHandler.nextID(), Side.SERVER);
-        net.registerMessage(PacketUpdateNBTItem.class, PacketUpdateNBTItem.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketCycleStorage.class, PacketCycleStorage.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketCompact.class, PacketCompact.class, PacketHandler.nextID(), Side.SERVER);
 
@@ -76,7 +74,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketConnectedBlocksReady.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketTransmittersReady.class, PacketTransmittersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReceiversReady.class, PacketReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketIntegerFromServer.class, PacketIntegerFromServer.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAllReceiversReady.class, PacketAllReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketPlayersReady.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityInfoReady.class, PacketSecurityInfoReady.class, PacketHandler.nextID(), Side.CLIENT);

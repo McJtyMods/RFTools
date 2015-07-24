@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
-import mcjty.rftools.network.PacketRequestListFromServer;
+import mcjty.network.PacketRequestListFromServer;
 
 import java.util.List;
 

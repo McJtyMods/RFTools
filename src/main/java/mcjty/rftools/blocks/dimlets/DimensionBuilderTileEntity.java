@@ -18,7 +18,7 @@ import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.network.PacketRequestIntegerFromServer;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.network.Argument;
-import mcjty.rftools.network.PacketRequestListFromServer;
+import mcjty.network.PacketRequestListFromServer;
 
 import java.util.List;
 

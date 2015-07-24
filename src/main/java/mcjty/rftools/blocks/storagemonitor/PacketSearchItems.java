@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.network.Argument;
-import mcjty.rftools.network.PacketRequestListFromServer;
+import mcjty.network.PacketRequestListFromServer;
 import mcjty.varia.Coordinate;
 
 import java.util.List;

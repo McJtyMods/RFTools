@@ -1,9 +1,7 @@
-package mcjty.rftools.network;
+package mcjty.network;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import mcjty.network.Argument;
-import mcjty.network.CommandHandler;
 import mcjty.varia.Logging;
 import net.minecraft.tileentity.TileEntity;
 

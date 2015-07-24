@@ -3,7 +3,7 @@ package mcjty.entity;
 import cofh.api.energy.EnergyStorage;
 import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.network.PacketRequestIntegerFromServer;
+import mcjty.network.PacketRequestIntegerFromServer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;

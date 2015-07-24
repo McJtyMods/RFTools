@@ -1,11 +1,8 @@
-package mcjty.rftools.network;
+package mcjty.network;
 
-import mcjty.network.Argument;
-import mcjty.network.ArgumentType;
-import mcjty.network.NetworkTools;
-import mcjty.varia.Coordinate;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.varia.Coordinate;
 
 import java.util.HashMap;
 import java.util.Map;

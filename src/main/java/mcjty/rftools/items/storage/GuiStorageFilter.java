@@ -11,7 +11,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
-import mcjty.rftools.network.PacketUpdateNBTItem;
+import mcjty.network.PacketUpdateNBTItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;

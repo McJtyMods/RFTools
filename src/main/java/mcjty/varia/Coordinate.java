@@ -1,6 +1,6 @@
 package mcjty.varia;
 
-import mcjty.rftools.network.ByteBufConverter;
+import mcjty.network.ByteBufConverter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
