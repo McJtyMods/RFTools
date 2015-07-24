@@ -1,9 +1,9 @@
 package mcjty.gui.widgets;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import mcjty.base.ModBaseRef;
 import mcjty.gui.RenderHelper;
 import mcjty.gui.Window;
-import mcjty.rftools.RFTools;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -397,7 +397,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                 // Error, just put in the entire line
                 this.line = line;
             } else {
-                Block block = GameRegistry.findBlock(RFTools.MODID, line.substring(4, end));
+                Block block = GameRegistry.findBlock(ModBaseRef.MODID, line.substring(4, end));
                 recipe = findRecipe(new ItemStack(block));
                 if (recipe == null) {
                     // Error,
@@ -414,7 +414,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                 // Error, just put in the entire line
                 this.line = line;
             } else {
-                Item item = GameRegistry.findItem(RFTools.MODID, line.substring(4, end));
+                Item item = GameRegistry.findItem(ModBaseRef.MODID, line.substring(4, end));
                 recipe = findRecipe(new ItemStack(item));
                 if (recipe == null) {
                     // Error,
@@ -445,7 +445,7 @@ public class TextPage extends AbstractWidget<TextPage> {
                 } catch (IndexOutOfBoundsException e) {
                 } catch (NumberFormatException e) {
                 }
-                resourceLocation = new ResourceLocation(RFTools.MODID, split[0]);
+                resourceLocation = new ResourceLocation(ModBaseRef.MODID, split[0]);
                 try {
                     this.line = split[3];
                 } catch (IndexOutOfBoundsException e) {
