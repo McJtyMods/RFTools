@@ -1,6 +1,7 @@
 package mcjty.rftools;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.gui.GuiConfig;
 import mcjty.varia.Logging;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -22,8 +23,6 @@ public class GeneralConfiguration {
     public static boolean enableShieldProjectorRecipe = true;
     public static boolean enableEndergenRecipe = true;
     public static boolean enableBlockProtectorRecipe = true;
-
-    public static int itemListBackground = 0xff909090;
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
@@ -50,7 +49,7 @@ public class GeneralConfiguration {
         enableBlockProtectorRecipe = cfg.get(CATEGORY_GENERAL, "enableBlockProtectorRecipe", enableBlockProtectorRecipe,
                 "Enable the block protector recipe.").getBoolean();
 
-        itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", itemListBackground,
+        GuiConfig.itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", GuiConfig.itemListBackground,
                 "Color for some list backgrounds").getInt();
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,

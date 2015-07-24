@@ -1,6 +1,7 @@
 package mcjty.container;
 
 import mcjty.entity.GenericTileEntity;
+import mcjty.gui.GuiSideWindow;
 import mcjty.gui.Window;
 import mcjty.gui.widgets.WidgetList;
 import mcjty.rftools.network.Argument;

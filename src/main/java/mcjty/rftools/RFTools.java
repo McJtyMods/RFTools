@@ -1,6 +1,8 @@
 package mcjty.rftools;
 
 import mcjty.base.ModBase;
+import mcjty.base.ModBaseRef;
+import mcjty.gui.GuiStyle;
 import mcjty.rftools.apideps.ComputerCraftHelper;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -31,10 +33,12 @@ import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
@@ -141,6 +145,8 @@ public class RFTools implements ModBase {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
+        ModBaseRef.INSTANCE = this;
+
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
         FMLInterModComms.sendMessage("Waila", "register", "mcjty.rftools.apideps.WailaCompatibility.load");
@@ -253,5 +259,13 @@ public class RFTools implements ModBase {
 
     public static void warn(EntityPlayer player, String message) {
         player.addChatComponentMessage(new ChatComponentText(message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+    }
+
+    // Implementation for ModBase
+
+    @Override
+    public void setGuiStyle(EntityPlayerMP playerEntity, String style) {
+        PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(playerEntity);
+        properties.getPreferencesProperties().setStyle(style);
     }
 }

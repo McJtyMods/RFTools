@@ -1,18 +1,15 @@
-package mcjty.container;
+package mcjty.gui;
 
-import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.gui.widgets.WidgetList;
-import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.gui.PacketSetGuiStyle;
-import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.network.PacketHandler;
-import mcjty.gui.GuiStyle;
+import mcjty.rftools.RFTools;
+import mcjty.network.PacketSetGuiStyle;
+import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -96,7 +93,7 @@ public class GuiSideWindow {
         if (style == GuiStyle.STYLE_BEVEL) {
             list.setFilledRectThickness(1);
         } else {
-            list.setFilledBackground(GeneralConfiguration.itemListBackground);
+            list.setFilledBackground(GuiConfig.itemListBackground);
         }
     }
 

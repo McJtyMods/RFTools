@@ -2,7 +2,7 @@ package mcjty.rftools.network;
 
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import mcjty.rftools.gui.PacketSetGuiStyle;
+import mcjty.network.PacketSetGuiStyle;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;
@@ -52,7 +52,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetTransmitters.class, PacketGetTransmitters.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetReceivers.class, PacketGetReceivers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketServerCommand.class, PacketServerCommand.class, PacketHandler.nextID(), Side.SERVER);
-        net.registerMessage(PacketSetGuiStyle.class, PacketSetGuiStyle.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestIntegerFromServer.class, PacketRequestIntegerFromServer.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetAllReceivers.class, PacketGetAllReceivers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketForceTeleport.class, PacketForceTeleport.class, PacketHandler.nextID(), Side.SERVER);
