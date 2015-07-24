@@ -148,7 +148,7 @@ public class RFTools implements ModBase {
 
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
-        FMLInterModComms.sendMessage("Waila", "register", "mcjty.rftools.apideps.WailaCompatibility.load");
+        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.invisibleShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.solidShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenHitBlock));
