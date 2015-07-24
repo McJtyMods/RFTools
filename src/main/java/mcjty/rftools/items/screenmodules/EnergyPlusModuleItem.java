@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.screens.modules.EnergyPlusBarScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.EnergyPlusBarClientScreenModule;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.varia.Logging;

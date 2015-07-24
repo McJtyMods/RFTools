@@ -2,7 +2,7 @@ package mcjty.rftools.items.netmonitor;
 
 import mcjty.rftools.BlockInfo;
 import mcjty.varia.Coordinate;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;

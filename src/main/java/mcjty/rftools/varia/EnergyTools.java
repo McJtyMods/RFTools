@@ -1,4 +1,4 @@
-package mcjty.varia;
+package mcjty.rftools.varia;
 
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;

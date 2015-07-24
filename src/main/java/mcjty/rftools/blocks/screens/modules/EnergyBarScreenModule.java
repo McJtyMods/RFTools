@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.varia.Coordinate;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

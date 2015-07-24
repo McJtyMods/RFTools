@@ -5,7 +5,7 @@ import mcjty.entity.SyncedValue;
 import mcjty.varia.BlockTools;
 import mcjty.network.Argument;
 import mcjty.varia.Coordinate;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 

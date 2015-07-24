@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import cofh.api.energy.IEnergyConnection;
 import mcjty.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.dimension.DimensionStorage;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;

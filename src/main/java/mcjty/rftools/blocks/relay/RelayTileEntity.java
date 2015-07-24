@@ -4,7 +4,7 @@ import cofh.api.energy.IEnergyConnection;
 import mcjty.entity.GenericEnergyHandlerTileEntity;
 import mcjty.varia.BlockTools;
 import mcjty.network.Argument;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

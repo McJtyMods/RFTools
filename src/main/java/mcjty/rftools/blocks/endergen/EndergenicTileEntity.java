@@ -9,7 +9,7 @@ import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
-import mcjty.varia.EnergyTools;
+import mcjty.rftools.varia.EnergyTools;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
