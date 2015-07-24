@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,7 +58,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 stack.setTagCompound(tagCompound);
             }
             tagCompound.setString("mode", mode.getCode());
-            RFTools.message(player, EnumChatFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
+            Logging.message(player, EnumChatFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
         }
         return super.onItemRightClick(stack, world, player);
     }
@@ -70,7 +71,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 GlobalCoordinate b = getCurrentBlock(stack);
                 if (b != null) {
                     if (b.getDimension() != world.provider.dimensionId) {
-                        RFTools.message(player, EnumChatFormatting.RED + "The selected block is in another dimension!");
+                        Logging.message(player, EnumChatFormatting.RED + "The selected block is in another dimension!");
                         return true;
                     }
                     TileEntity te = world.getTileEntity(b.getCoordinate().getX(), b.getCoordinate().getY(), b.getCoordinate().getZ());

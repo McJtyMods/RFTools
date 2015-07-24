@@ -3,6 +3,7 @@ package mcjty.rftools.items.dimlets;
 import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,22 +51,22 @@ public class KnownDimlet extends Item {
 
                 boolean locked = tagCompound.getBoolean("locked");
                 if (locked) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "This seed dimlet is locked. You cannot modify it!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "This seed dimlet is locked. You cannot modify it!");
                     return stack;
                 }
 
                 long forcedSeed = tagCompound.getLong("forcedSeed");
                 if (player.isSneaking()) {
                     if (forcedSeed == 0) {
-                        RFTools.message(player, EnumChatFormatting.YELLOW + "This dimlet has no seed. You cannot lock it!");
+                        Logging.message(player, EnumChatFormatting.YELLOW + "This dimlet has no seed. You cannot lock it!");
                         return stack;
                     }
                     tagCompound.setBoolean("locked", true);
-                    RFTools.message(player, "Dimlet locked!");
+                    Logging.message(player, "Dimlet locked!");
                 } else {
                     long seed = world.getSeed();
                     tagCompound.setLong("forcedSeed", seed);
-                    RFTools.message(player, "Seed set to: " + seed);
+                    Logging.message(player, "Seed set to: " + seed);
                 }
 
                 stack.setTagCompound(tagCompound);

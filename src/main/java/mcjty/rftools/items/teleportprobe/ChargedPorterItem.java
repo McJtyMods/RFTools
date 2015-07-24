@@ -8,6 +8,7 @@ import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -90,7 +91,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null || (!tagCompound.hasKey("target")) || tagCompound.getInteger("target") == -1) {
             if (world.isRemote) {
-                RFTools.message(player, EnumChatFormatting.RED + "The charged porter has no target.");
+                Logging.message(player, EnumChatFormatting.RED + "The charged porter has no target.");
             }
             return;
         }
@@ -99,7 +100,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             IExtendedEntityProperties properties = player.getExtendedProperties(PlayerExtendedProperties.ID);
             PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
             if (playerExtendedProperties.getPorterProperties().isTeleporting()) {
-                RFTools.message(player, EnumChatFormatting.RED + "Already teleporting!");
+                Logging.message(player, EnumChatFormatting.RED + "Already teleporting!");
                 return;
             }
 
@@ -108,7 +109,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
-                RFTools.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
+                Logging.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
                 TeleportationTools.applyEffectForSeverity(player, 3, false);
                 return;
             }
@@ -118,14 +119,14 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             cost *= 1.5f;
             int energy = getEnergyStored(stack);
             if (cost > energy) {
-                RFTools.message(player, EnumChatFormatting.RED + "Not enough energy to start the teleportation!");
+                Logging.message(player, EnumChatFormatting.RED + "Not enough energy to start the teleportation!");
                 return;
             }
             extractEnergyNoMax(stack, cost, false);
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
             playerExtendedProperties.getPorterProperties().startTeleport(target, ticks);
-            RFTools.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
+            Logging.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
         }
     }
 
@@ -139,7 +140,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         if (te instanceof MatterReceiverTileEntity) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             if (!matterReceiverTileEntity.checkAccess(player.getDisplayName())) {
-                RFTools.message(player, EnumChatFormatting.RED + "You have no access to target this receiver!");
+                Logging.message(player, EnumChatFormatting.RED + "You have no access to target this receiver!");
                 return;
             }
             id = matterReceiverTileEntity.getId();
@@ -147,12 +148,12 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
         if (id != -1) {
             if (world.isRemote) {
-                RFTools.message(player, "Charged porter target is set to " + id +".");
+                Logging.message(player, "Charged porter target is set to " + id + ".");
             }
             tagCompound.setInteger("target", id);
         } else {
             if (world.isRemote) {
-                RFTools.message(player, "Charged porter is cleared.");
+                Logging.message(player, "Charged porter is cleared.");
             }
             tagCompound.removeTag("target");
         }

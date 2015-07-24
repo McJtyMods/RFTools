@@ -2,7 +2,6 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.api.MachineInformation;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
@@ -11,6 +10,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.MachineInformationClientScreenModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -91,7 +91,7 @@ public class MachineInformationModuleItem extends Item implements ModuleProvider
             }
             tagCompound.setString("monitorname", name);
             if (world.isRemote) {
-                RFTools.message(player, "Machine Information module is set to block '" + name + "'");
+                Logging.message(player, "Machine Information module is set to block '" + name + "'");
             }
         } else {
             tagCompound.removeTag("dim");
@@ -100,7 +100,7 @@ public class MachineInformationModuleItem extends Item implements ModuleProvider
             tagCompound.removeTag("monitorz");
             tagCompound.removeTag("monitorname");
             if (world.isRemote) {
-                RFTools.message(player, "Machine Information module is cleared");
+                Logging.message(player, "Machine Information module is cleared");
             }
         }
         stack.setTagCompound(tagCompound);

@@ -1,10 +1,10 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,7 +46,7 @@ public class PorterProperties {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(entity.worldObj);
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
-                RFTools.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
+                Logging.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
                 TeleportationTools.applyEffectForSeverity(player, 3, false);
                 return;
             }

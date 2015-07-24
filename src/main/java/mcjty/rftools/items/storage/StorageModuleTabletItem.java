@@ -4,9 +4,9 @@ import cofh.api.energy.IEnergyContainerItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -64,7 +64,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
-                RFTools.message(player, EnumChatFormatting.YELLOW + "This tablet contains no storage module!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "This tablet contains no storage module!");
                 return stack;
             }
 
@@ -76,7 +76,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
             int energy = tagCompound.getInteger("Energy");
             if (energy < rfNeeded) {
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Not enough energy to open the contents!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Not enough energy to open the contents!");
                 return stack;
             }
 
@@ -85,7 +85,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
             if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
                     return stack;
                 }
                 player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);

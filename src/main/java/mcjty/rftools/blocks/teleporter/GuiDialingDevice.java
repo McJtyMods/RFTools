@@ -18,6 +18,7 @@ import mcjty.rftools.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRequestIntegerFromServer;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -212,12 +213,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         double distance = Vec3.createVectorHelper(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPosition(1.0f));
 
         if (destination.getDimension() != mc.theWorld.provider.dimensionId || distance > 150) {
-            RFTools.warn(mc.thePlayer, "Receiver is too far to hilight!");
+            Logging.warn(mc.thePlayer, "Receiver is too far to hilight!");
             mc.getMinecraft().thePlayer.closeScreen();
             return;
         }
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
-        RFTools.message(mc.thePlayer, "The receiver is now highlighted");
+        Logging.message(mc.thePlayer, "The receiver is now highlighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }
 

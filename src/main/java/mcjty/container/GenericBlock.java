@@ -5,12 +5,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.base.GeneralConfig;
+import mcjty.base.ModBaseRef;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.varia.BlockTools;
+import mcjty.varia.Logging;
 import mcjty.varia.SecurityTools;
 import mcjty.varia.WrenchChecker;
 import mcjty.wailasupport.WailaInfoProvider;
@@ -263,7 +265,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                 return true;
             }
             if (checkAccess(world, player, te)) return true;
-            player.openGui(RFTools.instance, getGuiID(), world, x, y, z);
+            player.openGui(ModBaseRef.INSTANCE, getGuiID(), world, x, y, z);
         }
         return true;
     }
@@ -278,7 +280,7 @@ public abstract class GenericBlock extends Block implements ITileEntityProvider,
                     SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
                     boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
                     if (channel.isWhitelist() != playerListed) {
-                        RFTools.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
+                        Logging.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
                         return true;
                     }
                 }

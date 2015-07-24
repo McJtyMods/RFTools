@@ -1,6 +1,10 @@
 package mcjty.varia;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -51,5 +55,13 @@ public class Logging {
         if (debugMode) {
             getInstance().logger.log(Level.INFO, message);
         }
+    }
+
+    public static void message(EntityPlayer player, String message) {
+        player.addChatComponentMessage(new ChatComponentText(message));
+    }
+
+    public static void warn(EntityPlayer player, String message) {
+        player.addChatComponentMessage(new ChatComponentText(message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 }

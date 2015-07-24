@@ -128,7 +128,7 @@ public class TeleportationTools {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
 
-        RFTools.message(player, "Whoosh!");
+        Logging.message(player, "Whoosh!");
         Achievements.trigger(player, Achievements.firstTeleport);
 
         boolean boostNeeded = false;
@@ -224,7 +224,7 @@ public class TeleportationTools {
         World world = DimensionManager.getWorld(dimension);
         TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(te instanceof MatterReceiverTileEntity)) {
-            RFTools.warn(player, "Something went wrong with the destination!");
+            Logging.warn(player, "Something went wrong with the destination!");
             return 0;
         }
 
@@ -240,11 +240,11 @@ public class TeleportationTools {
 
         int remainingRf = matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN);
         if (remainingRf <= 1) {
-            RFTools.warn(player, "The matter receiver has run out of power!");
+            Logging.warn(player, "The matter receiver has run out of power!");
         } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 10)) {
-            RFTools.warn(player, "The matter receiver is getting very low on power!");
+            Logging.warn(player, "The matter receiver is getting very low on power!");
         } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 5)) {
-            RFTools.warn(player, "The matter receiver is getting low on power!");
+            Logging.warn(player, "The matter receiver is getting low on power!");
         }
 
         return 10 - (extracted * 10 / rf);

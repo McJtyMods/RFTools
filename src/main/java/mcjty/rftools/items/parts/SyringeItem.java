@@ -7,6 +7,7 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -51,11 +52,11 @@ public class SyringeItem extends Item {
             if (tagCompound != null) {
                 String mob = tagCompound.getString("mobName");
                 if (mob != null) {
-                    RFTools.message(player, EnumChatFormatting.BLUE + "Mob: " + mob);
+                    Logging.message(player, EnumChatFormatting.BLUE + "Mob: " + mob);
                 }
                 int level = tagCompound.getInteger("level");
                 level = level * 100 / DimletConstructionConfiguration.maxMobInjections;
-                RFTools.message(player, EnumChatFormatting.BLUE + "Essence level: " + level + "%");
+                Logging.message(player, EnumChatFormatting.BLUE + "Essence level: " + level + "%");
             }
             return stack;
         }

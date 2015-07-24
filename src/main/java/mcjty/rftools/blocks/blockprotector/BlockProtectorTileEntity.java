@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueSet;
-import mcjty.rftools.RFTools;
 import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -185,7 +185,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void selectBlock(EntityPlayer player, int x, int y, int z) {
         // This is always called server side.
         if (Math.abs(x-xCoord) > BlockProtectorConfiguration.maxProtectDistance || Math.abs(y-yCoord) > BlockProtectorConfiguration.maxProtectDistance  || Math.abs(z-zCoord) > BlockProtectorConfiguration.maxProtectDistance) {
-            RFTools.message(player, EnumChatFormatting.RED + "Block out of range of the block protector!");
+            Logging.message(player, EnumChatFormatting.RED + "Block out of range of the block protector!");
             return;
         }
         GlobalCoordinate gc = new GlobalCoordinate(new Coordinate(x, y, z), worldObj.provider.dimensionId);

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.container.GenericItemBlock;
-import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
             RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity) te;
             int channel = redstoneTransmitterTileEntity.getChannel();
             if (channel == -1) {
-                RFTools.message(player, EnumChatFormatting.YELLOW + "This transmitter has no channel!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "This transmitter has no channel!");
             } else {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null) {
@@ -31,14 +31,14 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
                 tagCompound.setInteger("channel", channel);
                 stack.setTagCompound(tagCompound);
                 if (world.isRemote) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
                 }
             }
         } else if (te instanceof RedstoneReceiverTileEntity) {
             RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
             int channel = redstoneReceiverTileEntity.getChannel();
             if (channel == -1) {
-                RFTools.message(player, EnumChatFormatting.YELLOW + "This receiver has no channel!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "This receiver has no channel!");
             } else {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null) {
@@ -47,10 +47,10 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
                 tagCompound.setInteger("channel", channel);
                 stack.setTagCompound(tagCompound);
                 if (world.isRemote) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
                 }
                 if (world.isRemote) {
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "Channel set to " + channel + "!");
                 }
             }
         } else {

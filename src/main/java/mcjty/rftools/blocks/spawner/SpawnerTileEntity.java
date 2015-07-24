@@ -267,11 +267,11 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         double d = Vec3.createVectorHelper(coord.getX(), coord.getY(), coord.getZ()).distanceTo(
                 Vec3.createVectorHelper(xCoord, yCoord, zCoord));
         if (d > SpawnerConfiguration.maxBeamDistance) {
-            RFTools.message(player, "Destination distance is too far!");
+            Logging.message(player, "Destination distance is too far!");
         } else if (tileEntity instanceof MatterBeamerTileEntity) {
             MatterBeamerTileEntity matterBeamerTileEntity = (MatterBeamerTileEntity) tileEntity;
             matterBeamerTileEntity.setDestination(thisCoord);
-            RFTools.message(player, "Destination set!");
+            Logging.message(player, "Destination set!");
         }
 
         RFTools.instance.clientInfo.setSelectedTE(null);

@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
+import mcjty.varia.Logging;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -85,9 +86,9 @@ public class SimpleDialerBlock extends LogicSlabBlock {
             boolean onceMode = !simpleDialerTileEntity.isOnceMode();
             simpleDialerTileEntity.setOnceMode(onceMode);
             if (onceMode) {
-                RFTools.message(player, "Enabled 'dial once' mode");
+                Logging.message(player, "Enabled 'dial once' mode");
             } else {
-                RFTools.message(player, "Disabled 'dial once' mode");
+                Logging.message(player, "Disabled 'dial once' mode");
             }
         }
         return true;

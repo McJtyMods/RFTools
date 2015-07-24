@@ -16,6 +16,7 @@ import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.network.PacketHandler;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 
@@ -121,7 +122,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         }
         Coordinate c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime);
-        RFTools.message(mc.thePlayer, "The block is now highlighted");
+        Logging.message(mc.thePlayer, "The block is now highlighted");
         Minecraft.getMinecraft().thePlayer.closeScreen();
     }
 

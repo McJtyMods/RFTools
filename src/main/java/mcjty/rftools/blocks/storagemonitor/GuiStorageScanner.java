@@ -21,6 +21,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -149,7 +150,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         SyncedValueList<InvBlockInfo> inventories = tileEntity.getInventories();
         Coordinate c = inventories.get(index).getCoordinate();
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
-        RFTools.message(mc.thePlayer, "The inventory is now highlighted");
+        Logging.message(mc.thePlayer, "The inventory is now highlighted");
         mc.getMinecraft().thePlayer.closeScreen();
     }
 

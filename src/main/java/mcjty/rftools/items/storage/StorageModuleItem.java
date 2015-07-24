@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,7 +47,7 @@ public class StorageModuleItem extends Item {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-            RFTools.message(player, EnumChatFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
+            Logging.message(player, EnumChatFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
             return stack;
         }
         return stack;

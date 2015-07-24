@@ -2,7 +2,6 @@ package mcjty.rftools.items.screenmodules;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.logic.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.RedstoneTransmitterTileEntity;
@@ -12,6 +11,7 @@ import mcjty.rftools.blocks.screens.modules.ButtonScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ButtonClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -90,34 +90,34 @@ public class ButtonModuleItem extends Item implements ModuleProvider {
 
             if (channel == -1) {
                 if (blockChannel != -1) {
-                    RFTools.message(player, "Copied channel " + blockChannel + " to Button module");
+                    Logging.message(player, "Copied channel " + blockChannel + " to Button module");
                     tagCompound.setInteger("channel", blockChannel);
                     return true;
                 }
             }
-            RFTools.message(player, EnumChatFormatting.RED + "Nothing happens!");
+            Logging.message(player, EnumChatFormatting.RED + "Nothing happens!");
 
         } else if (te instanceof RedstoneReceiverTileEntity) {
             int blockChannel = ((RedstoneReceiverTileEntity)te).getChannel();
 
             if (channel == -1) {
                 if (blockChannel != -1) {
-                    RFTools.message(player, "Copied channel " + blockChannel + " to Button module");
+                    Logging.message(player, "Copied channel " + blockChannel + " to Button module");
                     tagCompound.setInteger("channel", blockChannel);
                     return true;
                 } else {
                     RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
                     channel = redstoneChannels.newChannel();
                     redstoneChannels.save(world);
-                    RFTools.message(player, "Created channel " + channel + " for Button module");
+                    Logging.message(player, "Created channel " + channel + " for Button module");
                     tagCompound.setInteger("channel", channel);
                 }
             }
 
             ((RedstoneReceiverTileEntity) te).setChannel(channel);
-            RFTools.message(player, "Receiver is set to channel " + channel);
+            Logging.message(player, "Receiver is set to channel " + channel);
         } else {
-            RFTools.message(player, EnumChatFormatting.RED + "You can only use this on a redstone receiver/transmitter!");
+            Logging.message(player, EnumChatFormatting.RED + "You can only use this on a redstone receiver/transmitter!");
         }
 
         return true;

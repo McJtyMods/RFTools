@@ -9,6 +9,7 @@ import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -42,15 +43,15 @@ public class DimensionMonitorItem extends Item {
             RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(player.worldObj);
             DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
             if (dimensionInformation == null) {
-                RFTools.message(player, "Not an RFTools dimension!");
+                Logging.message(player, "Not an RFTools dimension!");
             } else {
                 String name = dimensionInformation.getName();
                 DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());
                 int power = storage != null ? storage.getEnergyLevel(id) : 0;
 
-                RFTools.message(player, EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")" + EnumChatFormatting.YELLOW + "    Power: " + power + " RF");
+                Logging.message(player, EnumChatFormatting.BLUE + "Name: " + name + " (Id " + id + ")" + EnumChatFormatting.YELLOW + "    Power: " + power + " RF");
                 if (player.isSneaking()) {
-                    RFTools.message(player, EnumChatFormatting.RED + "Description: " + dimensionInformation.getDescriptor().getDescriptionString());
+                    Logging.message(player, EnumChatFormatting.RED + "Description: " + dimensionInformation.getDescriptor().getDescriptionString());
                     System.out.println("Description:  = " + dimensionInformation.getDescriptor().getDescriptionString());
                 }
             }

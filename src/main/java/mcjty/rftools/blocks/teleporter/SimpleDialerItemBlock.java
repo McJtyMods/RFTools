@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.container.GenericItemBlock;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class SimpleDialerItemBlock extends GenericItemBlock {
     public SimpleDialerItemBlock(Block block) {
@@ -31,7 +30,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
 
                 if (!matterTransmitterTileEntity.checkAccess(player.getDisplayName())) {
-                    RFTools.message(player, EnumChatFormatting.RED + "You have no access to this matter transmitter!");
+                    Logging.message(player, EnumChatFormatting.RED + "You have no access to this matter transmitter!");
                     return true;
                 }
 
@@ -44,15 +43,15 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                     Integer id = matterTransmitterTileEntity.getTeleportId();
                     boolean access = checkReceiverAccess(player, world, id);
                     if (!access) {
-                        RFTools.message(player, EnumChatFormatting.RED + "You have no access to the matter receiver!");
+                        Logging.message(player, EnumChatFormatting.RED + "You have no access to the matter receiver!");
                         return true;
                     }
 
                     tagCompound.setInteger("receiver", id);
-                    RFTools.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+                    Logging.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
                 }
 
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Transmitter set!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Transmitter set!");
             }
         } else if (te instanceof MatterReceiverTileEntity) {
             if (!world.isRemote) {
@@ -61,12 +60,12 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 Integer id  = matterReceiverTileEntity.getOrCalculateID();
                 boolean access = checkReceiverAccess(player, world, id);
                 if (!access) {
-                    RFTools.message(player, EnumChatFormatting.RED + "You have no access to this matter receiver!");
+                    Logging.message(player, EnumChatFormatting.RED + "You have no access to this matter receiver!");
                     return true;
                 }
 
                 tagCompound.setInteger("receiver", id);
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
             }
         } else {
             return super.onItemUse(stack, player, world, x, y, z, side, sx, sy, sz);

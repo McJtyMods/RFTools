@@ -20,6 +20,7 @@ import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Counter;
+import mcjty.varia.Logging;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -97,7 +98,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
             ItemStack stack = inventorySlots.getSlot(i + DimensionEnscriberContainer.SLOT_DIMLETS).getStack();
             if (stack != null && stack.stackSize > 0) {
                 // Cannot extract. There are still items in the way.
-                RFTools.warn(mc.thePlayer, "You cannot extract. Remove all dimlets first!");
+                Logging.warn(mc.thePlayer, "You cannot extract. Remove all dimlets first!");
                 return;
             }
         }

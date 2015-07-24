@@ -1,6 +1,5 @@
 package mcjty.rftools.items.dimlets;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -9,6 +8,7 @@ import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.network.PacketHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -32,7 +32,7 @@ public class RealizedDimensionTab extends Item {
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if ((!world.isRemote) && player.isSneaking()) {
             NBTTagCompound tagCompound = stack.getTagCompound();
-            RFTools.message(player, tagCompound.getString("descriptionString"));
+            Logging.message(player, tagCompound.getString("descriptionString"));
             int id = tagCompound.getInteger("id");
             if (id != 0) {
                 RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);

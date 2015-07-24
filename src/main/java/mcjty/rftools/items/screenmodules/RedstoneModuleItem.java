@@ -1,6 +1,5 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ModuleProvider;
@@ -11,6 +10,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -93,7 +93,7 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
             tagCompound.setInteger("monitorz", z);
             tagCompound.setInteger("monitorside", side);
             if (world.isRemote) {
-                RFTools.message(player, "Redstone module is set to " + x + "," + y + "," + z);
+                Logging.message(player, "Redstone module is set to " + x + "," + y + "," + z);
             }
 
             return true;
@@ -108,12 +108,12 @@ public class RedstoneModuleItem extends Item implements ModuleProvider {
         if (channel != -1) {
             tagCompound.setInteger("channel", channel);
             if (world.isRemote) {
-                RFTools.message(player, "Redstone module is set to channel '" + channel + "'");
+                Logging.message(player, "Redstone module is set to channel '" + channel + "'");
             }
         } else {
             tagCompound.removeTag("channel");
             if (world.isRemote) {
-                RFTools.message(player, "Redstone module is cleared");
+                Logging.message(player, "Redstone module is cleared");
             }
         }
         return true;

@@ -6,8 +6,8 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import mcjty.container.GenericContainer;
 import mcjty.container.InventoryHelper;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -53,7 +53,7 @@ public class PacketCompact implements IMessage, IMessageHandler<PacketCompact, I
                 remoteStorage.compact(id);
                 remoteStorage.markDirty();
             } else {
-                RFTools.message(playerEntity, EnumChatFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
+                Logging.message(playerEntity, EnumChatFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
             }
         } else {
             GenericContainer genericContainer = (GenericContainer) playerEntity.openContainer;

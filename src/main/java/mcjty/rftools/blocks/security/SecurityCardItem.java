@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
 import mcjty.network.PacketHandler;
+import mcjty.varia.Logging;
 import mcjty.varia.SecurityTools;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -77,32 +78,32 @@ public class SecurityCardItem extends Item {
             if (te instanceof GenericTileEntity) {
                 GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                 if (genericTileEntity.getOwnerUUID() == null) {
-                    RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
+                    Logging.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
                     if (SecurityTools.isAdmin(player) || isOwner(player, genericTileEntity)) {
                         NBTTagCompound tagCompound = stack.getTagCompound();
                         if (tagCompound == null || !tagCompound.hasKey("channel")) {
                             int blockSecurity = genericTileEntity.getSecurityChannel();
                             if (blockSecurity == -1) {
-                                RFTools.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
+                                Logging.message(player, EnumChatFormatting.RED + "This security card is not setup correctly!");
                             } else {
                                 if (tagCompound == null) {
                                     tagCompound = new NBTTagCompound();
                                     stack.setTagCompound(tagCompound);
                                 }
                                 tagCompound.setInteger("channel", blockSecurity);
-                                RFTools.message(player, EnumChatFormatting.RED + "Copied security channel from block to card!");
+                                Logging.message(player, EnumChatFormatting.RED + "Copied security channel from block to card!");
                             }
                         } else {
                             int channel = tagCompound.getInteger("channel");
                             toggleSecuritySettings(player, genericTileEntity, channel);
                         }
                     } else {
-                        RFTools.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
+                        Logging.message(player, EnumChatFormatting.RED + "You cannot change security settings of a block you don't own!");
                     }
                 }
             } else {
-                RFTools.message(player, EnumChatFormatting.RED + "Security is not supported on this block!");
+                Logging.message(player, EnumChatFormatting.RED + "Security is not supported on this block!");
             }
             return true;
         }
@@ -129,10 +130,10 @@ public class SecurityCardItem extends Item {
         int sec = genericTileEntity.getSecurityChannel();
         if (sec == channel) {
             genericTileEntity.setSecurityChannel(-1);
-            RFTools.message(player, "Security settings cleared from block!");
+            Logging.message(player, "Security settings cleared from block!");
         } else {
             genericTileEntity.setSecurityChannel(channel);
-            RFTools.message(player, "Security settings applied on block!");
+            Logging.message(player, "Security settings applied on block!");
         }
     }
 }

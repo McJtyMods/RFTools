@@ -4,13 +4,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.MachineInformation;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.network.Argument;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -327,7 +327,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             }
         } else if (teleportDestination == null && teleportId == null) {
             // We were teleporting a player but for some reason the destination went away. Interrupt.
-            RFTools.warn(teleportingPlayer, "The destination vanished! Aborting.");
+            Logging.warn(teleportingPlayer, "The destination vanished! Aborting.");
             clearTeleport(80);
         } else if (isPlayerOutsideBeam()) {
             // The player moved outside the beam. Interrupt the teleport.
@@ -468,7 +468,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         // First check if the destination is still valid.
         if (!isDestinationStillValid()) {
             TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 10, badTicks, totalTicks, false);
-            RFTools.warn(teleportingPlayer, "Missing destination!");
+            Logging.warn(teleportingPlayer, "Missing destination!");
             clearTeleport(200);
             return;
         }
@@ -504,7 +504,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         badTicks++;
         if (TeleportationTools.mustInterrupt(badTicks, totalTicks)) {
             // Too many bad ticks. Total failure!
-            RFTools.warn(teleportingPlayer, "Power failure during transit!");
+            Logging.warn(teleportingPlayer, "Power failure during transit!");
             clearTeleport(200);
         }
         return;
@@ -513,7 +513,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private boolean isPlayerOutsideBeam() {
         AxisAlignedBB playerBB = teleportingPlayer.boundingBox;
         if (!playerBB.intersectsWith(beamBox)) {
-            RFTools.message(teleportingPlayer, "Teleportation was interrupted!");
+            Logging.message(teleportingPlayer, "Teleportation was interrupted!");
             return true;
         }
         return false;
@@ -544,12 +544,12 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
             if (getEnergyStored(ForgeDirection.DOWN) < cost) {
-                RFTools.warn(player, "Not enough power to start the teleport!");
+                Logging.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
                 return;
             }
 
-            RFTools.message(player, "Start teleportation...");
+            Logging.message(player, "Start teleportation...");
             teleportingPlayer = player;
             teleportTimer = TeleportationTools.calculateTime(worldObj, cthis, dest);
             teleportTimer = (int) (teleportTimer * (1.2f - getInfusedFactor()) / 1.2f);
@@ -563,7 +563,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             goodTicks = 0;
             badTicks = 0;
         } else {
-            RFTools.warn(player, "Something is wrong with the destination!");
+            Logging.warn(player, "Something is wrong with the destination!");
         }
     }
 

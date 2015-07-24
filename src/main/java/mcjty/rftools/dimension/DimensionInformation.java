@@ -1,6 +1,5 @@
 package mcjty.rftools.dimension;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.description.*;
@@ -524,7 +523,7 @@ public class DimensionInformation {
         if (player == null) {
             Logging.log(message);
         } else {
-            RFTools.message(player, EnumChatFormatting.YELLOW + message);
+            Logging.message(player, EnumChatFormatting.YELLOW + message);
         }
     }
 

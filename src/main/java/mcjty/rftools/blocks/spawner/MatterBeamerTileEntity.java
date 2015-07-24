@@ -10,6 +10,7 @@ import mcjty.rftools.network.Argument;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketServerCommand;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
@@ -131,13 +132,13 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
             } else {
                 RFTools.instance.clientInfo.setDestinationTE(new Coordinate(destinationTE.xCoord, destinationTE.yCoord, destinationTE.zCoord));
             }
-            RFTools.message(player, "Select a spawner as destination");
+            Logging.message(player, "Select a spawner as destination");
         } else if (coord.equals(thisCoord)) {
             // Unselect this one.
             RFTools.instance.clientInfo.setSelectedTE(null);
             RFTools.instance.clientInfo.setDestinationTE(null);
             setDestination(null);
-            RFTools.message(player, "Destination cleared!");
+            Logging.message(player, "Destination cleared!");
         }
     }
 

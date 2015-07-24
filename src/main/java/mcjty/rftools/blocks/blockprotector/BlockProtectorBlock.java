@@ -9,6 +9,7 @@ import mcjty.varia.BlockTools;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -98,10 +99,10 @@ public class BlockProtectorBlock extends GenericBlock implements Infusable {
             GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem());
             if (currentBlock == null) {
                 SmartWrenchItem.setCurrentBlock(player.getHeldItem(), new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId));
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Selected block");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Selected block");
             } else {
                 SmartWrenchItem.setCurrentBlock(player.getHeldItem(), null);
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Cleared selected block");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Cleared selected block");
             }
         }
         return true;

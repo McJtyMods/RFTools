@@ -2,8 +2,8 @@ package mcjty.rftools.items.devdelight;
 
 import mcjty.base.GeneralConfig;
 import mcjty.entity.GenericTileEntity;
-import mcjty.rftools.RFTools;
 import mcjty.api.Infusable;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -33,17 +33,17 @@ public class ShardWandItem extends Item {
                     int infused = genericTileEntity.getInfused();
                     if (infused < GeneralConfig.maxInfuse) {
                         infused = GeneralConfig.maxInfuse;
-                        RFTools.message(player, "Maximized infusion level!");
+                        Logging.message(player, "Maximized infusion level!");
                     } else {
                         infused = 0;
-                        RFTools.message(player, "Cleared infusion level!");
+                        Logging.message(player, "Cleared infusion level!");
                     }
                     genericTileEntity.setInfused(infused);
                 } else {
-                    RFTools.message(player, "This block doesn't have the right tile entity!");
+                    Logging.message(player, "This block doesn't have the right tile entity!");
                 }
             } else {
-                RFTools.message(player, "This block is not infusable!");
+                Logging.message(player, "This block is not infusable!");
             }
             return true;
         }

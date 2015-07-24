@@ -1,5 +1,14 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.base.ModBase;
 import mcjty.base.ModBaseRef;
 import mcjty.gui.GuiStyle;
@@ -25,26 +34,13 @@ import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.StringUtils;
 
@@ -253,14 +249,6 @@ public class RFTools implements ModBase {
             Logging.log("RFTools Detected ComputerCraft: enabling support");
             ComputerCraftHelper.register();
         }
-    }
-
-    public static void message(EntityPlayer player, String message) {
-        player.addChatComponentMessage(new ChatComponentText(message));
-    }
-
-    public static void warn(EntityPlayer player, String message) {
-        player.addChatComponentMessage(new ChatComponentText(message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 
     // Implementation for ModBase

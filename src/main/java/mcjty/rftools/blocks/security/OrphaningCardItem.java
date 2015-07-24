@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,20 +47,20 @@ public class OrphaningCardItem extends Item {
             if (te instanceof GenericTileEntity) {
                 GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                 if (genericTileEntity.getOwnerUUID() == null) {
-                    RFTools.message(player, EnumChatFormatting.RED + "This block has no owner!");
+                    Logging.message(player, EnumChatFormatting.RED + "This block has no owner!");
                 } else {
                     if (player.capabilities.isCreativeMode || MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile())) {
                         genericTileEntity.clearOwner();
-                        RFTools.message(player, "Cleared owner!");
+                        Logging.message(player, "Cleared owner!");
                     } else if (genericTileEntity.getOwnerUUID().equals(player.getPersistentID())) {
                         genericTileEntity.clearOwner();
-                        RFTools.message(player, "Cleared owner!");
+                        Logging.message(player, "Cleared owner!");
                     } else {
-                        RFTools.message(player, EnumChatFormatting.RED + "You cannot clear ownership of a block you don't own!");
+                        Logging.message(player, EnumChatFormatting.RED + "You cannot clear ownership of a block you don't own!");
                     }
                 }
             } else {
-                RFTools.message(player, EnumChatFormatting.RED + "Onwership is not supported on this block!");
+                Logging.message(player, EnumChatFormatting.RED + "Onwership is not supported on this block!");
             }
             return true;
         }

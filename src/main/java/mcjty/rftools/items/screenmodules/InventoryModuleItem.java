@@ -1,7 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
@@ -10,6 +9,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -71,7 +71,7 @@ public class InventoryModuleItem extends Item implements ModuleProvider {
             }
             tagCompound.setString("monitorname", name);
             if (world.isRemote) {
-                RFTools.message(player, "Inventory module is set to block '" + name + "'");
+                Logging.message(player, "Inventory module is set to block '" + name + "'");
             }
         } else {
             tagCompound.removeTag("dim");
@@ -80,7 +80,7 @@ public class InventoryModuleItem extends Item implements ModuleProvider {
             tagCompound.removeTag("monitorz");
             tagCompound.removeTag("monitorname");
             if (world.isRemote) {
-                RFTools.message(player, "Inventory module is cleared");
+                Logging.message(player, "Inventory module is cleared");
             }
         }
         stack.setTagCompound(tagCompound);

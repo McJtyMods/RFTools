@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.spaceprojector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -78,7 +79,7 @@ public class SpaceChamberCardItem extends Item {
         } else {
             tagCompound.setInteger("channel", channel);
             if (world.isRemote) {
-                RFTools.message(player, "Card is set to channel '" + channel + "'");
+                Logging.message(player, "Card is set to channel '" + channel + "'");
             }
         }
         return true;
@@ -90,7 +91,7 @@ public class SpaceChamberCardItem extends Item {
             if (channel != -1) {
                 showDetailsGui(world, player);
             } else {
-                RFTools.message(player, EnumChatFormatting.YELLOW + "Card is not linked!");
+                Logging.message(player, EnumChatFormatting.YELLOW + "Card is not linked!");
             }
         }
     }
