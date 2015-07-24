@@ -20,11 +20,15 @@ public class Logging {
         instance = this;
     }
 
-    public static void logError(String msg) {
+    private static Logging getInstance() {
         if (instance == null) {
             instance = new Logging();
         }
-        instance.logger.log(Level.ERROR, msg);
+        return instance;
+    }
+
+    public static void logError(String msg) {
+        getInstance().logger.log(Level.ERROR, msg);
     }
 
     public static void log(World world, TileEntity te, String message) {
@@ -32,20 +36,20 @@ public class Logging {
             long ticks = world.getTotalWorldTime();
             if (ticks != prevTicks) {
                 prevTicks = ticks;
-                instance.logger.log(Level.INFO, "=== Time " + ticks + " ===");
+                getInstance().logger.log(Level.INFO, "=== Time " + ticks + " ===");
             }
             String id = te.xCoord + "," + te.yCoord + "," + te.zCoord + ": ";
-            instance.logger.log(Level.INFO, id + message);
+            getInstance().logger.log(Level.INFO, id + message);
         }
     }
 
     public static void log(String message) {
-        instance.logger.log(Level.INFO, message);
+        getInstance().logger.log(Level.INFO, message);
     }
 
     public static void logDebug(String message) {
         if (debugMode) {
-            instance.logger.log(Level.INFO, message);
+            getInstance().logger.log(Level.INFO, message);
         }
     }
 }
