@@ -59,6 +59,10 @@ repositories {
         name 'OC Repo'
         url "http://maven.cil.li/"
     }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
     // maven {
         // name = "forestry"
         // url = "http://maven.ic2.player.to/"
@@ -92,6 +96,7 @@ dependencies {
     compile "codechicken:ForgeMultipart:1.7.10-1.1.2.331:dev"
 
 //    compile "net.sengir.forestry:forestry_1.7.10-3.5.6.15:dev"
+//    compile "com.github.mcjty:mcjtylib:1.00beta1:dev"
 }
 
 processResources
