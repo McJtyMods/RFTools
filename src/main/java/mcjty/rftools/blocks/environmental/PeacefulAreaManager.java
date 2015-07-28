@@ -25,7 +25,7 @@ public class PeacefulAreaManager {
         }
         List<GlobalCoordinate> toRemove = new ArrayList<GlobalCoordinate>();
         boolean peaceful = false;
-        long curtime = System.currentTimeMillis() - 5000;
+        long curtime = System.currentTimeMillis() - 10000;
 
         for (Map.Entry<GlobalCoordinate, PeacefulArea> entry : areas.entrySet()) {
             PeacefulArea area = entry.getValue();
@@ -34,7 +34,7 @@ public class PeacefulAreaManager {
                 peaceful = true;
             }
             if (area.getLastTouched() < curtime) {
-                // Hasn't been touched for at least 5 seconds. Probably no longer valid.
+                // Hasn't been touched for at least 10 seconds. Probably no longer valid.
                 toRemove.add(entryCoordinate);
             }
         }
