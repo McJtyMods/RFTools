@@ -52,6 +52,7 @@ public class DimensionInformation {
     private Block fluidForTerrain = null;
     private BlockMeta tendrilBlock = null;
     private BlockMeta canyonBlock = null;
+    private BlockMeta[] pyramidBlocks = new BlockMeta[] { BlockMeta.STONE };
     private BlockMeta[] sphereBlocks = new BlockMeta[] { BlockMeta.STONE };
     private BlockMeta[] hugeSphereBlocks = new BlockMeta[] { BlockMeta.STONE };
     private BlockMeta[] liquidSphereBlocks = new BlockMeta[] { BlockMeta.STONE };
@@ -287,6 +288,11 @@ public class DimensionInformation {
             liquidSphereBlocks = new BlockMeta[] { oldLiquidSphereBlock };
         }
 
+        pyramidBlocks = readBlockArrayFromNBT(tagCompound, "pyramidBlocks");
+        if (pyramidBlocks.length == 0) {
+            pyramidBlocks = new BlockMeta[] { BlockMeta.STONE };
+        }
+
         // Support for the old format with only one sphere block.
         BlockMeta oldSphereBlock = getBlockMeta(tagCompound, "sphereBlock");
         sphereBlocks = readBlockArrayFromNBT(tagCompound, "sphereBlocks");
@@ -411,6 +417,8 @@ public class DimensionInformation {
 
         setBlockMeta(tagCompound, baseBlockForTerrain, "baseBlock");
         setBlockMeta(tagCompound, tendrilBlock, "tendrilBlock");
+
+        writeBlocksToNBT(tagCompound, pyramidBlocks, "pyramidBlocks");
 
         writeBlocksToNBT(tagCompound, sphereBlocks, "sphereBlocks");
         if (sphereBlocks.length > 0) {
@@ -544,6 +552,13 @@ public class DimensionInformation {
         logDebug(player, "        Base block: " + new ItemStack(baseBlockForTerrain.getBlock(), 1, baseBlockForTerrain.getMeta()).getDisplayName());
         if (featureTypes.contains(FeatureType.FEATURE_TENDRILS)) {
             logDebug(player, "        Tendril block: " + new ItemStack(tendrilBlock.getBlock(), 1, tendrilBlock.getMeta()).getDisplayName());
+        }
+        if (featureTypes.contains(FeatureType.FEATURE_PYRAMIDS)) {
+            for (BlockMeta block : pyramidBlocks) {
+                if (block != null) {
+                    logDebug(player, "        Pyramid blocks: " + new ItemStack(block.getBlock(), 1, block.getMeta()).getDisplayName());
+                }
+            }
         }
         if (featureTypes.contains(FeatureType.FEATURE_ORBS)) {
             for (BlockMeta block : sphereBlocks) {
@@ -702,6 +717,7 @@ public class DimensionInformation {
         buf.writeInt(Block.blockRegistry.getIDForObject(tendrilBlock.getBlock()));
         buf.writeInt(tendrilBlock.getMeta());
 
+        writeBlockArrayToBuf(buf, pyramidBlocks);
         writeBlockArrayToBuf(buf, sphereBlocks);
         writeBlockArrayToBuf(buf, hugeSphereBlocks);
         writeBlockArrayToBuf(buf, liquidSphereBlocks);
@@ -800,6 +816,7 @@ public class DimensionInformation {
         meta = buf.readInt();
         tendrilBlock = new BlockMeta(block, meta);
 
+        pyramidBlocks = readBlockArrayFromBuf(buf);
         sphereBlocks = readBlockArrayFromBuf(buf);
         hugeSphereBlocks = readBlockArrayFromBuf(buf);
         liquidSphereBlocks = readBlockArrayFromBuf(buf);
@@ -1153,6 +1170,14 @@ public class DimensionInformation {
 
     public void setCanyonBlock(BlockMeta canyonBlock) {
         this.canyonBlock = canyonBlock;
+    }
+
+    public BlockMeta[] getPyramidBlocks() {
+        return pyramidBlocks;
+    }
+
+    public void setPyramidBlocks(BlockMeta[] pyramidBlocks) {
+        this.pyramidBlocks = pyramidBlocks;
     }
 
     public BlockMeta[] getSphereBlocks() {

@@ -194,6 +194,7 @@ public class FeatureDimletType implements IDimletType {
         dimensionInformation.setExtraOregen(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_OREGEN, true));
         dimensionInformation.setTendrilBlock(dimensionInformation.getFeatureBlock(random, modifiersForFeature, FeatureType.FEATURE_TENDRILS));
         dimensionInformation.setSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_ORBS, false));
+        dimensionInformation.setPyramidBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_PYRAMIDS, false));
         dimensionInformation.setHugeSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_HUGEORBS, false));
         dimensionInformation.setLiquidSphereBlocks(getRandomBlockArray(random, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));
         dimensionInformation.setLiquidSphereFluids(getRandomFluidArray(random, dimensionInformation, featureTypes, modifiersForFeature, FeatureType.FEATURE_LIQUIDORBS, false));

@@ -61,6 +61,7 @@ public class GenericChunkProvider implements IChunkProvider {
     // RFTools specific features.
     private MapGenTendrils tendrilGenerator = new MapGenTendrils(this);
     private MapGenCanyons canyonGenerator = new MapGenCanyons(this);
+    private MapGenPyramids pyramidGenerator = new MapGenPyramids(this);
     private MapGenOrbs sphereGenerator = new MapGenOrbs(this, false);
     private MapGenOrbs hugeSphereGenerator = new MapGenOrbs(this, true);
     private MapGenRuinedCities ruinedCitiesGenerator = new MapGenRuinedCities(this);
@@ -209,6 +210,9 @@ public class GenericChunkProvider implements IChunkProvider {
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_CANYONS)) {
             this.canyonGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
+        }
+        if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_PYRAMIDS)) {
+            this.pyramidGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
         }
         if (dimensionInformation.hasFeatureType(FeatureType.FEATURE_ORBS)) {
             this.sphereGenerator.generate(this.worldObj, chunkX, chunkZ, ablock, abyte);
