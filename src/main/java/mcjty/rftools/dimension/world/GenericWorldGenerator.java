@@ -63,6 +63,45 @@ public class GenericWorldGenerator implements IWorldGenerator {
             }
         }
 
+        if ((Math.abs(chunkX) >= 2 || Math.abs(chunkZ) >= 2) && information.isPatreonBitSet(Patreons.PATREON_COLOREDPRISMS)) {
+            if (random.nextInt(10) == 1) {
+                int x = chunkX * 16 + 8;
+                int z = chunkZ * 16 + 8;
+                int y1 = world.getTopSolidOrLiquidBlock(x, z);
+                int y = world.getTopSolidOrLiquidBlock(x-7, z-7);
+                if (y < y1) {
+                    y1 = y;
+                }
+                y = world.getTopSolidOrLiquidBlock(x+7, z-7);
+                if (y < y1) {
+                    y1 = y;
+                }
+                y = world.getTopSolidOrLiquidBlock(x-7, z+7);
+                if (y < y1) {
+                    y1 = y;
+                }
+                y = world.getTopSolidOrLiquidBlock(x+7, z+7);
+                if (y < y1) {
+                    y1 = y;
+                }
+                if (y > 10 && y < 230) {
+                    for (int i = 7 ; i >= 0 ; i--) {
+                        if (i == 0) {
+                            world.setBlock(x, y, z, Blocks.stained_glass, i, 2);
+                        } else {
+                            for (int j = -i; j <= i - 1; j++) {
+                                world.setBlock(x + j, y, z + i, Blocks.stained_glass, i, 2);
+                                world.setBlock(x + i, y, z + j, Blocks.stained_glass, i, 2);
+                                world.setBlock(x - j - 1, y, z - i, Blocks.stained_glass, i, 2);
+                                world.setBlock(x - i, y, z - j - 1, Blocks.stained_glass, i, 2);
+                            }
+                        }
+                        y++;
+                    }
+                }
+            }
+        }
+
         if ((Math.abs(chunkX) >= 1 || Math.abs(chunkZ) >= 1) && information.isPatreonBitSet(Patreons.PATREON_PINKPILLARS)) {
             if (random.nextInt(2) == 1) {
                 int x = chunkX * 16 + random.nextInt(16);
