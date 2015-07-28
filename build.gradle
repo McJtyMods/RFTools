@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "3.20beta1"
+version = "3.20"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -96,7 +96,7 @@ dependencies {
     compile "codechicken:ForgeMultipart:1.7.10-1.1.2.331:dev"
 
 //    compile "net.sengir.forestry:forestry_1.7.10-3.5.6.15:dev"
-    compile "com.github.mcjty:mcjtylib:1.00-SNAPSHOT:dev"
+    compile "com.github.mcjty:mcjtylib:1.00beta1-SNAPSHOT:dev"
 }
 
 processResources
