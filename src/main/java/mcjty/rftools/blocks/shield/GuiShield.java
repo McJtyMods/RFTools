@@ -116,7 +116,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(new PositionalLayout.PositionalHint(170, 44, 80, 14));
 
-        addFilter = new Button(mc, this).setText("Add").setTooltips("Delete selected filter").setLayoutHint(new PositionalLayout.PositionalHint(170, 64, 36, 12)).
+        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(new PositionalLayout.PositionalHint(170, 64, 36, 12)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
