@@ -25,7 +25,6 @@ public class PeacefulEModule extends BuffEModule {
         }
 
         super.tick(world, x, y, z, radius, miny, maxy);
-
         PeacefulAreaManager.markArea(new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId), radius, miny, maxy);
     }
 }
