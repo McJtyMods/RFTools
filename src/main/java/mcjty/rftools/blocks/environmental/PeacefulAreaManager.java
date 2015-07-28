@@ -1,6 +1,12 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
+import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
+import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +41,30 @@ public class PeacefulAreaManager {
             }
             if (area.getLastTouched() < curtime) {
                 // Hasn't been touched for at least 10 seconds. Probably no longer valid.
-                toRemove.add(entryCoordinate);
+                // To be sure we will first check this by testing if the environmental controller is still active and running.
+                WorldServer world = DimensionManager.getWorld(entryCoordinate.getDimension());
+                if (world != null) {
+                    Coordinate c = entryCoordinate.getCoordinate();
+                    // If the world is not loaded we don't do anything and we also don't remove the area since we have no information about it.
+                    if (!world.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4)) {
+                        boolean removeArea = true;
+                        TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
+                        if (te instanceof EnvironmentalControllerTileEntity) {
+                            EnvironmentalControllerTileEntity controllerTileEntity = (EnvironmentalControllerTileEntity) te;
+                            for (EnvironmentModule module : controllerTileEntity.getEnvironmentModules()) {
+                                if (module instanceof PeacefulEModule) {
+                                    if (((PeacefulEModule) module).isActive()) {
+                                        removeArea = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (removeArea) {
+                            toRemove.add(entryCoordinate);
+                        }
+                    }
+                }
             }
         }
 
