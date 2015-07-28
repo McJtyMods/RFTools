@@ -9,12 +9,16 @@ import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.dimension.world.types.EffectType;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
@@ -188,11 +192,11 @@ public class ForgeEventHandlers {
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
         World world = event.world;
         int id = world.provider.dimensionId;
-        DimensionInformation dimensionInformation = null;
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
 
         if (DimletConfiguration.preventSpawnUnpowered) {
-            RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
-            dimensionInformation = dimensionManager.getDimensionInformation(id);
             if (dimensionInformation != null) {
                 // RFTools dimension.
                 DimensionStorage storage = DimensionStorage.getDimensionStorage(world);
@@ -201,6 +205,23 @@ public class ForgeEventHandlers {
                     event.setResult(Event.Result.DENY);
                     Logging.logDebug("Dimension power low: Prevented a spawn of " + event.entity.getClass().getName());
                }
+            }
+        }
+
+        if (dimensionInformation != null) {
+            if (dimensionInformation.hasEffectType(EffectType.EFFECT_STRONGMOBS) || dimensionInformation.hasEffectType(EffectType.EFFECT_BRUTALMOBS)) {
+                if (event.entity instanceof EntityLivingBase) {
+                    EntityLivingBase entityLivingBase = (EntityLivingBase) event.entity;
+                    IAttributeInstance entityAttribute = entityLivingBase.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+                    double newMax;
+                    if (dimensionInformation.hasEffectType(EffectType.EFFECT_BRUTALMOBS)) {
+                        newMax = entityAttribute.getBaseValue() * DimletConfiguration.brutalMobsFactor;
+                    } else {
+                        newMax = entityAttribute.getBaseValue() * DimletConfiguration.strongMobsFactor;
+                    }
+                    entityAttribute.setBaseValue(newMax);
+                    entityLivingBase.setHealth((float) newMax);
+                }
             }
         }
 

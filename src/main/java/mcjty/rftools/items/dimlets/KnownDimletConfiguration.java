@@ -635,6 +635,8 @@ public class KnownDimletConfiguration {
         initEffectItem(cfg, "Saturation II", EffectType.EFFECT_SATURATION2, mapping, master);
         initEffectItem(cfg, "Saturation III", EffectType.EFFECT_SATURATION3, mapping, master);
         initEffectItem(cfg, "Flight", EffectType.EFFECT_FLIGHT, mapping, master);
+        initEffectItem(cfg, "Strong Mobs", EffectType.EFFECT_STRONGMOBS, mapping, master);
+        initEffectItem(cfg, "Brutal Mobs", EffectType.EFFECT_BRUTALMOBS, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_EFFECT, "None"), "With this none dimlet you can disable", "all special effects");
 
         initTimeItem(cfg, "Normal", null, null, mapping, master);

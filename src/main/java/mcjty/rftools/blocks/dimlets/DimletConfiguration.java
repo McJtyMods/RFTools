@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.base.GeneralConfig;
 import net.minecraftforge.common.config.Configuration;
 
 public class DimletConfiguration {
@@ -33,6 +32,8 @@ public class DimletConfiguration {
     public static boolean respawnSameDim = false;   // If true we first try to respawn in rftools dimension unless power is low.
     public static boolean freezeUnpowered = true;   // Freeze all entities and TE's in an unpowered dimension.
     public static boolean preventSpawnUnpowered = true; // Prevent spawns in unpowered dimensions
+    public static double brutalMobsFactor = 5.0f;   // How much stronger brutal mobs should be
+    public static double strongMobsFactor = 2.0f;   // How much stronger brutal strong should be
 
     public static int cavernHeightLimit = 1;        // 0 == 64, 1 == 128, 2 == 195, 3 == 256
     public static float afterCreationCostFactor = 0.1f;
@@ -202,6 +203,11 @@ public class DimletConfiguration {
 
         dimensionalShardRecipe = cfg.get(CATEGORY_DIMLETS, "dimensionalShardRecipe", dimensionalShardRecipe,
                 "Set this to true if you want a recipe for dimensional shards. Useful on servers that disallow dimensions").getBoolean();
+
+        brutalMobsFactor = cfg.get(CATEGORY_DIMLETS, "brutalMobsFactor", brutalMobsFactor,
+                "How much stronger mobs should be if spawned in a dimension with the brutal mobs dimlet").getDouble();
+        strongMobsFactor = cfg.get(CATEGORY_DIMLETS, "strongMobsFactor", strongMobsFactor,
+                "How much stronger mobs should be if spawned in a dimension with the strong mobs dimlet").getDouble();
     }
 
 }
