@@ -427,10 +427,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
 
             boolean favorite = destination.isFavorite();
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(60));
-            panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
-            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
+            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(5));
+            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90).
+                    setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + coordinate.toString() + ")"));
+            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName));
             ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
                 @Override
                 public void choiceChanged(Widget parent, String newChoice) {

@@ -463,7 +463,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations(playerName));
+        return new ArrayList<TeleportDestinationClientInfo>(destinations.getValidDestinations(worldObj, playerName));
     }
 
     public List<TransmitterInfo> searchTransmitters() {

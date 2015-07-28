@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.rftools.dimension.DimensionInformation;
+import mcjty.rftools.dimension.world.GenericWorldProvider;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.varia.Coordinate;
@@ -87,7 +89,7 @@ public class TeleportDestinations extends WorldSavedData {
 
 
     // Server side only
-    public Collection<TeleportDestinationClientInfo> getValidDestinations(String playerName) {
+    public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         PlayerExtendedProperties properties = null;
         if (playerName != null) {
             List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
@@ -105,12 +107,23 @@ public class TeleportDestinations extends WorldSavedData {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
             Coordinate c = destination.getCoordinate();
             World world = DimensionManager.getWorld(destination.getDimension());
+            String dimName = null;
             if (world != null) {
-                String dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
-                if (dimName == null || dimName.trim().isEmpty()) {
-                    dimName = "Id " + destination.getDimension();
-                }
-                destinationClientInfo.setDimensionName(dimName);
+                dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+            }
+
+            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(destination.getDimension());
+            if (information != null) {
+                dimName = information.getName();
+            }
+            if (dimName == null || dimName.trim().isEmpty()) {
+                dimName = "Id " + destination.getDimension();
+            } else {
+                dimName = dimName + " (" + destination.getDimension() + ")";
+            }
+            destinationClientInfo.setDimensionName(dimName);
+
+            if (world != null) {
                 TileEntity te = world.getTileEntity(c.getX(), c.getY(), c.getZ());
                 if (te instanceof MatterReceiverTileEntity) {
                     MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;

@@ -30,6 +30,9 @@ import java.util.Set;
 
 @Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions.DimensionDictionary$Handler", modid = "reccomplex"))
 public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler {
+
+    public static final String RFTOOLS_DIMENSION = "rftools dimension";
+
     private DimensionInformation dimensionInformation;
     private DimensionStorage storage;
     private long seed;
@@ -201,7 +204,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
 
     @Override
     public String getDimensionName() {
-        return "rftools dimension";
+        return RFTOOLS_DIMENSION;
     }
 
     @Override

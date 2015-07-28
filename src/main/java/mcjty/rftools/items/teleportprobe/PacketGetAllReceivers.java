@@ -35,7 +35,7 @@ public class PacketGetAllReceivers implements IMessage, IMessageHandler<PacketGe
     public PacketAllReceiversReady onMessage(PacketGetAllReceivers message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
-        List<TeleportDestinationClientInfo> destinationList = new ArrayList<TeleportDestinationClientInfo> (destinations.getValidDestinations(null));
+        List<TeleportDestinationClientInfo> destinationList = new ArrayList<TeleportDestinationClientInfo> (destinations.getValidDestinations(player.worldObj, null));
         addDimensions(destinationList);
         addRfToolsDimensions(player.worldObj, destinationList);
         return new PacketAllReceiversReady(destinationList);
