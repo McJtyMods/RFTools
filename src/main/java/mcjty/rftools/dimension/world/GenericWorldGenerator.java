@@ -50,95 +50,117 @@ public class GenericWorldGenerator implements IWorldGenerator {
         } else if ((Math.abs(chunkX) > 6 || Math.abs(chunkZ) > 6) && !information.hasFeatureType(FeatureType.FEATURE_NODIMLETBUILDINGS)) {
             // Not too close to starting platform we possibly generate dungeons.
             if (random.nextInt(DimletConfiguration.dungeonChance) == 1) {
-                int midx = chunkX * 16 + 8;
-                int midz = chunkZ * 16 + 8;
-                int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz-3);
-                int starty2 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz-3);
-                int starty3 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz+3);
-                int starty4 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz+3);
-                int starty = (starty1+starty2+starty3+starty4) / 4;
-                if (starty > 1 && starty < world.getHeight()-20) {
-                    generateDungeon(world, random, midx, starty, midz);
-                }
+                generateDimletDungeon(random, chunkX, chunkZ, world);
             }
         }
 
         if ((Math.abs(chunkX) >= 2 || Math.abs(chunkZ) >= 2) && information.isPatreonBitSet(Patreons.PATREON_COLOREDPRISMS)) {
             if (random.nextInt(10) == 1) {
-                int x = chunkX * 16 + 8;
-                int z = chunkZ * 16 + 8;
-                int y1 = world.getTopSolidOrLiquidBlock(x, z);
-                int y = world.getTopSolidOrLiquidBlock(x-7, z-7);
-                if (y < y1) {
-                    y1 = y;
-                }
-                y = world.getTopSolidOrLiquidBlock(x+7, z-7);
-                if (y < y1) {
-                    y1 = y;
-                }
-                y = world.getTopSolidOrLiquidBlock(x-7, z+7);
-                if (y < y1) {
-                    y1 = y;
-                }
-                y = world.getTopSolidOrLiquidBlock(x+7, z+7);
-                if (y < y1) {
-                    y1 = y;
-                }
-                if (y > 10 && y < 230) {
-                    for (int i = 7 ; i >= 0 ; i--) {
-                        if (i == 0) {
-                            world.setBlock(x, y, z, Blocks.stained_glass, i, 2);
-                        } else {
-                            for (int j = -i; j <= i - 1; j++) {
-                                world.setBlock(x + j, y, z + i, Blocks.stained_glass, i, 2);
-                                world.setBlock(x + i, y, z + j, Blocks.stained_glass, i, 2);
-                                world.setBlock(x - j - 1, y, z - i, Blocks.stained_glass, i, 2);
-                                world.setBlock(x - i, y, z - j - 1, Blocks.stained_glass, i, 2);
-                            }
-                        }
-                        y++;
-                    }
-                }
+                generatePrism(chunkX, chunkZ, world);
             }
         }
 
         if ((Math.abs(chunkX) >= 1 || Math.abs(chunkZ) >= 1) && information.isPatreonBitSet(Patreons.PATREON_PINKPILLARS)) {
             if (random.nextInt(2) == 1) {
-                int x = chunkX * 16 + random.nextInt(16);
-                int z = chunkZ * 16 + random.nextInt(16);
-                int y = world.getTopSolidOrLiquidBlock(x, z);
-                if (y > 10 && y < 240) {
-                    for (int i = 0 ; i < random.nextInt(3) + 2 ; i++) {
-                        world.setBlock(x, y++, z, Blocks.stained_hardened_clay, 6, 2);
-                    }
-                    world.setBlock(x, y, z, Blocks.stained_glass, 6, 2);
-                }
+                generatePillar(random, chunkX, chunkZ, world);
             }
         }
 
         if ((Math.abs(chunkX) >= 3 || Math.abs(chunkZ) >= 3) && information.hasFeatureType(FeatureType.FEATURE_VOLCANOES)) {
             if (random.nextInt(DimletConfiguration.volcanoChance) == 1) {
-                int x = chunkX * 16 + random.nextInt(16);
-                int z = chunkZ * 16 + random.nextInt(16);
-                int y = world.getTopSolidOrLiquidBlock(x, z);
-
-                int cntsolid = 0;
-                while (y > 3) {
-                    if (WorldGenerationTools.isSolid(world, x, y, z)) {
-                        cntsolid++;
-                        if (cntsolid > 5) {
-                            world.setBlock(x, y, z, SpecialSetup.volcanicCoreBlock, 0, 3);
-                            Logging.log("Spawned volcano block at " + x + "," + y + "," + z);
-                            break;
-                        }
-                    } else {
-                        cntsolid = 0;
-                    }
-                    y--;
-                }
+                generateVolcano(random, chunkX, chunkZ, world);
             }
         }
 
+    }
+
+    private void generateDimletDungeon(Random random, int chunkX, int chunkZ, World world) {
+        int midx = chunkX * 16 + 8;
+        int midz = chunkZ * 16 + 8;
+        int starty1 = WorldGenerationTools.findSuitableEmptySpot(world, midx - 3, midz - 3);
+        int starty2 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz-3);
+        int starty3 = WorldGenerationTools.findSuitableEmptySpot(world, midx-3, midz+3);
+        int starty4 = WorldGenerationTools.findSuitableEmptySpot(world, midx+3, midz+3);
+        int starty = (starty1+starty2+starty3+starty4) / 4;
+        if (starty > 1 && starty < world.getHeight()-20) {
+            generateDungeon(world, random, midx, starty, midz);
+        }
+    }
+
+    private void generateVolcano(Random random, int chunkX, int chunkZ, World world) {
+        int x = chunkX * 16 + random.nextInt(16);
+        int z = chunkZ * 16 + random.nextInt(16);
+        int y = world.getTopSolidOrLiquidBlock(x, z);
+
+        int cntsolid = 0;
+        while (y > 3) {
+            if (WorldGenerationTools.isSolid(world, x, y, z)) {
+                cntsolid++;
+                if (cntsolid > 5) {
+                    world.setBlock(x, y, z, SpecialSetup.volcanicCoreBlock, 0, 3);
+                    Logging.log("Spawned volcano block at " + x + "," + y + "," + z);
+                    break;
+                }
+            } else {
+                cntsolid = 0;
+            }
+            y--;
+        }
+    }
+
+    private void generatePrism(int chunkX, int chunkZ, World world) {
+        int x = chunkX * 16 + 8;
+        int z = chunkZ * 16 + 8;
+        int y = world.getTopSolidOrLiquidBlock(x, z);
+        int y1 = world.getTopSolidOrLiquidBlock(x-7, z-7);
+        if (y1 < y) {
+            y = y1;
+        }
+        y1 = world.getTopSolidOrLiquidBlock(x+7, z-7);
+        if (y1 < y) {
+            y = y1;
+        }
+        y1 = world.getTopSolidOrLiquidBlock(x-7, z+7);
+        if (y1 < y) {
+            y = y1;
+        }
+        y1 = world.getTopSolidOrLiquidBlock(x+7, z+7);
+        if (y1 < y) {
+            y = y1;
+        }
+        if (y > 10 && y < 230) {
+            for (int i = 7 ; i >= 0 ; i--) {
+                if (i == 0) {
+                    setStainedGlassIfAir(world, x, y, z, i);
+                } else {
+                    for (int j = -i; j <= i - 1; j++) {
+                        setStainedGlassIfAir(world, x + j + 1, y, z + i, i);
+                        setStainedGlassIfAir(world, x + i, y, z + j, i);
+                        setStainedGlassIfAir(world, x - j - 1, y, z - i, i);
+                        setStainedGlassIfAir(world, x - i, y, z - j, i);
+                    }
+                }
+                y++;
+            }
+        }
+    }
+
+    private void setStainedGlassIfAir(World world, int x, int y, int z, int i) {
+        if (world.isAirBlock(x, y, z)) {
+            world.setBlock(x, y, z, Blocks.stained_glass, i, 2);
+        }
+    }
+
+    private void generatePillar(Random random, int chunkX, int chunkZ, World world) {
+        int x = chunkX * 16 + random.nextInt(16);
+        int z = chunkZ * 16 + random.nextInt(16);
+        int y = world.getTopSolidOrLiquidBlock(x, z);
+        if (y > 10 && y < 240) {
+            for (int i = 0 ; i < random.nextInt(3) + 2 ; i++) {
+                world.setBlock(x, y++, z, Blocks.stained_hardened_clay, 6, 2);
+            }
+            world.setBlock(x, y, z, Blocks.stained_glass, 6, 2);
+        }
     }
 
     private static int[][] puppeteerSpawnPlatform = new int[][] {
