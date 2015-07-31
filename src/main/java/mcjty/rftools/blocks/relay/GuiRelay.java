@@ -35,7 +35,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     private Map<String,TextField> energyValues = new HashMap<String, TextField>();
 
     public GuiRelay(RelayTileEntity relayTileEntity, Container container) {
-        super(relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
+        super(RFTools.instance, relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
 
         xSize = RELAY_WIDTH;
         ySize = RELAY_HEIGHT;

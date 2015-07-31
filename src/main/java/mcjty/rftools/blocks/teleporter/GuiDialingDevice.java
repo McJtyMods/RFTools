@@ -65,7 +65,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
 
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
-        super(dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
+        super(RFTools.instance, dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
         dialingDeviceTileEntity.setCurrentRF(dialingDeviceTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = DIALER_WIDTH;

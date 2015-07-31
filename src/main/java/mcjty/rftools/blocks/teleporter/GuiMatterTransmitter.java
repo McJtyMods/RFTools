@@ -52,7 +52,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
-        super(transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
+        super(RFTools.instance, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
         transmitterTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;

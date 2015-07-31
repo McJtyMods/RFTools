@@ -96,7 +96,7 @@ dependencies {
     compile "codechicken:ForgeMultipart:1.7.10-1.1.2.331:dev"
 
 //    compile "net.sengir.forestry:forestry_1.7.10-3.5.6.15:dev"
-    compile "com.github.mcjty:mcjtylib:1.0.0-SNAPSHOT:dev"
+    compile "com.github.mcjty:mcjtylib:1.1.0-SNAPSHOT:dev"
 }
 
 processResources

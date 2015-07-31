@@ -44,7 +44,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionenscriber.png");
 
     public GuiDimensionEnscriber(DimensionEnscriberTileEntity dimensionEnscriberTileEntity, DimensionEnscriberContainer container) {
-        super(dimensionEnscriberTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "enscriber");
+        super(RFTools.instance, dimensionEnscriberTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "enscriber");
 
         xSize = ENSCRIBER_WIDTH;
         ySize = ENSCRIBER_HEIGHT;

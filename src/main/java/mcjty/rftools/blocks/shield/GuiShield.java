@@ -66,7 +66,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
+        super(RFTools.instance, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SHIELD_WIDTH;

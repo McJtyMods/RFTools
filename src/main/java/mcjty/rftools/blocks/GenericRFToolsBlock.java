@@ -4,6 +4,7 @@ import cofh.api.item.IToolHammer;
 import mcjty.container.GenericBlock;
 import mcjty.container.WrenchUsage;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
@@ -20,7 +21,7 @@ import net.minecraft.world.World;
 public abstract class GenericRFToolsBlock extends GenericBlock {
 
     public GenericRFToolsBlock(Material material, Class<? extends TileEntity> tileEntityClass, boolean isContainer) {
-        super(material, tileEntityClass, isContainer);
+        super(RFTools.instance, material, tileEntityClass, isContainer);
     }
 
     @Override

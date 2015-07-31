@@ -21,7 +21,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/matterbeamer.png");
 
     public GuiMatterBeamer(MatterBeamerTileEntity beamerTileEntity, MatterBeamerContainer container) {
-        super(beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
+        super(RFTools.instance, beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
         beamerTileEntity.setCurrentRF(beamerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = BEAMER_WIDTH;

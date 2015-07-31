@@ -31,7 +31,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
     public GuiSpawner(SpawnerTileEntity spawnerTileEntity, SpawnerContainer container) {
-        super(spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
+        super(RFTools.instance, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
         spawnerTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SPAWNER_WIDTH;

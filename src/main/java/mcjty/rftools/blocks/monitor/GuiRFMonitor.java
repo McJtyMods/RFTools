@@ -39,7 +39,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
 
 
     public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
-        super(monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
+        super(RFTools.instance, monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
 
         xSize = 256;
         ySize = 180;

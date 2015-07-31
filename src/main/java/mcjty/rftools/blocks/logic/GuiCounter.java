@@ -23,7 +23,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private TextField currentField;
 
     public GuiCounter(CounterTileEntity counterTileEntity, Container container) {
-        super(counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
+        super(RFTools.instance, counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
         xSize = COUNTER_WIDTH;
         ySize = COUNTER_HEIGHT;
     }

@@ -23,7 +23,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
     private ChoiceLabel mode;
 
     public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity, Container container) {
-        super(enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
+        super(RFTools.instance, enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
         xSize = MONITOR_WIDTH;
         ySize = MONITOR_HEIGHT;
     }

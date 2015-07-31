@@ -42,7 +42,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public static SecurityChannels.SecurityChannel channelFromServer = null;
 
     public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, SecurityManagerContainer container) {
-        super(securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
+        super(RFTools.instance, securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
 
         xSize = SECURITYMANAGER_WIDTH;
         ySize = SECURITYMANAGER_HEIGHT;

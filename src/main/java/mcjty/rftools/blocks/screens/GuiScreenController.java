@@ -24,7 +24,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screencontroller.png");
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
-        super(screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
+        super(RFTools.instance, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
         screenControllerTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CONTROLLER_WIDTH;

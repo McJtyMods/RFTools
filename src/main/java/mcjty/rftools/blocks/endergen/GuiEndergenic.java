@@ -35,7 +35,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     private int timer = 10;
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
-        super(endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
+        super(RFTools.instance, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
         endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(ForgeDirection.DOWN));
         xSize = ENDERGENIC_WIDTH;
         ySize = ENDERGENIC_HEIGHT;

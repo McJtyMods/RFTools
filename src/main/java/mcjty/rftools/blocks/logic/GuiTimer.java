@@ -22,7 +22,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
     private TextField speedField;
 
     public GuiTimer(TimerTileEntity timerTileEntity, Container container) {
-        super(timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
+        super(RFTools.instance, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
         xSize = TIMER_WIDTH;
         ySize = TIMER_HEIGHT;
     }

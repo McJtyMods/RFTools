@@ -24,7 +24,7 @@ public class GuiDimletScrambler extends GenericGuiContainer<DimletScramblerTileE
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimletScrambler(DimletScramblerTileEntity pearlInjectorTileEntity, DimletScramblerContainer container) {
-        super(pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "scrambler");
+        super(RFTools.instance, pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "scrambler");
         pearlInjectorTileEntity.setCurrentRF(pearlInjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SCRAMBLER_WIDTH;

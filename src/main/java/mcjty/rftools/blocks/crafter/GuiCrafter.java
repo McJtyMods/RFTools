@@ -43,7 +43,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiCrafter(CrafterBaseTE crafterBlockTileEntity, CrafterContainer container) {
-        super(crafterBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "crafter");
+        super(RFTools.instance, crafterBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CRAFTER_WIDTH;

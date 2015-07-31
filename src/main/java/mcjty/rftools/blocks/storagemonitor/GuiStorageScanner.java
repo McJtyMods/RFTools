@@ -49,7 +49,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public static Set<Coordinate> fromServer_coordinates = new HashSet<Coordinate>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer storageScannerContainer) {
-        super(storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
+        super(RFTools.instance, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
         storageScannerTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = STORAGE_MONITOR_WIDTH;

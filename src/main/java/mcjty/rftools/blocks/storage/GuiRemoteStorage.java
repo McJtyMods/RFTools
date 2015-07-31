@@ -27,7 +27,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     private ImageChoiceLabel global[] = new ImageChoiceLabel[] { null, null, null, null };
 
     public GuiRemoteStorage(RemoteStorageTileEntity remoteStorageTileEntity, RemoteStorageContainer container) {
-        super(remoteStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "remotestor");
+        super(RFTools.instance, remoteStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "remotestor");
 
         xSize = STORAGE_WIDTH;
         ySize = STORAGE_HEIGHT;

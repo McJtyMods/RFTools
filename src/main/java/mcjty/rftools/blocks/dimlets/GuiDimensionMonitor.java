@@ -22,7 +22,7 @@ public class GuiDimensionMonitor extends GenericGuiContainer<DimensionMonitorTil
     private ScrollableLabel alarmLevel;
 
     public GuiDimensionMonitor(DimensionMonitorTileEntity dimensionMonitorTileEntity, Container container) {
-        super(dimensionMonitorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "monitor");
+        super(RFTools.instance, dimensionMonitorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "monitor");
         xSize = MONITOR_WIDTH;
         ySize = MONITOR_HEIGHT;
     }

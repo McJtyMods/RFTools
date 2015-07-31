@@ -33,7 +33,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
     private ImageChoiceLabel modMode;
 
     public GuiStorageFilter(StorageFilterContainer container) {
-        super(null, container, RFTools.GUI_MANUAL_MAIN, "storfilter");
+        super(RFTools.instance, null, container, RFTools.GUI_MANUAL_MAIN, "storfilter");
         xSize = CONTROLLER_WIDTH;
         ySize = CONTROLLER_HEIGHT;
     }
