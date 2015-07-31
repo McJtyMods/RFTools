@@ -197,8 +197,11 @@ public class KnownDimletConfiguration {
             return null;
         }
 
-        String name = StringUtils.join(splitted, '.', 1);
-        return new DimletKey(type, name);
+        StringBuffer name = new StringBuffer(splitted[1]);
+        for (int i = 2 ; i < splitted.length ; i++) {
+            name.append('.').append(splitted[i]);
+        }
+        return new DimletKey(type, name.toString());
     }
 
     private static boolean isBlacklistedKey(DimletKey key) {
