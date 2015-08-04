@@ -49,7 +49,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     @Override
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
-        return new String[] { "getScreenCount", "getScreenIndex", "getScreenCoordinate", "addText", "clearText" };
+        return new String[] { "getScreenCount", "getScreenIndex", "getScreenCoordinate", "addText", "setText", "clearText" };
     }
 
     @Override
@@ -60,7 +60,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             case 1: return getScreenIndex(new Coordinate(((Double) arguments[0]).intValue(), ((Double) arguments[1]).intValue(), ((Double) arguments[2]).intValue()));
             case 2: Coordinate c = connectedScreens.get(((Double) arguments[0]).intValue()); return new Object[] { c.getX(), c.getY(), c.getZ() };
             case 3: return addText((String) arguments[0], (String) arguments[1], ((Double) arguments[2]).intValue());
-            case 4: return clearText((String) arguments[0]);
+            case 4: return setText((String) arguments[0], (String) arguments[1], ((Double) arguments[2]).intValue());
+            case 5: return clearText((String) arguments[0]);
         }
         return new Object[0];
     }
@@ -157,6 +158,22 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         String text = args.checkString(1);
         int color = args.checkInteger(2);
 
+        return addText(tag, text, color);
+    }
+
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+        String text = args.checkString(1);
+        int color = args.checkInteger(2);
+
+        clearText(tag);
+        return addText(tag, text, color);
+    }
+
+    private Object[] setText(String tag, String text, int color) {
+        clearText(tag);
         return addText(tag, text, color);
     }
 
