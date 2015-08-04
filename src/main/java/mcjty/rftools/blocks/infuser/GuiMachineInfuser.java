@@ -7,6 +7,7 @@ import mcjty.gui.widgets.EnergyBar;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -22,7 +23,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/machineinfuser.png");
 
     public GuiMachineInfuser(MachineInfuserTileEntity machineInfuserTileEntity, MachineInfuserContainer container) {
-        super(RFTools.instance, machineInfuserTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "infuser");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, machineInfuserTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "infuser");
         machineInfuserTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = INFUSER_WIDTH;
@@ -44,7 +45,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
 //        tileEntity.requestResearchingFromServer();
     }
 
@@ -62,7 +63,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
 //        tileEntity.requestResearchingFromServer();
     }
 }

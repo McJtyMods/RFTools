@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
@@ -49,8 +50,8 @@ public abstract class CommonProxy {
 
         readMainConfig();
 
-        PacketHandler.registerMessages("rftools");
-        RFToolsMessages.registerNetworkMessages();
+        SimpleNetworkWrapper network = PacketHandler.registerMessages("rftools");
+        RFToolsMessages.registerNetworkMessages(network);
 
         ModItems.init();
         ModBlocks.init();

@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -85,7 +85,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
-            PacketHandler.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord, millis));
         }
 
         Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(new Coordinate(screenTileEntity.xCoord, screenTileEntity.yCoord, screenTileEntity.zCoord));

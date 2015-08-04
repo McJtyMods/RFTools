@@ -3,13 +3,13 @@ package mcjty.rftools.blocks.endergen;
 import cofh.api.energy.IEnergyConnection;
 import mcjty.api.MachineInformation;
 import mcjty.entity.GenericEnergyProviderTileEntity;
-import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
 import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
 import mcjty.network.PacketServerCommand;
-import mcjty.varia.Coordinate;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.EnergyTools;
+import mcjty.varia.BlockTools;
+import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -482,7 +482,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
         if (worldObj.isRemote) {
             // We're on the client. Send change to server.
-            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
                     EndergenicTileEntity.CMD_SETDESTINATION,
                     new Argument("dest", destination)));
         }

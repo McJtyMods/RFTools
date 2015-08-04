@@ -10,7 +10,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -80,7 +80,7 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private void requestDelightingInfoFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetDelightingInfo(selectedX, selectedY, selectedZ));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetDelightingInfo(selectedX, selectedY, selectedZ));
     }
 
     private void requestDelightingInfoFromClient() {

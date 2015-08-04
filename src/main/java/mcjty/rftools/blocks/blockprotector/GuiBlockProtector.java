@@ -11,6 +11,7 @@ import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -27,7 +28,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBlockProtector(BlockProtectorTileEntity blockProtectorTileEntity, BlockProtectorContainer container) {
-        super(RFTools.instance, blockProtectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "protect");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, blockProtectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "protect");
         blockProtectorTileEntity.setCurrentRF(blockProtectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = PROTECTOR_WIDTH;
@@ -49,7 +50,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void initRedstoneMode() {
@@ -69,7 +70,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(BlockProtectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, BlockProtectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
 
@@ -79,6 +80,6 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

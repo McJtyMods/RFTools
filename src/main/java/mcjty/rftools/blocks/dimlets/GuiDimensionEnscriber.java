@@ -19,6 +19,7 @@ import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Counter;
 import mcjty.varia.Logging;
 import net.minecraft.client.Minecraft;
@@ -44,7 +45,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionenscriber.png");
 
     public GuiDimensionEnscriber(DimensionEnscriberTileEntity dimensionEnscriberTileEntity, DimensionEnscriberContainer container) {
-        super(RFTools.instance, dimensionEnscriberTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "enscriber");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimensionEnscriberTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "enscriber");
 
         xSize = ENSCRIBER_WIDTH;
         ySize = ENSCRIBER_HEIGHT;
@@ -90,7 +91,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
     }
 
     private void storeName(String name) {
-        sendServerCommand(DimensionEnscriberTileEntity.CMD_SETNAME, new Argument("name", name));
+        sendServerCommand(RFToolsMessages.INSTANCE, DimensionEnscriberTileEntity.CMD_SETNAME, new Argument("name", name));
     }
 
     private void extractDimlets() {
@@ -102,11 +103,11 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                 return;
             }
         }
-        sendServerCommand(DimensionEnscriberTileEntity.CMD_EXTRACT);
+        sendServerCommand(RFToolsMessages.INSTANCE, DimensionEnscriberTileEntity.CMD_EXTRACT);
     }
 
     private void storeDimlets() {
-        sendServerCommand(DimensionEnscriberTileEntity.CMD_STORE, new Argument("name", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, DimensionEnscriberTileEntity.CMD_STORE, new Argument("name", nameField.getText()));
     }
 
     private void enableButtons() {

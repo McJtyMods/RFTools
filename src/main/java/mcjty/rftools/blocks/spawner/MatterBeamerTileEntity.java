@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
 import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
 import mcjty.network.PacketServerCommand;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
@@ -149,7 +149,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         if (worldObj.isRemote) {
             // We're on the client. Send change to server.
-            PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord,
                     MatterBeamerTileEntity.CMD_SETDESTINATION,
                     new Argument("dest", destination)));
         } else {

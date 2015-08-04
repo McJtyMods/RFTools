@@ -16,10 +16,10 @@ import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.network.Argument;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
@@ -49,7 +49,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public static Set<Coordinate> fromServer_coordinates = new HashSet<Coordinate>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer storageScannerContainer) {
-        super(RFTools.instance, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
         storageScannerTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = STORAGE_MONITOR_WIDTH;
@@ -140,7 +140,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         Keyboard.enableRepeatEvents(true);
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void hilightSelectedContainer(int index) {
@@ -155,16 +155,16 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void changeRadius(int r) {
-        sendServerCommand(StorageScannerTileEntity.CMD_SETRADIUS, new Argument("r", r));
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_SETRADIUS, new Argument("r", r));
     }
 
     private void startStopScan() {
-        sendServerCommand(StorageScannerTileEntity.CMD_STARTSCAN, new Argument("start", !tileEntity.isScanning()));
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_STARTSCAN, new Argument("start", !tileEntity.isScanning()));
     }
 
     private void startSearch(String text) {
         if (!text.isEmpty()) {
-            PacketHandler.INSTANCE.sendToServer(new PacketSearchItems(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, text));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketSearchItems(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, text));
         }
     }
 
@@ -172,7 +172,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         InvBlockInfo invBlockInfo = getSelectedContainer();
         if (invBlockInfo != null) {
             Coordinate c = invBlockInfo.getCoordinate();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetInventory(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInventory(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                     c.getX(), c.getY(), c.getZ()));
         }
     }
@@ -250,7 +250,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void updateScanButton() {

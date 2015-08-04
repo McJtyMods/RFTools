@@ -11,6 +11,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -28,7 +29,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiSpaceProjector(SpaceProjectorTileEntity spaceProjectorTileEntity, SpaceProjectorContainer container) {
-        super(RFTools.instance, spaceProjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, null);
+        super(RFTools.instance, RFToolsMessages.INSTANCE, spaceProjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, null);
         spaceProjectorTileEntity.setCurrentRF(spaceProjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = PROJECTOR_WIDTH;
@@ -56,11 +57,11 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void updateProjection() {
-        sendServerCommand(SpaceProjectorTileEntity.CMD_PROJECT);
+        sendServerCommand(RFToolsMessages.INSTANCE, SpaceProjectorTileEntity.CMD_PROJECT);
     }
 
     private void initRedstoneMode() {
@@ -80,7 +81,7 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(SpaceProjectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SpaceProjectorTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
 
@@ -90,6 +91,6 @@ public class GuiSpaceProjector extends GenericGuiContainer<SpaceProjectorTileEnt
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

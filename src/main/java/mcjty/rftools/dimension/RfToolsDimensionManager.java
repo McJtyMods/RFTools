@@ -10,8 +10,8 @@ import mcjty.rftools.items.dimensionmonitor.PhasedFieldGeneratorItem;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.network.PacketHandler;
 import mcjty.rftools.network.PacketRegisterDimensions;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
@@ -249,7 +249,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
                 dimlets.put(id, mapping.getKey(id));
             }
 
-            PacketHandler.INSTANCE.sendTo(new PacketCheckDimletConfig(dimlets), (EntityPlayerMP) player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketCheckDimletConfig(dimlets), (EntityPlayerMP) player);
         }
     }
 
@@ -270,7 +270,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         if (!world.isRemote) {
             // Sync to clients.
             Logging.log("Sync dimension info to clients!");
-            PacketHandler.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionInformation));
+            RFToolsMessages.INSTANCE.sendToAll(new PacketSyncDimensionInfo(dimensions, dimensionInformation));
         }
     }
 
@@ -292,7 +292,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
             DimensionManager.registerProviderType(id, GenericWorldProvider.class, false);
             DimensionManager.registerDimension(id, id);
         }
-        PacketHandler.INSTANCE.sendToAll(new PacketRegisterDimensions(id));
+        RFToolsMessages.INSTANCE.sendToAll(new PacketRegisterDimensions(id));
     }
 
     public static RfToolsDimensionManager getDimensionManager(World world) {

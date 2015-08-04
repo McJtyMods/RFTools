@@ -8,6 +8,7 @@ import mcjty.gui.widgets.ImageLabel;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -24,7 +25,7 @@ public class GuiDimletScrambler extends GenericGuiContainer<DimletScramblerTileE
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimletScrambler(DimletScramblerTileEntity pearlInjectorTileEntity, DimletScramblerContainer container) {
-        super(RFTools.instance, pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "scrambler");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "scrambler");
         pearlInjectorTileEntity.setCurrentRF(pearlInjectorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SCRAMBLER_WIDTH;
@@ -46,7 +47,7 @@ public class GuiDimletScrambler extends GenericGuiContainer<DimletScramblerTileE
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestScramblingFromServer();
     }
 
@@ -64,7 +65,7 @@ public class GuiDimletScrambler extends GenericGuiContainer<DimletScramblerTileE
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestScramblingFromServer();
     }
 }

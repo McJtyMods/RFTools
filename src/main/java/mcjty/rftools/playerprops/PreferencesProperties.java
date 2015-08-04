@@ -2,6 +2,7 @@ package mcjty.rftools.playerprops;
 
 import mcjty.gui.GuiStyle;
 import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +35,7 @@ public class PreferencesProperties {
     }
 
     private void syncToClient() {
-        PacketHandler.INSTANCE.sendTo(new PacketSendPreferencesToClient(buffX, buffY, style), (EntityPlayerMP) entity);
+        RFToolsMessages.INSTANCE.sendTo(new PacketSendPreferencesToClient(buffX, buffY, style), (EntityPlayerMP) entity);
         dirty = false;
     }
 

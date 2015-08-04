@@ -2,16 +2,16 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.WorldGenerationTools;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -270,7 +270,7 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
 
     // Request the building percentage from the server. This has to be called on the client side.
     public void requestBuildingPercentage() {
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETEDITING,
                 CLIENTCMD_GETEDITING));
     }

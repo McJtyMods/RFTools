@@ -8,6 +8,7 @@ import mcjty.gui.widgets.ImageLabel;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -24,7 +25,7 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimletResearcher(DimletResearcherTileEntity dimletResearcherTileEntity, DimletResearcherContainer container) {
-        super(RFTools.instance, dimletResearcherTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "researcher");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimletResearcherTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "researcher");
         dimletResearcherTileEntity.setCurrentRF(dimletResearcherTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = RESEARCHER_WIDTH;
@@ -46,7 +47,7 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestResearchingFromServer();
     }
 
@@ -64,7 +65,7 @@ public class GuiDimletResearcher extends GenericGuiContainer<DimletResearcherTil
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestResearchingFromServer();
     }
 }

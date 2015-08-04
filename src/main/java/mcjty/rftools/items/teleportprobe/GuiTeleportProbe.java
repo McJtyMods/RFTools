@@ -8,7 +8,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.*;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
@@ -68,7 +68,7 @@ public class GuiTeleportProbe extends GuiScreen {
     private void teleport(int index) {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         Coordinate c = destination.getCoordinate();
-        PacketHandler.INSTANCE.sendToServer(new PacketForceTeleport(c.getX(), c.getY(), c.getZ(), destination.getDimension()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketForceTeleport(c.getX(), c.getY(), c.getZ(), destination.getDimension()));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {
@@ -76,7 +76,7 @@ public class GuiTeleportProbe extends GuiScreen {
     }
 
     private void requestReceiversFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetAllReceivers());
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetAllReceivers());
     }
 
     private void populateList() {

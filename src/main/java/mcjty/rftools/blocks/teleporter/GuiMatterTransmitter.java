@@ -17,6 +17,7 @@ import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
 import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
@@ -52,7 +53,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
-        super(RFTools.instance, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
         transmitterTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = MATTER_WIDTH;
@@ -126,30 +127,30 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
         listDirty = 0;
         requestPlayers();
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void setTransmitterName(String text) {
-        sendServerCommand(MatterTransmitterTileEntity.CMD_SETNAME, new Argument("name", text));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETNAME, new Argument("name", text));
     }
 
     private void changeAccessMode(String newAccess) {
-        sendServerCommand(MatterTransmitterTileEntity.CMD_SETPRIVATE, new Argument("private", ACCESS_PRIVATE.equals(newAccess)));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETPRIVATE, new Argument("private", ACCESS_PRIVATE.equals(newAccess)));
     }
 
     private void addPlayer() {
-        sendServerCommand(MatterTransmitterTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
         listDirty = 0;
     }
 
     private void delPlayer() {
-        sendServerCommand(MatterTransmitterTileEntity.CMD_DELPLAYER, new Argument("player", players.get(allowedPlayers.getSelected())));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_DELPLAYER, new Argument("player", players.get(allowedPlayers.getSelected())));
         listDirty = 0;
     }
 
 
     private void requestPlayers() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetPlayers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetPlayers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void populatePlayers() {
@@ -184,7 +185,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void enableButtons() {

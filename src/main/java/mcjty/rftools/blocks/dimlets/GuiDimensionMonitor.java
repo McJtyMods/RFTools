@@ -9,8 +9,9 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.ScrollableLabel;
 import mcjty.gui.widgets.Slider;
 import mcjty.gui.widgets.Widget;
-import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 
 import java.awt.*;
@@ -22,7 +23,7 @@ public class GuiDimensionMonitor extends GenericGuiContainer<DimensionMonitorTil
     private ScrollableLabel alarmLevel;
 
     public GuiDimensionMonitor(DimensionMonitorTileEntity dimensionMonitorTileEntity, Container container) {
-        super(RFTools.instance, dimensionMonitorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "monitor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimensionMonitorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "monitor");
         xSize = MONITOR_WIDTH;
         ySize = MONITOR_HEIGHT;
     }
@@ -56,7 +57,7 @@ public class GuiDimensionMonitor extends GenericGuiContainer<DimensionMonitorTil
 
     private void changeAlarmValue(int newValue) {
         tileEntity.setAlarmLevel(newValue);
-        sendServerCommand(DimensionMonitorTileEntity.CMD_SETALARM, new Argument("level", newValue));
+        sendServerCommand(RFToolsMessages.INSTANCE, DimensionMonitorTileEntity.CMD_SETALARM, new Argument("level", newValue));
     }
 
 

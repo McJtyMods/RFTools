@@ -14,6 +14,7 @@ import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -32,7 +33,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private ImageChoiceLabel redstoneMode;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity environmentalControllerTileEntity, EnvironmentalControllerContainer container) {
-        super(RFTools.instance, environmentalControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, environmentalControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
 
         xSize = ENV_WIDTH;
         ySize = ENV_HEIGHT;
@@ -57,7 +58,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         ScrollableLabel radius = new ScrollableLabel(mc, this).setRealMinimum(5).setRealMaximum(100).setRealValue(r).setDesiredWidth(24).addValueEvent(new ValueEvent() {
             @Override
             public void valueChanged(Widget parent, int newValue) {
-                sendServerCommand(EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue));
+                sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue));
             }
         });
         Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius);
@@ -107,7 +108,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(EnvironmentalControllerTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
     private void sendBounds(boolean minchanged) {
@@ -134,7 +135,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 minyTextField.setText(Integer.toString(miny));
             }
         }
-        sendServerCommand(EnvironmentalControllerTileEntity.CMD_SETBOUNDS, new Argument("miny", miny), new Argument("maxy", maxy));
+        sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETBOUNDS, new Argument("miny", miny), new Argument("maxy", maxy));
     }
 
     @Override

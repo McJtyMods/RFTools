@@ -10,7 +10,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.BlockMeta;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -48,7 +48,7 @@ public class GuiChamberDetails extends GuiItemScreen {
     }
 
     private void requestChamberInfoFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetChamberInfo());
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetChamberInfo());
     }
 
     @Override

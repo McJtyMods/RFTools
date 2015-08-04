@@ -11,6 +11,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Mouse;
 
@@ -23,7 +24,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
     private ChoiceLabel mode;
 
     public GuiEnderMonitor(EnderMonitorTileEntity enderMonitorTileEntity, Container container) {
-        super(RFTools.instance, enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, enderMonitorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "endermon");
         xSize = MONITOR_WIDTH;
         ySize = MONITOR_HEIGHT;
     }
@@ -65,7 +66,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
     private void changeMode() {
         EnderMonitorMode newMode = EnderMonitorMode.getMode(mode.getCurrentChoice());
         tileEntity.setMode(newMode);
-        sendServerCommand(EnderMonitorTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, EnderMonitorTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
     }
 
     @Override

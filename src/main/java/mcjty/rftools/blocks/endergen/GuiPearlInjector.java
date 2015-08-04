@@ -6,6 +6,7 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ public class GuiPearlInjector  extends GenericGuiContainer<PearlInjectorTileEnti
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/pearlinjector.png");
 
     public GuiPearlInjector(PearlInjectorTileEntity pearlInjectorTileEntity, PearlInjectorContainer container) {
-        super(RFTools.instance, pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "powinjector");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, pearlInjectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "powinjector");
 
         xSize = PEARLINJECTOR_WIDTH;
         ySize = PEARLINJECTOR_HEIGHT;

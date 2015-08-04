@@ -7,8 +7,9 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.ImageChoiceLabel;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
-import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -24,7 +25,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterContainer.BUFFER_SIZE * 6];
 
     public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, ItemFilterContainer container) {
-        super(RFTools.instance, itemFilterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "filter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "filter");
 
         xSize = ITEMFILTER_WIDTH;
         ySize = ITEMFILTER_HEIGHT;
@@ -86,7 +87,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
             input = false;
             output = true;
         }
-        sendServerCommand(ItemFilterTileEntity.CMD_SETMODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, ItemFilterTileEntity.CMD_SETMODE,
                 new Argument("side", side),
                 new Argument("slot", slot),
                 new Argument("input", input),

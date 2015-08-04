@@ -7,9 +7,10 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
+import mcjty.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -29,7 +30,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionBuilder(DimensionBuilderTileEntity dimensionBuilderTileEntity, DimensionBuilderContainer container) {
-        super(RFTools.instance, dimensionBuilderTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "builder");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimensionBuilderTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "builder");
         dimensionBuilderTileEntity.setCurrentRF(dimensionBuilderTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = BUILDER_WIDTH;
@@ -57,7 +58,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestBuildingPercentage();
     }
 
@@ -78,7 +79,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(DimensionBuilderTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, DimensionBuilderTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
 
@@ -94,7 +95,7 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestBuildingPercentage();
     }
 }

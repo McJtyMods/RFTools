@@ -10,9 +10,10 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.dimlets.DimletType;
-import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -32,7 +33,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
     private ChoiceLabel[] craftable = new ChoiceLabel[6];
 
     public GuiDimletFilter(DimletFilterTileEntity dimletFilterTileEntity, DimletFilterContainer container) {
-        super(RFTools.instance, dimletFilterTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "filter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimletFilterTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "filter");
 
         xSize = DIMLETFILTER_WIDTH;
         ySize = DIMLETFILTER_HEIGHT;
@@ -140,7 +141,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         } catch (NumberFormatException e) {
             value = 0;
         }
-        sendServerCommand(DimletFilterTileEntity.CMD_SETMINRARITY,
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletFilterTileEntity.CMD_SETMINRARITY,
                 new Argument("side", side),
                 new Argument("value", value));
     }
@@ -157,7 +158,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         } catch (NumberFormatException e) {
             value = 0;
         }
-        sendServerCommand(DimletFilterTileEntity.CMD_SETMAXRARITY,
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletFilterTileEntity.CMD_SETMAXRARITY,
                 new Argument("side", side),
                 new Argument("value", value));
     }
@@ -172,7 +173,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         } else {
             cr = DimletFilterTileEntity.CRAFTABLE_NO;
         }
-        sendServerCommand(DimletFilterTileEntity.CMD_SETCRAFTABLE,
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletFilterTileEntity.CMD_SETCRAFTABLE,
                 new Argument("side", side),
                 new Argument("craftable", cr));
     }
@@ -185,7 +186,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
         } else {
             type = DimletType.getTypeByName(choice).ordinal();
         }
-        sendServerCommand(DimletFilterTileEntity.CMD_SETTYPE,
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletFilterTileEntity.CMD_SETTYPE,
                 new Argument("side", side),
                 new Argument("type", type));
     }
@@ -193,7 +194,7 @@ public class GuiDimletFilter extends GenericGuiContainer<DimletFilterTileEntity>
     private void changeMode(int side) {
         ImageChoiceLabel choiceLabel = bits[side];
         int input = choiceLabel.getCurrentChoiceIndex();
-        sendServerCommand(DimletFilterTileEntity.CMD_SETMODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletFilterTileEntity.CMD_SETMODE,
                 new Argument("side", side),
                 new Argument("input", input));
     }

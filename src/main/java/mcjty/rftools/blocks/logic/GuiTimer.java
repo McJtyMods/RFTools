@@ -11,6 +11,7 @@ import mcjty.gui.widgets.TextField;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 
 import java.awt.*;
@@ -22,7 +23,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
     private TextField speedField;
 
     public GuiTimer(TimerTileEntity timerTileEntity, Container container) {
-        super(RFTools.instance, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
         xSize = TIMER_WIDTH;
         ySize = TIMER_HEIGHT;
     }
@@ -62,7 +63,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
             delay = 1;
         }
         tileEntity.setDelay(delay);
-        sendServerCommand(TimerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
+        sendServerCommand(RFToolsMessages.INSTANCE, TimerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
     }
 
     @Override

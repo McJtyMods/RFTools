@@ -10,7 +10,7 @@ import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -32,7 +32,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private int selected = -1;
 
     public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
-        super(RFTools.instance, screenTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
 
         xSize = SCREEN_WIDTH;
         ySize = SCREEN_HEIGHT;
@@ -129,7 +129,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
             public void updateData() {
                 slot.setTagCompound(finalTagCompound);
                 tileEntity.setInventorySlotContents(finalI, slot);
-                PacketHandler.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
             }
         });
         modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(70, 7, 184, 130));

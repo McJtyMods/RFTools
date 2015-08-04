@@ -1,5 +1,9 @@
 package mcjty.rftools.dimension.world;
 
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ivorius.reccomplex.dimensions.DimensionDictionary;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -9,11 +13,7 @@ import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.SkyType;
 import mcjty.rftools.dimension.world.types.StructureType;
-import mcjty.network.PacketHandler;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ivorius.reccomplex.dimensions.DimensionDictionary;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -257,7 +257,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
         int dim = worldObj.provider.dimensionId;
         if (System.currentTimeMillis() - lastFogTime > 1000) {
             lastFogTime = System.currentTimeMillis();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
         }
 
         float factor = calculatePowerBlackout(dim);
@@ -286,7 +286,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
         int dim = worldObj.provider.dimensionId;
         if (System.currentTimeMillis() - lastTime > 1000) {
             lastTime = System.currentTimeMillis();
-            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetDimensionEnergy(dim));
         }
 
         float factor = calculatePowerBlackout(dim);

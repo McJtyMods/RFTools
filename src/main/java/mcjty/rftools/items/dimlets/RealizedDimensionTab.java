@@ -1,13 +1,13 @@
 package mcjty.rftools.items.dimlets;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
-import mcjty.network.PacketHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -82,7 +82,7 @@ public class RealizedDimensionTab extends Item {
                     if (id != 0) {
                         if (System.currentTimeMillis() - lastTime > 500) {
                             lastTime = System.currentTimeMillis();
-                            PacketHandler.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
+                            RFToolsMessages.INSTANCE.sendToServer(new PacketGetDimensionEnergy(id));
                         }
 
                         DimensionStorage storage = DimensionStorage.getDimensionStorage(player.getEntityWorld());

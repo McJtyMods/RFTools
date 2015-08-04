@@ -7,12 +7,13 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Panel;
+import mcjty.network.Argument;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimletWorkbench(DimletWorkbenchTileEntity dimletWorkbenchTileEntity, DimletWorkbenchContainer container) {
-        super(RFTools.instance, dimletWorkbenchTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "create");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimletWorkbenchTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "create");
 
         xSize = WORKBENCH_WIDTH;
         ySize = WORKBENCH_HEIGHT;
@@ -74,7 +75,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
     }
 
     private void setAutoExtract() {
-        sendServerCommand(DimletWorkbenchTileEntity.CMD_SETAUTOEXTRACT, new Argument("auto", autoExtract.isPressed()));
+        sendServerCommand(RFToolsMessages.INSTANCE, DimletWorkbenchTileEntity.CMD_SETAUTOEXTRACT, new Argument("auto", autoExtract.isPressed()));
     }
 
     private void extractDimlet() {
@@ -85,7 +86,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
                 DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, Minecraft.getMinecraft().theWorld);
                 if (!KnownDimletConfiguration.craftableDimlets.contains(key)) {
                     Achievements.trigger(Minecraft.getMinecraft().thePlayer, Achievements.smallBits);
-                    sendServerCommand(DimletWorkbenchTileEntity.CMD_STARTEXTRACT);
+                    sendServerCommand(RFToolsMessages.INSTANCE, DimletWorkbenchTileEntity.CMD_STARTEXTRACT);
                 }
             }
         }
@@ -123,7 +124,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestExtractingFromServer();
     }
 }

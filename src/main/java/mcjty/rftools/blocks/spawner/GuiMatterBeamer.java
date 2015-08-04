@@ -7,6 +7,7 @@ import mcjty.gui.widgets.EnergyBar;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -21,7 +22,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/matterbeamer.png");
 
     public GuiMatterBeamer(MatterBeamerTileEntity beamerTileEntity, MatterBeamerContainer container) {
-        super(RFTools.instance, beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
         beamerTileEntity.setCurrentRF(beamerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = BEAMER_WIDTH;
@@ -41,7 +42,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
 
         window = new Window(this, toplevel);
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     @Override
@@ -49,6 +50,6 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

@@ -11,6 +11,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -406,7 +407,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
 
     // Request the building percentage from the server. This has to be called on the client side.
     public void requestBuildingPercentage() {
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETBUILDING,
                 CLIENTCMD_GETBUILDING));
     }

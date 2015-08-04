@@ -2,12 +2,12 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -73,7 +73,7 @@ public class DimletResearcherTileEntity extends GenericEnergyReceiverTileEntity 
 
     // Request the researching amount from the server. This has to be called on the client side.
     public void requestResearchingFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETRESEARCHING,
                 CLIENTCMD_GETRESEARCHING));
     }

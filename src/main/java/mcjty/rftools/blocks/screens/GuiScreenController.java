@@ -9,6 +9,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -24,7 +25,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screencontroller.png");
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
-        super(RFTools.instance, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
         screenControllerTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CONTROLLER_WIDTH;
@@ -43,14 +44,14 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         scanButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
-                sendServerCommand(ScreenControllerTileEntity.CMD_SCAN);
+                sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_SCAN);
             }
         });
         Button detachButton = new Button(mc, this).setText("Detach").setTooltips("Detach from all screens").setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 50, 14));
         detachButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
-                sendServerCommand(ScreenControllerTileEntity.CMD_DETACH);
+                sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_DETACH);
             }
         });
         infoLabel = new Label(mc, this);
@@ -61,7 +62,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
 
@@ -72,6 +73,6 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         energyBar.setValue(tileEntity.getCurrentRF());
         infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

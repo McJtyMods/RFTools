@@ -13,7 +13,7 @@ import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.Container;
@@ -39,7 +39,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
 
 
     public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, Container container) {
-        super(RFTools.instance, monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
 
         xSize = 256;
         ySize = 180;
@@ -91,19 +91,19 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         window = new Window(this, toplevel);
 
         fromServer_clientAdjacentBlocks = new ArrayList<Coordinate>();
-        PacketHandler.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetAdjacentBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void changeAlarmMode(RFMonitorMode mode) {
         int alarmLevel = alarmLabel.getRealValue();
         tileEntity.setAlarm(mode, alarmLevel);
-        PacketHandler.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, alarmLevel));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, alarmLevel));
     }
 
     private void changeAlarmValue(int newValue) {
         RFMonitorMode mode = RFMonitorMode.getModeFromDescription(alarmModeChoiceLabel.getCurrentChoice());
         tileEntity.setAlarm(mode, newValue);
-        PacketHandler.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, newValue));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mode, newValue));
     }
 
     private void refreshList() {
@@ -113,10 +113,10 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         if (index != -1) {
             Coordinate c = adjacentBlocks.get(index);
             tileEntity.setMonitor(c);
-            PacketHandler.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, c));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, c));
         } else {
             tileEntity.setInvalid();
-            PacketHandler.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, Coordinate.INVALID));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketContentsMonitor(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, Coordinate.INVALID));
         }
     }
 

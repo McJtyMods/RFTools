@@ -8,6 +8,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +32,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
     public GuiSpawner(SpawnerTileEntity spawnerTileEntity, SpawnerContainer container) {
-        super(RFTools.instance, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
         spawnerTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SPAWNER_WIDTH;
@@ -64,7 +65,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
         window = new Window(this, toplevel);
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void showSyringeInfo() {
@@ -110,6 +111,6 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

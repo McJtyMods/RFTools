@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Logging;
 import mcjty.varia.SecurityTools;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -54,7 +54,7 @@ public class SecurityCardItem extends Item {
         if (channel != -1) {
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                PacketHandler.INSTANCE.sendToServer(new PacketGetSecurityName(channel));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityName(channel));
             }
             list.add(EnumChatFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
         } else {

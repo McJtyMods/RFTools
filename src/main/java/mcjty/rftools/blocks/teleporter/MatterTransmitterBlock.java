@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
 import mcjty.container.EmptyContainer;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.network.PacketHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.dimension.network.PacketGetDestinationInfo;
 import mcjty.rftools.dimension.network.ReturnDestinationInfoHelper;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -62,7 +62,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
                 int destId = tagCompound.getInteger("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    PacketHandler.INSTANCE.sendToServer(new PacketGetDestinationInfo(destId));
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(destId));
                 }
 
                 String destname = "?";
@@ -106,7 +106,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
             if (matterTransmitterTileEntity.isDialed()) {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    PacketHandler.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
                 }
 
                 String name = "?";

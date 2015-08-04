@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.dimlets;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -129,7 +129,7 @@ public class DimletScramblerTileEntity extends GenericEnergyReceiverTileEntity i
 
     // Request the scrambling amount from the server. This has to be called on the client side.
     public void requestScramblingFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETSCRAMBLING,
                 CLIENTCMD_GETSCRAMBLING));
     }

@@ -14,7 +14,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
@@ -73,7 +73,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     private void requestConnectedBlocksFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetConnectedBlocks(selectedX, selectedY, selectedZ));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetConnectedBlocks(selectedX, selectedY, selectedZ));
     }
 
     @Override

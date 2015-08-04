@@ -1,7 +1,7 @@
 package mcjty.rftools.playerprops;
 
 import mcjty.rftools.PlayerBuff;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,7 +33,7 @@ public class BuffProperties {
     }
 
     private void syncBuffs() {
-        PacketHandler.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), (EntityPlayerMP) entity);
+        RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), (EntityPlayerMP) entity);
     }
 
     public void tickBuffs() {

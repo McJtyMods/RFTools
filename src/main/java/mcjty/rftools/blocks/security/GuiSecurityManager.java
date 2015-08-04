@@ -9,13 +9,13 @@ import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.Button;
+import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.TextField;
-import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -42,7 +42,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public static SecurityChannels.SecurityChannel channelFromServer = null;
 
     public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, SecurityManagerContainer container) {
-        super(RFTools.instance, securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
 
         xSize = SECURITYMANAGER_WIDTH;
         ySize = SECURITYMANAGER_HEIGHT;
@@ -108,7 +108,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         }
         listDirty--;
         if (listDirty <= 0) {
-            PacketHandler.INSTANCE.sendToServer(new PacketGetSecurityInfo(id));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityInfo(id));
             listDirty = 20;
         }
     }
@@ -119,7 +119,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         if (channelFromServer != null) {
             channelFromServer.setName(channelName);
         }
-        sendServerCommand(SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelName));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelName));
     }
 
     private void updateSettings() {
@@ -128,7 +128,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         if (channelFromServer != null) {
             channelFromServer.setWhitelist(whitelist);
         }
-        sendServerCommand(SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", whitelist));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", whitelist));
     }
 
     private void populatePlayers() {
@@ -146,11 +146,11 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private void addPlayer() {
-        sendServerCommand(SecurityManagerTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
     }
 
     private void delPlayer() {
-        sendServerCommand(SecurityManagerTileEntity.CMD_DELPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_DELPLAYER, new Argument("player", nameField.getText()));
     }
 
     private int getCardID() {

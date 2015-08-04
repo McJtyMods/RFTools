@@ -12,11 +12,11 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
+import mcjty.network.Argument;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -43,7 +43,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiCrafter(CrafterBaseTE crafterBlockTileEntity, CrafterContainer container) {
-        super(RFTools.instance, crafterBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "crafter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, crafterBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         crafterBlockTileEntity.setCurrentRF(crafterBlockTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = CRAFTER_WIDTH;
@@ -85,7 +85,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         sendChangeToServer(-1, null, null, false, false);
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private Slider initRecipeList() {
@@ -170,7 +170,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void sendChangeToServer() {
-        sendServerCommand(CrafterBaseTE.CMD_MODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_MODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()),
                 new Argument("speed", speedMode.getCurrentChoiceIndex()));
     }
@@ -308,7 +308,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
-        PacketHandler.INSTANCE.sendToServer(new PacketCrafter(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, index, inv,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketCrafter(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, index, inv,
                 result, keepOne, craftInternal));
     }
 
@@ -326,6 +326,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

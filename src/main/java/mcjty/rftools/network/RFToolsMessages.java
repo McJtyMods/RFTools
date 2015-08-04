@@ -37,8 +37,10 @@ import mcjty.rftools.playerprops.PacketSendPreferencesToClient;
 import mcjty.rftools.playerprops.PacketSendPreferencesToClientHandler;
 
 public class RFToolsMessages {
-    public static void registerNetworkMessages() {
-        SimpleNetworkWrapper net = PacketHandler.INSTANCE;
+    public static SimpleNetworkWrapper INSTANCE;
+
+    public static void registerNetworkMessages(SimpleNetworkWrapper net) {
+        INSTANCE = net;
 
         // Server side
         net.registerMessage(PacketContentsMonitor.class, PacketContentsMonitor.class, PacketHandler.nextID(), Side.SERVER);

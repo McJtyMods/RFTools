@@ -14,11 +14,11 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -66,7 +66,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(RFTools.instance, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = SHIELD_WIDTH;
@@ -109,7 +109,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
-                sendServerCommand(ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor));
+                sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor));
             }
         });
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
@@ -155,7 +155,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         listDirty = 0;
         requestFilters();
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void selectFilter() {
@@ -194,7 +194,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void requestFilters() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetFilters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetFilters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void requestListsIfNeeded() {
@@ -245,12 +245,12 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void moveFilterUp() {
-        sendServerCommand(ShieldTEBase.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
     private void moveFilterDown() {
-        sendServerCommand(ShieldTEBase.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
 
@@ -284,14 +284,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         String playerName = player.getText();
         int selected = filterList.getSelected();
 
-        sendServerCommand(ShieldTEBase.CMD_ADDFILTER,
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_ADDFILTER,
                 new Argument("action", action), new Argument("type", type), new Argument("player", playerName),
                 new Argument("selected", selected));
         listDirty = 0;
     }
 
     private void removeSelectedFilter() {
-        sendServerCommand(ShieldTEBase.CMD_DELFILTER,
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DELFILTER,
                 new Argument("selected", filterList.getSelected()));
         listDirty = 0;
     }
@@ -313,7 +313,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     private void changeRedstoneMode() {
         tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(ShieldTEBase.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
     private void initVisibilityMode() {
@@ -368,14 +368,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     private void changeDamageType() {
         tileEntity.setDamageMode(DamageTypeMode.getMode(damageType.getCurrentChoice()));
-        sendServerCommand(ShieldTEBase.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
 
     }
 
     private void changeVisibilityMode() {
         ShieldRenderingMode newMode = ShieldRenderingMode.getMode(visibilityOptions.getCurrentChoice());
         tileEntity.setShieldRenderingMode(newMode);
-        sendServerCommand(ShieldTEBase.CMD_SHIELDVISMODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SHIELDVISMODE,
                 new Argument("mode", newMode.getDescription()));
     }
 
@@ -389,7 +389,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 pass = block.getRenderBlockPass();
             }
         }
-        sendServerCommand(ShieldTEBase.CMD_APPLYCAMO, new Argument("pass", pass));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_APPLYCAMO, new Argument("pass", pass));
     }
 
     private void enableButtons() {
@@ -414,6 +414,6 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

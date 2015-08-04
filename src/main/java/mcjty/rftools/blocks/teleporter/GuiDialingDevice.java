@@ -12,11 +12,11 @@ import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
+import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import mcjty.varia.Logging;
 import net.minecraft.util.ResourceLocation;
@@ -65,7 +65,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
 
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
-        super(RFTools.instance, dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
         dialingDeviceTileEntity.setCurrentRF(dialingDeviceTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = DIALER_WIDTH;
@@ -152,7 +152,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         requestReceivers();
         requestTransmitters();
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private Panel setupReceiverPanel() {
@@ -239,7 +239,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         Coordinate c = destination.getCoordinate();
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
                 DialingDeviceTileEntity.CLIENTCMD_STATUS, new Argument("c", c), new Argument("dim", destination.getDimension())));
 
@@ -320,7 +320,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
@@ -347,7 +347,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         if (transmitterInfo == null) {
             return;
         }
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.dimensionId),
@@ -358,16 +358,16 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void requestReceivers() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mc.thePlayer.getDisplayName()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, mc.thePlayer.getDisplayName()));
     }
 
     private void requestTransmitters() {
-        PacketHandler.INSTANCE.sendToServer(new PacketGetTransmitters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetTransmitters(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
     }
 
     private void changeShowFavorite() {
         boolean fav = favoriteButton.getCurrentChoiceIndex() == 1;
-        sendServerCommand(DialingDeviceTileEntity.CMD_SHOWFAVORITE,
+        sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_SHOWFAVORITE,
                 new Argument("favorite", fav));
         listDirty = 0;
         transmitterList.setSelected(-1);
@@ -382,7 +382,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         boolean favorite = destination.isFavorite();
         destination.setFavorite(!favorite);
-        sendServerCommand(DialingDeviceTileEntity.CMD_FAVORITE,
+        sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
                 new Argument("player", mc.thePlayer.getDisplayName()),
                 new Argument("receiver", destination.getCoordinate()),
                 new Argument("dimension", destination.getDimension()),
@@ -504,7 +504,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void requestListsIfNeeded() {

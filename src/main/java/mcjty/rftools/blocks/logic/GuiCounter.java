@@ -11,6 +11,7 @@ import mcjty.gui.widgets.TextField;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 
 import java.awt.*;
@@ -23,7 +24,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private TextField currentField;
 
     public GuiCounter(CounterTileEntity counterTileEntity, Container container) {
-        super(RFTools.instance, counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
         xSize = COUNTER_WIDTH;
         ySize = COUNTER_HEIGHT;
     }
@@ -76,7 +77,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
             counter = 1;
         }
         tileEntity.setCounter(counter);
-        sendServerCommand(CounterTileEntity.CMD_SETCOUNTER, new Argument("counter", counter));
+        sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCOUNTER, new Argument("counter", counter));
     }
 
     private void setCurrent() {
@@ -88,7 +89,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
             current = 0;
         }
         tileEntity.setCounter(current);
-        sendServerCommand(CounterTileEntity.CMD_SETCURRENT, new Argument("current", current));
+        sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCURRENT, new Argument("current", current));
     }
 
     @Override

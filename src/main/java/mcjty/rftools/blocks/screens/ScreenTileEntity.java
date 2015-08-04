@@ -4,12 +4,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.network.Argument;
+import mcjty.network.PacketServerCommand;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketServerCommand;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -198,7 +198,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         clientScreenModules.get(moduleIndex).mouseClick(worldObj, x, y - currenty, true);
         clickedModules.add(new ActivatedModule(moduleIndex, 5, x, y));
 
-        PacketHandler.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord, CMD_CLICK,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(xCoord, yCoord, zCoord, CMD_CLICK,
                 new Argument("x", x),
                 new Argument("y", y - currenty),
                 new Argument("module", moduleIndex)));

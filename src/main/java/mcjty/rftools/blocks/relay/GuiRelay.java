@@ -13,8 +13,9 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
-import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
@@ -35,7 +36,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     private Map<String,TextField> energyValues = new HashMap<String, TextField>();
 
     public GuiRelay(RelayTileEntity relayTileEntity, Container container) {
-        super(RFTools.instance, relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
 
         xSize = RELAY_WIDTH;
         ySize = RELAY_HEIGHT;
@@ -161,7 +162,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
             addArgument(arguments, i, "Off");
         }
 
-        sendServerCommand(RelayTileEntity.CMD_SETTINGS, arguments.toArray(new Argument[arguments.size()]));
+        sendServerCommand(RFToolsMessages.INSTANCE, RelayTileEntity.CMD_SETTINGS, arguments.toArray(new Argument[arguments.size()]));
     }
 
     private void addArgument(List<Argument> arguments, int i, String suffix) {

@@ -9,9 +9,9 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
-import mcjty.rftools.RFTools;
-import mcjty.network.PacketHandler;
 import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.awt.*;
@@ -35,7 +35,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     private int timer = 10;
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
-        super(RFTools.instance, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
         endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(ForgeDirection.DOWN));
         xSize = ENDERGENIC_WIDTH;
         ySize = ENDERGENIC_HEIGHT;
@@ -68,7 +68,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new mcjty.gui.Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
 
         checkStats();
 
@@ -91,13 +91,13 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         timer--;
         if (timer <= 0) {
             timer = 20;
-            PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                     EndergenicTileEntity.CMD_GETSTAT_RF, EndergenicTileEntity.CLIENTCMD_GETSTAT_RF));
-            PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                     EndergenicTileEntity.CMD_GETSTAT_LOST, EndergenicTileEntity.CLIENTCMD_GETSTAT_LOST));
-            PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                     EndergenicTileEntity.CMD_GETSTAT_LAUNCHED, EndergenicTileEntity.CLIENTCMD_GETSTAT_LAUNCHED));
-            PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
                     EndergenicTileEntity.CMD_GETSTAT_OPPORTUNITIES, EndergenicTileEntity.CLIENTCMD_GETSTAT_OPPORTUNITIES));
         }
     }

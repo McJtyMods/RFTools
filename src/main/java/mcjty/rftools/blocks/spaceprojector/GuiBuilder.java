@@ -9,6 +9,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -35,7 +36,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
-        super(RFTools.instance, builderTileEntity, container, RFTools.GUI_MANUAL_MAIN, "builder");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_MAIN, "builder");
         builderTileEntity.setCurrentRF(builderTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = BUILDER_WIDTH;
@@ -146,23 +147,23 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         anchor[tileEntity.getAnchor()].setPressed(true);
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 
     private void setLoopMode() {
-        sendServerCommand(CMD_SETLOOP, new Argument("loop", loopMode.getCurrentChoiceIndex() == 1));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", loopMode.getCurrentChoiceIndex() == 1));
     }
 
     private void setSilentMode() {
-        sendServerCommand(CMD_SETSILENT, new Argument("silent", silentMode.getCurrentChoiceIndex() == 1));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", silentMode.getCurrentChoiceIndex() == 1));
     }
 
     private void setSupportMode() {
-        sendServerCommand(CMD_SETSUPPORT, new Argument("support", supportMode.getCurrentChoiceIndex() == 1));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", supportMode.getCurrentChoiceIndex() == 1));
     }
 
     private void setEntityMode() {
-        sendServerCommand(CMD_SETENTITIES, new Argument("entities", entityMode.getCurrentChoiceIndex() == 1));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", entityMode.getCurrentChoiceIndex() == 1));
     }
 
     private void selectAnchor(int index) {
@@ -171,7 +172,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 anchor[i].setPressed(i == index);
             }
         }
-        sendServerCommand(CMD_SETANCHOR, new Argument("anchor", index));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, new Argument("anchor", index));
     }
 
     private void updateMode() {
@@ -183,7 +184,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 break;
             }
         }
-        sendServerCommand(CMD_SETMODE, new Argument("mode", mode));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETMODE, new Argument("mode", mode));
     }
 
     private void updateRotate() {
@@ -198,7 +199,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         } else if (ROTATE_270.equals(choice)) {
             index = 3;
         }
-        sendServerCommand(CMD_SETROTATE, new Argument("rotate", index));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETROTATE, new Argument("rotate", index));
     }
 
     @Override
@@ -207,6 +208,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

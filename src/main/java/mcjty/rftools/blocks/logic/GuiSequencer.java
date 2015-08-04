@@ -14,6 +14,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
@@ -32,7 +33,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiSequencer(SequencerTileEntity sequencerTileEntity, Container container) {
-        super(RFTools.instance, sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
         xSize = SEQUENCER_WIDTH;
         ySize = SEQUENCER_HEIGHT;
     }
@@ -139,7 +140,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
             delay = 1;
         }
         tileEntity.setDelay(delay);
-        sendServerCommand(SequencerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
     }
 
     private void fillGrid(boolean value) {
@@ -147,7 +148,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
             bits.get(bit).setCurrentChoice(value ? 1 : 0);
         }
         tileEntity.setCycleBits(0, 63, value);
-        sendServerCommand(SequencerTileEntity.CMD_SETBITS,
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETBITS,
                 new Argument("start", 0),
                 new Argument("stop", 63),
                 new Argument("choice", value));
@@ -156,7 +157,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     private void changeBit(int bit, String choice) {
         boolean newChoice = "1".equals(choice);
         tileEntity.setCycleBit(bit, newChoice);
-        sendServerCommand(SequencerTileEntity.CMD_SETBIT,
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETBIT,
                 new Argument("bit", bit),
                 new Argument("choice", newChoice));
     }
@@ -164,7 +165,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     private void changeMode() {
         SequencerMode newMode = SequencerMode.getMode(mode.getCurrentChoice());
         tileEntity.setMode(newMode);
-        sendServerCommand(SequencerTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_MODE, new Argument("mode", newMode.getDescription()));
     }
 
     @Override

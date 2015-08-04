@@ -2,14 +2,14 @@ package mcjty.rftools.blocks.dimletconstruction;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.DimletCraftingTools;
 import mcjty.rftools.items.dimlets.types.IDimletType;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
@@ -363,7 +363,7 @@ public class DimletWorkbenchTileEntity extends GenericEnergyReceiverTileEntity i
 
     // Request the extracting amount from the server. This has to be called on the client side.
     public void requestExtractingFromServer() {
-        PacketHandler.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
                 CMD_GETEXTRACTING,
                 CLIENTCMD_GETEXTRACTING));
     }

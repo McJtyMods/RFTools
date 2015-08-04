@@ -10,6 +10,7 @@ import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -27,7 +28,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     private ImageChoiceLabel global[] = new ImageChoiceLabel[] { null, null, null, null };
 
     public GuiRemoteStorage(RemoteStorageTileEntity remoteStorageTileEntity, RemoteStorageContainer container) {
-        super(RFTools.instance, remoteStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "remotestor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, remoteStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "remotestor");
 
         xSize = STORAGE_WIDTH;
         ySize = STORAGE_HEIGHT;
@@ -64,7 +65,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     }
 
     private void changeGlobal(int index) {
-        sendServerCommand(RemoteStorageTileEntity.CMD_SETGLOBAL,
+        sendServerCommand(RFToolsMessages.INSTANCE, RemoteStorageTileEntity.CMD_SETGLOBAL,
                 new Argument("index", index),
                 new Argument("global", global[index].getCurrentChoiceIndex() == 1));
     }
@@ -73,6 +74,6 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
         energyBar.setValue(tileEntity.getCurrentRF());
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 }

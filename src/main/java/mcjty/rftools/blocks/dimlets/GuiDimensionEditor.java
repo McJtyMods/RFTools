@@ -8,6 +8,7 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -25,7 +26,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiDimensionEditor(DimensionEditorTileEntity dimensionEditorTileEntity, DimensionEditorContainer container) {
-        super(RFTools.instance, dimensionEditorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "editor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dimensionEditorTileEntity, container, RFTools.GUI_MANUAL_DIMENSION, "editor");
         GenericEnergyStorageTileEntity.setCurrentRF(dimensionEditorTileEntity.getEnergyStored(ForgeDirection.DOWN));
 
         xSize = EDITOR_WIDTH;
@@ -51,7 +52,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestBuildingPercentage();
     }
 
@@ -70,7 +71,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
 
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer();
+        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
         tileEntity.requestBuildingPercentage();
     }
 }

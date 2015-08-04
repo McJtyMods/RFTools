@@ -7,11 +7,11 @@ import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.ImageChoiceLabel;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.Widget;
+import mcjty.network.Argument;
+import mcjty.network.PacketUpdateNBTItem;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketUpdateNBTItem;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +33,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
     private ImageChoiceLabel modMode;
 
     public GuiStorageFilter(StorageFilterContainer container) {
-        super(RFTools.instance, null, container, RFTools.GUI_MANUAL_MAIN, "storfilter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, RFTools.GUI_MANUAL_MAIN, "storfilter");
         xSize = CONTROLLER_WIDTH;
         ySize = CONTROLLER_HEIGHT;
     }
@@ -114,7 +114,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
     }
 
     private void updateSettings() {
-        PacketHandler.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
                 new Argument("blacklistMode", blacklistMode.getCurrentChoice()),
                 new Argument("oredictMode", oredictMode.getCurrentChoiceIndex() == 1),
                 new Argument("damageMode", damageMode.getCurrentChoiceIndex() == 1),

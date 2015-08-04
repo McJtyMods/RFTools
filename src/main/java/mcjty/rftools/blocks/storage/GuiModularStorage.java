@@ -13,14 +13,14 @@ import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.network.Argument;
+import mcjty.network.PacketUpdateNBTItem;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
-import mcjty.network.PacketUpdateNBTItem;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -82,7 +82,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
-        super(RFTools.instance, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
         xSize = STORAGE_WIDTH;
 
         int width = Minecraft.getMinecraft().displayWidth;
@@ -228,29 +228,29 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private void cycleStorage() {
         if (tileEntity != null) {
-            sendServerCommand(ModularStorageTileEntity.CMD_CYCLE);
+            sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CYCLE);
         } else {
-            PacketHandler.INSTANCE.sendToServer(new PacketCycleStorage());
+            RFToolsMessages.INSTANCE.sendToServer(new PacketCycleStorage());
         }
     }
 
     private void compact() {
         if (tileEntity != null) {
-            sendServerCommand(ModularStorageTileEntity.CMD_COMPACT);
+            sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_COMPACT);
         } else {
-            PacketHandler.INSTANCE.sendToServer(new PacketCompact());
+            RFToolsMessages.INSTANCE.sendToServer(new PacketCompact());
         }
     }
 
     private void updateSettings() {
         if (tileEntity != null) {
-            sendServerCommand(ModularStorageTileEntity.CMD_SETTINGS,
+            sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_SETTINGS,
                     new Argument("sortMode", sortMode.getCurrentChoice()),
                     new Argument("viewMode", viewMode.getCurrentChoice()),
                     new Argument("filter", filter.getText()),
                     new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
         } else {
-            PacketHandler.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
                     new Argument("sortMode", sortMode.getCurrentChoice()),
                     new Argument("viewMode", viewMode.getCurrentChoice()),
                     new Argument("filter", filter.getText()),
