@@ -72,10 +72,5 @@ public class ShieldTemplateBlock extends Block {
         public ShieldTemplateItemBlock(Block block) {
             super(block, block);
         }
-
-        @Override
-        public String getUnlocalizedName(ItemStack stack) {
-            return this.getUnlocalizedName() + ":" + stack.getItemDamage();
-        }
     }
 }
