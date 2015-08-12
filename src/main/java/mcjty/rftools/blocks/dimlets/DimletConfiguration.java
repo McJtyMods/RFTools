@@ -66,6 +66,8 @@ public class DimletConfiguration {
 	public static boolean randomizeSeed = false;
     public static boolean normalTerrainInheritsOverworld = false;
 
+    public static boolean voidOnly = false;
+
     public static float endermanUnknownDimletDrop = 0.01f;
     public static int unknownDimletChestLootMinimum = 1;
     public static int unknownDimletChestLootMaximum = 3;
@@ -203,6 +205,8 @@ public class DimletConfiguration {
 
         dimensionalShardRecipe = cfg.get(CATEGORY_DIMLETS, "dimensionalShardRecipe", dimensionalShardRecipe,
                 "Set this to true if you want a recipe for dimensional shards. Useful on servers that disallow dimensions").getBoolean();
+        voidOnly = cfg.get(CATEGORY_DIMLETS, "voidOnly", voidOnly,
+                "Set this to true if you want to make sure RFTools can only create void dimensions").getBoolean();
 
         brutalMobsFactor = cfg.get(CATEGORY_DIMLETS, "brutalMobsFactor", brutalMobsFactor,
                 "How much stronger mobs should be if spawned in a dimension with the brutal mobs dimlet").getDouble();
