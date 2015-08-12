@@ -11,10 +11,10 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.entity.SyncedValueList;
-import mcjty.varia.BlockTools;
+import mcjty.network.Argument;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.network.Argument;
+import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -60,6 +60,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     // If true the shield is currently made.
     private boolean shieldComposed = false;
+    // The meta value for the template blocks that were used.
+    private int templateMeta = 0;
     // If true the shield is currently active.
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
@@ -547,14 +549,32 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
     public void composeShield() {
+        templateMeta = findTemplateMeta();
+
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord);
+        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord, templateMeta);
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
         }
         shieldComposed = true;
         updateShield();
+    }
+
+    private int findTemplateMeta() {
+        int meta = -1;
+        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+            int xx = xCoord + dir.offsetX;
+            int yy = yCoord + dir.offsetY;
+            int zz = zCoord + dir.offsetZ;
+            if (yy >= 0 && yy < worldObj.getHeight()) {
+                if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                    meta = worldObj.getBlockMetadata(xx, yy, zz);
+                    break;
+                }
+            }
+        }
+        return meta;
     }
 
     /**
@@ -590,10 +610,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         for (Coordinate c : shieldBlocks) {
             Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
             if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, 0, 2);
+                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
             } else {
                 // No room, just spawn the block
-                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock));
+                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
             }
         }
         shieldComposed = false;
@@ -609,8 +629,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
      * @param x current block
      * @param y current block
      * @param z current block
+     * @param meta the metavalue for the shield template block we support
      */
-    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z) {
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, int meta) {
         if (coordinateSet.size() >= supportedBlocks) {
             return;
         }
@@ -622,8 +643,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
                 Coordinate c = new Coordinate(xx, yy, zz);
                 if (!coordinateSet.contains(c)) {
                     if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
-                        coordinateSet.add(c);
-                        findTemplateBlocks(coordinateSet, xx, yy, zz);
+                        int m = worldObj.getBlockMetadata(xx, yy, zz);
+                        if (m == meta) {
+                            coordinateSet.add(c);
+                            findTemplateBlocks(coordinateSet, xx, yy, zz, meta);
+                        }
                     }
                 }
             }
@@ -636,6 +660,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
+        templateMeta = tagCompound.getInteger("templateMeta");
         shieldBlocks.readFromNBT(tagCompound, "coordinates");
     }
 
@@ -687,6 +712,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
+        tagCompound.setInteger("templateMeta", templateMeta);
         shieldBlocks.writeToNBT(tagCompound, "coordinates");
     }
 

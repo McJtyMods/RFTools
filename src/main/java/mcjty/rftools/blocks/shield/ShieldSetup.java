@@ -64,6 +64,10 @@ public class ShieldSetup {
             }, new ItemStack(shieldBlock3), 4));
         }
 
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 0), "s", 's', new ItemStack(shieldTemplateBlock, 1, 3));
     }
 }
