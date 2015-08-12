@@ -596,11 +596,11 @@ This injector has an internal buffer that can only store ender pearls.
 {n:shield}
 RFTools implements a 'simple' shield system that can filter mobs, animals,
 players, and items. You start by building the shape of your yield with
-connected Shield Template Blocks. Then you put a Shield Block next
-to one of these templates and you give it power.
+connected Shield Template Blocks of the same color. Then you put a Shield
+Block next to one of these templates and you give it power.
 
-A tier 1 shield can handle up to 256 blocks. Tier 2 ups this to 1024.
-The tier 3 shield deals 4 times as much damage at twice the power.
+A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
+ups this to 4096 and  deals 4 times as much damage at twice the power.
 
 To compose the shield you then need to right click the shield block with
 a wrench. The shield block will compose the shield in the specified shape.
@@ -610,6 +610,9 @@ in case you're not happy with it.
 {-------------------------------------------------------------}
 To craft the Shield Template Blocks you use the following recipe:
 {rb:shieldTemplateBlock}
+
+Note that there are four different template blocks so you can use them
+to make adjacent distinct shields. Every projector will only take one color.
 
 To craft the Shield Block you use the following recipe:
 {rb:shieldBlock}
