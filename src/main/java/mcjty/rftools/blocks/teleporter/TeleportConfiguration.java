@@ -45,6 +45,9 @@ public class TeleportConfiguration {
     public static int matterTransmitterLoadChunk = -1;
     public static int matterTransmitterLoadWorld = -1;
 
+    // Prevent inter-dimensional teleportation.
+    public static boolean preventInterdimensionalTeleports = false;
+
     public static boolean logTeleportUsages = false;
 
     public static void init(Configuration cfg) {
@@ -115,5 +118,8 @@ public class TeleportConfiguration {
 
         logTeleportUsages = cfg.get(CATEGORY_TELEPORTER, "logTeleportUsages", logTeleportUsages,
                 "If this is true then all usages of the teleport system are logged").getBoolean();
+
+        preventInterdimensionalTeleports = cfg.get(CATEGORY_TELEPORTER, "preventInterdimensionalTeleports", preventInterdimensionalTeleports,
+                "If this is true then the RFTools teleportation system cannot be used to travel in the same dimension").getBoolean();
     }
 }
