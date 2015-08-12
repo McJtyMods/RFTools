@@ -93,8 +93,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     private ItemStack stacks[] = new ItemStack[ShieldContainer.BUFFER_SIZE];
 
-    public ShieldTEBase() {
-        super(ShieldConfiguration.MAXENERGY, ShieldConfiguration.RECEIVEPERTICK);
+    public ShieldTEBase(int maxEnergy, int maxReceive) {
+        super(maxEnergy, maxReceive);
         registerSyncedObject(shieldBlocks);
     }
 
