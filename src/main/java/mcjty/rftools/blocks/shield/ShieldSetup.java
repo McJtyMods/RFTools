@@ -40,7 +40,7 @@ public class ShieldSetup {
             GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
             GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
             shieldTemplateBlock = new ShieldTemplateBlock();
-            GameRegistry.registerBlock(shieldTemplateBlock, "shieldTemplateBlock");
+            GameRegistry.registerBlock(shieldTemplateBlock, ShieldTemplateBlock.ShieldTemplateItemBlock.class, "shieldTemplateBlock");
         }
     }
 
