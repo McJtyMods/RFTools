@@ -204,7 +204,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         window = new Window(this, toplevel);
 
-        window.setTextFocus(filter);
+        if (ModularStorageConfiguration.autofocusSearch) {
+            window.setTextFocus(filter);
+        }
     }
 
     private void setSortMode(String sortMode) {

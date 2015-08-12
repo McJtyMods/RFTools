@@ -29,6 +29,8 @@ public class ModularStorageConfiguration {
     public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
     public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.
 
+    public static boolean autofocusSearch = true;   // If true we set auto focus on the search field when opening the GUI.
+
     public static Map<String,String> categoryMapper = new HashMap<String, String>();
 
     public static void init(Configuration cfg) {
@@ -55,6 +57,9 @@ public class ModularStorageConfiguration {
                 "RF/tick to share an inventory to the same dimension").getInt();
         remoteShareGlobal = cfg.get(CATEGORY_STORAGE, "remoteShareGlobal", remoteShareGlobal,
                 "RF/tick to share an inventory to all dimensions").getInt();
+
+        autofocusSearch = cfg.get(CATEGORY_STORAGE, "autofocusSearch", autofocusSearch,
+                "If true we automatically set the focus on the search field when opening the GUI for the modular storage. Set to false if you don't want that").getBoolean();
 
         initCategories();
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
