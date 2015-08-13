@@ -595,7 +595,7 @@ This injector has an internal buffer that can only store ender pearls.
 {b}Shield System
 {n:shield}
 RFTools implements a 'simple' shield system that can filter mobs, animals,
-players, and items. You start by building the shape of your yield with
+players, and items. You start by building the shape of your shield with
 connected Shield Template Blocks of the same color. Then you put a Shield
 Block next to one of these templates and you give it power.
 
