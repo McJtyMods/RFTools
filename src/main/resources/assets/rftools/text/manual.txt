@@ -602,11 +602,11 @@ Block next to one of these templates and you give it power.
 A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
 ups this to 4096 and  deals 4 times as much damage at twice the power.
 
-To compose the shield you then need to right click the shield block with
-a wrench. The shield block will compose the shield in the specified shape.
-Wrenching the shield block again will turn the shield back into
-the template blocks. By doing that you can change the shape of your shield
-in case you're not happy with it.
+To compose the shield right click the shield block with a wrench. The
+shield block will compose the shield in the specified shape. If you use the
+control key together with the wrench it will also connect on corners.
+Wrench the shield again to get the template blocks back. By doing that you
+can change the shape of your shield in case you're not happy with it.
 {-------------------------------------------------------------}
 To craft the Shield Template Blocks you use the following recipe:
 {rb:shieldTemplateBlock}

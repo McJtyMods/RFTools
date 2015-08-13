@@ -121,7 +121,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
         return new String[] { "getDamageMode", "setDamageMode", "getRedstoneMode", "setRedstoneMode", "getShieldRenderingMode", "setShieldRenderingMode", "isShieldActive", "isShieldComposed",
-            "composeShield", "decomposeShield" };
+            "composeShield", "composeShieldDsc", "decomposeShield" };
     }
 
     @Override
@@ -136,8 +136,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             case 5: return setShieldRenderingMode((String) arguments[0]);
             case 6: return new Object[] { isShieldActive() };
             case 7: return new Object[] { isShieldComposed() };
-            case 8: return composeShieldComp();
-            case 9: return decomposeShieldComp();
+            case 8: return composeShieldComp(false);
+            case 9: return composeShieldComp(true);
+            case 10: return decomposeShieldComp();
         }
         return new Object[0];
     }
@@ -249,13 +250,19 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] composeShield(Context context, Arguments args) throws Exception {
-        return composeShieldComp();
+        return composeShieldComp(false);
     }
 
-    private Object[] composeShieldComp() {
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] composeShieldDsc(Context context, Arguments args) throws Exception {
+        return composeShieldComp(true);
+    }
+
+    private Object[] composeShieldComp(boolean ctrl) {
         boolean done = false;
         if (!isShieldComposed()) {
-            composeShield();
+            composeShield(ctrl);
             done = true;
         }
         return new Object[] { done };
@@ -538,21 +545,21 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
 
 
-    public void composeDecomposeShield() {
+    public void composeDecomposeShield(boolean ctrl) {
         if (shieldComposed) {
             // Shield is already composed. Break it into template blocks again.
             decomposeShield();
         } else {
             // Shield is not composed. Find all nearby template blocks and form a shield.
-            composeShield();
+            composeShield(ctrl);
         }
     }
 
-    public void composeShield() {
+    public void composeShield(boolean ctrl) {
         templateMeta = findTemplateMeta();
 
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord, templateMeta);
+        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord, templateMeta, ctrl);
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
@@ -630,23 +637,47 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
      * @param y current block
      * @param z current block
      * @param meta the metavalue for the shield template block we support
+     * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, int meta) {
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, int meta, boolean ctrl) {
         if (coordinateSet.size() >= supportedBlocks) {
             return;
         }
-        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-            int xx = x + dir.offsetX;
-            int yy = y + dir.offsetY;
-            int zz = z + dir.offsetZ;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
-                Coordinate c = new Coordinate(xx, yy, zz);
-                if (!coordinateSet.contains(c)) {
-                    if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
-                        int m = worldObj.getBlockMetadata(xx, yy, zz);
-                        if (m == meta) {
-                            coordinateSet.add(c);
-                            findTemplateBlocks(coordinateSet, xx, yy, zz, meta);
+        if (ctrl) {
+            for (int xx = x-1 ; xx <= x+1 ; xx++) {
+                for (int yy = y-1 ; yy <= y+1 ; yy++) {
+                    for (int zz = z-1 ; zz <= z+1 ; zz++) {
+                        if (xx != x || yy != y || zz != z) {
+                            if (yy >= 0 && yy < worldObj.getHeight()) {
+                                Coordinate c = new Coordinate(xx, yy, zz);
+                                if (!coordinateSet.contains(c)) {
+                                    if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                                        int m = worldObj.getBlockMetadata(xx, yy, zz);
+                                        if (m == meta) {
+                                            coordinateSet.add(c);
+                                            findTemplateBlocks(coordinateSet, xx, yy, zz, meta, ctrl);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+                int xx = x + dir.offsetX;
+                int yy = y + dir.offsetY;
+                int zz = z + dir.offsetZ;
+                if (yy >= 0 && yy < worldObj.getHeight()) {
+                    Coordinate c = new Coordinate(xx, yy, zz);
+                    if (!coordinateSet.contains(c)) {
+                        if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                            int m = worldObj.getBlockMetadata(xx, yy, zz);
+                            if (m == meta) {
+                                coordinateSet.add(c);
+                                findTemplateBlocks(coordinateSet, xx, yy, zz, meta, ctrl);
+                            }
                         }
                     }
                 }

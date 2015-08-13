@@ -72,15 +72,16 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
 
     @Override
     protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
-        composeDecomposeShield(world, x, y, z);
+        boolean ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+        composeDecomposeShield(world, x, y, z, ctrl);
         return true;
     }
 
-    private void composeDecomposeShield(World world, int x, int y, int z) {
+    private void composeDecomposeShield(World world, int x, int y, int z, boolean ctrl) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof ShieldTEBase) {
-                ((ShieldTEBase)te).composeDecomposeShield();
+                ((ShieldTEBase)te).composeDecomposeShield(ctrl);
             }
         }
     }
