@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.network.Argument;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -316,7 +317,13 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         }
 
 //        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
-        ItemStack result = recipe.getCraftingResult(workInventory);
+        ItemStack result = null;
+        try {
+            result = recipe.getCraftingResult(workInventory);
+        } catch (Exception e) {
+            // Ignore this error for now to make sure we don't crash on bad recipes.
+            Logging.log("Problem with recipe!");
+        }
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         if (result != null && placeResult(craftingRecipe.isCraftInternal(), result, undo)) {
