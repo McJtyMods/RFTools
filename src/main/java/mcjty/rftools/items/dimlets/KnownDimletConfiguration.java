@@ -61,6 +61,7 @@ public class KnownDimletConfiguration {
     // All craftable dimlets.
     public static final Set<DimletKey> craftableDimlets = new HashSet<DimletKey>();
 
+    private static final Set<DimletKey> imcDimletBlackList = new HashSet<DimletKey>(); // Dimlets blacklist from IMC
     private static final Set<DimletKey> dimletBlackList = new HashSet<DimletKey>(); // Note, the keys here can contain wildcards
     private static final Set<DimletKey> dimletRandomNotAllowed = new HashSet<DimletKey>();
     private static final Set<DimletKey> dimletLootNotAllowed = new HashSet<DimletKey>();
@@ -106,7 +107,7 @@ public class KnownDimletConfiguration {
         if (key == null) {
             return;
         }
-        dimletBlackList.add(key);
+        imcDimletBlackList.add(key);
         Logging.log("IMC: Blacklisted dimlet with key: '" + keyName + "'");
     }
 
@@ -205,6 +206,10 @@ public class KnownDimletConfiguration {
     }
 
     private static boolean isBlacklistedKey(DimletKey key) {
+        if (imcDimletBlackList.contains(key)) {
+            return true;
+        }
+
         if (dimletBlackList.contains(key)) {
             return true;
         }
