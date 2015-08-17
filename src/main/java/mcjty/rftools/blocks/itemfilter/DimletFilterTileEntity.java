@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.itemfilter;
 
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericTileEntity;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletType;
@@ -245,7 +246,7 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
 
     @Override
     public int getInventoryStackLimit() {
-        return 16;
+        return DimletConfiguration.dimletStackSize;
     }
 
     @Override

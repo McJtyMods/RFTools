@@ -73,6 +73,8 @@ public class DimletConfiguration {
     public static int unknownDimletChestLootMaximum = 3;
     public static int unknownDimletChestLootRarity = 50;
 
+    public static int dimletStackSize = 16;
+
     public static boolean dimensionalShardRecipe = false;
 
 	public static void init(Configuration cfg) {
@@ -212,6 +214,9 @@ public class DimletConfiguration {
                 "How much stronger mobs should be if spawned in a dimension with the brutal mobs dimlet").getDouble();
         strongMobsFactor = cfg.get(CATEGORY_DIMLETS, "strongMobsFactor", strongMobsFactor,
                 "How much stronger mobs should be if spawned in a dimension with the strong mobs dimlet").getDouble();
+
+        dimletStackSize = cfg.get(CATEGORY_DIMLETS, "dimletStackSize", dimletStackSize,
+                "Stack limit for dimlets").getInt();
     }
 
 }
