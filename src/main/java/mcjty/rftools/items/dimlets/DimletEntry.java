@@ -1,5 +1,7 @@
 package mcjty.rftools.items.dimlets;
 
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
+
 public class DimletEntry {
     private final DimletKey key;
     private final int rfCreateCost;     // Overrides the type default
@@ -28,8 +30,21 @@ public class DimletEntry {
         return rfCreateCost;
     }
 
-    public int getRfMaintainCost() {
+    public int getBaseRfMaintainCost() {
         return rfMaintainCost;
+    }
+
+    public int getRfMaintainCost() {
+        int cost = rfMaintainCost;
+        if (cost > 0) {
+            float factor = DimletConfiguration.maintenanceCostPercentage / 100.0f;
+            if (factor < -0.9f) {
+                factor = -0.9f;
+            }
+            cost += cost * factor;
+        }
+
+        return cost;
     }
 
     public int getTickCost() {
