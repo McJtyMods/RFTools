@@ -643,10 +643,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return true;
             }
         }
-        if (meta != -1) {
+//        if (meta != -1) {
             // Try a second time with meta equal to -1 (which means to ignore meta).
-            return consumeBlock(block, -1);
-        }
+//            return consumeBlock(block, -1);
+//        }
         return false;
     }
 
