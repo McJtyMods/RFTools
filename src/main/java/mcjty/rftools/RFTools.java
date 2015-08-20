@@ -52,7 +52,7 @@ import java.util.EnumMap;
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "3.32";
+    public static final String VERSION = "3.33";
     public static final String MIN_FORGE_VER = "10.13.2.1291";
     public static final String MIN_COFHCORE_VER = "1.7.10R3.0.0B9";
     public static final String MIN_MCJTYLIB_VER = "1.3.0";
