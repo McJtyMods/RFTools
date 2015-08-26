@@ -232,6 +232,10 @@ public class TeleportationTools {
         int rf = TeleportConfiguration.rfPerTeleportReceiver;
         rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
 
+        if (rf <= 0) {
+            return 0;
+        }
+
         int extracted = rf;
         if (rf > matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN)) {
             extracted = matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN);
