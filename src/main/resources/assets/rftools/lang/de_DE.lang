@@ -27,6 +27,7 @@ death.dimension.powerfailure=%s starb in einer kolabierenden Welt!
 item.NetworkMonitor.name=RF Netzwerk Monitor
 item.TeleportProbe.name=Teleporter Sonde
 item.ChargedPorter.name=Aufgeladener Teleporter
+item.AdvancedChargedPorter.name=Advanced Charged Porter
 item.RFToolsManual.name=RFTools Handbuch
 item.RFToolsManualDimension.name=RFTools Dimensionshandbuch
 item.DevelopersDelight.name=Entwickler Toolkit

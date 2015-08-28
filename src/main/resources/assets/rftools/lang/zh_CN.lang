@@ -24,6 +24,7 @@ death.dimension.powerfailure=%s 在崩解的世界中死亡
 item.NetworkMonitor.name=RF网络监视仪
 item.TeleportProbe.name=传输调试仪
 item.ChargedPorter.name=充电搬运机
+item.AdvancedChargedPorter.name=Advanced Charged Porter
 item.RFToolsManual.name=RF工具指南
 item.RFToolsManualDimension.name=RF工具维度说明书
 item.DevelopersDelight.name=开发者指南工具

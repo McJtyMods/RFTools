@@ -27,6 +27,7 @@ death.dimension.powerfailure=%s çöken bir boyutta öldü!
 item.NetworkMonitor.name=RF Ağ Monitorü
 item.TeleportProbe.name=Işınlama Sondası
 item.ChargedPorter.name=Taşınabilir Işınlayıcı
+item.AdvancedChargedPorter.name=Advanced Charged Porter
 item.RFToolsManual.name=RFTools Rehberi
 item.RFToolsManualDimension.name=RFTools Boyut Rehberi
 item.DevelopersDelight.name=Geliştiricinin zevki

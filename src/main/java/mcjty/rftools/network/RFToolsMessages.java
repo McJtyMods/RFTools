@@ -28,9 +28,7 @@ import mcjty.rftools.items.devdelight.PacketDelightingInfoReady;
 import mcjty.rftools.items.devdelight.PacketGetDelightingInfo;
 import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
 import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
-import mcjty.rftools.items.teleportprobe.PacketAllReceiversReady;
-import mcjty.rftools.items.teleportprobe.PacketForceTeleport;
-import mcjty.rftools.items.teleportprobe.PacketGetAllReceivers;
+import mcjty.rftools.items.teleportprobe.*;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.playerprops.PacketSendBuffsToClientHandler;
 import mcjty.rftools.playerprops.PacketSendPreferencesToClient;
@@ -53,6 +51,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetTransmitters.class, PacketGetTransmitters.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetReceivers.class, PacketGetReceivers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetAllReceivers.class, PacketGetAllReceivers.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetTargets.class, PacketGetTargets.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketForceTeleport.class, PacketForceTeleport.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetPlayers.class, PacketGetPlayers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetSecurityInfo.class, PacketGetSecurityInfo.class, PacketHandler.nextID(), Side.SERVER);
@@ -77,6 +76,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketTransmittersReady.class, PacketTransmittersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReceiversReady.class, PacketReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAllReceiversReady.class, PacketAllReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketTargetsReady.class, PacketTargetsReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketPlayersReady.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityInfoReady.class, PacketSecurityInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityNameReady.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);

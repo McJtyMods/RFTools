@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
-    private int capacity;
+    protected int capacity;
     private int maxReceive;
     private int maxExtract;
 
@@ -39,10 +39,18 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         maxExtract = 0;
     }
 
+    protected String getIconName() {
+        return "chargedPorterItemL";
+    }
+
+    protected int getSpeedBonus() {
+        return 1;
+    }
+
     @Override
     public void registerIcons(IIconRegister iconRegister) {
         for (int i = 0 ; i <= 8 ; i++) {
-            powerLevel[i] = iconRegister.registerIcon(RFTools.MODID + ":chargedPorterItemL" + i);
+            powerLevel[i] = iconRegister.registerIcon(RFTools.MODID + ":" + getIconName() + i);
         }
     }
 
@@ -59,7 +67,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         if (tagCompound != null) {
             energy = tagCompound.getInteger("Energy");
         }
-        int level = (9*energy) / TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
+        int level = (9*energy) / capacity;
         if (level < 0) {
             level = 0;
         } else if (level > 8) {
@@ -133,6 +141,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             extractEnergyNoMax(stack, cost, false);
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
+            ticks /= getSpeedBonus();
             playerExtendedProperties.getPorterProperties().startTeleport(target, ticks);
             Logging.message(player, EnumChatFormatting.YELLOW + "Start teleportation!");
         }
@@ -155,17 +164,25 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         }
 
         if (id != -1) {
-            if (world.isRemote) {
-                Logging.message(player, "Charged porter target is set to " + id + ".");
-            }
-            tagCompound.setInteger("target", id);
+            selectOnReceiver(player, world, tagCompound, id);
         } else {
-            if (world.isRemote) {
-                Logging.message(player, "Charged porter is cleared.");
-            }
-            tagCompound.removeTag("target");
+            selectOnThinAir(player, world, tagCompound);
         }
         stack.setTagCompound(tagCompound);
+    }
+
+    protected void selectOnReceiver(EntityPlayer player, World world, NBTTagCompound tagCompound, int id) {
+        if (world.isRemote) {
+            Logging.message(player, "Charged porter target is set to " + id + ".");
+        }
+        tagCompound.setInteger("target", id);
+    }
+
+    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound) {
+        if (world.isRemote) {
+            Logging.message(player, "Charged porter is cleared.");
+        }
+        tagCompound.removeTag("target");
     }
 
     @Override
