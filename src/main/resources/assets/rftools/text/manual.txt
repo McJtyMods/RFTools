@@ -482,14 +482,16 @@ transmitter already dialed to that receiver.
 {-------------------------------------------------------------} 
 {b}Charged Porter
 {n:porter}
-The Charged Porter is an item that you set to some target (a matter
-receiver) and charge up. Right clicking the item will teleport you to
-the preset receiver. Note that this requires 50% more RF then you would
-normally use with a matter transmitter. Also note that the receiver
-still needs power! Sneak-right click on a receiver to set target.
-To craft this use:
+The Charged Porter is an item that you set to some target receiver (with
+sneak-right click) and charge up. Right clicking the porter will teleport
+you. Note that this requires more power compared to normal teleportation.
+Also note that the receiver still needs power! To craft this use:
 
 {ri:chargedPorterItem}
+
+The advanced version that can store more power, teleports faster and
+allows 4 destinations (sneak right click to add receiver and sneak right
+click in the air to edit the four possible destinations).
 {-------------------------------------------------------------}
 {b}Simple Dialer
 {n:simdial}
