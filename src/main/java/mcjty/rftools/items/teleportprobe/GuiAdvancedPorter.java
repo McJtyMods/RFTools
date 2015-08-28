@@ -1,11 +1,14 @@
 package mcjty.rftools.items.teleportprobe;
 
 import mcjty.gui.Window;
+import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.VerticalLayout;
 import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.gui.widgets.Widget;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
@@ -16,22 +19,21 @@ import java.util.List;
 public class GuiAdvancedPorter extends GuiScreen {
 
     private int xSize = 356;
-    private int ySize = 80;
+    private int ySize = 84;
 
     private Window window;
+    private Panel[] panels = new Panel[AdvancedChargedPorterItem.MAXTARGETS];
     private TextField[] destinations = new TextField[AdvancedChargedPorterItem.MAXTARGETS];
 
     private static int target = -1;
-    private static String name;
     private static int[] targets = new int[AdvancedChargedPorterItem.MAXTARGETS];
     private static String[] names = new String[AdvancedChargedPorterItem.MAXTARGETS];
 
     public GuiAdvancedPorter() {
     }
 
-    public static void setInfo(int target, String name, int[] targets, String[] names) {
+    public static void setInfo(int target, int[] targets, String[] names) {
         GuiAdvancedPorter.target = target;
-        GuiAdvancedPorter.name = name;
         GuiAdvancedPorter.targets = targets;
         GuiAdvancedPorter.names = names;
     }
@@ -48,12 +50,12 @@ public class GuiAdvancedPorter extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(0));
 
         for (int i = 0 ; i < AdvancedChargedPorterItem.MAXTARGETS ; i++) {
             destinations[i] = new TextField(mc, this);
-            Panel dest = createPanel(destinations[i]);
-            toplevel.addChild(dest);
+            panels[i] = createPanel(destinations[i], i);
+            toplevel.addChild(panels[i]);
         }
 
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
@@ -63,11 +65,25 @@ public class GuiAdvancedPorter extends GuiScreen {
         updateInfoFromServer();
     }
 
-    private Panel createPanel(TextField destination) {
+    private Panel createPanel(final TextField destination, final int i) {
         return new Panel(mc, this).setLayout(new HorizontalLayout())
                     .addChild(destination)
-                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30))
-                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(30));
+                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
+                        @Override
+                        public void buttonClicked(Widget parent) {
+                            if (targets[i] != -1) {
+                                RFToolsMessages.INSTANCE.sendToServer(new PacketSetTarget(targets[i]));
+                                target = targets[i];
+                            }
+                        }
+                    }))
+                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
+                        @Override
+                        public void buttonClicked(Widget parent) {
+                            RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
+                            targets[i] = -1;
+                        }
+                    })).setDesiredHeight(16);
     }
 
     private void updateInfoFromServer() {
@@ -100,10 +116,14 @@ public class GuiAdvancedPorter extends GuiScreen {
 
 
     private void setTarget(int i) {
+        panels[i].setFilledBackground(-1);
         if (targets[i] == -1) {
             destinations[i].setText("No target set");
         } else {
-            destinations[i].setText(targets[i] + " (" + names[i] + ")");
+            destinations[i].setText(targets[i] + ": " + names[i]);
+            if (targets[i] == target) {
+                panels[i].setFilledBackground(0xffeedd33);
+            }
         }
     }
 

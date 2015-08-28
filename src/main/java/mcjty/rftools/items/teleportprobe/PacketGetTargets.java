@@ -31,8 +31,8 @@ public class PacketGetTargets implements IMessage, IMessageHandler<PacketGetTarg
             return null;
         }
         NBTTagCompound tagCompound = heldItem.getTagCompound();
+
         int target = -1;
-        String name = "";
         int targets[] = new int[AdvancedChargedPorterItem.MAXTARGETS];
         String names[] = new String[AdvancedChargedPorterItem.MAXTARGETS];
         TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
@@ -40,13 +40,6 @@ public class PacketGetTargets implements IMessage, IMessageHandler<PacketGetTarg
         if (tagCompound != null) {
             if (tagCompound.hasKey("target")) {
                 target = tagCompound.getInteger("target");
-                GlobalCoordinate gc = destinations.getCoordinateForId(target);
-                if (gc != null) {
-                    TeleportDestination destination = destinations.getDestination(gc);
-                    if (destination != null) {
-                        name = destination.getName() + " (dimension " + destination.getDimension() + ")";
-                    }
-                }
             } else {
                 target = -1;
             }
@@ -72,6 +65,6 @@ public class PacketGetTargets implements IMessage, IMessageHandler<PacketGetTarg
             }
         }
 
-        return new PacketTargetsReady(target, name, targets, names);
+        return new PacketTargetsReady(target, targets, names);
     }
 }

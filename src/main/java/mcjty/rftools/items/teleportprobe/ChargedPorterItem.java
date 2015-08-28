@@ -80,8 +80,13 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!player.isSneaking()) {
             startTeleport(stack, player, world);
+        } else {
+            selectReceiver(stack, world, player);
         }
         return super.onItemRightClick(stack, world, player);
+    }
+
+    protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
     }
 
     @Override
@@ -166,7 +171,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         if (id != -1) {
             selectOnReceiver(player, world, tagCompound, id);
         } else {
-            selectOnThinAir(player, world, tagCompound);
+            selectOnThinAir(player, world, tagCompound, stack);
         }
         stack.setTagCompound(tagCompound);
     }
@@ -178,7 +183,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         tagCompound.setInteger("target", id);
     }
 
-    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound) {
+    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound, ItemStack stack) {
         if (world.isRemote) {
             Logging.message(player, "Charged porter is cleared.");
         }

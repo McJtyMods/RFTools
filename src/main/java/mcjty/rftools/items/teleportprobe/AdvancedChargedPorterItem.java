@@ -4,6 +4,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -29,6 +30,14 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     @Override
     protected void selectOnReceiver(EntityPlayer player, World world, NBTTagCompound tagCompound, int id) {
         for (int i = 0 ; i < MAXTARGETS ; i++) {
+            if (tagCompound.hasKey("target"+i) && tagCompound.getInteger("target"+i) == id) {
+                // Id is already there.
+                Logging.message(player, EnumChatFormatting.YELLOW + "Receiver " + id + " was already added to the charged porter.");
+                return;
+            }
+        }
+
+        for (int i = 0 ; i < MAXTARGETS ; i++) {
             if (!tagCompound.hasKey("target"+i)) {
                 tagCompound.setInteger("target"+i, id);
                 if (world.isRemote) {
@@ -40,15 +49,21 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
                 return;
             }
         }
+
         if (world.isRemote) {
             Logging.message(player, EnumChatFormatting.YELLOW + "Charged porter has no free targets!");
         }
     }
 
     @Override
-    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound) {
+    protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_ADVANCEDPORTER, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
+    }
+
+    @Override
+    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound, ItemStack stack) {
+        selectReceiver(stack, world, player);
     }
 }
