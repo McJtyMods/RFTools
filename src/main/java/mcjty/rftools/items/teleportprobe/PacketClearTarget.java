@@ -39,7 +39,14 @@ public class PacketClearTarget implements IMessage, IMessageHandler<PacketClearT
         if (tagCompound == null) {
             return null;
         }
-        tagCompound.removeTag("target"+message.index);
+        if (tagCompound.hasKey("target"+message.index)) {
+            int id = tagCompound.getInteger("target"+message.index);
+            if (tagCompound.hasKey("target") && tagCompound.getInteger("target") == id) {
+                tagCompound.removeTag("target");
+            }
+            tagCompound.removeTag("target"+message.index);
+
+        }
         return null;
     }
 

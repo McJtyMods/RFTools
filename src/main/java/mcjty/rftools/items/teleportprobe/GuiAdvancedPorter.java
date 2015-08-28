@@ -19,7 +19,7 @@ import java.util.List;
 public class GuiAdvancedPorter extends GuiScreen {
 
     private int xSize = 356;
-    private int ySize = 84;
+    private int ySize = 72;
 
     private Window window;
     private Panel[] panels = new Panel[AdvancedChargedPorterItem.MAXTARGETS];
@@ -77,9 +77,12 @@ public class GuiAdvancedPorter extends GuiScreen {
                             }
                         }
                     }))
-                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
+                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
                         @Override
                         public void buttonClicked(Widget parent) {
+                            if (targets[i] != -1 && targets[i] == target) {
+                                target = -1;
+                            }
                             RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
                             targets[i] = -1;
                         }
