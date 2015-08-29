@@ -28,6 +28,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -184,6 +185,25 @@ public class ForgeEventHandlers {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+        World world = event.world;
+        if (world.isRemote) {
+            return;
+        }
+        int id = world.provider.dimensionId;
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
+
+        if (dimensionInformation != null && dimensionInformation.isNoanimals()) {
+            if (event.entity instanceof IAnimals && !(event.entity instanceof IMob)) {
+                event.setCanceled(true);
+                Logging.logDebug("Noanimals dimension: Prevented a spawn of " + event.entity.getClass().getName());
             }
         }
     }
