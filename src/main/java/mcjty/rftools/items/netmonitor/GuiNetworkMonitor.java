@@ -63,7 +63,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     public GuiNetworkMonitor() {
-        super(RFTools.instance, MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
         listDirty = 0;
         previousRfMillis = 0;
     }
