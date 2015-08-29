@@ -1,5 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
+import mcjty.gui.GuiItemScreen;
 import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.layout.HorizontalLayout;
@@ -10,18 +11,14 @@ import mcjty.gui.widgets.TextField;
 import mcjty.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.List;
 
-public class GuiAdvancedPorter extends GuiScreen {
+public class GuiAdvancedPorter extends GuiItemScreen {
 
-    private int xSize = 356;
-    private int ySize = 72;
+    private final static int xSize = 356;
+    private final static int ySize = 72;
 
-    private Window window;
     private Panel[] panels = new Panel[AdvancedChargedPorterItem.MAXTARGETS];
     private TextField[] destinations = new TextField[AdvancedChargedPorterItem.MAXTARGETS];
 
@@ -30,17 +27,13 @@ public class GuiAdvancedPorter extends GuiScreen {
     private static String[] names = new String[AdvancedChargedPorterItem.MAXTARGETS];
 
     public GuiAdvancedPorter() {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, xSize, ySize, RFTools.GUI_MANUAL_MAIN, "porter");
     }
 
     public static void setInfo(int target, int[] targets, String[] names) {
         GuiAdvancedPorter.target = target;
         GuiAdvancedPorter.targets = targets;
         GuiAdvancedPorter.names = names;
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
     }
 
     @Override
@@ -93,31 +86,6 @@ public class GuiAdvancedPorter extends GuiScreen {
         RFToolsMessages.INSTANCE.sendToServer(new PacketGetTargets());
     }
 
-    @Override
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseMovedOrUp(int x, int y, int button) {
-        super.mouseMovedOrUp(x, y, button);
-        window.mouseMovedOrUp(x, y, button);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
-
     private void setTarget(int i) {
         panels[i].setFilledBackground(-1);
         if (targets[i] == -1) {
@@ -138,15 +106,6 @@ public class GuiAdvancedPorter extends GuiScreen {
             setTarget(i);
         }
 
-        window.draw();
-
-        List<String> tooltips = window.getTooltips();
-        if (tooltips != null) {
-            int guiLeft = (this.width - this.xSize) / 2;
-            int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
-        }
+        drawWindow();
     }
 }
