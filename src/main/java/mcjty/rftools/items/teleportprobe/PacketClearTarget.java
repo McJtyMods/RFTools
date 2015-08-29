@@ -45,7 +45,6 @@ public class PacketClearTarget implements IMessage, IMessageHandler<PacketClearT
                 tagCompound.removeTag("target");
             }
             tagCompound.removeTag("target"+message.index);
-
         }
         return null;
     }
