@@ -151,7 +151,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             int rft = 0;
             if (dt > 0 && previousRf != null && previousRf.containsKey(me.getKey())) {
                 rft = energy - previousRf.get(me.getKey());
-                rft = rft * 20 / (int)dt;
+                rft = rft * 50 / (int)dt;
             }
             energyLabel.setRfPerTick(rft);
         }
