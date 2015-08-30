@@ -354,11 +354,19 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                 float rs = descriptor.getRainStrength();
                 if (rs > -0.5f) {
                     worldObj.rainingStrength = rs;
+                    if (Math.abs(worldObj.rainingStrength) < 0.001) {
+                        worldObj.setRainStrength(0);
+                        worldObj.getWorldInfo().setRaining(false);
+                    }
                 }
 
                 float ts = descriptor.getThunderStrength();
                 if (ts > -0.5f) {
                     worldObj.thunderingStrength = ts;
+                    if (Math.abs(worldObj.thunderingStrength) < 0.001) {
+                        worldObj.setThunderStrength(0);
+                        worldObj.getWorldInfo().setThundering(false);
+                    }
                 }
             }
         }
