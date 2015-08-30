@@ -41,6 +41,7 @@ item.RealizedDimensionTab.name=Dolu Boyut Etiketi
 item.DimensionMonitor.name=Boyut Monitorü
 item.PhasedFieldGenerator.name=Aşamalı Alan Jeneratörü
 item.DimensionalShard.name=Boyutsal Kristal
+item.InfusedDiamond.name=Infused Diamond
 item.DimletTemplate.name=Dimlet Şablonu
 item.TextModule.name=Yazı Modulü
 item.EnergyModule.name=Enerji Modulü

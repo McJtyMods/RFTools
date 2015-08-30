@@ -91,9 +91,9 @@ public class TeleporterSetup {
         GameRegistry.addRecipe(new ItemStack(chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.redstone_block),
-                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(chargedPorterItem), new ItemStack(DimletSetup.dimensionalShard),
-                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.redstone_block)
+                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block),
+                new ItemStack(DimletSetup.infusedDiamond), new ItemStack(chargedPorterItem), new ItemStack(DimletSetup.infusedDiamond),
+                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block)
         }, new ItemStack(advancedChargedPorterItem), 4));
 
         if (GeneralConfiguration.enableDialingDeviceRecipe) {

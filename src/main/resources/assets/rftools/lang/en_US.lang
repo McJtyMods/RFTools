@@ -41,6 +41,7 @@ item.RealizedDimensionTab.name=Realized Dimension Tab
 item.DimensionMonitor.name=Dimension Monitor
 item.PhasedFieldGenerator.name=Phased Field Generator
 item.DimensionalShard.name=Dimensional Shard
+item.InfusedDiamond.name=Infused Diamond
 item.DimletTemplate.name=Dimlet Template
 item.TextModule.name=Text Module
 item.EnergyModule.name=Energy Module

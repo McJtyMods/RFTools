@@ -41,6 +41,7 @@ item.RealizedDimensionTab.name=Benutztes Dimensionsgitter
 item.DimensionMonitor.name=Dimensionsbildschirm
 item.PhasedFieldGenerator.name=Phasenfeldgenerator
 item.DimensionalShard.name=Dimensionsscherbe
+item.InfusedDiamond.name=Infused Diamond
 item.DimletTemplate.name=Dimlet Template
 item.TextModule.name=Textmodul
 item.EnergyModule.name=Energiemodule

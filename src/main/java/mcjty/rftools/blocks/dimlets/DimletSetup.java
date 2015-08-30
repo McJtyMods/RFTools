@@ -41,6 +41,7 @@ public class DimletSetup {
     public static DimensionMonitorItem dimensionMonitorItem;
     public static PhasedFieldGeneratorItem phasedFieldGeneratorItem;
     public static DimensionalShard dimensionalShard;
+    public static InfusedDiamond infusedDiamond;
 
     public static void setupBlocks() {
         dimletResearcherBlock = new DimletResearcherBlock();
@@ -140,6 +141,12 @@ public class DimletSetup {
         dimensionalShard.setCreativeTab(RFTools.tabRfTools);
         dimensionalShard.setTextureName(RFTools.MODID + ":dimensionalShardItem");
         GameRegistry.registerItem(dimensionalShard, "dimensionalShardItem");
+
+        infusedDiamond = new InfusedDiamond();
+        infusedDiamond.setUnlocalizedName("InfusedDiamond");
+        infusedDiamond.setCreativeTab(RFTools.tabRfTools);
+        infusedDiamond.setTextureName(RFTools.MODID + ":infusedDiamond");
+        GameRegistry.registerItem(infusedDiamond, "infusedDiamondItem");
     }
 
     public static void setupCrafting() {
@@ -183,6 +190,8 @@ public class DimletSetup {
         GameRegistry.addRecipe(new ItemStack(phasedFieldGeneratorItem), "rsr", "sEs", "rsr", 'E', Items.ender_eye, 'r', Items.redstone, 's', dimensionalShard);
 
         GameRegistry.addRecipe(new ItemStack(dimletTemplate), "sss", "sps", "sss", 's', dimensionalShard, 'p', Items.paper);
+
+        GameRegistry.addRecipe(new ItemStack(infusedDiamond), "sss", "sds", "sss", 's', dimensionalShard, 'd', Items.diamond);
 
         if (DimletConfiguration.dimensionalShardRecipe) {
             GameRegistry.addRecipe(new ItemStack(dimensionalShard, 8), "deg", "irG", "qcL", 'd', Items.diamond, 'e', Items.emerald, 'g', Items.gold_ingot,

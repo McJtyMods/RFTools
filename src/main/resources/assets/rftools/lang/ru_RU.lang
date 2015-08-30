@@ -41,6 +41,7 @@ item.RealizedDimensionTab.name=Вкладка созданных измерен�
 item.DimensionMonitor.name=Монитор измерений
 item.PhasedFieldGenerator.name=Генератор переключаемого поля
 item.DimensionalShard.name=Осколок измерения
+item.InfusedDiamond.name=Infused Diamond
 item.DimletTemplate.name=Шаблон димлета
 item.TextModule.name=Модуль «Текст»
 item.EnergyModule.name=Модуль «Энергия»

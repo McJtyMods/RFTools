@@ -38,6 +38,7 @@ item.RealizedDimensionTab.name=刻錄世界構建模板
 item.DimensionMonitor.name=維度監控器
 item.PhasedFieldGenerator.name=相場發生器
 item.DimensionalShard.name=空間碎片
+item.InfusedDiamond.name=Infused Diamond
 item.DimletTemplate.name=信息卡模板
 item.TextModule.name=文本模塊
 item.EnergyModule.name=能量模塊
