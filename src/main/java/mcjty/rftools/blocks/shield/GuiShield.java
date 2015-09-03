@@ -349,7 +349,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         typeOptions.setChoiceTooltip("Passive", "Matches passive mobs");
         typeOptions.setChoiceTooltip("Hostile", "Matches hostile mobs");
         typeOptions.setChoiceTooltip("Item", "Matches items");
-        typeOptions.setChoiceTooltip("Player", "Matches players", "(optionaly named)");
+        typeOptions.setChoiceTooltip("Player", "Matches players", "(optionally named)");
     }
 
     private void initDamageType() {
