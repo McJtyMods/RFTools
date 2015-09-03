@@ -355,7 +355,8 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                 if (rs > -0.5f) {
                     worldObj.rainingStrength = rs;
                     if (Math.abs(worldObj.rainingStrength) < 0.001) {
-                        worldObj.setRainStrength(0);
+                        worldObj.prevRainingStrength = 0;
+                        worldObj.rainingStrength = 0;
                         worldObj.getWorldInfo().setRaining(false);
                     }
                 }
@@ -364,7 +365,8 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                 if (ts > -0.5f) {
                     worldObj.thunderingStrength = ts;
                     if (Math.abs(worldObj.thunderingStrength) < 0.001) {
-                        worldObj.setThunderStrength(0);
+                        worldObj.prevThunderingStrength = 0;
+                        worldObj.thunderingStrength = 0;
                         worldObj.getWorldInfo().setThundering(false);
                     }
                 }
