@@ -157,6 +157,9 @@ public class TeleportationTools {
             return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
         }
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
+        if (transmitterTileEntity == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_TRANSMITTER;
+        }
 
         if (player != null && !transmitterTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS;
