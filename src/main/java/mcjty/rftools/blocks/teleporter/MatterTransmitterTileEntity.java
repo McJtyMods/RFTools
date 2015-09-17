@@ -549,12 +549,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
                 return;
             }
 
-            if (TeleportConfiguration.preventInterdimensionalTeleports) {
-                if (worldObj.provider.dimensionId == dest.getDimension()) {
-                    Logging.warn(player, "Teleportation in the same dimension is not allowed!");
-                    cooldownTimer = 80;
-                    return;
-                }
+            int srcId = worldObj.provider.dimensionId;
+            int dstId = dest.getDimension();
+            if (!TeleportationTools.checkValidTeleport(player, srcId, dstId)) {
+                cooldownTimer = 80;
+                return;
             }
 
             Logging.message(player, "Start teleportation...");

@@ -333,4 +333,22 @@ public class TeleportationTools {
         }
         return true;
     }
+
+    public static boolean checkValidTeleport(EntityPlayer player, int srcId, int dstId) {
+        if (TeleportConfiguration.preventInterdimensionalTeleports) {
+            if (srcId == dstId) {
+                Logging.warn(player, "Teleportation in the same dimension is not allowed!");
+                return false;
+            }
+        }
+        if (TeleportConfiguration.getBlacklistedTeleportationDestinations().contains(dstId)) {
+            Logging.warn(player, "Teleportation to that dimension is not allowed!");
+            return false;
+        }
+        if (TeleportConfiguration.getBlacklistedTeleportationSources().contains(srcId)) {
+            Logging.warn(player, "Teleportation from this dimension is not allowed!");
+            return false;
+        }
+        return true;
+    }
 }

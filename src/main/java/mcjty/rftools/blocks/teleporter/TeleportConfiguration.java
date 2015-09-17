@@ -1,6 +1,11 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.varia.Logging;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TeleportConfiguration {
     public static final String CATEGORY_TELEPORTER = "teleporter";
@@ -50,6 +55,12 @@ public class TeleportConfiguration {
 
     // Prevent inter-dimensional teleportation.
     public static boolean preventInterdimensionalTeleports = false;
+    // Blacklist the following dimensions to be able to teleport from.
+    public static String blacklistedTeleportationSources = "";
+    private static Set<Integer> blacklistedTeleportationSourcesSet = null;
+    // Blacklist the following dimensions to be able to teleport too.
+    public static String blacklistedTeleportationDestinations = "";
+    private static Set<Integer> blacklistedTeleportationDestinationsSet = null;
 
     public static boolean logTeleportUsages = false;
 
@@ -128,5 +139,39 @@ public class TeleportConfiguration {
 
         preventInterdimensionalTeleports = cfg.get(CATEGORY_TELEPORTER, "preventInterdimensionalTeleports", preventInterdimensionalTeleports,
                 "If this is true then the RFTools teleportation system cannot be used to travel in the same dimension").getBoolean();
+        blacklistedTeleportationSources = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationSources", blacklistedTeleportationSources,
+                "Comma separated list of dimension ids that the teleportation system can't teleport from").getString();
+        blacklistedTeleportationDestinations = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationDestinations", blacklistedTeleportationDestinations,
+                "Comma separated list of dimension ids that the teleportation system can't teleport to").getString();
+    }
+
+    public static Set<Integer> getBlacklistedTeleportationSources() {
+        if (blacklistedTeleportationSourcesSet == null) {
+            blacklistedTeleportationSourcesSet = new HashSet<Integer>();
+            String[] strings = StringUtils.split(blacklistedTeleportationSources, ',');
+            for (String string : strings) {
+                try {
+                    blacklistedTeleportationSourcesSet.add(Integer.parseInt(string));
+                } catch (NumberFormatException e) {
+                    Logging.logError("Bad formatted 'blacklistedTeleportationSources' config!");
+                }
+            }
+        }
+        return blacklistedTeleportationSourcesSet;
+    }
+
+    public static Set<Integer> getBlacklistedTeleportationDestinations() {
+        if (blacklistedTeleportationDestinationsSet == null) {
+            blacklistedTeleportationDestinationsSet = new HashSet<Integer>();
+            String[] strings = StringUtils.split(blacklistedTeleportationDestinations, ',');
+            for (String string : strings) {
+                try {
+                    blacklistedTeleportationDestinationsSet.add(Integer.parseInt(string));
+                } catch (NumberFormatException e) {
+                    Logging.logError("Bad formatted 'blacklistedTeleportationDestinations' config!");
+                }
+            }
+        }
+        return blacklistedTeleportationDestinationsSet;
     }
 }

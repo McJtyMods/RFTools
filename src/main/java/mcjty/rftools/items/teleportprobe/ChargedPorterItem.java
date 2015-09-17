@@ -128,11 +128,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
             }
             TeleportDestination destination = destinations.getDestination(coordinate);
 
-            if (TeleportConfiguration.preventInterdimensionalTeleports) {
-                if (world.provider.dimensionId == destination.getDimension()) {
-                    Logging.message(player, EnumChatFormatting.RED + "Teleportation in the same dimension is not allowed!");
-                    return;
-                }
+            if (!TeleportationTools.checkValidTeleport(player, world.provider.dimensionId, destination.getDimension())) {
+                Logging.message(player, EnumChatFormatting.RED + "Teleportation in the same dimension is not allowed!");
+                return;
             }
 
             Coordinate playerCoordinate = new Coordinate((int) player.posX, (int) player.posY, (int) player.posZ);
