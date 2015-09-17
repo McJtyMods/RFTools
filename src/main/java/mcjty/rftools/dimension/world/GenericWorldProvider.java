@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ivorius.reccomplex.dimensions.DimensionDictionary;
+import mcjty.rftools.api.dimension.RFToolsWorldProvider;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -29,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions.DimensionDictionary$Handler", modid = "reccomplex"))
-public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler {
+public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler, RFToolsWorldProvider {
 
     public static final String RFTOOLS_DIMENSION = "rftools dimension";
 
@@ -394,5 +395,14 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
         } else {
             return dimensionInformation.getCelestialAngle();
         }
+    }
+
+    //------------------------ RFToolsWorldProvider
+
+
+    @Override
+    public int getCurrentRF() {
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+        return dimensionStorage.getEnergyLevel(dimensionId);
     }
 }
