@@ -54,6 +54,14 @@ public class CrafterContainer extends GenericContainer {
                 }
             };
         }
+        if (index == SLOT_CRAFTOUTPUT) {
+            return new GhostOutputSlot(inventory, index, x, y) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    return false;
+                }
+            };
+        }
         return super.createSlot(slotFactory, inventory, index, x, y, slotType);
     }
 }
