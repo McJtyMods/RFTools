@@ -171,8 +171,8 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                     SkyRenderer.registerNoSky(this);
                 } else if (skyType == SkyType.SKY_ENDER) {
                     SkyRenderer.registerEnderSky(this);
-                } else if (skyType == SkyType.SKY_INFERNO) {
-                    SkyRenderer.registerPlasmaSky(this);
+                } else if (skyType == SkyType.SKY_INFERNO || skyType == SkyType.SKY_STARS1 || skyType == SkyType.SKY_STARS2 || skyType == SkyType.SKY_STARS3) {
+                    SkyRenderer.registerSkybox(this, skyType);
                 } else {
                     SkyRenderer.registerSky(this, dimensionInformation);
                 }

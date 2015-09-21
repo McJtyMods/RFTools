@@ -549,6 +549,8 @@ public class KnownDimletConfiguration {
 
         initSkyItem(cfg, "Ender", new SkyDescriptor.Builder().skyType(SkyType.SKY_ENDER).build(), false, mapping, master);
         initSkyItem(cfg, "Inferno", new SkyDescriptor.Builder().skyType(SkyType.SKY_INFERNO).build(), false, mapping, master);
+        initSkyItem(cfg, "Stars1", new SkyDescriptor.Builder().skyType(SkyType.SKY_STARS1).build(), false, mapping, master);
+        initSkyItem(cfg, "Stars2", new SkyDescriptor.Builder().skyType(SkyType.SKY_STARS2).build(), false, mapping, master);
 
         initSkyItem(cfg, "Body None", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_NONE).build(), false, mapping, master);   // False because we don't want to select this randomly.
         initSkyItem(cfg, "Body Sun", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_SUN).build(), true, mapping, master);
@@ -705,6 +707,7 @@ public class KnownDimletConfiguration {
         initPatreonItem(cfg, "Puppeteer", mapping, master, "Puppeteer's Support Dimlet");
         initPatreonItem(cfg, "Rouven", mapping, master, "Rouven's Support Dimlet");
         initPatreonItem(cfg, "FireBall", mapping, master, "FireBall's Support Dimlet");
+        initPatreonItem(cfg, "DarkCorvuz", mapping, master, "DarkCorvuz's Support Dimlet");
 
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_WEATHER, "Default"));
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_EFFECT, "None"));

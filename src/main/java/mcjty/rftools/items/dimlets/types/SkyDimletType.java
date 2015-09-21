@@ -3,6 +3,7 @@ package mcjty.rftools.items.dimlets.types;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.SkyDescriptor;
+import mcjty.rftools.dimension.world.types.SkyType;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
@@ -109,6 +110,9 @@ public class SkyDimletType implements IDimletType {
         if (newDescriptor.specifiesSkyColor()) {
             builder.resetSkyColor();
         }
+        if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_DARKCORVUS)) {
+            builder.skyType(SkyType.SKY_STARS3);
+        }
         builder.combine(newDescriptor);
         dimensionInformation.setSkyDescriptor(builder.build());
     }
@@ -147,6 +151,9 @@ public class SkyDimletType implements IDimletType {
         for (Pair<DimletKey, List<DimletKey>> dimletWithModifiers : dimlets) {
             DimletKey key = dimletWithModifiers.getKey();
             builder.combine(DimletObjectMapping.idToSkyDescriptor.get(key));
+        }
+        if (dimensionInformation.isPatreonBitSet(Patreons.PATREON_DARKCORVUS)) {
+            builder.skyType(SkyType.SKY_STARS3);
         }
         dimensionInformation.setSkyDescriptor(builder.build());
     }

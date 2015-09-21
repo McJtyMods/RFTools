@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.description.CelestialBodyDescriptor;
+import mcjty.rftools.dimension.world.types.SkyType;
 import mcjty.rftools.items.dimlets.types.Patreons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -26,6 +27,9 @@ import java.util.Random;
 public class SkyRenderer {
     private static final ResourceLocation locationEndSkyPng = new ResourceLocation("textures/environment/end_sky.png");
     private static final ResourceLocation locationPlasmaSkyPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/plasmasky.png");
+    private static final ResourceLocation locationStars1 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars1.png");
+    private static final ResourceLocation locationStars2 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars2.png");
+    private static final ResourceLocation locationStars3 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars3.png");
 //    private static final ResourceLocation locationDebugSkyPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/debugsky.png");
 
     private static final ResourceLocation locationMoonPhasesPng = new ResourceLocation("textures/environment/moon_phases.png");
@@ -123,11 +127,28 @@ public class SkyRenderer {
         });
     }
 
-    public static void registerPlasmaSky(GenericWorldProvider provider) {
+    public static void registerSkybox(GenericWorldProvider provider, final SkyType skyType) {
         provider.setSkyRenderer(new IRenderHandler() {
             @Override
             public void render(float partialTicks, WorldClient world, Minecraft mc) {
-                SkyRenderer.renderPlasmaSky();
+                ResourceLocation sky;
+                switch (skyType) {
+                    case SKY_INFERNO:
+                        sky = locationPlasmaSkyPng;
+                        break;
+                    case SKY_STARS1:
+                        sky = locationStars1;
+                        break;
+                    case SKY_STARS2:
+                        sky = locationStars2;
+                        break;
+                    case SKY_STARS3:
+                        sky = locationStars3;
+                        break;
+                    default:
+                        return;
+                }
+                SkyRenderer.renderSkyTexture(sky);
             }
         });
         provider.setCloudRenderer(new IRenderHandler() {
@@ -169,7 +190,7 @@ public class SkyRenderer {
     private static UV[] faceEast  = new UV[] { UV.uv(0.0D, 1.0D), UV.uv(1.0D, 1.0D), UV.uv(1.0D, 0.0D), UV.uv(0.0D, 0.0D) };
 
     @SideOnly(Side.CLIENT)
-    private static void renderPlasmaSky() {
+    private static void renderSkyTexture(ResourceLocation sky) {
         TextureManager renderEngine = Minecraft.getMinecraft().getTextureManager();
 
         GL11.glDisable(GL11.GL_FOG);
@@ -178,7 +199,7 @@ public class SkyRenderer {
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         RenderHelper.disableStandardItemLighting();
         GL11.glDepthMask(false);
-        renderEngine.bindTexture(locationPlasmaSkyPng);
+        renderEngine.bindTexture(sky);
         Tessellator tessellator = Tessellator.instance;
 
         for (int i = 0; i < 6; ++i) {
