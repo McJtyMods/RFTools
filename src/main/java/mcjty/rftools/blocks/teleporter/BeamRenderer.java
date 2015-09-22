@@ -18,7 +18,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer {
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
         MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
-        if (matterTransmitterTileEntity.isDialed()) {
+        if (matterTransmitterTileEntity.isDialed() && !matterTransmitterTileEntity.isBeamHidden()) {
             Tessellator tessellator = Tessellator.instance;
             GL11.glPushMatrix();
             GL11.glTranslatef((float) x, (float) y + 1.0f, (float) z);

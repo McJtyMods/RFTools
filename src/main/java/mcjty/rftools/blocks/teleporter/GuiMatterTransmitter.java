@@ -14,9 +14,8 @@ import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
-import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
-import mcjty.network.PacketHandler;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
@@ -33,6 +32,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
     private EnergyBar energyBar;
     private ChoiceLabel privateSetting;
+    private ToggleButton beamToggle;
     private WidgetList allowedPlayers;
     private Button addButton;
     private Button delButton;
@@ -96,7 +96,13 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         } else {
             privateSetting.setChoice(ACCESS_PUBLIC);
         }
-        Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
+        beamToggle = new ToggleButton(mc, this).setText("Hide").setDesiredHeight(13).setTooltips("Hide the teleportation beam").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget parent) {
+                changeBeamState();
+            }
+        }).setPressed(tileEntity.isBeamHidden());
+        Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).addChild(beamToggle).setDesiredHeight(16);
 
         allowedPlayers = createStyledList();
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
@@ -132,6 +138,10 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
     private void setTransmitterName(String text) {
         sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETNAME, new Argument("name", text));
+    }
+
+    private void changeBeamState() {
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETBEAM, new Argument("hide", beamToggle.isPressed()));
     }
 
     private void changeAccessMode(String newAccess) {
