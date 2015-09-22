@@ -28,8 +28,10 @@ public class SkyRenderer {
     private static final ResourceLocation locationEndSkyPng = new ResourceLocation("textures/environment/end_sky.png");
     private static final ResourceLocation locationPlasmaSkyPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/plasmasky.png");
     private static final ResourceLocation locationStars1 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars1.png");
+    private static final ResourceLocation locationStars1a = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars1a.png");
     private static final ResourceLocation locationStars2 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars2.png");
     private static final ResourceLocation locationStars3 = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars3.png");
+    private static final ResourceLocation locationStars3a = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/stars3a.png");
 //    private static final ResourceLocation locationDebugSkyPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/debugsky.png");
 
     private static final ResourceLocation locationMoonPhasesPng = new ResourceLocation("textures/environment/moon_phases.png");
@@ -127,28 +129,41 @@ public class SkyRenderer {
         });
     }
 
+    private static final int SKYTYPE_DARKTOP = 0;
+    private static final int SKYTYPE_ALLHORIZONTAL = 1;
+    private static final int SKYTYPE_ALL = 2;
+    private static final int SKYTYPE_ALTERNATING = 3;
+
     public static void registerSkybox(GenericWorldProvider provider, final SkyType skyType) {
         provider.setSkyRenderer(new IRenderHandler() {
             @Override
             public void render(float partialTicks, WorldClient world, Minecraft mc) {
                 ResourceLocation sky;
+                ResourceLocation sky2 = null;
+                int type = SKYTYPE_DARKTOP;
                 switch (skyType) {
                     case SKY_INFERNO:
                         sky = locationPlasmaSkyPng;
+                        type = SKYTYPE_DARKTOP;
                         break;
                     case SKY_STARS1:
                         sky = locationStars1;
+                        sky2 = locationStars1a;
+                        type = SKYTYPE_ALTERNATING;
                         break;
                     case SKY_STARS2:
                         sky = locationStars2;
+                        type = SKYTYPE_ALL;
                         break;
                     case SKY_STARS3:
                         sky = locationStars3;
+                        sky2 = locationStars3a;
+                        type = SKYTYPE_ALLHORIZONTAL;
                         break;
                     default:
                         return;
                 }
-                SkyRenderer.renderSkyTexture(sky);
+                SkyRenderer.renderSkyTexture(sky, sky2, type);
             }
         });
         provider.setCloudRenderer(new IRenderHandler() {
@@ -190,7 +205,7 @@ public class SkyRenderer {
     private static UV[] faceEast  = new UV[] { UV.uv(0.0D, 1.0D), UV.uv(1.0D, 1.0D), UV.uv(1.0D, 0.0D), UV.uv(0.0D, 0.0D) };
 
     @SideOnly(Side.CLIENT)
-    private static void renderSkyTexture(ResourceLocation sky) {
+    private static void renderSkyTexture(ResourceLocation sky, ResourceLocation sky2, int type) {
         TextureManager renderEngine = Minecraft.getMinecraft().getTextureManager();
 
         GL11.glDisable(GL11.GL_FOG);
@@ -199,7 +214,6 @@ public class SkyRenderer {
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         RenderHelper.disableStandardItemLighting();
         GL11.glDepthMask(false);
-        renderEngine.bindTexture(sky);
         Tessellator tessellator = Tessellator.instance;
 
         for (int i = 0; i < 6; ++i) {
@@ -209,21 +223,56 @@ public class SkyRenderer {
             int col = 0xffffff;
 
             if (i == 0) {       // Down face
-                col = 0;
+                uv = faceDown;
+                switch (type) {
+                    case SKYTYPE_ALL:
+                        renderEngine.bindTexture(sky);
+                        break;
+                    case SKYTYPE_ALLHORIZONTAL:
+                    case SKYTYPE_ALTERNATING:
+                        renderEngine.bindTexture(sky2);
+                        break;
+                    default:
+                        col = 0;
+                        break;
+                }
             } else if (i == 1) {       // North face
+                renderEngine.bindTexture(sky);
                 GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
                 uv = faceNorth;
             } else if (i == 2) {       // South face
+                renderEngine.bindTexture(sky);
                 GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
                 uv = faceSouth;
             } else if (i == 3) {       // Up face
                 GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
                 uv = faceUp;
-                col = 0;
+                switch (type) {
+                    case SKYTYPE_ALL:
+                        renderEngine.bindTexture(sky);
+                        break;
+                    case SKYTYPE_ALLHORIZONTAL:
+                    case SKYTYPE_ALTERNATING:
+                        renderEngine.bindTexture(sky2);
+                        break;
+                    default:
+                        col = 0;
+                        break;
+                }
             } else if (i == 4) {       // East face
+                if (type == SKYTYPE_ALTERNATING && sky2 != null) {
+                    renderEngine.bindTexture(sky2);
+                } else {
+                    renderEngine.bindTexture(sky);
+                }
                 GL11.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
                 uv = faceEast;
             } else if (i == 5) {       // West face
+                if (type == SKYTYPE_ALTERNATING && sky2 != null) {
+                    renderEngine.bindTexture(sky2);
+                } else {
+                    renderEngine.bindTexture(sky);
+                }
                 GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
                 uv = faceWest;
             }
