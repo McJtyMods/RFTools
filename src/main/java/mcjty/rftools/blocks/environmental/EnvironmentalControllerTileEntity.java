@@ -5,6 +5,7 @@ import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.network.Argument;
+import mcjty.rftools.blocks.teleporter.PlayerName;
 import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,23 +13,27 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
     public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_ADDPLAYER = "addPlayer";
+    public static final String CMD_DELPLAYER = "delPlayer";
+    public static final String CMD_GETPLAYERS = "getPlayers";
+    public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
 
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
+    private Set<String> players = new HashSet<String>();
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
     private int miny = 30;
@@ -43,6 +48,30 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
+    }
+
+    public List<PlayerName> getPlayers() {
+        List<PlayerName> p = new ArrayList<PlayerName>();
+        for (String player : players) {
+            p.add(new PlayerName(player));
+        }
+        return p;
+    }
+
+    public void addPlayer(String player) {
+        if (!players.contains(player)) {
+            players.add(player);
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
+        }
+    }
+
+    public void delPlayer(String player) {
+        if (players.contains(player)) {
+            players.remove(player);
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
+        }
     }
 
     public boolean isActive() {
@@ -299,6 +328,15 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         volume = -1;
         int m = tagCompound.getByte("rsMode");
         redstoneMode = RedstoneMode.values()[m];
+
+        players.clear();
+        NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        if (playerList != null) {
+            for (int i = 0 ; i < playerList.tagCount() ; i++) {
+                String player = playerList.getStringTagAt(i);
+                players.add(player);
+            }
+        }
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -326,6 +364,12 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         tagCompound.setInteger("miny", miny);
         tagCompound.setInteger("maxy", maxy);
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+
+        NBTTagList playerTagList = new NBTTagList();
+        for (String player : players) {
+            playerTagList.appendTag(new NBTTagString(player));
+        }
+        tagCompound.setTag("players", playerTagList);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -359,6 +403,37 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         } else if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
             setRedstoneMode(RedstoneMode.getMode(m));
+            return true;
+        } else if (CMD_ADDPLAYER.equals(command)) {
+            addPlayer(args.get("player").getString());
+            return true;
+        } else if (CMD_DELPLAYER.equals(command)) {
+            delPlayer(args.get("player").getString());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETPLAYERS.equals(command)) {
+            return getPlayers();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETPLAYERS.equals(command)) {
+            GuiEnvironmentalController.storePlayersForClient(list);
             return true;
         }
         return false;

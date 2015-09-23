@@ -160,7 +160,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
 
     private void requestPlayers() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetPlayers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetPlayers(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, MatterTransmitterTileEntity.CMD_GETPLAYERS, MatterTransmitterTileEntity.CLIENTCMD_GETPLAYERS));
     }
 
     private void populatePlayers() {

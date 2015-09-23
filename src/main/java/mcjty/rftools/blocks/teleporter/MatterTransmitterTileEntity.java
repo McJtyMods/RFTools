@@ -155,6 +155,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (!allowedPlayers.contains(player)) {
             allowedPlayers.add(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
@@ -162,6 +163,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (allowedPlayers.contains(player)) {
             allowedPlayers.remove(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
