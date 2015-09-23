@@ -8,12 +8,13 @@ import mcjty.gui.events.ValueEvent;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Button;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
+import mcjty.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.network.Argument;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -31,6 +32,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private TextField minyTextField;
     private TextField maxyTextField;
     private ImageChoiceLabel redstoneMode;
+    private WidgetList players;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity environmentalControllerTileEntity, EnvironmentalControllerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, environmentalControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
@@ -54,7 +56,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         int miny = tileEntity.getMiny();
         int maxy = tileEntity.getMaxy();
 
-        Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 10, ENV_WIDTH-30, 16));
+        Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 6, ENV_WIDTH - 30, 16));
         ScrollableLabel radius = new ScrollableLabel(mc, this).setRealMinimum(5).setRealMaximum(100).setRealValue(r).setDesiredWidth(24).addValueEvent(new ValueEvent() {
             @Override
             public void valueChanged(Widget parent, int newValue) {
@@ -64,26 +66,42 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius);
         radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
 
-        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 30, ENV_WIDTH-30, 16));
+        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 24, ENV_WIDTH - 30, 16));
         minyTextField = new TextField(mc, this).setText(Integer.toString(miny)).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 sendBounds(true);
             }
         });
-        minPanel.addChild(new Label(mc, this).setText("Minimum height:")).addChild(minyTextField);
-        Panel maxPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 50, ENV_WIDTH-30, 16));
         maxyTextField = new TextField(mc, this).setText(Integer.toString(maxy)).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 sendBounds(false);
             }
         });
-        maxPanel.addChild(new Label(mc, this).setText("Maximum height:")).addChild(maxyTextField);
+
+        minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
+
+        players = createStyledList();
+        Slider playerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
+        Panel playersPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 30, 72))
+                .setLayout(new HorizontalLayout().setHorizontalMargin(1)).addChild(players).addChild(playerSlider);
+
+        Panel controlPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(25, 118, ENV_WIDTH - 30, 16))
+                .setLayout(new HorizontalLayout().setHorizontalMargin(1).setVerticalMargin(0).setSpacing(1));
+        ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices("BL", "WL")
+                .setChoiceTooltip("BL", "Players in the list above will not get the effects")
+                .setChoiceTooltip("WL", "Players in the list above will get the effects");
+        Button addButton = new Button(mc, this).setText("+").setTooltips("Add a player to the list");
+        Button delButton = new Button(mc, this).setText("-").setTooltips("Remove selected player from the list");
+        TextField playerField = new TextField(mc, this);
 
         initRedstoneMode();
+        controlPanel.addChild(blacklist).addChild(addButton).addChild(delButton).addChild(playerField).addChild(redstoneMode);
 
-        toplevel.addChild(radiusPanel).addChild(minPanel).addChild(maxPanel).addChild(redstoneMode);
+        toplevel.addChild(radiusPanel).addChild(minPanel).addChild(playersPanel).addChild(controlPanel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -93,6 +111,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
+                setDesiredHeight(16).
+                setDesiredWidth(16).
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
                     public void choiceChanged(Widget parent, String newChoice) {
@@ -102,7 +122,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(152, 118, 16, 16));
+//        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(152, 118, 16, 16));
         redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
