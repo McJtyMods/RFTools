@@ -9,8 +9,8 @@ import mcjty.gui.events.ValueEvent;
 import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.PositionalLayout;
-import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Button;
+import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.gui.widgets.TextField;
@@ -30,6 +30,8 @@ import java.util.List;
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
     public static final int ENV_WIDTH = 194;
     public static final int ENV_HEIGHT = 224;
+    public static final String MODE_BLACKLIST = "BL";
+    public static final String MODE_WHITELIST = "WL";
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/environmentalcontroller.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -113,9 +115,20 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Panel controlPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(25, 118, ENV_WIDTH - 30, 16))
                 .setLayout(new HorizontalLayout().setHorizontalMargin(1).setVerticalMargin(0).setSpacing(1));
-        ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices("BL", "WL")
-                .setChoiceTooltip("BL", "Players in the list above will not get the effects")
-                .setChoiceTooltip("WL", "Players in the list above will get the effects");
+        ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices(MODE_BLACKLIST, MODE_WHITELIST)
+                .setChoiceTooltip(MODE_BLACKLIST, "Players in the list above will not get the effects")
+                .setChoiceTooltip(MODE_WHITELIST, "Players in the list above will get the effects")
+                .addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        changeBlacklistMode(newChoice);
+                    }
+                });
+        if (tileEntity.isWhitelistMode()) {
+            blacklist.setChoice(MODE_WHITELIST);
+        } else {
+            blacklist.setChoice(MODE_BLACKLIST);
+        }
         addButton = new Button(mc, this).setText("+").setTooltips("Add a player to the list").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
@@ -158,6 +171,10 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+    }
+
+    private void changeBlacklistMode(String newAccess) {
+        sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETBLACKLIST, new Argument("blacklist", MODE_BLACKLIST.equals(newAccess)));
     }
 
     private void changeRedstoneMode() {

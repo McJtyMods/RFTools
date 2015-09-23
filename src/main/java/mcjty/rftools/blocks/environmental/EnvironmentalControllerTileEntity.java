@@ -24,6 +24,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
     public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_SETBLACKLIST = "setBlacklist";
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_GETPLAYERS = "getPlayers";
@@ -34,6 +35,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
     private Set<String> players = new HashSet<String>();
+    private boolean whitelistMode = false;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
     private int miny = 30;
@@ -48,6 +50,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
+    }
+
+    public boolean isWhitelistMode() {
+        return whitelistMode;
     }
 
     public List<PlayerName> getPlayers() {
@@ -329,6 +335,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         int m = tagCompound.getByte("rsMode");
         redstoneMode = RedstoneMode.values()[m];
 
+        whitelistMode = tagCompound.getBoolean("whitelist");
+
         players.clear();
         NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
@@ -364,6 +372,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         tagCompound.setInteger("miny", miny);
         tagCompound.setInteger("maxy", maxy);
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+
+        tagCompound.setBoolean("whitelist", whitelistMode);
 
         NBTTagList playerTagList = new NBTTagList();
         for (String player : players) {
