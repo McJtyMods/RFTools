@@ -334,9 +334,16 @@ public class ScreenBlock extends GenericRFToolsBlock {
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            boolean large = tagCompound.getBoolean("large");
+            int size;
+            if (tagCompound.hasKey("large")) {
+                size = tagCompound.getBoolean("large") ? ScreenTileEntity.SIZE_LARGE : ScreenTileEntity.SIZE_NORMAL;
+            } else {
+                size = tagCompound.getInteger("size");
+            }
             boolean transparent = tagCompound.getBoolean("transparent");
-            if (large) {
+            if (size == ScreenTileEntity.SIZE_HUGE) {
+                list.add(EnumChatFormatting.BLUE + "Huge screen.");
+            } else if (size == ScreenTileEntity.SIZE_LARGE) {
                 list.add(EnumChatFormatting.BLUE + "Large screen.");
             }
             if (transparent) {
