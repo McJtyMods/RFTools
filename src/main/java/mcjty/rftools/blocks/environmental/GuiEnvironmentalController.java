@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.List;
 
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
-    public static final int ENV_WIDTH = 179;
+    public static final int ENV_WIDTH = 194;
     public static final int ENV_HEIGHT = 224;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/environmentalcontroller.png");
