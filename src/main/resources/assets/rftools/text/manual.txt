@@ -660,7 +660,7 @@ the amount of fluids in a tank, the time of the day, simple text,
 the amount of RF left in a dimension and so on. More modules
 are planned for the future.
 
-There are large and transparent screens variations of the
+There are large, huge and transparent screen variations of the
 screen. You can get those by using a wrench on the screen.
 You can also color a screen by selecting it with a dye item.
 {-------------------------------------------------------------}
