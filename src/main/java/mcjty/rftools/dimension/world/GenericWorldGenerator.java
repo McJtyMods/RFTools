@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.types.FeatureType;
+import mcjty.rftools.dimension.world.types.TerrainType;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -273,6 +274,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
         }
 
         boolean shelter = information.isShelter();
+        if (information.getTerrainType() == TerrainType.TERRAIN_LIQUID) {
+            shelter = true;
+        }
         int bounds = 3;
         if (shelter) {
             bounds = 4;

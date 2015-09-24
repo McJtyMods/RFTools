@@ -94,10 +94,12 @@ public class TerrainDimletType implements IDimletType {
 
     @Override
     public float getModifierCreateCostFactor(DimletType modifierType, DimletKey key) {
+        TerrainType terrainType = DimletObjectMapping.idToTerrainType.get(key);
+
         if (modifierType == DimletType.DIMLET_MATERIAL) {
-            return materialCreationCostFactor;
+            return materialCreationCostFactor * terrainType.getMaterialCostFactor();
         } else if (modifierType == DimletType.DIMLET_LIQUID) {
-            return liquidCreationCostFactor;
+            return liquidCreationCostFactor * terrainType.getLiquidCostFactor();
         } else {
             return 1.0f;
         }
@@ -105,10 +107,12 @@ public class TerrainDimletType implements IDimletType {
 
     @Override
     public float getModifierMaintainCostFactor(DimletType modifierType, DimletKey key) {
+        TerrainType terrainType = DimletObjectMapping.idToTerrainType.get(key);
+
         if (modifierType == DimletType.DIMLET_MATERIAL) {
-            return materialMaintenanceCostFactor;
+            return materialMaintenanceCostFactor * terrainType.getMaterialCostFactor();
         } else if (modifierType == DimletType.DIMLET_LIQUID) {
-            return liquidMaintenanceCostFactor;
+            return liquidMaintenanceCostFactor * terrainType.getLiquidCostFactor();
         } else {
             return 1.0f;
         }
@@ -116,10 +120,12 @@ public class TerrainDimletType implements IDimletType {
 
     @Override
     public float getModifierTickCostFactor(DimletType modifierType, DimletKey key) {
+        TerrainType terrainType = DimletObjectMapping.idToTerrainType.get(key);
+
         if (modifierType == DimletType.DIMLET_MATERIAL) {
-            return materialTickCostFactor;
+            return materialTickCostFactor * terrainType.getMaterialCostFactor();
         } else if (modifierType == DimletType.DIMLET_LIQUID) {
-            return liquidTickCostFactor;
+            return liquidTickCostFactor * terrainType.getLiquidCostFactor();
         } else {
             return 1.0f;
         }

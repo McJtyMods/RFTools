@@ -163,6 +163,9 @@ public class GenericChunkProvider implements IChunkProvider {
             case TERRAIN_FLOODED_CAVERN:
                 terrainGenerator = new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128);
                 break;
+            case TERRAIN_LIQUID:
+                terrainGenerator = new LiquidTerrainGenerator();
+                break;
             default:
                 terrainGenerator = new VoidTerrainGenerator();
                 break;
