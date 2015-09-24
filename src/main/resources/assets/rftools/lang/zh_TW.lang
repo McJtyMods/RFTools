@@ -81,6 +81,10 @@ item.FlightEModule.name=飛行模塊
 item.PeacefulEModule.name=和平模塊
 item.WaterBreathingEModule.name=Water Breathing Module
 item.NightVisionEModule.name=Night Vision Module
+item.BlindnessEModule.name=Blindness Module
+item.WeaknessEModule.name=Weakness Module
+item.PoisonEModule.name=Poison Module
+item.SlownessEModule.name=Slowness Module
 
 item.DimletBase.name=信息卡基礎部件
 item.DimletControlCircuit0.name=信息卡控制電路

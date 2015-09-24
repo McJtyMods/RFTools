@@ -84,6 +84,10 @@ item.FlightEModule.name=Flugmodul
 item.PeacefulEModule.name=Friedensmodul
 item.WaterBreathingEModule.name=Wasseratmungmodul
 item.NightVisionEModule.name=Nachtsichtmodul
+item.BlindnessEModule.name=Blindness Module
+item.WeaknessEModule.name=Weakness Module
+item.PoisonEModule.name=Poison Module
+item.SlownessEModule.name=Slowness Module
 
 item.DimletBase.name=Dimlet Basisteil
 item.DimletControlCircuit0.name=Dimlet Steuerelektronik Rarität 0
