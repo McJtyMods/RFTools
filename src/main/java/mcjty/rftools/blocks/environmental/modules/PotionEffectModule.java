@@ -47,10 +47,12 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double pz = player.posZ;
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
-                    player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS*3, amplifier, true));
-                    PlayerBuff buff = getBuff();
-                    if (buff != null) {
-                        BuffProperties.addBuff(player, buff, MAXTICKS);
+                    if (controllerTileEntity.isPlayerAffected(player)) {
+                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS * 3, amplifier, true));
+                        PlayerBuff buff = getBuff();
+                        if (buff != null) {
+                            BuffProperties.addBuff(player, buff, MAXTICKS);
+                        }
                     }
                 }
             }
