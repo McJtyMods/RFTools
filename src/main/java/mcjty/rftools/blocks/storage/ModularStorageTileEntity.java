@@ -392,8 +392,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             return;
         }
 
-        System.out.println("copyToModule: stack = " + stack);
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
+            remoteId = 0;
             return;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -415,8 +415,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ISide
             numStacks = -1;
             return;
         }
-
-        System.out.println("copyFromModule: stack = " + stack);
 
         remoteId = 0;
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
