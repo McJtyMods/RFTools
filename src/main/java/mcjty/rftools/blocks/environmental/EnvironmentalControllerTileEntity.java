@@ -56,7 +56,15 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return whitelistMode;
     }
 
-    public List<PlayerName> getPlayers() {
+    public boolean isPlayerAffected(EntityPlayer player) {
+        if (whitelistMode) {
+            return players.contains(player.getDisplayName());
+        } else {
+            return !players.contains(player.getDisplayName());
+        }
+    }
+
+    public List<PlayerName> getPlayersAsList() {
         List<PlayerName> p = new ArrayList<PlayerName>();
         for (String player : players) {
             p.add(new PlayerName(player));
@@ -180,7 +188,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             consumeEnergy(rfNeeded);
             for (EnvironmentModule module : environmentModules) {
                 module.activate(true);
-                module.tick(worldObj, xCoord, yCoord, zCoord, radius, miny, maxy);
+                module.tick(worldObj, xCoord, yCoord, zCoord, radius, miny, maxy, this);
             }
             if (!active) {
                 active = true;
@@ -431,7 +439,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getPlayers();
+            return getPlayersAsList();
         }
         return null;
     }

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
+import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -19,12 +20,12 @@ public class PeacefulEModule extends BuffEModule {
     }
 
     @Override
-    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
+    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         if (!isActive()) {
             return;
         }
 
-        super.tick(world, x, y, z, radius, miny, maxy);
+        super.tick(world, x, y, z, radius, miny, maxy, controllerTileEntity);
         PeacefulAreaManager.markArea(new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId), radius, miny, maxy);
     }
 }

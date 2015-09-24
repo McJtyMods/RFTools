@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -24,7 +25,7 @@ public abstract class BuffEModule implements EnvironmentModule {
     }
 
     @Override
-    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
+    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         if (!active) {
             return;
         }
@@ -44,7 +45,9 @@ public abstract class BuffEModule implements EnvironmentModule {
                 double pz = player.posZ;
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
-                    BuffProperties.addBuff(player, buff, MAXTICKS);
+                    if (controllerTileEntity.isPlayerAffected(player)) {
+                        BuffProperties.addBuff(player, buff, MAXTICKS);
+                    }
                 }
             }
         }
