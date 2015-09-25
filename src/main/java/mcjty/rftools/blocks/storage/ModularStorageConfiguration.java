@@ -31,6 +31,10 @@ public class ModularStorageConfiguration {
 
     public static boolean autofocusSearch = true;   // If true we set auto focus on the search field when opening the GUI.
 
+    public static int height1 = 236;
+    public static int height2 = 320;
+    public static int height3 = 490;
+
     public static Map<String,String> categoryMapper = new HashMap<String, String>();
 
     public static void init(Configuration cfg) {
@@ -60,6 +64,10 @@ public class ModularStorageConfiguration {
 
         autofocusSearch = cfg.get(CATEGORY_STORAGE, "autofocusSearch", autofocusSearch,
                 "If true we automatically set the focus on the search field when opening the GUI for the modular storage. Set to false if you don't want that").getBoolean();
+
+        height1 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height1, "The height for the smallest style modular storage GUI").getInt();
+        height2 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height2, "The height for the middle style modular storage GUI").getInt();
+        height3 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height3, "The height for the tallest style modular storage GUI").getInt();
 
         initCategories();
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);

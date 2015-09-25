@@ -45,9 +45,9 @@ import java.util.List;
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
     public static final int STORAGE_WIDTH = 256;
-    public static final int STORAGE_HEIGHT0 = 236;
-    public static final int STORAGE_HEIGHT1 = 320;
-    public static final int STORAGE_HEIGHT2 = 490;
+    public static final int STORAGE_HEIGHT0 = ModularStorageConfiguration.height1;
+    public static final int STORAGE_HEIGHT1 = ModularStorageConfiguration.height2;
+    public static final int STORAGE_HEIGHT2 = ModularStorageConfiguration.height3;
 
     public static final String VIEW_LIST = "list";
     public static final String VIEW_COLUMNS = "columns";
