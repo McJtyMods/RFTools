@@ -10,6 +10,7 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.types.EffectType;
+import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
@@ -33,6 +34,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 
@@ -279,4 +281,14 @@ public class ForgeEventHandlers {
         }
     }
 
+    @SubscribeEvent
+    public void onReplaceBiomeBlocks(ChunkProviderEvent.ReplaceBiomeBlocks event) {
+        World world = event.world;
+        int id = world.provider.dimensionId;
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation information = dimensionManager.getDimensionInformation(id);
+        if (information != null && information.hasFeatureType(FeatureType.FEATURE_CLEAN)) {
+            event.setResult(Event.Result.DENY);
+        }
+    }
 }

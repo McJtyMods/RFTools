@@ -627,6 +627,7 @@ public class KnownDimletConfiguration {
         initFeatureItem(cfg, "Huge Liquid Orbs", FeatureType.FEATURE_HUGELIQUIDORBS, mapping, master);
         initFeatureItem(cfg, "No Dimlet Buildings", FeatureType.FEATURE_NODIMLETBUILDINGS, mapping, master);
         initFeatureItem(cfg, "Pyramids", FeatureType.FEATURE_PYRAMIDS, mapping, master);
+        initFeatureItem(cfg, "Clean", FeatureType.FEATURE_CLEAN, mapping, master);
 //        initFeatureItem(cfg, "Dense Caves", FeatureType.FEATURE_DENSE_CAVES, mapping);
         addExtraInformation(new DimletKey(DimletType.DIMLET_FEATURE, "None"), "With this none dimlet you can disable", "all special features");
 

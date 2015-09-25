@@ -33,6 +33,7 @@ import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.village.VillageSetup;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
@@ -120,6 +121,8 @@ public abstract class CommonProxy {
         FMLCommonHandler.instance().bus().register(new ClientDisconnectEvent());
         MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        MinecraftForge.ORE_GEN_BUS.register(new ForgeOregenHandlers());
+        MinecraftForge.TERRAIN_GEN_BUS.register(new ForgeTerrainGenHandlers());
         FMLCommonHandler.instance().bus().register(new FMLEventHandlers());
         FMLCommonHandler.instance().bus().register(new DimensionTickEvent());
     }
