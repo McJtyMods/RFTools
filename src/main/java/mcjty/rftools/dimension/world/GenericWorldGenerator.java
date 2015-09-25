@@ -265,7 +265,12 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         int midx = 8;
         int midz = 8;
-        int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
+        int starty;
+        if (information.getTerrainType() == TerrainType.TERRAIN_SOLID) {
+            starty = 64;
+        } else {
+            starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
+        }
         if (starty == -1) {
             // No suitable spot. We will carve something out.
             starty = 64;
