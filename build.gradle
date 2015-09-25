@@ -44,7 +44,7 @@ repositories {
 
 apply plugin: 'forge'
 
-version = "3.35"
+version = "3.40"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
