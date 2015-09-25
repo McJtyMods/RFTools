@@ -608,6 +608,8 @@ public class KnownDimletConfiguration {
         initTerrainItem(cfg, "Liquid", TerrainType.TERRAIN_LIQUID, mapping, master);
         initTerrainItem(cfg, "Solid", TerrainType.TERRAIN_SOLID, mapping, master);
         initTerrainItem(cfg, "Waves", TerrainType.TERRAIN_WAVES, mapping, master);
+        initTerrainItem(cfg, "Filled Waves", TerrainType.TERRAIN_FILLEDWAVES, mapping, master);
+        initTerrainItem(cfg, "Rough", TerrainType.TERRAIN_ROUGH, mapping, master);
 
         initFeatureItem(cfg, "None", FeatureType.FEATURE_NONE, mapping, master);
         initFeatureItem(cfg, "Caves", FeatureType.FEATURE_CAVES, mapping, master);

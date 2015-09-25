@@ -4,10 +4,12 @@ import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
-public class WavesTerrainGenerator extends NormalTerrainGenerator {
+import java.util.Random;
+
+public class RoughTerrainGenerator extends NormalTerrainGenerator {
     private final boolean filled;
 
-    public WavesTerrainGenerator(boolean filled) {
+    public RoughTerrainGenerator(boolean filled) {
         super();
         this.filled = filled;
     }
@@ -18,12 +20,12 @@ public class WavesTerrainGenerator extends NormalTerrainGenerator {
         byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
         Block baseFluid = provider.dimensionInformation.getFluidForTerrain();
 
+        Random random = new Random(chunkX * 13L + chunkZ * 577L);
+
         int index = 0;
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                double sin = Math.sin((chunkX * 16 + x) / 16.0f);
-                double cos = Math.cos((chunkZ * 16 + z) / 16.0f);
-                byte waterLevel = (byte) (63 + sin * cos * 16);
+                byte waterLevel = (byte) (63 + random.nextFloat() * 32 - 16);
                 int height = 0;
                 while (height < DimletConfiguration.bedrockLayer) {
                     aBlock[index] = Blocks.bedrock;

@@ -170,7 +170,13 @@ public class GenericChunkProvider implements IChunkProvider {
                 terrainGenerator = new FlatTerrainGenerator((byte) 127);
                 break;
             case TERRAIN_WAVES:
-                terrainGenerator = new WavesTerrainGenerator();
+                terrainGenerator = new WavesTerrainGenerator(false);
+                break;
+            case TERRAIN_FILLEDWAVES:
+                terrainGenerator = new WavesTerrainGenerator(true);
+                break;
+            case TERRAIN_ROUGH:
+                terrainGenerator = new RoughTerrainGenerator(false);
                 break;
             default:
                 terrainGenerator = new VoidTerrainGenerator();
