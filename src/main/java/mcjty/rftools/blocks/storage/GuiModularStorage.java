@@ -174,13 +174,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 });
 
         if (tileEntity != null) {
-            filter.setText(tileEntity.getFilter());
+            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tileEntity.getFilter());
             setViewMode(tileEntity.getViewMode());
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
         } else {
             NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound();
-            filter.setText(tagCompound.getString("filter"));
+            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
             setViewMode(tagCompound.getString("viewMode"));
             setSortMode(tagCompound.getString("sortMode"));
             groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
