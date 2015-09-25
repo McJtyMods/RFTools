@@ -16,8 +16,8 @@ public enum TerrainType {
     TERRAIN_FLOODED_CAVERN(true, true, 1, 1.5f),
     TERRAIN_NEARLANDS(false, true, 1, 1),
     TERRAIN_LIQUID(true, true, 0.3f, 2),
-    TERRAIN_SOLID(false, true, 2, 0.5f),
-    TERRAIN_WAVES(false, true, 1, 1);
+    TERRAIN_SOLID(false, true, 2, 0.6f),
+    TERRAIN_WAVES(false, true, 1, 0.6f);
 
     private final boolean noHorizon;
     private final boolean sky;
