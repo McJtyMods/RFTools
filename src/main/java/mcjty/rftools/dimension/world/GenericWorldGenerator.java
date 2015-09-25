@@ -31,7 +31,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
         if (manager.getDimensionDescriptor(world.provider.dimensionId) == null) {
-            return; // Not one of RFTools dimensions
+            return; // Not an RFTools dimension
         }
 
         DimensionInformation information = manager.getDimensionInformation(world.provider.dimensionId);
