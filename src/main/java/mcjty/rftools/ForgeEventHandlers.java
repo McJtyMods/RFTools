@@ -284,6 +284,9 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onReplaceBiomeBlocks(ChunkProviderEvent.ReplaceBiomeBlocks event) {
         World world = event.world;
+        if (world == null) {
+            return;
+        }
         int id = world.provider.dimensionId;
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
         DimensionInformation information = dimensionManager.getDimensionInformation(id);
