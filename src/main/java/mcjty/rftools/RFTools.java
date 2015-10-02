@@ -35,6 +35,7 @@ import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Logging;
+import mcjty.wailasupport.WailaCompatibility;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +56,7 @@ public class RFTools implements ModBase {
     public static final String VERSION = "3.41";
     public static final String MIN_FORGE_VER = "10.13.2.1291";
     public static final String MIN_COFHCORE_VER = "1.7.10R3.0.0B9";
-    public static final String MIN_MCJTYLIB_VER = "1.4.0";
+    public static final String MIN_MCJTYLIB_VER = "1.6.0";
 
     @SidedProxy(clientSide="mcjty.rftools.ClientProxy", serverSide="mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
@@ -150,7 +151,8 @@ public class RFTools implements ModBase {
     public void preInit(FMLPreInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
-        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
+        WailaCompatibility.register();
+//        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.invisibleShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.solidShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenHitBlock));
