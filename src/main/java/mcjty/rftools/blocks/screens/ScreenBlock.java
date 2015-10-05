@@ -93,7 +93,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 2) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         setInvisibleBlockSafe(world, x, y, z, -i, -j, 0, meta);
                     }
                 }
@@ -103,7 +103,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 3) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         setInvisibleBlockSafe(world, x, y, z, i, -j, 0, meta);
                     }
                 }
@@ -113,7 +113,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 4) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         setInvisibleBlockSafe(world, x, y, z, 0, -i, j, meta);
                     }
                 }
@@ -123,7 +123,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 5) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         setInvisibleBlockSafe(world, x, y, z, 0, -i, -j, meta);
                     }
                 }
@@ -144,7 +144,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 2) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         clearInvisibleBlockSafe(world, x - i, y - j, z);
                     }
                 }
@@ -154,7 +154,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 3) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         clearInvisibleBlockSafe(world, x + i, y - j, z);
                     }
                 }
@@ -164,7 +164,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 4) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         clearInvisibleBlockSafe(world, x, y - i, z + j);
                     }
                 }
@@ -174,7 +174,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         if (meta == 5) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 && j != 0) {
+                    if (i != 0 || j != 0) {
                         clearInvisibleBlockSafe(world, x, y - i, z - j);
                     }
                 }
