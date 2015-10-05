@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -52,8 +53,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
-        boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
-
         if (!screenTileEntity.isTransparent()) {
             GL11.glDisable(GL11.GL_LIGHTING);
             renderScreenBoard(screenTileEntity.getSize(), screenTileEntity.getColor());
@@ -74,11 +73,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 //            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
-        if (lightingEnabled) {
-            GL11.glEnable(GL11.GL_LIGHTING);
-        }
-
         GL11.glDepthMask(true);
+        RenderHelper.disableStandardItemLighting();
+
         GL11.glPopMatrix();
     }
 
