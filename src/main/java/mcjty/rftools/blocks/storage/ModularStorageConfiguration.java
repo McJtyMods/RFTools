@@ -69,8 +69,8 @@ public class ModularStorageConfiguration {
                 "If true we clear the search field when opening the GUI for the modular storage. Set to false if you don't want that").getBoolean();
 
         height1 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height1, "The height for the smallest style modular storage GUI").getInt();
-        height2 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height2, "The height for the middle style modular storage GUI").getInt();
-        height3 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height3, "The height for the tallest style modular storage GUI").getInt();
+        height2 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight2", height2, "The height for the middle style modular storage GUI").getInt();
+        height3 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight3", height3, "The height for the tallest style modular storage GUI").getInt();
 
         initCategories();
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
