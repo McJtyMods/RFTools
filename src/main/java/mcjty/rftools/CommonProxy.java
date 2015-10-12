@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import mcjty.base.GeneralConfig;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
@@ -46,6 +47,8 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        GeneralConfig.preInit(e);
+
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
 
