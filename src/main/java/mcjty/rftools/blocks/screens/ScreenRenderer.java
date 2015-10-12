@@ -29,6 +29,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
+
         GL11.glPushMatrix();
         float f3;
 
@@ -69,14 +71,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.getSize());
-
-//            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
-        GL11.glDepthMask(true);
-        RenderHelper.disableStandardItemLighting();
-
         GL11.glPopMatrix();
+        GL11.glPopAttrib();
     }
 
     private Map<Integer, Object[]> updateScreenData(ScreenTileEntity screenTileEntity) {
