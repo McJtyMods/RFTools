@@ -559,7 +559,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         templateMeta = findTemplateMeta();
 
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord, templateMeta, ctrl);
+        findTemplateBlocks(coordinateSet, templateMeta, ctrl);
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
@@ -633,50 +633,72 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     /**
      * Find all template blocks recursively.
      * @param coordinateSet the set with coordinates to update during the search
-     * @param x current block
-     * @param y current block
-     * @param z current block
      * @param meta the metavalue for the shield template block we support
      * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, int meta, boolean ctrl) {
-        if (coordinateSet.size() >= supportedBlocks) {
-            return;
-        }
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int meta, boolean ctrl) {
+        Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
+
         if (ctrl) {
-            for (int xx = x-1 ; xx <= x+1 ; xx++) {
-                for (int yy = y-1 ; yy <= y+1 ; yy++) {
-                    for (int zz = z-1 ; zz <= z+1 ; zz++) {
-                        if (xx != x || yy != y || zz != z) {
-                            if (yy >= 0 && yy < worldObj.getHeight()) {
-                                Coordinate c = new Coordinate(xx, yy, zz);
-                                if (!coordinateSet.contains(c)) {
-                                    if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
-                                        int m = worldObj.getBlockMetadata(xx, yy, zz);
-                                        if (m == meta) {
-                                            coordinateSet.add(c);
-                                            findTemplateBlocks(coordinateSet, xx, yy, zz, meta, ctrl);
-                                        }
-                                    }
-                                }
+            addToTodoCornered(coordinateSet, todo, getCoordinate(), meta);
+            while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
+                Coordinate coordinate = todo.pollFirst();
+                coordinateSet.add(coordinate);
+                addToTodoCornered(coordinateSet, todo, coordinate, meta);
+            }
+        } else {
+            addToTodoStraight(coordinateSet, todo, getCoordinate(), meta);
+            while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
+                Coordinate coordinate = todo.pollFirst();
+                coordinateSet.add(coordinate);
+                addToTodoStraight(coordinateSet, todo, coordinate, meta);
+            }
+        }
+    }
+
+    private void addToTodoStraight(Set<Coordinate> coordinateSet, Deque<Coordinate> todo, Coordinate coordinate, int meta) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        int z = coordinate.getZ();
+        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+            int xx = x + dir.offsetX;
+            int yy = y + dir.offsetY;
+            int zz = z + dir.offsetZ;
+            if (yy >= 0 && yy < worldObj.getHeight()) {
+                Coordinate c = new Coordinate(xx, yy, zz);
+                if (!coordinateSet.contains(c)) {
+                    if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                        int m = worldObj.getBlockMetadata(xx, yy, zz);
+                        if (m == meta) {
+                            if (!todo.contains(c)) {
+                                todo.addLast(c);
                             }
                         }
                     }
                 }
             }
-        } else {
-            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-                int xx = x + dir.offsetX;
-                int yy = y + dir.offsetY;
-                int zz = z + dir.offsetZ;
-                if (yy >= 0 && yy < worldObj.getHeight()) {
-                    Coordinate c = new Coordinate(xx, yy, zz);
-                    if (!coordinateSet.contains(c)) {
-                        if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
-                            int m = worldObj.getBlockMetadata(xx, yy, zz);
-                            if (m == meta) {
-                                coordinateSet.add(c);
-                                findTemplateBlocks(coordinateSet, xx, yy, zz, meta, ctrl);
+        }
+    }
+
+    private void addToTodoCornered(Set<Coordinate> coordinateSet, Deque<Coordinate> todo, Coordinate coordinate, int meta) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        int z = coordinate.getZ();
+        for (int xx = x-1 ; xx <= x+1 ; xx++) {
+            for (int yy = y-1 ; yy <= y+1 ; yy++) {
+                for (int zz = z-1 ; zz <= z+1 ; zz++) {
+                    if (xx != x || yy != y || zz != z) {
+                        if (yy >= 0 && yy < worldObj.getHeight()) {
+                            Coordinate c = new Coordinate(xx, yy, zz);
+                            if (!coordinateSet.contains(c)) {
+                                if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                                    int m = worldObj.getBlockMetadata(xx, yy, zz);
+                                    if (m == meta) {
+                                        if (!todo.contains(c)) {
+                                            todo.addLast(c);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
