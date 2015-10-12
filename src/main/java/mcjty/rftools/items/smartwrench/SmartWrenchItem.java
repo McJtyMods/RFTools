@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 @Optional.InterfaceList({
-        @Optional.Interface(iface = "cofh.api.item.IToolHammer", modid = "CoFHCore")})
+        @Optional.Interface(iface = "cofh.api.item.IToolHammer", modid = "CoFHLib")})
 public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     private IIcon wrenchIcon;
     private IIcon selectIcon;
@@ -32,14 +32,14 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    @Optional.Method(modid = "CoFHCore")
+    @Optional.Method(modid = "CoFHLib")
     public boolean isUsable(ItemStack item, EntityLivingBase user, int x, int y, int z) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Override
-    @Optional.Method(modid = "CoFHCore")
+    @Optional.Method(modid = "CoFHLib")
     public void toolUsed(ItemStack item, EntityLivingBase user, int x, int y, int z) {
     }
 
