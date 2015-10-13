@@ -14,8 +14,10 @@ import mcjty.entity.SyncedValueList;
 import mcjty.network.Argument;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
@@ -39,7 +42,7 @@ import java.util.*;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IInventory, SimpleComponent, IPeripheral {
+public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IInventory, SmartWrenchSelector, SimpleComponent, IPeripheral {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -567,7 +570,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         templateMeta = findTemplateMeta();
 
         Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, templateMeta, ctrl);
+        findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
         shieldBlocks.clear();
         for (Coordinate c : coordinateSet) {
             shieldBlocks.add(c);
@@ -592,11 +595,41 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return meta;
     }
 
+    @Override
+    public void selectBlock(EntityPlayer player, int x, int y, int z) {
+        if (!shieldActive) {
+            Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not active. Nothing happens!");
+            return;
+        }
+        Block origBlock = worldObj.getBlock(x, y, z);
+        Coordinate c = new Coordinate(x, y, z);
+        if (origBlock == ShieldSetup.shieldTemplateBlock) {
+            Set<Coordinate> templateBlocks = new HashSet<Coordinate>();
+            findTemplateBlocks(templateBlocks, worldObj.getBlockMetadata(x, y, z), false, c);
+
+            int[] camoId = calculateCamoId();
+            int cddata = calculateShieldCollisionData();
+            int damageBits = calculateDamageBits();
+            Block block = calculateShieldBlock(damageBits);
+            for (Coordinate templateBlock : templateBlocks) {
+                shieldBlocks.add(templateBlock);
+                updateShieldBlock(camoId, cddata, damageBits, block, templateBlock);
+            }
+        } else if (origBlock instanceof AbstractShieldBlock) {
+            shieldBlocks.remove(c);
+            worldObj.setBlock(x, y, z, ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+        } else {
+            Logging.message(player, EnumChatFormatting.YELLOW + "The selected shield can't do anything with this block!");
+            return;
+        }
+        markDirty();
+        notifyBlockUpdate();
+    }
+
     /**
      * Update all shield blocks. Possibly creating the shield.
      */
     private void updateShield() {
-        Coordinate thisCoordinate = new Coordinate(xCoord, yCoord, zCoord);
         int[] camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
         int damageBits = calculateDamageBits();
@@ -605,20 +638,24 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             if (Blocks.air.equals(block)) {
                 worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
             } else {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
-                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof ShieldBlockTileEntity) {
-                    ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
-                    shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
-                    shieldBlockTileEntity.setShieldBlock(thisCoordinate);
-                    shieldBlockTileEntity.setDamageBits(damageBits);
-                    shieldBlockTileEntity.setCollisionData(cddata);
-                    shieldBlockTileEntity.setShieldColor(shieldColor);
-                }
+                updateShieldBlock(camoId, cddata, damageBits, block, c);
             }
         }
         markDirty();
         notifyBlockUpdate();
+    }
+
+    private void updateShieldBlock(int[] camoId, int cddata, int damageBits, Block block, Coordinate c) {
+        worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
+        TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (te instanceof ShieldBlockTileEntity) {
+            ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
+            shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
+            shieldBlockTileEntity.setShieldBlock(getCoordinate());
+            shieldBlockTileEntity.setDamageBits(damageBits);
+            shieldBlockTileEntity.setCollisionData(cddata);
+            shieldBlockTileEntity.setShieldColor(shieldColor);
+        }
     }
 
     public void decomposeShield() {
@@ -644,18 +681,18 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
      * @param meta the metavalue for the shield template block we support
      * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int meta, boolean ctrl) {
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int meta, boolean ctrl, Coordinate start) {
         Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
 
         if (ctrl) {
-            addToTodoCornered(coordinateSet, todo, getCoordinate(), meta);
+            addToTodoCornered(coordinateSet, todo, start, meta);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 Coordinate coordinate = todo.pollFirst();
                 coordinateSet.add(coordinate);
                 addToTodoCornered(coordinateSet, todo, coordinate, meta);
             }
         } else {
-            addToTodoStraight(coordinateSet, todo, getCoordinate(), meta);
+            addToTodoStraight(coordinateSet, todo, start, meta);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 Coordinate coordinate = todo.pollFirst();
                 coordinateSet.add(coordinate);

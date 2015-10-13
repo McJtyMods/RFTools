@@ -639,6 +639,13 @@ will be 'generic' but you can also set it to 'player'. This
 will consume more energy but you will get XP orbs as well
 as loot that you normally only get when a mob is killed
 by the player.
+
+If you hit the shield projector with your left mouse instead of
+the right mouse it will also scan on the corners for template
+blocks. Additionally using the smart wrench it is possible
+to add or remove shield templates to an already formed shield.
+Note that doing this will not be remembered if you decompose
+the shield again.
 {-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
