@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shield;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 
 public class SolidShieldBlock extends AbstractShieldBlock {
@@ -38,7 +39,8 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
-        if (world.getBlock(x, y, z) == ShieldSetup.solidShieldBlock) {
+        Block block = world.getBlock(x, y, z);
+        if (block == ShieldSetup.solidShieldBlock || block == ShieldSetup.noTickSolidShieldBlock) {
             return false;
         }
         return true;

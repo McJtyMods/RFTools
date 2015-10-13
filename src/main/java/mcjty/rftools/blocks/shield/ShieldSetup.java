@@ -16,7 +16,9 @@ public class ShieldSetup {
     public static ShieldBlock shieldBlock2;
     public static ShieldBlock shieldBlock3;
     public static InvisibleShieldBlock invisibleShieldBlock;
+    public static NoTickInvisibleShieldBlock noTickInvisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
+    public static NoTickSolidShieldBlock noTickSolidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static void setupBlocks() {
@@ -34,11 +36,18 @@ public class ShieldSetup {
 
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
+        noTickInvisibleShieldBlock = new NoTickInvisibleShieldBlock();
+        GameRegistry.registerBlock(noTickInvisibleShieldBlock, "noTickInvisibleShieldBlock");
 
         if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
             solidShieldBlock = new SolidShieldBlock();
             GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
             GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
+
+            noTickSolidShieldBlock = new NoTickSolidShieldBlock();
+            GameRegistry.registerBlock(noTickSolidShieldBlock, "noTickolidShieldBlock");
+            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, "NoTickShieldBlockTileEntity");
+
             shieldTemplateBlock = new ShieldTemplateBlock();
             GameRegistry.registerBlock(shieldTemplateBlock, ShieldTemplateBlock.ShieldTemplateItemBlock.class, "shieldTemplateBlock");
         }

@@ -388,15 +388,23 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return new int[] { camoId, meta, te };
     }
 
-    private Block calculateShieldBlock() {
+    private Block calculateShieldBlock(int damageBits) {
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.air;
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
-            return ShieldSetup.invisibleShieldBlock;
+            if (damageBits == 0) {
+                return ShieldSetup.noTickInvisibleShieldBlock;
+            } else {
+                return ShieldSetup.invisibleShieldBlock;
+            }
         }
 
-        return ShieldSetup.solidShieldBlock;
+        if (damageBits == 0) {
+            return ShieldSetup.noTickSolidShieldBlock;
+        } else {
+            return ShieldSetup.solidShieldBlock;
+        }
     }
 
     private int calculateDamageBits() {
@@ -591,8 +599,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         Coordinate thisCoordinate = new Coordinate(xCoord, yCoord, zCoord);
         int[] camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
-        Block block = calculateShieldBlock();
         int damageBits = calculateDamageBits();
+        Block block = calculateShieldBlock(damageBits);
         for (Coordinate c : shieldBlocks) {
             if (Blocks.air.equals(block)) {
                 worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());

@@ -154,8 +154,11 @@ public class RFTools implements ModBase {
         WailaCompatibility.register();
 //        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.invisibleShieldBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.noTickInvisibleShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.solidShieldBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.noTickSolidShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenHitBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenBlock));
     }
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.
