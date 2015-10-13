@@ -69,6 +69,7 @@ item.FilterModule.name=Storage Filter Module
 item.DimletModule.name=Dimlet Storage Module
 item.OreDictModule.name=Ore Dictionary Storage Module
 item.GenericModule.name=Generic Storage Module
+item.ShapeCard.name=Shape Card
 
 item.RegenerationEModule.name=Regeneration Module
 item.RegenerationPlusEModule.name=Regeneration Plus Module

@@ -14,6 +14,7 @@ import mcjty.entity.SyncedValueList;
 import mcjty.network.Argument;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
@@ -567,16 +568,97 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
     public void composeShield(boolean ctrl) {
-        templateMeta = findTemplateMeta();
+        if (isShapedShield()) {
+            shieldBlocks.clear();
 
-        Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
-        shieldBlocks.clear();
-        for (Coordinate c : coordinateSet) {
-            shieldBlocks.add(c);
+            // Special shaped mode.
+            ShapeCardItem.Shape shape = ShapeCardItem.getShape(stacks[ShieldContainer.SLOT_SHAPE]);
+            Coordinate dimension = ShapeCardItem.getDimension(stacks[ShieldContainer.SLOT_SHAPE]);
+            Coordinate offset = ShapeCardItem.getOffset(stacks[ShieldContainer.SLOT_SHAPE]);
+            switch (shape) {
+                case SHAPE_BOX:
+                    composeBoxShield(dimension, offset);
+                    break;
+                case SHAPE_TOPDOME:
+                    break;
+                case SHAPE_BOTTOMDOME:
+                    break;
+                case SHAPE_SPHERE:
+                    composeSphereShield(dimension, offset);
+                    break;
+            }
+        } else {
+            templateMeta = findTemplateMeta();
+
+            Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
+            findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
+            shieldBlocks.clear();
+            for (Coordinate c : coordinateSet) {
+                shieldBlocks.add(c);
+            }
         }
         shieldComposed = true;
         updateShield();
+    }
+
+    private boolean isShapedShield() {
+        return stacks[ShieldContainer.SLOT_SHAPE] != null;
+    }
+
+    private static float squaredDistance(Coordinate c, int x1, int y1, int z1) {
+        int x = c.getX();
+        int y = c.getY();
+        int z = c.getZ();
+        return (x1-x) * (x1-x) + (y1-y) * (y1-y) + (z1-z) * (z1-z);
+    }
+
+    private void composeSphereShield(Coordinate dimension, Coordinate offset) {
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        Coordinate center = new Coordinate(xCoord + offset.getX(), yCoord + offset.getY(), zCoord + offset.getZ());
+        Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        for (int ox = 0 ; ox < dx ; ox++) {
+            for (int oy = 0 ; oy < dy ; oy++) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    int x = tl.getX() + ox;
+                    int y = tl.getY() + oy;
+                    int z = tl.getZ() + oz;
+                    double distance = Math.sqrt(squaredDistance(center, x, y, z));
+//                    System.out.println("distance = " + distance + " (" + (int)distance + ") dx = " + dx);
+                    if (((int)distance) == (dx/2-1)){
+                        if (worldObj.isAirBlock(x, y, z) && shieldBlocks.size() < supportedBlocks - 1) {
+                            if (y >= 0 && y < 255) {
+                                shieldBlocks.add(new Coordinate(x, y, z));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void composeBoxShield(Coordinate dimension, Coordinate offset) {
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        for (int ox = 0 ; ox < dx ; ox++) {
+            for (int oy = 0 ; oy < dy ; oy++) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    if (ox == 0 || oy == 0 || oz == 0 || ox == (dx-1) || oy == (dy-1) || oz == (dz-1)) {
+                        int x = tl.getX() + ox;
+                        int y = tl.getY() + oy;
+                        int z = tl.getZ() + oz;
+                        if (worldObj.isAirBlock(x, y, z) && shieldBlocks.size() < supportedBlocks - 1) {
+                            shieldBlocks.add(new Coordinate(x, y, z));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private int findTemplateMeta() {
@@ -617,7 +699,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             }
         } else if (origBlock instanceof AbstractShieldBlock) {
             shieldBlocks.remove(c);
-            worldObj.setBlock(x, y, z, ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+            if (isShapedShield()) {
+                worldObj.setBlockToAir(x, y, z);
+            } else {
+                worldObj.setBlock(x, y, z, ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+            }
         } else {
             Logging.message(player, EnumChatFormatting.YELLOW + "The selected shield can't do anything with this block!");
             return;
@@ -662,10 +748,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         for (Coordinate c : shieldBlocks) {
             Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
             if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+                if (isShapedShield()) {
+                    worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
+                } else {
+                    worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+                }
             } else {
-                // No room, just spawn the block
-                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                if (!isShapedShield()) {
+                    // No room, just spawn the block
+                    BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                }
             }
         }
         shieldComposed = false;

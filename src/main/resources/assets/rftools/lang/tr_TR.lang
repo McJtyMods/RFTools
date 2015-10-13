@@ -69,6 +69,7 @@ item.FilterModule.name=Depolama Filtresi Modulü
 item.DimletModule.name=Dimlet Deposu Modulü
 item.OreDictModule.name=Ore Dictionary Deposu Modulü
 item.GenericModule.name=Genel Depolama Modulü
+item.ShapeCard.name=Shape Card
 
 item.RegenerationEModule.name=Yenilenme Modulü
 item.RegenerationPlusEModule.name=Yenilenme+ Modulü

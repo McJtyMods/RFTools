@@ -20,6 +20,10 @@ public class ShieldConfiguration {
     public static float damage = 5.0f;
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 256;
+    // Maximum shield offset when the shape card is used
+    public static int maxShieldOffset = 128;
+    // Maximum shield dimension when the shape card is used
+    public static int maxShieldDimension = 256;
 
     // Set to true to temporarily remove the shield blocks to make your world loadable again.
     public static boolean disableShieldBlocksToUncorruptWorld = false;
@@ -31,6 +35,10 @@ public class ShieldConfiguration {
                 "RF per tick that the shield block can receive").getInt();
         maxShieldSize = cfg.get(CATEGORY_SHIELD, "shieldMaxSize", maxShieldSize,
                 "Maximum size (in blocks) of a tier 1 shield").getInt();
+        maxShieldOffset = cfg.get(CATEGORY_SHIELD, "maxShieldOffset", maxShieldOffset,
+                "Maximum offset of the shape when a shape card is used").getInt();
+        maxShieldDimension = cfg.get(CATEGORY_SHIELD, "maxShieldDimension", maxShieldDimension,
+                "Maximum dimension of the shape when a shape card is used").getInt();
         rfBase = cfg.get(CATEGORY_SHIELD, "shieldRfBase", rfBase,
                 "Base amount of RF/tick for every block in the shield (while active)").getInt();
         rfCamo = cfg.get(CATEGORY_SHIELD, "shieldRfCamo", rfCamo,

@@ -69,6 +69,7 @@ item.FilterModule.name=Модуль «Фильтр для хранилища»
 item.DimletModule.name=Модуль «Хранилища димлетов»
 item.OreDictModule.name=Модуль «Хранилище по словарю руд»
 item.GenericModule.name=Модуль «Общее хранилище»
+item.ShapeCard.name=Shape Card
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»

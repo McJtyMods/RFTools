@@ -88,6 +88,7 @@ item.BlindnessEModule.name=Blindness Module
 item.WeaknessEModule.name=Weakness Module
 item.PoisonEModule.name=Poison Module
 item.SlownessEModule.name=Slowness Module
+item.ShapeCard.name=Shape Card
 
 item.DimletBase.name=Dimlet Basisteil
 item.DimletControlCircuit0.name=Dimlet Steuerelektronik Rarität 0
