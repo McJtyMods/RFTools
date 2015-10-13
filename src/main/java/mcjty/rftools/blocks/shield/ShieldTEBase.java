@@ -597,8 +597,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     @Override
     public void selectBlock(EntityPlayer player, int x, int y, int z) {
-        if (!shieldActive) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not active. Nothing happens!");
+        if (!shieldComposed) {
+            Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not composed. Nothing happens!");
             return;
         }
         Block origBlock = worldObj.getBlock(x, y, z);
