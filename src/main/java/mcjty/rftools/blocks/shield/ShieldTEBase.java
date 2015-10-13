@@ -683,6 +683,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not composed. Nothing happens!");
             return;
         }
+        float squaredDistance = getCoordinate().squaredDistance(x, y, z);
+        if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance * ShieldConfiguration.maxDisjointShieldDistance) {
+            Logging.message(player, EnumChatFormatting.YELLOW + "This template is too far to connect to the shield!!");
+            return;
+        }
+
         Block origBlock = worldObj.getBlock(x, y, z);
         Coordinate c = new Coordinate(x, y, z);
         if (origBlock == ShieldSetup.shieldTemplateBlock) {

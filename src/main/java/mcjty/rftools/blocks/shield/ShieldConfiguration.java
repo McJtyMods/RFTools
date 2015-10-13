@@ -24,6 +24,8 @@ public class ShieldConfiguration {
     public static int maxShieldOffset = 128;
     // Maximum shield dimension when the shape card is used
     public static int maxShieldDimension = 256;
+    // Maximum distance at which you can add disjoint shield sections to a composed shield
+    public static int maxDisjointShieldDistance = 64;
 
     // Set to true to temporarily remove the shield blocks to make your world loadable again.
     public static boolean disableShieldBlocksToUncorruptWorld = false;
@@ -39,6 +41,8 @@ public class ShieldConfiguration {
                 "Maximum offset of the shape when a shape card is used").getInt();
         maxShieldDimension = cfg.get(CATEGORY_SHIELD, "maxShieldDimension", maxShieldDimension,
                 "Maximum dimension of the shape when a shape card is used").getInt();
+        maxDisjointShieldDistance = cfg.get(CATEGORY_SHIELD, "maxDisjointShieldDistance", maxDisjointShieldDistance,
+                "Maximum distance at which you can add disjoint shield sections to a composed shield").getInt();
         rfBase = cfg.get(CATEGORY_SHIELD, "shieldRfBase", rfBase,
                 "Base amount of RF/tick for every block in the shield (while active)").getInt();
         rfCamo = cfg.get(CATEGORY_SHIELD, "shieldRfCamo", rfCamo,
