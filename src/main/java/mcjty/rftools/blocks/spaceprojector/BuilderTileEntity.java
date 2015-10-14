@@ -690,31 +690,44 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void handleBlockShaped() {
-        if (getCachedBlocks().contains(scan)) {
-            int rf = getEnergyStored(ForgeDirection.DOWN);
-            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
-            if (rfNeeded > rf) {
-                // Not enough energy.
+        for (int i = 0 ; i < 100 ; i++) {
+            if (scan == null) {
                 return;
             }
-
-            Block destBlock = worldObj.getBlock(scan.getX(), scan.getY(), scan.getZ());
-            if (isEmptyOrWater(destBlock)) {
-                BlockMeta block = consumeBlock(null, 0);
-                if (block == null) {
-                    return;
-                }
-
-                worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
-                worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
-                if (!silent) {
-                    RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
-                }
-
-                consumeEnergy(rfNeeded);
+            if (getCachedBlocks().contains(scan)) {
+                handleSingleBlock();
+                nextLocation();
+                return;
+            } else {
+                nextLocation();
             }
         }
-        nextLocation();
+    }
+
+    private boolean handleSingleBlock() {
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return true;
+        }
+
+        Block destBlock = worldObj.getBlock(scan.getX(), scan.getY(), scan.getZ());
+        if (isEmptyOrWater(destBlock)) {
+            BlockMeta block = consumeBlock(null, 0);
+            if (block == null) {
+                return true;
+            }
+
+            worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
+            worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
+            if (!silent) {
+                RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
+            }
+
+            consumeEnergy(rfNeeded);
+        }
+        return false;
     }
 
     private void handleBlock(World world) {
