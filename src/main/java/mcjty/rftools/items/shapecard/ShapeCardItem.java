@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
 import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -85,7 +86,8 @@ public class ShapeCardItem extends Item {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This item can be configured as a shape. You");
             list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
-            list.add(EnumChatFormatting.WHITE + "a shield of that shape.");
+            list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
+            list.add(EnumChatFormatting.WHITE + "actually build the shape");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -166,6 +168,25 @@ public class ShapeCardItem extends Item {
         return (x1-x) * (x1-x) + (y1-y) * (y1-y) + (z1-z) * (z1-z);
     }
 
+    public static Coordinate getMinCorner(Coordinate thisCoord, Coordinate dimension, Coordinate offset) {
+        int xCoord = thisCoord.getX();
+        int yCoord = thisCoord.getY();
+        int zCoord = thisCoord.getZ();
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        return new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+    }
+
+    public static Coordinate getMaxCorner(Coordinate thisCoord, Coordinate dimension, Coordinate offset) {
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        Coordinate minCorner = getMinCorner(thisCoord, dimension, offset);
+        return new Coordinate(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
+    }
+
+
     public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
         switch (shape) {
             case SHAPE_BOX:
@@ -198,9 +219,8 @@ public class ShapeCardItem extends Item {
                     int y = tl.getY() + oy;
                     int z = tl.getZ() + oz;
                     double distance = Math.sqrt(squaredDistance(center, x, y, z));
-//                    System.out.println("distance = " + distance + " (" + (int)distance + ") dx = " + dx);
                     if (((int)distance) == (dx/2-1)){
-                        if (worldObj.isAirBlock(x, y, z) && blocks.size() < maxSize - 1) {
+                        if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                             if (y >= 0 && y < 255) {
                                 blocks.add(new Coordinate(x, y, z));
                             }
@@ -227,7 +247,7 @@ public class ShapeCardItem extends Item {
                         int x = tl.getX() + ox;
                         int y = tl.getY() + oy;
                         int z = tl.getZ() + oz;
-                        if (worldObj.isAirBlock(x, y, z) && blocks.size() < maxSize - 1) {
+                        if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                             blocks.add(new Coordinate(x, y, z));
                         }
                     }

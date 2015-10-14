@@ -11,11 +11,14 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.network.Argument;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.network.Argument;
+import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
+import mcjty.varia.BlockMeta;
+import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -37,8 +40,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
@@ -91,6 +93,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int projDx;
     private int projDy;
     private int projDz;
+
+    // Cached set of blocks that we need to build in shaped mode
+    private Set<Coordinate> cachedBlocks = null;
 
     public BuilderTileEntity() {
         super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
@@ -244,8 +249,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
+    private boolean isShapeCard() {
+        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        if (itemStack == null || itemStack.stackSize == 0) {
+            return false;
+        }
+        return itemStack.getItem() == ModItems.shapeCardItem;
+    }
+
     private NBTTagCompound hasCard() {
-        ItemStack itemStack = inventoryHelper.getStackInSlot(0);
+        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
         if (itemStack == null || itemStack.stackSize == 0) {
             return null;
         }
@@ -254,7 +267,28 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return tagCompound;
     }
 
+    private void makeSupportBlocksShaped() {
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
+        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+        List<Coordinate> blocks = new ArrayList<Coordinate>();
+        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+        for (Coordinate block : blocks) {
+            if (worldObj.isAirBlock(block.getX(), block.getY(), block.getZ())) {
+                int error = SupportBlock.STATUS_OK;
+                worldObj.setBlock(block.getX(), block.getY(), block.getZ(), SpaceProjectorSetup.supportBlock, error, 3);
+                worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), error, 3);
+            }
+        }
+    }
+
     private void makeSupportBlocks() {
+        if (isShapeCard()) {
+            makeSupportBlocksShaped();
+            return;
+        }
+
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel != null) {
             int dimension = chamberChannel.getDimension();
@@ -293,7 +327,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private void clearSupportBlocksShaped() {
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
+        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+        List<Coordinate> blocks = new ArrayList<Coordinate>();
+        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+        for (Coordinate block : blocks) {
+            if (worldObj.getBlock(block.getX(), block.getY(), block.getZ()) == SpaceProjectorSetup.supportBlock) {
+                worldObj.setBlockToAir(block.getX(), block.getY(), block.getZ());
+            }
+        }
+    }
+
     public void clearSupportBlocks() {
+        if (isShapeCard()) {
+            clearSupportBlocksShaped();
+            return;
+        }
+
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel != null) {
             int dimension = chamberChannel.getDimension();
@@ -497,7 +550,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void restartScan() {
         if (loopMode || (powered > 0 && scan == null)) {
-            calculateBox();
+            if (isShapeCard()) {
+                calculateBoxShaped();
+            } else {
+                calculateBox();
+            }
             scan = minBox;
         } else {
             scan = null;
@@ -523,6 +580,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 //        }
     }
 
+
+    private void checkStateServerShaped() {
+        float factor = getInfusedFactor();
+        for (int i = 0 ; i < 1 + (factor * 20) ; i++) {
+            if (scan != null) {
+                handleBlockShaped();
+            }
+        }
+    }
+
+
     @Override
     protected void checkStateServer() {
         if (powered == 0 && loopMode) {
@@ -530,6 +598,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (scan == null) {
+            return;
+        }
+
+        if (isShapeCard()) {
+            checkStateServerShaped();
             return;
         }
 
@@ -555,6 +628,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private void calculateBoxShaped() {
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
+        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+
+        Coordinate minCorner = ShapeCardItem.getMinCorner(getCoordinate(), dimension, offset);
+        Coordinate maxCorner = ShapeCardItem.getMaxCorner(getCoordinate(), dimension, offset);
+
+        if (boxValid) {
+            // Double check if the box is indeed still valid.
+            if (minCorner.equals(minBox) && maxCorner.equals(maxBox)) {
+                return;
+            }
+        }
+
+        boxValid = true;
+
+        cachedBlocks = null;
+        minBox = minCorner;
+        maxBox = maxCorner;
+        restartScan();
+    }
+
     private SpaceChamberRepository.SpaceChamberChannel calculateBox() {
         NBTTagCompound tc = hasCard();
         if (tc == null) {
@@ -578,6 +674,46 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return null;
         }
         return chamberChannel;
+    }
+
+    private Set<Coordinate> getCachedBlocks() {
+        if (cachedBlocks == null) {
+            cachedBlocks = new HashSet<Coordinate>();
+            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+            Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
+            Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+        }
+        return cachedBlocks;
+    }
+
+    private void handleBlockShaped() {
+        if (getCachedBlocks().contains(scan)) {
+            int rf = getEnergyStored(ForgeDirection.DOWN);
+            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
+            if (rfNeeded > rf) {
+                // Not enough energy.
+                return;
+            }
+
+            Block destBlock = worldObj.getBlock(scan.getX(), scan.getY(), scan.getZ());
+            if (isEmpty(destBlock)) {
+                BlockMeta block = consumeBlock(null, 0);
+                if (block == null) {
+                    return;
+                }
+
+                worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
+                worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
+                if (!silent) {
+                    RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
+                }
+
+                consumeEnergy(rfNeeded);
+            }
+        }
+        nextLocation();
     }
 
     private void handleBlock(World world) {
@@ -616,38 +752,62 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         nextLocation();
     }
 
-    private boolean findAndConsumeBlock(IInventory inventory, Block block, int meta) {
-        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
-                ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                if (itemBlock.field_150939_a == block && (meta == -1 || stack.getItemDamage() == meta)) {
-                    inventory.decrStackSize(i, 1);
-                    return true;
+    private static Random random = new Random();
+
+    // Also works if block is null and just picks the first available block.
+    private BlockMeta findAndConsumeBlock(IInventory inventory, Block block, int meta) {
+        if (block == null) {
+            // We are not looking for a specific block. Pick a random one out of the chest.
+            List<Integer> slots = new ArrayList<Integer>();
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                    slots.add(i);
+                }
+            }
+            if (slots.size() == 0) {
+                return null;
+            }
+            int randomSlot = slots.get(random.nextInt(slots.size()));
+            ItemStack stack = inventory.getStackInSlot(randomSlot);
+            ItemBlock itemBlock = (ItemBlock) stack.getItem();
+            inventory.decrStackSize(randomSlot, 1);
+            return new BlockMeta(itemBlock.field_150939_a, stack.getItemDamage());
+        } else {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
+                    if (itemBlock.field_150939_a == block && (meta == -1 || stack.getItemDamage() == meta)) {
+                        inventory.decrStackSize(i, 1);
+                        return new BlockMeta(itemBlock.field_150939_a, stack.getItemDamage());
+                    }
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    private boolean consumeBlock(Block block, int meta) {
+    private BlockMeta consumeBlock(Block block, int meta) {
         TileEntity te = worldObj.getTileEntity(xCoord, yCoord+1, zCoord);
         if (te instanceof IInventory) {
-            if (findAndConsumeBlock((IInventory) te, block, meta)) {
-                return true;
+            BlockMeta b = findAndConsumeBlock((IInventory) te, block, meta);
+            if (b != null) {
+                return b;
             }
         }
         te = worldObj.getTileEntity(xCoord, yCoord-1, zCoord);
         if (te instanceof IInventory) {
-            if (findAndConsumeBlock((IInventory) te, block, meta)) {
-                return true;
+            BlockMeta b = findAndConsumeBlock((IInventory) te, block, meta);
+            if (b != null) {
+                return b;
             }
         }
 //        if (meta != -1) {
             // Try a second time with meta equal to -1 (which means to ignore meta).
 //            return consumeBlock(block, -1);
 //        }
-        return false;
+        return null;
     }
 
     public static SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
@@ -681,6 +841,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private int isMovable(Block block, TileEntity tileEntity) {
         return getBlockInformation(block, tileEntity).getBlockLevel();
+    }
+
+    public static boolean isEmpty(World world, int x, int y, int z) {
+        if (world.isAirBlock(x, y, z)) {
+            return true;
+        }
+        Block block = world.getBlock(x, y, z);
+        return isEmpty(block);
     }
 
     // True if this block can just be overwritten (i.e. are or support block)
@@ -755,7 +923,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (origBlock == null || origBlock.getMaterial() == Material.air) {
                 return;
             }
-            if (!consumeBlock(origBlock, origMeta)) {
+            if (consumeBlock(origBlock, origMeta) == null) {
                 return;
             }
 
@@ -1045,6 +1213,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == BuilderContainer.SLOT_TAB) {
+            cachedBlocks = null;
+            boxValid = false;
+            scan = null;
+        }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
