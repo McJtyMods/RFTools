@@ -1203,6 +1203,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        if (index == BuilderContainer.SLOT_TAB && inventoryHelper.getStackInSlot(index) != null && amount > 0) {
+            // Restart if we go from having a stack to not having stack or the other way around.
+            cachedBlocks = null;
+            boxValid = false;
+            scan = null;
+        }
         return inventoryHelper.decrStackSize(index, amount);
     }
 

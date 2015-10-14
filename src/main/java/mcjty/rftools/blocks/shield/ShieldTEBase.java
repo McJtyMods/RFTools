@@ -967,6 +967,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        if (index == ShieldContainer.SLOT_SHAPE && stacks[index] != null && amount > 0) {
+            // Restart if we go from having a stack to not having stack or the other way around.
+            decomposeShield();
+        }
+
         if (stacks[index] != null) {
             if (stacks[index].stackSize <= amount) {
                 ItemStack old = stacks[index];
