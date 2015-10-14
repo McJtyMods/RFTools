@@ -1213,7 +1213,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == BuilderContainer.SLOT_TAB) {
+        if (index == BuilderContainer.SLOT_TAB && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
+            // Restart if we go from having a stack to not having stack or the other way around.
             cachedBlocks = null;
             boxValid = false;
             scan = null;
