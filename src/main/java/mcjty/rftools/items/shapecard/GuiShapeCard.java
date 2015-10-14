@@ -58,7 +58,10 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_SPHERE.getDescription(),
                 ShapeCardItem.Shape.SHAPE_CYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_PRISM.getDescription()).addChoiceEvent(new ChoiceEvent() {
+                ShapeCardItem.Shape.SHAPE_PRISM.getDescription(),
+                ShapeCardItem.Shape.SHAPE_SOLIDBOX.getDescription(),
+                ShapeCardItem.Shape.SHAPE_SOLIDSPHERE.getDescription(),
+                ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription()).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateShape();

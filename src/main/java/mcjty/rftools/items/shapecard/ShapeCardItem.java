@@ -28,7 +28,11 @@ public class ShapeCardItem extends Item {
         SHAPE_SPHERE(3, "Sphere"),
         SHAPE_CYLINDER(4, "Cylinder"),
         SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
-        SHAPE_PRISM(6, "Prism");
+        SHAPE_PRISM(6, "Prism"),
+        SHAPE_SOLIDBOX(7, "Solid Box"),
+        SHAPE_SOLIDSPHERE(8, "Solid Sphere"),
+        SHAPE_SOLIDCYLINDER(9, "Solid Cylinder");
+
 
         private final int index;
         private final String description;
@@ -186,22 +190,31 @@ public class ShapeCardItem extends Item {
     public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
         switch (shape) {
             case SHAPE_BOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize);
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                break;
+            case SHAPE_SOLIDBOX:
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
                 break;
             case SHAPE_TOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false);
                 break;
             case SHAPE_BOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false);
                 break;
             case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false);
+                break;
+            case SHAPE_SOLIDSPHERE:
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true);
                 break;
             case SHAPE_CYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false);
+                break;
+            case SHAPE_SOLIDCYLINDER:
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true);
                 break;
             case SHAPE_CAPPEDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false);
                 break;
             case SHAPE_PRISM:
                 composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize);
@@ -209,7 +222,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side) {
+    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -236,12 +249,17 @@ public class ShapeCardItem extends Item {
                         for (int oz = 0; oz < dz; oz++) {
                             int z = tl.getZ() + oz;
                             if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
-                                int cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
-                                cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
-                                cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
-                                cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
-                                cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
-                                cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
+                                int cnt;
+                                if (solid) {
+                                    cnt = 0;
+                                } else {
+                                    cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
+                                    cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
+                                    cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
+                                    cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
+                                    cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
+                                    cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
+                                }
                                 if (cnt != 6) {
                                     if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                         blocks.add(new Coordinate(x, y, z));
@@ -273,7 +291,7 @@ public class ShapeCardItem extends Item {
         return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
     }
 
-    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped) {
+    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped, boolean solid) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -298,10 +316,14 @@ public class ShapeCardItem extends Item {
                         int z = tl.getZ() + oz;
                         if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
                             int cnt;
-                            cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
-                            cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
-                            cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
-                            cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
+                            if (solid) {
+                                cnt = 0;
+                            } else {
+                                cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
+                                cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
+                                cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
+                                cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
+                            }
                             if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
                                 if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                     blocks.add(new Coordinate(x, y, z));
@@ -314,7 +336,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
+    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -330,7 +352,7 @@ public class ShapeCardItem extends Item {
                 if (y >= 0 && y < 255) {
                     for (int oz = 0 ; oz < dz ; oz++) {
                         int z = tl.getZ() + oz;
-                        if (ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
+                        if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
                             if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                 blocks.add(new Coordinate(x, y, z));
                             }
