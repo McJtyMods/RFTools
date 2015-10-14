@@ -647,6 +647,11 @@ to add or remove shield templates to an already formed shield.
 Note that doing this will not be remembered if you decompose
 the shield again.
 {-------------------------------------------------------------}
+Note that the shield also supports space cards. In that case you
+don't have to use shield template blocks but instead you can
+insert the appropriate space card to define the shape of
+the shield.
+{-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
 {rb:itemFilterBlock}
@@ -796,6 +801,9 @@ parameters and give it a redstone signal.
 If you right click a linked space chamber card it will give you
 an overview of all blocks and entities together with the cost
 of moving them.
+
+Note that the builder also supports shape cards. In this case the
+builder can only build. The other settings are ignored.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
