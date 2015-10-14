@@ -1213,6 +1213,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public ItemStack decrStackSize(int index, int amount) {
         if (index == BuilderContainer.SLOT_TAB && inventoryHelper.getStackInSlot(index) != null && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
+            clearSupportBlocks();
             cachedBlocks = null;
             boxValid = false;
             scan = null;
@@ -1229,6 +1230,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == BuilderContainer.SLOT_TAB && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
             // Restart if we go from having a stack to not having stack or the other way around.
+            clearSupportBlocks();
             cachedBlocks = null;
             boxValid = false;
             scan = null;
