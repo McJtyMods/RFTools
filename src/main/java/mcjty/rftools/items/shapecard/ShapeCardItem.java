@@ -232,7 +232,7 @@ public class ShapeCardItem extends Item {
             for (int oy = 0 ; oy < dy ; oy++) {
                 int y = tl.getY() + oy;
                 if (y >= 0 && y < 255) {
-                    if (side == 0 || (side == 1 && y >= yCoord) || (side == -1 && y <= yCoord)) {
+                    if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
                         for (int oz = 0; oz < dz; oz++) {
                             int z = tl.getZ() + oz;
                             if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
@@ -353,12 +353,12 @@ public class ShapeCardItem extends Item {
         for (int oy = 0 ; oy < dy ; oy++) {
             int y = tl.getY() + oy;
             if (y >= 0 && y < 255) {
-                int yoffset = dy-oy-1;
+                int yoffset = oy;
                 for (int ox = yoffset ; ox < dx-yoffset ; ox++) {
                     int x = tl.getX() + ox;
                     for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
                         int z = tl.getZ() + oz;
-                        if (ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
+                        if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
                             if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                 blocks.add(new Coordinate(x, y, z));
                             }
