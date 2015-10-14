@@ -161,13 +161,6 @@ public class ShapeCardItem extends Item {
         return stack;
     }
 
-    private static float squaredDistance(Coordinate c, int x1, int y1, int z1) {
-        int x = c.getX();
-        int y = c.getY();
-        int z = c.getZ();
-        return (x1-x) * (x1-x) + (y1-y) * (y1-y) + (z1-z) * (z1-z);
-    }
-
     public static Coordinate getMinCorner(Coordinate thisCoord, Coordinate dimension, Coordinate offset) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
@@ -202,6 +195,10 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    private static float squaredDistance(float cx, float cy, float cz, float x1, float y1, float z1, float dx2, float dy2, float dz2) {
+        return (x1-cx) * (x1-cx) / dx2 + (y1-cy) * (y1-cy) / dy2 + (z1-cz) * (z1-cz) / dz2;
+    }
+
     private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
@@ -209,26 +206,46 @@ public class ShapeCardItem extends Item {
         int dx = dimension.getX();
         int dy = dimension.getY();
         int dz = dimension.getZ();
-        Coordinate center = new Coordinate(xCoord + offset.getX(), yCoord + offset.getY(), zCoord + offset.getZ());
+        float centerx = xCoord + offset.getX() + 0.5f;
+        float centery = yCoord + offset.getY() + 0.5f;
+        float centerz = zCoord + offset.getZ() + 0.5f;
         Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
+        float dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
+        float dy2 = dy == 0 ? .5f : (dy * dy) / 4.0f;
+        float dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+
+        int davg = (dx + dy + dz) / 3;
+
         for (int ox = 0 ; ox < dx ; ox++) {
+            int x = tl.getX() + ox;
             for (int oy = 0 ; oy < dy ; oy++) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int x = tl.getX() + ox;
-                    int y = tl.getY() + oy;
-                    int z = tl.getZ() + oz;
-                    double distance = Math.sqrt(squaredDistance(center, x, y, z));
-                    if (((int)distance) == (dx/2-1)){
-                        if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                            if (y >= 0 && y < 255) {
-                                blocks.add(new Coordinate(x, y, z));
+                int y = tl.getY() + oy;
+                if (y >= 0 && y < 255) {
+                    for (int oz = 0 ; oz < dz ; oz++) {
+                        int z = tl.getZ() + oz;
+                        if (isInside(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
+                            int cnt = isInside(centerx, centery, centerz, x-1, y, z, dx2, dy2, dz2, davg);
+                            cnt += isInside(centerx, centery, centerz, x+1, y, z, dx2, dy2, dz2, davg);
+                            cnt += isInside(centerx, centery, centerz, x, y-1, z, dx2, dy2, dz2, davg);
+                            cnt += isInside(centerx, centery, centerz, x, y+1, z, dx2, dy2, dz2, davg);
+                            cnt += isInside(centerx, centery, centerz, x, y, z-1, dx2, dy2, dz2, davg);
+                            cnt += isInside(centerx, centery, centerz, x, y, z+1, dx2, dy2, dz2, davg);
+                            if (cnt != 6) {
+                                if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                    blocks.add(new Coordinate(x, y, z));
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private static int isInside(float centerx, float centery, float centerz, int x, int y, int z, float dx2, float dy2, float dz2, int davg) {
+        double distance = Math.sqrt(squaredDistance(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
     }
 
     private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
@@ -241,14 +258,16 @@ public class ShapeCardItem extends Item {
         Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
         for (int ox = 0 ; ox < dx ; ox++) {
+            int x = tl.getX() + ox;
             for (int oy = 0 ; oy < dy ; oy++) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    if (ox == 0 || oy == 0 || oz == 0 || ox == (dx-1) || oy == (dy-1) || oz == (dz-1)) {
-                        int x = tl.getX() + ox;
-                        int y = tl.getY() + oy;
+                int y = tl.getY() + oy;
+                if (y >= 0 && y < 255) {
+                    for (int oz = 0 ; oz < dz ; oz++) {
                         int z = tl.getZ() + oz;
-                        if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                            blocks.add(new Coordinate(x, y, z));
+                        if (ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
+                            if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                blocks.add(new Coordinate(x, y, z));
+                            }
                         }
                     }
                 }
