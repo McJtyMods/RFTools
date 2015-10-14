@@ -25,7 +25,7 @@ public class GuiShapeCard extends GuiScreen {
     /** The X size of the window in pixels. */
     protected int xSize = 360;
     /** The Y size of the window in pixels. */
-    protected int ySize = 50;
+    protected int ySize = 46;
 
     private ChoiceLabel shapeLabel;
     private TextField dimX;
@@ -51,11 +51,14 @@ public class GuiShapeCard extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).addChoices(
+        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 ShapeCardItem.Shape.SHAPE_BOX.getDescription(),
                 ShapeCardItem.Shape.SHAPE_TOPDOME.getDescription(),
                 ShapeCardItem.Shape.SHAPE_BOTTOMDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SPHERE.getDescription()).addChoiceEvent(new ChoiceEvent() {
+                ShapeCardItem.Shape.SHAPE_SPHERE.getDescription(),
+                ShapeCardItem.Shape.SHAPE_CYLINDER.getDescription(),
+                ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
+                ShapeCardItem.Shape.SHAPE_PRISM.getDescription()).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateShape();

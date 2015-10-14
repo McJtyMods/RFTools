@@ -25,7 +25,10 @@ public class ShapeCardItem extends Item {
         SHAPE_BOX(0, "Box"),
         SHAPE_TOPDOME(1, "Top Dome"),
         SHAPE_BOTTOMDOME(2, "Bottom Dome"),
-        SHAPE_SPHERE(3, "Sphere");
+        SHAPE_SPHERE(3, "Sphere"),
+        SHAPE_CYLINDER(4, "Cylinder"),
+        SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
+        SHAPE_PRISM(6, "Prism");
 
         private final int index;
         private final String description;
@@ -186,20 +189,27 @@ public class ShapeCardItem extends Item {
                 composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize);
                 break;
             case SHAPE_TOPDOME:
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1);
                 break;
             case SHAPE_BOTTOMDOME:
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1);
                 break;
             case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0);
+                break;
+            case SHAPE_CYLINDER:
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                break;
+            case SHAPE_CAPPEDCYLINDER:
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
+                break;
+            case SHAPE_PRISM:
+                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize);
                 break;
         }
     }
 
-    private static float squaredDistance(float cx, float cy, float cz, float x1, float y1, float z1, float dx2, float dy2, float dz2) {
-        return (x1-cx) * (x1-cx) / dx2 + (y1-cy) * (y1-cy) / dy2 + (z1-cz) * (z1-cz) / dz2;
-    }
-
-    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
+    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -222,18 +232,20 @@ public class ShapeCardItem extends Item {
             for (int oy = 0 ; oy < dy ; oy++) {
                 int y = tl.getY() + oy;
                 if (y >= 0 && y < 255) {
-                    for (int oz = 0 ; oz < dz ; oz++) {
-                        int z = tl.getZ() + oz;
-                        if (isInside(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
-                            int cnt = isInside(centerx, centery, centerz, x-1, y, z, dx2, dy2, dz2, davg);
-                            cnt += isInside(centerx, centery, centerz, x+1, y, z, dx2, dy2, dz2, davg);
-                            cnt += isInside(centerx, centery, centerz, x, y-1, z, dx2, dy2, dz2, davg);
-                            cnt += isInside(centerx, centery, centerz, x, y+1, z, dx2, dy2, dz2, davg);
-                            cnt += isInside(centerx, centery, centerz, x, y, z-1, dx2, dy2, dz2, davg);
-                            cnt += isInside(centerx, centery, centerz, x, y, z+1, dx2, dy2, dz2, davg);
-                            if (cnt != 6) {
-                                if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                    blocks.add(new Coordinate(x, y, z));
+                    if (side == 0 || (side == 1 && y >= yCoord) || (side == -1 && y <= yCoord)) {
+                        for (int oz = 0; oz < dz; oz++) {
+                            int z = tl.getZ() + oz;
+                            if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
+                                int cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
+                                cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
+                                cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
+                                cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
+                                cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
+                                cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
+                                if (cnt != 6) {
+                                    if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                        blocks.add(new Coordinate(x, y, z));
+                                    }
                                 }
                             }
                         }
@@ -243,9 +255,63 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static int isInside(float centerx, float centery, float centerz, int x, int y, int z, float dx2, float dy2, float dz2, int davg) {
-        double distance = Math.sqrt(squaredDistance(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+    private static float squaredDistance3D(float cx, float cy, float cz, float x1, float y1, float z1, float dx2, float dy2, float dz2) {
+        return (x1-cx) * (x1-cx) / dx2 + (y1-cy) * (y1-cy) / dy2 + (z1-cz) * (z1-cz) / dz2;
+    }
+
+    private static float squaredDistance2D(float cx, float cz, float x1, float z1, float dx2, float dz2) {
+        return (x1-cx) * (x1-cx) / dx2 + (z1-cz) * (z1-cz) / dz2;
+    }
+
+    private static int isInside2D(float centerx, float centerz, int x, int z, float dx2, float dz2, int davg) {
+        double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
         return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+    }
+
+    private static int isInside3D(float centerx, float centery, float centerz, int x, int y, int z, float dx2, float dy2, float dz2, int davg) {
+        double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+    }
+
+    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped) {
+        int xCoord = thisCoord.getX();
+        int yCoord = thisCoord.getY();
+        int zCoord = thisCoord.getZ();
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        float centerx = xCoord + offset.getX() + 0.5f;
+        float centerz = zCoord + offset.getZ() + 0.5f;
+        Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        float dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
+        float dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+
+        int davg = (dx + dz) / 2;
+
+        for (int ox = 0 ; ox < dx ; ox++) {
+            int x = tl.getX() + ox;
+            for (int oy = 0 ; oy < dy ; oy++) {
+                int y = tl.getY() + oy;
+                if (y >= 0 && y < 255) {
+                    for (int oz = 0; oz < dz; oz++) {
+                        int z = tl.getZ() + oz;
+                        if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
+                            int cnt;
+                            cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
+                            cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
+                            cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
+                            cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
+                            if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
+                                if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                    blocks.add(new Coordinate(x, y, z));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
@@ -275,6 +341,33 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    private static void composePrism(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
+        int xCoord = thisCoord.getX();
+        int yCoord = thisCoord.getY();
+        int zCoord = thisCoord.getZ();
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        for (int oy = 0 ; oy < dy ; oy++) {
+            int y = tl.getY() + oy;
+            if (y >= 0 && y < 255) {
+                int yoffset = dy-oy-1;
+                for (int ox = yoffset ; ox < dx-yoffset ; ox++) {
+                    int x = tl.getX() + ox;
+                    for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
+                        int z = tl.getZ() + oz;
+                        if (ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
+                            if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                blocks.add(new Coordinate(x, y, z));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 }
