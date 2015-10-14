@@ -25,6 +25,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemBlock;
@@ -698,7 +699,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             Block destBlock = worldObj.getBlock(scan.getX(), scan.getY(), scan.getZ());
-            if (isEmpty(destBlock)) {
+            if (isEmptyOrWater(destBlock)) {
                 BlockMeta block = consumeBlock(null, 0);
                 if (block == null) {
                     return;
@@ -851,6 +852,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return isEmpty(block);
     }
 
+    public static boolean isEmptyOrWater(Block block) {
+        if (block == Blocks.water || block == Blocks.flowing_water) {
+            return true;
+        }
+        return isEmpty(block);
+    }
+
     // True if this block can just be overwritten (i.e. are or support block)
     public static boolean isEmpty(Block block) {
         if (block == null) {
@@ -917,7 +925,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         Block destBlock = destWorld.getBlock(destX, destY, destZ);
-        if (isEmpty(destBlock)) {
+        if (isEmptyOrWater(destBlock)) {
             Block origBlock = world.getBlock(x, y, z);
             int origMeta = world.getBlockMetadata(x, y, z);
             if (origBlock == null || origBlock.getMaterial() == Material.air) {
