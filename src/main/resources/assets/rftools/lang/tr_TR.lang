@@ -156,6 +156,7 @@ tile.enderMonitorBlock.name=Ender Monitorü
 tile.shieldBlock.name=Kalkan Yansıtıcı Seviye 1
 tile.shieldBlock2.name=Kalkan Yansıtıcı Seviye 2
 tile.shieldBlock3.name=Kalkan Yansıtıcı Seviye 3
+tile.shieldBlock4.name=Kalkan Yansıtıcı Seviye 4
 tile.invisibleShieldBlock.name=Görünmez Kalkan Bloğu
 tile.noTickInvisibleShieldBlock.name=Görünmez Kalkan Bloğu
 tile.solidShieldBlock.name=Katı Kalkan Bloğu

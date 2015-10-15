@@ -29,9 +29,11 @@ public class ShapeCardItem extends Item {
         SHAPE_CYLINDER(4, "Cylinder"),
         SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
         SHAPE_PRISM(6, "Prism"),
-        SHAPE_SOLIDBOX(7, "Solid Box"),
-        SHAPE_SOLIDSPHERE(8, "Solid Sphere"),
-        SHAPE_SOLIDCYLINDER(9, "Solid Cylinder");
+        SHAPE_TORUS(7, "Torus"),
+        SHAPE_SOLIDBOX(100, "Solid Box"),
+        SHAPE_SOLIDSPHERE(103, "Solid Sphere"),
+        SHAPE_SOLIDCYLINDER(104, "Solid Cylinder"),
+        SHAPE_SOLIDTORUS(107, "Solid Torus");
 
 
         private final int index;
@@ -219,6 +221,12 @@ public class ShapeCardItem extends Item {
             case SHAPE_PRISM:
                 composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize);
                 break;
+            case SHAPE_TORUS:
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                break;
+            case SHAPE_SOLIDTORUS:
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
+                break;
         }
     }
 
@@ -383,6 +391,62 @@ public class ShapeCardItem extends Item {
                         if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
                             if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                 blocks.add(new Coordinate(x, y, z));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static int isInsideTorus(float centerx, float centery, float centerz, int x, int y, int z, float bigRadius, float smallRadius) {
+        double rr = bigRadius - Math.sqrt((x-centerx)*(x-centerx) + (z-centerz)*(z-centerz));
+        double f = rr*rr + (y-centery) * (y-centery) - smallRadius * smallRadius;
+        if (f >= 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    private static void composeTorus(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid) {
+        int xCoord = thisCoord.getX();
+        int yCoord = thisCoord.getY();
+        int zCoord = thisCoord.getZ();
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        float centerx = xCoord + offset.getX();
+        float centery = yCoord + offset.getY();
+        float centerz = zCoord + offset.getZ();
+        Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        float smallRadius = (dy-2)/2.0f;
+        float bigRadius = (dx-2)/2.0f - smallRadius;
+
+        for (int ox = 0 ; ox < dx ; ox++) {
+            int x = tl.getX() + ox;
+            for (int oy = 0 ; oy < dy ; oy++) {
+                int y = tl.getY() + oy;
+                if (y >= 0 && y < 255) {
+                    for (int oz = 0; oz < dz; oz++) {
+                        int z = tl.getZ() + oz;
+                        if (isInsideTorus(centerx, centery, centerz, x, y, z, bigRadius, smallRadius) == 1) {
+                            int cnt;
+                            if (solid) {
+                                cnt = 0;
+                            } else {
+                                cnt  = isInsideTorus(centerx, centery, centerz, x - 1, y, z, bigRadius, smallRadius);
+                                cnt += isInsideTorus(centerx, centery, centerz, x + 1, y, z, bigRadius, smallRadius);
+                                cnt += isInsideTorus(centerx, centery, centerz, x, y, z - 1, bigRadius, smallRadius);
+                                cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
+                                cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
+                                cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
+                            }
+                            if (cnt != 6) {
+                                if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                    blocks.add(new Coordinate(x, y, z));
+                                }
                             }
                         }
                     }

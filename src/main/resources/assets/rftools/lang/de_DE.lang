@@ -156,6 +156,7 @@ tile.enderMonitorBlock.name=Ender-Monitor
 tile.shieldBlock.name=Schildprojektor Level 1
 tile.shieldBlock2.name=Schildprojektor Level 2
 tile.shieldBlock3.name=Schildprojektor Level 3
+tile.shieldBlock4.name=Schildprojektor Level 4
 tile.invisibleShieldBlock.name=Unsichtbarer Schildblock
 tile.noTickInvisibleShieldBlock.name=Unsichtbarer Schildblock
 tile.solidShieldBlock.name=Massiver Schildblock

@@ -59,9 +59,11 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_CYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_PRISM.getDescription(),
+                ShapeCardItem.Shape.SHAPE_TORUS.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDBOX.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDSPHERE.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription()).addChoiceEvent(new ChoiceEvent() {
+                ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription(),
+                ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription()).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 updateShape();
@@ -83,6 +85,9 @@ public class GuiShapeCard extends GuiScreen {
         dimX = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
+                if (isTorus()) {
+                    dimZ.setText(newText);
+                }
                 updateSettings();
             }
         }).setText(String.valueOf(dim.getX()));
@@ -129,8 +134,17 @@ public class GuiShapeCard extends GuiScreen {
 
     private void updateShape() {
         RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
-                new Argument("shape", ShapeCardItem.Shape.getShape(shapeLabel.getCurrentChoice()).getIndex())));
+                new Argument("shape", getCurrentShape().getIndex())));
 
+    }
+
+    private boolean isTorus() {
+        ShapeCardItem.Shape shape = getCurrentShape();
+        return ShapeCardItem.Shape.SHAPE_TORUS.equals(shape) || ShapeCardItem.Shape.SHAPE_SOLIDTORUS.equals(shape);
+    }
+
+    private ShapeCardItem.Shape getCurrentShape() {
+        return ShapeCardItem.Shape.getShape(shapeLabel.getCurrentChoice());
     }
 
     private static int parseInt(String s) {
@@ -179,6 +193,8 @@ public class GuiShapeCard extends GuiScreen {
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
+
+        dimZ.setEnabled(!isTorus());
 
         window.draw();
         List<String> tooltips = window.getTooltips();

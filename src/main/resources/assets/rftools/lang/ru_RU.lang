@@ -156,6 +156,7 @@ tile.enderMonitorBlock.name=Монитор Края
 tile.shieldBlock.name=Проектировщик щита 1-го уровня
 tile.shieldBlock2.name=Проектировщик щита 2-го уровня
 tile.shieldBlock3.name=Проектировщик щита 3-го уровня
+tile.shieldBlock4.name=Проектировщик щита 4-го уровня
 tile.invisibleShieldBlock.name=Блок невидимого щита
 tile.noTickInvisibleShieldBlock.name=Блок невидимого щита
 tile.solidShieldBlock.name=Блок твёрдого щита

@@ -15,6 +15,7 @@ public class ShieldSetup {
     public static ShieldBlock shieldBlock;
     public static ShieldBlock shieldBlock2;
     public static ShieldBlock shieldBlock3;
+    public static ShieldBlock shieldBlock4;
     public static InvisibleShieldBlock invisibleShieldBlock;
     public static NoTickInvisibleShieldBlock noTickInvisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
@@ -33,6 +34,10 @@ public class ShieldSetup {
         shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class);
         GameRegistry.registerBlock(shieldBlock3, GenericItemBlock.class, "shieldBlock3");
         GameRegistry.registerTileEntity(ShieldTileEntity3.class, "ShieldTileEntity3");
+
+        shieldBlock4 = new ShieldBlock("shieldBlock4", ShieldTileEntity4.class);
+        GameRegistry.registerBlock(shieldBlock4, GenericItemBlock.class, "shieldBlock4");
+        GameRegistry.registerTileEntity(ShieldTileEntity4.class, "ShieldTileEntity4");
 
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
@@ -71,6 +76,11 @@ public class ShieldSetup {
                     new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
                     new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard)
             }, new ItemStack(shieldBlock3), 4));
+            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                    new ItemStack(Items.nether_star), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard),
+                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock3), new ItemStack(Blocks.obsidian),
+                    new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(Items.nether_star)
+            }, new ItemStack(shieldBlock4), 4));
         }
 
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);

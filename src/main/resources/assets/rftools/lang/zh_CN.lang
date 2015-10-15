@@ -152,6 +152,7 @@ tile.enderMonitorBlock.name=末影显示器
 tile.shieldBlock.name=屏蔽投影仪（一层）
 tile.shieldBlock2.name=屏蔽投影仪（两层）
 tile.shieldBlock3.name=屏蔽投影仪（三层）
+tile.shieldBlock4.name=Shield Projector Tier 4
 tile.invisibleShieldBlock.name=看不见的护盾
 tile.noTickInvisibleShieldBlock.name=看不见的护盾
 tile.solidShieldBlock.name=固体护盾方块

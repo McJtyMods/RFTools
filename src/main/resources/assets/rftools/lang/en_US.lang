@@ -156,6 +156,7 @@ tile.enderMonitorBlock.name=Ender Monitor
 tile.shieldBlock.name=Shield Projector Tier 1
 tile.shieldBlock2.name=Shield Projector Tier 2
 tile.shieldBlock3.name=Shield Projector Tier 3
+tile.shieldBlock4.name=Shield Projector Tier 4
 tile.invisibleShieldBlock.name=Invisible Shield Block
 tile.noTickInvisibleShieldBlock.name=Invisible Shield Block
 tile.solidShieldBlock.name=Solid Shield Block
