@@ -712,8 +712,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        Block destBlock = worldObj.getBlock(scan.getX(), scan.getY(), scan.getZ());
-        if (isEmptyOrWater(destBlock)) {
+        if (isEmptyOrReplacable(worldObj, scan.getX(), scan.getY(), scan.getZ())) {
             BlockMeta block = consumeBlock(null, 0);
             if (block == null) {
                 return true;
@@ -865,8 +864,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return isEmpty(block);
     }
 
-    public static boolean isEmptyOrWater(Block block) {
-        if (block == Blocks.water || block == Blocks.flowing_water) {
+    public static boolean isEmptyOrReplacable(World world, int x, int y, int z) {
+        Block block = world.getBlock(x, y, z);
+        if (block.isReplaceable(world, x, y, z)) {
             return true;
         }
         return isEmpty(block);
@@ -937,8 +937,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        Block destBlock = destWorld.getBlock(destX, destY, destZ);
-        if (isEmptyOrWater(destBlock)) {
+        if (isEmptyOrReplacable(destWorld, destX, destY, destZ)) {
             Block origBlock = world.getBlock(x, y, z);
             int origMeta = world.getBlockMetadata(x, y, z);
             if (origBlock == null || origBlock.getMaterial() == Material.air) {

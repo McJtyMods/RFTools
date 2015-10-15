@@ -261,7 +261,7 @@ public class ShapeCardItem extends Item {
                                     cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
                                 }
                                 if (cnt != 6) {
-                                    if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                    if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                         blocks.add(new Coordinate(x, y, z));
                                     }
                                 }
@@ -325,7 +325,7 @@ public class ShapeCardItem extends Item {
                                 cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
                             }
                             if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
-                                if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                                if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                     blocks.add(new Coordinate(x, y, z));
                                 }
                             }
@@ -353,7 +353,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = 0 ; oz < dz ; oz++) {
                         int z = tl.getZ() + oz;
                         if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                            if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                 blocks.add(new Coordinate(x, y, z));
                             }
                         }
@@ -381,7 +381,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
                         int z = tl.getZ() + oz;
                         if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                            if (BuilderTileEntity.isEmpty(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
                                 blocks.add(new Coordinate(x, y, z));
                             }
                         }
