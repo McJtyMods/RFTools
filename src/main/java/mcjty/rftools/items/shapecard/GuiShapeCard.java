@@ -135,6 +135,9 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private void updateShape() {
+        if (isTorus()) {
+            dimZ.setText(dimX.getText());
+        }
         RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
                 new Argument("shape", getCurrentShape().getIndex())));
 
