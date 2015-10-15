@@ -23,19 +23,19 @@ public class ShieldSetup {
     public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static void setupBlocks() {
-        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class);
+        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class, ShieldTileEntity.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock, GenericItemBlock.class, "shieldBlock");
         GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
 
-        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class);
+        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class, ShieldTileEntity2.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock2, GenericItemBlock.class, "shieldBlock2");
         GameRegistry.registerTileEntity(ShieldTileEntity2.class, "ShieldTileEntity2");
 
-        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class);
+        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class, ShieldTileEntity3.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock3, GenericItemBlock.class, "shieldBlock3");
         GameRegistry.registerTileEntity(ShieldTileEntity3.class, "ShieldTileEntity3");
 
-        shieldBlock4 = new ShieldBlock("shieldBlock4", ShieldTileEntity4.class);
+        shieldBlock4 = new ShieldBlock("shieldBlock4", ShieldTileEntity4.class, ShieldTileEntity4.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock4, GenericItemBlock.class, "shieldBlock4");
         GameRegistry.registerTileEntity(ShieldTileEntity4.class, "ShieldTileEntity4");
 

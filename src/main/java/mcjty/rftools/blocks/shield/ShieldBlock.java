@@ -26,10 +26,13 @@ import java.util.List;
 
 public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
 
-    public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz) {
+    private final int max;
+
+    public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz, int max) {
         super(Material.iron, clazz, true);
         setBlockName(blockName);
         setCreativeTab(RFTools.tabRfTools);
+        this.max = max;
     }
 
     @Override
@@ -49,6 +52,8 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+
+        list.add(EnumChatFormatting.GREEN + "Supports " + max + " blocks");
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This machine forms a shield out of adjacent");

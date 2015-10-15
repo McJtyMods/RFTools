@@ -602,7 +602,7 @@ connected Shield Template Blocks of the same color. Then you put a Shield
 Block next to one of these templates and you give it power.
 
 A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
-ups this to 4096 and  deals 4 times as much damage at twice the power.
+ups this to 4096 and deals 4 times as much damage at twice the power.
 
 To compose the shield right click the shield block with a wrench. The
 shield block will compose the shield in the specified shape. If you hit
