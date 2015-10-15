@@ -6,6 +6,7 @@ import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
+import mcjty.gui.widgets.Label;
 import mcjty.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.network.Argument;
@@ -27,6 +28,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel supportMode;
     private ImageChoiceLabel entityMode;
     private ImageChoiceLabel loopMode;
+    private Label currentLevel;
 
     private ToggleButton anchor[] = new ToggleButton[4];
     private String[] anchorLabels = new String[] { "O", "O", "O", "O" };
@@ -61,6 +63,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 });
         modeChoice.setChoice(MODES[tileEntity.getMode()]);
 
+        currentLevel = new Label(mc, this);
+        currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(80, 28, 40, 15));
+
         rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(130, 7, 40, 14)).
                 setTooltips("Set the horizontal rotation angle").
                 addChoiceEvent(
@@ -78,7 +83,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             case 3: rotateButton.setChoice(ROTATE_270); break;
         }
 
-        silentMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 24, 16, 16)).
+        silentMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(28, 28, 16, 16)).
                 setTooltips("Suppress the placement/breaking sound", "when moving blocks").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -90,7 +95,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         silentMode.addChoice("on", "Block sounds are muted", guiElements, 10 * 16, 3 * 16);
         silentMode.setCurrentChoice(tileEntity.isSilent() ? 1 : 0);
 
-        supportMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(66, 24, 16, 16)).
+        supportMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(46, 28, 16, 16)).
                 setTooltips("Use supporting blocks when moving.", "Useful for liquids, gravel, ...").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -102,7 +107,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         supportMode.addChoice("on", "Support mode is enabled", guiElements, 6*16, 3*16);
         supportMode.setCurrentChoice(tileEntity.hasSupportMode() ? 1 : 0);
 
-        entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(48, 42, 16, 16)).
+        entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(28, 46, 16, 16)).
                 setTooltips("Move entities").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -114,7 +119,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         entityMode.addChoice("on", "Entities are moved", guiElements, 8*16, 3*16);
         entityMode.setCurrentChoice(tileEntity.hasEntityMode() ? 1 : 0);
 
-        loopMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(66, 42, 16, 16)).
+        loopMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(46, 46, 16, 16)).
                 setTooltips("Loop mode").
                 addChoiceEvent(new ChoiceEvent() {
                     @Override
@@ -127,7 +132,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         loopMode.setCurrentChoice(tileEntity.hasLoopMode() ? 1 : 0);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode).addChild(entityMode).addChild(loopMode);
+                addChild(modeChoice).addChild(rotateButton).addChild(silentMode).addChild(supportMode).addChild(entityMode).addChild(loopMode).addChild(currentLevel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         for (int y = 0 ; y <= 1 ; y++) {
@@ -148,6 +153,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestCurrentLevel();
     }
 
     private void setLoopMode() {
@@ -204,10 +210,14 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        int cury = tileEntity.getCurrentLevel();
+        currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
+
         drawWindow();
 
         energyBar.setValue(tileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestCurrentLevel();
     }
 }

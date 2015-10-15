@@ -3,8 +3,10 @@ package mcjty.rftools.blocks.spaceprojector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -45,6 +47,26 @@ public class BuilderBlock extends GenericRFToolsBlock implements Infusable {
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    private static long lastTime = 0;
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof BuilderTileEntity) {
+            BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                builderTileEntity.requestCurrentLevel();
+            }
+            int scan = builderTileEntity.getCurrentLevel();
+            currenttip.add(EnumChatFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+        }
+        return currenttip;
+
     }
 
     @Override

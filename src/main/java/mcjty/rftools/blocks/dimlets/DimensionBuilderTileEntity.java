@@ -45,7 +45,9 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
 
     public static final String COMPONENT_NAME = "dimension_builder";
 
+    // For usage in the gui
     private static int buildPercentage = 0;
+
     private int creative = -1;      // -1 is unknown
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int powered = 0;

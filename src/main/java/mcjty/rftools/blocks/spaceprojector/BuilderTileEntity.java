@@ -12,11 +12,13 @@ import li.cil.oc.api.network.SimpleComponent;
 import mcjty.container.InventoryHelper;
 import mcjty.entity.GenericEnergyReceiverTileEntity;
 import mcjty.network.Argument;
+import mcjty.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.shapecard.ShapeCardItem;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.BlockMeta;
 import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
@@ -25,7 +27,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemBlock;
@@ -57,6 +58,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETSUPPORT = "setSupport";
     public static final String CMD_SETENTITIES = "setEntities";
     public static final String CMD_SETLOOP = "setLoop";
+    public static final String CMD_GETLEVEL = "getLevel";
+    public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
 
@@ -84,6 +87,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean supportMode = false;
     private boolean entityMode = false;
     private boolean loopMode = false;
+
+    // For usage in the gui
+    private static int currentLevel = 0;
 
     private int powered = 0;
 
@@ -856,14 +862,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return getBlockInformation(block, tileEntity).getBlockLevel();
     }
 
-    public static boolean isEmpty(World world, int x, int y, int z) {
-        if (world.isAirBlock(x, y, z)) {
-            return true;
-        }
-        Block block = world.getBlock(x, y, z);
-        return isEmpty(block);
-    }
-
     public static boolean isEmptyOrReplacable(World world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         if (block.isReplaceable(world, x, y, z)) {
@@ -1350,6 +1348,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setTag("Items", bufferTagList);
     }
 
+    // Request the current scan level.
+    public void requestCurrentLevel() {
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(xCoord, yCoord, zCoord,
+                CMD_GETLEVEL,
+                CLIENTCMD_GETLEVEL));
+    }
+
+    public static int getCurrentLevel() {
+        return currentLevel;
+    }
+
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
         boolean rc = super.execute(playerMP, command, args);
@@ -1380,5 +1389,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         return false;
     }
+
+    @Override
+    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+        Integer rc = super.executeWithResultInteger(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GETLEVEL.equals(command)) {
+            return scan == null ? -1 : scan.getY();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, Integer result) {
+        boolean rc = super.execute(command, result);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GETLEVEL.equals(command)) {
+            currentLevel = result;
+            return true;
+        }
+        return false;
+    }
+
 
 }
