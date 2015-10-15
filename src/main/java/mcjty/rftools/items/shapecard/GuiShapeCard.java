@@ -3,12 +3,10 @@ package mcjty.rftools.items.shapecard;
 import mcjty.gui.Window;
 import mcjty.gui.events.ChoiceEvent;
 import mcjty.gui.events.TextEvent;
+import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.HorizontalLayout;
 import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.ChoiceLabel;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
-import mcjty.gui.widgets.Widget;
+import mcjty.gui.widgets.*;
 import mcjty.network.Argument;
 import mcjty.network.PacketUpdateNBTItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -35,6 +33,7 @@ public class GuiShapeCard extends GuiScreen {
     private TextField offsetY;
     private TextField offsetZ;
     private Window window;
+    private Label blocksLabel;
 
     public GuiShapeCard() {
     }
@@ -77,7 +76,10 @@ public class GuiShapeCard extends GuiScreen {
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
 
-        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).addChild(shapeLabel);
+        blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
+
+        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).addChild(shapeLabel).addChild(blocksLabel);
 
         Coordinate dim = ShapeCardItem.getDimension(heldItem);
         Coordinate offset = ShapeCardItem.getOffset(heldItem);
@@ -147,6 +149,10 @@ public class GuiShapeCard extends GuiScreen {
         return ShapeCardItem.Shape.getShape(shapeLabel.getCurrentChoice());
     }
 
+    private Coordinate getCurrentDimension() {
+        return new Coordinate(parseInt(dimX.getText()), parseInt(dimY.getText()), parseInt(dimZ.getText()));
+    }
+
     private static int parseInt(String s) {
         try {
             return Integer.parseInt(s);
@@ -195,6 +201,7 @@ public class GuiShapeCard extends GuiScreen {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
         dimZ.setEnabled(!isTorus());
+        blocksLabel.setText("#Blocks:" + ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension()));
 
         window.draw();
         List<String> tooltips = window.getTooltips();

@@ -14,10 +14,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ShapeCardItem extends Item {
 
@@ -188,6 +185,28 @@ public class ShapeCardItem extends Item {
         return new Coordinate(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
+    public static int countBlocks(Shape shape, Coordinate dimension) {
+        final int[] cnt = {0};
+        Coordinate offset = new Coordinate(0, 128, 0);
+        composeShape(shape, null, new Coordinate(0, 0, 0), dimension, offset, new AbstractCollection<Coordinate>() {
+            @Override
+            public Iterator<Coordinate> iterator() {
+                return null;
+            }
+
+            @Override
+            public boolean add(Coordinate coordinate) {
+                cnt[0]++;
+                return true;
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+        }, 1000000000);
+        return cnt[0];
+    }
 
     public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
         switch (shape) {
@@ -230,6 +249,12 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    private static void placeBlockIfPossible(World worldObj, Collection<Coordinate> blocks, int maxSize, int x, int y, int z) {
+        if (worldObj == null || (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1)) {
+            blocks.add(new Coordinate(x, y, z));
+        }
+    }
+
     private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
@@ -269,9 +294,7 @@ public class ShapeCardItem extends Item {
                                     cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
                                 }
                                 if (cnt != 6) {
-                                    if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                        blocks.add(new Coordinate(x, y, z));
-                                    }
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
                                 }
                             }
                         }
@@ -333,9 +356,7 @@ public class ShapeCardItem extends Item {
                                 cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
                             }
                             if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
-                                if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                    blocks.add(new Coordinate(x, y, z));
-                                }
+                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
                             }
                         }
                     }
@@ -361,9 +382,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = 0 ; oz < dz ; oz++) {
                         int z = tl.getZ() + oz;
                         if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                blocks.add(new Coordinate(x, y, z));
-                            }
+                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
                         }
                     }
                 }
@@ -389,9 +408,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
                         int z = tl.getZ() + oz;
                         if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                blocks.add(new Coordinate(x, y, z));
-                            }
+                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
                         }
                     }
                 }
@@ -444,9 +461,7 @@ public class ShapeCardItem extends Item {
                                 cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
                             }
                             if (cnt != 6) {
-                                if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                                    blocks.add(new Coordinate(x, y, z));
-                                }
+                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
                             }
                         }
                     }
