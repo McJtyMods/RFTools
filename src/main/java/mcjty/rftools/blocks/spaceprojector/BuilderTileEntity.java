@@ -562,6 +562,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             } else {
                 calculateBox();
             }
+            cachedBlocks = null;
             scan = minBox;
         } else {
             scan = null;
@@ -1176,7 +1177,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (x >= maxBox.getX()) {
                 if (z >= maxBox.getZ()) {
                     if (y >= maxBox.getY()) {
-                        if (mode != MODE_SWAP) {
+                        if (mode != MODE_SWAP || isShapeCard()) {
                             restartScan();
                         } else {
                             // We don't restart in swap mode.

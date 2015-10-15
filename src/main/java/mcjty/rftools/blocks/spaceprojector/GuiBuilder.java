@@ -4,6 +4,7 @@ import mcjty.container.GenericGuiContainer;
 import mcjty.gui.Window;
 import mcjty.gui.events.ButtonEvent;
 import mcjty.gui.events.ChoiceEvent;
+import mcjty.gui.layout.HorizontalAlignment;
 import mcjty.gui.layout.PositionalLayout;
 import mcjty.gui.widgets.*;
 import mcjty.gui.widgets.Label;
@@ -63,7 +64,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 });
         modeChoice.setChoice(MODES[tileEntity.getMode()]);
 
-        currentLevel = new Label(mc, this);
+        currentLevel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(80, 28, 40, 15));
 
         rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(130, 7, 40, 14)).
