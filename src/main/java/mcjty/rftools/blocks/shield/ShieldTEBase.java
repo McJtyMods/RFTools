@@ -620,13 +620,17 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         }
         float squaredDistance = getCoordinate().squaredDistance(x, y, z);
         if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance * ShieldConfiguration.maxDisjointShieldDistance) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "This template is too far to connect to the shield!!");
+            Logging.message(player, EnumChatFormatting.YELLOW + "This template is too far to connect to the shield!");
             return;
         }
 
         Block origBlock = worldObj.getBlock(x, y, z);
         Coordinate c = new Coordinate(x, y, z);
         if (origBlock == ShieldSetup.shieldTemplateBlock) {
+            if (isShapedShield()) {
+                Logging.message(player, EnumChatFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
+                return;
+            }
             Set<Coordinate> templateBlocks = new HashSet<Coordinate>();
             findTemplateBlocks(templateBlocks, worldObj.getBlockMetadata(x, y, z), false, c);
 
