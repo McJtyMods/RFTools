@@ -65,7 +65,7 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription()).addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
-                updateShape();
+                updateSettings();
             }
         });
         ItemStack heldItem = mc.thePlayer.getHeldItem();
@@ -105,7 +105,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dimX).addChild(dimY).addChild(dimZ);
+        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new TextField(mc, this).setText("Dim:")).addChild(dimX).addChild(dimY).addChild(dimZ);
         offsetX = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
@@ -124,7 +124,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new TextField(mc, this).setText("Offset:")).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
 
         Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout()).addChild(dimPanel).addChild(offsetPanel);
 
@@ -132,15 +132,6 @@ public class GuiShapeCard extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
-    }
-
-    private void updateShape() {
-        if (isTorus()) {
-            dimZ.setText(dimX.getText());
-        }
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
-                new Argument("shape", getCurrentShape().getIndex())));
-
     }
 
     private boolean isTorus() {
@@ -165,7 +156,11 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private void updateSettings() {
+        if (isTorus()) {
+            dimZ.setText(dimX.getText());
+        }
         RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+                new Argument("shape", getCurrentShape().getIndex()),
                 new Argument("dimX", parseInt(dimX.getText())),
                 new Argument("dimY", parseInt(dimY.getText())),
                 new Argument("dimZ", parseInt(dimZ.getText())),
@@ -204,7 +199,7 @@ public class GuiShapeCard extends GuiScreen {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
         dimZ.setEnabled(!isTorus());
-        blocksLabel.setText("#Blocks:" + ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension()));
+        blocksLabel.setText("#Blocks: " + ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension()));
 
         window.draw();
         List<String> tooltips = window.getTooltips();
