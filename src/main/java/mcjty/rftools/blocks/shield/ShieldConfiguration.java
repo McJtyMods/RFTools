@@ -6,7 +6,7 @@ public class ShieldConfiguration {
     public static final String CATEGORY_SHIELD = "shield";
     public static int MAXENERGY = 200000;
     public static int RECEIVEPERTICK = 5000;
-    // The amount of rf to use as a base per block in the shield.
+    // The amount of rf to use as a base per 10 blocks in the shield.
     public static int rfBase = 8;
     // This amount is added for a camo block.
     public static int rfCamo = 2;
@@ -44,11 +44,11 @@ public class ShieldConfiguration {
         maxDisjointShieldDistance = cfg.get(CATEGORY_SHIELD, "maxDisjointShieldDistance", maxDisjointShieldDistance,
                 "Maximum distance at which you can add disjoint shield sections to a composed shield").getInt();
         rfBase = cfg.get(CATEGORY_SHIELD, "shieldRfBase", rfBase,
-                "Base amount of RF/tick for every block in the shield (while active)").getInt();
+                "Base amount of RF/tick for every 10 blocks in the shield (while active)").getInt();
         rfCamo = cfg.get(CATEGORY_SHIELD, "shieldRfCamo", rfCamo,
-                "RF/tick for every block added in case of camo mode").getInt();
+                "RF/tick for every 10 blocks added in case of camo mode").getInt();
         rfShield = cfg.get(CATEGORY_SHIELD, "shieldRfShield", rfShield,
-                "RF/tick for every block added in case of shield mode").getInt();
+                "RF/tick for every 10 block addeds in case of shield mode").getInt();
         rfDamage = cfg.get(CATEGORY_SHIELD, "shieldRfDamage", rfDamage,
                 "The amount of RF to consume for a single spike of damage for one entity").getInt();
         rfDamagePlayer = cfg.get(CATEGORY_SHIELD, "shieldRfDamagePlayer", rfDamagePlayer,

@@ -455,11 +455,15 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         if (!shieldActive) {
             return 0;
         }
-        int rf = ShieldConfiguration.rfBase;
+        int s = shieldBlocks.size() - 50;
+        if (s < 10) {
+            s = 10;
+        }
+        int rf = ShieldConfiguration.rfBase * s / 10;
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfShield;
+            rf += ShieldConfiguration.rfShield * s / 10;
         } else if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfCamo;
+            rf += ShieldConfiguration.rfCamo * s / 10;
         }
         return rf;
     }
