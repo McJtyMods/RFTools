@@ -7,8 +7,10 @@ import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.network.Argument;
+import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -37,6 +39,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
+
+    private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+        @Override
+        public boolean canInteractWith(EntityPlayer var1) {
+            return false;
+        }
+    }, 3, 3);
+
 
     public CrafterBaseTE() {
         super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
@@ -306,7 +316,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             return false;
         }
 
-        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
+//        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
+        ItemStack result = null;
+        try {
+            result = recipe.getCraftingResult(workInventory);
+        } catch (Exception e) {
+            // Ignore this error for now to make sure we don't crash on bad recipes.
+            Logging.log("Problem with recipe!");
+        }
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         if (result != null && placeResult(craftingRecipe.isCraftInternal(), result, undo)) {
@@ -332,6 +349,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                     ItemStack input = inventoryHelper.getStackInSlot(slotIdx);
                     if (input != null && input.stackSize > keep) {
                         if (OreDictionary.itemMatches(stack, input, false)) {
+                            workInventory.setInventorySlotContents(i, input.copy());
                             if (input.getItem().hasContainerItem(input)) {
                                 ItemStack containerItem = input.getItem().getContainerItem(input);
                                 if (containerItem != null) {
@@ -364,6 +382,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
                 if (count > 0) {
                     return false;   // Couldn't find all items.
                 }
+            } else {
+                workInventory.setInventorySlotContents(i, null);
             }
         }
         return true;

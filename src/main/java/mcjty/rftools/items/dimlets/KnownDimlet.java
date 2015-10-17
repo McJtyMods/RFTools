@@ -3,6 +3,7 @@ package mcjty.rftools.items.dimlets;
 import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.varia.Logging;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,7 +22,7 @@ public class KnownDimlet extends Item {
     private final Map<DimletType, IIcon> icons = new HashMap<DimletType, IIcon>();
 
     public KnownDimlet() {
-        setMaxStackSize(16);
+        setMaxStackSize(DimletConfiguration.dimletStackSize);
         setHasSubtypes(true);
         setMaxDamage(0);
     }

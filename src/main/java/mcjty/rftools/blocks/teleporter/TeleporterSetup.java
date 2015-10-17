@@ -5,6 +5,9 @@ import mcjty.container.GenericItemBlock;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
+import mcjty.rftools.crafting.PreservingShapedRecipe;
+import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
 import net.minecraft.init.Blocks;
@@ -22,6 +25,7 @@ public class TeleporterSetup {
 
     public static TeleportProbeItem teleportProbeItem;
     public static ChargedPorterItem chargedPorterItem;
+    public static AdvancedChargedPorterItem advancedChargedPorterItem;
 
     public static void setupBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock();
@@ -58,6 +62,11 @@ public class TeleporterSetup {
         chargedPorterItem.setUnlocalizedName("ChargedPorter");
         chargedPorterItem.setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(chargedPorterItem, "chargedPorterItem");
+
+        advancedChargedPorterItem = new AdvancedChargedPorterItem();
+        advancedChargedPorterItem.setUnlocalizedName("AdvancedChargedPorter");
+        advancedChargedPorterItem.setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(advancedChargedPorterItem, "advancedChargedPorterItem");
     }
 
     public static void setupCrafting() {
@@ -80,6 +89,13 @@ public class TeleporterSetup {
         GameRegistry.addRecipe(new ItemStack(matterBoosterBlock), " B ", "BMB", " B ", 'M', destinationAnalyzerBlock,
                 'B', Blocks.redstone_block);
         GameRegistry.addRecipe(new ItemStack(chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
+
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block),
+                new ItemStack(DimletSetup.infusedDiamond), new ItemStack(chargedPorterItem), new ItemStack(DimletSetup.infusedDiamond),
+                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block)
+        }, new ItemStack(advancedChargedPorterItem), 4));
+
         if (GeneralConfiguration.enableDialingDeviceRecipe) {
             GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
         }

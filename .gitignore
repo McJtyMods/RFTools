@@ -2,3 +2,5 @@
 *.iml
 *.ipr
 *.iws
+eclipse/
+out/

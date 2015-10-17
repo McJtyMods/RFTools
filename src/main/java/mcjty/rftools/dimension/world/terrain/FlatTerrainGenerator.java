@@ -8,13 +8,19 @@ import net.minecraft.init.Blocks;
 import java.util.Random;
 
 public class FlatTerrainGenerator extends NormalTerrainGenerator {
+    private final byte height;
+
+    public FlatTerrainGenerator(byte height) {
+        super();
+        this.height = height;
+    }
 
     @Override
     public void generate(int chunkX, int chunkZ, Block[] aBlock, byte[] abyte) {
         Block baseBlock = provider.dimensionInformation.getBaseBlockForTerrain().getBlock();
         byte baseMeta = provider.dimensionInformation.getBaseBlockForTerrain().getMeta();
 
-        byte waterLevel = 63;
+        byte waterLevel = height;
 
         boolean elevated = false;
         if (provider.dimensionInformation.hasFeatureType(FeatureType.FEATURE_MAZE)) {

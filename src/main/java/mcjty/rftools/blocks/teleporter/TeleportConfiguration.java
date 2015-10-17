@@ -1,6 +1,11 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.varia.Logging;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TeleportConfiguration {
     public static final String CATEGORY_TELEPORTER = "teleporter";
@@ -17,8 +22,11 @@ public class TeleportConfiguration {
     public static int rfPerCheck = 5000;                    // RF Used to do a check on a receiver.
     public static int rfDialedConnectionPerTick = 10;       // RF Consumed by transmitter when a dial is active and not doing anything else
 
+    public static int ADVANCED_CHARGEDPORTER_MAXENERGY = 1000000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
     public static int CHARGEDPORTER_MAXENERGY = 200000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
     public static int CHARGEDPORTER_RECEIVEPERTICK = 400;
+
+    public static int advancedSpeedBonus = 4;               // How much faster the speed of the advanced porter is
 
     // The following flags are used to calculate power usage for even starting a teleport. The rfStartTeleportBaseDim (cost of
     // teleporting to another dimension) is also the cap of the local teleport which is calculated by doing
@@ -47,6 +55,12 @@ public class TeleportConfiguration {
 
     // Prevent inter-dimensional teleportation.
     public static boolean preventInterdimensionalTeleports = false;
+    // Blacklist the following dimensions to be able to teleport from.
+    public static String blacklistedTeleportationSources = "";
+    private static Set<Integer> blacklistedTeleportationSourcesSet = null;
+    // Blacklist the following dimensions to be able to teleport too.
+    public static String blacklistedTeleportationDestinations = "";
+    private static Set<Integer> blacklistedTeleportationDestinationsSet = null;
 
     public static boolean logTeleportUsages = false;
 
@@ -66,10 +80,14 @@ public class TeleportConfiguration {
         DIALER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "dialerRFPerTick", DIALER_RECEIVEPERTICK,
                 "RF per tick that the dialing device can receive").getInt();
 
+        ADVANCED_CHARGEDPORTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "advancedChargedPorterMaxRF", ADVANCED_CHARGEDPORTER_MAXENERGY,
+                "Maximum RF storage that the advanced charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)").getInt();
         CHARGEDPORTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "chargedPorterMaxRF", CHARGEDPORTER_MAXENERGY,
                 "Maximum RF storage that the charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)").getInt();
         CHARGEDPORTER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "chargedPorterRFPerTick", CHARGEDPORTER_RECEIVEPERTICK,
                 "RF per tick that the the charged porter item can receive").getInt();
+        advancedSpeedBonus = cfg.get(CATEGORY_TELEPORTER, "advancedSpeedBonus", advancedSpeedBonus,
+                "The speed bonus for the advanced charged porter (compared to the normal one)").getInt();
 
         horizontalDialerRange = cfg.get(CATEGORY_TELEPORTER, "horizontalDialerRange", horizontalDialerRange,
                 "The horizontal range the dialing device uses to check for transmitters. These are the transmitters the dialing device will be able to control").getInt();
@@ -121,5 +139,39 @@ public class TeleportConfiguration {
 
         preventInterdimensionalTeleports = cfg.get(CATEGORY_TELEPORTER, "preventInterdimensionalTeleports", preventInterdimensionalTeleports,
                 "If this is true then the RFTools teleportation system cannot be used to travel in the same dimension").getBoolean();
+        blacklistedTeleportationSources = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationSources", blacklistedTeleportationSources,
+                "Comma separated list of dimension ids that the teleportation system can't teleport from").getString();
+        blacklistedTeleportationDestinations = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationDestinations", blacklistedTeleportationDestinations,
+                "Comma separated list of dimension ids that the teleportation system can't teleport to").getString();
+    }
+
+    public static Set<Integer> getBlacklistedTeleportationSources() {
+        if (blacklistedTeleportationSourcesSet == null) {
+            blacklistedTeleportationSourcesSet = new HashSet<Integer>();
+            String[] strings = StringUtils.split(blacklistedTeleportationSources, ',');
+            for (String string : strings) {
+                try {
+                    blacklistedTeleportationSourcesSet.add(Integer.parseInt(string));
+                } catch (NumberFormatException e) {
+                    Logging.logError("Bad formatted 'blacklistedTeleportationSources' config!");
+                }
+            }
+        }
+        return blacklistedTeleportationSourcesSet;
+    }
+
+    public static Set<Integer> getBlacklistedTeleportationDestinations() {
+        if (blacklistedTeleportationDestinationsSet == null) {
+            blacklistedTeleportationDestinationsSet = new HashSet<Integer>();
+            String[] strings = StringUtils.split(blacklistedTeleportationDestinations, ',');
+            for (String string : strings) {
+                try {
+                    blacklistedTeleportationDestinationsSet.add(Integer.parseInt(string));
+                } catch (NumberFormatException e) {
+                    Logging.logError("Bad formatted 'blacklistedTeleportationDestinations' config!");
+                }
+            }
+        }
+        return blacklistedTeleportationDestinationsSet;
     }
 }

@@ -33,6 +33,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_SETPRIVATE = "setAccess";
+    public static final String CMD_SETBEAM = "setBeam";
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
@@ -48,6 +49,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private String name = null;
     private boolean privateAccess = false;
+    private boolean beamHidden = false;
     private Set<String> allowedPlayers = new HashSet<String>();
     private int status = TeleportationTools.STATUS_OK;
 
@@ -84,6 +86,17 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     public void setPrivateAccess(boolean privateAccess) {
         this.privateAccess = privateAccess;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    public boolean isBeamHidden() {
+        return beamHidden;
+    }
+
+    public void setBeamHidden(boolean b) {
+        this.beamHidden = b;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     public boolean isOnce() {
@@ -142,6 +155,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (!allowedPlayers.contains(player)) {
             allowedPlayers.add(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
@@ -149,6 +163,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (allowedPlayers.contains(player)) {
             allowedPlayers.remove(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
@@ -187,6 +202,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             teleportId = null;
         }
         privateAccess = tagCompound.getBoolean("private");
+        beamHidden = tagCompound.getBoolean("hideBeam");
         once = tagCompound.getBoolean("once");
 
         allowedPlayers.clear();
@@ -232,6 +248,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         tagCompound.setBoolean("private", privateAccess);
+        tagCompound.setBoolean("hideBeam", beamHidden);
         tagCompound.setBoolean("once", once);
 
         NBTTagList playerTagList = new NBTTagList();
@@ -549,12 +566,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
                 return;
             }
 
-            if (TeleportConfiguration.preventInterdimensionalTeleports) {
-                if (worldObj.provider.dimensionId == dest.getDimension()) {
-                    Logging.warn(player, "Teleportation in the same dimension is not allowed!");
-                    cooldownTimer = 80;
-                    return;
-                }
+            int srcId = worldObj.provider.dimensionId;
+            int dstId = dest.getDimension();
+            if (!TeleportationTools.checkValidTeleport(player, srcId, dstId)) {
+                cooldownTimer = 80;
+                return;
             }
 
             Logging.message(player, "Start teleportation...");
@@ -586,6 +602,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return true;
         } else if (CMD_SETPRIVATE.equals(command)) {
             setPrivateAccess(args.get("private").getBoolean());
+            return true;
+        } else if (CMD_SETBEAM.equals(command)) {
+            setBeamHidden(args.get("hide").getBoolean());
             return true;
         } else if (CMD_ADDPLAYER.equals(command)) {
             addPlayer(args.get("player").getString());

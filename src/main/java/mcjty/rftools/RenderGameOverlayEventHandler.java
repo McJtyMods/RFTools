@@ -95,6 +95,18 @@ public class RenderGameOverlayEventHandler {
                 case BUFF_NIGHTVISION:
                     item = EnvironmentalSetup.nightVisionEModuleItem;
                     break;
+                case BUFF_BLINDNESS:
+                    item = EnvironmentalSetup.blindnessEModuleItem;
+                    break;
+                case BUFF_WEAKNESS:
+                    item = EnvironmentalSetup.weaknessEModuleItem;
+                    break;
+                case BUFF_POISON:
+                    item = EnvironmentalSetup.poisonEModuleItem;
+                    break;
+                case BUFF_SLOWNESS:
+                    item = EnvironmentalSetup.slownessEModuleItem;
+                    break;
                 default:
                     item = null;
             }

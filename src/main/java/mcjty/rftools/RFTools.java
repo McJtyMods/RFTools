@@ -35,6 +35,7 @@ import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Logging;
+import mcjty.wailasupport.WailaCompatibility;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,15 +48,15 @@ import java.util.EnumMap;
 
 @Mod(modid = RFTools.MODID, name="RFTools", dependencies =
         "required-after:Forge@["+RFTools.MIN_FORGE_VER+
-        ",);required-after:CoFHCore@["+RFTools.MIN_COFHCORE_VER+
+        ",);required-after:CoFHLib@["+RFTools.MIN_COFHLIB_VER+
         ",);required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "3.30";
+    public static final String VERSION = "3.50";
     public static final String MIN_FORGE_VER = "10.13.2.1291";
-    public static final String MIN_COFHCORE_VER = "1.7.10R3.0.0B9";
-    public static final String MIN_MCJTYLIB_VER = "1.3.0";
+    public static final String MIN_COFHLIB_VER = "1.0.3";
+    public static final String MIN_MCJTYLIB_VER = "1.6.1";
 
     @SidedProxy(clientSide="mcjty.rftools.ClientProxy", serverSide="mcjty.rftools.ServerProxy")
     public static CommonProxy proxy;
@@ -105,6 +106,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MATTER_RECEIVER = modGuiIndex++;
     public static final int GUI_DIALING_DEVICE = modGuiIndex++;
     public static final int GUI_TELEPORTPROBE = modGuiIndex++;
+    public static final int GUI_ADVANCEDPORTER = modGuiIndex++;
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
     public static final int GUI_MANUAL_DIMENSION = modGuiIndex++;
     public static final int GUI_ENDERGENIC = modGuiIndex++;
@@ -139,6 +141,7 @@ public class RFTools implements ModBase {
     public static final int GUI_BUILDER = modGuiIndex++;
     public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
     public static final int GUI_SECURITY_MANAGER = modGuiIndex++;
+    public static final int GUI_SHAPECARD = modGuiIndex++;
 
 
     /**
@@ -149,10 +152,14 @@ public class RFTools implements ModBase {
     public void preInit(FMLPreInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(new DimletDropsEvent());
         this.proxy.preInit(e);
-        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
+        WailaCompatibility.register();
+//        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.invisibleShieldBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.noTickInvisibleShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.solidShieldBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ShieldSetup.noTickSolidShieldBlock));
         FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenHitBlock));
+        FMLInterModComms.sendMessage("JAKJ_RedstoneInMotion", "blacklistSoft", Block.blockRegistry.getNameForObject(ScreenSetup.screenBlock));
     }
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.

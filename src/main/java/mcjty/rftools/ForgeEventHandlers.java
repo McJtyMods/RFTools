@@ -10,10 +10,12 @@ import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.types.EffectType;
+import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.varia.Coordinate;
 import mcjty.varia.GlobalCoordinate;
 import mcjty.varia.Logging;
+import mcjty.varia.WrenchChecker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,50 +24,78 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ForgeEventHandlers {
 
+    private Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
+        Collection<GlobalCoordinate> protectors;
+        BlockProtectors blockProtectors = BlockProtectors.getProtectors(world);
+        if (blockProtectors == null) {
+            protectors = Collections.emptyList();
+        } else {
+            int id = world.provider.dimensionId;
+            protectors = blockProtectors.findProtectors(x, y, z, id, 2);
+        }
+        return protectors;
+    }
 
-//    @SubscribeEvent
-//    public void onGrassColorRequest(BiomeEvent.GetGrassColor event) {
-//        event.
-//        event.newColor = BiomeMutator.PINK;
-//    }
+    @SubscribeEvent
+    public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        ItemStack heldItem = event.entityPlayer.getHeldItem();
+        if (heldItem == null || heldItem.getItem() == null) {
+            return;
+        }
+        if (event.entityPlayer.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
+            // If the block is protected we prevent sneak-wrenching it.
+            World world = event.world;
+            int x = event.x;
+            int y = event.y;
+            int z = event.z;
+            Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
+            checkHarvestProtection(event, x, y, z, world, protectors);
+        }
+
+    }
 
     @SubscribeEvent
     public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
-        BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
-        if (blockProtectors == null) {
-            return;
-        }
+        int x = event.x;
+        int y = event.y;
+        int z = event.z;
+        World world = event.world;
+        Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
+        checkHarvestProtection(event, x, y, z, world, protectors);
+    }
 
-        int id = event.world.provider.dimensionId;
-        Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors(event.x, event.y, event.z, id, 2);
-
+    private void checkHarvestProtection(Event event, int x, int y, int z, World world, Collection<GlobalCoordinate> protectors) {
         for (GlobalCoordinate protector : protectors) {
             int cx = protector.getCoordinate().getX();
             int cy = protector.getCoordinate().getY();
             int cz = protector.getCoordinate().getZ();
-            TileEntity te = event.world.getTileEntity(cx, cy, cz);
+            TileEntity te = world.getTileEntity(cx, cy, cz);
             if (te instanceof BlockProtectorTileEntity) {
                 BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
-                Coordinate relative = blockProtectorTileEntity.absoluteToRelative(event.x, event.y, event.z);
+                Coordinate relative = blockProtectorTileEntity.absoluteToRelative(x, y, z);
                 boolean b = blockProtectorTileEntity.isProtected(relative);
                 if (b) {
                     if (blockProtectorTileEntity.attemptHarvestProtection()) {
@@ -82,14 +112,8 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onDetonate(ExplosionEvent.Detonate event) {
-        BlockProtectors blockProtectors = BlockProtectors.getProtectors(event.world);
-        if (blockProtectors == null) {
-            return;
-        }
-
-        int id = event.world.provider.dimensionId;
         Explosion explosion = event.explosion;
-        Collection<GlobalCoordinate> protectors = blockProtectors.findProtectors((int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ, id, (int) explosion.explosionSize);
+        Collection<GlobalCoordinate> protectors = getProtectors(event.world, (int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ);
 
         if (protectors.isEmpty()) {
             return;
@@ -189,6 +213,25 @@ public class ForgeEventHandlers {
     }
 
     @SubscribeEvent
+    public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+        World world = event.world;
+        if (world.isRemote) {
+            return;
+        }
+        int id = world.provider.dimensionId;
+
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
+
+        if (dimensionInformation != null && dimensionInformation.isNoanimals()) {
+            if (event.entity instanceof IAnimals && !(event.entity instanceof IMob)) {
+                event.setCanceled(true);
+                Logging.logDebug("Noanimals dimension: Prevented a spawn of " + event.entity.getClass().getName());
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
         World world = event.world;
         int id = world.provider.dimensionId;
@@ -259,4 +302,17 @@ public class ForgeEventHandlers {
         }
     }
 
+    @SubscribeEvent
+    public void onReplaceBiomeBlocks(ChunkProviderEvent.ReplaceBiomeBlocks event) {
+        World world = event.world;
+        if (world == null) {
+            return;
+        }
+        int id = world.provider.dimensionId;
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+        DimensionInformation information = dimensionManager.getDimensionInformation(id);
+        if (information != null && information.hasFeatureType(FeatureType.FEATURE_CLEAN)) {
+            event.setResult(Event.Result.DENY);
+        }
+    }
 }

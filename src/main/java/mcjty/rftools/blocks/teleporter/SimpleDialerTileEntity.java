@@ -46,7 +46,10 @@ public class SimpleDialerTileEntity extends GenericTileEntity {
                     }
                 }
 
-                TeleportationTools.dial(worldObj, null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, onceMode);
+                int dial = TeleportationTools.dial(worldObj, null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, onceMode);
+                if (dial != DialingDeviceTileEntity.DIAL_OK) {
+                    // @todo some way to report error
+                }
             }
         }
     }

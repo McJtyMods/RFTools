@@ -172,6 +172,7 @@ public class ScreenSetup {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,

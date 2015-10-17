@@ -157,6 +157,9 @@ public class TeleportationTools {
             return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
         }
         MatterTransmitterTileEntity transmitterTileEntity = (MatterTransmitterTileEntity) transWorld.getTileEntity(transmitter.getX(), transmitter.getY(), transmitter.getZ());
+        if (transmitterTileEntity == null) {
+            return DialingDeviceTileEntity.DIAL_INVALID_TRANSMITTER;
+        }
 
         if (player != null && !transmitterTileEntity.checkAccess(player)) {
             return DialingDeviceTileEntity.DIAL_TRANSMITTER_NOACCESS;
@@ -231,6 +234,10 @@ public class TeleportationTools {
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
         int rf = TeleportConfiguration.rfPerTeleportReceiver;
         rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
+
+        if (rf <= 0) {
+            return 0;
+        }
 
         int extracted = rf;
         if (rf > matterReceiverTileEntity.getEnergyStored(ForgeDirection.DOWN)) {
@@ -323,6 +330,24 @@ public class TeleportationTools {
                     break;
                 }
             }
+        }
+        return true;
+    }
+
+    public static boolean checkValidTeleport(EntityPlayer player, int srcId, int dstId) {
+        if (TeleportConfiguration.preventInterdimensionalTeleports) {
+            if (srcId == dstId) {
+                Logging.warn(player, "Teleportation in the same dimension is not allowed!");
+                return false;
+            }
+        }
+        if (TeleportConfiguration.getBlacklistedTeleportationDestinations().contains(dstId)) {
+            Logging.warn(player, "Teleportation to that dimension is not allowed!");
+            return false;
+        }
+        if (TeleportConfiguration.getBlacklistedTeleportationSources().contains(srcId)) {
+            Logging.warn(player, "Teleportation from this dimension is not allowed!");
+            return false;
         }
         return true;
     }

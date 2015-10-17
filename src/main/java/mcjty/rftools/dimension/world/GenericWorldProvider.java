@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ivorius.reccomplex.dimensions.DimensionDictionary;
+import mcjty.rftools.api.dimension.RFToolsWorldProvider;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -29,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Optional.InterfaceList(@Optional.Interface(iface = "ivorius.reccomplex.dimensions.DimensionDictionary$Handler", modid = "reccomplex"))
-public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler {
+public class GenericWorldProvider extends WorldProvider implements DimensionDictionary.Handler, RFToolsWorldProvider {
 
     public static final String RFTOOLS_DIMENSION = "rftools dimension";
 
@@ -170,8 +171,8 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                     SkyRenderer.registerNoSky(this);
                 } else if (skyType == SkyType.SKY_ENDER) {
                     SkyRenderer.registerEnderSky(this);
-                } else if (skyType == SkyType.SKY_INFERNO) {
-                    SkyRenderer.registerPlasmaSky(this);
+                } else if (skyType == SkyType.SKY_INFERNO || skyType == SkyType.SKY_STARS1 || skyType == SkyType.SKY_STARS2 || skyType == SkyType.SKY_STARS3) {
+                    SkyRenderer.registerSkybox(this, skyType);
                 } else {
                     SkyRenderer.registerSky(this, dimensionInformation);
                 }
@@ -354,11 +355,21 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                 float rs = descriptor.getRainStrength();
                 if (rs > -0.5f) {
                     worldObj.rainingStrength = rs;
+                    if (Math.abs(worldObj.rainingStrength) < 0.001) {
+                        worldObj.prevRainingStrength = 0;
+                        worldObj.rainingStrength = 0;
+                        worldObj.getWorldInfo().setRaining(false);
+                    }
                 }
 
                 float ts = descriptor.getThunderStrength();
                 if (ts > -0.5f) {
                     worldObj.thunderingStrength = ts;
+                    if (Math.abs(worldObj.thunderingStrength) < 0.001) {
+                        worldObj.prevThunderingStrength = 0;
+                        worldObj.thunderingStrength = 0;
+                        worldObj.getWorldInfo().setThundering(false);
+                    }
                 }
             }
         }
@@ -384,5 +395,14 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
         } else {
             return dimensionInformation.getCelestialAngle();
         }
+    }
+
+    //------------------------ RFToolsWorldProvider
+
+
+    @Override
+    public int getCurrentRF() {
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+        return dimensionStorage.getEnergyLevel(dimensionId);
     }
 }

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import mcjty.base.GeneralConfig;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
@@ -33,6 +34,7 @@ import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.mobs.ModEntities;
 import mcjty.network.PacketHandler;
 import mcjty.rftools.village.VillageSetup;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
@@ -45,6 +47,8 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        GeneralConfig.preInit(e);
+
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
 
@@ -120,6 +124,8 @@ public abstract class CommonProxy {
         FMLCommonHandler.instance().bus().register(new ClientDisconnectEvent());
         MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        MinecraftForge.ORE_GEN_BUS.register(new ForgeOregenHandlers());
+        MinecraftForge.TERRAIN_GEN_BUS.register(new ForgeTerrainGenHandlers());
         FMLCommonHandler.instance().bus().register(new FMLEventHandlers());
         FMLCommonHandler.instance().bus().register(new DimensionTickEvent());
     }

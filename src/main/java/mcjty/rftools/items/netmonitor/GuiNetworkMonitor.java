@@ -63,7 +63,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     public GuiNetworkMonitor() {
-        super(RFTools.instance, MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
         listDirty = 0;
         previousRfMillis = 0;
     }
@@ -151,7 +151,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             int rft = 0;
             if (dt > 0 && previousRf != null && previousRf.containsKey(me.getKey())) {
                 rft = energy - previousRf.get(me.getKey());
-                rft = rft * 20 / (int)dt;
+                rft = rft * 50 / (int)dt;
             }
             energyLabel.setRfPerTick(rft);
         }

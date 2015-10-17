@@ -15,30 +15,44 @@ public class ShieldSetup {
     public static ShieldBlock shieldBlock;
     public static ShieldBlock shieldBlock2;
     public static ShieldBlock shieldBlock3;
+    public static ShieldBlock shieldBlock4;
     public static InvisibleShieldBlock invisibleShieldBlock;
+    public static NoTickInvisibleShieldBlock noTickInvisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
+    public static NoTickSolidShieldBlock noTickSolidShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static void setupBlocks() {
-        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class);
+        shieldBlock = new ShieldBlock("shieldBlock", ShieldTileEntity.class, ShieldTileEntity.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock, GenericItemBlock.class, "shieldBlock");
         GameRegistry.registerTileEntity(ShieldTileEntity.class, "ShieldTileEntity");
 
-        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class);
+        shieldBlock2 = new ShieldBlock("shieldBlock2", ShieldTileEntity2.class, ShieldTileEntity2.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock2, GenericItemBlock.class, "shieldBlock2");
         GameRegistry.registerTileEntity(ShieldTileEntity2.class, "ShieldTileEntity2");
 
-        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class);
+        shieldBlock3 = new ShieldBlock("shieldBlock3", ShieldTileEntity3.class, ShieldTileEntity3.MAX_SHIELD_SIZE);
         GameRegistry.registerBlock(shieldBlock3, GenericItemBlock.class, "shieldBlock3");
         GameRegistry.registerTileEntity(ShieldTileEntity3.class, "ShieldTileEntity3");
 
+        shieldBlock4 = new ShieldBlock("shieldBlock4", ShieldTileEntity4.class, ShieldTileEntity4.MAX_SHIELD_SIZE);
+        GameRegistry.registerBlock(shieldBlock4, GenericItemBlock.class, "shieldBlock4");
+        GameRegistry.registerTileEntity(ShieldTileEntity4.class, "ShieldTileEntity4");
+
         invisibleShieldBlock = new InvisibleShieldBlock();
         GameRegistry.registerBlock(invisibleShieldBlock, "invisibleShieldBlock");
+        noTickInvisibleShieldBlock = new NoTickInvisibleShieldBlock();
+        GameRegistry.registerBlock(noTickInvisibleShieldBlock, "noTickInvisibleShieldBlock");
 
         if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
             solidShieldBlock = new SolidShieldBlock();
             GameRegistry.registerBlock(solidShieldBlock, "solidShieldBlock");
             GameRegistry.registerTileEntity(ShieldBlockTileEntity.class, "ShieldBlockTileEntity");
+
+            noTickSolidShieldBlock = new NoTickSolidShieldBlock();
+            GameRegistry.registerBlock(noTickSolidShieldBlock, "noTickolidShieldBlock");
+            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, "NoTickShieldBlockTileEntity");
+
             shieldTemplateBlock = new ShieldTemplateBlock();
             GameRegistry.registerBlock(shieldTemplateBlock, ShieldTemplateBlock.ShieldTemplateItemBlock.class, "shieldTemplateBlock");
         }
@@ -62,6 +76,11 @@ public class ShieldSetup {
                     new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
                     new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard)
             }, new ItemStack(shieldBlock3), 4));
+            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                    new ItemStack(Items.nether_star), new ItemStack(Blocks.obsidian), new ItemStack(DimletSetup.dimensionalShard),
+                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock3), new ItemStack(Blocks.obsidian),
+                    new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Blocks.obsidian), new ItemStack(Items.nether_star)
+            }, new ItemStack(shieldBlock4), 4));
         }
 
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);

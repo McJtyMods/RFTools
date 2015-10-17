@@ -57,6 +57,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
     public static final int DIAL_INTERRUPTED = 0x80;                // The dial was interrupted
     public static final int DIAL_INVALID_SOURCE_MASK = 0x100;       // The source is somehow invalid
     public static final int DIAL_DIMENSION_POWER_LOW_MASK = 0x200;  // The destination dimension is low on power
+    public static final int DIAL_INVALID_TRANSMITTER = 0x400;       // The transmitter is gone!
     public static final int DIAL_OK = 0;                            // All is ok
     public static final String COMPONENT_NAME = "dialing_device";
 

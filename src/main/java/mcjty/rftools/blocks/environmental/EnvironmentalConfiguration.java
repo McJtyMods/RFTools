@@ -23,6 +23,17 @@ public class EnvironmentalConfiguration {
     public static float SPEEDPLUS_RFPERTICK = 0.003f;
     public static float WATERBREATHING_RFPERTICK = 0.001f;
 
+    // Debuffs
+    public static float BLINDNESS_RFPERTICK = 0.01f;
+    public static float WEAKNESS_RFPERTICK = 0.01f;
+    public static float POISON_RFPERTICK = 0.02f;
+    public static float SLOWNESS_RFPERTICK = 0.012f;
+
+    public static boolean blindnessAvailable = false;
+    public static boolean weaknessAvailable = false;
+    public static boolean poisonAvailable = false;
+    public static boolean slownessAvailable = false;
+
     public static void init(Configuration cfg) {
         ENVIRONMENTAL_MAXENERGY = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRF", ENVIRONMENTAL_MAXENERGY,
                 "Maximum RF storage that the environmental controller can hold").getInt();
@@ -59,5 +70,22 @@ public class EnvironmentalConfiguration {
                 "RF per tick/per block for the speed plus module").getDouble();
         WATERBREATHING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "watherBreathingRFPerTick", WATERBREATHING_RFPERTICK,
                 "RF per tick/per block for the wather breathing module").getDouble();
+
+        BLINDNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessRFPerTick", BLINDNESS_RFPERTICK,
+                "RF per tick/per block for the blindness module").getDouble();
+        blindnessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessAvailable", blindnessAvailable,
+                "Set to true to make the blindness module available").getBoolean();
+        WEAKNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessRFPerTick", WEAKNESS_RFPERTICK,
+                "RF per tick/per block for the weakness module").getDouble();
+        weaknessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessAvailable", weaknessAvailable,
+                "Set to true to make the weakness module available").getBoolean();
+        POISON_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "poisonRFPerTick", POISON_RFPERTICK,
+                "RF per tick/per block for the poison module").getDouble();
+        poisonAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "poisonAvailable", poisonAvailable,
+                "Set to true to make the poison module available").getBoolean();
+        SLOWNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "slownessRFPerTick", SLOWNESS_RFPERTICK,
+                "RF per tick/per block for the slowness module").getDouble();
+        slownessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "slownessAvailable", slownessAvailable,
+                "Set to true to make the slowness module available").getBoolean();
     }
 }

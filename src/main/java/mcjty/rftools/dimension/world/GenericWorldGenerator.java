@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.types.FeatureType;
+import mcjty.rftools.dimension.world.types.TerrainType;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
@@ -30,7 +31,7 @@ public class GenericWorldGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
         RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(world);
         if (manager.getDimensionDescriptor(world.provider.dimensionId) == null) {
-            return; // Not one of RFTools dimensions
+            return; // Not an RFTools dimension
         }
 
         DimensionInformation information = manager.getDimensionInformation(world.provider.dimensionId);
@@ -264,7 +265,12 @@ public class GenericWorldGenerator implements IWorldGenerator {
 
         int midx = 8;
         int midz = 8;
-        int starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
+        int starty;
+        if (information.getTerrainType() == TerrainType.TERRAIN_SOLID) {
+            starty = 64;
+        } else {
+            starty = WorldGenerationTools.findSuitableEmptySpot(world, midx, midz);
+        }
         if (starty == -1) {
             // No suitable spot. We will carve something out.
             starty = 64;
@@ -273,6 +279,9 @@ public class GenericWorldGenerator implements IWorldGenerator {
         }
 
         boolean shelter = information.isShelter();
+        if (information.getTerrainType() == TerrainType.TERRAIN_LIQUID) {
+            shelter = true;
+        }
         int bounds = 3;
         if (shelter) {
             bounds = 4;

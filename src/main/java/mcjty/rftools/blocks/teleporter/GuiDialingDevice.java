@@ -284,6 +284,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             setStatusError("Transmitter blocked!");
             return;
         }
+        if ((dialResult & DialingDeviceTileEntity.DIAL_INVALID_TRANSMITTER) != 0) {
+            setStatusError("Invalid transmitter!!");
+            return;
+        }
         if ((dialResult & DialingDeviceTileEntity.DIAL_INTERRUPTED) != 0) {
             setStatusMessage("Interrupted!");
             return;

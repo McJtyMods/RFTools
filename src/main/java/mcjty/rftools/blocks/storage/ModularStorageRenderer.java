@@ -43,6 +43,7 @@ public class ModularStorageRenderer extends DefaultISBRH {
             Tessellator tessellator = Tessellator.instance;
             tessellator.addTranslation(x, y, z);
             tessellator.setBrightness(240);
+            tessellator.setColorRGBA_I(0xffffff, 255);
 
             IIcon icon = ModularStorageSetup.modularStorageBlock.getOverlayIcon();
 

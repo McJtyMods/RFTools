@@ -245,7 +245,7 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
 
     @Override
     public int getInventoryStackLimit() {
-        return 16;
+        return DimletConfiguration.dimletStackSize;
     }
 
     @Override

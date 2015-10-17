@@ -333,7 +333,7 @@ public class DimensionTickEvent {
                         if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true)) {
                             player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000000.0f);
                         } else {
-                            if (doEffects) {
+                            if (doEffects && DimletConfiguration.phasedFieldGeneratorDebuf) {
                                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), EFFECTS_MAX * MAXTICKS, 4, true));
                                 player.addPotionEffect(new PotionEffect(Potion.digSlowdown.getId(), EFFECTS_MAX * MAXTICKS, 2, true));
                                 player.addPotionEffect(new PotionEffect(Potion.hunger.getId(), EFFECTS_MAX * MAXTICKS, 2, true));

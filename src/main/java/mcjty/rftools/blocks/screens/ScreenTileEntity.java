@@ -41,9 +41,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     private boolean needsServerData = false;
     private boolean powerOn = false;        // True if screen is powered.
     private boolean connected = false;      // True if screen is connected to a controller.
-    private boolean large = false;          // Large screen.
+    private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
+
+    public static final int SIZE_NORMAL = 0;
+    public static final int SIZE_LARGE = 1;
+    public static final int SIZE_HUGE = 2;
 
     // Cached server screen modules
     private List<ScreenModule> screenModules = null;
@@ -73,7 +77,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return AxisAlignedBB.getBoundingBox(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
+        return AxisAlignedBB.getBoundingBox(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1);
     }
 
     @Override
@@ -155,7 +159,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     }
 
     public void hitScreenClient(double hitX, double hitY, double hitZ, int side) {
-        float factor = large ? 2.0f : 1.0f;
+        float factor = size+1.0f;
         float dx = 0;
         float dy = (float) ((-hitY + 1.0) / factor);
         switch (side) {
@@ -271,7 +275,11 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
-        large = tagCompound.getBoolean("large");
+        if (tagCompound.hasKey("large")) {
+            size = tagCompound.getBoolean("large") ? 1 : 0;
+        } else {
+            size = tagCompound.getInteger("size");
+        }
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
     }
@@ -297,7 +305,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
-        tagCompound.setBoolean("large", large);
+        tagCompound.setInteger("size", size);
         tagCompound.setBoolean("transparent", transparent);
         tagCompound.setInteger("color", color);
     }
@@ -325,8 +333,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    public void setLarge(boolean large) {
-        this.large = large;
+    public void setSize(int size) {
+        this.size = size;
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -337,8 +345,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    public boolean isLarge() {
-        return large;
+    public int getSize() {
+        return size;
     }
 
     public boolean isTransparent() {

@@ -37,6 +37,11 @@ public class EnvironmentalSetup {
     public static WaterBreathingEModuleItem waterBreathingEModuleItem;
     public static NightVisionEModuleItem nightVisionEModuleItem;
 
+    public static BlindnessEModuleItem blindnessEModuleItem;
+    public static WeaknessEModuleItem weaknessEModuleItem;
+    public static PoisonEModuleItem poisonEModuleItem;
+    public static SlownessEModuleItem slownessEModuleItem;
+
     public static void setupBlocks() {
         environmentalControllerBlock = new EnvironmentalControllerBlock();
         GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
@@ -127,6 +132,30 @@ public class EnvironmentalSetup {
         nightVisionEModuleItem.setCreativeTab(RFTools.tabRfTools);
         nightVisionEModuleItem.setTextureName(RFTools.MODID + ":envmodules/nightVisionEModuleItem");
         GameRegistry.registerItem(nightVisionEModuleItem, "nightVisionEModuleItem");
+
+        blindnessEModuleItem = new BlindnessEModuleItem();
+        blindnessEModuleItem.setUnlocalizedName("BlindnessEModule");
+        blindnessEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        blindnessEModuleItem.setTextureName(RFTools.MODID + ":envmodules/blindnessEModuleItem");
+        GameRegistry.registerItem(blindnessEModuleItem, "blindnessEModuleItem");
+
+        weaknessEModuleItem = new WeaknessEModuleItem();
+        weaknessEModuleItem.setUnlocalizedName("WeaknessEModule");
+        weaknessEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        weaknessEModuleItem.setTextureName(RFTools.MODID + ":envmodules/weaknessEModuleItem");
+        GameRegistry.registerItem(weaknessEModuleItem, "weaknessEModuleItem");
+
+        poisonEModuleItem = new PoisonEModuleItem();
+        poisonEModuleItem.setUnlocalizedName("PoisonEModule");
+        poisonEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        poisonEModuleItem.setTextureName(RFTools.MODID + ":envmodules/poisonEModuleItem");
+        GameRegistry.registerItem(poisonEModuleItem, "poisonEModuleItem");
+
+        slownessEModuleItem = new SlownessEModuleItem();
+        slownessEModuleItem.setUnlocalizedName("SlownessEModule");
+        slownessEModuleItem.setCreativeTab(RFTools.tabRfTools);
+        slownessEModuleItem.setTextureName(RFTools.MODID + ":envmodules/slownessEModuleItem");
+        GameRegistry.registerItem(slownessEModuleItem, "slownessEModuleItem");
     }
 
     public static void setupCrafting() {
@@ -150,6 +179,8 @@ public class EnvironmentalSetup {
         ItemStack reds = new ItemStack(Items.redstone);
         ItemStack gold = new ItemStack(Items.gold_ingot);
         ItemStack ink = new ItemStack((Item) inkSac);
+        ItemStack obsidian = new ItemStack(Blocks.obsidian);
+        ItemStack lapis = new ItemStack(Items.dye, 1, 4);
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
                 new ItemStack[] {null, chickenSyringe, null, reds, gold, reds, null, ink, null},
@@ -217,6 +248,34 @@ public class EnvironmentalSetup {
 
         GameRegistry.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', DimletConstructionSetup.peaceEssenceItem,
                 'r', reds, 'g', gold, 'i', ink);
+
+        if (EnvironmentalConfiguration.blindnessAvailable) {
+            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                    new ItemStack[]{null, squidSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                    new ItemStack(blindnessEModuleItem)));
+        }
+
+        if (EnvironmentalConfiguration.weaknessAvailable) {
+            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                    new ItemStack[]{null, batSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                    new ItemStack(weaknessEModuleItem)));
+        }
+
+        if (EnvironmentalConfiguration.poisonAvailable) {
+            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                    new ItemStack[]{null, caveSpiderSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                    new ItemStack(poisonEModuleItem)));
+        }
+
+        if (EnvironmentalConfiguration.slownessAvailable) {
+            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                    new ItemStack[]{null, new ItemStack(Items.clock), null, lapis, obsidian, lapis, null, ink, null},
+                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                    new ItemStack(slownessEModuleItem)));
+        }
     }
 
     public static ItemStack createEnchantedItem(Item item, int effectId, int amount) {

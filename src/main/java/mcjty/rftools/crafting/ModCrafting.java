@@ -72,6 +72,9 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualDimensionItem), "r r", " b ", "r r", 'r', Items.redstone, 'b', Items.book);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.shapeCardItem), "pbp", "rir", "pbp", 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', Items.brick, 'p', Items.paper);
     }
 
     private static void intBaseCrafting() {

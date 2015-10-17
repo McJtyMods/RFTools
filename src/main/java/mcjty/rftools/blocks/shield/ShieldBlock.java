@@ -3,8 +3,12 @@ package mcjty.rftools.blocks.shield;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.api.Infusable;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.varia.Coordinate;
+import mcjty.varia.GlobalCoordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -22,10 +26,13 @@ import java.util.List;
 
 public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
 
-    public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz) {
+    private final int max;
+
+    public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz, int max) {
         super(Material.iron, clazz, true);
         setBlockName(blockName);
         setCreativeTab(RFTools.tabRfTools);
+        this.max = max;
     }
 
     @Override
@@ -46,12 +53,13 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
+        list.add(EnumChatFormatting.GREEN + "Supports " + max + " blocks");
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This machine can build a shield out of adjacent");
-            list.add(EnumChatFormatting.WHITE + "shield template block. You can add filters for");
-            list.add(EnumChatFormatting.WHITE + "players, mobs, animals, items to control if they");
-            list.add(EnumChatFormatting.WHITE + "should be able to pass or not and if they should");
-            list.add(EnumChatFormatting.WHITE + "get damage.");
+            list.add(EnumChatFormatting.WHITE + "This machine forms a shield out of adjacent");
+            list.add(EnumChatFormatting.WHITE + "template blocks. It can filter based on type of");
+            list.add(EnumChatFormatting.WHITE + "mob and do various things (damage, solid, ...)");
+            list.add(EnumChatFormatting.WHITE + "Use the Smart Wrench to add sections to the shield");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(EnumChatFormatting.YELLOW + "increased damage.");
         } else {
@@ -71,16 +79,38 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
     }
 
     @Override
+    public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
+        if (!world.isRemote) {
+            composeDecomposeShield(world, x, y, z, true);
+        }
+    }
+
+    @Override
     protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
-        composeDecomposeShield(world, x, y, z);
+        composeDecomposeShield(world, x, y, z, false);
         return true;
     }
 
-    private void composeDecomposeShield(World world, int x, int y, int z) {
+    @Override
+    protected boolean wrenchSneakSelect(World world, int x, int y, int z, EntityPlayer player) {
+        if (!world.isRemote) {
+            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem());
+            if (currentBlock == null) {
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(), new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId));
+                Logging.message(player, EnumChatFormatting.YELLOW + "Selected block");
+            } else {
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(), null);
+                Logging.message(player, EnumChatFormatting.YELLOW + "Cleared selected block");
+            }
+        }
+        return true;
+    }
+
+    private void composeDecomposeShield(World world, int x, int y, int z, boolean ctrl) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof ShieldTEBase) {
-                ((ShieldTEBase)te).composeDecomposeShield();
+                ((ShieldTEBase)te).composeDecomposeShield(ctrl);
             }
         }
     }

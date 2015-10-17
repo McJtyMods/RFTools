@@ -20,6 +20,8 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_SETPRIVATE = "setAccess";
+    public static final String CMD_GETPLAYERS = "getPlayers";
+    public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
     private String name = null;
     private boolean privateAccess = false;
@@ -150,6 +152,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
         if (!allowedPlayers.contains(player)) {
             allowedPlayers.add(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
@@ -157,6 +160,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
         if (allowedPlayers.contains(player)) {
             allowedPlayers.remove(player);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            markDirty();
         }
     }
 
@@ -260,7 +264,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
         if (rc != null) {
             return rc;
         }
-        if (MatterTransmitterTileEntity.CMD_GETPLAYERS.equals(command)) {
+        if (CMD_GETPLAYERS.equals(command)) {
             return getAllowedPlayers();
         }
         return null;
@@ -272,7 +276,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity {
         if (rc) {
             return true;
         }
-        if (MatterTransmitterTileEntity.CLIENTCMD_GETPLAYERS.equals(command)) {
+        if (CLIENTCMD_GETPLAYERS.equals(command)) {
             GuiMatterReceiver.storeAllowedPlayersForClient(list);
             return true;
         }

@@ -11,10 +11,10 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.devdelight.DevelopersDelightItem;
 import mcjty.rftools.items.devdelight.ShardWandItem;
-import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.items.manual.RFToolsManualDimensionItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -25,6 +25,7 @@ public final class ModItems {
     public static DevelopersDelightItem developersDelightItem;
     public static ShardWandItem shardWandItem;
     public static SmartWrenchItem smartWrenchItem;
+    public static ShapeCardItem shapeCardItem;
 
     public static void init() {
         setupVariousItems();
@@ -40,6 +41,12 @@ public final class ModItems {
     }
 
     private static void setupVariousItems() {
+        shapeCardItem = new ShapeCardItem();
+        shapeCardItem.setUnlocalizedName("ShapeCard");
+        shapeCardItem.setCreativeTab(RFTools.tabRfTools);
+        shapeCardItem.setTextureName(RFTools.MODID + ":shapeCardItem");
+        GameRegistry.registerItem(shapeCardItem, "shapeCardItem");
+
         smartWrenchItem = new SmartWrenchItem();
         smartWrenchItem.setUnlocalizedName("SmartWrench");
         smartWrenchItem.setCreativeTab(RFTools.tabRfTools);

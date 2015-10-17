@@ -125,7 +125,7 @@ public class GenericChunkProvider implements IChunkProvider {
                 terrainGenerator = new VoidTerrainGenerator();
                 break;
             case TERRAIN_FLAT:
-                terrainGenerator = new FlatTerrainGenerator();
+                terrainGenerator = new FlatTerrainGenerator((byte) 63);
                 break;
             case TERRAIN_AMPLIFIED:
                 terrainGenerator = new AmplifiedTerrainGenerator();
@@ -162,6 +162,21 @@ public class GenericChunkProvider implements IChunkProvider {
                 break;
             case TERRAIN_FLOODED_CAVERN:
                 terrainGenerator = new CavernTerrainGenerator(CavernTerrainGenerator.CavernHeight.HEIGHT_128);
+                break;
+            case TERRAIN_LIQUID:
+                terrainGenerator = new LiquidTerrainGenerator();
+                break;
+            case TERRAIN_SOLID:
+                terrainGenerator = new FlatTerrainGenerator((byte) 127);
+                break;
+            case TERRAIN_WAVES:
+                terrainGenerator = new WavesTerrainGenerator(false);
+                break;
+            case TERRAIN_FILLEDWAVES:
+                terrainGenerator = new WavesTerrainGenerator(true);
+                break;
+            case TERRAIN_ROUGH:
+                terrainGenerator = new RoughTerrainGenerator(false);
                 break;
             default:
                 terrainGenerator = new VoidTerrainGenerator();

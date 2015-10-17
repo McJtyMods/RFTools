@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.screens;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.varia.BlockTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -87,31 +87,47 @@ public class ScreenBlock extends GenericRFToolsBlock {
         }
     }
 
-    private void setInvisibleBlocks(World world, int x, int y, int z) {
+    private void setInvisibleBlocks(World world, int x, int y, int z, int size) {
         int meta = world.getBlockMetadata(x, y, z);
 
         if (meta == 2) {
-            setInvisibleBlockSafe(world, x, y, z, -1, 0, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, -1, -1, 0, meta);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, x, y, z, -i, -j, 0, meta);
+                    }
+                }
+            }
         }
 
         if (meta == 3) {
-            setInvisibleBlockSafe(world, x, y, z, 1, 0, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 1, -1, 0, meta);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, x, y, z, i, -j, 0, meta);
+                    }
+                }
+            }
         }
 
         if (meta == 4) {
-            setInvisibleBlockSafe(world, x, y, z, 0, 0, 1, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 1, meta);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, x, y, z, 0, -i, j, meta);
+                    }
+                }
+            }
         }
 
         if (meta == 5) {
-            setInvisibleBlockSafe(world, x, y, z, 0, 0, -1, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, 0, meta);
-            setInvisibleBlockSafe(world, x, y, z, 0, -1, -1, meta);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, x, y, z, 0, -i, -j, meta);
+                    }
+                }
+            }
         }
     }
 
@@ -124,46 +140,89 @@ public class ScreenBlock extends GenericRFToolsBlock {
         }
     }
 
-    private void clearInvisibleBlocks(World world, int x, int y, int z, int meta) {
+    private void clearInvisibleBlocks(World world, int x, int y, int z, int meta, int size) {
         if (meta == 2) {
-            clearInvisibleBlockSafe(world, x - 1, y, z);
-            clearInvisibleBlockSafe(world, x, y - 1, z);
-            clearInvisibleBlockSafe(world, x - 1, y - 1, z);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, x - i, y - j, z);
+                    }
+                }
+            }
         }
 
         if (meta == 3) {
-            clearInvisibleBlockSafe(world, x + 1, y, z);
-            clearInvisibleBlockSafe(world, x, y - 1, z);
-            clearInvisibleBlockSafe(world, x + 1, y - 1, z);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, x + i, y - j, z);
+                    }
+                }
+            }
         }
 
         if (meta == 4) {
-            clearInvisibleBlockSafe(world, x, y, z + 1);
-            clearInvisibleBlockSafe(world, x, y - 1, z);
-            clearInvisibleBlockSafe(world, x, y - 1, z + 1);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, x, y - i, z + j);
+                    }
+                }
+            }
         }
 
         if (meta == 5) {
-            clearInvisibleBlockSafe(world, x, y, z - 1);
-            clearInvisibleBlockSafe(world, x, y - 1, z);
-            clearInvisibleBlockSafe(world, x, y - 1, z - 1);
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, x, y - i, z - j);
+                    }
+                }
+            }
         }
     }
+
+    private static class Setup {
+        private final boolean transparent;
+        private final int size;
+
+        public Setup(int size, boolean transparent) {
+            this.size = size;
+            this.transparent = transparent;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public boolean isTransparent() {
+            return transparent;
+        }
+    }
+
+    private static Setup transitions[] = new Setup[] {
+            new Setup(ScreenTileEntity.SIZE_NORMAL, false),
+            new Setup(ScreenTileEntity.SIZE_NORMAL, true),
+            new Setup(ScreenTileEntity.SIZE_LARGE, false),
+            new Setup(ScreenTileEntity.SIZE_LARGE, true),
+            new Setup(ScreenTileEntity.SIZE_HUGE, false),
+            new Setup(ScreenTileEntity.SIZE_HUGE, true),
+    };
 
     @Override
     protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(x, y, z);
-        if (screenTileEntity.isTransparent() && screenTileEntity.isLarge()) {
-            screenTileEntity.setTransparent(false);
-        } else if (screenTileEntity.isLarge()) {
-            screenTileEntity.setLarge(false);
-            int meta = world.getBlockMetadata(x, y, z);
-            clearInvisibleBlocks(world, x, y, z, meta);
-        } else if (screenTileEntity.isTransparent()) {
-            screenTileEntity.setLarge(true);
-            setInvisibleBlocks(world, x, y, z);
-        } else {
-            screenTileEntity.setTransparent(true);
+        int meta = world.getBlockMetadata(x, y, z);
+        clearInvisibleBlocks(world, x, y, z, meta, screenTileEntity.getSize());
+        for (int i = 0 ; i < transitions.length ; i++) {
+            Setup setup = transitions[i];
+            if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
+                Setup next = transitions[(i+1) % transitions.length];
+                screenTileEntity.setTransparent(next.isTransparent());
+                screenTileEntity.setSize(next.getSize());
+                setInvisibleBlocks(world, x, y, z, screenTileEntity.getSize());
+                break;
+            }
         }
         return true;
     }
@@ -275,9 +334,16 @@ public class ScreenBlock extends GenericRFToolsBlock {
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            boolean large = tagCompound.getBoolean("large");
+            int size;
+            if (tagCompound.hasKey("large")) {
+                size = tagCompound.getBoolean("large") ? ScreenTileEntity.SIZE_LARGE : ScreenTileEntity.SIZE_NORMAL;
+            } else {
+                size = tagCompound.getInteger("size");
+            }
             boolean transparent = tagCompound.getBoolean("transparent");
-            if (large) {
+            if (size == ScreenTileEntity.SIZE_HUGE) {
+                list.add(EnumChatFormatting.BLUE + "Huge screen.");
+            } else if (size == ScreenTileEntity.SIZE_LARGE) {
                 list.add(EnumChatFormatting.BLUE + "Large screen.");
             }
             if (transparent) {
@@ -322,8 +388,8 @@ public class ScreenBlock extends GenericRFToolsBlock {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
-            if (screenTileEntity.isLarge()) {
-                setInvisibleBlocks(world, x, y, z);
+            if (screenTileEntity.getSize() > ScreenTileEntity.SIZE_NORMAL) {
+                setInvisibleBlocks(world, x, y, z, screenTileEntity.getSize());
             }
         }
     }
@@ -333,8 +399,8 @@ public class ScreenBlock extends GenericRFToolsBlock {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-            if (screenTileEntity.isLarge()) {
-                clearInvisibleBlocks(world, x, y, z, meta);
+            if (screenTileEntity.getSize() > ScreenTileEntity.SIZE_NORMAL) {
+                clearInvisibleBlocks(world, x, y, z, meta, screenTileEntity.getSize());
             }
         }
         super.breakBlock(world, x, y, z, block, meta);

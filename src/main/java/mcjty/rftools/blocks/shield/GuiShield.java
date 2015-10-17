@@ -105,7 +105,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         });
         ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this).addColors(0x96ffc8, 0x4698ff, 0xff6030, 0x55a0a0, 0xa055a0, 0xffffff).
                 setTooltips("Color for the shield").
-                setLayoutHint(new PositionalLayout.PositionalHint(51, 186, 28, 16)).
+                setLayoutHint(new PositionalLayout.PositionalHint(51, 180, 28, 16)).
                 addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
@@ -307,7 +307,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 180, 16, 16));
         redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
@@ -349,7 +349,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         typeOptions.setChoiceTooltip("Passive", "Matches passive mobs");
         typeOptions.setChoiceTooltip("Hostile", "Matches hostile mobs");
         typeOptions.setChoiceTooltip("Item", "Matches items");
-        typeOptions.setChoiceTooltip("Player", "Matches players", "(optionaly named)");
+        typeOptions.setChoiceTooltip("Player", "Matches players", "(optionally named)");
     }
 
     private void initDamageType() {

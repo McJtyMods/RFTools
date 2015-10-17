@@ -45,9 +45,9 @@ import java.util.List;
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
     public static final int STORAGE_WIDTH = 256;
-    public static final int STORAGE_HEIGHT0 = 236;
-    public static final int STORAGE_HEIGHT1 = 320;
-    public static final int STORAGE_HEIGHT2 = 490;
+    public static final int STORAGE_HEIGHT0 = ModularStorageConfiguration.height1;
+    public static final int STORAGE_HEIGHT1 = ModularStorageConfiguration.height2;
+    public static final int STORAGE_HEIGHT2 = ModularStorageConfiguration.height3;
 
     public static final String VIEW_LIST = "list";
     public static final String VIEW_COLUMNS = "columns";
@@ -174,13 +174,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 });
 
         if (tileEntity != null) {
-            filter.setText(tileEntity.getFilter());
+            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tileEntity.getFilter());
             setViewMode(tileEntity.getViewMode());
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
         } else {
             NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound();
-            filter.setText(tagCompound.getString("filter"));
+            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
             setViewMode(tagCompound.getString("viewMode"));
             setSortMode(tagCompound.getString("sortMode"));
             groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);

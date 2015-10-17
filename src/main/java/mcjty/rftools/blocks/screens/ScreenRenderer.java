@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -22,11 +23,14 @@ import java.util.Map;
 public class ScreenRenderer extends TileEntitySpecialRenderer {
 
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
-    private final ModelScreen screenModel = new ModelScreen(false);
-    private final ModelScreen screenModelLarge = new ModelScreen(true);
+    private final ModelScreen screenModel = new ModelScreen(ScreenTileEntity.SIZE_NORMAL);
+    private final ModelScreen screenModelLarge = new ModelScreen(ScreenTileEntity.SIZE_LARGE);
+    private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
+
         GL11.glPushMatrix();
         float f3;
 
@@ -51,11 +55,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
 
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
 
-        boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
-
         if (!screenTileEntity.isTransparent()) {
             GL11.glDisable(GL11.GL_LIGHTING);
-            renderScreenBoard(screenTileEntity.isLarge(), screenTileEntity.getColor());
+            renderScreenBoard(screenTileEntity.getSize(), screenTileEntity.getColor());
         }
 
         if (screenTileEntity.isPowerOn()) {
@@ -68,17 +70,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
             Map<Integer, Object[]> screenData = updateScreenData(screenTileEntity);
 
             List<ClientScreenModule> modules = screenTileEntity.getClientScreenModules();
-            renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.isLarge());
-
-//            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            renderModules(fontrenderer, mode, modules, screenData, screenTileEntity.getSize());
         }
 
-        if (lightingEnabled) {
-            GL11.glEnable(GL11.GL_LIGHTING);
-        }
-
-        GL11.glDepthMask(true);
         GL11.glPopMatrix();
+        GL11.glPopAttrib();
     }
 
     private Map<Integer, Object[]> updateScreenData(ScreenTileEntity screenTileEntity) {
@@ -95,13 +91,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         return screenData;
     }
 
-    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, Object[]> screenData, boolean large) {
-        float f3, factor;
-        if (large) {
-            factor = 2.0f;
-        } else {
-            factor = 1.0f;
-        }
+    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, Object[]> screenData, int size) {
+        float f3;
+        float factor = size + 1.0f;
         int currenty = 7;
         int moduleIndex = 0;
         for (ClientScreenModule module : modules) {
@@ -150,11 +142,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         }
     }
 
-    private void renderScreenBoard(boolean large, int color) {
+    private void renderScreenBoard(int size, int color) {
         this.bindTexture(texture);
         GL11.glPushMatrix();
         GL11.glScalef(1, -1, -1);
-        if (large) {
+        if (size == ScreenTileEntity.SIZE_HUGE) {
+            this.screenModelHuge.render();
+        } else if (size == ScreenTileEntity.SIZE_LARGE) {
             this.screenModelLarge.render();
         } else {
             this.screenModel.render();
@@ -167,7 +161,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer {
         tessellator.setColorRGBA_I(color, 255);
 //        tessellator.setColorOpaque(0, 0, 0);
         float r;
-        if (large) {
+        if (size == ScreenTileEntity.SIZE_HUGE) {
+            r = 2.46f;
+        } else if (size == ScreenTileEntity.SIZE_LARGE) {
             r = 1.46f;
         } else {
             r = .46f;

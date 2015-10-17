@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
@@ -26,7 +27,7 @@ public abstract class PotionEffectModule implements EnvironmentModule {
     protected abstract PlayerBuff getBuff();
 
     @Override
-    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy) {
+    public void tick(World world, int x, int y, int z, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         if (!active) {
             return;
         }
@@ -46,10 +47,12 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double pz = player.posZ;
                 double sqdist = (px-x) * (px-x) + (pz-z) * (pz-z);
                 if (sqdist < maxsqdist) {
-                    player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS*3, amplifier, true));
-                    PlayerBuff buff = getBuff();
-                    if (buff != null) {
-                        BuffProperties.addBuff(player, buff, MAXTICKS);
+                    if (controllerTileEntity.isPlayerAffected(player)) {
+                        player.addPotionEffect(new PotionEffect(potionEffect, MAXTICKS * 3, amplifier, true));
+                        PlayerBuff buff = getBuff();
+                        if (buff != null) {
+                            BuffProperties.addBuff(player, buff, MAXTICKS);
+                        }
                     }
                 }
             }

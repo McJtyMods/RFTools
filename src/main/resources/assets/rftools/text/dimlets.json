@@ -234,6 +234,7 @@
         [ "Liquid", "obsidian.molten", 5000, 1200, 300, 3, 0, 0 ],
         [ "Liquid", "manyullyn.molten", 20000, 10000, 900, 5, 0, 0 ],
         [ "Liquid", "fluidpure", 6000, 800, 200, 3, 0, 0 ],
+        [ "Liquid", "fluiddeath", 8000, 1300, 400, 5, 1, 0 ],
 
         [ "Mob", "Default", 300, 100, 200, 1, 0, 0 ],
         [ "Mob", "Blaze", 6000, 3000, 800, 3, 0, 0 ],
@@ -316,6 +317,7 @@
         [ "Feature", "Dense Caves", 100, 1, 1, 1, 0, 0 ],
         [ "Feature", "Volcanoes", 100, 1, 1, 1, 0, 0 ],
         [ "Feature", "No Dimlet Buildings", 100, 1, 1, 2, 1, 0 ],
+        [ "Feature", "Clean", 10, -5, 1, 2, 1, 0 ],
 
         [ "Patreon", "McJty", 10, 0, 1, 2, 1, 0 ],
         [ "Patreon", "SickHippie", 10, 0, 1, 2, 1, 0 ],
@@ -323,6 +325,7 @@
         [ "Patreon", "Nissenfeld", 10, 0, 1, 2, 1, 0 ],
         [ "Patreon", "Puppeteer", 10, 0, 1, 2, 1, 0 ],
         [ "Patreon", "Rouven", 100, 100, 10, 3, 1, 0 ],
-        [ "Patreon", "FireBall", 10, 0, 1, 2, 1, 0 ]
+        [ "Patreon", "FireBall", 10, 0, 1, 2, 1, 0 ],
+        [ "Patreon", "DarkCorvus", 10, 0, 1, 2, 1, 0 ]
     ]
 }

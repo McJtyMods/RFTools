@@ -14,8 +14,11 @@ import mcjty.entity.SyncedValueList;
 import mcjty.network.Argument;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
+import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.varia.BlockTools;
 import mcjty.varia.Coordinate;
+import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
@@ -39,7 +43,7 @@ import java.util.*;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
         @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IInventory, SimpleComponent, IPeripheral {
+public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IInventory, SmartWrenchSelector, SimpleComponent, IPeripheral {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -121,7 +125,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
         return new String[] { "getDamageMode", "setDamageMode", "getRedstoneMode", "setRedstoneMode", "getShieldRenderingMode", "setShieldRenderingMode", "isShieldActive", "isShieldComposed",
-            "composeShield", "decomposeShield" };
+            "composeShield", "composeShieldDsc", "decomposeShield" };
     }
 
     @Override
@@ -136,8 +140,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             case 5: return setShieldRenderingMode((String) arguments[0]);
             case 6: return new Object[] { isShieldActive() };
             case 7: return new Object[] { isShieldComposed() };
-            case 8: return composeShieldComp();
-            case 9: return decomposeShieldComp();
+            case 8: return composeShieldComp(false);
+            case 9: return composeShieldComp(true);
+            case 10: return decomposeShieldComp();
         }
         return new Object[0];
     }
@@ -249,13 +254,19 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     @Callback
     @Optional.Method(modid = "OpenComputers")
     public Object[] composeShield(Context context, Arguments args) throws Exception {
-        return composeShieldComp();
+        return composeShieldComp(false);
     }
 
-    private Object[] composeShieldComp() {
+    @Callback
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] composeShieldDsc(Context context, Arguments args) throws Exception {
+        return composeShieldComp(true);
+    }
+
+    private Object[] composeShieldComp(boolean ctrl) {
         boolean done = false;
         if (!isShieldComposed()) {
-            composeShield();
+            composeShield(ctrl);
             done = true;
         }
         return new Object[] { done };
@@ -381,15 +392,23 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return new int[] { camoId, meta, te };
     }
 
-    private Block calculateShieldBlock() {
+    private Block calculateShieldBlock(int damageBits) {
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.air;
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
-            return ShieldSetup.invisibleShieldBlock;
+            if (damageBits == 0) {
+                return ShieldSetup.noTickInvisibleShieldBlock;
+            } else {
+                return ShieldSetup.invisibleShieldBlock;
+            }
         }
 
-        return ShieldSetup.solidShieldBlock;
+        if (damageBits == 0) {
+            return ShieldSetup.noTickSolidShieldBlock;
+        } else {
+            return ShieldSetup.solidShieldBlock;
+        }
     }
 
     private int calculateDamageBits() {
@@ -436,11 +455,15 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         if (!shieldActive) {
             return 0;
         }
-        int rf = ShieldConfiguration.rfBase;
+        int s = shieldBlocks.size() - 50;
+        if (s < 10) {
+            s = 10;
+        }
+        int rf = ShieldConfiguration.rfBase * s / 10;
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfShield;
+            rf += ShieldConfiguration.rfShield * s / 10;
         } else if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfCamo;
+            rf += ShieldConfiguration.rfCamo * s / 10;
         }
         return rf;
     }
@@ -536,29 +559,41 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         }
     }
 
-
-
-    public void composeDecomposeShield() {
+    public void composeDecomposeShield(boolean ctrl) {
         if (shieldComposed) {
             // Shield is already composed. Break it into template blocks again.
             decomposeShield();
         } else {
             // Shield is not composed. Find all nearby template blocks and form a shield.
-            composeShield();
+            composeShield(ctrl);
         }
     }
 
-    public void composeShield() {
-        templateMeta = findTemplateMeta();
+    public void composeShield(boolean ctrl) {
+        if (isShapedShield()) {
+            shieldBlocks.clear();
 
-        Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-        findTemplateBlocks(coordinateSet, xCoord, yCoord, zCoord, templateMeta);
-        shieldBlocks.clear();
-        for (Coordinate c : coordinateSet) {
-            shieldBlocks.add(c);
+            // Special shaped mode.
+            ShapeCardItem.Shape shape = ShapeCardItem.getShape(stacks[ShieldContainer.SLOT_SHAPE]);
+            Coordinate dimension = ShapeCardItem.getDimension(stacks[ShieldContainer.SLOT_SHAPE]);
+            Coordinate offset = ShapeCardItem.getOffset(stacks[ShieldContainer.SLOT_SHAPE]);
+            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, shieldBlocks, supportedBlocks);
+        } else {
+            templateMeta = findTemplateMeta();
+
+            Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
+            findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
+            shieldBlocks.clear();
+            for (Coordinate c : coordinateSet) {
+                shieldBlocks.add(c);
+            }
         }
         shieldComposed = true;
         updateShield();
+    }
+
+    private boolean isShapedShield() {
+        return stacks[ShieldContainer.SLOT_SHAPE] != null;
     }
 
     private int findTemplateMeta() {
@@ -577,43 +612,97 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return meta;
     }
 
+    @Override
+    public void selectBlock(EntityPlayer player, int x, int y, int z) {
+        if (!shieldComposed) {
+            Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not composed. Nothing happens!");
+            return;
+        }
+        float squaredDistance = getCoordinate().squaredDistance(x, y, z);
+        if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance * ShieldConfiguration.maxDisjointShieldDistance) {
+            Logging.message(player, EnumChatFormatting.YELLOW + "This template is too far to connect to the shield!");
+            return;
+        }
+
+        Block origBlock = worldObj.getBlock(x, y, z);
+        Coordinate c = new Coordinate(x, y, z);
+        if (origBlock == ShieldSetup.shieldTemplateBlock) {
+            if (isShapedShield()) {
+                Logging.message(player, EnumChatFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
+                return;
+            }
+            Set<Coordinate> templateBlocks = new HashSet<Coordinate>();
+            findTemplateBlocks(templateBlocks, worldObj.getBlockMetadata(x, y, z), false, c);
+
+            int[] camoId = calculateCamoId();
+            int cddata = calculateShieldCollisionData();
+            int damageBits = calculateDamageBits();
+            Block block = calculateShieldBlock(damageBits);
+            for (Coordinate templateBlock : templateBlocks) {
+                shieldBlocks.add(templateBlock);
+                updateShieldBlock(camoId, cddata, damageBits, block, templateBlock);
+            }
+        } else if (origBlock instanceof AbstractShieldBlock) {
+            shieldBlocks.remove(c);
+            if (isShapedShield()) {
+                worldObj.setBlockToAir(x, y, z);
+            } else {
+                worldObj.setBlock(x, y, z, ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+            }
+        } else {
+            Logging.message(player, EnumChatFormatting.YELLOW + "The selected shield can't do anything with this block!");
+            return;
+        }
+        markDirty();
+        notifyBlockUpdate();
+    }
+
     /**
      * Update all shield blocks. Possibly creating the shield.
      */
     private void updateShield() {
-        Coordinate thisCoordinate = new Coordinate(xCoord, yCoord, zCoord);
         int[] camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
-        Block block = calculateShieldBlock();
         int damageBits = calculateDamageBits();
+        Block block = calculateShieldBlock(damageBits);
         for (Coordinate c : shieldBlocks) {
             if (Blocks.air.equals(block)) {
                 worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
             } else {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
-                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof ShieldBlockTileEntity) {
-                    ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
-                    shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
-                    shieldBlockTileEntity.setShieldBlock(thisCoordinate);
-                    shieldBlockTileEntity.setDamageBits(damageBits);
-                    shieldBlockTileEntity.setCollisionData(cddata);
-                    shieldBlockTileEntity.setShieldColor(shieldColor);
-                }
+                updateShieldBlock(camoId, cddata, damageBits, block, c);
             }
         }
         markDirty();
         notifyBlockUpdate();
     }
 
+    private void updateShieldBlock(int[] camoId, int cddata, int damageBits, Block block, Coordinate c) {
+        worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
+        TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+        if (te instanceof ShieldBlockTileEntity) {
+            ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
+            shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
+            shieldBlockTileEntity.setShieldBlock(getCoordinate());
+            shieldBlockTileEntity.setDamageBits(damageBits);
+            shieldBlockTileEntity.setCollisionData(cddata);
+            shieldBlockTileEntity.setShieldColor(shieldColor);
+        }
+    }
+
     public void decomposeShield() {
         for (Coordinate c : shieldBlocks) {
             Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
             if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
-                worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+                if (isShapedShield()) {
+                    worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
+                } else {
+                    worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+                }
             } else {
-                // No room, just spawn the block
-                BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                if (!isShapedShield()) {
+                    // No room, just spawn the block
+                    BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                }
             }
         }
         shieldComposed = false;
@@ -626,15 +715,33 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     /**
      * Find all template blocks recursively.
      * @param coordinateSet the set with coordinates to update during the search
-     * @param x current block
-     * @param y current block
-     * @param z current block
      * @param meta the metavalue for the shield template block we support
+     * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int x, int y, int z, int meta) {
-        if (coordinateSet.size() >= supportedBlocks) {
-            return;
+    private void findTemplateBlocks(Set<Coordinate> coordinateSet, int meta, boolean ctrl, Coordinate start) {
+        Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
+
+        if (ctrl) {
+            addToTodoCornered(coordinateSet, todo, start, meta);
+            while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
+                Coordinate coordinate = todo.pollFirst();
+                coordinateSet.add(coordinate);
+                addToTodoCornered(coordinateSet, todo, coordinate, meta);
+            }
+        } else {
+            addToTodoStraight(coordinateSet, todo, start, meta);
+            while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
+                Coordinate coordinate = todo.pollFirst();
+                coordinateSet.add(coordinate);
+                addToTodoStraight(coordinateSet, todo, coordinate, meta);
+            }
         }
+    }
+
+    private void addToTodoStraight(Set<Coordinate> coordinateSet, Deque<Coordinate> todo, Coordinate coordinate, int meta) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        int z = coordinate.getZ();
         for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
             int xx = x + dir.offsetX;
             int yy = y + dir.offsetY;
@@ -645,8 +752,36 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
                     if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
                         int m = worldObj.getBlockMetadata(xx, yy, zz);
                         if (m == meta) {
-                            coordinateSet.add(c);
-                            findTemplateBlocks(coordinateSet, xx, yy, zz, meta);
+                            if (!todo.contains(c)) {
+                                todo.addLast(c);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void addToTodoCornered(Set<Coordinate> coordinateSet, Deque<Coordinate> todo, Coordinate coordinate, int meta) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        int z = coordinate.getZ();
+        for (int xx = x-1 ; xx <= x+1 ; xx++) {
+            for (int yy = y-1 ; yy <= y+1 ; yy++) {
+                for (int zz = z-1 ; zz <= z+1 ; zz++) {
+                    if (xx != x || yy != y || zz != z) {
+                        if (yy >= 0 && yy < worldObj.getHeight()) {
+                            Coordinate c = new Coordinate(xx, yy, zz);
+                            if (!coordinateSet.contains(c)) {
+                                if (ShieldSetup.shieldTemplateBlock.equals(worldObj.getBlock(xx, yy, zz))) {
+                                    int m = worldObj.getBlockMetadata(xx, yy, zz);
+                                    if (m == meta) {
+                                        if (!todo.contains(c)) {
+                                            todo.addLast(c);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -840,6 +975,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        if (index == ShieldContainer.SLOT_SHAPE && stacks[index] != null && amount > 0) {
+            // Restart if we go from having a stack to not having stack or the other way around.
+            decomposeShield();
+        }
+
         if (stacks[index] != null) {
             if (stacks[index].stackSize <= amount) {
                 ItemStack old = stacks[index];
@@ -864,6 +1004,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == ShieldContainer.SLOT_SHAPE && ((stack == null && stacks[index] != null) || (stack != null && stacks[index] == null))) {
+            // Restart if we go from having a stack to not having stack or the other way around.
+            decomposeShield();
+        }
         stacks[index] = stack;
         if (stack != null && stack.stackSize > getInventoryStackLimit()) {
             stack.stackSize = getInventoryStackLimit();
