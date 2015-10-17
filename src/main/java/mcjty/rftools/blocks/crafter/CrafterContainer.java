@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
-import mcjty.container.*;
+import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

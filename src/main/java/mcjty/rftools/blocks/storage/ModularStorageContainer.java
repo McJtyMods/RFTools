@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.container.*;
+import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;

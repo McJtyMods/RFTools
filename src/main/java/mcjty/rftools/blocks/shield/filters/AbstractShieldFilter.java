@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.shield.filters;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class AbstractShieldFilter implements ShieldFilter {

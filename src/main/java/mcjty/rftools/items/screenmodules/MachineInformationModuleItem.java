@@ -1,6 +1,9 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.api.MachineInformation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.api.MachineInformation;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.blocks.screens.ModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -8,9 +11,6 @@ import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.MachineInformationClientScreenModule;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

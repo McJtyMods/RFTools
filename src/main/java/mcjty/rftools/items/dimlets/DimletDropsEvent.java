@@ -1,8 +1,8 @@
 package mcjty.rftools.items.dimlets;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 

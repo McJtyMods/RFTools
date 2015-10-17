@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;

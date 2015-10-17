@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import net.minecraft.nbt.NBTTagCompound;

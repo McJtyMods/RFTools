@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.dimension.world.types.StructureType;
-import mcjty.rftools.items.dimlets.DimletType;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -13,7 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StructureEssenceItem extends Item {
     public static final Map<Integer,StructureType> structures = new HashMap<Integer, StructureType>();

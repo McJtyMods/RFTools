@@ -1,9 +1,9 @@
 package mcjty.rftools.commands;
 
+import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
-import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

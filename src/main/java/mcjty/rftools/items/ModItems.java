@@ -1,5 +1,6 @@
 package mcjty.rftools.items;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -16,7 +17,6 @@ import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ModItems {
     public static NetworkMonitorItem networkMonitorItem;

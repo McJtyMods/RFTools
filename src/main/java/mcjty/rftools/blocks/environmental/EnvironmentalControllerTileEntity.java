@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.network.Argument;
 import mcjty.rftools.blocks.teleporter.PlayerName;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

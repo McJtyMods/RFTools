@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.biome.BiomeGenBase;
 

@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.events.ChoiceEvent;
-import mcjty.gui.layout.PositionalLayout;
-import mcjty.gui.widgets.ImageChoiceLabel;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.Widget;
-import mcjty.network.Argument;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ChoiceEvent;
+import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;

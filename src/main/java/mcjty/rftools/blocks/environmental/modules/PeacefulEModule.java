@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.environmental.modules;
 
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.world.World;
 
 public class PeacefulEModule extends BuffEModule {

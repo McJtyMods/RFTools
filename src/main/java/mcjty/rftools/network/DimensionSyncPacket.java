@@ -1,9 +1,9 @@
 package mcjty.rftools.network;
 
-import mcjty.rftools.dimension.world.GenericWorldProvider;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.dimension.world.GenericWorldProvider;
 import net.minecraftforge.common.DimensionManager;
 
 public class DimensionSyncPacket {

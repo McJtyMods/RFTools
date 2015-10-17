@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.network.Argument;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

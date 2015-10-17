@@ -1,5 +1,7 @@
 package mcjty.rftools.render;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import mcjty.rftools.blocks.endergen.EndergenicRenderer;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerRenderer;
@@ -22,8 +24,6 @@ import mcjty.rftools.blocks.storage.RemoteStorageBlock;
 import mcjty.rftools.blocks.storage.RemoteStorageRenderer;
 import mcjty.rftools.blocks.teleporter.BeamRenderer;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public final class ModRenderers {
 

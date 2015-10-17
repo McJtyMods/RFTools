@@ -1,10 +1,10 @@
 package mcjty.rftools.playerprops;
 
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

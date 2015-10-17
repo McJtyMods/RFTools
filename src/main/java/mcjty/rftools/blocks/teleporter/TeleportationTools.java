@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

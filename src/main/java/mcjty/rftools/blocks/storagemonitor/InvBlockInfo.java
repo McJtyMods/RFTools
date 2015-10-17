@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
-import mcjty.varia.Coordinate;
+import mcjty.lib.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class InvBlockInfo {

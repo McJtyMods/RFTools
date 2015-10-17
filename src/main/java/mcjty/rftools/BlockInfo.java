@@ -1,6 +1,6 @@
 package mcjty.rftools;
 
-import mcjty.varia.Coordinate;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

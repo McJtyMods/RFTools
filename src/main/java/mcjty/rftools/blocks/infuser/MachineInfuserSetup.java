@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.infuser;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.init.Items;

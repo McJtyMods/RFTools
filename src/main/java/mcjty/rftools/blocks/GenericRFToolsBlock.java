@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks;
 
 import cofh.api.item.IToolHammer;
-import mcjty.container.GenericBlock;
-import mcjty.container.WrenchUsage;
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.WrenchUsage;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.SecurityTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
-import mcjty.varia.Logging;
-import mcjty.varia.SecurityTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

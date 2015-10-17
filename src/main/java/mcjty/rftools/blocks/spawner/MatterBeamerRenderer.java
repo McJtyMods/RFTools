@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.gui.RenderHelper;
+import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.render.DefaultISBRH;
-import mcjty.varia.BlockTools;
-import mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.Tessellator;

@@ -1,6 +1,6 @@
 package mcjty.rftools.dimension.world;
 
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.LongHashMap;

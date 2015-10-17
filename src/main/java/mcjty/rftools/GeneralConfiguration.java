@@ -1,9 +1,8 @@
 package mcjty.rftools;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import mcjty.base.GeneralConfig;
-import mcjty.gui.GuiConfig;
-import mcjty.varia.Logging;
+import mcjty.lib.gui.GuiConfig;
+import mcjty.lib.varia.Logging;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;

@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import mcjty.gui.GuiStyle;
+import mcjty.lib.gui.GuiStyle;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

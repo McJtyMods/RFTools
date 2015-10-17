@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.RenderHelper;
-import mcjty.gui.widgets.Panel;
+import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

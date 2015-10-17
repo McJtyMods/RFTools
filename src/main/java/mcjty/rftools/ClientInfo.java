@@ -2,7 +2,7 @@ package mcjty.rftools;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.varia.Coordinate;
+import mcjty.lib.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 

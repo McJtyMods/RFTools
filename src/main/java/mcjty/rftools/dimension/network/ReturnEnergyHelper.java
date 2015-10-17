@@ -1,8 +1,8 @@
 package mcjty.rftools.dimension.network;
 
-import mcjty.rftools.dimension.DimensionStorage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.dimension.DimensionStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 

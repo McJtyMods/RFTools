@@ -1,9 +1,10 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.network.Argument;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
@@ -11,7 +12,6 @@ import mcjty.rftools.dimension.world.WorldGenerationTools;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;

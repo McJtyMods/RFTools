@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.infuser;
 
-import mcjty.api.Infusable;
-import mcjty.base.GeneralConfig;
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.api.Infusable;
+import mcjty.lib.base.GeneralConfig;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.block.Block;

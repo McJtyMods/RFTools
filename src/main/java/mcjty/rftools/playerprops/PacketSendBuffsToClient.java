@@ -1,8 +1,8 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.rftools.PlayerBuff;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.PlayerBuff;
 
 import java.util.ArrayList;
 import java.util.List;

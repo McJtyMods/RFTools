@@ -2,10 +2,10 @@ package mcjty.rftools.items.shapecard;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
-import mcjty.varia.Coordinate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

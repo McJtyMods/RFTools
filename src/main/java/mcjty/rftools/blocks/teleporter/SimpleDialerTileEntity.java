@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.varia.BlockTools;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SimpleDialerTileEntity extends GenericTileEntity {

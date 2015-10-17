@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.container.GenericItemBlock;
-import mcjty.varia.Logging;
+import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

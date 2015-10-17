@@ -1,8 +1,10 @@
 package mcjty.rftools.blocks.storage.sorters;
 
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
-import net.minecraft.block.*;
-import net.minecraft.item.*;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Comparator;

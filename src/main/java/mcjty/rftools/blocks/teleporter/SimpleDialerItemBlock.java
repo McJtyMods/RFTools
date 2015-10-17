@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

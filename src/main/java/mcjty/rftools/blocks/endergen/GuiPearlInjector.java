@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.layout.PositionalLayout;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.Widget;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;

@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
-import mcjty.container.EmptyContainer;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.lib.api.Infusable;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;

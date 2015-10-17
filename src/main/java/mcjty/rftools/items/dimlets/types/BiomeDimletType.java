@@ -1,6 +1,6 @@
 package mcjty.rftools.items.dimlets.types;
 
-import mcjty.varia.BlockTools;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;

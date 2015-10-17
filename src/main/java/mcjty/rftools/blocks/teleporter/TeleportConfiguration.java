@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.StringUtils;
 

@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.teleporter;
 
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import mcjty.network.CommandHandler;
-import mcjty.network.NetworkTools;
-import mcjty.network.PacketRequestListFromServer;
-import mcjty.varia.Logging;
+import mcjty.lib.network.CommandHandler;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.varia.Logging;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;

@@ -1,6 +1,7 @@
 package mcjty.rftools.village;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.lib.varia.WeightedRandomSelector;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
@@ -9,7 +10,6 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.parts.StructureEssenceItem;
-import mcjty.varia.WeightedRandomSelector;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

@@ -1,15 +1,15 @@
 package mcjty.rftools.items.teleportprobe;
 
-import mcjty.gui.Window;
-import mcjty.gui.events.DefaultSelectionEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.*;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.DefaultSelectionEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 

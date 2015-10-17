@@ -1,22 +1,22 @@
 package mcjty.rftools.items.netmonitor;
 
-import mcjty.gui.GuiItemScreen;
-import mcjty.gui.Window;
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.events.DefaultSelectionEvent;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
+import mcjty.lib.gui.GuiItemScreen;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ButtonEvent;
+import mcjty.lib.gui.events.DefaultSelectionEvent;
+import mcjty.lib.gui.events.TextEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 

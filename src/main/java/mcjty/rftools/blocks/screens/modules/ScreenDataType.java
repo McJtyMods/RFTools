@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.network.NetworkTools;
-import mcjty.varia.Logging;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.Logging;
 import net.minecraft.item.ItemStack;
 
 public enum ScreenDataType {

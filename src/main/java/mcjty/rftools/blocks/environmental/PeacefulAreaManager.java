@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;

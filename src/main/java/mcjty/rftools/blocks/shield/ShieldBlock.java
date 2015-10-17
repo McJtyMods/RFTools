@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.shield;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
+import mcjty.lib.api.Infusable;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

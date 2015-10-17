@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

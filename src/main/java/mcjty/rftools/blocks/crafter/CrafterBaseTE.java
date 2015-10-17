@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.crafter;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
-import mcjty.network.Argument;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;

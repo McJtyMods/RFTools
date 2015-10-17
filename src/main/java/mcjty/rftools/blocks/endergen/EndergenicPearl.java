@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

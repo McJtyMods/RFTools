@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.network.NetworkTools;
+import mcjty.lib.network.NetworkTools;
 
 public class TeleportDestinationClientInfo extends TeleportDestination implements Comparable<TeleportDestinationClientInfo> {
 

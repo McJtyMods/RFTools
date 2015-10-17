@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.entity.SyncedValue;
-import mcjty.varia.BlockTools;
-import mcjty.network.Argument;
-import mcjty.varia.Coordinate;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.entity.SyncedValue;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

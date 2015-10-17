@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import mcjty.container.ContainerFactory;
-import mcjty.container.GenericContainer;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.GenericContainer;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class BlockProtectorContainer extends GenericContainer {

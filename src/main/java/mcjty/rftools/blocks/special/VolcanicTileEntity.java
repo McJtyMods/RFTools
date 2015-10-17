@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.special;
 
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;

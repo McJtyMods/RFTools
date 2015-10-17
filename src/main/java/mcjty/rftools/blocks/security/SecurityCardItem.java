@@ -2,11 +2,11 @@ package mcjty.rftools.blocks.security;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.SecurityTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Logging;
-import mcjty.varia.SecurityTools;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

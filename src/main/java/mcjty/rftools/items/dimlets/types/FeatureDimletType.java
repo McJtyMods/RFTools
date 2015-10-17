@@ -1,5 +1,6 @@
 package mcjty.rftools.items.dimlets.types;
 
+import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.FeatureType;
@@ -8,7 +9,6 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.DimletType;
-import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

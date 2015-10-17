@@ -2,12 +2,12 @@ package mcjty.rftools.blocks.teleporter;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
-import mcjty.container.EmptyContainer;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.lib.api.Infusable;
+import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;

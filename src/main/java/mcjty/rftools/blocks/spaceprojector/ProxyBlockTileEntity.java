@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import mcjty.varia.Coordinate;
+import mcjty.lib.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

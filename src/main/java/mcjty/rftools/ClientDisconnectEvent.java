@@ -1,10 +1,10 @@
 package mcjty.rftools;
 
-import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 
 public class ClientDisconnectEvent {
 

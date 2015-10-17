@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;

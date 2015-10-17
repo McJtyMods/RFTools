@@ -1,9 +1,9 @@
 package mcjty.rftools.dimension.description;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.items.dimlets.*;
-import mcjty.varia.Logging;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;

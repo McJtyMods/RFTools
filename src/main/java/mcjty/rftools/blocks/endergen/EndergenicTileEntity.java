@@ -1,16 +1,16 @@
 package mcjty.rftools.blocks.endergen;
 
 import cofh.api.energy.IEnergyConnection;
-import mcjty.api.MachineInformation;
-import mcjty.entity.GenericEnergyProviderTileEntity;
-import mcjty.network.Argument;
-import mcjty.network.PacketServerCommand;
+import mcjty.lib.api.MachineInformation;
+import mcjty.lib.entity.GenericEnergyProviderTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.EnergyTools;
-import mcjty.varia.BlockTools;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

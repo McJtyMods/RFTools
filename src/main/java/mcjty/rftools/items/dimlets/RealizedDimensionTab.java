@@ -2,13 +2,13 @@ package mcjty.rftools.items.dimlets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

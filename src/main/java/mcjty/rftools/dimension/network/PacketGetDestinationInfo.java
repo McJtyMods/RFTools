@@ -4,9 +4,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.world.World;
 
 public class PacketGetDestinationInfo implements IMessage,IMessageHandler<PacketGetDestinationInfo, PacketReturnDestinationInfo> {

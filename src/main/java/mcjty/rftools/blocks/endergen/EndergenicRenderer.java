@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.render.DefaultISBRH;
-import mcjty.varia.Coordinate;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;

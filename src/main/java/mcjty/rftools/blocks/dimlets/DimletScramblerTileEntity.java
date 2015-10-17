@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.network.Argument;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;

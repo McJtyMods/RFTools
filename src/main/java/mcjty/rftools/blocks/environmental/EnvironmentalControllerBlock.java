@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.environmental;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.lib.api.Infusable;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;

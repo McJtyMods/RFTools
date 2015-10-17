@@ -2,13 +2,13 @@ package mcjty.rftools;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.render.DefaultISBRH;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.Tessellator;

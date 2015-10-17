@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.network.ByteBufConverter;
-import mcjty.network.NetworkTools;
+import mcjty.lib.network.ByteBufConverter;
+import mcjty.lib.network.NetworkTools;
 
 public class PlayerName implements ByteBufConverter {
     private final String name;

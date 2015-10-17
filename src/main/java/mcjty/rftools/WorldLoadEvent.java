@@ -1,9 +1,9 @@
 package mcjty.rftools;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mcjty.varia.Logging;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.world.WorldEvent;
 

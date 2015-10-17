@@ -1,21 +1,24 @@
 package mcjty.rftools.items.shapecard;
 
-import mcjty.gui.Window;
-import mcjty.gui.events.ChoiceEvent;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
-import mcjty.network.Argument;
-import mcjty.network.PacketUpdateNBTItem;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ChoiceEvent;
+import mcjty.lib.gui.events.TextEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.List;
 
 public class GuiShapeCard extends GuiScreen {

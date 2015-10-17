@@ -1,9 +1,5 @@
 package mcjty.rftools;
 
-import mcjty.rftools.blocks.dimlets.DimletSetup;
-import mcjty.rftools.blocks.endergen.EndergenicSetup;
-import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.rftools.network.DimensionSyncPacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -11,8 +7,12 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.dimlets.DimletSetup;
+import mcjty.rftools.blocks.endergen.EndergenicSetup;
+import mcjty.rftools.dimension.RfToolsDimensionManager;
+import mcjty.rftools.network.DimensionSyncPacket;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

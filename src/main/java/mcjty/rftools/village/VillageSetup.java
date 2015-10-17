@@ -1,8 +1,8 @@
 package mcjty.rftools.village;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.varia.Logging;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 
 public class VillageSetup {

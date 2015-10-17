@@ -1,12 +1,11 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.DimensionInformation;
-import mcjty.rftools.dimension.world.GenericWorldProvider;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.Logging;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

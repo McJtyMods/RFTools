@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericTileEntity;
-import mcjty.varia.BlockTools;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;

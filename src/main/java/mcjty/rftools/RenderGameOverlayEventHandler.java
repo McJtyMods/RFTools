@@ -1,6 +1,6 @@
 package mcjty.rftools;
 
-import mcjty.gui.RenderHelper;
+import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;

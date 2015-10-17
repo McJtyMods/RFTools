@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.container.*;
+import mcjty.lib.container.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
