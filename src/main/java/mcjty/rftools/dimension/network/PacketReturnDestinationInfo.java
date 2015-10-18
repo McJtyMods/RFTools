@@ -2,7 +2,7 @@ package mcjty.rftools.dimension.network;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import mcjty.network.NetworkTools;
+import mcjty.lib.network.NetworkTools;
 
 public class PacketReturnDestinationInfo implements IMessage {
     private int id;

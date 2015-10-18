@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.varia.Coordinate;
+import mcjty.lib.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;

@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.entity.SyncedValue;
-import mcjty.varia.BlockTools;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.entity.SyncedValue;
+import mcjty.lib.varia.BlockTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class RedstoneReceiverTileEntity extends GenericTileEntity {

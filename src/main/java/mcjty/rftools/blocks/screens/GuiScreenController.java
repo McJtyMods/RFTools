@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.layout.PositionalLayout;
-import mcjty.gui.widgets.Button;
-import mcjty.gui.widgets.*;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ButtonEvent;
+import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;

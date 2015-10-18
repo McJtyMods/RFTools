@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import mcjty.container.InventoryHelper;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.blocks.dimlets.DimensionEnscriberTileEntity;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;

@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import mcjty.varia.Coordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

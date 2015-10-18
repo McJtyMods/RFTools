@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

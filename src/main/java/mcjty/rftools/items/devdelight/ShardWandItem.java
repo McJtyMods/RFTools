@@ -1,9 +1,9 @@
 package mcjty.rftools.items.devdelight;
 
-import mcjty.base.GeneralConfig;
-import mcjty.entity.GenericTileEntity;
-import mcjty.api.Infusable;
-import mcjty.varia.Logging;
+import mcjty.lib.api.Infusable;
+import mcjty.lib.base.GeneralConfig;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

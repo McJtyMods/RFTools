@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -185,7 +185,7 @@ public class ModularStorageConfiguration {
         categoryMapper.put("net.minecraft.block.BlockSapling", "Saplings");
         categoryMapper.put("net.minecraft.block.BlockFlower", "Flowers");
 
-        categoryMapper.put("mcjty.container.GenericBlock", "Machines");
+        categoryMapper.put("mcjty.lib.container.GenericBlock", "Machines");
 
         categoryMapper.put("mcjty.rftools.items.dimlets.KnownDimlet", "Dimlets");
         categoryMapper.put("mcjty.rftools.items.dimlets.UnknownDimlet", "Dimlets");

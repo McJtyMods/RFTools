@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.storage.sorters;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
-import mcjty.rftools.items.dimlets.DimletType;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;

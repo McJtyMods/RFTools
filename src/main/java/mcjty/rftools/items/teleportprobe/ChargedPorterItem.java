@@ -1,14 +1,14 @@
 package mcjty.rftools.items.teleportprobe;
 
 import cofh.api.energy.IEnergyContainerItem;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.teleporter.*;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

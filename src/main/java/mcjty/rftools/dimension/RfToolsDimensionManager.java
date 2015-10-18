@@ -1,5 +1,7 @@
 package mcjty.rftools.dimension;
 
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -12,8 +14,6 @@ import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.network.PacketRegisterDimensions;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -1,10 +1,10 @@
 package mcjty.rftools.dimension.world.terrain;
 
+import cpw.mods.fml.common.eventhandler.Event;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
 import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.dimension.world.types.TerrainType;
-import cpw.mods.fml.common.eventhandler.Event;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;

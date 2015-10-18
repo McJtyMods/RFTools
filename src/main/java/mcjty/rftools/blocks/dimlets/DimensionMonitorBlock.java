@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.dimlets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.EmptyContainer;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
 import net.minecraft.block.material.Material;

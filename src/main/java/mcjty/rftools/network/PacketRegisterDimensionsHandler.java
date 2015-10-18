@@ -1,10 +1,10 @@
 package mcjty.rftools.network;
 
-import mcjty.rftools.dimension.world.GenericWorldProvider;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.dimension.world.GenericWorldProvider;
 import net.minecraftforge.common.DimensionManager;
 
 public class PacketRegisterDimensionsHandler implements IMessageHandler<PacketRegisterDimensions, IMessage> {

@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.dimletconstruction;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcp.mobius.waila.api.IWailaConfigHandler;

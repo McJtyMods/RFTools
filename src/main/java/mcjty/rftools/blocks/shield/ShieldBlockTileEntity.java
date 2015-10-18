@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;

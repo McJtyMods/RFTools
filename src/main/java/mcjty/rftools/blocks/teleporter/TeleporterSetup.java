@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;

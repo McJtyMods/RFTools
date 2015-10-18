@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.entity.SyncedValue;
-import mcjty.varia.BlockTools;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.entity.SyncedValue;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.dimension.DimensionStorage;
-import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 

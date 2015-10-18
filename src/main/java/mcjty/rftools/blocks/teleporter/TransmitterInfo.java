@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.network.ByteBufConverter;
-import mcjty.network.NetworkTools;
-import mcjty.varia.Coordinate;
+import mcjty.lib.network.ByteBufConverter;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.Coordinate;
 
 public class TransmitterInfo implements ByteBufConverter {
     private final Coordinate coordinate;

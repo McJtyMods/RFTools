@@ -1,20 +1,20 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.events.ChoiceEvent;
-import mcjty.gui.events.DefaultSelectionEvent;
-import mcjty.gui.events.ValueEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ChoiceEvent;
+import mcjty.lib.gui.events.DefaultSelectionEvent;
+import mcjty.lib.gui.events.ValueEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.Container;
 

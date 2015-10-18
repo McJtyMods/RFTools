@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.storage;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

@@ -1,8 +1,8 @@
 package mcjty.rftools.items.devdelight;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RFToolsTools;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shards;
 
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;

@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.events.ValueEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.ScrollableLabel;
-import mcjty.gui.widgets.Slider;
-import mcjty.gui.widgets.Widget;
-import mcjty.network.Argument;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ValueEvent;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.ScrollableLabel;
+import mcjty.lib.gui.widgets.Slider;
+import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;

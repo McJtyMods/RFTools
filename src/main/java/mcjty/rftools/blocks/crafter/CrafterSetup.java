@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.container.GenericItemBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import net.minecraft.init.Blocks;

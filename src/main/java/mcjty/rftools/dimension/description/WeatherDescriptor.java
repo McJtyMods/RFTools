@@ -1,7 +1,7 @@
 package mcjty.rftools.dimension.description;
 
-import mcjty.rftools.dimension.world.types.WeatherType;
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.dimension.world.types.WeatherType;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class WeatherDescriptor {

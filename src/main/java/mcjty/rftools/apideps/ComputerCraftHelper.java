@@ -1,10 +1,10 @@
 package mcjty.rftools.apideps;
 
-import mcjty.entity.GenericTileEntity;
 import cpw.mods.fml.common.Optional;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
+import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 

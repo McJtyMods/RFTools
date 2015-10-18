@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
+import mcjty.lib.api.Infusable;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;

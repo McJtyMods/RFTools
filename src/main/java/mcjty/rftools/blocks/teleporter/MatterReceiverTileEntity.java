@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.network.Argument;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.varia.Coordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 

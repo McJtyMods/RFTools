@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -1,7 +1,7 @@
 package mcjty.rftools.dimension.world.mapgen;
 
+import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
-import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 

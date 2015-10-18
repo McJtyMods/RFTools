@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.dimlets;
 
 import cofh.api.energy.IEnergyConnection;
-import mcjty.entity.GenericEnergyProviderTileEntity;
+import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;

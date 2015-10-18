@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.crafter;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.api.Infusable;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.lib.api.Infusable;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;

@@ -1,7 +1,7 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 

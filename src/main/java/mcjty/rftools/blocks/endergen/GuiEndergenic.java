@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.container.EmptyContainer;
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.*;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -67,7 +67,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
                 addChild(descriptionLabel).
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
-        window = new mcjty.gui.Window(this, toplevel);
+        window = new mcjty.lib.gui.Window(this, toplevel);
         tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }
 

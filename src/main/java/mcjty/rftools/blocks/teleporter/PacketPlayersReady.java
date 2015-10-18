@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.network.PacketListFromServer;
+import mcjty.lib.network.PacketListFromServer;
 
 import java.util.List;
 

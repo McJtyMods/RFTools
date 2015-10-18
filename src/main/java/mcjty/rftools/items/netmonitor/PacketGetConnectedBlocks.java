@@ -1,12 +1,12 @@
 package mcjty.rftools.items.netmonitor;
 
-import mcjty.rftools.BlockInfo;
-import mcjty.varia.Coordinate;
-import mcjty.rftools.varia.EnergyTools;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.varia.Coordinate;
+import mcjty.rftools.BlockInfo;
+import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

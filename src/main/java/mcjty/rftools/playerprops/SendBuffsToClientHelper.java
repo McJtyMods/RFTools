@@ -1,10 +1,9 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.rftools.PlayerBuff;
-import mcjty.rftools.RenderGameOverlayEventHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.rftools.playerprops.PacketSendBuffsToClient;
+import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.RenderGameOverlayEventHandler;
 
 import java.util.ArrayList;
 

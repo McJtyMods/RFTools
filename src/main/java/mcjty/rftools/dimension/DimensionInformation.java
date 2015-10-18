@@ -1,5 +1,10 @@
 package mcjty.rftools.dimension;
 
+import io.netty.buffer.ByteBuf;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.BlockMeta;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.description.*;
@@ -7,11 +12,6 @@ import mcjty.rftools.dimension.world.types.*;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.items.dimlets.types.Patreons;
-import mcjty.network.NetworkTools;
-import mcjty.varia.BlockMeta;
-import mcjty.varia.Coordinate;
-import io.netty.buffer.ByteBuf;
-import mcjty.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;

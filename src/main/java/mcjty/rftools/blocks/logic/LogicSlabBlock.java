@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.varia.BlockTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;

@@ -1,24 +1,24 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.container.EmptyContainer;
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.events.ButtonEvent;
-import mcjty.gui.events.ChoiceEvent;
-import mcjty.gui.events.DefaultSelectionEvent;
-import mcjty.gui.layout.HorizontalAlignment;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.Button;
-import mcjty.gui.widgets.*;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
-import mcjty.network.Argument;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.events.ButtonEvent;
+import mcjty.lib.gui.events.ChoiceEvent;
+import mcjty.lib.gui.events.DefaultSelectionEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -144,7 +144,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 addChild(energyBar).addChild(transmitterPanel).
                 addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
-        window = new mcjty.gui.Window(this, toplevel);
+        window = new mcjty.lib.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
 
         listDirty = 0;

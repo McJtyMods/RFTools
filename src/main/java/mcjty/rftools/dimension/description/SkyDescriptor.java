@@ -1,9 +1,9 @@
 package mcjty.rftools.dimension.description;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.CelestialBodyType;
 import mcjty.rftools.dimension.world.types.SkyType;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;

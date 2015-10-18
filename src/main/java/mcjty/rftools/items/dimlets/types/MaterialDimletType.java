@@ -1,13 +1,13 @@
 package mcjty.rftools.items.dimlets.types;
 
-import mcjty.varia.BlockTools;
+import mcjty.lib.varia.BlockMeta;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionSetup;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.DimletType;
-import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

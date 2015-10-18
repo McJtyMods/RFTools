@@ -1,8 +1,8 @@
 package mcjty.rftools.items.dimlets;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.dimension.description.MobDescriptor;
-import mcjty.varia.Logging;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -15,7 +15,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MobConfiguration {
     public static final Map<String,MobDescriptor> mobClasses = new HashMap<String, MobDescriptor>();

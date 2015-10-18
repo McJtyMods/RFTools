@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.network.Argument;
-import mcjty.network.PacketRequestIntegerFromServer;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.DimletCraftingTools;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

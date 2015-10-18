@@ -1,5 +1,7 @@
 package mcjty.rftools.dimension.world;
 
+import cpw.mods.fml.common.IWorldGenerator;
+import mcjty.lib.varia.*;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.special.SpecialSetup;
@@ -12,8 +14,6 @@ import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletRandomizer;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.dimlets.types.Patreons;
-import mcjty.varia.*;
-import cpw.mods.fml.common.IWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;

@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.dimlets;
 
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericTileEntity;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
 import mcjty.rftools.items.dimlets.DimletEntry;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
-import mcjty.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;

@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.container.ContainerFactory;
-import mcjty.container.GenericContainer;
-import mcjty.container.SlotDefinition;
-import mcjty.container.SlotType;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.GenericContainer;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 

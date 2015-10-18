@@ -1,22 +1,12 @@
 package mcjty.rftools.commands;
 
-import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
-
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 public class CmdRCC extends AbstractRfToolsCommand {
     @Override

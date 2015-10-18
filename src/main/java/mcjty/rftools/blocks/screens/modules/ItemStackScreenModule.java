@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.MFRCompatibility;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.varia.Coordinate;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

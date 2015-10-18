@@ -1,9 +1,9 @@
 package mcjty.rftools.dimension.world.terrain;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.dimension.world.GenericChunkProvider;
 import mcjty.rftools.dimension.world.types.TerrainType;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;

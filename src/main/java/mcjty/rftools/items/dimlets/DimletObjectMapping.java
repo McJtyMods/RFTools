@@ -1,10 +1,10 @@
 package mcjty.rftools.items.dimlets;
 
+import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.dimension.description.SkyDescriptor;
 import mcjty.rftools.dimension.description.WeatherDescriptor;
 import mcjty.rftools.dimension.world.types.*;
-import mcjty.varia.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
 

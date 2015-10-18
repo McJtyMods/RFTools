@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import mcjty.entity.GenericEnergyReceiverTileEntity;
-import mcjty.entity.SyncedValueSet;
-import mcjty.varia.BlockTools;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.entity.SyncedValueSet;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
-import mcjty.network.Argument;
-import mcjty.varia.Coordinate;
-import mcjty.varia.GlobalCoordinate;
-import mcjty.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

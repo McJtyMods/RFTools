@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.dimletconstruction;
 
-import mcjty.container.*;
+import mcjty.lib.container.*;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import net.minecraft.entity.player.EntityPlayer;

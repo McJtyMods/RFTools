@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.monitor;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.container.EmptyContainer;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
+import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;

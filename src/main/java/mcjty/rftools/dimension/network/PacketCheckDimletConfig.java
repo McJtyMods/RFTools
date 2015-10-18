@@ -1,11 +1,11 @@
 package mcjty.rftools.dimension.network;
 
-import mcjty.rftools.items.dimlets.DimletKey;
-import mcjty.rftools.items.dimlets.DimletType;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
-import mcjty.network.NetworkTools;
-import mcjty.varia.Logging;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.items.dimlets.DimletKey;
+import mcjty.rftools.items.dimlets.DimletType;
 
 import java.util.HashMap;
 import java.util.Map;

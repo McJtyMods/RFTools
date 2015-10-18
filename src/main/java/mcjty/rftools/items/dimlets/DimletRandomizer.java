@@ -1,11 +1,11 @@
 package mcjty.rftools.items.dimlets;
 
+import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WeightedRandomSelector;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.dimension.world.types.EffectType;
 import mcjty.rftools.dimension.world.types.FeatureType;
 import mcjty.rftools.dimension.world.types.StructureType;
-import mcjty.varia.Logging;
-import mcjty.varia.WeightedRandomSelector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.tuple.Pair;

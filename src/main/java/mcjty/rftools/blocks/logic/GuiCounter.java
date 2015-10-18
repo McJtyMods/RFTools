@@ -1,16 +1,16 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.container.GenericGuiContainer;
-import mcjty.gui.Window;
-import mcjty.gui.events.TextEvent;
-import mcjty.gui.layout.HorizontalLayout;
-import mcjty.gui.layout.VerticalLayout;
-import mcjty.gui.widgets.Label;
-import mcjty.gui.widgets.Panel;
-import mcjty.gui.widgets.TextField;
-import mcjty.gui.widgets.Widget;
+import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.TextEvent;
+import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
-import mcjty.network.Argument;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Container;
 

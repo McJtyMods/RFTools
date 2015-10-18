@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.entity.GenericTileEntity;
-import mcjty.entity.SyncedValue;
-import mcjty.varia.BlockTools;
-import mcjty.network.Argument;
+import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.entity.SyncedValue;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 

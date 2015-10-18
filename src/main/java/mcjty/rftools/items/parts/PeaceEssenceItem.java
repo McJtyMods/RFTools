@@ -1,8 +1,8 @@
 package mcjty.rftools.items.parts;
 
-import mcjty.rftools.RFTools;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

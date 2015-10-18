@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.varia.Logging;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.spaceprojector;
 
 import com.mojang.authlib.GameProfile;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 
 import java.util.Random;
 import java.util.UUID;

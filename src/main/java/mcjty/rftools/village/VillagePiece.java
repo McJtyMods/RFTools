@@ -1,11 +1,11 @@
 package mcjty.rftools.village;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.logic.SequencerMode;
 import mcjty.rftools.blocks.logic.SequencerTileEntity;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;

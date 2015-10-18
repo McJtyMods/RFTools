@@ -1,14 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.gui.RenderHelper;
-import mcjty.gui.events.ChoiceEvent;
-import mcjty.gui.widgets.ChoiceLabel;
-import mcjty.gui.widgets.Widget;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.client.Minecraft;
+import mcjty.lib.gui.RenderHelper;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.text.DecimalFormat;
 

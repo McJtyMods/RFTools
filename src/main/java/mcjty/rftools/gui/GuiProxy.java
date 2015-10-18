@@ -1,6 +1,7 @@
 package mcjty.rftools.gui;
 
-import mcjty.container.GenericBlock;
+import cpw.mods.fml.common.network.IGuiHandler;
+import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.spaceprojector.GuiChamberDetails;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
@@ -14,7 +15,6 @@ import mcjty.rftools.items.storage.GuiStorageFilter;
 import mcjty.rftools.items.storage.StorageFilterContainer;
 import mcjty.rftools.items.teleportprobe.GuiAdvancedPorter;
 import mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
-import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

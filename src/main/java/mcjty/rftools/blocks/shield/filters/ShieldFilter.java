@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.shield.filters;
 
-import mcjty.network.ByteBufConverter;
+import mcjty.lib.network.ByteBufConverter;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 

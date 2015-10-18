@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.api.MachineInformation;
-import mcjty.container.InventoryHelper;
-import mcjty.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.api.MachineInformation;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.varia.BlockTools;
 import mcjty.rftools.blocks.dimletconstruction.DimletConstructionConfiguration;
 import mcjty.rftools.dimension.description.MobDescriptor;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import mcjty.rftools.items.dimlets.DimletType;
-import mcjty.varia.Coordinate;
-import mcjty.varia.Logging;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;

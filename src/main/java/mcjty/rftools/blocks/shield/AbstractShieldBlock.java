@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.varia.Coordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
