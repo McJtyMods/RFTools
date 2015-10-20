@@ -8,6 +8,7 @@ import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
@@ -450,8 +451,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {
-                itemList.addChild(new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground).
-                        setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10));
+                AbstractWidget groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
+                        .setDesiredWidth(231);
+                itemList.addChild(new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(2).setVerticalMargin(0)).setDesiredHeight(10).addChild(groupLabel));
             }
 
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);

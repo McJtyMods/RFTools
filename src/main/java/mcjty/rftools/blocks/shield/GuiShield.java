@@ -78,7 +78,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         initVisibilityMode();
@@ -87,14 +87,17 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         initRedstoneMode();
         initDamageType();
 
-        filterList = createStyledList().
-                setLayoutHint(new PositionalLayout.PositionalHint(12, 12, 142, 115)).addSelectionEvent(new DefaultSelectionEvent() {
-            @Override
-            public void select(Widget parent, int index) {
-                selectFilter();
-            }
-        });
-        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setLayoutHint(new PositionalLayout.PositionalHint(156, 12, 10, 115));
+        filterList = createStyledList().setDesiredHeight(115).
+                addSelectionEvent(new DefaultSelectionEvent() {
+                    @Override
+                    public void select(Widget parent, int index) {
+                        selectFilter();
+                    }
+                });
+        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setDesiredWidth(11).setDesiredHeight(115);
+        Panel filterPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 10, 154, 119)).addChild(filterList).addChild(filterSlider)
+                .setFilledBackground(0xff9e9e9e);
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
                 setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(new ButtonEvent() {
@@ -105,7 +108,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         });
         ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this).addColors(0x96ffc8, 0x4698ff, 0xff6030, 0x55a0a0, 0xa055a0, 0xffffff).
                 setTooltips("Color for the shield").
-                setLayoutHint(new PositionalLayout.PositionalHint(51, 180, 28, 16)).
+                setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16)).
                 addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
@@ -116,28 +119,28 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(new PositionalLayout.PositionalHint(170, 44, 80, 14));
 
-        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(new PositionalLayout.PositionalHint(170, 64, 36, 12)).
+        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(new PositionalLayout.PositionalHint(4, 6, 36, 14)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
                         addNewFilter();
                     }
                 });
-        delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(new PositionalLayout.PositionalHint(214, 64, 36, 12)).
+        delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(new PositionalLayout.PositionalHint(39, 6, 36, 14)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
                         removeSelectedFilter();
                     }
                 });
-        upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(new PositionalLayout.PositionalHint(170, 78, 36, 12)).
+        upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(new PositionalLayout.PositionalHint(4, 22, 36, 14)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
                         moveFilterUp();
                     }
                 });
-        downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(new PositionalLayout.PositionalHint(214, 78, 36, 12)).
+        downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(new PositionalLayout.PositionalHint(39, 22, 36, 14)).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -145,9 +148,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                     }
                 });
 
+        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 60, 80, 43))
+                .addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter)
+                .setFilledRectThickness(-2)
+                .setFilledBackground(0xff8b8b8b);
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterList).addChild(filterSlider).addChild(actionOptions).
-                addChild(typeOptions).addChild(player).addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter).addChild(damageType).
+                addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterPanel).addChild(actionOptions).
+                addChild(typeOptions).addChild(player).addChild(controlPanel).addChild(damageType).
                 addChild(colorSelector);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -307,7 +315,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 180, 16, 16));
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(62, 200, 16, 16));
         redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
@@ -353,7 +361,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initDamageType() {
-        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 100, 80, 14));
+        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 106, 80, 14));
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
         damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
         damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");
@@ -401,7 +409,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         if (sel == -1) {
             addFilter.setText("Add");
         } else {
-            addFilter.setText("Insert");
+            addFilter.setText("Ins");
         }
         player.setEnabled("Player".equals(typeOptions.getCurrentChoice()));
     }

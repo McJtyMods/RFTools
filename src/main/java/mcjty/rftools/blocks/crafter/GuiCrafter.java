@@ -55,7 +55,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 8, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         initKeepMode();

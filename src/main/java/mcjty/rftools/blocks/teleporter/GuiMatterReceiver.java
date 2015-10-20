@@ -64,7 +64,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(MATTER_WIDTH-10).setMaxValue(maxEnergyStored).setShowText(true);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(MATTER_WIDTH-10).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this receiver", "in the dialer").addTextEvent(new TextEvent() {
@@ -76,7 +76,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         textField.setText(tileEntity.getName());
         Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
-        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(13).setDesiredWidth(60).
+        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
                 setChoiceTooltip(ACCESS_PUBLIC, "Everyone can dial to this receiver").
                 setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can dial to this receiver").
                 addChoiceEvent(new ChoiceEvent() {
@@ -94,7 +94,8 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
         allowedPlayers = createStyledList();
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(allowedPlayers).addChild(allowedPlayerSlider);
+        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
+                .setFilledBackground(0xff9e9e9e);
 
         nameField = new TextField(mc, this);
         addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").

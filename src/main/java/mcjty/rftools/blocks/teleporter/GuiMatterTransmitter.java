@@ -70,7 +70,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(MATTER_WIDTH-10).setMaxValue(maxEnergyStored).setShowText(true);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(MATTER_WIDTH-10).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this transmitter", "in the dialer").addTextEvent(new TextEvent() {
@@ -82,7 +82,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         textField.setText(tileEntity.getName());
         Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
-        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(13).setDesiredWidth(60).
+        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
             setChoiceTooltip(ACCESS_PUBLIC, "Everyone can access this transmitter", "and change the dialing destination").
             setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can access this transmitter").
             addChoiceEvent(new ChoiceEvent() {
@@ -96,7 +96,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         } else {
             privateSetting.setChoice(ACCESS_PUBLIC);
         }
-        beamToggle = new ToggleButton(mc, this).setText("Hide").setDesiredHeight(13).setTooltips("Hide the teleportation beam").addButtonEvent(new ButtonEvent() {
+        beamToggle = new ToggleButton(mc, this).setText("Hide").setDesiredHeight(14).setDesiredWidth(45).setTooltips("Hide the teleportation beam").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 changeBeamState();
@@ -106,7 +106,8 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
         allowedPlayers = createStyledList();
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(allowedPlayers).addChild(allowedPlayerSlider);
+        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
+                .setFilledBackground(0xff9e9e9e);
 
         nameField = new TextField(mc, this);
         addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").

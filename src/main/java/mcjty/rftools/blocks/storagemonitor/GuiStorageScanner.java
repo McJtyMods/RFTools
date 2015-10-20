@@ -62,7 +62,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(8).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         storageList = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
@@ -130,6 +130,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Slider radiusSlider = new Slider(mc, this).
                 setHorizontal().
                 setTooltips("Radius of scan").
+                setMinimumKnobSize(8).
                 setScrollable(radiusLabel);
         Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
 

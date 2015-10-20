@@ -77,14 +77,14 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(ForgeDirection.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
         Panel transmitterPanel = setupTransmitterPanel();
         Panel receiverPanel = setupReceiverPanel();
 
         dialButton = new Button(mc, this).setText("Dial").setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver").
-                setDesiredHeight(14).
+                setDesiredHeight(14).setDesiredWidth(65).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -92,7 +92,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                     }
                 });
         dialOnceButton = new Button(mc, this).setText("Dial Once").setTooltips("Dial a connection for a", "single teleport").
-                setDesiredHeight(14).
+                setDesiredHeight(14).setDesiredWidth(65).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -100,7 +100,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                     }
                 });
         interruptButton = new Button(mc, this).setText("Interrupt").setTooltips("Interrupt a connection", "for the selected transmitter").
-                setDesiredHeight(14).
+                setDesiredHeight(14).setDesiredWidth(65).
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -117,9 +117,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         favoriteButton.addChoice("Yes", "Favorited receiver", guielements, 115, 19);
         favoriteButton.setCurrentChoice(tileEntity.isShowOnlyFavorites() ? 1 : 0);
 
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).
+                addChild(favoriteButton).setDesiredHeight(16);
+
         analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
         statusButton = new Button(mc, this).setText("Check").
-                setDesiredHeight(14).
+                setDesiredHeight(14).setDesiredWidth(65).
                 setEnabled(analyzerAvailable).
                 addButtonEvent(new ButtonEvent() {
                     @Override
@@ -133,12 +136,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             statusButton.setTooltips("Check the status of", "the selected receiver", "(needs an adjacent analyzer!)");
         }
 
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).
-                addChild(favoriteButton).addChild(statusButton).setDesiredHeight(16);
-
         statusLabel = new Label(mc, this);
-        statusLabel.setDesiredWidth(180).setDesiredHeight(14).setFilledRectThickness(1);
-        Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Status")).addChild(statusLabel).setDesiredHeight(16);
+        statusLabel.setDesiredWidth(170).setDesiredHeight(14).setFilledRectThickness(1);
+        Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(statusButton).addChild(statusLabel).setDesiredHeight(16);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1)).
                 addChild(energyBar).addChild(transmitterPanel).
@@ -167,8 +167,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedReceiver(index);
             }
         });
-        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(10).setDesiredHeight(100).setVertical().setScrollable(receiverList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(receiverList).addChild(receiverSlider).setDesiredHeight(106);
+        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollable(receiverList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(receiverList).addChild(receiverSlider).setDesiredHeight(106)
+                .setFilledBackground(0xff9e9e9e);
     }
 
     private Panel setupTransmitterPanel() {
@@ -184,8 +185,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedTransmitter(index);
             }
         });
-        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(10).setDesiredHeight(58).setVertical().setScrollable(transmitterList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(transmitterList).addChild(transmitterSlider).setDesiredHeight(64);
+        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollable(transmitterList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(transmitterList).addChild(transmitterSlider).setDesiredHeight(64)
+                .setFilledBackground(0xff9e9e9e);
     }
 
     private void clearSelectedStatus() {
@@ -224,12 +226,14 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     private void setStatusError(String message) {
         statusLabel.setText(message);
-        statusLabel.setColor(0xffff0000);
+        statusLabel.setColor(0xffffffff);
+        statusLabel.setFilledBackground(0xffff0000, 0xff880000);
     }
 
     private void setStatusMessage(String message) {
         statusLabel.setText(message);
         statusLabel.setColor(0xff000000);
+        statusLabel.setFilledBackground(0xff00ff00, 0xff008800);
     }
 
     private void checkStatus() {
@@ -431,10 +435,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
 
             boolean favorite = destination.isFavorite();
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(5));
-            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90).
+            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3));
+            panel.addChild(new Label(mc, this).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(96).
                     setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + coordinate.toString() + ")"));
-            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName));
+            panel.addChild(new Label(mc, this).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName)
+                    .setDesiredWidth(110));
             ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
                 @Override
                 public void choiceChanged(Widget parent, String newChoice) {
@@ -479,9 +485,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             Coordinate coordinate = transmitterInfo.getCoordinate();
             TeleportDestination destination = transmitterInfo.getTeleportDestination();
 
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-            panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()));
+            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3));
+            panel.addChild(new Label(mc, this).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(102));
+            panel.addChild(new Label(mc, this).setDynamic(true).setText(coordinate.toString()).setDesiredWidth(90));
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }
@@ -501,6 +507,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             showStatus(fromServer_receiverStatus);
         } else {
             statusLabel.setText("");
+            statusLabel.setColor(0xff000000);
+            statusLabel.setFilledBackground(-1);
         }
 
         enableButtons();
