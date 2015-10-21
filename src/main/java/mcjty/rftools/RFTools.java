@@ -11,7 +11,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
-import mcjty.lib.gui.GuiStyle;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.apideps.ComputerCraftHelper;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
@@ -35,11 +34,9 @@ import mcjty.rftools.items.dimlets.DimletMapping;
 import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.network.DimensionSyncChannelHandler;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.StringUtils;
@@ -265,17 +262,6 @@ public class RFTools implements ModBase {
     @Override
     public String getModId() {
         return MODID;
-    }
-
-    @Override
-    public void setGuiStyle(EntityPlayerMP playerEntity, GuiStyle style) {
-        PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(playerEntity);
-        properties.getPreferencesProperties().setStyle(style);
-    }
-
-    @Override
-    public GuiStyle getGuiStyle(EntityPlayer player) {
-        return PlayerExtendedProperties.getProperties(player).getPreferencesProperties().getStyle();
     }
 
     @Override

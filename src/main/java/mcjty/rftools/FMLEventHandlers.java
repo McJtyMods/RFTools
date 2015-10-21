@@ -7,11 +7,13 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
+import mcjty.lib.preferences.PlayerPreferencesProperties;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.network.DimensionSyncPacket;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -29,6 +31,11 @@ public class FMLEventHandlers {
             if (properties instanceof PlayerExtendedProperties) {
                 PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
                 playerExtendedProperties.tick();
+            }
+            properties = event.player.getExtendedProperties(PlayerPreferencesProperties.ID);
+            if (properties instanceof PlayerPreferencesProperties) {
+                PlayerPreferencesProperties preferencesProperties = (PlayerPreferencesProperties) properties;
+                preferencesProperties.tick(RFToolsMessages.INSTANCE);
             }
         }
     }

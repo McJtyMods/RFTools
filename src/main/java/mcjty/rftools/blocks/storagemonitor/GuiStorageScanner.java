@@ -65,7 +65,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 
-        storageList = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
+        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 itemList.removeChildren();
@@ -86,7 +86,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 addChild(energyBar).
                 addChild(storageList).addChild(storageListSlider);
 
-        itemList = createStyledList();
+        itemList = new WidgetList(mc, this);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
         Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
                 addChild(itemList).addChild(itemListSlider);

@@ -111,7 +111,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = createStyledList().setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
                 setLeftMargin(0).setRowheight(-1);
         slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize-89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 

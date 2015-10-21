@@ -1,8 +1,8 @@
 package mcjty.rftools;
 
 import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.preferences.PlayerPreferencesProperties;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -36,7 +36,7 @@ public class RenderGameOverlayEventHandler {
         }
 
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-        PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(player);
+        PlayerPreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
 
         int x = properties.getPreferencesProperties().getBuffX();
         int y = properties.getPreferencesProperties().getBuffY();

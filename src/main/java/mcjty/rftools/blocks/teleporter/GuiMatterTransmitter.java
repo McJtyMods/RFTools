@@ -104,7 +104,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         }).setPressed(tileEntity.isBeamHidden());
         Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).addChild(beamToggle).setDesiredHeight(16);
 
-        allowedPlayers = createStyledList();
+        allowedPlayers = new WidgetList(mc, this);
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
         Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
                 .setFilledBackground(0xff9e9e9e);

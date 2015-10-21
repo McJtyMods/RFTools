@@ -89,7 +89,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private Slider initRecipeList() {
-        recipeList = createStyledList().
+        recipeList = new WidgetList(mc, this).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {

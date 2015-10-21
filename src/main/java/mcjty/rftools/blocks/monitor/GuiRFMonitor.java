@@ -49,7 +49,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
     public void initGui() {
         super.initGui();
 
-        list = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 setSelectedBlock(index);

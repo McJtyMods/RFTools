@@ -2,6 +2,7 @@ package mcjty.rftools;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mcjty.lib.preferences.PlayerPreferencesProperties;
 import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -177,6 +178,12 @@ public class ForgeEventHandlers {
         if (event.entity instanceof EntityPlayer) {
             PlayerExtendedProperties properties = new PlayerExtendedProperties();
             event.entity.registerExtendedProperties(PlayerExtendedProperties.ID, properties);
+
+            PlayerPreferencesProperties preferencesProperties = (PlayerPreferencesProperties) event.entity.getExtendedProperties(PlayerPreferencesProperties.ID);
+            if (preferencesProperties == null) {
+                preferencesProperties = new PlayerPreferencesProperties();
+                event.entity.registerExtendedProperties(PlayerPreferencesProperties.ID, preferencesProperties);
+            }
         }
     }
 

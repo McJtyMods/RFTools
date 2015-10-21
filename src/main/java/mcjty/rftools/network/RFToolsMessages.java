@@ -31,8 +31,6 @@ import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.*;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.playerprops.PacketSendBuffsToClientHandler;
-import mcjty.rftools.playerprops.PacketSendPreferencesToClient;
-import mcjty.rftools.playerprops.PacketSendPreferencesToClientHandler;
 
 public class RFToolsMessages {
     public static SimpleNetworkWrapper INSTANCE;
@@ -93,6 +91,5 @@ public class RFToolsMessages {
         net.registerMessage(PacketReturnScreenDataHandler.class, PacketReturnScreenData.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketRegisterDimensionsHandler.class, PacketRegisterDimensions.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSendBuffsToClientHandler.class, PacketSendBuffsToClient.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketSendPreferencesToClientHandler.class, PacketSendPreferencesToClient.class, PacketHandler.nextID(), Side.CLIENT);
     }
 }

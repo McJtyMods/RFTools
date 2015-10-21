@@ -52,7 +52,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public void initGui() {
         super.initGui();
 
-        players = createStyledList();
+        players = new WidgetList(mc, this);
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
         Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(players).addChild(allowedPlayerSlider).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));

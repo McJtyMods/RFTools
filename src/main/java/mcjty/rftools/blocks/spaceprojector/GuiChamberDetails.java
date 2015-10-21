@@ -55,7 +55,7 @@ public class GuiChamberDetails extends GuiItemScreen {
     public void initGui() {
         super.initGui();
 
-        blockList = createStyledList();
+        blockList = new WidgetList(mc, this);
         Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(blockList);
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(blockList).addChild(listSlider);
 

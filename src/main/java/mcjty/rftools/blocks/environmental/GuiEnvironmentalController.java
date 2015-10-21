@@ -106,7 +106,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
         minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
 
-        playersList = createStyledList();
+        playersList = new WidgetList(mc, this);
         Slider playerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(playersList);
         Panel playersPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 30, 72))

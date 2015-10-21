@@ -87,7 +87,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         initRedstoneMode();
         initDamageType();
 
-        filterList = createStyledList().setDesiredHeight(115).
+        filterList = new WidgetList(mc, this).setDesiredHeight(115).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
