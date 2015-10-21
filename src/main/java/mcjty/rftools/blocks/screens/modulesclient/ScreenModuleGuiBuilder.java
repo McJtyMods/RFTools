@@ -32,7 +32,7 @@ public class ScreenModuleGuiBuilder {
         this.mc = mc;
         this.moduleGuiChanged = moduleGuiChanged;
         this.currentData = currentData;
-        panel = new Panel(mc, gui).setLayout(new VerticalLayout());
+        panel = new Panel(mc, gui).setLayout(new VerticalLayout().setVerticalMargin(5));
     }
 
     public Panel build() {
@@ -53,7 +53,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder text(final String tagname, String... tooltip) {
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips(tooltip).addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(15).setTooltips(tooltip).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 currentData.setString(tagname, newText);
@@ -68,7 +68,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder integer(final String tagname, String... tooltip) {
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips(tooltip).addTextEvent(new TextEvent() {
+        TextField textField = new TextField(mc, gui).setDesiredHeight(15).setTooltips(tooltip).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 int value;
@@ -89,7 +89,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder toggle(final String tagname, String label, String... tooltip) {
-        final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(13).setCheckMarker(true);
+        final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setCheckMarker(true);
         toggleButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
@@ -106,7 +106,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder toggleNegative(final String tagname, String label, String... tooltip) {
-        final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(13).setCheckMarker(true);
+        final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setDesiredWidth(36).setCheckMarker(true);
         toggleButton.addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
@@ -125,7 +125,7 @@ public class ScreenModuleGuiBuilder {
     }
 
     public ScreenModuleGuiBuilder color(final String tagname, String... tooltip) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(15).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(20).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {
                 currentData.setInteger(tagname, newColor);
@@ -199,7 +199,7 @@ public class ScreenModuleGuiBuilder {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
-        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(modeFull, modeCompact, modeCommas).
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(58).setDesiredHeight(14).addChoices(modeFull, modeCompact, modeCommas).
                 setChoiceTooltip(modeFull, "Full format: 3123555").
                 setChoiceTooltip(modeCompact, "Compact format: 3.1M").
                 setChoiceTooltip(modeCommas, "Comma format: 3,123,555").
@@ -221,7 +221,7 @@ public class ScreenModuleGuiBuilder {
         String modeNone = "None";
         final String modePertick = componentName + "/t";
         final String modePct = componentName + "%";
-        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(60).setDesiredHeight(13).addChoices(modeNone, componentName, modePertick, modePct).
+        final ChoiceLabel modeButton = new ChoiceLabel(mc, gui).setDesiredWidth(50).setDesiredHeight(14).addChoices(modeNone, componentName, modePertick, modePct).
                 setChoiceTooltip(modeNone, "No text is shown").
                 setChoiceTooltip(componentName, "Show the amount of " + componentName).
                 setChoiceTooltip(modePertick, "Show the average "+componentName+"/tick", "gain or loss").

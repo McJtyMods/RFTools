@@ -132,7 +132,9 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, finalI, finalTagCompound));
             }
         });
-        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(70, 7, 184, 130));
+        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 8, 170, 130));
+        modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);
+
         toplevel.addChild(modulePanels[i]);
         buttons[i].setText(moduleProvider.getName());
     }

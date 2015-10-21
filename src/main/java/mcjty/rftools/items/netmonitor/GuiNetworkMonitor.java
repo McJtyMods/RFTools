@@ -80,7 +80,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     public void initGui() {
         super.initGui();
 
-        list = createStyledList().addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
                 hilightBlock(index);
