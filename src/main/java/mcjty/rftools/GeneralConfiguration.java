@@ -1,7 +1,6 @@
 package mcjty.rftools;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import mcjty.lib.gui.GuiConfig;
 import mcjty.lib.varia.Logging;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -48,9 +47,6 @@ public class GeneralConfiguration {
                 "Enable the endergenic generator recipe.").getBoolean();
         enableBlockProtectorRecipe = cfg.get(CATEGORY_GENERAL, "enableBlockProtectorRecipe", enableBlockProtectorRecipe,
                 "Enable the block protector recipe.").getBoolean();
-
-        GuiConfig.itemListBackground = cfg.get(CATEGORY_GENERAL, "itemListBackground", GuiConfig.itemListBackground,
-                "Color for some list backgrounds").getInt();
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();

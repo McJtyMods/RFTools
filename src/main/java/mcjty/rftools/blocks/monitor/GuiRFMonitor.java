@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ChoiceEvent;
@@ -28,7 +29,6 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
     private ScrollableLabel alarmLabel;
     private int listDirty;
 
-    public static final int TEXT_COLOR = 0x000000;
     public static final int TEXT_COLOR_SELECTED = 0xFFFFFF;
 
     // A copy of the adjacent blocks we're currently showing
@@ -82,6 +82,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         Slider alarmSlider = new Slider(mc, this).
                 setDesiredHeight(15).
                 setHorizontal().
+                setMinimumKnobSize(15).
                 setTooltips("Alarm level").
                 setScrollable(alarmLabel);
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
@@ -138,7 +139,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
             Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
             int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
 
-            int color = TEXT_COLOR;
+            int color = StyleConfig.colorTextInListNormal;
 
             String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 

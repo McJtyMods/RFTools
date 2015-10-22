@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
@@ -96,7 +97,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         } else {
             privateSetting.setChoice(ACCESS_PUBLIC);
         }
-        beamToggle = new ToggleButton(mc, this).setText("Hide").setDesiredHeight(14).setDesiredWidth(45).setTooltips("Hide the teleportation beam").addButtonEvent(new ButtonEvent() {
+        beamToggle = new ToggleButton(mc, this).setText("Hide").setCheckMarker(true).setDesiredHeight(14).setDesiredWidth(49).setTooltips("Hide the teleportation beam").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 changeBeamState();
@@ -174,7 +175,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         players = new ArrayList<String>(newPlayers);
         allowedPlayers.removeChildren();
         for (String player : players) {
-            allowedPlayers.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            allowedPlayers.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
         }
     }
 

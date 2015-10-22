@@ -1,5 +1,6 @@
 package mcjty.rftools.items.devdelight;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.events.ChoiceEvent;
@@ -107,7 +108,7 @@ public class GuiDevelopersDelight extends GuiScreen {
         ToggleButton tab1Button = createToggleButton("Block");
         ToggleButton tab2Button = createToggleButton("TE");
         ToggleButton tab3Button = createToggleButton("NBT");
-        clientServerMode = new ChoiceLabel(mc, this).addChoices("Server", "Client").setChoice("Server").addChoiceEvent(new ChoiceEvent() {
+        clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent(new ChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, String newChoice) {
                 requestNewLists();
@@ -115,7 +116,7 @@ public class GuiDevelopersDelight extends GuiScreen {
         }).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
         metaData = new TextField(mc, this).setDesiredHeight(14).setTooltips("Metadata for this block");
 
-        Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(50).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
+        Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
                 addChild(new Label(mc, this).setDynamic(true)).addChild(clientServerMode).addChild(metaData).addChild(new Label(mc, this).setDynamic(true));
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
@@ -163,20 +164,20 @@ public class GuiDevelopersDelight extends GuiScreen {
 
     private Panel createBlockClassesPage() {
         blockClassList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(12).setVertical().setScrollable(blockClassList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(blockClassList).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(blockClassList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(blockClassList).addChild(listSlider);
     }
 
     private Panel createTeClassesPage() {
         teClassList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(12).setVertical().setScrollable(teClassList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(teClassList).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(teClassList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(teClassList).addChild(listSlider);
     }
 
     private Panel createNbtDataPage() {
         nbtDataList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(12).setVertical().setScrollable(nbtDataList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nbtDataList).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(nbtDataList);
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(nbtDataList).addChild(listSlider);
     }
 
     private void populateLists() {
@@ -193,27 +194,27 @@ public class GuiDevelopersDelight extends GuiScreen {
 
         Block block = Minecraft.getMinecraft().theWorld.getBlock(selectedX, selectedY, selectedZ);
 
-        blockClassList.addChild(new Label(mc, this).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-        blockClassList.addChild(new Label(mc, this).setText("Unloc Name: " + block.getUnlocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-        blockClassList.addChild(new Label(mc, this).setText("Icon Name: " + block.getItemIconName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-        blockClassList.addChild(new Label(mc, this).setText("Block Name: " + Block.blockRegistry.getNameForObject(block)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Unloc Name: " + block.getUnlocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Icon Name: " + block.getItemIconName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Block Name: " + Block.blockRegistry.getNameForObject(block)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
 
         for (String c : blockClasses) {
-            blockClassList.addChild(new Label(mc, this).setText("Class: " + c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Class: " + c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
         }
 
         teClassList.removeChildren();
         for (String c : teClasses) {
-            teClassList.addChild(new Label(mc, this).setText(c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            teClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
         }
 
         nbtDataList.removeChildren();
         for (Map.Entry<String,DelightingInfoHelper.NBTDescription> me : nbtData.entrySet()) {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(me.getKey()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(70));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(me.getKey()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(70));
             DelightingInfoHelper.NBTDescription value = me.getValue();
-            panel.addChild(new Label(mc, this).setText(value.getType()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
-            panel.addChild(new Label(mc, this).setText(value.getValue()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getType()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getValue()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
             nbtDataList.addChild(panel);
         }
 

@@ -82,7 +82,7 @@ public class GuiShapeCard extends GuiScreen {
         blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
 
-        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).addChild(shapeLabel).addChild(blocksLabel);
+        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(100).addChild(shapeLabel).addChild(blocksLabel);
 
         Coordinate dim = ShapeCardItem.getDimension(heldItem);
         Coordinate offset = ShapeCardItem.getOffset(heldItem);
@@ -108,7 +108,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new TextField(mc, this).setText("Dim:")).addChild(dimX).addChild(dimY).addChild(dimZ);
+        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Dim:").setDesiredWidth(60)).addChild(dimX).addChild(dimY).addChild(dimZ);
         offsetX = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
@@ -127,9 +127,9 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new TextField(mc, this).setText("Offset:")).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Offset:").setDesiredWidth(60)).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
 
-        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout()).addChild(dimPanel).addChild(offsetPanel);
+        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(dimPanel).addChild(offsetPanel);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(modePanel).addChild(settingsPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));

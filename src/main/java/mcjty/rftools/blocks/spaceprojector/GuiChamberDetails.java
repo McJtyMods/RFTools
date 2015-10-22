@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
@@ -85,17 +86,17 @@ public class GuiChamberDetails extends GuiItemScreen {
             ItemStack stack = new ItemStack(bm.getBlock(), 0, bm.getMeta());
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
-            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setColor(StyleConfig.colorTextInListNormal);
             if (stack.getItem() == null) {
                 nameLabel.setText("?").setDesiredWidth(160);
             } else {
                 nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
             }
 
-            Label countLabel = new Label(mc, this).setText(String.valueOf(count));
+            Label countLabel = new Label(mc, this).setText(String.valueOf(count)).setColor(StyleConfig.colorTextInListNormal);
             countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
 
-            Label costLabel = new Label(mc, this);
+            Label costLabel = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal);
             costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
 
             if (cost == -1) {

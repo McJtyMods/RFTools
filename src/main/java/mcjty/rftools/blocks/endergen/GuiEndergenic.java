@@ -18,7 +18,7 @@ import java.awt.*;
 
 public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     public static final int ENDERGENIC_WIDTH = 190;
-    public static final int ENDERGENIC_HEIGHT = 108;
+    public static final int ENDERGENIC_HEIGHT = 110;
 
     private EnergyBar energyBar;
     private TextField lastRfPerTick;
@@ -51,16 +51,16 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
         Label descriptionLabel = new Label(mc, this).setText("Averages over last 5 seconds:").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
 
-        lastRfPerTick = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(90).setDesiredHeight(15);
+        lastRfPerTick = new TextField(mc, this).setText("0 RF/tick").setDesiredWidth(90).setDesiredHeight(14);
         Panel p1 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Gain:").setDesiredWidth(70)).addChild(lastRfPerTick);
 
-        lastLostPearls = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(15);
+        lastLostPearls = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(14);
         Panel p2 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Lost:").setDesiredWidth(70)).addChild(lastLostPearls);
 
-        lastLaunchedPearls = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(15);
+        lastLaunchedPearls = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(14);
         Panel p3 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Launched:").setDesiredWidth(70)).addChild(lastLaunchedPearls);
 
-        lastOpportunities = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(15);
+        lastOpportunities = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(14);
         Panel p4 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Chances:").setDesiredWidth(70)).addChild(lastOpportunities);
 
         Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.SyncedValueList;
@@ -103,7 +104,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 }).
                 setTooltips("Start/stop a scan of", "all storage units", "in radius");
         progressBar = new EnergyBar(mc, this).setShowText(false).
-                setColor1(0xFF777777).setColor2(0xFF555555).
+                setEnergyOnColor(0xff0022ee).setEnergyOffColor(0xff111163).setSpacerColor(0xff000043).
                 setHorizontal().setMaxValue(100).setDesiredWidth(30).setValue(0);
         radiusLabel = new ScrollableLabel(mc, this).
                 addValueEvent(new ValueEvent() {
@@ -200,7 +201,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
                     Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
                     panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
-                    panel.addChild(new Label(mc, this).setDynamic(true).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                    panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
                     itemList.addChild(panel);
                 }
             }
@@ -226,8 +227,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
                 panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-                panel.addChild(new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-                panel.addChild(new Label(mc, this).setDynamic(true).setText(c.toString()));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(c.toString()));
                 storageList.addChild(panel);
             }
         }

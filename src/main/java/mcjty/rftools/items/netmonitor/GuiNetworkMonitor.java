@@ -1,5 +1,6 @@
 package mcjty.rftools.items.netmonitor;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -87,16 +88,16 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(list);
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(list);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
 
-        showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").addButtonEvent(new ButtonEvent() {
+        showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").setDesiredWidth(80).addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 previousRfMillis = 0;
             }
-        }).setDesiredHeight(13);
-        filterTextField = new TextField(mc, this).setDesiredHeight(13).addTextEvent(new TextEvent() {
+        }).setDesiredHeight(14);
+        filterTextField = new TextField(mc, this).setDesiredHeight(14).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
                 filter = filterTextField.getText();
@@ -106,9 +107,9 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                 connectedBlocks = null;
             }
         });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(18);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(17);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(buttonPanel).setDesiredHeight(13);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3)).addChild(listPanel).addChild(buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -203,11 +204,11 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
                 panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-                panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
-                panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setColor(color).setDesiredWidth(75));
                 EnergyBar energyLabel = oldLabelMap == null ? null : oldLabelMap.get(coordinate);
                 if (energyLabel == null) {
-                    energyLabel = new EnergyBar(mc, this).setColor(TEXT_COLOR).setHorizontal();
+                    energyLabel = new EnergyBar(mc, this).setHorizontal();
                 }
                 setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
 

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -57,15 +58,15 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(players).addChild(allowedPlayerSlider).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
 
-        nameField = new TextField(mc, this);
-        addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").
+        nameField = new TextField(mc, this).setDesiredHeight(15);
+        addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list").
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
                         addPlayer();
                     }
                 });
-        delButton = new Button(mc, this).setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
+        delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
                 addButtonEvent(new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -183,7 +184,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
             channelNameField.setText(channelFromServer.getName());
             blacklistMode.setCurrentChoice(channelFromServer.isWhitelist() ? 0 : 1);
             for (String player : channelFromServer.getPlayers()) {
-                players.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                players.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
             }
         } else {
             channelNameField.setText("");

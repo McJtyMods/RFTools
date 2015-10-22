@@ -52,7 +52,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
         progressIcon = new ImageLabel(mc, this).setImage(iconGuiElements, 4 * 16, 16);
         progressIcon.setLayoutHint(new PositionalLayout.PositionalHint(135, 6, 16, 16));
 
-        extractButton = new Button(mc, this).setText("Extract").setLayoutHint(new PositionalLayout.PositionalHint(40, 7, 55, 14)).addButtonEvent(
+        extractButton = new Button(mc, this).setText("Extract").setLayoutHint(new PositionalLayout.PositionalHint(36, 7, 55, 14)).addButtonEvent(
                 new ButtonEvent() {
                     @Override
                     public void buttonClicked(Widget parent) {
@@ -61,7 +61,7 @@ public class GuiDimletWorkbench extends GenericGuiContainer<DimletWorkbenchTileE
                 }
         ).setTooltips("Deconstruct a dimlet into its parts");
 
-        autoExtract = new ToggleButton(mc, this).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(100, 7, 30, 14)).addButtonEvent(new ButtonEvent() {
+        autoExtract = new ToggleButton(mc, this).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(94, 7, 42, 14)).addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 setAutoExtract();

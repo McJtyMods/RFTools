@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -87,7 +88,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue));
             }
         });
-        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius);
+        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(8);
         radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
 
         Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 24, ENV_WIDTH - 30, 16));
@@ -107,15 +108,17 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
 
         playersList = new WidgetList(mc, this);
-        Slider playerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(playersList);
+        Slider playerSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(playersList);
         Panel playersPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 30, 72))
-                .setLayout(new HorizontalLayout().setHorizontalMargin(1)).addChild(playersList).addChild(playerSlider);
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(playersList).addChild(playerSlider);
 
         Panel controlPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(25, 118, ENV_WIDTH - 30, 16))
                 .setLayout(new HorizontalLayout().setHorizontalMargin(1).setVerticalMargin(0).setSpacing(1));
         ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices(MODE_BLACKLIST, MODE_WHITELIST)
+                .setDesiredWidth(30)
+                .setDesiredHeight(15)
                 .setChoiceTooltip(MODE_BLACKLIST, "Players in the list above will not get the effects")
                 .setChoiceTooltip(MODE_WHITELIST, "Players in the list above will get the effects")
                 .addChoiceEvent(new ChoiceEvent() {
@@ -129,13 +132,13 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         } else {
             blacklist.setChoice(MODE_BLACKLIST);
         }
-        addButton = new Button(mc, this).setText("+").setTooltips("Add a player to the list").addButtonEvent(new ButtonEvent() {
+        addButton = new Button(mc, this).setText("+").setDesiredHeight(15).setTooltips("Add a player to the list").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 addPlayer();
             }
         });
-        delButton = new Button(mc, this).setText("-").setTooltips("Remove selected player from the list").addButtonEvent(new ButtonEvent() {
+        delButton = new Button(mc, this).setText("-").setDesiredHeight(15).setTooltips("Remove selected player from the list").addButtonEvent(new ButtonEvent() {
             @Override
             public void buttonClicked(Widget parent) {
                 delPlayer();
@@ -206,7 +209,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         players  = new ArrayList<String>(newPlayers);
         playersList.removeChildren();
         for (String player : players) {
-            playersList.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
         }
     }
 

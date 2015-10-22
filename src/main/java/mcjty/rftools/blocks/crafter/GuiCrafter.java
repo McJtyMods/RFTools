@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -99,7 +100,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 80));
         populateList();
 
-        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(138, 7, 10, 80));
+        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 10, 80));
     }
 
     private void initInternalRecipe() {
@@ -113,7 +114,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                     }
                 }).
                 setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(150, 24, 38, 14));
+                setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
     }
 
     private void initKeepMode() {
@@ -127,7 +128,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                     }
                 }).
                 setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(150, 7, 38, 14));
+                setLayoutHint(new PositionalLayout.PositionalHint(148, 7, 41, 14));
     }
 
     private void initSpeedMode() {
@@ -186,7 +187,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void addRecipeLine(Object craftingResult) {
         String readableName = BlockInfo.getReadableName(craftingResult, 0);
-        int color = 0xFF000000;
+        int color = StyleConfig.colorTextInListNormal;
         if (craftingResult == null) {
             readableName = "<no recipe>";
             color = 0xFF505050;

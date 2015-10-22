@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -452,6 +453,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {
                 AbstractWidget groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
+                        .setColor(StyleConfig.colorTextInListNormal)
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
                         .setDesiredWidth(231);
                 itemList.addChild(new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(2).setVerticalMargin(0)).setDesiredHeight(10).addChild(groupLabel));
@@ -470,7 +472,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             } else {
                 displayName = typeModule.getShortLabel(stack);
             }
-            AbstractWidget label = new Label(mc, this).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
+            AbstractWidget label = new Label(mc, this).setText(displayName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
             panel.addChild(label);
         }
         currentPos.setValue(currentPos.getValue() + 1);

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ChoiceEvent;
@@ -28,7 +29,6 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
     private ScrollableLabel alarmLabel;
     private int listDirty;
 
-    public static final int TEXT_COLOR = 0x000000;
     public static final int TEXT_COLOR_SELECTED = 0xFFFFFF;
 
     // A copy of the adjacent blocks we're currently showing
@@ -137,7 +137,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
             Block block = mc.theWorld.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
             int meta = mc.theWorld.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
 
-            int color = TEXT_COLOR;
+            int color = StyleConfig.colorTextInListNormal;
 
             String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 

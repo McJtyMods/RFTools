@@ -1,5 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
+import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -54,8 +55,8 @@ public class GuiTeleportProbe extends GuiScreen {
                 teleport(index);
             }
         });
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(15).setVertical().setScrollable(list);
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(list).addChild(listSlider);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(list);
+        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -97,9 +98,9 @@ public class GuiTeleportProbe extends GuiScreen {
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
-            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(destination.getName()).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setDesiredWidth(75));
-            panel.addChild(new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText("Id " + dim).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(destination.getName()).setDesiredWidth(100));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText("Id " + dim).setDesiredWidth(75));
             list.addChild(panel);
         }
     }
