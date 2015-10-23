@@ -152,7 +152,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 60, 80, 43))
                 .addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter)
                 .setFilledRectThickness(-2)
-                .setFilledBackground(0xff8b8b8b);
+                .setFilledBackground(StyleConfig.colorListBackground);
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterPanel).addChild(actionOptions).
