@@ -88,7 +88,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue));
             }
         });
-        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(8);
+        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(12);
         radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
 
         Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 24, ENV_WIDTH - 30, 16));

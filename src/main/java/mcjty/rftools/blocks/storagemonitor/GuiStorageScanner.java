@@ -131,7 +131,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Slider radiusSlider = new Slider(mc, this).
                 setHorizontal().
                 setTooltips("Radius of scan").
-                setMinimumKnobSize(8).
+                setMinimumKnobSize(12).
                 setScrollable(radiusLabel);
         Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
 
