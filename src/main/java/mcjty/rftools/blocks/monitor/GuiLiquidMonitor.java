@@ -80,6 +80,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 });
         Slider alarmSlider = new Slider(mc, this).
                 setDesiredHeight(15).
+                setMinimumKnobSize(15).
                 setHorizontal().
                 setTooltips("Alarm level").
                 setScrollable(alarmLabel);
