@@ -451,6 +451,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (supportMode) {
             clearSupportBlocks();
         }
+        boxValid = false;
         this.anchor = anchor;
         if (supportMode) {
             makeSupportBlocks();
