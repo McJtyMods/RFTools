@@ -349,6 +349,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public void clearSupportBlocks() {
+        if (worldObj.isRemote) {
+            // Don't do anything on the client.
+            return;
+        }
+
         if (isShapeCard()) {
             clearSupportBlocksShaped();
             return;
