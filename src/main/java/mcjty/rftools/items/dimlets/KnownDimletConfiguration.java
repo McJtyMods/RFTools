@@ -744,7 +744,6 @@ public class KnownDimletConfiguration {
         readUserDimlets(cfg, modConfigDir, mapping, master);
 
         DimletRandomizer.setupWeightedRandomList();
-        setupChestLoot();
 
         mapping.save(world);
     }
@@ -1113,23 +1112,23 @@ public class KnownDimletConfiguration {
         }
     }
 
-    private static void setupChestLoot() {
-        if (DimletConfiguration.unknownDimletChestLootRarity > 0) {
-            setupChestLoot(ChestGenHooks.DUNGEON_CHEST);
-            setupChestLoot(ChestGenHooks.MINESHAFT_CORRIDOR);
-            setupChestLoot(ChestGenHooks.PYRAMID_DESERT_CHEST);
-            setupChestLoot(ChestGenHooks.PYRAMID_JUNGLE_CHEST);
-            setupChestLoot(ChestGenHooks.STRONGHOLD_CORRIDOR);
-            setupChestLoot(ChestGenHooks.VILLAGE_BLACKSMITH);
-        }
+    public static void setupChestLoot() {
+        setupChestLoot(ChestGenHooks.DUNGEON_CHEST);
+        setupChestLoot(ChestGenHooks.MINESHAFT_CORRIDOR);
+        setupChestLoot(ChestGenHooks.PYRAMID_DESERT_CHEST);
+        setupChestLoot(ChestGenHooks.PYRAMID_JUNGLE_CHEST);
+        setupChestLoot(ChestGenHooks.STRONGHOLD_CORRIDOR);
+        setupChestLoot(ChestGenHooks.VILLAGE_BLACKSMITH);
     }
 
     private static void setupChestLoot(String category) {
-        ChestGenHooks chest = ChestGenHooks.getInfo(category);
-        chest.addItem(new WeightedRandomChestContent(DimletSetup.unknownDimlet, 0,
-                DimletConfiguration.unknownDimletChestLootMinimum,
-                DimletConfiguration.unknownDimletChestLootMaximum,
-                DimletConfiguration.unknownDimletChestLootRarity));
+        if (DimletConfiguration.unknownDimletChestLootRarity > 0) {
+            ChestGenHooks chest = ChestGenHooks.getInfo(category);
+            chest.addItem(new WeightedRandomChestContent(DimletSetup.unknownDimlet, 0,
+                    DimletConfiguration.unknownDimletChestLootMinimum,
+                    DimletConfiguration.unknownDimletChestLootMaximum,
+                    DimletConfiguration.unknownDimletChestLootRarity));
+        }
     }
 
     private static int initControllerItem(Configuration cfg, String name, ControllerType type, DimletMapping mapping, boolean master) {

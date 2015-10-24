@@ -60,6 +60,7 @@ public abstract class CommonProxy {
         ModBlocks.init();
         ModCrafting.init();
         ModDimensions.init();
+        KnownDimletConfiguration.setupChestLoot();
     }
 
     private void readMainConfig() {
