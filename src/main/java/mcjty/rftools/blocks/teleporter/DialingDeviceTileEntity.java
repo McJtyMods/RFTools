@@ -532,11 +532,15 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
         World w = dimensionManager.getWorldForDimension(dim);
         if (w == null) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            destinations.cleanupInvalid(worldObj);
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c.getX(), c.getY(), c.getZ());
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            destinations.cleanupInvalid(worldObj);
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
