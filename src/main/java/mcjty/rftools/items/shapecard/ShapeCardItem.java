@@ -6,17 +6,26 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import java.util.*;
 
 public class ShapeCardItem extends Item {
+
+    public static final int CARD_SHAPE = 0;
+    public static final int CARD_VOID = 1;
+    public static final int CARD_QUARRY = 2;
+
+    private final IIcon[] icons = new IIcon[3];
 
     public enum Shape {
         SHAPE_BOX(0, "Box"),
@@ -73,6 +82,8 @@ public class ShapeCardItem extends Item {
 
     public ShapeCardItem() {
         setMaxStackSize(1);
+        setHasSubtypes(true);
+        setMaxDamage(0);
     }
 
     @Override
@@ -99,6 +110,14 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    /**
+     * Return true if the card is a normal card (not a quarry or void card)
+     * @param stack
+     * @return
+     */
+    public static boolean isNormalCard(ItemStack stack) {
+        return stack.getItemDamage() == CARD_SHAPE;
+    }
 
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -204,58 +223,69 @@ public class ShapeCardItem extends Item {
             public int size() {
                 return 0;
             }
-        }, 1000000000);
+        }, 1000000000, false);
         return cnt[0];
     }
 
-    public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
+    public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry) {
         switch (shape) {
             case SHAPE_BOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry);
                 break;
             case SHAPE_SOLIDBOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry);
                 break;
             case SHAPE_TOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false, forquarry);
                 break;
             case SHAPE_BOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry);
                 break;
             case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry);
                 break;
             case SHAPE_SOLIDSPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true, forquarry);
                 break;
             case SHAPE_CYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry);
                 break;
             case SHAPE_SOLIDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true, forquarry);
                 break;
             case SHAPE_CAPPEDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry);
                 break;
             case SHAPE_PRISM:
-                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize);
+                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize, forquarry);
                 break;
             case SHAPE_TORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false);
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry);
                 break;
             case SHAPE_SOLIDTORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true);
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry);
                 break;
         }
     }
 
-    private static void placeBlockIfPossible(World worldObj, Collection<Coordinate> blocks, int maxSize, int x, int y, int z) {
-        if (worldObj == null || (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1)) {
+    private static void placeBlockIfPossible(World worldObj, Collection<Coordinate> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
+        if (worldObj == null) {
             blocks.add(new Coordinate(x, y, z));
+            return;
+        }
+        if (forquarry) {
+            if (worldObj.isAirBlock(x, y, z)) {
+                return;
+            }
+            blocks.add(new Coordinate(x, y, z));
+        } else {
+            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                blocks.add(new Coordinate(x, y, z));
+            }
         }
     }
 
-    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid) {
+    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid, boolean forquarry) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -294,7 +324,7 @@ public class ShapeCardItem extends Item {
                                     cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
                                 }
                                 if (cnt != 6) {
-                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                 }
                             }
                         }
@@ -322,7 +352,7 @@ public class ShapeCardItem extends Item {
         return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
     }
 
-    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped, boolean solid) {
+    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -356,7 +386,7 @@ public class ShapeCardItem extends Item {
                                 cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
                             }
                             if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
-                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
+                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                             }
                         }
                     }
@@ -365,7 +395,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid) {
+    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -382,7 +412,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = 0 ; oz < dz ; oz++) {
                         int z = tl.getZ() + oz;
                         if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
+                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                         }
                     }
                 }
@@ -390,7 +420,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composePrism(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize) {
+    private static void composePrism(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -408,7 +438,7 @@ public class ShapeCardItem extends Item {
                     for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
                         int z = tl.getZ() + oz;
                         if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
+                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                         }
                     }
                 }
@@ -419,14 +449,14 @@ public class ShapeCardItem extends Item {
     private static int isInsideTorus(float centerx, float centery, float centerz, int x, int y, int z, float bigRadius, float smallRadius) {
         double rr = bigRadius - Math.sqrt((x-centerx)*(x-centerx) + (z-centerz)*(z-centerz));
         double f = rr*rr + (y-centery) * (y-centery) - smallRadius * smallRadius;
-        if (f >= 0) {
+        if (f <= 0) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    private static void composeTorus(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid) {
+    private static void composeTorus(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -461,7 +491,7 @@ public class ShapeCardItem extends Item {
                                 cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
                             }
                             if (cnt != 6) {
-                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z);
+                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                             }
                         }
                     }
@@ -470,5 +500,34 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        icons[CARD_SHAPE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardItem");
+        icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
+        icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIconIndex(ItemStack stack) {
+        int damage = stack.getItemDamage();
+        return icons[damage];
+    }
+
+    @Override
+    public String getUnlocalizedName(ItemStack itemStack) {
+        if (itemStack.getItemDamage() == 0) {
+            return super.getUnlocalizedName(itemStack);
+        } else {
+            return super.getUnlocalizedName(itemStack) + itemStack.getItemDamage();
+        }
+    }
+
+    @Override
+    public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
+        for (int i = 0 ; i < icons.length ; i++) {
+            list.add(new ItemStack(this, 1, i));
+        }
+    }
 
 }

@@ -282,7 +282,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Coordinate offset = ShapeCardItem.getOffset(shapeCard);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
-        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
         for (Coordinate block : blocks) {
             if (worldObj.isAirBlock(block.getX(), block.getY(), block.getZ())) {
                 int error = SupportBlock.STATUS_OK;
@@ -342,7 +342,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Coordinate offset = ShapeCardItem.getOffset(shapeCard);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
-        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
         for (Coordinate block : blocks) {
             if (worldObj.getBlock(block.getX(), block.getY(), block.getZ()) == SpaceProjectorSetup.supportBlock) {
                 worldObj.setBlockToAir(block.getX(), block.getY(), block.getZ());
@@ -699,7 +699,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
             Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
             Coordinate offset = ShapeCardItem.getOffset(shapeCard);
-            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension);
+            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks,
+                    SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension,
+                    !ShapeCardItem.isNormalCard(shapeCard));
         }
         return cachedBlocks;
     }
@@ -727,20 +729,33 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        if (isEmptyOrReplacable(worldObj, scan.getX(), scan.getY(), scan.getZ())) {
-            BlockMeta block = consumeBlock(null, 0);
-            if (block == null) {
-                return true;
-            }
-
-            worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
-            worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
-            if (!silent) {
-                RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
-            }
-
+        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        if (itemStack.getItemDamage() == ShapeCardItem.CARD_VOID) {
+            // @todo energy consumption depends on type of card?
+            worldObj.setBlockToAir(scan.getX(), scan.getY(), scan.getZ());
             consumeEnergy(rfNeeded);
+        } else if (itemStack.getItemDamage() == ShapeCardItem.CARD_QUARRY) {
+            // @todo energy consumption depends on type of card?
+            worldObj.setBlockToAir(scan.getX(), scan.getY(), scan.getZ());
+            consumeEnergy(rfNeeded);
+
+        } else {
+            if (isEmptyOrReplacable(worldObj, scan.getX(), scan.getY(), scan.getZ())) {
+                BlockMeta block = consumeBlock(null, 0);
+                if (block == null) {
+                    return true;
+                }
+
+                worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
+                worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
+                if (!silent) {
+                    RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
+                }
+
+                consumeEnergy(rfNeeded);
+            }
         }
+
         return false;
     }
 
