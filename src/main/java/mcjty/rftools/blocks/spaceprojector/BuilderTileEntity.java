@@ -40,6 +40,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
@@ -70,10 +72,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back" };
 
-    public static final String ROTATE_0 = "0°";
-    public static final String ROTATE_90 = "90°";
-    public static final String ROTATE_180 = "180°";
-    public static final String ROTATE_270 = "270°";
+    public static final String ROTATE_0 = "0ï¿½";
+    public static final String ROTATE_90 = "90ï¿½";
+    public static final String ROTATE_180 = "180ï¿½";
+    public static final String ROTATE_270 = "270ï¿½";
 
     public static final int ANCHOR_SW = 0;
     public static final int ANCHOR_SE = 1;
@@ -316,8 +318,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             TileEntity srcTileEntity = world.getTileEntity(src.getX(), src.getY(), src.getZ());
                             TileEntity dstTileEntity = worldObj.getTileEntity(dest.getX(), dest.getY(), dest.getZ());
 
-                            int error1 = isMovable(srcBlock, srcTileEntity);
-                            int error2 = isMovable(dstBlock, dstTileEntity);
+                            int error1 = isMovable(world, src.getX(), src.getY(), src.getZ(), srcBlock, srcTileEntity);
+                            int error2 = isMovable(worldObj, dest.getX(), dest.getY(), dest.getZ(), dstBlock, dstTileEntity);
                             error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
@@ -836,10 +838,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    public static SpaceProjectorSetup.BlockInformation getBlockInformation(Block block, TileEntity tileEntity) {
+    public static SpaceProjectorSetup.BlockInformation getBlockInformation(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
         if (isEmpty(block)) {
             return SpaceProjectorSetup.BlockInformation.FREE;
         }
+
+        FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+        if (!block.canEntityDestroy(world, x, y, z, fakePlayer)) {
+            return SpaceProjectorSetup.BlockInformation.INVALID;
+        }
+
         SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.getBlockInformation(block);
         if (tileEntity != null) {
             switch (SpaceProjectorConfiguration.teMode) {
@@ -865,8 +873,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return SpaceProjectorSetup.BlockInformation.OK;
     }
 
-    private int isMovable(Block block, TileEntity tileEntity) {
-        return getBlockInformation(block, tileEntity).getBlockLevel();
+    private int isMovable(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
+        return getBlockInformation(world, x, y, z, block, tileEntity).getBlockLevel();
     }
 
     public static boolean isEmptyOrReplacable(World world, int x, int y, int z) {
@@ -952,7 +960,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
 
-            SpaceProjectorSetup.BlockInformation information = getBlockInformation(origBlock, null);
+            SpaceProjectorSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, null);
             origMeta = rotateMeta(origMeta, information, rotate);
 
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
@@ -1066,7 +1074,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             TileEntity origTileEntity = world.getTileEntity(x, y, z);
-            SpaceProjectorSetup.BlockInformation information = getBlockInformation(origBlock, origTileEntity);
+            SpaceProjectorSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, origTileEntity);
             if (information.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                 return;
             }
@@ -1112,12 +1120,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        SpaceProjectorSetup.BlockInformation srcInformation = getBlockInformation(srcBlock, srcTileEntity);
+        SpaceProjectorSetup.BlockInformation srcInformation = getBlockInformation(world, x, y, z, srcBlock, srcTileEntity);
         if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
 
-        SpaceProjectorSetup.BlockInformation dstInformation = getBlockInformation(dstBlock, dstTileEntity);
+        SpaceProjectorSetup.BlockInformation dstInformation = getBlockInformation(destWorld, destX, destY, destZ, dstBlock, dstTileEntity);
         if (dstInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }

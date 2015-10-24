@@ -69,7 +69,7 @@ public class PacketGetChamberInfo implements IMessage, IMessageHandler<PacketGet
                         blocks.increment(bm);
 
                         TileEntity te = world.getTileEntity(x, y, z);
-                        SpaceProjectorSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(block, te);
+                        SpaceProjectorSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, x, y, z, block, te);
                         if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                             costs.put(bm, -1);
                         } else {
