@@ -1032,7 +1032,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

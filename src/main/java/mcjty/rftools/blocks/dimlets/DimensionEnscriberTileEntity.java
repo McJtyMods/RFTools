@@ -89,7 +89,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

@@ -132,7 +132,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

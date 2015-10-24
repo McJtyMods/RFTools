@@ -392,7 +392,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

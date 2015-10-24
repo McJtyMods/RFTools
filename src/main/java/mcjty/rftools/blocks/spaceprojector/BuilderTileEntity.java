@@ -1295,7 +1295,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

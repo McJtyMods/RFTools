@@ -170,7 +170,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements IInven
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

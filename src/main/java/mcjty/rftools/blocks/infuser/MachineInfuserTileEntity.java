@@ -167,7 +167,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

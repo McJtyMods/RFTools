@@ -251,7 +251,7 @@ public class DimletFilterTileEntity extends GenericTileEntity implements ISidedI
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

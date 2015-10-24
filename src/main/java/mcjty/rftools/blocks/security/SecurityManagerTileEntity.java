@@ -183,7 +183,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements IInv
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

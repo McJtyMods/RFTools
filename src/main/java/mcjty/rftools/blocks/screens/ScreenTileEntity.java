@@ -245,7 +245,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ISidedInvento
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override

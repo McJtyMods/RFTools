@@ -229,7 +229,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
+        return canPlayerAccess(player);
     }
 
     @Override
