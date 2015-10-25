@@ -20,6 +20,10 @@ public class SpaceProjectorConfiguration {
 
     public static int maxSpaceChamberDimension = 128;
 
+    public static double voidShapeCardFactor = 0.5;
+    public static double quarryShapeCardFactor = 2.0;
+    public static double silkquarryShapeCardFactor = 4.0;
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -41,5 +45,12 @@ public class SpaceProjectorConfiguration {
                 "Maximum dimension for the space chamber").getInt();
         dimensionCostFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "dimensionCostFactor", dimensionCostFactor,
                 "How much more expensive a move accross dimensions is").getDouble();
+
+        voidShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "voidShapeCardFactor", voidShapeCardFactor,
+                "The RF per operation of the builder is multiplied with this factor when using the void shape card").getDouble();
+        quarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryShapeCardFactor", quarryShapeCardFactor,
+                "The RF per operation of the builder is multiplied with this factor when using the quarry shape card").getDouble();
+        silkquarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "silkquarryShapeCardFactor", silkquarryShapeCardFactor,
+                "The RF per operation of the builder is multiplied with this factor when using the silk quarry shape card").getDouble();
     }
 }

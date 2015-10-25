@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -700,7 +701,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
             Coordinate offset = ShapeCardItem.getOffset(shapeCard);
             ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks,
-                    SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension,
+                    SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension,
                     !ShapeCardItem.isNormalCard(shapeCard));
         }
         return cachedBlocks;
@@ -712,8 +713,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             if (getCachedBlocks().contains(scan)) {
-                handleSingleBlock();
-                nextLocation();
+                if (!handleSingleBlock()) {
+                    nextLocation();
+                }
                 return;
             } else {
                 nextLocation();
@@ -721,41 +723,129 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    // Return true if we have to wait at this spot.
     private boolean handleSingleBlock() {
-        int rf = getEnergyStored(ForgeDirection.DOWN);
+        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        int rf = (int) (getEnergyStored(ForgeDirection.DOWN) * ShapeCardItem.getCostFactor(itemStack));
         int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return true;
         }
 
-        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        int sx = scan.getX();
+        int sy = scan.getY();
+        int sz = scan.getZ();
         if (itemStack.getItemDamage() == ShapeCardItem.CARD_VOID) {
-            // @todo energy consumption depends on type of card?
-            worldObj.setBlockToAir(scan.getX(), scan.getY(), scan.getZ());
-            consumeEnergy(rfNeeded);
+            return voidBlock(rfNeeded, sx, sy, sz);
         } else if (itemStack.getItemDamage() == ShapeCardItem.CARD_QUARRY) {
-            // @todo energy consumption depends on type of card?
-            worldObj.setBlockToAir(scan.getX(), scan.getY(), scan.getZ());
-            consumeEnergy(rfNeeded);
-
+            return quarryBlock(rfNeeded, sx, sy, sz);
+        } else if (itemStack.getItemDamage() == ShapeCardItem.CARD_QUARRY_SILK) {
+            return silkQuarryBlock(rfNeeded, sx, sy, sz);
         } else {
-            if (isEmptyOrReplacable(worldObj, scan.getX(), scan.getY(), scan.getZ())) {
-                BlockMeta block = consumeBlock(null, 0);
-                if (block == null) {
-                    return true;
-                }
+            return buildBlock(rfNeeded, sx, sy, sz);
+        }
+    }
 
-                worldObj.setBlock(scan.getX(), scan.getY(), scan.getZ(), block.getBlock(), block.getMeta(), 3);
-                worldObj.setBlockMetadataWithNotify(scan.getX(), scan.getY(), scan.getZ(), block.getMeta(), 3);
-                if (!silent) {
-                    RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), scan.getX(), scan.getY(), scan.getZ(), 1.0f, 1.0f);
-                }
+    private boolean buildBlock(int rfNeeded, int sx, int sy, int sz) {
+        if (isEmptyOrReplacable(worldObj, sx, sy, sz)) {
+            BlockMeta block = consumeBlock(null, 0);
+            if (block == null) {
+                return true;    // We could not find a block. Wait
+            }
 
-                consumeEnergy(rfNeeded);
+            worldObj.setBlock(sx, sy, sz, block.getBlock(), block.getMeta(), 3);
+            worldObj.setBlockMetadataWithNotify(sx, sy, sz, block.getMeta(), 3);
+            if (!silent) {
+                RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+            }
+
+            consumeEnergy(rfNeeded);
+        }
+        return false;
+    }
+
+    private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz) {
+        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+            // Skip a 3x3x3 block around the builder.
+            return false;
+        }
+        Block block = worldObj.getBlock(sx, sy, sz);
+        if (isEmpty(block)) {
+            return false;
+        }
+        if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
+            int meta = worldObj.getBlockMetadata(sx, sy, sz);
+
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
+                List<ItemStack> drops;
+                if (block.canSilkHarvest(worldObj, fakePlayer, sx, sy, sz, meta)) {
+                    Item item = Item.getItemFromBlock(block);
+                    int m = 0;
+                    if (item != null && item.getHasSubtypes()) {
+                        m = meta;
+                    }
+                    drops = Collections.singletonList(new ItemStack(item, 1, m));
+                } else {
+                    drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
+                }
+                if (checkAndInsertItems(drops)) {
+                    worldObj.setBlockToAir(sx, sy, sz);
+                    consumeEnergy(rfNeeded);
+                    if (!silent) {
+                        RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                    }
+                } else {
+                    return true;    // Not enough room. Wait
+                }
             }
         }
+        return false;
+    }
 
+    private boolean quarryBlock(int rfNeeded, int sx, int sy, int sz) {
+        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+            // Skip a 3x3x3 block around the builder.
+            return false;
+        }
+        Block block = worldObj.getBlock(sx, sy, sz);
+        if (isEmpty(block)) {
+            return false;
+        }
+        if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
+            int meta = worldObj.getBlockMetadata(sx, sy, sz);
+
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
+                ArrayList<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
+                if (checkAndInsertItems(drops)) {
+                    worldObj.setBlockToAir(sx, sy, sz);
+                    consumeEnergy(rfNeeded);
+                    if (!silent) {
+                        RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                    }
+                } else {
+                    return true;    // Not enough room. Wait
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean voidBlock(int rfNeeded, int sx, int sy, int sz) {
+        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+            // Skip a 3x3x3 block around the builder.
+            return false;
+        }
+        Block block = worldObj.getBlock(sx, sy, sz);
+        if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
+            if (!silent) {
+                RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+            }
+            worldObj.setBlockToAir(sx, sy, sz);
+            consumeEnergy(rfNeeded);
+        }
         return false;
     }
 
@@ -830,6 +920,41 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         return null;
     }
+
+    private boolean checkAndInsertItems(List<ItemStack> items) {
+        TileEntity teAbove = worldObj.getTileEntity(xCoord, yCoord+1, zCoord);
+        boolean ok = false;
+        if (teAbove instanceof IInventory) {
+            ok = checkAndInsertItems(items, (IInventory) teAbove);
+        }
+        if (ok) {
+            return true;
+        }
+        TileEntity teDown = worldObj.getTileEntity(xCoord, yCoord-1, zCoord);
+        if (teDown instanceof IInventory) {
+            ok = checkAndInsertItems(items, (IInventory) teDown);
+        }
+        return ok;
+    }
+
+    private boolean checkAndInsertItems(List<ItemStack> items, IInventory inventory) {
+        Map<Integer, ItemStack> undo = new HashMap<Integer, ItemStack>();
+        for (ItemStack item : items) {
+            int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
+            if (remaining > 0) {
+                undo(undo, inventory);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void undo(Map<Integer,ItemStack> undo, IInventory inventory) {
+        for (Map.Entry<Integer, ItemStack> entry : undo.entrySet()) {
+            inventory.setInventorySlotContents(entry.getKey(), entry.getValue());
+        }
+    }
+
 
     private BlockMeta consumeBlock(Block block, int meta) {
         TileEntity te = worldObj.getTileEntity(xCoord, yCoord+1, zCoord);

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,6 +13,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Random;
 
 public class SupportBlock extends Block {
@@ -61,30 +64,38 @@ public class SupportBlock extends Block {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
         if (!world.isRemote) {
             // Find all connected blocks and remove them.
-            removeBlock(world, x, y, z);
+            Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
+            todo.add(new Coordinate(x, y, z));
+            removeBlock(world, todo);
         }
         return super.onBlockActivated(world, x, y, z, player, side, sidex, sidey, sidez);
     }
 
-    private void removeBlock(World world, int x, int y, int z) {
-        world.setBlockToAir(x, y, z);
-        if (world.getBlock(x-1, y, z) == this) {
-            removeBlock(world, x-1, y, z);
-        }
-        if (world.getBlock(x+1, y, z) == this) {
-            removeBlock(world, x+1, y, z);
-        }
-        if (world.getBlock(x, y-1, z) == this) {
-            removeBlock(world, x, y-1, z);
-        }
-        if (world.getBlock(x, y+1, z) == this) {
-            removeBlock(world, x, y+1, z);
-        }
-        if (world.getBlock(x, y, z-1) == this) {
-            removeBlock(world, x, y, z-1);
-        }
-        if (world.getBlock(x, y, z+1) == this) {
-            removeBlock(world, x, y, z+1);
+    private void removeBlock(World world, Deque<Coordinate> todo) {
+        while (!todo.isEmpty()) {
+            Coordinate c = todo.pollFirst();
+            int x = c.getX();
+            int y = c.getY();
+            int z = c.getZ();
+            world.setBlockToAir(x, y, z);
+            if (world.getBlock(x-1, y, z) == this) {
+                todo.push(new Coordinate(x-1, y, z));
+            }
+            if (world.getBlock(x+1, y, z) == this) {
+                todo.push(new Coordinate(x + 1, y, z));
+            }
+            if (world.getBlock(x, y-1, z) == this) {
+                todo.push(new Coordinate(x, y - 1, z));
+            }
+            if (world.getBlock(x, y+1, z) == this) {
+                todo.push(new Coordinate(x, y + 1, z));
+            }
+            if (world.getBlock(x, y, z-1) == this) {
+                todo.push(new Coordinate(x, y, z - 1));
+            }
+            if (world.getBlock(x, y, z+1) == this) {
+                todo.push(new Coordinate(x, y, z + 1));
+            }
         }
     }
 

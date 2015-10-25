@@ -6,6 +6,7 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
+import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,8 +25,9 @@ public class ShapeCardItem extends Item {
     public static final int CARD_SHAPE = 0;
     public static final int CARD_VOID = 1;
     public static final int CARD_QUARRY = 2;
+    public static final int CARD_QUARRY_SILK = 3;
 
-    private final IIcon[] icons = new IIcon[3];
+    private final IIcon[] icons = new IIcon[4];
 
     public enum Shape {
         SHAPE_BOX(0, "Box"),
@@ -110,6 +112,16 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    public static double getCostFactor(ItemStack stack) {
+        switch (stack.getItemDamage()) {
+            case CARD_SHAPE: return 1.0;
+            case CARD_VOID: return SpaceProjectorConfiguration.voidShapeCardFactor;
+            case CARD_QUARRY: return SpaceProjectorConfiguration.quarryShapeCardFactor;
+            case CARD_QUARRY_SILK: return SpaceProjectorConfiguration.silkquarryShapeCardFactor;
+            default: return 1.0;
+        }
+    }
+
     /**
      * Return true if the card is a normal card (not a quarry or void card)
      * @param stack
@@ -125,7 +137,11 @@ public class ShapeCardItem extends Item {
             return Shape.SHAPE_BOX;
         }
         int shape = tagCompound.getInteger("shape");
-        return Shape.getShape(shape);
+        Shape s = Shape.getShape(shape);
+        if (s == null) {
+            return Shape.SHAPE_BOX;
+        }
+        return s;
     }
 
     public static void setShape(ItemStack stack, Shape shape) {
@@ -505,6 +521,7 @@ public class ShapeCardItem extends Item {
         icons[CARD_SHAPE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardItem");
         icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
         icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
+        icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
     }
 
     @SideOnly(Side.CLIENT)
