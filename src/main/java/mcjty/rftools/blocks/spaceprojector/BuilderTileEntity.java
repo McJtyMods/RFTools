@@ -600,7 +600,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void checkStateServerShaped() {
         float factor = getInfusedFactor();
-        for (int i = 0 ; i < 1 + (factor * 20) ; i++) {
+        for (int i = 0 ; i < 8 + (factor * 20) ; i++) {
             if (scan != null) {
                 handleBlockShaped();
             }
