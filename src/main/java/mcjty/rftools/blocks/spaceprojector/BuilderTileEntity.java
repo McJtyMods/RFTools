@@ -1347,6 +1347,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        chunkUnload();
+    }
+
     private void chunkUnload() {
         if (forcedChunk != null && ticket != null) {
             ForgeChunkManager.unforceChunk(ticket, forcedChunk);
