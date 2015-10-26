@@ -293,7 +293,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
-        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
+        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getCoordinate(), dimension, offset, blocks,
+                SpaceProjectorConfiguration.maxBuilderDimension*256*SpaceProjectorConfiguration.maxBuilderDimension, false);
         for (Coordinate block : blocks) {
             if (worldObj.isAirBlock(block.getX(), block.getY(), block.getZ())) {
                 int error = SupportBlock.STATUS_OK;

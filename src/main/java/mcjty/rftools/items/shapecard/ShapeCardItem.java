@@ -61,6 +61,20 @@ public class ShapeCardItem extends Item {
             }
         }
 
+        // Return the hollow version of the shape.
+        public Shape makeHollow() {
+            switch (this) {
+                case SHAPE_SOLIDBOX:
+                    return SHAPE_BOX;
+                case SHAPE_SOLIDSPHERE:
+                    return SHAPE_SPHERE;
+                case SHAPE_SOLIDCYLINDER:
+                    return SHAPE_CYLINDER;
+                case SHAPE_SOLIDTORUS:
+                    return SHAPE_TORUS;
+            }
+            return this;
+        }
 
         Shape(int index, String description) {
             this.index = index;
