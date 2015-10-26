@@ -67,6 +67,10 @@ item.DimletModule.name=Dimlet Storage Module
 item.OreDictModule.name=Ore Dictionary Storage Module
 item.GenericModule.name=Generic Storage Module
 item.ShapeCard.name=Shape Card
+item.ShapeCard1.name=Shape Card (Void)
+item.ShapeCard2.name=Shape Card (Quarry)
+item.ShapeCard3.name=Shape Card (Silk Quarry)
+item.ShapeCard4.name=Shape Card (Fortune Quarry)
 
 item.RegenerationEModule.name=再生模塊
 item.RegenerationPlusEModule.name=再生+模塊

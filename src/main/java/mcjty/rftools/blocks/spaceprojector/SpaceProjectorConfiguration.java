@@ -23,6 +23,7 @@ public class SpaceProjectorConfiguration {
     public static double voidShapeCardFactor = 0.5;
     public static double quarryShapeCardFactor = 2.0;
     public static double silkquarryShapeCardFactor = 4.0;
+    public static double fortunequarryShapeCardFactor = 3.0;
 
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
@@ -52,5 +53,7 @@ public class SpaceProjectorConfiguration {
                 "The RF per operation of the builder is multiplied with this factor when using the quarry shape card").getDouble();
         silkquarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "silkquarryShapeCardFactor", silkquarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the silk quarry shape card").getDouble();
+        fortunequarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
+                "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
     }
 }

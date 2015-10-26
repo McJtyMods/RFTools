@@ -70,6 +70,10 @@ item.DimletModule.name=Модуль «Хранилища димлетов»
 item.OreDictModule.name=Модуль «Хранилище по словарю руд»
 item.GenericModule.name=Модуль «Общее хранилище»
 item.ShapeCard.name=Shape Card
+item.ShapeCard1.name=Shape Card (Void)
+item.ShapeCard2.name=Shape Card (Quarry)
+item.ShapeCard3.name=Shape Card (Silk Quarry)
+item.ShapeCard4.name=Shape Card (Fortune Quarry)
 
 item.RegenerationEModule.name=Модуль «Регенерация»
 item.RegenerationPlusEModule.name=Модуль «Регенерация+»

@@ -89,6 +89,10 @@ item.WeaknessEModule.name=Weakness Module
 item.PoisonEModule.name=Poison Module
 item.SlownessEModule.name=Slowness Module
 item.ShapeCard.name=Shape Card
+item.ShapeCard1.name=Shape Card (Void)
+item.ShapeCard2.name=Shape Card (Quarry)
+item.ShapeCard3.name=Shape Card (Silk Quarry)
+item.ShapeCard4.name=Shape Card (Fortune Quarry)
 
 item.DimletBase.name=Dimlet Basisteil
 item.DimletControlCircuit0.name=Dimlet Steuerelektronik Rarität 0

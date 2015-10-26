@@ -28,8 +28,9 @@ public class ShapeCardItem extends Item {
     public static final int CARD_VOID = 1;
     public static final int CARD_QUARRY = 2;
     public static final int CARD_QUARRY_SILK = 3;
+    public static final int CARD_QUARRY_FORTUNE = 4;
 
-    private final IIcon[] icons = new IIcon[4];
+    private final IIcon[] icons = new IIcon[5];
 
     public enum Shape {
         SHAPE_BOX(0, "Box"),
@@ -105,10 +106,33 @@ public class ShapeCardItem extends Item {
         list.add(EnumChatFormatting.GREEN + "Offset " + getOffset(itemStack));
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This item can be configured as a shape. You");
-            list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
-            list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
-            list.add(EnumChatFormatting.WHITE + "actually build the shape");
+            int type = itemStack.getItemDamage();
+            switch (type) {
+                case CARD_VOID:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
+                    break;
+                case CARD_SHAPE:
+                    list.add(EnumChatFormatting.WHITE + "This item can be configured as a shape. You");
+                    list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
+                    list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
+                    list.add(EnumChatFormatting.WHITE + "actually build the shape");
+                    break;
+                case CARD_QUARRY_SILK:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
+                    break;
+                case CARD_QUARRY_FORTUNE:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
+                    break;
+                case CARD_QUARRY:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
+                    break;
+            }
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -120,12 +144,13 @@ public class ShapeCardItem extends Item {
             case CARD_VOID: return SpaceProjectorConfiguration.voidShapeCardFactor;
             case CARD_QUARRY: return SpaceProjectorConfiguration.quarryShapeCardFactor;
             case CARD_QUARRY_SILK: return SpaceProjectorConfiguration.silkquarryShapeCardFactor;
+            case CARD_QUARRY_FORTUNE: return SpaceProjectorConfiguration.fortunequarryShapeCardFactor;
             default: return 1.0;
         }
     }
 
     public static boolean isQuarry(int type) {
-        return type == CARD_QUARRY || type == CARD_QUARRY_SILK;
+        return type == CARD_QUARRY || type == CARD_QUARRY_SILK || type == CARD_QUARRY_FORTUNE;
     }
 
     /**
@@ -528,6 +553,7 @@ public class ShapeCardItem extends Item {
         icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
         icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
         icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
+        icons[CARD_QUARRY_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardFortuneItem");
     }
 
     @SideOnly(Side.CLIENT)

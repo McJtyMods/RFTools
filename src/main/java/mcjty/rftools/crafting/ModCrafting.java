@@ -92,6 +92,11 @@ public final class ModCrafting {
                 new ItemStack(Items.diamond), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Items.diamond),
                 new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Items.diamond), new ItemStack(DimletSetup.dimensionalShard)
         }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Items.ghast_tear), new ItemStack(DimletSetup.dimensionalShard),
+                new ItemStack(Items.emerald), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Items.diamond),
+                new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Items.redstone), new ItemStack(DimletSetup.dimensionalShard)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
     }
 
     private static void intBaseCrafting() {

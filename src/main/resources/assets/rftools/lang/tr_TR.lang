@@ -70,6 +70,10 @@ item.DimletModule.name=Dimlet Deposu Modulü
 item.OreDictModule.name=Ore Dictionary Deposu Modulü
 item.GenericModule.name=Genel Depolama Modulü
 item.ShapeCard.name=Shape Card
+item.ShapeCard1.name=Shape Card (Void)
+item.ShapeCard2.name=Shape Card (Quarry)
+item.ShapeCard3.name=Shape Card (Silk Quarry)
+item.ShapeCard4.name=Shape Card (Fortune Quarry)
 
 item.RegenerationEModule.name=Yenilenme Modulü
 item.RegenerationPlusEModule.name=Yenilenme+ Modulü

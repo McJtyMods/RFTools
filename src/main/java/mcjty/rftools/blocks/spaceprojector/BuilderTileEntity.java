@@ -722,6 +722,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         switch (getCardType()) {
             case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_QUARRY_FORTUNE: return quarryBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_SHAPE: return buildBlock(rfNeeded, sx, sy, sz);
         }
@@ -799,7 +800,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
-                ArrayList<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
+                ArrayList<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 2 : 0);
                 if (checkAndInsertItems(drops)) {
                     worldObj.setBlockToAir(sx, sy, sz);
                     consumeEnergy(rfNeeded);
