@@ -142,6 +142,7 @@ public class ShapeCardItem extends Item {
                 case CARD_VOID:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
@@ -150,6 +151,7 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
                     list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
                     list.add(EnumChatFormatting.WHITE + "actually build the shape");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerOperation + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
                     break;
@@ -158,6 +160,7 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
@@ -165,6 +168,7 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
@@ -173,6 +177,7 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
@@ -180,6 +185,7 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
@@ -187,12 +193,14 @@ public class ShapeCardItem extends Item {
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;

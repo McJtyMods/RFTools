@@ -759,8 +759,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (!isEmpty(block)) {
                 float hardness = block.getBlockHardness(worldObj, sx, sy, sz);
                 rfNeeded *= (int) ((hardness + 1) * 2);
-                //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ REMOVE
-                System.out.println("hardness = " + hardness + ", rfNeeded = " + rfNeeded + ", block = " + block.getUnlocalizedName());
             }
         }
 
@@ -835,7 +833,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (ShapeCardItem.isClearingQuarry(getCardType())) {
                         worldObj.setBlockToAir(sx, sy, sz);
                     } else {
-                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 0);       // No block update!
+                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
                     }
                     consumeEnergy(rfNeeded);
                     if (!silent) {
@@ -867,7 +865,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (ShapeCardItem.isClearingQuarry(getCardType())) {
                         worldObj.setBlockToAir(sx, sy, sz);
                     } else {
-                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 0);       // No block update!
+                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
                     }
                     consumeEnergy(rfNeeded);
                     if (!silent) {
