@@ -104,7 +104,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int projDy;
     private int projDz;
 
-    private int cardType; // One of the card types out of ShapeCardItem.CARD_...
+    private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
 
     // Cached set of blocks that we need to build in shaped mode
     private Set<Coordinate> cachedBlocks = null;
@@ -696,6 +696,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private int getCardType() {
+        if (cardType == ShapeCardItem.CARD_UNKNOWN) {
+            ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            if (card != null) {
+                cardType = card.getItemDamage();
+            }
+        }
+        return cardType;
+    }
+
     // Return true if we have to wait at this spot.
     private boolean handleSingleBlock() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
@@ -709,7 +719,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sx = scan.getX();
         int sy = scan.getY();
         int sz = scan.getZ();
-        switch (cardType) {
+        switch (getCardType()) {
             case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz);
@@ -1302,7 +1312,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 calculateBox();
             }
             cachedBlocks = null;
-            if (ShapeCardItem.isQuarry(cardType)) {
+            if (ShapeCardItem.isQuarry(getCardType())) {
                 // We start at the top for a quarry
                 scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
             } else {
@@ -1323,7 +1333,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int y = scan.getY();
             int z = scan.getZ();
 
-            if (ShapeCardItem.isQuarry(cardType)) {
+            if (ShapeCardItem.isQuarry(getCardType())) {
                 nextLocationQuarry(x, y, z);
             } else {
                 nextLocationNormal(x, y, z);
@@ -1409,10 +1419,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public ItemStack decrStackSize(int index, int amount) {
         if (index == BuilderContainer.SLOT_TAB && inventoryHelper.getStackInSlot(index) != null && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
-            clearSupportBlocks();
-            cachedBlocks = null;
-            boxValid = false;
-            scan = null;
+            refreshSettings();
         }
         return inventoryHelper.decrStackSize(index, amount);
     }
@@ -1426,12 +1433,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == BuilderContainer.SLOT_TAB && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
             // Restart if we go from having a stack to not having stack or the other way around.
-            clearSupportBlocks();
-            cachedBlocks = null;
-            boxValid = false;
-            scan = null;
+            refreshSettings();
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+    }
+
+    private void refreshSettings() {
+        clearSupportBlocks();
+        cachedBlocks = null;
+        boxValid = false;
+        scan = null;
+        cardType = ShapeCardItem.CARD_UNKNOWN;
     }
 
     @Override

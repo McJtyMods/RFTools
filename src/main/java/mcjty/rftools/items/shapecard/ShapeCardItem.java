@@ -22,6 +22,7 @@ import java.util.*;
 
 public class ShapeCardItem extends Item {
 
+    public static final int CARD_UNKNOWN = -2;          // Not known yet
     public static final int CARD_SPACE = -1;            // Not a shape card but a space card instead
     public static final int CARD_SHAPE = 0;
     public static final int CARD_VOID = 1;
