@@ -1352,18 +1352,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void restartScan() {
         chunkUnload();
         if (loopMode || (powered > 0 && scan == null)) {
-            if (isShapeCard()) {
-                calculateBoxShaped();
-            } else {
+            if (getCardType() == ShapeCardItem.CARD_SHAPE) {
                 calculateBox();
+                scan = minBox;
+            } else {
+                calculateBoxShaped();
+                // We start at the top for a quarry or shape building
+                scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
             }
             cachedBlocks = null;
-            if (ShapeCardItem.isQuarry(getCardType())) {
-                // We start at the top for a quarry
-                scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
-            } else {
-                scan = minBox;
-            }
         } else {
             scan = null;
         }
@@ -1427,10 +1424,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int y = scan.getY();
             int z = scan.getZ();
 
-            if (ShapeCardItem.isQuarry(getCardType())) {
-                nextLocationQuarry(x, y, z);
-            } else {
+            if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 nextLocationNormal(x, y, z);
+            } else {
+                nextLocationQuarry(x, y, z);
             }
         }
     }

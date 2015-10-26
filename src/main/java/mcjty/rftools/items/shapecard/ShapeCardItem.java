@@ -161,10 +161,6 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    public static boolean isQuarry(int type) {
-        return type == CARD_QUARRY || type == CARD_QUARRY_SILK || type == CARD_QUARRY_FORTUNE;
-    }
-
     /**
      * Return true if the card is a normal card (not a quarry or void card)
      * @param stack
