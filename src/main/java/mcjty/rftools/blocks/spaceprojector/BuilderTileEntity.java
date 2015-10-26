@@ -16,6 +16,7 @@ import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Coordinate;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.RfToolsTeleporter;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -37,9 +38,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -105,6 +108,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int projDz;
 
     private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
+
+    // For chunkloading with the quarry.
+    private static ForgeChunkManager.Ticket ticket = null;
+    // The currently forced chunk.
+    private ChunkCoordIntPair forcedChunk = null;
 
     // Cached set of blocks that we need to build in shaped mode
     private Set<Coordinate> cachedBlocks = null;
@@ -589,6 +597,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (isShapeCard()) {
             if (powered == 0) {
+                chunkUnload();
                 return;
             }
             checkStateServerShaped();
@@ -708,17 +717,30 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Return true if we have to wait at this spot.
     private boolean handleSingleBlock() {
-        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        int rf = (int) (getEnergyStored(ForgeDirection.DOWN) * ShapeCardItem.getCostFactor(itemStack));
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * (4.0f - getInfusedFactor()) / 4.0f);
+        int sx = scan.getX();
+        int sy = scan.getY();
+        int sz = scan.getZ();
+        if (!chunkLoad(sx, sz)) {
+            // The chunk is not available and we could not chunkload it. We have to wait.
+            return true;
+        }
+
+        int rf = getEnergyStored(ForgeDirection.DOWN);
+        int rfNeeded = SpaceProjectorConfiguration.builderRfPerOperation;
+        switch (getCardType()) {
+            case ShapeCardItem.CARD_VOID: rfNeeded *= SpaceProjectorConfiguration.voidShapeCardFactor; break;
+            case ShapeCardItem.CARD_QUARRY: rfNeeded *= SpaceProjectorConfiguration.quarryShapeCardFactor; break;
+            case ShapeCardItem.CARD_QUARRY_FORTUNE: rfNeeded *= SpaceProjectorConfiguration.fortunequarryShapeCardFactor; break;
+            case ShapeCardItem.CARD_QUARRY_SILK: rfNeeded *= SpaceProjectorConfiguration.silkquarryShapeCardFactor; break;
+            case ShapeCardItem.CARD_SHAPE: break;
+        }
+        rfNeeded = (int) (rfNeeded * (4.0f - getInfusedFactor()) / 4.0f);
+
         if (rfNeeded > rf) {
             // Not enough energy.
             return true;
         }
 
-        int sx = scan.getX();
-        int sy = scan.getY();
-        int sz = scan.getZ();
         switch (getCardType()) {
             case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz);
             case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz);
@@ -1306,6 +1328,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void restartScan() {
+        chunkUnload();
         if (loopMode || (powered > 0 && scan == null)) {
             if (isShapeCard()) {
                 calculateBoxShaped();
@@ -1324,11 +1347,53 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private void chunkUnload() {
+        if (forcedChunk != null && ticket != null) {
+            ForgeChunkManager.unforceChunk(ticket, forcedChunk);
+            forcedChunk = null;
+        }
+    }
+
+    private boolean chunkLoad(int x, int z) {
+        int cx = x >> 4;
+        int cz = z >> 4;
+
+        if (worldObj.getChunkProvider().chunkExists(cx, cz)) {
+            return true;
+        }
+
+        if (SpaceProjectorConfiguration.quarryChunkloads) {
+            if (ticket == null) {
+                ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, new ForgeChunkManager.LoadingCallback() {
+                    @Override
+                    public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
+
+                    }
+                });
+                ticket = ForgeChunkManager.requestTicket(RFTools.instance, worldObj, ForgeChunkManager.Type.NORMAL);
+                if (ticket == null) {
+                    // Chunk is not loaded and we can't get a ticket.
+                    return false;
+                }
+            }
+
+            ChunkCoordIntPair pair = new ChunkCoordIntPair(cx, cz);
+            if (pair.equals(forcedChunk)) {
+                return true;
+            }
+            if (forcedChunk != null) {
+                ForgeChunkManager.unforceChunk(ticket, forcedChunk);
+            }
+            forcedChunk = pair;
+            ForgeChunkManager.forceChunk(ticket, forcedChunk);
+            return true;
+        }
+        // Chunk is not loaded and we don't do chunk loading so we cannot proceed.
+        return false;
+    }
+
 
     private void nextLocation() {
-//        ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(RFTools.instance, worldObj, ForgeChunkManager.Type.NORMAL);
-//        ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(0, 0));
-
         if (scan != null) {
             int x = scan.getX();
             int y = scan.getY();

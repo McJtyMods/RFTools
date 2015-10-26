@@ -6,7 +6,6 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
-import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -135,17 +134,6 @@ public class ShapeCardItem extends Item {
             }
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
-        }
-    }
-
-    public static double getCostFactor(ItemStack stack) {
-        switch (stack.getItemDamage()) {
-            case CARD_SHAPE: return 1.0;
-            case CARD_VOID: return SpaceProjectorConfiguration.voidShapeCardFactor;
-            case CARD_QUARRY: return SpaceProjectorConfiguration.quarryShapeCardFactor;
-            case CARD_QUARRY_SILK: return SpaceProjectorConfiguration.silkquarryShapeCardFactor;
-            case CARD_QUARRY_FORTUNE: return SpaceProjectorConfiguration.fortunequarryShapeCardFactor;
-            default: return 1.0;
         }
     }
 
