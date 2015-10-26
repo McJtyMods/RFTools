@@ -684,7 +684,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Coordinate offset = ShapeCardItem.getOffset(shapeCard);
             ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks,
                     SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension,
-                    !ShapeCardItem.isNormalCard(shapeCard));
+                    !ShapeCardItem.isNormalShapeCard(shapeCard));
         }
         return cachedBlocks;
     }
@@ -725,27 +725,51 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        int rf = getEnergyStored(ForgeDirection.DOWN);
-        int rfNeeded = SpaceProjectorConfiguration.builderRfPerOperation;
-        switch (getCardType()) {
-            case ShapeCardItem.CARD_VOID: rfNeeded *= SpaceProjectorConfiguration.voidShapeCardFactor; break;
-            case ShapeCardItem.CARD_QUARRY: rfNeeded *= SpaceProjectorConfiguration.quarryShapeCardFactor; break;
-            case ShapeCardItem.CARD_QUARRY_FORTUNE: rfNeeded *= SpaceProjectorConfiguration.fortunequarryShapeCardFactor; break;
-            case ShapeCardItem.CARD_QUARRY_SILK: rfNeeded *= SpaceProjectorConfiguration.silkquarryShapeCardFactor; break;
-            case ShapeCardItem.CARD_SHAPE: break;
-        }
-        rfNeeded = (int) (rfNeeded * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded;
 
-        if (rfNeeded > rf) {
+        switch (getCardType()) {
+            case ShapeCardItem.CARD_VOID:
+                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor);
+                break;
+            case ShapeCardItem.CARD_QUARRY_FORTUNE:
+                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor);
+                break;
+            case ShapeCardItem.CARD_QUARRY_SILK:
+                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor);
+                break;
+            case ShapeCardItem.CARD_QUARRY:
+                rfNeeded = SpaceProjectorConfiguration.builderRfPerQuarry;
+                break;
+            case ShapeCardItem.CARD_SHAPE:
+                rfNeeded = SpaceProjectorConfiguration.builderRfPerOperation;
+                break;
+            default:
+                rfNeeded = 0;
+                break;
+        }
+
+        Block block = null;
+        if (getCardType() != ShapeCardItem.CARD_SHAPE) {
+            block = worldObj.getBlock(sx, sy, sz);
+            if (!isEmpty(block)) {
+                float hardness = block.getBlockHardness(worldObj, sx, sy, sz);
+                rfNeeded *= (int) ((hardness + 1) * 2);
+                System.out.println("hardness = " + hardness + ", rfNeeded = " + rfNeeded + ", block = " + block.getUnlocalizedName());
+            }
+        }
+
+        rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
+
+        if (rfNeeded > getEnergyStored(ForgeDirection.DOWN)) {
             // Not enough energy.
             return true;
         }
 
         switch (getCardType()) {
-            case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz);
-            case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz);
-            case ShapeCardItem.CARD_QUARRY_FORTUNE: return quarryBlock(rfNeeded, sx, sy, sz);
-            case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY_FORTUNE: return quarryBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz, block);
             case ShapeCardItem.CARD_SHAPE: return buildBlock(rfNeeded, sx, sy, sz);
         }
         return true;
@@ -769,12 +793,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz) {
+    private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        Block block = worldObj.getBlock(sx, sy, sz);
         if (isEmpty(block)) {
             return false;
         }
@@ -808,12 +831,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean quarryBlock(int rfNeeded, int sx, int sy, int sz) {
+    private boolean quarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        Block block = worldObj.getBlock(sx, sy, sz);
         if (isEmpty(block)) {
             return false;
         }
@@ -837,12 +859,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean voidBlock(int rfNeeded, int sx, int sy, int sz) {
+    private boolean voidBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        Block block = worldObj.getBlock(sx, sy, sz);
         if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
             if (!silent) {
                 RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);

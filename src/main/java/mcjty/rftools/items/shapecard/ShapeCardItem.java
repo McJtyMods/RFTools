@@ -146,7 +146,7 @@ public class ShapeCardItem extends Item {
      * @param stack
      * @return
      */
-    public static boolean isNormalCard(ItemStack stack) {
+    public static boolean isNormalShapeCard(ItemStack stack) {
         return stack.getItemDamage() == CARD_SHAPE;
     }
 

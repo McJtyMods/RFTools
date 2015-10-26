@@ -12,6 +12,7 @@ public class SpaceProjectorConfiguration {
     public static int BUILDER_RECEIVEPERTICK = 50000;
 
     public static int builderRfPerOperation = 500;
+    public static int builderRfPerQuarry = 300;
     public static int builderRfPerEntity = 5000;
     public static int builderRfPerPlayer = 40000;
     public static double dimensionCostFactor = 5.0f;
@@ -21,9 +22,8 @@ public class SpaceProjectorConfiguration {
     public static int maxSpaceChamberDimension = 128;
 
     public static double voidShapeCardFactor = 0.5;
-    public static double quarryShapeCardFactor = 2.0;
-    public static double silkquarryShapeCardFactor = 4.0;
-    public static double fortunequarryShapeCardFactor = 3.0;
+    public static double silkquarryShapeCardFactor = 4;
+    public static double fortunequarryShapeCardFactor = 3;
     public static boolean quarryChunkloads = true;
 
     public static int quarryBaseSpeed = 8;
@@ -39,7 +39,9 @@ public class SpaceProjectorConfiguration {
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the builder can receive").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerOperation", builderRfPerOperation,
-                "RF per block operation for the builder").getInt();
+                "RF per block operation for the builder when used to build").getInt();
+        builderRfPerQuarry = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerQuarry", builderRfPerQuarry,
+                "Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)").getInt();
         builderRfPerEntity = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerEntity", builderRfPerEntity,
                 "RF per entity move operation for the builder").getInt();
         builderRfPerPlayer = cfg.get(CATEGORY_SPACEPROJECTOR, "builderRfPerPlayer", builderRfPerPlayer,
@@ -53,8 +55,6 @@ public class SpaceProjectorConfiguration {
 
         voidShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "voidShapeCardFactor", voidShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the void shape card").getDouble();
-        quarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryShapeCardFactor", quarryShapeCardFactor,
-                "The RF per operation of the builder is multiplied with this factor when using the quarry shape card").getDouble();
         silkquarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "silkquarryShapeCardFactor", silkquarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the silk quarry shape card").getDouble();
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
