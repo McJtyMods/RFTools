@@ -616,7 +616,7 @@ public class ShapeCardItem extends Item {
     private static int isInsideTorus(float centerx, float centery, float centerz, int x, int y, int z, float bigRadius, float smallRadius) {
         double rr = bigRadius - Math.sqrt((x-centerx)*(x-centerx) + (z-centerz)*(z-centerz));
         double f = rr*rr + (y-centery) * (y-centery) - smallRadius * smallRadius;
-        if (f <= 0) {
+        if (f < 0) {
             return 1;
         } else {
             return 0;
