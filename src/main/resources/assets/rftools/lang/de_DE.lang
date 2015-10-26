@@ -93,6 +93,9 @@ item.ShapeCard1.name=Shape Card (Void)
 item.ShapeCard2.name=Shape Card (Quarry)
 item.ShapeCard3.name=Shape Card (Silk Quarry)
 item.ShapeCard4.name=Shape Card (Fortune Quarry)
+item.ShapeCard5.name=Shape Card (Clearing Quarry)
+item.ShapeCard6.name=Shape Card (Clearing Silk Quarry)
+item.ShapeCard7.name=Shape Card (Clearing Fortune Quarry)
 
 item.DimletBase.name=Dimlet Basisteil
 item.DimletControlCircuit0.name=Dimlet Steuerelektronik Rarität 0

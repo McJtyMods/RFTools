@@ -28,6 +28,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -733,12 +734,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY_FORTUNE:
+            case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
                 rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY_SILK:
+            case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
                 rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY:
+            case ShapeCardItem.CARD_QUARRY_CLEAR:
                 rfNeeded = SpaceProjectorConfiguration.builderRfPerQuarry;
                 break;
             case ShapeCardItem.CARD_SHAPE:
@@ -755,6 +759,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (!isEmpty(block)) {
                 float hardness = block.getBlockHardness(worldObj, sx, sy, sz);
                 rfNeeded *= (int) ((hardness + 1) * 2);
+                //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ REMOVE
                 System.out.println("hardness = " + hardness + ", rfNeeded = " + rfNeeded + ", block = " + block.getUnlocalizedName());
             }
         }
@@ -767,11 +772,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         switch (getCardType()) {
-            case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz, block);
-            case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz, block);
-            case ShapeCardItem.CARD_QUARRY_FORTUNE: return quarryBlock(rfNeeded, sx, sy, sz, block);
-            case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz, block);
-            case ShapeCardItem.CARD_SHAPE: return buildBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_VOID:
+                return voidBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY:
+            case ShapeCardItem.CARD_QUARRY_CLEAR:
+                return quarryBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY_FORTUNE:
+            case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
+                return quarryBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_QUARRY_SILK:
+            case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
+                return silkQuarryBlock(rfNeeded, sx, sy, sz, block);
+            case ShapeCardItem.CARD_SHAPE:
+                return buildBlock(rfNeeded, sx, sy, sz);
         }
         return true;
     }
@@ -819,7 +832,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
                 }
                 if (checkAndInsertItems(drops)) {
-                    worldObj.setBlockToAir(sx, sy, sz);
+                    if (ShapeCardItem.isClearingQuarry(getCardType())) {
+                        worldObj.setBlockToAir(sx, sy, sz);
+                    } else {
+                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 0);       // No block update!
+                    }
                     consumeEnergy(rfNeeded);
                     if (!silent) {
                         RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
@@ -845,9 +862,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
-                ArrayList<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 2 : 0);
+                List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 2 : 0);
                 if (checkAndInsertItems(drops)) {
-                    worldObj.setBlockToAir(sx, sy, sz);
+                    if (ShapeCardItem.isClearingQuarry(getCardType())) {
+                        worldObj.setBlockToAir(sx, sy, sz);
+                    } else {
+                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 0);       // No block update!
+                    }
                     consumeEnergy(rfNeeded);
                     if (!silent) {
                         RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);

@@ -28,8 +28,11 @@ public class ShapeCardItem extends Item {
     public static final int CARD_QUARRY = 2;
     public static final int CARD_QUARRY_SILK = 3;
     public static final int CARD_QUARRY_FORTUNE = 4;
+    public static final int CARD_QUARRY_CLEAR = 5;
+    public static final int CARD_QUARRY_CLEAR_SILK = 6;
+    public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
 
-    private final IIcon[] icons = new IIcon[5];
+    private final IIcon[] icons = new IIcon[8];
 
     public enum Shape {
         SHAPE_BOX(0, "Box"),
@@ -137,6 +140,14 @@ public class ShapeCardItem extends Item {
                     break;
                 case CARD_QUARRY_SILK:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
+                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
+                case CARD_QUARRY_CLEAR_SILK:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
@@ -144,12 +155,27 @@ public class ShapeCardItem extends Item {
                     break;
                 case CARD_QUARRY_FORTUNE:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
+                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
+                case CARD_QUARRY_CLEAR_FORTUNE:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY:
+                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
+                case CARD_QUARRY_CLEAR:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
                     list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
@@ -168,6 +194,10 @@ public class ShapeCardItem extends Item {
      */
     public static boolean isNormalShapeCard(ItemStack stack) {
         return stack.getItemDamage() == CARD_SHAPE;
+    }
+
+    public static boolean isClearingQuarry(int type) {
+        return type == CARD_QUARRY_CLEAR || type == CARD_QUARRY_CLEAR_FORTUNE || type == CARD_QUARRY_CLEAR_SILK;
     }
 
     public static Shape getShape(ItemStack stack) {
@@ -584,6 +614,9 @@ public class ShapeCardItem extends Item {
         icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
         icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
         icons[CARD_QUARRY_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardFortuneItem");
+        icons[CARD_QUARRY_CLEAR] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCQuarryItem");
+        icons[CARD_QUARRY_CLEAR_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCSilkItem");
+        icons[CARD_QUARRY_CLEAR_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCFortuneItem");
     }
 
     @SideOnly(Side.CLIENT)

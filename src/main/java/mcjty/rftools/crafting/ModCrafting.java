@@ -97,6 +97,36 @@ public final class ModCrafting {
                 new ItemStack(Items.emerald), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Items.diamond),
                 new ItemStack(DimletSetup.dimensionalShard), new ItemStack(Items.redstone), new ItemStack(DimletSetup.dimensionalShard)
         }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_SILK), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), new ItemStack(Blocks.glass),
+                new ItemStack(Blocks.glass), new ItemStack(Blocks.glass), new ItemStack(Blocks.glass)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_SILK), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), new ItemStack(Blocks.dirt),
+                new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt)
+        }, new ItemStack(ModItems.shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
     }
 
     private static void intBaseCrafting() {
