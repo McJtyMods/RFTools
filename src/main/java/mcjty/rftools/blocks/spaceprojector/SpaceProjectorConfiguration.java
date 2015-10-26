@@ -26,6 +26,9 @@ public class SpaceProjectorConfiguration {
     public static double fortunequarryShapeCardFactor = 3.0;
     public static boolean quarryChunkloads = true;
 
+    public static int quarryBaseSpeed = 8;
+    public static int quarryInfusionSpeedFactor = 20;
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -59,5 +62,10 @@ public class SpaceProjectorConfiguration {
 
         quarryChunkloads = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryChunkloads", quarryChunkloads,
                 "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
+
+        quarryBaseSpeed = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryBaseSpeed", quarryBaseSpeed,
+                "The base speed (number of blocks per tick) of the quarry").getInt();
+        quarryInfusionSpeedFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryInfusionSpeedFactor", quarryInfusionSpeedFactor,
+                "Multiply the infusion factor with this value and add that to the quarry base speed").getInt();
     }
 }
