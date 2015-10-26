@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
@@ -354,47 +355,64 @@ public class ShapeCardItem extends Item {
             public int size() {
                 return 0;
             }
-        }, MAXIMUM_COUNT+1, false);
+        }, MAXIMUM_COUNT+1, false, null);
         return cnt[0];
     }
 
-    public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry) {
+    public static boolean xInChunk(int x, ChunkCoordIntPair chunk) {
+        if (chunk == null) {
+            return true;
+        } else {
+            return chunk.chunkXPos == (x>>4);
+        }
+    }
+
+    public static boolean zInChunk(int z, ChunkCoordIntPair chunk) {
+        if (chunk == null) {
+            return true;
+        } else {
+            return chunk.chunkZPos == (z>>4);
+        }
+    }
+
+    public static void composeShape(Shape shape, World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry,
+                                    ChunkCoordIntPair chunk) {
         switch (shape) {
             case SHAPE_BOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry);
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
                 break;
             case SHAPE_SOLIDBOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry);
+                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
                 break;
             case SHAPE_TOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false, forquarry);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false, forquarry, chunk);
                 break;
             case SHAPE_BOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry, chunk);
                 break;
             case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry, chunk);
                 break;
             case SHAPE_SOLIDSPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true, forquarry);
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true, forquarry, chunk);
                 break;
             case SHAPE_CYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry, chunk);
                 break;
             case SHAPE_SOLIDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true, forquarry);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true, forquarry, chunk);
                 break;
             case SHAPE_CAPPEDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry, chunk);
                 break;
             case SHAPE_PRISM:
-                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize, forquarry);
+                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize, forquarry, chunk);
                 break;
             case SHAPE_TORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry);
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
                 break;
             case SHAPE_SOLIDTORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry);
+                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
                 break;
         }
     }
@@ -416,7 +434,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid, boolean forquarry) {
+    private static void composeSphere(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -436,26 +454,30 @@ public class ShapeCardItem extends Item {
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
-            for (int oy = 0 ; oy < dy ; oy++) {
-                int y = tl.getY() + oy;
-                if (y >= 0 && y < 255) {
-                    if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
-                        for (int oz = 0; oz < dz; oz++) {
-                            int z = tl.getZ() + oz;
-                            if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
-                                int cnt;
-                                if (solid) {
-                                    cnt = 0;
-                                } else {
-                                    cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
-                                    cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
-                                    cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
-                                    cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
-                                    cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
-                                    cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
-                                }
-                                if (cnt != 6) {
-                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+            if (xInChunk(x, chunk)) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    int z = tl.getZ() + oz;
+                    if (zInChunk(z, chunk)) {
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = tl.getY() + oy;
+                            if (y >= 0 && y < 255) {
+                                if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
+                                    if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
+                                        int cnt;
+                                        if (solid) {
+                                            cnt = 0;
+                                        } else {
+                                            cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
+                                            cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
+                                            cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
+                                            cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
+                                            cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
+                                            cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
+                                        }
+                                        if (cnt != 6) {
+                                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -483,7 +505,7 @@ public class ShapeCardItem extends Item {
         return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
     }
 
-    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry) {
+    private static void composeCylinder(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -501,23 +523,27 @@ public class ShapeCardItem extends Item {
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
-            for (int oy = 0 ; oy < dy ; oy++) {
-                int y = tl.getY() + oy;
-                if (y >= 0 && y < 255) {
-                    for (int oz = 0; oz < dz; oz++) {
-                        int z = tl.getZ() + oz;
-                        if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
-                            int cnt;
-                            if (solid) {
-                                cnt = 0;
-                            } else {
-                                cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
-                                cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
-                                cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
-                                cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
-                            }
-                            if (cnt != 4 || (capped && (oy == 0 || oy == dy-1))) {
-                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+            if (xInChunk(x, chunk)) {
+                for (int oz = 0; oz < dz; oz++) {
+                    int z = tl.getZ() + oz;
+                    if (zInChunk(z, chunk)) {
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = tl.getY() + oy;
+                            if (y >= 0 && y < 255) {
+                                if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
+                                    int cnt;
+                                    if (solid) {
+                                        cnt = 0;
+                                    } else {
+                                        cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
+                                        cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
+                                        cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
+                                        cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
+                                    }
+                                    if (cnt != 4 || (capped && (oy == 0 || oy == dy - 1))) {
+                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                    }
+                                }
                             }
                         }
                     }
@@ -526,7 +552,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry) {
+    private static void composeBox(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -537,13 +563,17 @@ public class ShapeCardItem extends Item {
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
-            for (int oy = 0 ; oy < dy ; oy++) {
-                int y = tl.getY() + oy;
-                if (y >= 0 && y < 255) {
-                    for (int oz = 0 ; oz < dz ; oz++) {
-                        int z = tl.getZ() + oz;
-                        if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+            if (xInChunk(x, chunk)) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    int z = tl.getZ() + oz;
+                    if (zInChunk(z, chunk)) {
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = tl.getY() + oy;
+                            if (y >= 0 && y < 255) {
+                                if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                }
+                            }
                         }
                     }
                 }
@@ -551,7 +581,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composePrism(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry) {
+    private static void composePrism(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean forquarry, ChunkCoordIntPair chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -564,12 +594,18 @@ public class ShapeCardItem extends Item {
             int y = tl.getY() + oy;
             if (y >= 0 && y < 255) {
                 int yoffset = oy;
-                for (int ox = yoffset ; ox < dx-yoffset ; ox++) {
-                    int x = tl.getX() + ox;
-                    for (int oz = yoffset ; oz < dz-yoffset ; oz++) {
-                        int z = tl.getZ() + oz;
-                        if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                for (int ox = 0 ; ox < dx ; ox++) {
+                    if (ox >= yoffset && ox < dx-yoffset) {
+                        int x = tl.getX() + ox;
+                        if (xInChunk(x, chunk)) {
+                            for (int oz = yoffset; oz < dz - yoffset; oz++) {
+                                int z = tl.getZ() + oz;
+                                if (zInChunk(z, chunk)) {
+                                    if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
+                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -587,7 +623,7 @@ public class ShapeCardItem extends Item {
         }
     }
 
-    private static void composeTorus(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry) {
+    private static void composeTorus(World worldObj, Coordinate thisCoord, Coordinate dimension, Coordinate offset, Collection<Coordinate> blocks, int maxSize, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -604,25 +640,29 @@ public class ShapeCardItem extends Item {
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
-            for (int oy = 0 ; oy < dy ; oy++) {
-                int y = tl.getY() + oy;
-                if (y >= 0 && y < 255) {
-                    for (int oz = 0; oz < dz; oz++) {
-                        int z = tl.getZ() + oz;
-                        if (isInsideTorus(centerx, centery, centerz, x, y, z, bigRadius, smallRadius) == 1) {
-                            int cnt;
-                            if (solid) {
-                                cnt = 0;
-                            } else {
-                                cnt  = isInsideTorus(centerx, centery, centerz, x - 1, y, z, bigRadius, smallRadius);
-                                cnt += isInsideTorus(centerx, centery, centerz, x + 1, y, z, bigRadius, smallRadius);
-                                cnt += isInsideTorus(centerx, centery, centerz, x, y, z - 1, bigRadius, smallRadius);
-                                cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
-                                cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
-                                cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
-                            }
-                            if (cnt != 6) {
-                                placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+            if (xInChunk(x, chunk)) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    int z = tl.getZ() + oz;
+                    if (zInChunk(z, chunk)) {
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = tl.getY() + oy;
+                            if (y >= 0 && y < 255) {
+                                if (isInsideTorus(centerx, centery, centerz, x, y, z, bigRadius, smallRadius) == 1) {
+                                    int cnt;
+                                    if (solid) {
+                                        cnt = 0;
+                                    } else {
+                                        cnt = isInsideTorus(centerx, centery, centerz, x - 1, y, z, bigRadius, smallRadius);
+                                        cnt += isInsideTorus(centerx, centery, centerz, x + 1, y, z, bigRadius, smallRadius);
+                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z - 1, bigRadius, smallRadius);
+                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
+                                        cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
+                                        cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
+                                    }
+                                    if (cnt != 6) {
+                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                    }
+                                }
                             }
                         }
                     }

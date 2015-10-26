@@ -577,7 +577,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(stacks[ShieldContainer.SLOT_SHAPE]);
             Coordinate dimension = ShapeCardItem.getClampedDimension(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldDimension);
             Coordinate offset = ShapeCardItem.getClampedOffset(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldOffset);
-            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, shieldBlocks, supportedBlocks, false);
+            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, shieldBlocks, supportedBlocks, false, null);
         } else {
             templateMeta = findTemplateMeta();
 

@@ -117,6 +117,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Cached set of blocks that we need to build in shaped mode
     private Set<Coordinate> cachedBlocks = null;
+    private ChunkCoordIntPair cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
     public BuilderTileEntity() {
         super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
@@ -295,7 +296,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
         ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getCoordinate(), dimension, offset, blocks,
-                SpaceProjectorConfiguration.maxBuilderDimension*256*SpaceProjectorConfiguration.maxBuilderDimension, false);
+                SpaceProjectorConfiguration.maxBuilderDimension*256*SpaceProjectorConfiguration.maxBuilderDimension, false, null);
         for (Coordinate block : blocks) {
             if (worldObj.isAirBlock(block.getX(), block.getY(), block.getZ())) {
                 int error = SupportBlock.STATUS_OK;
@@ -355,7 +356,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
-        ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
+        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false, null);
         for (Coordinate block : blocks) {
             if (worldObj.getBlock(block.getX(), block.getY(), block.getZ()) == SpaceProjectorSetup.supportBlock) {
                 worldObj.setBlockToAir(block.getX(), block.getY(), block.getZ());
@@ -635,6 +636,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         Coordinate minCorner = ShapeCardItem.getMinCorner(getCoordinate(), dimension, offset);
         Coordinate maxCorner = ShapeCardItem.getMaxCorner(getCoordinate(), dimension, offset);
+        if (minCorner.getY() < 0) {
+            minCorner = new Coordinate(minCorner.getX(), 0, minCorner.getZ());
+        } else if (minCorner.getY() > 255) {
+            minCorner = new Coordinate(minCorner.getX(), 255, minCorner.getZ());
+        }
+        if (maxCorner.getY() < 0) {
+            maxCorner = new Coordinate(maxCorner.getX(), 0, maxCorner.getZ());
+        } else if (maxCorner.getY() > 255) {
+            maxCorner = new Coordinate(maxCorner.getX(), 255, maxCorner.getZ());
+        }
 
         if (boxValid) {
             // Double check if the box is indeed still valid.
@@ -647,6 +658,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         cardType = shapeCard.getItemDamage();
 
         cachedBlocks = null;
+        cachedChunk = null;
         minBox = minCorner;
         maxBox = maxCorner;
         restartScan();
@@ -677,7 +689,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return chamberChannel;
     }
 
-    private Set<Coordinate> getCachedBlocks() {
+    private Set<Coordinate> getCachedBlocks(ChunkCoordIntPair chunk) {
+        if ((chunk != null && !chunk.equals(cachedChunk)) || (chunk == null && cachedChunk != null)) {
+            cachedBlocks = null;
+        }
+
         if (cachedBlocks == null) {
             cachedBlocks = new HashSet<Coordinate>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
@@ -686,7 +702,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
             ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks,
                     SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension,
-                    !ShapeCardItem.isNormalShapeCard(shapeCard));
+                    !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
+            cachedChunk = chunk;
         }
         return cachedBlocks;
     }
@@ -696,7 +713,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (scan == null) {
                 return;
             }
-            if (getCachedBlocks().contains(scan)) {
+            if (getCachedBlocks(new ChunkCoordIntPair(scan.getX() >> 4, scan.getZ() >> 4)).contains(scan)) {
                 if (!handleSingleBlock()) {
                     nextLocation();
                 }
@@ -1386,6 +1403,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
             }
             cachedBlocks = null;
+            cachedChunk = null;
         } else {
             scan = null;
         }
@@ -1557,6 +1575,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void refreshSettings() {
         clearSupportBlocks();
         cachedBlocks = null;
+        cachedChunk = null;
         boxValid = false;
         scan = null;
         cardType = ShapeCardItem.CARD_UNKNOWN;
