@@ -32,6 +32,8 @@ public class ShapeCardItem extends Item {
     public static final int CARD_QUARRY_CLEAR_SILK = 6;
     public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
 
+    public static final int MAXIMUM_COUNT = 50000000;
+
     private final IIcon[] icons = new IIcon[8];
 
     public enum Shape {
@@ -243,7 +245,7 @@ public class ShapeCardItem extends Item {
         int dimX = tagCompound.getInteger("dimX");
         int dimY = tagCompound.getInteger("dimY");
         int dimZ = tagCompound.getInteger("dimZ");
-        return new Coordinate(dimX, dimY, dimZ);
+        return new Coordinate(dimX, clampDimension(dimY, 256), dimZ);
     }
 
     public static Coordinate getClampedDimension(ItemStack stack, int maximum) {
@@ -327,7 +329,8 @@ public class ShapeCardItem extends Item {
     public static int countBlocks(Shape shape, Coordinate dimension) {
         final int[] cnt = {0};
         Coordinate offset = new Coordinate(0, 128, 0);
-        composeShape(shape, null, new Coordinate(0, 0, 0), dimension, offset, new AbstractCollection<Coordinate>() {
+        Coordinate clamped = new Coordinate(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+        composeShape(shape, null, new Coordinate(0, 0, 0), clamped, offset, new AbstractCollection<Coordinate>() {
             @Override
             public Iterator<Coordinate> iterator() {
                 return null;
@@ -343,7 +346,7 @@ public class ShapeCardItem extends Item {
             public int size() {
                 return 0;
             }
-        }, 1000000000, false);
+        }, MAXIMUM_COUNT+1, false);
         return cnt[0];
     }
 

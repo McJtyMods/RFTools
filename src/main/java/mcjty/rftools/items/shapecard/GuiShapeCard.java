@@ -38,6 +38,8 @@ public class GuiShapeCard extends GuiScreen {
     private Window window;
     private Label blocksLabel;
 
+    private boolean countDirty = true;
+
     public GuiShapeCard() {
     }
 
@@ -159,6 +161,7 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private void updateSettings() {
+        countDirty = true;
         if (isTorus()) {
             dimZ.setText(dimX.getText());
         }
@@ -197,12 +200,27 @@ public class GuiShapeCard extends GuiScreen {
         window.keyTyped(typedChar, keyCode);
     }
 
+    private static int updateCounter = 20;
+
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
         dimZ.setEnabled(!isTorus());
-        blocksLabel.setText("#Blocks: " + ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension()));
+
+        updateCounter--;
+        if (updateCounter <= 0) {
+            updateCounter = 10;
+            if (countDirty) {
+                countDirty = false;
+                int count = ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension());
+                if (count >= ShapeCardItem.MAXIMUM_COUNT) {
+                    blocksLabel.setText("#Blocks: ++" + count);
+                } else {
+                    blocksLabel.setText("#Blocks: " + count);
+                }
+            }
+        }
 
         window.draw();
         List<String> tooltips = window.getTooltips();

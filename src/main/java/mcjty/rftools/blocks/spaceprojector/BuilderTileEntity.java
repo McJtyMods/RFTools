@@ -1379,7 +1379,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void restartScan() {
         chunkUnload();
         if (loopMode || (powered > 0 && scan == null)) {
-            if (getCardType() == ShapeCardItem.CARD_SHAPE) {
+            if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
             } else {
