@@ -104,6 +104,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int projDy;
     private int projDz;
 
+    private int cardType; // One of the card types out of ShapeCardItem.CARD_...
+
     // Cached set of blocks that we need to build in shaped mode
     private Set<Coordinate> cachedBlocks = null;
 
@@ -556,6 +558,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         boxValid = true;
+        cardType = ShapeCardItem.CARD_SPACE;
 
         createProjection(chamberChannel);
 
@@ -563,40 +566,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         maxBox = maxCorner;
         restartScan();
     }
-
-    private void restartScan() {
-        if (loopMode || (powered > 0 && scan == null)) {
-            if (isShapeCard()) {
-                calculateBoxShaped();
-            } else {
-                calculateBox();
-            }
-            cachedBlocks = null;
-            scan = minBox;
-        } else {
-            scan = null;
-        }
-        // Calculate a good starting point to avoid problems with overlapping areas.
-//        if (boxValid) {
-//            // This is the default.
-//            scan = minBox;
-//
-//            NBTTagCompound tc = hasCard();
-//            if (tc == null) {
-//                return;
-//            }
-//            int channel = tc.getInteger("channel");
-//            SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
-//            SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
-//            if (chamberChannel.getDimension() == worldObj.provider.dimensionId) {
-//                // Same dimension so we have to check for overlap
-//                Coordinate destMin = new Coordinate(1000000000, 1000000000, 1000000000);
-//                Coordinate destMax = new Coordinate(-1000000000, -1000000000, -1000000000);
-//
-//            }
-//        }
-    }
-
 
     private void checkStateServerShaped() {
         float factor = getInfusedFactor();
@@ -619,6 +588,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (isShapeCard()) {
+            if (powered == 0) {
+                return;
+            }
             checkStateServerShaped();
             return;
         }
@@ -661,6 +633,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         boxValid = true;
+        cardType = shapeCard.getItemDamage();
 
         cachedBlocks = null;
         minBox = minCorner;
@@ -736,15 +709,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sx = scan.getX();
         int sy = scan.getY();
         int sz = scan.getZ();
-        if (itemStack.getItemDamage() == ShapeCardItem.CARD_VOID) {
-            return voidBlock(rfNeeded, sx, sy, sz);
-        } else if (itemStack.getItemDamage() == ShapeCardItem.CARD_QUARRY) {
-            return quarryBlock(rfNeeded, sx, sy, sz);
-        } else if (itemStack.getItemDamage() == ShapeCardItem.CARD_QUARRY_SILK) {
-            return silkQuarryBlock(rfNeeded, sx, sy, sz);
-        } else {
-            return buildBlock(rfNeeded, sx, sy, sz);
+        switch (cardType) {
+            case ShapeCardItem.CARD_VOID: return voidBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_QUARRY: return quarryBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_QUARRY_SILK: return silkQuarryBlock(rfNeeded, sx, sy, sz);
+            case ShapeCardItem.CARD_SHAPE: return buildBlock(rfNeeded, sx, sy, sz);
         }
+        return true;
     }
 
     private boolean buildBlock(int rfNeeded, int sx, int sy, int sz) {
@@ -1323,29 +1294,89 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return new Coordinate(c.getX() + projDx, c.getY() + projDy, c.getZ() + projDz);
     }
 
+    private void restartScan() {
+        if (loopMode || (powered > 0 && scan == null)) {
+            if (isShapeCard()) {
+                calculateBoxShaped();
+            } else {
+                calculateBox();
+            }
+            cachedBlocks = null;
+            if (ShapeCardItem.isQuarry(cardType)) {
+                // We start at the top for a quarry
+                scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
+            } else {
+                scan = minBox;
+            }
+        } else {
+            scan = null;
+        }
+    }
+
+
     private void nextLocation() {
+//        ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(RFTools.instance, worldObj, ForgeChunkManager.Type.NORMAL);
+//        ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(0, 0));
+
         if (scan != null) {
             int x = scan.getX();
             int y = scan.getY();
             int z = scan.getZ();
-            if (x >= maxBox.getX()) {
-                if (z >= maxBox.getZ()) {
-                    if (y >= maxBox.getY()) {
-                        if (mode != MODE_SWAP || isShapeCard()) {
-                            restartScan();
-                        } else {
-                            // We don't restart in swap mode.
-                            scan = null;
-                        }
+
+            if (ShapeCardItem.isQuarry(cardType)) {
+                nextLocationQuarry(x, y, z);
+            } else {
+                nextLocationNormal(x, y, z);
+            }
+        }
+    }
+
+    private void nextLocationQuarry(int x, int y, int z) {
+        if (x >= maxBox.getX() || ((x+1) % 16 == 0)) {
+            if (z >= maxBox.getZ() || ((z+1) % 16 == 0)) {
+                if (y <= minBox.getY()) {
+                    if (x < maxBox.getX()) {
+                        x++;
+                        z = (z >> 4) << 4;
+                        y = maxBox.getY();
+                        scan = new Coordinate(x, y, z);
+                    } else if (z < maxBox.getZ()) {
+                        x = minBox.getX();
+                        z++;
+                        y = maxBox.getY();
+                        scan = new Coordinate(x, y, z);
                     } else {
-                        scan = new Coordinate(minBox.getX(), y+1, minBox.getZ());
+                        restartScan();
                     }
                 } else {
-                    scan = new Coordinate(minBox.getX(), y, z+1);
+                    scan = new Coordinate((x >> 4) << 4, y - 1, (z >> 4) << 4);
                 }
             } else {
-                scan = new Coordinate(x+1, y, z);
+                scan = new Coordinate((x >> 4) << 4, y, z + 1);
             }
+        } else {
+            scan = new Coordinate(x + 1, y, z);
+        }
+    }
+
+    private void nextLocationNormal(int x, int y, int z) {
+        if (x >= maxBox.getX()) {
+            if (z >= maxBox.getZ()) {
+                if (y >= maxBox.getY()) {
+                    if (mode != MODE_SWAP || isShapeCard()) {
+                        restartScan();
+                    } else {
+                        // We don't restart in swap mode.
+                        scan = null;
+                    }
+                } else {
+                    scan = new Coordinate(minBox.getX(), y + 1, minBox.getZ());
+                }
+            } else {
+                scan = new Coordinate(minBox.getX(), y, z + 1);
+            }
+        } else {
+            scan = new Coordinate(x + 1, y, z);
         }
     }
 

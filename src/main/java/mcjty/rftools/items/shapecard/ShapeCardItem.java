@@ -22,6 +22,7 @@ import java.util.*;
 
 public class ShapeCardItem extends Item {
 
+    public static final int CARD_SPACE = -1;            // Not a shape card but a space card instead
     public static final int CARD_SHAPE = 0;
     public static final int CARD_VOID = 1;
     public static final int CARD_QUARRY = 2;
@@ -120,6 +121,10 @@ public class ShapeCardItem extends Item {
             case CARD_QUARRY_SILK: return SpaceProjectorConfiguration.silkquarryShapeCardFactor;
             default: return 1.0;
         }
+    }
+
+    public static boolean isQuarry(int type) {
+        return type == CARD_QUARRY || type == CARD_QUARRY_SILK;
     }
 
     /**

@@ -11,7 +11,10 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -244,6 +247,22 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         int cury = tileEntity.getCurrentLevel();
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
+
+        ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
+        boolean enabled;
+        if (card == null) {
+            enabled = false;
+        } else if (card.getItem() == ModItems.shapeCardItem) {
+            enabled = false;
+        } else {
+            enabled = true;
+        }
+        modeChoice.setEnabled(enabled);
+        anchor[0].setEnabled(enabled);
+        anchor[1].setEnabled(enabled);
+        anchor[2].setEnabled(enabled);
+        anchor[3].setEnabled(enabled);
+        rotateButton.setEnabled(enabled);
 
         drawWindow();
 
