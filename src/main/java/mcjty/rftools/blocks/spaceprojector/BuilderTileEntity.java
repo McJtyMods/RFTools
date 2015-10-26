@@ -1104,7 +1104,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return rotate;
     }
 
-    private int rotateMeta(int meta, SpaceProjectorSetup.BlockInformation information, int rotMode) {
+    private int rotateMeta(Block block, int meta, SpaceProjectorSetup.BlockInformation information, int rotMode) {
+        Item item = Item.getItemFromBlock(block);
+        if (item.getHasSubtypes()) {
+            // If the item has subtypes we cannot rotate it.
+            return meta;
+        }
+
         switch (information.getRotateInfo()) {
             case SpaceProjectorSetup.BlockInformation.ROTATE_mfff:
                 switch (rotMode) {
@@ -1148,7 +1154,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             SpaceProjectorSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, null);
-            origMeta = rotateMeta(origMeta, information, rotate);
+            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             destWorld.setBlock(destX, destY, destZ, origBlock, origMeta, 3);
             destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
@@ -1276,7 +1282,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             int origMeta = world.getBlockMetadata(x, y, z);
-            origMeta = rotateMeta(origMeta, information, rotMode);
+            origMeta = rotateMeta(origBlock, origMeta, information, rotMode);
 
             world.removeTileEntity(x, y, z);
             clearBlock(world, x, y, z);
@@ -1328,9 +1334,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         int srcMeta = world.getBlockMetadata(x, y, z);
-        srcMeta = rotateMeta(srcMeta, srcInformation, oppositeRotate());
+        srcMeta = rotateMeta(srcBlock, srcMeta, srcInformation, oppositeRotate());
         int dstMeta = destWorld.getBlockMetadata(destX, destY, destZ);
-        dstMeta = rotateMeta(dstMeta, dstInformation, rotate);
+        dstMeta = rotateMeta(dstBlock, dstMeta, dstInformation, rotate);
 
         world.removeTileEntity(x, y, z);
         world.setBlockToAir(x, y, z);
