@@ -29,6 +29,9 @@ public class SpaceProjectorConfiguration {
     public static int quarryBaseSpeed = 8;
     public static int quarryInfusionSpeedFactor = 20;
 
+    public static int maxBuilderOffset = 260;
+    public static int maxBuilderDimension = 512;
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -67,5 +70,10 @@ public class SpaceProjectorConfiguration {
                 "The base speed (number of blocks per tick) of the quarry").getInt();
         quarryInfusionSpeedFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryInfusionSpeedFactor", quarryInfusionSpeedFactor,
                 "Multiply the infusion factor with this value and add that to the quarry base speed").getInt();
+
+        maxBuilderOffset = cfg.get(CATEGORY_SPACEPROJECTOR, "maxBuilderOffset", maxBuilderOffset,
+                "Maximum offset of the shape when a shape card is used in the builder").getInt();
+        maxBuilderDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxBuilderDimension", maxBuilderDimension,
+                "Maximum dimension of the shape when a shape card is used in the builder").getInt();
     }
 }

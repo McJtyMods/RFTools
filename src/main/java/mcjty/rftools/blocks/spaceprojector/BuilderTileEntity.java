@@ -289,8 +289,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void makeSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
-        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+        Coordinate dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
+        Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
         ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
@@ -349,8 +349,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void clearSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
-        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+        Coordinate dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
+        Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<Coordinate> blocks = new ArrayList<Coordinate>();
         ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false);
@@ -628,8 +628,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void calculateBoxShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
-        Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+        Coordinate dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
+        Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
 
         Coordinate minCorner = ShapeCardItem.getMinCorner(getCoordinate(), dimension, offset);
         Coordinate maxCorner = ShapeCardItem.getMaxCorner(getCoordinate(), dimension, offset);
@@ -680,8 +680,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             cachedBlocks = new HashSet<Coordinate>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
-            Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
-            Coordinate offset = ShapeCardItem.getOffset(shapeCard);
+            Coordinate dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
+            Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
             ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, cachedBlocks,
                     SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension,
                     !ShapeCardItem.isNormalShapeCard(shapeCard));

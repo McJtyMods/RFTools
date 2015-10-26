@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -191,12 +190,23 @@ public class ShapeCardItem extends Item {
         int dimX = tagCompound.getInteger("dimX");
         int dimY = tagCompound.getInteger("dimY");
         int dimZ = tagCompound.getInteger("dimZ");
-        return new Coordinate(clampDimension(dimX), clampDimension(dimY), clampDimension(dimZ));
+        return new Coordinate(dimX, dimY, dimZ);
     }
 
-    private static int clampDimension(int o) {
-        if (o > ShieldConfiguration.maxShieldDimension) {
-            o = ShieldConfiguration.maxShieldDimension;
+    public static Coordinate getClampedDimension(ItemStack stack, int maximum) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            return new Coordinate(5, 5, 5);
+        }
+        int dimX = tagCompound.getInteger("dimX");
+        int dimY = tagCompound.getInteger("dimY");
+        int dimZ = tagCompound.getInteger("dimZ");
+        return new Coordinate(clampDimension(dimX, maximum), clampDimension(dimY, maximum), clampDimension(dimZ, maximum));
+    }
+
+    private static int clampDimension(int o, int maximum) {
+        if (o > maximum) {
+            o = maximum;
         } else if (o < 0) {
             o = 0;
         }
@@ -211,14 +221,25 @@ public class ShapeCardItem extends Item {
         int offsetX = tagCompound.getInteger("offsetX");
         int offsetY = tagCompound.getInteger("offsetY");
         int offsetZ = tagCompound.getInteger("offsetZ");
-        return new Coordinate(clampOffset(offsetX), clampOffset(offsetY), clampOffset(offsetZ));
+        return new Coordinate(offsetX, offsetY, offsetZ);
     }
 
-    private static int clampOffset(int o) {
-        if (o < -ShieldConfiguration.maxShieldOffset) {
-            o = -ShieldConfiguration.maxShieldOffset;
-        } else if (o > ShieldConfiguration.maxShieldOffset) {
-            o = ShieldConfiguration.maxShieldOffset;
+    public static Coordinate getClampedOffset(ItemStack stack, int maximum) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            return new Coordinate(0, 0, 0);
+        }
+        int offsetX = tagCompound.getInteger("offsetX");
+        int offsetY = tagCompound.getInteger("offsetY");
+        int offsetZ = tagCompound.getInteger("offsetZ");
+        return new Coordinate(clampOffset(offsetX, maximum), clampOffset(offsetY, maximum), clampOffset(offsetZ, maximum));
+    }
+
+    private static int clampOffset(int o, int maximum) {
+        if (o < -maximum) {
+            o = -maximum;
+        } else if (o > maximum) {
+            o = maximum;
         }
         return o;
     }
