@@ -116,13 +116,26 @@ public class ShapeCardItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
+
+        int type = itemStack.getItemDamage();
+        if (!SpaceProjectorConfiguration.shapeCardAllowed) {
+            list.add(EnumChatFormatting.RED + "Disabled in config!");
+        } else if (type != CARD_SHAPE) {
+            if (!SpaceProjectorConfiguration.quarryAllowed) {
+                list.add(EnumChatFormatting.RED + "Disabled in config!");
+            } else if (isClearingQuarry(type)) {
+                if (!SpaceProjectorConfiguration.clearingQuarryAllowed) {
+                    list.add(EnumChatFormatting.RED + "Disabled in config!");
+                }
+            }
+        }
+
         Shape shape = getShape(itemStack);
         list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
         list.add(EnumChatFormatting.GREEN + "Dimension " + getDimension(itemStack));
         list.add(EnumChatFormatting.GREEN + "Offset " + getOffset(itemStack));
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int type = itemStack.getItemDamage();
             switch (type) {
                 case CARD_VOID:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");

@@ -24,7 +24,11 @@ public class SpaceProjectorConfiguration {
     public static double voidShapeCardFactor = 0.5;
     public static double silkquarryShapeCardFactor = 4;
     public static double fortunequarryShapeCardFactor = 3;
+
     public static boolean quarryChunkloads = true;
+    public static boolean shapeCardAllowed = true;
+    public static boolean quarryAllowed = true;
+    public static boolean clearingQuarryAllowed = true;
 
     public static int quarryBaseSpeed = 8;
     public static int quarryInfusionSpeedFactor = 20;
@@ -65,6 +69,12 @@ public class SpaceProjectorConfiguration {
 
         quarryChunkloads = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryChunkloads", quarryChunkloads,
                 "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
+        shapeCardAllowed = cfg.get(CATEGORY_SPACEPROJECTOR, "shapeCardAllowed", shapeCardAllowed,
+                "If true we allow shape cards to be crafted. Note that in order to use the quarry system you must also enable this").getBoolean();
+        quarryAllowed = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryAllowed", quarryAllowed,
+                "If true we allow quarry cards to be crafted").getBoolean();
+        clearingQuarryAllowed = cfg.get(CATEGORY_SPACEPROJECTOR, "clearingQuarryAllowed", clearingQuarryAllowed,
+                "If true we allow the clearing quarry cards to be crafted (these can be heavier on the server)").getBoolean();
 
         quarryBaseSpeed = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryBaseSpeed", quarryBaseSpeed,
                 "The base speed (number of blocks per tick) of the quarry").getInt();
