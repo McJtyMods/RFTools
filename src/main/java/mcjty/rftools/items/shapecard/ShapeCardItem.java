@@ -6,6 +6,7 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
+import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -109,27 +110,37 @@ public class ShapeCardItem extends Item {
             switch (type) {
                 case CARD_VOID:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
+                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_SHAPE:
                     list.add(EnumChatFormatting.WHITE + "This item can be configured as a shape. You");
                     list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
                     list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
                     list.add(EnumChatFormatting.WHITE + "actually build the shape");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerOperation + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
                     break;
                 case CARD_QUARRY_SILK:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_FORTUNE:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
             }
         } else {

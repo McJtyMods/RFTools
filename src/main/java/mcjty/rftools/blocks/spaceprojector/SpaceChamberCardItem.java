@@ -47,6 +47,8 @@ public class SpaceChamberCardItem extends Item {
             list.add(EnumChatFormatting.WHITE + "the area contents.");
             list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
             list.add(EnumChatFormatting.WHITE + "linked area");
+            list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerOperation + " RF/t per block");
+            list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
