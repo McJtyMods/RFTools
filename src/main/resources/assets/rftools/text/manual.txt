@@ -762,39 +762,31 @@ give a bigger bonus.
 {-------------------------------------------------------------}
 {b}Builder
 {n:builder}
-The Builder is probably the most versatile machine in RFTools. It can
-do the following operations:
+{rb:builderBlock}
+The Builder is one of the most versatile machine in RFTools. It can do:
     - Move a structure from one spot (even other dimension) to another
     - Rebuild a structure from one spot to another
     - Swap structures between two spots
     - Build geometrical shapes (dome, torus, box, ...)
     - Clear out areas in a certain shape (void blocks)
     - Quarry an area in a certain shape (silk touch, fortune, ...)
-For some of these modes it needs a chest on top or below the builder
-to supply the right blocks (or in case of a quarry to fill with the
-quarried results).
-
-{rb:builderBlock}
+A chest on top or below is sometimes needed to supply or collect blocks.
 {-------------------------------------------------------------}
-Using the GUI you can control where the builder should place the
-blocks (always at the back of the builder). This only works for
-space cards.
+Using the GUI you can control where the builder should place the blocks
+(always at the back of the builder). This only works for space cards.
 
 Other GUI options are:
 {i:textures/gui/guielements.png,160,48,Silent mode: mute sounds from moving blocks}
-{i:textures/gui/guielements.png,96,48,Support mode}
-In this mode support blocks are created at the source and destination
-areas. This helps to see where the end result will go as well as
-support sand/gravel and liquids during the move.
+{i:textures/gui/guielements.png,96,48,Support mode: create preview/support blocks}
+Help to identify what will happen and help with gravity affected blocks.
 {i:textures/gui/guielements.png,128,48,Entity mode: also move entities}
-{i:textures/gui/guielements.png,192,48,Loop mode}
+{i:textures/gui/guielements.png,192,48,Loop mode:}
 In this mode the builder will keep running as long as it has a redstone
 signal and keep on moving or copying if there is room to do so. If
 this is off the builder will do one pass and stop.
 {-------------------------------------------------------------}
 For moving, swapping and copying structures you need a space card
-linked to a space chamber:
-{ri:spaceChamberCardItem}
+linked to a space chamber.
 
 You can use Space Chamber blocks to mark the corners of the source
 area that you want to work. One of these corners should be a
@@ -803,29 +795,28 @@ Space Chamber Controller block.
 {rb:spaceChamberControllerBlock}
 {-------------------------------------------------------------}
 {n:chambercard}
+{ri:spaceChamberCardItem}
 Right selecting the controller block with a wrench will let it form the
-chamber. If all is correct you will get a message saying so. Then you
-need to use a Space Chamber Card (right click it on the controller) to
-link the controller to the card.
+chamber. If all is correct you will get a message saying so. Then you need
+to use a Space Chamber Card (right click it on the controller) to link the
+controller to the card.
 
-Then put that card in the builder, set the right mode and other
+Put that card in the builder, set the right mode and other
 parameters and give it a redstone signal.
 
-If you right click a linked space chamber card it will give you
-an overview of all blocks and entities together with the cost
-of moving them.
+If you right click a linked space chamber card it will give you an overview
+of all blocks and entities together with the cost of moving them.
 {-------------------------------------------------------------}
 For building geometrical shapes, voiding and quarrying areas you
 need shape cards:
 {ri:shapeCardItem}
 
-Right clicking such a card will open a GUI where you can set the
-shape as well as the dimensions. A shape card can be upgraded
-in the crafting table to make the void card and one of the quarry
-cards.
+Right clicking such a card will open a GUI where you can set the shape as
+well as the dimensions. A shape card can be upgraded in the crafting table
+to make the void card and one of the quarry cards.
 
-Note that several options in the GUI of the builder are unused
-if you use shape cards.
+Note that several options in the GUI of the builder are unused if you use
+shape cards.
 {-------------------------------------------------------------}
 {b}Dimension Builder
 {n:dimlet}
