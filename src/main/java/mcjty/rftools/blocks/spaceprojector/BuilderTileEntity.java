@@ -831,10 +831,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;
         }
         if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
-            int meta = worldObj.getBlockMetadata(sx, sy, sz);
+            boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
+            if ((!clear) && block == Blocks.dirt) {
+                // We can skip dirt if we are not clearing.
+                return false;
+            }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
+                int meta = worldObj.getBlockMetadata(sx, sy, sz);
                 List<ItemStack> drops;
                 if (block.canSilkHarvest(worldObj, fakePlayer, sx, sy, sz, meta)) {
                     Item item = Item.getItemFromBlock(block);
@@ -847,7 +852,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
                 }
                 if (checkAndInsertItems(drops)) {
-                    if (ShapeCardItem.isClearingQuarry(getCardType())) {
+                    if (clear) {
                         worldObj.setBlockToAir(sx, sy, sz);
                     } else {
                         worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
@@ -873,13 +878,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;
         }
         if (block.getBlockHardness(worldObj, sx, sy, sz) >= 0) {
-            int meta = worldObj.getBlockMetadata(sx, sy, sz);
+            boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
+            if ((!clear) && block == Blocks.dirt) {
+                // We can skip dirt if we are not clearing.
+                return false;
+            }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
+                int meta = worldObj.getBlockMetadata(sx, sy, sz);
                 List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 2 : 0);
                 if (checkAndInsertItems(drops)) {
-                    if (ShapeCardItem.isClearingQuarry(getCardType())) {
+                    if (clear) {
                         worldObj.setBlockToAir(sx, sy, sz);
                     } else {
                         worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
