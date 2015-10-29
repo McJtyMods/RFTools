@@ -631,6 +631,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void calculateBoxShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        if (shapeCard == null) {
+            return;
+        }
         Coordinate dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
         Coordinate offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
 
@@ -1407,7 +1410,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
-            } else {
+            } else if (getCardType() != ShapeCardItem.CARD_UNKNOWN) {
                 calculateBoxShaped();
                 // We start at the top for a quarry or shape building
                 scan = new Coordinate(minBox.getX(), maxBox.getY(), minBox.getZ());
