@@ -839,6 +839,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // We can skip dirt if we are not clearing.
                 return false;
             }
+            if (worldObj.getTileEntity(sx, sy, sz) != null) {
+                // Skip tile entities
+                return false;
+            }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
@@ -884,6 +888,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == Blocks.dirt) {
                 // We can skip dirt if we are not clearing.
+                return false;
+            }
+            if (worldObj.getTileEntity(sx, sy, sz) != null) {
+                // Skip tile entities
                 return false;
             }
 
