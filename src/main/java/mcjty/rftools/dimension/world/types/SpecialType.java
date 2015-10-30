@@ -8,4 +8,5 @@ public enum SpecialType {
     SPECIAL_SEED,
     SPECIAL_SPAWN,
     SPECIAL_NOANIMALS,
+    SPECIAL_OWNER,
 }

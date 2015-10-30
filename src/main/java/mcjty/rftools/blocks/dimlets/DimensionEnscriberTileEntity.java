@@ -3,12 +3,12 @@ package mcjty.rftools.blocks.dimlets;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
-import mcjty.rftools.items.dimlets.DimletEntry;
-import mcjty.rftools.items.dimlets.DimletKey;
-import mcjty.rftools.items.dimlets.KnownDimletConfiguration;
+import mcjty.rftools.dimension.world.types.SpecialType;
+import mcjty.rftools.items.dimlets.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ISidedInventory;
@@ -150,12 +150,33 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
         tagCompound.setTag("Items", bufferTagList);
     }
 
-    private void storeDimlets() {
+    private void storeDimlets(EntityPlayerMP player) {
+        if (DimletConfiguration.ownerDimletsNeeded) {
+            if (checkOwnerDimlet()) {
+                Logging.warn(player, "You need an owner dimlet to make a dimension!");
+                return;
+            }
+        }
         DimensionDescriptor descriptor = convertToDimensionDescriptor();
         ItemStack realizedTab = createRealizedTab(descriptor, worldObj);
         inventoryHelper.setStackInSlot(DimensionEnscriberContainer.SLOT_TAB, realizedTab);
 
         markDirty();
+    }
+
+    private boolean checkOwnerDimlet() {
+        boolean owner = false;
+        for (int i = 0 ; i < DimensionEnscriberContainer.SIZE_DIMLETS ; i++) {
+            ItemStack stack = inventoryHelper.getStackInSlot(i + DimensionEnscriberContainer.SLOT_DIMLETS);
+            if (stack != null && stack.stackSize > 0) {
+                DimletKey key = KnownDimletConfiguration.getDimletKey(stack, worldObj);
+                if (key.getType() == DimletType.DIMLET_SPECIAL && DimletObjectMapping.idToSpecialType.get(key) == SpecialType.SPECIAL_OWNER) {
+                    owner = true;
+                    break;
+                }
+            }
+        }
+        return !owner;
     }
 
     /**
@@ -214,6 +235,14 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             int idx = DimensionEnscriberContainer.SLOT_DIMLETS;
             String descriptionString = tagCompound.getString("descriptionString");
             for (DimletKey descriptor : DimensionDescriptor.parseDescriptionString(descriptionString)) {
+                int id = tagCompound.getInteger("id");
+                if (DimletConfiguration.ownerDimletsNeeded && id != 0) {
+                    // If we need owner dimlets and the dimension is created we don't extract the owern dimlet.
+                    if (descriptor.getType() == DimletType.DIMLET_SPECIAL && DimletObjectMapping.idToSpecialType.get(descriptor) == SpecialType.SPECIAL_OWNER) {
+                        continue;
+                    }
+                }
+
                 inventoryHelper.setStackInSlot(idx++, KnownDimletConfiguration.makeKnownDimlet(descriptor, worldObj));
             }
         }
@@ -264,7 +293,7 @@ public class DimensionEnscriberTileEntity extends GenericTileEntity implements I
             return true;
         }
         if (CMD_STORE.equals(command)) {
-            storeDimlets();
+            storeDimlets(playerMP);
             setName(args.get("name").getString());
             return true;
         } else if (CMD_EXTRACT.equals(command)) {

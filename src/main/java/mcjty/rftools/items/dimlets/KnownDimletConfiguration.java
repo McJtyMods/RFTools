@@ -503,6 +503,10 @@ public class KnownDimletConfiguration {
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Spawn"), "With this dimlet you can force", "respawning in the rftools dimension", "(unless power is low).");
         initSpecialItem(cfg, "No Animals", SpecialType.SPECIAL_NOANIMALS, mapping, master);
         addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "No Animals"), "Animal spawning is disabled", "if you use this dimlet");
+        if (DimletConfiguration.ownerDimletsNeeded) {
+            initSpecialItem(cfg, "Owner", SpecialType.SPECIAL_OWNER, mapping, master);
+            addExtraInformation(new DimletKey(DimletType.DIMLET_SPECIAL, "Owner"), "You need this dimlet to create", "a dimension tab");
+        }
 
         initMobItem(cfg, "Default", mapping, master);
         for (Map.Entry<String, MobDescriptor> entry : MobConfiguration.mobClasses.entrySet()) {

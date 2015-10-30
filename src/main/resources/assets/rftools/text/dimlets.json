@@ -253,6 +253,7 @@
         [ "Special", "Seed", 1000, 0, 100, 2, 0, 0 ],
         [ "Special", "Spawn", 10000, 300, 100, 2, 0, 0 ],
         [ "Special", "No Animals", 5000, 40, 10, 2, 0, 0 ],
+        [ "Special", "Owner", 0, 0, 0, 0, 0, 0 ],
         [ "Effect", "None", 2000, 10, 10, 0, 0, 0 ],
         [ "Effect", "Regeneration", 80000, 35000, 800, 4, 0, 0 ],
         [ "Effect", "Regeneration II", 90000, 40000, 900, 5, 0, 0 ],

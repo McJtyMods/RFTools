@@ -16,6 +16,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.FeatureType;
+import mcjty.rftools.dimension.world.types.SpecialType;
 import mcjty.rftools.dimension.world.types.TerrainType;
 import mcjty.rftools.items.dimlets.DimletKey;
 import mcjty.rftools.items.dimlets.DimletObjectMapping;
@@ -154,6 +155,7 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
         int cntTerrain = 0;
         int cntBiomes = 0;
         int cntController = 0;
+        int cntOwner = 0;
         for (int i = DimensionEnscriberContainer.SLOT_DIMLETS ; i < DimensionEnscriberContainer.SLOT_TAB ; i++) {
             Slot slot = inventorySlots.getSlot(i);
             if (slot != null && slot.getStack() != null && slot.getStack().stackSize > 0) {
@@ -166,8 +168,17 @@ public class GuiDimensionEnscriber extends GenericGuiContainer<DimensionEnscribe
                     cntBiomes++;
                 } else if (key.getType() == DimletType.DIMLET_CONTROLLER) {
                     cntController++;
+                } else if (key.getType() == DimletType.DIMLET_SPECIAL && DimletObjectMapping.idToSpecialType.get(key) == SpecialType.SPECIAL_OWNER) {
+                    cntOwner++;
                 }
             }
+        }
+        if (cntOwner > 1) {
+            tooltips.add("Using more then one owner dimlet is not useful!");
+        }
+        if (DimletConfiguration.ownerDimletsNeeded && cntOwner != 1) {
+            tooltips.add("You cannot make a dimension without an owner dimlet!");
+            storeButton.setEnabled(false);
         }
         if (cntTerrain > 1) {
             tooltips.add("Using more then one TERRAIN is not useful!");
