@@ -224,6 +224,11 @@ public class ShapeCardItem extends Item {
         return type == CARD_QUARRY_CLEAR || type == CARD_QUARRY_CLEAR_FORTUNE || type == CARD_QUARRY_CLEAR_SILK;
     }
 
+    public static boolean isQuarry(int type) {
+        return type == CARD_QUARRY_CLEAR || type == CARD_QUARRY_CLEAR_FORTUNE || type == CARD_QUARRY_CLEAR_SILK ||
+                type == CARD_QUARRY || type == CARD_QUARRY_FORTUNE || type == CARD_QUARRY_SILK;
+    }
+
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {

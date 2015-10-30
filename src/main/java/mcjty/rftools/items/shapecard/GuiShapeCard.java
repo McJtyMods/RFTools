@@ -1,5 +1,7 @@
 package mcjty.rftools.items.shapecard;
 
+import mcjty.lib.base.StyleConfig;
+import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.TextEvent;
@@ -14,7 +16,9 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
@@ -28,6 +32,8 @@ public class GuiShapeCard extends GuiScreen {
     /** The Y size of the window in pixels. */
     protected int ySize = 46;
 
+    private boolean isQuarryCard;
+
     private ChoiceLabel shapeLabel;
     private TextField dimX;
     private TextField dimY;
@@ -37,6 +43,14 @@ public class GuiShapeCard extends GuiScreen {
     private TextField offsetZ;
     private Window window;
     private Label blocksLabel;
+
+    private Panel voidPanel;
+    private ToggleButton stone;
+    private ToggleButton cobble;
+    private ToggleButton dirt;
+    private ToggleButton gravel;
+    private ToggleButton sand;
+    private ToggleButton netherrack;
 
     private boolean countDirty = true;
 
@@ -51,9 +65,6 @@ public class GuiShapeCard extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 ShapeCardItem.Shape.SHAPE_BOX.getDescription(),
@@ -78,6 +89,12 @@ public class GuiShapeCard extends GuiScreen {
             // Cannot happen!
             return;
         }
+
+        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
+        if (isQuarryCard) {
+            ySize = 46 + 28;
+        }
+
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
 
@@ -110,7 +127,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Dim:").setDesiredWidth(60)).addChild(dimX).addChild(dimY).addChild(dimZ);
+        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Dim:").setDesiredWidth(60)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
         offsetX = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
@@ -129,11 +146,36 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Offset:").setDesiredWidth(60)).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Offset:").setDesiredWidth(60)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
 
         Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(dimPanel).addChild(offsetPanel);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(modePanel).addChild(settingsPanel);
+        int k = (this.width - this.xSize) / 2;
+        int l = (this.height - this.ySize) / 2;
+
+        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(modePanel).addChild(settingsPanel);
+        Widget toplevel;
+        if (isQuarryCard) {
+            voidPanel = new Panel(mc, this).setLayout(new HorizontalLayout())
+                    .setDesiredHeight(26)
+                    .setFilledRectThickness(-2)
+                    .setFilledBackground(StyleConfig.colorListBackground);
+            Label label = new Label(mc, this).setText("Void:");
+            stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone");
+            cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble");
+            dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt");
+            gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel");
+            sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand");
+            netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack");
+
+            voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack);
+            toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
+
+        } else {
+            modeSettingsPanel.setFilledRectThickness(2);
+            toplevel = modeSettingsPanel;
+        }
+
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -223,6 +265,20 @@ public class GuiShapeCard extends GuiScreen {
         }
 
         window.draw();
+
+        if (isQuarryCard) {
+            // @@@ Hacky code!
+            int x = (int) (window.getToplevel().getBounds().getX() + voidPanel.getBounds().getX()) + 1;
+            int y = (int) (window.getToplevel().getBounds().getY() + voidPanel.getBounds().getY() + stone.getBounds().getY()) + 1;
+
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) stone.getBounds().getX(), y, new ItemStack(Blocks.stone), stone.isPressed());
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) cobble.getBounds().getX(), y, new ItemStack(Blocks.cobblestone), cobble.isPressed());
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) dirt.getBounds().getX(), y, new ItemStack(Blocks.dirt), dirt.isPressed());
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) gravel.getBounds().getX(), y, new ItemStack(Blocks.gravel), gravel.isPressed());
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) sand.getBounds().getX(), y, new ItemStack(Blocks.sand), sand.isPressed());
+            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) netherrack.getBounds().getX(), y, new ItemStack(Blocks.netherrack), netherrack.isPressed());
+        }
+
         List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
             int guiLeft = (this.width - this.xSize) / 2;
