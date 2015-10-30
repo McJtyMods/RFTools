@@ -10,7 +10,8 @@ public enum Patreons {
     PATREON_PUPPETEER(6),
     PATREON_LAYEREDMETA(7),
     PATREON_COLOREDPRISMS(8),
-    PATREON_DARKCORVUS(9);
+    PATREON_DARKCORVUS(9),
+    PATREON_TOMWOLF(10);
 
     private final int bit;
 

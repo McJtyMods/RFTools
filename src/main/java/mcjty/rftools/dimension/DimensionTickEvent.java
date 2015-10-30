@@ -3,6 +3,7 @@ package mcjty.rftools.dimension;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mcjty.rftools.PlayerBuff;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -107,6 +108,40 @@ public class DimensionTickEvent {
         // The world is loaded and there are players there.
         if (information.isPatreonBitSet(Patreons.PATREON_FIREWORKS)) {
             handleFireworks(world);
+        }
+        if (information.isPatreonBitSet(Patreons.PATREON_TOMWOLF)) {
+            handleHowlingWolf(world, information);
+        }
+    }
+
+    private static int t = 0;
+
+    private void handleHowlingWolf(WorldServer world, DimensionInformation information) {
+        if (information.getCelestialAngle() == null) {
+            // We don't have fixed time.
+            float a = world.getCelestialAngle(1.0f);
+            t--;
+            if (t <= 0) {
+                t = 0;
+            }
+            if (Math.abs(a-0.5f) < 0.05f) {
+                if (t <= 0) {
+                    playHowl(world);
+                    t = 40;
+                }
+            }
+        } else {
+            // We have fixed time so just play the sound at random moments
+            if (random.nextFloat() < 0.001) {
+                playHowl(world);
+            }
+        }
+    }
+
+    private void playHowl(WorldServer world) {
+        for (Object playerEntity : world.playerEntities) {
+            EntityPlayer player = (EntityPlayer) playerEntity;
+            world.playSoundEffect(player.posX, player.posY, player.posZ, RFTools.MODID+":wolfhowl", 1.0f, 1.0f);
         }
     }
 

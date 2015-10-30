@@ -718,6 +718,7 @@ public class KnownDimletConfiguration {
         initPatreonItem(cfg, "Rouven", mapping, master, "Rouven's Support Dimlet");
         initPatreonItem(cfg, "FireBall", mapping, master, "FireBall's Support Dimlet");
         initPatreonItem(cfg, "DarkCorvuz", mapping, master, "DarkCorvuz's Support Dimlet");
+        initPatreonItem(cfg, "TomWolf", mapping, master, "TomWolf's Support Dimlet");
 
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_WEATHER, "Default"));
         craftableDimlets.add(new DimletKey(DimletType.DIMLET_EFFECT, "None"));

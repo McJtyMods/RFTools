@@ -41,6 +41,7 @@ public class SkyRenderer {
     private static final ResourceLocation locationRabbitSunPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/rabbitsun.png");
     private static final ResourceLocation locationRabbitMoonPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/rabbitmoon.png");
     private static final ResourceLocation locationPlanetPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/planet1.png");
+    private static final ResourceLocation locationWolfMoonPng = new ResourceLocation(RFTools.MODID + ":" +"textures/sky/wolfred.png");
 //    private static final ResourceLocation locationCloudsPng = new ResourceLocation("textures/environment/clouds.png");
 
     private static boolean initialized = false;
@@ -620,6 +621,8 @@ public class SkyRenderer {
             moon = locationSickMoonPng;
         } else if (information.isPatreonBitSet(Patreons.PATREON_RABBITMOON)) {
             moon = locationRabbitMoonPng;
+        } else if (information.isPatreonBitSet(Patreons.PATREON_TOMWOLF)) {
+            moon = locationWolfMoonPng;
         } else {
             moon = locationMoonPhasesPng;
         }
