@@ -119,6 +119,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private Set<Coordinate> cachedBlocks = null;
     private ChunkCoordIntPair cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
+    // Cached set of blocks that we want to void with the quarry.
+    private Set<Block> cachedVoidableBlocks = null;
+
     public BuilderTileEntity() {
         super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
     }
@@ -662,6 +665,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         cachedBlocks = null;
         cachedChunk = null;
+        cachedVoidableBlocks = null;
         minBox = minCorner;
         maxBox = maxCorner;
         restartScan();
@@ -823,6 +827,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             consumeEnergy(rfNeeded);
         }
         return false;
+    }
+
+    private Set<Block> getCachedVoidableBlocks() {
+        if (cachedVoidableBlocks == null) {
+            ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            if (card != null && card.getItem() == ModItems.shapeCardItem) {
+                cachedVoidableBlocks = ShapeCardItem.getVoidedBlocks(card);
+            } else {
+                cachedVoidableBlocks = Collections.emptySet();
+            }
+        }
+        return cachedVoidableBlocks;
     }
 
     private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
@@ -1023,10 +1039,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean checkAndInsertItems(List<ItemStack> items, IInventory inventory) {
         Map<Integer, ItemStack> undo = new HashMap<Integer, ItemStack>();
         for (ItemStack item : items) {
-            int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
-            if (remaining > 0) {
-                undo(undo, inventory);
-                return false;
+            if (!(item.getItem() instanceof ItemBlock) || !getCachedVoidableBlocks().contains(((ItemBlock) item.getItem()).field_150939_a)) {
+                int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
+                if (remaining > 0) {
+                    undo(undo, inventory);
+                    return false;
+                }
             }
         }
         return true;
@@ -1425,6 +1443,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             cachedBlocks = null;
             cachedChunk = null;
+            cachedVoidableBlocks = null;
         } else {
             scan = null;
         }
@@ -1597,6 +1616,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         clearSupportBlocks();
         cachedBlocks = null;
         cachedChunk = null;
+        cachedVoidableBlocks = null;
         boxValid = false;
         scan = null;
         cardType = ShapeCardItem.CARD_UNKNOWN;

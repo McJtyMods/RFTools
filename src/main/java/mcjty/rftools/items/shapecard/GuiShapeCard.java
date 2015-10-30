@@ -17,11 +17,15 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.List;
@@ -52,6 +56,7 @@ public class GuiShapeCard extends GuiScreen {
     private ToggleButton gravel;
     private ToggleButton sand;
     private ToggleButton netherrack;
+    private ToggleButton oredict;
 
     private boolean countDirty = true;
 
@@ -128,7 +133,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Dim:").setDesiredWidth(60)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
+        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Dim:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(70)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
         offsetX = new TextField(mc, this).addTextEvent(new TextEvent() {
             @Override
             public void textChanged(Widget parent, String newText) {
@@ -147,14 +152,14 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         }).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Offset:").setDesiredWidth(60)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(70)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
 
-        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(dimPanel).addChild(offsetPanel);
+        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0)).addChild(dimPanel).addChild(offsetPanel);
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(modePanel).addChild(settingsPanel);
+        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
         Widget toplevel;
         if (isQuarryCard) {
             setupVoidPanel(heldItem);
@@ -212,6 +217,15 @@ public class GuiShapeCard extends GuiScreen {
                 updateVoidSettings();
             }
         });
+        oredict = new ToggleButton(mc, this).setDesiredWidth(60).setDesiredHeight(15).setTooltips("Enable ore dictionary matching")
+                .setText("Oredict")
+                .setCheckMarker(true)
+                .addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
 
         stone.setPressed(ShapeCardItem.isVoiding(heldItem, "stone"));
         cobble.setPressed(ShapeCardItem.isVoiding(heldItem, "cobble"));
@@ -219,8 +233,9 @@ public class GuiShapeCard extends GuiScreen {
         gravel.setPressed(ShapeCardItem.isVoiding(heldItem, "gravel"));
         sand.setPressed(ShapeCardItem.isVoiding(heldItem, "sand"));
         netherrack.setPressed(ShapeCardItem.isVoiding(heldItem, "netherrack"));
+        oredict.setPressed(ShapeCardItem.isOreDictionary(heldItem));
 
-        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack);
+        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack).addChild(oredict);
     }
 
     private boolean isTorus() {
@@ -267,7 +282,8 @@ public class GuiShapeCard extends GuiScreen {
                 new Argument("voiddirt", dirt.isPressed()),
                 new Argument("voidgravel", gravel.isPressed()),
                 new Argument("voidsand", sand.isPressed()),
-                new Argument("voidnetherrack", netherrack.isPressed())
+                new Argument("voidnetherrack", netherrack.isPressed()),
+                new Argument("oredict", oredict.isPressed())
         ));
     }
 
@@ -324,12 +340,12 @@ public class GuiShapeCard extends GuiScreen {
             int x = (int) (window.getToplevel().getBounds().getX() + voidPanel.getBounds().getX()) + 1;
             int y = (int) (window.getToplevel().getBounds().getY() + voidPanel.getBounds().getY() + stone.getBounds().getY()) + 1;
 
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) stone.getBounds().getX(), y, new ItemStack(Blocks.stone), stone.isPressed());
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) cobble.getBounds().getX(), y, new ItemStack(Blocks.cobblestone), cobble.isPressed());
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) dirt.getBounds().getX(), y, new ItemStack(Blocks.dirt), dirt.isPressed());
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) gravel.getBounds().getX(), y, new ItemStack(Blocks.gravel), gravel.isPressed());
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) sand.getBounds().getX(), y, new ItemStack(Blocks.sand), sand.isPressed());
-            RenderHelper.renderObject(Minecraft.getMinecraft(), x + (int) netherrack.getBounds().getX(), y, new ItemStack(Blocks.netherrack), netherrack.isPressed());
+            renderVoidBlock(x, y, stone, Blocks.stone);
+            renderVoidBlock(x, y, cobble, Blocks.cobblestone);
+            renderVoidBlock(x, y, dirt, Blocks.dirt);
+            renderVoidBlock(x, y, gravel, Blocks.gravel);
+            renderVoidBlock(x, y, sand, Blocks.sand);
+            renderVoidBlock(x, y, netherrack, Blocks.netherrack);
         }
 
         List<String> tooltips = window.getTooltips();
@@ -341,4 +357,35 @@ public class GuiShapeCard extends GuiScreen {
             drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
         }
     }
+
+    private void renderVoidBlock(int x, int y, ToggleButton button, Block block) {
+        x += (int) button.getBounds().getX();
+        RenderHelper.renderObject(Minecraft.getMinecraft(), x, y, new ItemStack(block), button.isPressed());
+        if (button.isPressed()) {
+            drawLine(x-1, y-1, x+18, y+18, 0xffff0000);
+            drawLine(x+18, y-1, x-1, y+18, 0xffff0000);
+        }
+    }
+
+    private static void drawLine(int x1, int y1, int x2, int y2, int color) {
+        float f3 = (color >> 24 & 255) / 255.0F;
+        float f = (color >> 16 & 255) / 255.0F;
+        float f1 = (color >> 8 & 255) / 255.0F;
+        float f2 = (color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.instance;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glLineWidth(2.0f);
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        GL11.glColor4f(f, f1, f2, f3);
+        tessellator.startDrawing(GL11.GL_LINES);
+        tessellator.addVertex(x1, y1, 0.0D);
+        tessellator.addVertex(x2, y2, 0.0D);
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
 }

@@ -6,16 +6,20 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.input.Keyboard;
 
 import java.util.*;
@@ -229,6 +233,55 @@ public class ShapeCardItem extends Item {
                 type == CARD_QUARRY || type == CARD_QUARRY_FORTUNE || type == CARD_QUARRY_SILK;
     }
 
+    private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
+        if (oredict) {
+            int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
+            for (int id : iDs) {
+                String oreName = OreDictionary.getOreName(id);
+                ArrayList<ItemStack> ores = OreDictionary.getOres(oreName);
+                for (ItemStack ore : ores) {
+                    if (ore.getItem() instanceof ItemBlock) {
+                        blocks.add(((ItemBlock)ore.getItem()).field_150939_a);
+                    }
+                }
+            }
+        } else {
+            blocks.add(block);
+        }
+    }
+
+    public static Set<Block> getVoidedBlocks(ItemStack stack) {
+        Set<Block> blocks = new HashSet<Block>();
+        boolean oredict = isOreDictionary(stack);
+        if (isVoiding(stack, "stone")) {
+            addBlocks(blocks, Blocks.stone, oredict);
+        }
+        if (isVoiding(stack, "cobble")) {
+            addBlocks(blocks, Blocks.cobblestone, oredict);
+        }
+        if (isVoiding(stack, "dirt")) {
+            addBlocks(blocks, Blocks.dirt, oredict);
+        }
+        if (isVoiding(stack, "sand")) {
+            addBlocks(blocks, Blocks.sand, oredict);
+        }
+        if (isVoiding(stack, "gravel")) {
+            addBlocks(blocks, Blocks.gravel, oredict);
+        }
+        if (isVoiding(stack, "netherrack")) {
+            addBlocks(blocks, Blocks.netherrack, oredict);
+        }
+        return blocks;
+    }
+
+    public static boolean isOreDictionary(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            return false;
+        }
+        return tagCompound.getBoolean("oredict");
+    }
+
     public static boolean isVoiding(ItemStack stack, String material) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -262,6 +315,9 @@ public class ShapeCardItem extends Item {
     public static Coordinate getDimension(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
+            return new Coordinate(5, 5, 5);
+        }
+        if (!tagCompound.hasKey("dimX")) {
             return new Coordinate(5, 5, 5);
         }
         int dimX = tagCompound.getInteger("dimX");
