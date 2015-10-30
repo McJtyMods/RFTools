@@ -3,6 +3,7 @@ package mcjty.rftools.items.shapecard;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -156,19 +157,7 @@ public class GuiShapeCard extends GuiScreen {
         Panel modeSettingsPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(modePanel).addChild(settingsPanel);
         Widget toplevel;
         if (isQuarryCard) {
-            voidPanel = new Panel(mc, this).setLayout(new HorizontalLayout())
-                    .setDesiredHeight(26)
-                    .setFilledRectThickness(-2)
-                    .setFilledBackground(StyleConfig.colorListBackground);
-            Label label = new Label(mc, this).setText("Void:");
-            stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone");
-            cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble");
-            dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt");
-            gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel");
-            sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand");
-            netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack");
-
-            voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack);
+            setupVoidPanel(heldItem);
             toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
 
         } else {
@@ -179,6 +168,59 @@ public class GuiShapeCard extends GuiScreen {
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
+    }
+
+    private void setupVoidPanel(ItemStack heldItem) {
+        voidPanel = new Panel(mc, this).setLayout(new HorizontalLayout())
+                .setDesiredHeight(26)
+                .setFilledRectThickness(-2)
+                .setFilledBackground(StyleConfig.colorListBackground);
+        Label label = new Label(mc, this).setText("Void:");
+        stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+        cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+        dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+        gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+        sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+        netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(new ButtonEvent() {
+            @Override
+            public void buttonClicked(Widget widget) {
+                updateVoidSettings();
+            }
+        });
+
+        stone.setPressed(ShapeCardItem.isVoiding(heldItem, "stone"));
+        cobble.setPressed(ShapeCardItem.isVoiding(heldItem, "cobble"));
+        dirt.setPressed(ShapeCardItem.isVoiding(heldItem, "dirt"));
+        gravel.setPressed(ShapeCardItem.isVoiding(heldItem, "gravel"));
+        sand.setPressed(ShapeCardItem.isVoiding(heldItem, "sand"));
+        netherrack.setPressed(ShapeCardItem.isVoiding(heldItem, "netherrack"));
+
+        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack);
     }
 
     private boolean isTorus() {
@@ -215,7 +257,18 @@ public class GuiShapeCard extends GuiScreen {
                 new Argument("offsetX", parseInt(offsetX.getText())),
                 new Argument("offsetY", parseInt(offsetY.getText())),
                 new Argument("offsetZ", parseInt(offsetZ.getText()))
-                ));
+        ));
+    }
+
+    private void updateVoidSettings() {
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+                new Argument("voidstone", stone.isPressed()),
+                new Argument("voidcobble", cobble.isPressed()),
+                new Argument("voiddirt", dirt.isPressed()),
+                new Argument("voidgravel", gravel.isPressed()),
+                new Argument("voidsand", sand.isPressed()),
+                new Argument("voidnetherrack", netherrack.isPressed())
+        ));
     }
 
     @Override

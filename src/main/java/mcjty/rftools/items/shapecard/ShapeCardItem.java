@@ -229,6 +229,14 @@ public class ShapeCardItem extends Item {
                 type == CARD_QUARRY || type == CARD_QUARRY_FORTUNE || type == CARD_QUARRY_SILK;
     }
 
+    public static boolean isVoiding(ItemStack stack, String material) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            return false;
+        }
+        return tagCompound.getBoolean("void" + material);
+    }
+
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
