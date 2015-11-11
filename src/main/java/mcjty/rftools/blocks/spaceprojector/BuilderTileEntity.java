@@ -24,6 +24,8 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -859,6 +861,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // Skip tile entities
                 return false;
             }
+            if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
+                // Skip liquids
+                return false;
+            }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
@@ -908,6 +914,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (worldObj.getTileEntity(sx, sy, sz) != null) {
                 // Skip tile entities
+                return false;
+            }
+            if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
+                // Skip liquids
                 return false;
             }
 
