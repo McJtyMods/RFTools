@@ -783,7 +783,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (getCardType() != ShapeCardItem.CARD_SHAPE) {
             block = worldObj.getBlock(sx, sy, sz);
             if (!isEmpty(block)) {
-                float hardness = block.getBlockHardness(worldObj, sx, sy, sz);
+                float hardness;
+                if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
+                    hardness = 1.0f;
+                } else {
+                    hardness = block.getBlockHardness(worldObj, sx, sy, sz);
+                }
                 rfNeeded *= (int) ((hardness + 1) * 2);
             }
         }
@@ -861,10 +866,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // Skip tile entities
                 return false;
             }
-            if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
-                // Skip liquids
-                return false;
-            }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
@@ -914,10 +915,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (worldObj.getTileEntity(sx, sy, sz) != null) {
                 // Skip tile entities
-                return false;
-            }
-            if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
-                // Skip liquids
                 return false;
             }
 
