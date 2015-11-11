@@ -3,6 +3,8 @@ package mcjty.rftools.items.shapecard;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
 import mcjty.rftools.blocks.spaceprojector.SpaceProjectorConfiguration;
@@ -108,6 +110,10 @@ public class ShapeCardItem extends Item {
         }
     }
 
+    public static final int MODE_NONE = 0;
+    public static final int MODE_CORNER1 = 1;
+    public static final int MODE_CORNER2 = 2;
+
     public ShapeCardItem() {
         setMaxStackSize(1);
         setHasSubtypes(true);
@@ -118,6 +124,150 @@ public class ShapeCardItem extends Item {
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1;
     }
+
+    @Override
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+        if (!world.isRemote) {
+            int mode = getMode(stack);
+            if (mode == MODE_NONE) {
+                if (player.isSneaking()) {
+                    if (world.getTileEntity(x, y, z) instanceof BuilderTileEntity) {
+                        setCurrentBlock(stack, new GlobalCoordinate(new Coordinate(x, y, z), world.provider.dimensionId));
+                        Logging.message(player, EnumChatFormatting.GREEN + "Now select the first corner");
+                        setMode(stack, MODE_CORNER1);
+                        setCorner1(stack, null);
+                    } else {
+                        Logging.message(player, EnumChatFormatting.RED + "You can only do this on a builder!");
+                    }
+                } else {
+                    return false;
+                }
+            } else if (mode == MODE_CORNER1) {
+                GlobalCoordinate currentBlock = getCurrentBlock(stack);
+                if (currentBlock.getDimension() != world.provider.dimensionId) {
+                    Logging.message(player, EnumChatFormatting.RED + "The Builder is in another dimension!");
+                } else if (currentBlock.getCoordinate().equals(new Coordinate(x, y, z))) {
+                    Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                    setMode(stack, MODE_NONE);
+                } else {
+                    Logging.message(player, EnumChatFormatting.GREEN + "Now select the second corner");
+                    setMode(stack, MODE_CORNER2);
+                    setCorner1(stack, new Coordinate(x, y, z));
+                }
+            } else {
+                GlobalCoordinate currentBlock = getCurrentBlock(stack);
+                if (currentBlock.getDimension() != world.provider.dimensionId) {
+                    Logging.message(player, EnumChatFormatting.RED + "The Builder is in another dimension!");
+                } else if (currentBlock.getCoordinate().equals(new Coordinate(x, y, z))) {
+                    Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                    setMode(stack, MODE_NONE);
+                } else {
+                    Logging.message(player, EnumChatFormatting.GREEN + "New settings copied to the shape card!");
+                    NBTTagCompound tag = stack.getTagCompound();
+                    if (tag == null) {
+                        tag = new NBTTagCompound();
+                        stack.setTagCompound(tag);
+                    }
+                    Coordinate c1 = getCorner1(stack);
+                    if (c1 == null) {
+                        Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                        setMode(stack, MODE_NONE);
+                    } else {
+                        Coordinate center = new Coordinate((c1.getX() + x) / 2, (c1.getY() + y) / 2, (c1.getZ() + z) / 2);
+                        tag.setInteger("dimX", Math.abs(c1.getX() - x + 1));
+                        tag.setInteger("dimY", Math.abs(c1.getY() - y + 1));
+                        tag.setInteger("dimZ", Math.abs(c1.getZ() - z + 1));
+                        tag.setInteger("offsetX", center.getX() - currentBlock.getCoordinate().getX());
+                        tag.setInteger("offsetY", center.getY() - currentBlock.getCoordinate().getY());
+                        tag.setInteger("offsetZ", center.getZ() - currentBlock.getCoordinate().getZ());
+
+                        setMode(stack, MODE_NONE);
+                        setCorner1(stack, null);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void setCorner1(ItemStack itemStack, Coordinate corner) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            itemStack.setTagCompound(tagCompound);
+        }
+        if (corner == null) {
+            tagCompound.removeTag("corner1x");
+            tagCompound.removeTag("corner1y");
+            tagCompound.removeTag("corner1z");
+        } else {
+            tagCompound.setInteger("corner1x", corner.getX());
+            tagCompound.setInteger("corner1y", corner.getY());
+            tagCompound.setInteger("corner1z", corner.getZ());
+        }
+    }
+
+    public static Coordinate getCorner1(ItemStack stack1) {
+        NBTTagCompound tagCompound = stack1.getTagCompound();
+        if (tagCompound == null) {
+            return null;
+        }
+        if (tagCompound.hasKey("corner1x")) {
+            return null;
+        }
+        return new Coordinate(tagCompound.getInteger("corner1x"), tagCompound.getInteger("corner1y"), tagCompound.getInteger("corner1z"));
+    }
+
+    public static int getMode(ItemStack itemStack) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            return tagCompound.getInteger("mode");
+        } else {
+            return MODE_NONE;
+        }
+    }
+
+    public static void setMode(ItemStack itemStack, int mode) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            itemStack.setTagCompound(tagCompound);
+        }
+        tagCompound.setInteger("mode", mode);
+    }
+
+    public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            itemStack.setTagCompound(tagCompound);
+        }
+
+        if (c == null) {
+            tagCompound.removeTag("selectedX");
+            tagCompound.removeTag("selectedY");
+            tagCompound.removeTag("selectedZ");
+            tagCompound.removeTag("selectedDim");
+        } else {
+            tagCompound.setInteger("selectedX", c.getCoordinate().getX());
+            tagCompound.setInteger("selectedY", c.getCoordinate().getY());
+            tagCompound.setInteger("selectedZ", c.getCoordinate().getZ());
+            tagCompound.setInteger("selectedDim", c.getDimension());
+        }
+    }
+
+    public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("selectedX")) {
+            int x = tagCompound.getInteger("selectedX");
+            int y = tagCompound.getInteger("selectedY");
+            int z = tagCompound.getInteger("selectedZ");
+            int dim = tagCompound.getInteger("selectedDim");
+            return new GlobalCoordinate(new Coordinate(x, y, z), dim);
+        }
+        return null;
+    }
+
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -141,6 +291,8 @@ public class ShapeCardItem extends Item {
         list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
         list.add(EnumChatFormatting.GREEN + "Dimension " + getDimension(itemStack));
         list.add(EnumChatFormatting.GREEN + "Offset " + getOffset(itemStack));
+        list.add(EnumChatFormatting.YELLOW + "Sneak right click on builder to start mark mode");
+        list.add(EnumChatFormatting.YELLOW + "Then right click to mark two corners of wanted area");
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             switch (type) {

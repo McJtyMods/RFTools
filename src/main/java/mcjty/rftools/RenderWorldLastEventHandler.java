@@ -6,6 +6,7 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.render.DefaultISBRH;
@@ -19,6 +20,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @SideOnly(Side.CLIENT)
@@ -47,10 +49,27 @@ public class RenderWorldLastEventHandler {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                             Set<Coordinate> coordinates = blockProtectorTileEntity.getProtectedBlocks();
                             if (!coordinates.isEmpty()) {
-                                renderProtectionBlocks(evt, p, new Coordinate(te.xCoord, te.yCoord, te.zCoord), coordinates);
+                                renderHighlightedBlocks(evt, p, new Coordinate(te.xCoord, te.yCoord, te.zCoord), coordinates);
                             }
                         }
                     }
+                }
+            }
+        } else if (heldItem.getItem() == ModItems.shapeCardItem) {
+            int mode = ShapeCardItem.getMode(heldItem);
+            if (mode == ShapeCardItem.MODE_CORNER1 || mode == ShapeCardItem.MODE_CORNER2) {
+                GlobalCoordinate current = ShapeCardItem.getCurrentBlock(heldItem);
+                if (current != null && current.getDimension() == mc.theWorld.provider.dimensionId) {
+                    Set<Coordinate> coordinates = new HashSet<Coordinate>();
+                    coordinates.add(new Coordinate(0, 0, 0));
+                    if (mode == ShapeCardItem.MODE_CORNER2) {
+                        Coordinate cur = current.getCoordinate();
+                        Coordinate c = ShapeCardItem.getCorner1(heldItem);
+                        if (c != null) {
+                            coordinates.add(new Coordinate(c.getX() - cur.getX(), c.getY() - cur.getY(), c.getZ() - cur.getZ()));
+                        }
+                    }
+                    renderHighlightedBlocks(evt, p, current.getCoordinate(), coordinates);
                 }
             }
         }
@@ -58,7 +77,7 @@ public class RenderWorldLastEventHandler {
 
     private static final ResourceLocation yellowglow = new ResourceLocation(RFTools.MODID, "textures/blocks/yellowglow.png");
 
-    private static void renderProtectionBlocks(RenderWorldLastEvent evt, EntityClientPlayerMP p, Coordinate base, Set<Coordinate> coordinates) {
+    private static void renderHighlightedBlocks(RenderWorldLastEvent evt, EntityClientPlayerMP p, Coordinate base, Set<Coordinate> coordinates) {
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.partialTicks;
         double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.partialTicks;
         double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.partialTicks;
@@ -111,7 +130,7 @@ public class RenderWorldLastEventHandler {
 
         tessellator.startDrawing(GL11.GL_LINES);
         for (Coordinate coordinate : coordinates) {
-            renderProtectionBlockOutline(tessellator, base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ());
+            renderHighLightedBlocksOutline(tessellator, base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ());
         }
         tessellator.draw();
 
@@ -125,7 +144,7 @@ public class RenderWorldLastEventHandler {
         GL11.glPopMatrix();
     }
 
-    private static void renderProtectionBlockOutline(Tessellator tessellator, float mx, float my, float mz) {
+    private static void renderHighLightedBlocksOutline(Tessellator tessellator, float mx, float my, float mz) {
         tessellator.addVertex(mx, my, mz);
         tessellator.addVertex(mx+1, my, mz);
         tessellator.addVertex(mx, my, mz);
