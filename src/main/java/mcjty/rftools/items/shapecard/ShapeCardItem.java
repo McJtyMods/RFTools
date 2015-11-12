@@ -162,7 +162,6 @@ public class ShapeCardItem extends Item {
                     Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
-                    Logging.message(player, EnumChatFormatting.GREEN + "New settings copied to the shape card!");
                     NBTTagCompound tag = stack.getTagCompound();
                     if (tag == null) {
                         tag = new NBTTagCompound();
@@ -173,10 +172,16 @@ public class ShapeCardItem extends Item {
                         Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
                         setMode(stack, MODE_NONE);
                     } else {
-                        Coordinate center = new Coordinate((c1.getX() + x) / 2, (c1.getY() + y) / 2, (c1.getZ() + z) / 2);
-                        tag.setInteger("dimX", Math.abs(c1.getX() - x + 1));
-                        tag.setInteger("dimY", Math.abs(c1.getY() - y + 1));
-                        tag.setInteger("dimZ", Math.abs(c1.getZ() - z + 1));
+                        Logging.message(player, EnumChatFormatting.GREEN + "New settings copied to the shape card!");
+                        System.out.println("currentBlock = " + currentBlock.getCoordinate());
+                        System.out.println("corner1 = " + c1);
+                        System.out.println("corner2 = " + x + ", " + y + ", " + z);
+//                        Coordinate center = new Coordinate((int) ((c1.getX() + x) / 2.0f + .55f), (int) ((c1.getY() + y) / 2.0f + .55f), (int) ((c1.getZ() + z) / 2.0f + .55f));
+                        Coordinate center = new Coordinate((int) Math.ceil((c1.getX() + x) / 2.0f), (int) Math.ceil((c1.getY() + y) / 2.0f), (int) Math.ceil((c1.getZ() + z) / 2.0f));
+                        System.out.println("center = " + center);
+                        tag.setInteger("dimX", Math.abs(c1.getX() - x) + 1);
+                        tag.setInteger("dimY", Math.abs(c1.getY() - y) + 1);
+                        tag.setInteger("dimZ", Math.abs(c1.getZ() - z) + 1);
                         tag.setInteger("offsetX", center.getX() - currentBlock.getCoordinate().getX());
                         tag.setInteger("offsetY", center.getY() - currentBlock.getCoordinate().getY());
                         tag.setInteger("offsetZ", center.getZ() - currentBlock.getCoordinate().getZ());
@@ -212,7 +217,7 @@ public class ShapeCardItem extends Item {
         if (tagCompound == null) {
             return null;
         }
-        if (tagCompound.hasKey("corner1x")) {
+        if (!tagCompound.hasKey("corner1x")) {
             return null;
         }
         return new Coordinate(tagCompound.getInteger("corner1x"), tagCompound.getInteger("corner1y"), tagCompound.getInteger("corner1z"));
@@ -291,10 +296,10 @@ public class ShapeCardItem extends Item {
         list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
         list.add(EnumChatFormatting.GREEN + "Dimension " + getDimension(itemStack));
         list.add(EnumChatFormatting.GREEN + "Offset " + getOffset(itemStack));
-        list.add(EnumChatFormatting.YELLOW + "Sneak right click on builder to start mark mode");
-        list.add(EnumChatFormatting.YELLOW + "Then right click to mark two corners of wanted area");
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(EnumChatFormatting.YELLOW + "Sneak right click on builder to start mark mode");
+            list.add(EnumChatFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             switch (type) {
                 case CARD_VOID:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
