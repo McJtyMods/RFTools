@@ -22,8 +22,8 @@ public class SpaceProjectorConfiguration {
     public static int maxSpaceChamberDimension = 128;
 
     public static double voidShapeCardFactor = 0.5;
-    public static double silkquarryShapeCardFactor = 4;
-    public static double fortunequarryShapeCardFactor = 3;
+    public static double silkquarryShapeCardFactor = 3;
+    public static double fortunequarryShapeCardFactor = 2;
 
     public static boolean quarryChunkloads = true;
     public static boolean shapeCardAllowed = true;
