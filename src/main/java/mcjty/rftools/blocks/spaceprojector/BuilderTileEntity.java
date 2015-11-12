@@ -787,6 +787,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
                     hardness = 1.0f;
                 } else {
+                    if (getCachedVoidableBlocks().contains(block)) {
+                        rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor);
+                    }
                     hardness = block.getBlockHardness(worldObj, sx, sy, sz);
                 }
                 rfNeeded *= (int) ((hardness + 1) * 2);
@@ -848,6 +851,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return cachedVoidableBlocks;
     }
 
+    private void clearOrDirtBlock(int rfNeeded, int sx, int sy, int sz, Block block, boolean clear) {
+        if (clear) {
+            worldObj.setBlockToAir(sx, sy, sz);
+        } else {
+            worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
+        }
+        consumeEnergy(rfNeeded);
+        if (!silent) {
+            RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+        }
+    }
+
     private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
@@ -869,30 +884,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
-                int meta = worldObj.getBlockMetadata(sx, sy, sz);
-                List<ItemStack> drops;
-                if (block.canSilkHarvest(worldObj, fakePlayer, sx, sy, sz, meta)) {
-                    Item item = Item.getItemFromBlock(block);
-                    int m = 0;
-                    if (item != null && item.getHasSubtypes()) {
-                        m = meta;
-                    }
-                    drops = Collections.singletonList(new ItemStack(item, 1, m));
+                if (getCachedVoidableBlocks().contains(block)) {
+                    clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
-                }
-                if (checkAndInsertItems(drops)) {
-                    if (clear) {
-                        worldObj.setBlockToAir(sx, sy, sz);
+                    int meta = worldObj.getBlockMetadata(sx, sy, sz);
+                    List<ItemStack> drops;
+                    if (block.canSilkHarvest(worldObj, fakePlayer, sx, sy, sz, meta)) {
+                        Item item = Item.getItemFromBlock(block);
+                        int m = 0;
+                        if (item != null && item.getHasSubtypes()) {
+                            m = meta;
+                        }
+                        drops = Collections.singletonList(new ItemStack(item, 1, m));
                     } else {
-                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
+                        drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
                     }
-                    consumeEnergy(rfNeeded);
-                    if (!silent) {
-                        RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                    if (checkAndInsertItems(drops)) {
+                        clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
+                    } else {
+                        return true;    // Not enough room. Wait
                     }
-                } else {
-                    return true;    // Not enough room. Wait
                 }
             }
         }
@@ -920,20 +931,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
-                int meta = worldObj.getBlockMetadata(sx, sy, sz);
-                List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 3 : 0);
-                if (checkAndInsertItems(drops)) {
-                    if (clear) {
-                        worldObj.setBlockToAir(sx, sy, sz);
-                    } else {
-                        worldObj.setBlock(sx, sy, sz, Blocks.dirt, 0, 2);       // No block update!
-                    }
-                    consumeEnergy(rfNeeded);
-                    if (!silent) {
-                        RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
-                    }
+                if (getCachedVoidableBlocks().contains(block)) {
+                    clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    return true;    // Not enough room. Wait
+                    int meta = worldObj.getBlockMetadata(sx, sy, sz);
+                    List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 3 : 0);
+                    if (checkAndInsertItems(drops)) {
+                        clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
+                    } else {
+                        return true;    // Not enough room. Wait
+                    }
                 }
             }
         }
@@ -1046,7 +1053,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean checkAndInsertItems(List<ItemStack> items, IInventory inventory) {
         Map<Integer, ItemStack> undo = new HashMap<Integer, ItemStack>();
         for (ItemStack item : items) {
-            if (!(item.getItem() instanceof ItemBlock) || !getCachedVoidableBlocks().contains(((ItemBlock) item.getItem()).field_150939_a)) {
+            if (!(item.getItem() instanceof ItemBlock)) {
                 int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
                 if (remaining > 0) {
                     undo(undo, inventory);
