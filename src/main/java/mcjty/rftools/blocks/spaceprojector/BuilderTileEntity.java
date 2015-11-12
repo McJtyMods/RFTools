@@ -921,7 +921,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(worldObj, sx, sy, sz, fakePlayer)) {
                 int meta = worldObj.getBlockMetadata(sx, sy, sz);
-                List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 2 : 0);
+                List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 3 : 0);
                 if (checkAndInsertItems(drops)) {
                     if (clear) {
                         worldObj.setBlockToAir(sx, sy, sz);
