@@ -473,7 +473,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             clearSupportBlocks();
         }
         boxValid = false;
+
         this.anchor = anchor;
+
+        if (isShapeCard()) {
+            // If there is a shape card we modify it for the new settings.
+            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
+            switch (anchor) {
+                case ANCHOR_NE:
+
+                case ANCHOR_NW:
+                case ANCHOR_SE:
+                case ANCHOR_SW:
+            }
+        }
+
         if (supportMode) {
             makeSupportBlocks();
         }

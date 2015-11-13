@@ -258,10 +258,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             enabled = true;
         }
         modeChoice.setEnabled(enabled);
-        anchor[0].setEnabled(enabled);
-        anchor[1].setEnabled(enabled);
-        anchor[2].setEnabled(enabled);
-        anchor[3].setEnabled(enabled);
         rotateButton.setEnabled(enabled);
 
         drawWindow();
