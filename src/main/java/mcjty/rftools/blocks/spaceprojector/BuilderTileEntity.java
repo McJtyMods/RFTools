@@ -1068,12 +1068,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean checkAndInsertItems(List<ItemStack> items, IInventory inventory) {
         Map<Integer, ItemStack> undo = new HashMap<Integer, ItemStack>();
         for (ItemStack item : items) {
-            if (!(item.getItem() instanceof ItemBlock)) {
-                int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
-                if (remaining > 0) {
-                    undo(undo, inventory);
-                    return false;
-                }
+            int remaining = InventoryHelper.mergeItemStackSafe(inventory, ForgeDirection.DOWN.ordinal(), item, 0, inventory.getSizeInventory(), undo);
+            if (remaining > 0) {
+                undo(undo, inventory);
+                return false;
             }
         }
         return true;
