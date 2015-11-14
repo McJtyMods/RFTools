@@ -626,7 +626,7 @@ public class ShapeCardItem extends Item {
                 composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry, chunk);
                 break;
             case SHAPE_SOLIDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, true, forquarry, chunk);
+                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, true, forquarry, chunk);
                 break;
             case SHAPE_CAPPEDCYLINDER:
                 composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry, chunk);
