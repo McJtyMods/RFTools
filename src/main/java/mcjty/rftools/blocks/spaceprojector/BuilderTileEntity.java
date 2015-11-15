@@ -480,13 +480,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             // If there is a shape card we modify it for the new settings.
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
-            switch (anchor) {
-                case ANCHOR_NE:
-
-                case ANCHOR_NW:
-                case ANCHOR_SE:
-                case ANCHOR_SW:
-            }
+            Coordinate minBox = positionBox(dimension);
+            Coordinate offset = new Coordinate(minBox.getX() + (int)Math.ceil(dimension.getX() / 2), minBox.getY() + (int)Math.ceil(dimension.getY() / 2), minBox.getZ() + (int)Math.ceil(dimension.getZ() / 2));
+            NBTTagCompound tagCompound = shapeCard.getTagCompound();
+            tagCompound.setInteger("offsetX", offset.getX());
+            tagCompound.setInteger("offsetY", offset.getY());
+            tagCompound.setInteger("offsetZ", offset.getZ());
         }
 
         if (supportMode) {
@@ -495,6 +494,48 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirty();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
+
+    // Give a dimension, return a min coordinate of the box right in front of the builder
+    private Coordinate positionBox(Coordinate dimension) {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        ForgeDirection direction = BlockTools.getOrientationHoriz(meta);
+        int spanX = dimension.getX();
+        int spanY = dimension.getY();
+        int spanZ = dimension.getZ();
+        int x = 0;
+        int y;
+        int z = 0;
+        y = - ((anchor == ANCHOR_NE || anchor == ANCHOR_NW) ? spanY - 1 : 0);
+        switch (direction) {
+            case SOUTH:
+                System.out.println("SOUTH");
+                x = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanX - 1);
+                z = spanZ;
+                break;
+            case NORTH:
+                System.out.println("NORTH");
+                x = - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
+                z = 1;
+                break;
+            case WEST:
+                System.out.println("WEST");
+                x = 1;
+                z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ - 1 : 0);
+                break;
+            case EAST:
+                System.out.println("EAST");
+                x = - spanZ;
+                z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanZ - 1);
+                break;
+            case DOWN:
+            case UP:
+            case UNKNOWN:
+                break;
+        }
+        return new Coordinate(x, y, z);
+    }
+
+
 
     public int getRotate() {
         return rotate;
