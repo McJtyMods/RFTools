@@ -464,6 +464,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    public void resetBox() {
+        boxValid = false;
+    }
+
     public int getAnchor() {
         return anchor;
     }
@@ -508,22 +512,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         y = - ((anchor == ANCHOR_NE || anchor == ANCHOR_NW) ? spanY - 1 : 0);
         switch (direction) {
             case SOUTH:
-                System.out.println("SOUTH");
-                x = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanX - 1);
-                z = spanZ;
+                x = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
+                z = - spanZ;
                 break;
             case NORTH:
-                System.out.println("NORTH");
-                x = - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
+                x = 1 - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
                 z = 1;
                 break;
             case WEST:
-                System.out.println("WEST");
                 x = 1;
                 z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ - 1 : 0);
                 break;
             case EAST:
-                System.out.println("EAST");
                 x = - spanZ;
                 z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanZ - 1);
                 break;

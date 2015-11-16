@@ -12,7 +12,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.items.shapecard.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -114,7 +113,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 positionPanel.addChild(anchor[index]);
             }
         }
-        anchor[tileEntity.getAnchor()].setCurrentChoice(1);
+        if (!isShapeCard()) {
+            anchor[tileEntity.getAnchor()].setCurrentChoice(1);
+        }
         return positionPanel;
     }
 
@@ -209,8 +210,12 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private void selectAnchor(int index) {
         for (int i = 0 ; i < anchor.length ; i++) {
-            if ((anchor[i].getCurrentChoiceIndex() == 1) != (i == index)) {
-                anchor[i].setCurrentChoice(i == index ? 1 : 0);
+            if (isShapeCard()) {
+                anchor[i].setCurrentChoice(0);
+            } else {
+                if ((anchor[i].getCurrentChoiceIndex() == 1) != (i == index)) {
+                    anchor[i].setCurrentChoice(i == index ? 1 : 0);
+                }
             }
         }
         sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, new Argument("anchor", index));
@@ -241,6 +246,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             index = 3;
         }
         sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETROTATE, new Argument("rotate", index));
+    }
+
+    private boolean isShapeCard() {
+        ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
+        return card != null && card.getItem() == ModItems.shapeCardItem;
     }
 
     @Override

@@ -70,6 +70,21 @@ public class BuilderBlock extends GenericRFToolsBlock implements Infusable {
     }
 
     @Override
+    protected void rotateBlock(World world, int x, int y, int z) {
+        super.rotateBlock(world, x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof BuilderTileEntity) {
+            if (!world.isRemote) {
+                BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
+                if (builderTileEntity.hasSupportMode()) {
+                    builderTileEntity.clearSupportBlocks();
+                    builderTileEntity.resetBox();
+                }
+            }
+        }
+    }
+
+    @Override
     public String getIdentifyingIconName() {
         return "machineBuilder";
     }
