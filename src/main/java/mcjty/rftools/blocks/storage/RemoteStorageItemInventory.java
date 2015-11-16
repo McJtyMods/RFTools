@@ -13,10 +13,17 @@ public class RemoteStorageItemInventory implements IInventory {
     }
 
     private RemoteStorageTileEntity getRemoteStorage() {
-        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, getStorageID());
+        int id = getStorageID();
+        if (id == -1) {
+            return null;
+        }
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, id);
     }
 
     private int getStorageID() {
+        if (entityPlayer.getHeldItem() == null || entityPlayer.getHeldItem().getTagCompound() == null) {
+            return -1;
+        }
         return entityPlayer.getHeldItem().getTagCompound().getInteger("id");
     }
 
