@@ -12,7 +12,7 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
     private Object objectToGetEnergyFrom;
 
     public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output) {
-        super(2, 2, new ItemStack[] { container, item, null, null }, output);
+        super(2, 1, new ItemStack[] { container, item }, output);
         objectToInheritFrom = getObjectFromStack(item.getItem());
         objectToGetEnergyFrom = getObjectFromStack(container.getItem());
     }
