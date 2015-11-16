@@ -38,10 +38,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -1228,7 +1228,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private int rotateMeta(Block block, int meta, SpaceProjectorSetup.BlockInformation information, int rotMode) {
         Item item = Item.getItemFromBlock(block);
-        if (item.getHasSubtypes()) {
+        if (item != null && item.getHasSubtypes()) {
             // If the item has subtypes we cannot rotate it.
             return meta;
         }
@@ -1367,12 +1367,37 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             ((EntityPlayer) entity).setPositionAndUpdate(newX, newY, newZ);
         } else {
             if (world.provider.dimensionId != destWorld.provider.dimensionId) {
-                MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, destWorld.provider.dimensionId, (WorldServer) world, (WorldServer) destWorld,
-                        new RfToolsTeleporter((WorldServer) destWorld, newX, newY, newZ));
+                // Special code since for some reason the vanilla transferEntityToWorld crashes when teleporting
+                // entities out of the end.
+                transferEntityToWorld(entity, (WorldServer) world, (WorldServer) destWorld,
+                        new RfToolsTeleporter((WorldServer) destWorld, newX, newY, newZ), newX, newY, newZ);
+            } else {
+                entity.setLocationAndAngles(newX, newY, newZ, entity.rotationYaw, entity.rotationPitch);
+                destWorld.updateEntityWithOptionalForce(entity, false);
             }
-            entity.setPosition(newX, newY, newZ);
         }
     }
+
+    private void transferEntityToWorld(Entity entity, WorldServer world, WorldServer destWorld, Teleporter teleporter, double newX, double newY, double newZ) {
+        double d3 = entity.posX;
+        double d4 = entity.posY;
+        double d5 = entity.posZ;
+        float f = entity.rotationYaw;
+
+        world.theProfiler.startSection("placing");
+
+        if (entity.isEntityAlive()) {
+            entity.setLocationAndAngles(newX, newY, newZ, entity.rotationYaw, entity.rotationPitch);
+            teleporter.placeInPortal(entity, d3, d4, d5, f);
+            destWorld.spawnEntityInWorld(entity);
+            destWorld.updateEntityWithOptionalForce(entity, false);
+        }
+
+        world.theProfiler.endSection();
+
+        entity.setWorld(destWorld);
+    }
+
 
     private boolean isEntityInBlock(int x, int y, int z, Entity entity) {
         if (entity.posX >= x && entity.posX < x+1 && entity.posY >= y && entity.posY < y+1 && entity.posZ >= z && entity.posZ < z+1) {
