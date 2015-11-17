@@ -209,6 +209,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void selectAnchor(int index) {
+        updateAnchorSettings(index);
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, new Argument("anchor", index));
+    }
+
+    private void updateAnchorSettings(int index) {
         for (int i = 0 ; i < anchor.length ; i++) {
             if (isShapeCard()) {
                 anchor[i].setCurrentChoice(0);
@@ -218,7 +223,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 }
             }
         }
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, new Argument("anchor", index));
     }
 
     private void updateMode() {
@@ -269,6 +273,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         }
         modeChoice.setEnabled(enabled);
         rotateButton.setEnabled(enabled);
+        updateAnchorSettings(tileEntity.getAnchor());
 
         drawWindow();
 
