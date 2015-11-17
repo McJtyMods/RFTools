@@ -166,8 +166,7 @@ public class GuiShapeCard extends GuiScreen {
             toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
 
         } else {
-            modeSettingsPanel.setFilledRectThickness(2);
-            toplevel = modeSettingsPanel;
+            toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel);
         }
 
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
