@@ -11,6 +11,8 @@ import mcjty.rftools.items.dimlets.DimletObjectMapping;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -92,9 +94,16 @@ public class SyringeItem extends Item {
 
     private String findSelectedMobName(Entity entity) {
         // First try to find an exact matching class.
+        Class<? extends Entity> entityClass = entity.getClass();
+
+        // Special case for the ender dragon
+        if (entity instanceof EntityDragonPart) {
+            entityClass = EntityDragon.class;
+        }
+
         for (Map.Entry<DimletKey, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
-            Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
-            if (entityClass != null && entityClass.equals(entity.getClass())) {
+            Class<? extends EntityLiving> entryClass = entry.getValue().getEntityClass();
+            if (entryClass != null && entryClass.equals(entityClass)) {
                 DimletKey key = entry.getKey();
                 return key.getName();
             }
@@ -102,8 +111,8 @@ public class SyringeItem extends Item {
 
         // See if we can find subclasses that match.
         for (Map.Entry<DimletKey, MobDescriptor> entry : DimletObjectMapping.idtoMob.entrySet()) {
-            Class<? extends EntityLiving> entityClass = entry.getValue().getEntityClass();
-            if (entityClass != null && entityClass.isAssignableFrom(entity.getClass())) {
+            Class<? extends EntityLiving> entryClass = entry.getValue().getEntityClass();
+            if (entryClass != null && entryClass.isAssignableFrom(entityClass)) {
                 DimletKey key = entry.getKey();
                 return key.getName();
             }
