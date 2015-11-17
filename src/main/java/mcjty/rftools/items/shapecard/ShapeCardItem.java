@@ -81,7 +81,7 @@ public class ShapeCardItem extends Item {
                 case SHAPE_SOLIDSPHERE:
                     return SHAPE_SPHERE;
                 case SHAPE_SOLIDCYLINDER:
-                    return SHAPE_CYLINDER;
+                    return SHAPE_CAPPEDCYLINDER;
                 case SHAPE_SOLIDTORUS:
                     return SHAPE_TORUS;
             }
@@ -694,10 +694,12 @@ public class ShapeCardItem extends Item {
 
             davg = (dx + dy + dz) / 3;
         } else {
-            dx2 = dx == 0 ? .5f : ((dx + 2.5f) * (dx + 2.5f)) / 4.0f;
-            dy2 = dy == 0 ? .5f : ((dy + 2.5f) * (dy + 2.5f)) / 4.0f;
-            dz2 = dz == 0 ? .5f : ((dz + 2.5f) * (dz + 2.5f)) / 4.0f;
-            davg = (int) ((dx + dy + dz + 6 + 1.5f) / 3);
+//            float factor = 2.3f;
+            float factor = 2.0f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dy + dz + factor * 3) / 3);
         }
 
         for (int ox = 0 ; ox < dx ; ox++) {
