@@ -21,6 +21,10 @@ public class SkyDescriptor {
     private final Float fogColorFactorG;
     private final Float fogColorFactorB;
 
+    private final Float cloudColorFactorR;
+    private final Float cloudColorFactorG;
+    private final Float cloudColorFactorB;
+
     private final SkyType skyType;
 
     private final List<CelestialBodyType> celestialBodies;
@@ -34,6 +38,9 @@ public class SkyDescriptor {
         fogColorFactorR = builder.fogColorFactorR;
         fogColorFactorG = builder.fogColorFactorG;
         fogColorFactorB = builder.fogColorFactorB;
+        cloudColorFactorR = builder.cloudColorFactorR;
+        cloudColorFactorG = builder.cloudColorFactorG;
+        cloudColorFactorB = builder.cloudColorFactorB;
         skyType = builder.skyType;
         celestialBodies = new ArrayList<CelestialBodyType>(builder.celestialBodies);
     }
@@ -47,6 +54,9 @@ public class SkyDescriptor {
         writeFloat(buf, fogColorFactorR);
         writeFloat(buf, fogColorFactorG);
         writeFloat(buf, fogColorFactorB);
+        writeFloat(buf, cloudColorFactorR);
+        writeFloat(buf, cloudColorFactorG);
+        writeFloat(buf, cloudColorFactorB);
         writeInteger(buf, skyType == null ? null : skyType.ordinal());
         buf.writeInt(celestialBodies.size());
         for (CelestialBodyType body : celestialBodies) {
@@ -78,6 +88,15 @@ public class SkyDescriptor {
         }
         if (fogColorFactorB != null) {
             compound.setFloat("fogColorFactorB", fogColorFactorB);
+        }
+        if (cloudColorFactorR != null) {
+            compound.setFloat("cloudColorFactorR", cloudColorFactorR);
+        }
+        if (cloudColorFactorG != null) {
+            compound.setFloat("cloudColorFactorG", cloudColorFactorG);
+        }
+        if (cloudColorFactorB != null) {
+            compound.setFloat("cloudColorFactorB", cloudColorFactorB);
         }
         if (skyType != null) {
             compound.setInteger("skyType", skyType.ordinal());
@@ -140,6 +159,22 @@ public class SkyDescriptor {
         return fogColorFactorB == null ? 1.0f : fogColorFactorB;
     }
 
+    public boolean isCloudColorGiven() {
+        return cloudColorFactorR != null;
+    }
+
+    public Float getCloudColorFactorR() {
+        return cloudColorFactorR == null ? 1.0f : cloudColorFactorR;
+    }
+
+    public Float getCloudColorFactorG() {
+        return cloudColorFactorG == null ? 1.0f : cloudColorFactorG;
+    }
+
+    public Float getCloudColorFactorB() {
+        return cloudColorFactorB == null ? 1.0f : cloudColorFactorB;
+    }
+
     public SkyType getSkyType() {
         return skyType == null ? SkyType.SKY_NORMAL : skyType;
     }
@@ -165,6 +200,9 @@ public class SkyDescriptor {
         private Float fogColorFactorR = null;
         private Float fogColorFactorG = null;
         private Float fogColorFactorB = null;
+        private Float cloudColorFactorR = null;
+        private Float cloudColorFactorG = null;
+        private Float cloudColorFactorB = null;
         private SkyType skyType;
         private List<CelestialBodyType> celestialBodies = new ArrayList<CelestialBodyType>();
 
@@ -177,6 +215,9 @@ public class SkyDescriptor {
             fogColorFactorR = readFloat(buf);
             fogColorFactorG = readFloat(buf);
             fogColorFactorB = readFloat(buf);
+            cloudColorFactorR = readFloat(buf);
+            cloudColorFactorG = readFloat(buf);
+            cloudColorFactorB = readFloat(buf);
             Integer skyTypeI = readInteger(buf);
             if (skyTypeI == null) {
                 skyType = null;
@@ -231,6 +272,21 @@ public class SkyDescriptor {
                 fogColorFactorB = compound.getFloat("fogColorFactorB");
             } else {
                 fogColorFactorB = null;
+            }
+            if (compound.hasKey("cloudColorFactorR")) {
+                cloudColorFactorR = compound.getFloat("cloudColorFactorR");
+            } else {
+                cloudColorFactorR = null;
+            }
+            if (compound.hasKey("cloudColorFactorG")) {
+                cloudColorFactorG = compound.getFloat("cloudColorFactorG");
+            } else {
+                cloudColorFactorG = null;
+            }
+            if (compound.hasKey("cloudColorFactorB")) {
+                cloudColorFactorB = compound.getFloat("cloudColorFactorB");
+            } else {
+                cloudColorFactorB = null;
             }
 
             if (compound.hasKey("skyType")) {
@@ -317,6 +373,27 @@ public class SkyDescriptor {
                     this.fogColorFactorB *= descriptor.fogColorFactorB;
                 }
             }
+            if (descriptor.cloudColorFactorR != null) {
+                if (this.cloudColorFactorR == null) {
+                    this.cloudColorFactorR = descriptor.cloudColorFactorR;
+                } else {
+                    this.cloudColorFactorR *= descriptor.cloudColorFactorR;
+                }
+            }
+            if (descriptor.cloudColorFactorG != null) {
+                if (this.cloudColorFactorG == null) {
+                    this.cloudColorFactorG = descriptor.cloudColorFactorG;
+                } else {
+                    this.cloudColorFactorG *= descriptor.cloudColorFactorG;
+                }
+            }
+            if (descriptor.cloudColorFactorB != null) {
+                if (this.cloudColorFactorB == null) {
+                    this.cloudColorFactorB = descriptor.cloudColorFactorB;
+                } else {
+                    this.cloudColorFactorB *= descriptor.cloudColorFactorB;
+                }
+            }
 
             for (CelestialBodyType body : descriptor.celestialBodies) {
                 if (body == CelestialBodyType.BODY_NONE) {
@@ -365,6 +442,13 @@ public class SkyDescriptor {
             return this;
         }
 
+        public Builder fogColorFactor(float r, float g, float b) {
+            fogColorFactorR = r;
+            fogColorFactorG = g;
+            fogColorFactorB = b;
+            return this;
+        }
+
         public Builder resetFogColor() {
             fogColorFactorR = null;
             fogColorFactorG = null;
@@ -372,10 +456,17 @@ public class SkyDescriptor {
             return this;
         }
 
-        public Builder fogColorFactor(float r, float g, float b) {
-            fogColorFactorR = r;
-            fogColorFactorG = g;
-            fogColorFactorB = b;
+        public Builder cloudColorFactor(float r, float g, float b) {
+            cloudColorFactorR = r;
+            cloudColorFactorG = g;
+            cloudColorFactorB = b;
+            return this;
+        }
+
+        public Builder resetCloudColor() {
+            cloudColorFactorR = null;
+            cloudColorFactorG = null;
+            cloudColorFactorB = null;
             return this;
         }
 

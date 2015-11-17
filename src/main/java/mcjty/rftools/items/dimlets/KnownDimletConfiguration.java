@@ -568,6 +568,15 @@ public class KnownDimletConfiguration {
         initSkyItem(cfg, "Body Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_PLANET).build(), true, mapping, master);
         initSkyItem(cfg, "Body Large Planet", new SkyDescriptor.Builder().addBody(CelestialBodyType.BODY_LARGEPLANET).build(), true, mapping, master);
 
+        initSkyItem(cfg, "Normal Clouds", new SkyDescriptor.Builder().resetCloudColor().build(), false, mapping, master);
+        initSkyItem(cfg, "Black Clouds", new SkyDescriptor.Builder().cloudColorFactor(0.0f, 0.0f, 0.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Red Clouds", new SkyDescriptor.Builder().cloudColorFactor(1.0f, 0.2f, 0.2f).build(), false, mapping, master);
+        initSkyItem(cfg, "Green Clouds", new SkyDescriptor.Builder().cloudColorFactor(0.2f, 1.0f, 0.2f).build(), false, mapping, master);
+        initSkyItem(cfg, "Blue Clouds", new SkyDescriptor.Builder().cloudColorFactor(0.2f, 0.2f, 1.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Yellow Clouds", new SkyDescriptor.Builder().cloudColorFactor(1.0f, 1.0f, 0.2f).build(), false, mapping, master);
+        initSkyItem(cfg, "Cyan Clouds", new SkyDescriptor.Builder().cloudColorFactor(0.2f, 1.0f, 1.0f).build(), false, mapping, master);
+        initSkyItem(cfg, "Purple Clouds", new SkyDescriptor.Builder().cloudColorFactor(1.0f, 0.2f, 1.0f).build(), false, mapping, master);
+
         DimletKey keySkyNormal = new DimletKey(DimletType.DIMLET_SKY, "Normal");
         DimletKey keySkyNormalDay = new DimletKey(DimletType.DIMLET_SKY, "Normal Day");
         DimletKey keySkyNormalNight = new DimletKey(DimletType.DIMLET_SKY, "Normal Night");

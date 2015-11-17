@@ -176,6 +176,10 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                 } else {
                     SkyRenderer.registerSky(this, dimensionInformation);
                 }
+
+                if (dimensionInformation.getSkyDescriptor().isCloudColorGiven()) {
+                    SkyRenderer.registerCloudRenderer(this, dimensionInformation);
+                }
             }
         }
     }
