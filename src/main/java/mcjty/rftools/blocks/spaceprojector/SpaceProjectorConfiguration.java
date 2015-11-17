@@ -36,6 +36,8 @@ public class SpaceProjectorConfiguration {
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
 
+    public static boolean oldSphereCylinderShape = false;
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_SPACEPROJECTOR, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -85,5 +87,8 @@ public class SpaceProjectorConfiguration {
                 "Maximum offset of the shape when a shape card is used in the builder").getInt();
         maxBuilderDimension = cfg.get(CATEGORY_SPACEPROJECTOR, "maxBuilderDimension", maxBuilderDimension,
                 "Maximum dimension of the shape when a shape card is used in the builder").getInt();
+
+        oldSphereCylinderShape = cfg.get(CATEGORY_SPACEPROJECTOR, "oldSphereCylinderShape", oldSphereCylinderShape,
+                "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
     }
 }

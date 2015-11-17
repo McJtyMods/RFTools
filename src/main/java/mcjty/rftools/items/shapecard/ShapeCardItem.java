@@ -667,16 +667,38 @@ public class ShapeCardItem extends Item {
         int dx = dimension.getX();
         int dy = dimension.getY();
         int dz = dimension.getZ();
-        float centerx = xCoord + offset.getX() + 0.5f;
-        float centery = yCoord + offset.getY() + 0.5f;
-        float centerz = zCoord + offset.getZ() + 0.5f;
+
+        float centerx;
+        float centery;
+        float centerz;
+        if (SpaceProjectorConfiguration.oldSphereCylinderShape) {
+            centerx = xCoord + offset.getX() + 0.5f;
+            centery = yCoord + offset.getY() + 0.5f;
+            centerz = zCoord + offset.getZ() + 0.5f;
+        } else {
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+        }
         Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
-        float dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
-        float dy2 = dy == 0 ? .5f : (dy * dy) / 4.0f;
-        float dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+        float dx2;
+        float dy2;
+        float dz2;
+        int davg;
 
-        int davg = (dx + dy + dz) / 3;
+        if (SpaceProjectorConfiguration.oldSphereCylinderShape) {
+            dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
+            dy2 = dy == 0 ? .5f : (dy * dy) / 4.0f;
+            dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+
+            davg = (dx + dy + dz) / 3;
+        } else {
+            dx2 = dx == 0 ? .5f : ((dx + 2.5f) * (dx + 2.5f)) / 4.0f;
+            dy2 = dy == 0 ? .5f : ((dy + 2.5f) * (dy + 2.5f)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + 2.5f) * (dz + 2.5f)) / 4.0f;
+            davg = (int) ((dx + dy + dz + 6 + 1.5f) / 3);
+        }
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
@@ -738,14 +760,32 @@ public class ShapeCardItem extends Item {
         int dx = dimension.getX();
         int dy = dimension.getY();
         int dz = dimension.getZ();
-        float centerx = xCoord + offset.getX() + 0.5f;
-        float centerz = zCoord + offset.getZ() + 0.5f;
+        float centerx;
+        float centerz;
+
+        if (SpaceProjectorConfiguration.oldSphereCylinderShape) {
+            centerx = xCoord + offset.getX() + 0.5f;
+            centerz = zCoord + offset.getZ() + 0.5f;
+        } else {
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+        }
+
         Coordinate tl = new Coordinate(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
-        float dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
-        float dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+        float dx2;
+        float dz2;
+        int davg;
 
-        int davg = (dx + dz) / 2;
+        if (SpaceProjectorConfiguration.oldSphereCylinderShape) {
+            dx2 = dx == 0 ? .5f : (dx * dx) / 4.0f;
+            dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
+            davg = (dx + dz) / 2;
+        } else {
+            dx2 = dx == 0 ? .5f : ((dx + 2.5f) * (dx + 2.5f)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + 2.5f) * (dz + 2.5f)) / 4.0f;
+            davg = (dx + dz + 4 + 1) / 2;
+        }
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
