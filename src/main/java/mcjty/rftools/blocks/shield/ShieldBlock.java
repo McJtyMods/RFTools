@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.shield;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -20,11 +22,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
 
     private final int max;
 
@@ -133,6 +138,11 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         checkRedstone(world, x, y, z);
+    }
+
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
     }
 
     @Override

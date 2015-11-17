@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.spaceprojector;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
@@ -21,7 +23,9 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpaceProjectorBlock extends GenericRFToolsBlock {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class SpaceProjectorBlock extends GenericRFToolsBlock implements IRedstoneConnectable {
 
     private IIcon iconTop;
 
@@ -34,6 +38,11 @@ public class SpaceProjectorBlock extends GenericRFToolsBlock {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         checkRedstoneWithTE(world, x, y, z);
+    }
+
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)

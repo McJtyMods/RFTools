@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.relay;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
@@ -22,7 +24,9 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RelayBlock extends GenericRFToolsBlock {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class RelayBlock extends GenericRFToolsBlock implements IRedstoneConnectable {
 
     private IIcon icons[] = new IIcon[6];
     private IIcon iconFrontOff;
@@ -53,6 +57,11 @@ public class RelayBlock extends GenericRFToolsBlock {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         checkRedstone(world, x, y, z);
+    }
+
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
     }
 
     @Override

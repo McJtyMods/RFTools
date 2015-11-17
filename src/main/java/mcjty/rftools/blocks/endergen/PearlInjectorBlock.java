@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.endergen;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
@@ -16,11 +18,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class PearlInjectorBlock extends GenericRFToolsBlock {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class PearlInjectorBlock extends GenericRFToolsBlock implements IRedstoneConnectable {
 
     public PearlInjectorBlock() {
         super(Material.iron, PearlInjectorTileEntity.class, true);
@@ -87,4 +92,8 @@ public class PearlInjectorBlock extends GenericRFToolsBlock {
         checkRedstone(world, x, y, z);
     }
 
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
+    }
 }

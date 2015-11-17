@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.environmental;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -18,11 +20,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements Infusable {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
 
     public EnvironmentalControllerBlock() {
         super(Material.iron, EnvironmentalControllerTileEntity.class, true);
@@ -89,6 +94,10 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
         checkRedstoneWithTE(world, x, y, z);
     }
 
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
+    }
 
     @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {

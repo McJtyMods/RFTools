@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.spawner;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
@@ -20,11 +22,14 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
 
     private IIcon iconSideOn;
 
@@ -106,7 +111,12 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
         checkRedstone(world, x, y, z);
     }
 
-//    @Override
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
+    }
+
+    //    @Override
 //    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
 //        return true;
 //    }

@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.endergen;
 
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.Achievements;
@@ -24,7 +26,9 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EndergenicBlock extends GenericRFToolsBlock implements Infusable {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class EndergenicBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
 
     private IIcon icon;
     private IIcon iconUp;
@@ -108,6 +112,11 @@ public class EndergenicBlock extends GenericRFToolsBlock implements Infusable {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         checkRedstone(world, x, y, z);
+    }
+
+    @Override
+    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
+        return true;
     }
 
     @Override
