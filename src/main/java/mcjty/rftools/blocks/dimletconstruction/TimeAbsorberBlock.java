@@ -53,6 +53,9 @@ public class TimeAbsorberBlock extends GenericRFToolsBlock {
                 int absorbing = timeAbsorberTileEntity.getAbsorbing();
                 int pct = ((DimletConstructionConfiguration.maxTimeAbsorbtion - absorbing) * 100) / DimletConstructionConfiguration.maxTimeAbsorbtion;
                 currenttip.add(EnumChatFormatting.GREEN + "Dimlet: " + name + " (" + angle + ", " + pct + "%)");
+            } else {
+                currenttip.add(EnumChatFormatting.GREEN + "Give this block a redstone signal");
+                currenttip.add(EnumChatFormatting.GREEN + "at the right time you want to absorb");
             }
         }
         return currenttip;
