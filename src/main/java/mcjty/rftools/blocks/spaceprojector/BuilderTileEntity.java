@@ -482,7 +482,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             Coordinate dimension = ShapeCardItem.getDimension(shapeCard);
             Coordinate minBox = positionBox(dimension);
-            Coordinate offset = new Coordinate(minBox.getX() + (int)Math.ceil(dimension.getX() / 2), minBox.getY() + (int)Math.ceil(dimension.getY() / 2), minBox.getZ() + (int)Math.ceil(dimension.getZ() / 2));
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+
+            Coordinate offset = new Coordinate(minBox.getX() + (int)Math.ceil(dx / 2), minBox.getY() + (int)Math.ceil(dy / 2), minBox.getZ() + (int)Math.ceil(dz / 2));
             NBTTagCompound tagCompound = shapeCard.getTagCompound();
             tagCompound.setInteger("offsetX", offset.getX());
             tagCompound.setInteger("offsetY", offset.getY());
@@ -521,7 +525,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ - 1 : 0);
                 break;
             case EAST:
-                x = - spanZ;
+                x = - spanX;
                 z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanZ - 1);
                 break;
             case DOWN:

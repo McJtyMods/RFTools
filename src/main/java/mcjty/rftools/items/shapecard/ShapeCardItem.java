@@ -694,8 +694,8 @@ public class ShapeCardItem extends Item {
 
             davg = (dx + dy + dz) / 3;
         } else {
-//            float factor = 2.3f;
-            float factor = 2.0f;
+//            float factor = 2.0f;
+            float factor = 1.8f;
             dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
             dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
             dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
@@ -784,9 +784,10 @@ public class ShapeCardItem extends Item {
             dz2 = dz == 0 ? .5f : (dz * dz) / 4.0f;
             davg = (dx + dz) / 2;
         } else {
-            dx2 = dx == 0 ? .5f : ((dx + 2.5f) * (dx + 2.5f)) / 4.0f;
-            dz2 = dz == 0 ? .5f : ((dz + 2.5f) * (dz + 2.5f)) / 4.0f;
-            davg = (dx + dz + 4 + 1) / 2;
+            float factor = 1.7f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dz + factor * 2) / 2);
         }
 
         for (int ox = 0 ; ox < dx ; ox++) {

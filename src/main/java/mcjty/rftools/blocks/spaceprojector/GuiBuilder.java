@@ -154,8 +154,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                         setSupportMode();
                     }
                 });
-        supportMode.addChoice("off", "Support mode is disabled", guiElements, 7*16, 3*16);
-        supportMode.addChoice("on", "Support mode is enabled", guiElements, 6*16, 3*16);
+        supportMode.addChoice("off", "Support/preview mode disabled", guiElements, 7*16, 3*16);
+        supportMode.addChoice("on", "Support/preview mode enabled", guiElements, 6*16, 3*16);
         supportMode.setCurrentChoice(tileEntity.hasSupportMode() ? 1 : 0);
 
         entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 37, 17, 17))
