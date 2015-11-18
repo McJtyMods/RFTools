@@ -51,7 +51,7 @@ import java.util.EnumMap;
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "4.10";
+    public static final String VERSION = "4.11";
     public static final String MIN_FORGE_VER = "10.13.2.1291";
     public static final String MIN_COFHLIB_VER = "1.0.3";
     public static final String MIN_MCJTYLIB_VER = "1.7.0";
@@ -166,6 +166,12 @@ public class RFTools implements ModBase {
     public void init(FMLInitializationEvent e) {
         this.proxy.init(e);
 
+        opencomputers = Loader.isModLoaded("OpenComputers");
+        if (opencomputers) {
+            Logging.log("RFTools Detected OpenComputers: enabling support");
+            OpenComputersCompatibility.registerOC();
+        }
+
         channels = NetworkRegistry.INSTANCE.newChannel("RFToolsChannel", DimensionSyncChannelHandler.instance);
 
         Achievements.init();
@@ -250,11 +256,6 @@ public class RFTools implements ModBase {
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
         if (draconicevolution) {
             Logging.log("RFTools Detected Draconic Evolution: enabling support");
-        }
-        opencomputers = Loader.isModLoaded("OpenComputers");
-        if (opencomputers) {
-            Logging.log("RFTools Detected OpenComputers: enabling support");
-            OpenComputersCompatibility.registerOC();
         }
 
         if (Loader.isModLoaded("ComputerCraft")) {
