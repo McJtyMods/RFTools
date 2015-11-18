@@ -756,8 +756,12 @@ public class SkyRenderer {
         float f3 = 4.0F;
         RenderGlobal renderGlobal = mc.renderGlobal;
         double d0 = (CloudRenderAccessHelper.getCloudTickCounter(renderGlobal) + partialTicks);
-        double d1 = (mc.renderViewEntity.prevPosX + (mc.renderViewEntity.posX - mc.renderViewEntity.prevPosX) * partialTicks + d0 * 0.029999999329447746D) / f2;
-        double d2 = (mc.renderViewEntity.prevPosZ + (mc.renderViewEntity.posZ - mc.renderViewEntity.prevPosZ) * partialTicks) / f2 + 0.33000001311302185D;
+
+        double entityX = mc.renderViewEntity.prevPosX + (mc.renderViewEntity.posX - mc.renderViewEntity.prevPosX) * partialTicks;
+        double entityZ = mc.renderViewEntity.prevPosZ + (mc.renderViewEntity.posZ - mc.renderViewEntity.prevPosZ) * partialTicks;
+
+        double d1 = (entityX + d0 * 0.029999999329447746D) / f2;
+        double d2 = entityZ / f2 + 0.33000001311302185D;
         float y = provider.getCloudHeight() - f1 + 0.33F;
         int i = MathHelper.floor_double(d1 / 2048.0D);
         int j = MathHelper.floor_double(d2 / 2048.0D);
@@ -819,9 +823,12 @@ public class SkyRenderer {
                     float x = u - f11;
                     float z = v - f12;
                     if (randomColors) {
-                        cr = (x % 2) / 2.0f;
-                        cg = ((x + z) % 2) / 2.0f;
-                        cb = (z % 2) / 2.0f;
+//                        cr = (float) ((u % 10.0f) / 10.0f);
+//                        cg = (float) (((u + v) % 10.0f) / 10.0f);
+//                        cb = (float) ((v % 10.0f) / 10.0f);
+                        cr = x % 1.0f;
+                        cg = (x+z) % 1.0f;
+                        cb = z % 1.0f;
                     }
 
                     if (y > -f3 - 1.0F) {
