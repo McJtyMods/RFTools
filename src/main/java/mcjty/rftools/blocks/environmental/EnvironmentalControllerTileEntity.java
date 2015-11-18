@@ -515,6 +515,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         } else if (CMD_DELPLAYER.equals(command)) {
             delPlayer(args.get("player").getString());
             return true;
+        } else if (CMD_SETBLACKLIST.equals(command)) {
+            setWhitelistMode(!args.get("blacklist").getBoolean());
+            return true;
         }
         return false;
     }
