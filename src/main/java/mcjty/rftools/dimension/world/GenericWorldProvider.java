@@ -15,6 +15,7 @@ import mcjty.rftools.dimension.network.PacketGetDimensionEnergy;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import mcjty.rftools.dimension.world.types.SkyType;
 import mcjty.rftools.dimension.world.types.StructureType;
+import mcjty.rftools.items.dimlets.types.Patreons;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -177,7 +178,7 @@ public class GenericWorldProvider extends WorldProvider implements DimensionDict
                     SkyRenderer.registerSky(this, dimensionInformation);
                 }
 
-                if (dimensionInformation.getSkyDescriptor().isCloudColorGiven()) {
+                if (dimensionInformation.getSkyDescriptor().isCloudColorGiven() || dimensionInformation.isPatreonBitSet(Patreons.PATREON_KENNEY)) {
                     SkyRenderer.registerCloudRenderer(this, dimensionInformation);
                 }
             }

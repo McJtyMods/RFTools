@@ -163,15 +163,15 @@ public class SkyDescriptor {
         return cloudColorFactorR != null;
     }
 
-    public Float getCloudColorFactorR() {
+    public float getCloudColorFactorR() {
         return cloudColorFactorR == null ? 1.0f : cloudColorFactorR;
     }
 
-    public Float getCloudColorFactorG() {
+    public float getCloudColorFactorG() {
         return cloudColorFactorG == null ? 1.0f : cloudColorFactorG;
     }
 
-    public Float getCloudColorFactorB() {
+    public float getCloudColorFactorB() {
         return cloudColorFactorB == null ? 1.0f : cloudColorFactorB;
     }
 

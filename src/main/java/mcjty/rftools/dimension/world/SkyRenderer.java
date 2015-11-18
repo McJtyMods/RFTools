@@ -758,7 +758,7 @@ public class SkyRenderer {
         double d0 = (CloudRenderAccessHelper.getCloudTickCounter(renderGlobal) + partialTicks);
         double d1 = (mc.renderViewEntity.prevPosX + (mc.renderViewEntity.posX - mc.renderViewEntity.prevPosX) * partialTicks + d0 * 0.029999999329447746D) / f2;
         double d2 = (mc.renderViewEntity.prevPosZ + (mc.renderViewEntity.posZ - mc.renderViewEntity.prevPosZ) * partialTicks) / f2 + 0.33000001311302185D;
-        float f4 = provider.getCloudHeight() - f1 + 0.33F;
+        float y = provider.getCloudHeight() - f1 + 0.33F;
         int i = MathHelper.floor_double(d1 / 2048.0D);
         int j = MathHelper.floor_double(d2 / 2048.0D);
         d1 -= (i * 2048);
@@ -767,20 +767,20 @@ public class SkyRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         Vec3 vec3 = provider.worldObj.getCloudColour(partialTicks);
-        float f5 = (float) vec3.xCoord;
-        float f6 = (float) vec3.yCoord;
-        float f7 = (float) vec3.zCoord;
+        float red = (float) vec3.xCoord;
+        float green = (float) vec3.yCoord;
+        float blue = (float) vec3.zCoord;
         float f8;
         float f9;
         float f10;
 
         if (mc.gameSettings.anaglyph) {
-            f8 = (f5 * 30.0F + f6 * 59.0F + f7 * 11.0F) / 100.0F;
-            f9 = (f5 * 30.0F + f6 * 70.0F) / 100.0F;
-            f10 = (f5 * 30.0F + f7 * 70.0F) / 100.0F;
-            f5 = f8;
-            f6 = f9;
-            f7 = f10;
+            f8 = (red * 30.0F + green * 59.0F + blue * 11.0F) / 100.0F;
+            f9 = (red * 30.0F + green * 70.0F) / 100.0F;
+            f10 = (red * 30.0F + blue * 70.0F) / 100.0F;
+            red = f8;
+            green = f9;
+            blue = f10;
         }
 
         f10 = 0.00390625F;
@@ -793,9 +793,10 @@ public class SkyRenderer {
         float f13 = 9.765625E-4F;
         GL11.glScalef(f2, 1.0F, f2);
 
-        Float cr = information.getSkyDescriptor().getCloudColorFactorR();
-        Float cg = information.getSkyDescriptor().getCloudColorFactorG();
-        Float cb = information.getSkyDescriptor().getCloudColorFactorB();
+        float cr = information.getSkyDescriptor().getCloudColorFactorR();
+        float cg = information.getSkyDescriptor().getCloudColorFactorG();
+        float cb = information.getSkyDescriptor().getCloudColorFactorB();
+        boolean randomColors = information.isPatreonBitSet(Patreons.PATREON_KENNEY);
 
         for (int k = 0; k < 2; ++k) {
             if (k == 0) {
@@ -813,40 +814,45 @@ public class SkyRenderer {
             for (int l = -b1 + 1; l <= b1; ++l) {
                 for (int i1 = -b1 + 1; i1 <= b1; ++i1) {
                     tessellator.startDrawingQuads();
-                    float f14 = (l * b0);
-                    float f15 = (i1 * b0);
-                    float f16 = f14 - f11;
-                    float f17 = f15 - f12;
+                    float u = (l * b0);
+                    float v = (i1 * b0);
+                    float x = u - f11;
+                    float z = v - f12;
+                    if (randomColors) {
+                        cr = (x % 2) / 2.0f;
+                        cg = ((x + z) % 2) / 2.0f;
+                        cb = (z % 2) / 2.0f;
+                    }
 
-                    if (f4 > -f3 - 1.0F) {
-                        tessellator.setColorRGBA_F(f5 * 0.7F * cr, f6 * 0.7F * cg, f7 * 0.7F * cb, 0.8F);
+                    if (y > -f3 - 1.0F) {
+                        tessellator.setColorRGBA_F(red * 0.7F * cr, green * 0.7F * cg, blue * 0.7F * cb, 0.8F);
                         tessellator.setNormal(0.0F, -1.0F, 0.0F);
-                        tessellator.addVertexWithUV((f16 + 0.0F), (f4 + 0.0F), (f17 + b0), ((f14 + 0.0F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + b0), (f4 + 0.0F), (f17 + b0), ((f14 + b0) * f10 + f8), ((f15 + b0) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + b0), (f4 + 0.0F), (f17 + 0.0F), ((f14 + b0) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + 0.0F), (f4 + 0.0F), (f17 + 0.0F), ((f14 + 0.0F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
+                        tessellator.addVertexWithUV((x + 0.0F), (y + 0.0F), (z + b0), ((u + 0.0F) * f10 + f8), ((v + b0) * f10 + f9));
+                        tessellator.addVertexWithUV((x + b0), (y + 0.0F), (z + b0), ((u + b0) * f10 + f8), ((v + b0) * f10 + f9));
+                        tessellator.addVertexWithUV((x + b0), (y + 0.0F), (z + 0.0F), ((u + b0) * f10 + f8), ((v + 0.0F) * f10 + f9));
+                        tessellator.addVertexWithUV((x + 0.0F), (y + 0.0F), (z + 0.0F), ((u + 0.0F) * f10 + f8), ((v + 0.0F) * f10 + f9));
                     }
 
-                    if (f4 <= f3 + 1.0F) {
-                        tessellator.setColorRGBA_F(f5 * cr, f6 * cg, f7 * cb, 0.8F);
+                    if (y <= f3 + 1.0F) {
+                        tessellator.setColorRGBA_F(red * cr, green * cg, blue * cb, 0.8F);
                         tessellator.setNormal(0.0F, 1.0F, 0.0F);
-                        tessellator.addVertexWithUV((f16 + 0.0F), (f4 + f3 - f13), (f17 + b0), ((f14 + 0.0F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + b0), (f4 + f3 - f13), (f17 + b0), ((f14 + b0) * f10 + f8), ((f15 + b0) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + b0), (f4 + f3 - f13), (f17 + 0.0F), ((f14 + b0) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
-                        tessellator.addVertexWithUV((f16 + 0.0F), (f4 + f3 - f13), (f17 + 0.0F), ((f14 + 0.0F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
+                        tessellator.addVertexWithUV((x + 0.0F), (y + f3 - f13), (z + b0), ((u + 0.0F) * f10 + f8), ((v + b0) * f10 + f9));
+                        tessellator.addVertexWithUV((x + b0), (y + f3 - f13), (z + b0), ((u + b0) * f10 + f8), ((v + b0) * f10 + f9));
+                        tessellator.addVertexWithUV((x + b0), (y + f3 - f13), (z + 0.0F), ((u + b0) * f10 + f8), ((v + 0.0F) * f10 + f9));
+                        tessellator.addVertexWithUV((x + 0.0F), (y + f3 - f13), (z + 0.0F), ((u + 0.0F) * f10 + f8), ((v + 0.0F) * f10 + f9));
                     }
 
-                    tessellator.setColorRGBA_F(f5 * 0.9F * cr, f6 * 0.9F * cg, f7 * 0.9F * cb, 0.8F);
+                    tessellator.setColorRGBA_F(red * 0.9F * cr, green * 0.9F * cg, blue * 0.9F * cb, 0.8F);
                     int j1;
 
                     if (l > -1) {
                         tessellator.setNormal(-1.0F, 0.0F, 0.0F);
 
                         for (j1 = 0; j1 < b0; ++j1) {
-                            tessellator.addVertexWithUV((f16 + j1 + 0.0F), (f4 + 0.0F), (f17 + b0), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 0.0F), (f4 + f3), (f17 + b0), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 0.0F), (f4 + f3), (f17 + 0.0F), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 0.0F), (f4 + 0.0F), (f17 + 0.0F), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 0.0F), (y + 0.0F), (z + b0), ((u + j1 + 0.5F) * f10 + f8), ((v + b0) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 0.0F), (y + f3), (z + b0), ((u + j1 + 0.5F) * f10 + f8), ((v + b0) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 0.0F), (y + f3), (z + 0.0F), ((u + j1 + 0.5F) * f10 + f8), ((v + 0.0F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 0.0F), (y + 0.0F), (z + 0.0F), ((u + j1 + 0.5F) * f10 + f8), ((v + 0.0F) * f10 + f9));
                         }
                     }
 
@@ -854,23 +860,23 @@ public class SkyRenderer {
                         tessellator.setNormal(1.0F, 0.0F, 0.0F);
 
                         for (j1 = 0; j1 < b0; ++j1) {
-                            tessellator.addVertexWithUV((f16 + j1 + 1.0F - f13), (f4 + 0.0F), (f17 + b0), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 1.0F - f13), (f4 + f3), (f17 + b0), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + b0) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 1.0F - f13), (f4 + f3), (f17 + 0.0F), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + j1 + 1.0F - f13), (f4 + 0.0F), (f17 + 0.0F), ((f14 + j1 + 0.5F) * f10 + f8), ((f15 + 0.0F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 1.0F - f13), (y + 0.0F), (z + b0), ((u + j1 + 0.5F) * f10 + f8), ((v + b0) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 1.0F - f13), (y + f3), (z + b0), ((u + j1 + 0.5F) * f10 + f8), ((v + b0) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 1.0F - f13), (y + f3), (z + 0.0F), ((u + j1 + 0.5F) * f10 + f8), ((v + 0.0F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + j1 + 1.0F - f13), (y + 0.0F), (z + 0.0F), ((u + j1 + 0.5F) * f10 + f8), ((v + 0.0F) * f10 + f9));
                         }
                     }
 
-                    tessellator.setColorRGBA_F(f5 * 0.8F * cr, f6 * 0.8F * cg, f7 * 0.8F * cb, 0.8F);
+                    tessellator.setColorRGBA_F(red * 0.8F * cr, green * 0.8F * cg, blue * 0.8F * cb, 0.8F);
 
                     if (i1 > -1) {
                         tessellator.setNormal(0.0F, 0.0F, -1.0F);
 
                         for (j1 = 0; j1 < b0; ++j1) {
-                            tessellator.addVertexWithUV((f16 + 0.0F), (f4 + f3), (f17 + j1 + 0.0F), ((f14 + 0.0F) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + b0), (f4 + f3), (f17 + j1 + 0.0F), ((f14 + b0) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + b0), (f4 + 0.0F), (f17 + j1 + 0.0F), ((f14 + b0) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + 0.0F), (f4 + 0.0F), (f17 + j1 + 0.0F), ((f14 + 0.0F) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + 0.0F), (y + f3), (z + j1 + 0.0F), ((u + 0.0F) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + b0), (y + f3), (z + j1 + 0.0F), ((u + b0) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + b0), (y + 0.0F), (z + j1 + 0.0F), ((u + b0) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + 0.0F), (y + 0.0F), (z + j1 + 0.0F), ((u + 0.0F) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
                         }
                     }
 
@@ -878,10 +884,10 @@ public class SkyRenderer {
                         tessellator.setNormal(0.0F, 0.0F, 1.0F);
 
                         for (j1 = 0; j1 < b0; ++j1) {
-                            tessellator.addVertexWithUV((f16 + 0.0F), (f4 + f3), (f17 + j1 + 1.0F - f13), ((f14 + 0.0F) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + b0), (f4 + f3), (f17 + j1 + 1.0F - f13), ((f14 + b0) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + b0), (f4 + 0.0F), (f17 + j1 + 1.0F - f13), ((f14 + b0) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
-                            tessellator.addVertexWithUV((f16 + 0.0F), (f4 + 0.0F), (f17 + j1 + 1.0F - f13), ((f14 + 0.0F) * f10 + f8), ((f15 + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + 0.0F), (y + f3), (z + j1 + 1.0F - f13), ((u + 0.0F) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + b0), (y + f3), (z + j1 + 1.0F - f13), ((u + b0) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + b0), (y + 0.0F), (z + j1 + 1.0F - f13), ((u + b0) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
+                            tessellator.addVertexWithUV((x + 0.0F), (y + 0.0F), (z + j1 + 1.0F - f13), ((u + 0.0F) * f10 + f8), ((v + j1 + 0.5F) * f10 + f9));
                         }
                     }
 
