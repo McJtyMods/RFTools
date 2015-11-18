@@ -135,7 +135,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Optional.Method(modid = "ComputerCraft")
     public String[] getMethodNames() {
         return new String[] { "hasCard", "getMode", "setMode", "getRotate", "setRotate", "getAnchor", "setAnchor", "getSupportMode", "setSupportMode", "getEntityMode", "setEntityMode",
-            "getLoopMode", "setLoopMode" };
+            "getLoopMode", "setLoopMode", "getScan" };
     }
 
     @Override
@@ -155,6 +155,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case 10: setEntityMode(((Double) arguments[0]).intValue() > 0); return null;
             case 11: return new Object[] { hasLoopMode() };
             case 12: setLoopMode(((Double) arguments[0]).intValue() > 0); return null;
+            case 13: return scan == null ? null : new Object[] { scan.getX(), scan.getY(), scan.getZ() };
         }
         return new Object[0];
     }
@@ -183,19 +184,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return COMPONENT_NAME;
     }
 
-    @Callback
+    @Callback(doc = "Return true if the builder has a shape or space card in it", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] hasCard(Context context, Arguments args) throws Exception {
         return new Object[] { hasCard() != null };
     }
 
-    @Callback
+    @Callback(doc = "Get the current building mode (only useful in combination with a space card). Values are 0 (copy), 1 (move), 2 (swap), 3 (back)", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getMode(Context context, Arguments args) throws Exception {
         return new Object[] { getMode() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current building mode (only useful in combination with a space card). Values are 0 (copy), 1 (move), 2 (swap), 3 (back)", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setMode(Context context, Arguments args) throws Exception {
         int mode = args.checkInteger(0);
@@ -203,13 +204,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Get the current rotation mode (only useful in combination with a space card). Values are 0 to 3 (increments of 90 degrees)", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getRotate(Context context, Arguments args) throws Exception {
         return new Object[] { getRotate()};
     }
 
-    @Callback
+    @Callback(doc = "Set the current rotation mode (only useful in combination with a space card). Values are 0 to 3 (increments of 90 degrees)", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setRotate(Context context, Arguments args) throws Exception {
         Integer angle = args.checkInteger(0);
@@ -217,13 +218,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Get the current anchor mode (only useful in combination with a space card). Values are 0 (SW), 1 (SE), 2 (NW), 3 (NE)", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getAnchor(Context context, Arguments args) throws Exception {
         return new Object[] { getAnchor()};
     }
 
-    @Callback
+    @Callback(doc = "Set the current anchor mode. In contrast with getAnchor() this also works with a shape card and it will reposition the shape before the builder. Values are 0 (SW), 1 (SE), 2 (NW), 3 (NE)", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setAnchor(Context context, Arguments args) throws Exception {
         Integer angle = args.checkInteger(0);
@@ -231,13 +232,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Return true if support/preview mode is enabled", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getSupportMode(Context context, Arguments args) throws Exception {
         return new Object[] { hasSupportMode()};
     }
 
-    @Callback
+    @Callback(doc = "Enable/disable support/preview mode", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setSupportMode(Context context, Arguments args) throws Exception {
         boolean support = args.checkBoolean(0);
@@ -245,13 +246,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Return true if entity mode is enabled (entities are also moved). This is only useful in combination with a space card", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getEntityMode(Context context, Arguments args) throws Exception {
         return new Object[] { hasEntityMode()};
     }
 
-    @Callback
+    @Callback(doc = "Enable/disable entity mode (entities are also moved). This is only useful in combination with a space card", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setEntityMode(Context context, Arguments args) throws Exception {
         boolean ent = args.checkBoolean(0);
@@ -259,18 +260,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Return true if loop mode is enabled. In this mode the builder will keep on working as long as it has a redstone signal", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getLoopMode(Context context, Arguments args) throws Exception {
         return new Object[] { hasLoopMode()};
     }
 
-    @Callback
+    @Callback(doc = "Enable/disable loop mode. In this mode the builder will keep on working as long as it has a redstone signal", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setLoopMode(Context context, Arguments args) throws Exception {
         boolean ent = args.checkBoolean(0);
         setLoopMode(ent);
         return null;
+    }
+
+    @Callback(doc = "Return the current location where the builder is working", getter = true)
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getScan(Context context, Arguments args) throws Exception {
+        if (scan == null) {
+            return null;
+        }
+        Map<String,Integer> coordinate = new HashMap<String, Integer>();
+        coordinate.put("x", scan.getX());
+        coordinate.put("y", scan.getY());
+        coordinate.put("z", scan.getZ());
+        return new Object[] { coordinate };
     }
 
     private boolean isShapeCard() {

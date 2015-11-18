@@ -160,13 +160,13 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
         return COMPONENT_NAME;
     }
 
-    @Callback
+    @Callback(doc = "Return true if this builder has a dimension tab in it", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] hasTab(Context context, Arguments args) throws Exception {
         return new Object[] { hasTab() != null };
     }
 
-    @Callback
+    @Callback(doc = "Return the current dimension building progress as a percentage", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getBuildingPercentage(Context context, Arguments args) throws Exception {
         return getBuildingPercentage();
@@ -184,7 +184,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
         }
     }
 
-    @Callback
+    @Callback(doc = "Return how much power (RF) the dimension in the builder is currently having", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getDimensionPower(Context context, Arguments args) throws Exception {
         return getDimensionPower();
@@ -205,13 +205,13 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
         }
     }
 
-    @Callback
+    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
         return new Object[] { getRedstoneMode().getDescription() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);

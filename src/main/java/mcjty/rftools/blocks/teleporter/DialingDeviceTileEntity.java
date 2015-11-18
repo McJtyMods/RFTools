@@ -263,7 +263,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return COMPONENT_NAME;
     }
 
-    @Callback
+    @Callback(doc = "Get all transmitters that can be reached by this dialer. This returns a table of coordinates with each coordinate being table index by 'x, 'y', and 'z'", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getTransmitters(Context context, Arguments args) throws Exception {
         List<TransmitterInfo> transmitterInfos = searchTransmitters();
@@ -279,7 +279,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "Get all receivers that exist in the world. This returns a table of coordinates with each coordinate being table index by 'dim', 'x, 'y', and 'z' (dim is the dimension number)", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getReceivers(Context context, Arguments args) throws Exception {
         List<TeleportDestinationClientInfo> receivers = searchReceivers(null);
@@ -296,7 +296,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "For a given receiver (given as a table parameter with indexes 'dim', 'x', 'y', and 'z') return the name of that receiver", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getReceiverName(Context context, Arguments args) throws Exception {
         Map receiver = args.checkTable(0);
@@ -318,7 +318,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { destination.getName() };
     }
 
-    @Callback
+    @Callback(doc = "For a given transmitter (given as a table parameter with indexes 'x', 'y', and 'z') return the name of that transmitter", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getTransmitterName(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);
@@ -335,7 +335,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return null;
     }
 
-    @Callback
+    @Callback(doc = "First parameter is a table describing the transmitter ('x', 'y', and 'z'). The second parameter is a table describing the receiver ('dim', 'x', 'y', and 'z'). This method will dial the transmitter to the receiver")
     @Optional.Method(modid = "OpenComputers")
     public Object[] dial(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);
@@ -359,7 +359,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "First parameter is a table describing the transmitter ('x', 'y', and 'z'). The second parameter is a table describing the receiver ('dim', 'x', 'y', and 'z'). This method will dial the transmitter to the receiver (dial once mode)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] dialOnce(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);
@@ -383,7 +383,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "The parameter is a table describing the transmitter ('x', 'y', and 'z'). This method will interrupt the dialed connection")
     @Optional.Method(modid = "OpenComputers")
     public Object[] interrupt(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);
@@ -401,7 +401,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity imp
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "Return the receiver (in the form of a table 'dim', 'x', 'y', and 'z') where the given transmitter is dialed too. The parameter is a table describing the transmitter ('x', 'y', and 'z')", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getDialed(Context context, Arguments args) throws Exception {
         Map transmitter = args.checkTable(0);

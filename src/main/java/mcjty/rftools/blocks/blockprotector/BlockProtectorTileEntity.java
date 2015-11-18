@@ -1,5 +1,14 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import cpw.mods.fml.common.Optional;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.entity.SyncedValueSet;
 import mcjty.lib.network.Argument;
@@ -18,9 +27,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Map;
 import java.util.Set;
 
-public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, SimpleComponent, IPeripheral {
 
     public static final String CMD_RSMODE = "rsMode";
+    public static final String COMPONENT_NAME = "block_protector";
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int powered = 0;
@@ -38,6 +51,65 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             return Coordinate.writeToNBT(element);
         }
     };
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String getType() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String[] getMethodNames() {
+        return new String[] { "getRedstoneMode", "setRedstoneMode" };
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        switch (method) {
+            case 0: return new Object[] { getRedstoneMode().getDescription() };
+            case 1: return setRedstoneMode((String) arguments[0]);
+        }
+        return new Object[0];
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void attach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void detach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public boolean equals(IPeripheral other) {
+        return false;
+    }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getRedstoneMode().getDescription() };
+    }
+
+    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        return setRedstoneMode(mode);
+    }
 
     public BlockProtectorTileEntity() {
         super(BlockProtectorConfiguration.MAXENERGY, BlockProtectorConfiguration.RECEIVEPERTICK);

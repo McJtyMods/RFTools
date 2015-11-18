@@ -13,6 +13,7 @@ import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.apideps.ComputerCraftHelper;
+import mcjty.rftools.apideps.OpenComputersCompatibility;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
@@ -67,6 +68,7 @@ public class RFTools implements ModBase {
     public boolean jabba = false;
     public boolean mekanism = false;
     public boolean draconicevolution = false;
+    public boolean opencomputers = false;
 
     public static EnumMap<Side, FMLEmbeddedChannel> channels;
 
@@ -248,6 +250,11 @@ public class RFTools implements ModBase {
         draconicevolution = Loader.isModLoaded("DraconicEvolution");
         if (draconicevolution) {
             Logging.log("RFTools Detected Draconic Evolution: enabling support");
+        }
+        opencomputers = Loader.isModLoaded("OpenComputers");
+        if (opencomputers) {
+            Logging.log("RFTools Detected OpenComputers: enabling support");
+            OpenComputersCompatibility.registerOC();
         }
 
         if (Loader.isModLoaded("ComputerCraft")) {

@@ -90,13 +90,13 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return COMPONENT_NAME;
     }
 
-    @Callback
+    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getScreenCount(Context context, Arguments args) throws Exception {
         return new Object[] { connectedScreens.size() };
     }
 
-    @Callback
+    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getScreens(Context context, Arguments args) throws Exception {
         List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
@@ -111,7 +111,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return new Object[] { result };
     }
 
-    @Callback
+    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
         Map screen = args.checkTable(0);
@@ -134,7 +134,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
         int index = args.checkInteger(0);
@@ -151,7 +151,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     }
 
 
-    @Callback
+    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] addText(Context context, Arguments args) throws Exception {
         String tag = args.checkString(0);
@@ -161,7 +161,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return addText(tag, text, color);
     }
 
-    @Callback
+    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] setText(Context context, Arguments args) throws Exception {
         String tag = args.checkString(0);
@@ -193,7 +193,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
     @Optional.Method(modid = "OpenComputers")
     public Object[] clearText(Context context, Arguments args) throws Exception {
         String tag = args.checkString(0);
@@ -217,7 +217,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getTags(Context context, Arguments args) throws Exception {
         List<String> tags = new ArrayList<String>();

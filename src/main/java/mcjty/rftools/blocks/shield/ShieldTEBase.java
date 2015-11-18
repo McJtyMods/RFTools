@@ -172,13 +172,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
 
-    @Callback
+    @Callback(doc = "Get the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getDamageMode(Context context, Arguments args) throws Exception {
         return new Object[] { getDamageMode().getDescription() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setDamageMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
@@ -194,13 +194,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
         return new Object[] { getRedstoneMode().getDescription() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
@@ -217,13 +217,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
 
-    @Callback
+    @Callback(doc = "Get the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getShieldRenderingMode(Context context, Arguments args) throws Exception {
         return new Object[] { getShieldRenderingMode().getDescription() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setShieldRenderingMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
@@ -239,25 +239,25 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return null;
     }
 
-    @Callback
+    @Callback(doc = "Return true if the shield is active", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] isShieldActive(Context context, Arguments args) throws Exception {
         return new Object[] { isShieldActive() };
     }
 
-    @Callback
+    @Callback(doc = "Return true if the shield is composed (i.e. formed)", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] isShieldComposed(Context context, Arguments args) throws Exception {
         return new Object[] { isShieldComposed() };
     }
 
-    @Callback
+    @Callback(doc = "Form the shield (compose it)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] composeShield(Context context, Arguments args) throws Exception {
         return composeShieldComp(false);
     }
 
-    @Callback
+    @Callback(doc = "Form the shield (compose it). This version works in disconnected mode (template blocks will connect on corners too)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] composeShieldDsc(Context context, Arguments args) throws Exception {
         return composeShieldComp(true);
@@ -272,7 +272,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         return new Object[] { done };
     }
 
-    @Callback
+    @Callback(doc = "Break down the shield (decompose it)")
     @Optional.Method(modid = "OpenComputers")
     public Object[] decomposeShield(Context context, Arguments args) throws Exception {
         return decomposeShieldComp();

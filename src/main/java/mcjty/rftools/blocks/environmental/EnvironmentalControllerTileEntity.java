@@ -1,5 +1,14 @@
 package mcjty.rftools.blocks.environmental;
 
+import cpw.mods.fml.common.Optional;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
@@ -19,7 +28,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
-public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory, SimpleComponent, IPeripheral {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
@@ -29,6 +41,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
+
+    public static final String COMPONENT_NAME = "environmental_controller";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
 
@@ -52,8 +66,72 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
     }
 
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String getType() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public String[] getMethodNames() {
+        return new String[] { "getRedstoneMode", "setRedstoneMode" };
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        switch (method) {
+            case 0: return new Object[] { getRedstoneMode().getDescription() };
+            case 1: return setRedstoneMode((String) arguments[0]);
+        }
+        return new Object[0];
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void attach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public void detach(IComputerAccess computer) {
+
+    }
+
+    @Override
+    @Optional.Method(modid = "ComputerCraft")
+    public boolean equals(IPeripheral other) {
+        return false;
+    }
+
+    @Override
+    @Optional.Method(modid = "OpenComputers")
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
+        return new Object[] { getRedstoneMode().getDescription() };
+    }
+
+    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
+    @Optional.Method(modid = "OpenComputers")
+    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
+        String mode = args.checkString(0);
+        return setRedstoneMode(mode);
+    }
+
     public boolean isWhitelistMode() {
         return whitelistMode;
+    }
+
+    public void setWhitelistMode(boolean w) {
+        whitelistMode = w;
+        markDirty();
     }
 
     public boolean isPlayerAffected(EntityPlayer player) {
@@ -196,6 +274,15 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
                 worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             }
         }
+    }
+
+    private Object[] setRedstoneMode(String mode) {
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRedstoneMode(redstoneMode);
+        return null;
     }
 
     public void setRedstoneMode(RedstoneMode redstoneMode) {

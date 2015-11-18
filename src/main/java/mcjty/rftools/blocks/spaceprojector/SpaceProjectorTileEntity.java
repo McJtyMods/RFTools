@@ -95,19 +95,19 @@ public class SpaceProjectorTileEntity extends GenericEnergyReceiverTileEntity im
         return COMPONENT_NAME;
     }
 
-    @Callback
+    @Callback(doc = "Return true if this projector has a space card in it", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] hasCard(Context context, Arguments args) throws Exception {
         return new Object[] { hasCard() != null };
     }
 
-    @Callback
+    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
         return new Object[] { getRedstoneMode().getDescription() };
     }
 
-    @Callback
+    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
     @Optional.Method(modid = "OpenComputers")
     public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
         String mode = args.checkString(0);
