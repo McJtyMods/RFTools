@@ -132,6 +132,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public void setWhitelistMode(boolean w) {
         whitelistMode = w;
         markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     public boolean isPlayerAffected(EntityPlayer player) {
