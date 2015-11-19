@@ -71,6 +71,8 @@ public class DimletConfiguration {
     public static boolean voidOnly = false;
     public static boolean ownerDimletsNeeded = false;
     public static boolean dimensionBuilderNeedsOwner = false;
+    public static boolean playersCanDeleteDimensions = false;
+    public static boolean dimensionFolderIsDeletedWithSafeDel = true;
 
     public static float endermanUnknownDimletDrop = 0.01f;
     public static int unknownDimletChestLootMinimum = 1;
@@ -219,6 +221,10 @@ public class DimletConfiguration {
                 "If this is enabled (non-craftable) owner dimlets are required to construct dimension tabs. This is useful on servers where you want to limit the amount of dimensions a player can make").getBoolean();
         dimensionBuilderNeedsOwner = cfg.get(CATEGORY_DIMLETS, "dimensionBuilderNeedsOwner", dimensionBuilderNeedsOwner,
                 "If this is enabled then the dimension builder needs a correct owner before you can create dimensions with it").getBoolean();
+        playersCanDeleteDimensions = cfg.get(CATEGORY_DIMLETS, "playersCanDeleteDimensions", playersCanDeleteDimensions,
+                "If this is enabled then regular players can delete their own dimensions using the /rftdim safedel <id> command").getBoolean();
+        dimensionFolderIsDeletedWithSafeDel = cfg.get(CATEGORY_DIMLETS, "dimensionFolderIsDeletedWithSafeDel", dimensionFolderIsDeletedWithSafeDel,
+                "If this is enabled the /rftdim safedel <id> command will also delete the DIM<id> folder. If false then this has to be done manually").getBoolean();
 
         brutalMobsFactor = cfg.get(CATEGORY_DIMLETS, "brutalMobsFactor", brutalMobsFactor,
                 "How much stronger mobs should be if spawned in a dimension with the brutal mobs dimlet").getDouble();
