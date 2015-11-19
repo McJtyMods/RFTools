@@ -340,12 +340,12 @@ public class RfToolsDimensionManager extends WorldSavedData {
         DimensionManager.unregisterProviderType(id);
     }
 
-    public void recoverDimension(World world, int id, DimensionDescriptor descriptor, String name) {
+    public void recoverDimension(World world, int id, DimensionDescriptor descriptor, String name, String playerName, UUID player) {
         if (!DimensionManager.isDimensionRegistered(id)) {
             registerDimensionToServerAndClient(id);
         }
 
-        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world);
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world, playerName, player);
 
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
@@ -355,7 +355,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         touchSpawnChunk(id);
     }
 
-    public int createNewDimension(World world, DimensionDescriptor descriptor, String name) {
+    public int createNewDimension(World world, DimensionDescriptor descriptor, String name, String playerName, UUID player) {
         int id = 0;
         while (!reclaimedIds.isEmpty()) {
             int rid = reclaimedIds.iterator().next();
@@ -375,7 +375,7 @@ public class RfToolsDimensionManager extends WorldSavedData {
         dimensions.put(id, descriptor);
         dimensionToID.put(descriptor, id);
 
-        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world);
+        DimensionInformation dimensionInfo = new DimensionInformation(name, descriptor, world, playerName, player);
         dimensionInformation.put(id, dimensionInfo);
 
         save(world);

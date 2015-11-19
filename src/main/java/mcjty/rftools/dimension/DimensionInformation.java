@@ -35,6 +35,8 @@ import java.util.*;
 public class DimensionInformation {
     private final DimensionDescriptor descriptor;
     private String name;
+    private String ownerName;
+    private UUID owner;
 
     private Coordinate spawnPoint = null;
 
@@ -95,9 +97,11 @@ public class DimensionInformation {
     // The actual RF cost after taking into account the features we got in our world.
     private int actualRfCost;
 
-    public DimensionInformation(String name, DimensionDescriptor descriptor, World world) {
+    public DimensionInformation(String name, DimensionDescriptor descriptor, World world, String playerName, UUID player) {
         this.name = name;
         this.descriptor = descriptor;
+        this.ownerName = playerName;
+        this.owner = player;
 
         this.forcedDimensionSeed = descriptor.getForcedSeed();
         if (DimletConfiguration.randomizeSeed) {
@@ -194,6 +198,12 @@ public class DimensionInformation {
 
     public DimensionInformation(DimensionDescriptor descriptor, NBTTagCompound tagCompound) {
         this.name = tagCompound.getString("name");
+        this.ownerName = tagCompound.getString("owner");
+        if (tagCompound.hasKey("ownerM")) {
+            this.owner = new UUID(tagCompound.getLong("ownerM"), tagCompound.getLong("ownerL"));
+        } else {
+            this.owner = null;
+        }
         this.descriptor = descriptor;
 
         setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
@@ -213,6 +223,12 @@ public class DimensionInformation {
 
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.name = tagCompound.getString("name");
+        this.ownerName = tagCompound.getString("owner");
+        if (tagCompound.hasKey("ownerM")) {
+            this.owner = new UUID(tagCompound.getLong("ownerM"), tagCompound.getLong("ownerL"));
+        } else {
+            this.owner = null;
+        }
         setSpawnPoint(Coordinate.readFromNBT(tagCompound, "spawnPoint"));
         setProbeCounter(tagCompound.getInteger("probeCounter"));
         setupFromNBT(tagCompound);
@@ -387,6 +403,12 @@ public class DimensionInformation {
 
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setString("name", getName());
+        tagCompound.setString("owner", ownerName);
+        if (owner != null) {
+            tagCompound.setLong("ownerM", owner.getMostSignificantBits());
+            tagCompound.setLong("ownerL", owner.getLeastSignificantBits());
+        }
+
         Coordinate spawnPoint = getSpawnPoint();
         if (spawnPoint != null) {
             Coordinate.writeToNBT(tagCompound, "spawnPoint", spawnPoint);
@@ -692,6 +714,14 @@ public class DimensionInformation {
     }
 
     public void toBytes(ByteBuf buf) {
+        NetworkTools.writeString(buf, ownerName);
+        if (owner == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeLong(owner.getMostSignificantBits());
+            buf.writeLong(owner.getLeastSignificantBits());
+        }
         NetworkTools.writeEnum(buf, terrainType, TerrainType.TERRAIN_VOID);
         NetworkTools.writeEnumCollection(buf, featureTypes);
         NetworkTools.writeEnumCollection(buf, structureTypes);
@@ -786,6 +816,13 @@ public class DimensionInformation {
     public DimensionInformation(String name, DimensionDescriptor descriptor, ByteBuf buf) {
         this.name = name;
         this.descriptor = descriptor;
+
+        ownerName = NetworkTools.readString(buf);
+        if (buf.readBoolean()) {
+            owner = new UUID(buf.readLong(), buf.readLong());
+        } else {
+            owner = null;
+        }
 
         terrainType = NetworkTools.readEnum(buf, TerrainType.values());
         NetworkTools.readEnumCollection(buf, featureTypes, FeatureType.values());
@@ -1021,36 +1058,6 @@ public class DimensionInformation {
         return block;
     }
 
-    public Block getFeatureLiquid(Random random, Map<FeatureType, List<DimletKey>> modifiersForFeature, FeatureType featureType) {
-        Block block;
-        if (featureTypes.contains(featureType)) {
-            List<BlockMeta> blocks = new ArrayList<BlockMeta>();
-            List<Block> fluids = new ArrayList<Block>();
-            getMaterialAndFluidModifiers(modifiersForFeature.get(featureType), blocks, fluids);
-
-            if (!fluids.isEmpty()) {
-                block = fluids.get(random.nextInt(fluids.size()));
-                if (block == null) {
-                    block = Blocks.water;     // This is the default in case None was specified.
-                }
-            } else {
-                // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
-                if (random.nextFloat() < DimletConfiguration.randomOrbFluidChance) {
-                    DimletKey key = DimletRandomizer.getRandomFluidBlock(random, true);
-                    actualRfCost += calculateCostFactor(key);
-                    block = DimletObjectMapping.idToFluid.get(key);
-                } else {
-                    block = Blocks.water;
-                }
-            }
-        } else {
-            block = Blocks.water;
-        }
-        return block;
-    }
-
-
-
     private void setupBiomeMapping() {
         biomeMapping.clear();
         if (controllerType == ControllerType.CONTROLLER_FILTERED) {
@@ -1081,6 +1088,14 @@ public class DimensionInformation {
 
     public DimensionDescriptor getDescriptor() {
         return descriptor;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public UUID getOwner() {
+        return owner;
     }
 
     public void setName(String name) {

@@ -13,6 +13,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
+import java.util.UUID;
+
 public class CmdRecover extends AbstractRfToolsCommand {
     @Override
     public String getHelp() {
@@ -43,9 +45,13 @@ public class CmdRecover extends AbstractRfToolsCommand {
 
         World world = sender.getEntityWorld();
         ItemStack heldItem = null;
+        String playerName = null;
+        UUID playerUUID = null;
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
             heldItem = player.getHeldItem();
+            playerName = player.getDisplayName();
+            playerUUID = player.getGameProfile().getId();
         }
         if (heldItem == null || heldItem.getItem() != DimletSetup.realizedDimensionTab) {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "You need to hold a realized dimension tab in your hand!"));
@@ -85,7 +91,7 @@ public class CmdRecover extends AbstractRfToolsCommand {
 
         DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
         String name = tagCompound.getString("name");
-        dimensionManager.recoverDimension(world, dim, descriptor, name);
+        dimensionManager.recoverDimension(world, dim, descriptor, name, playerName, playerUUID);
 
         sender.addChatMessage(new ChatComponentText("Dimension was succesfully recovered"));
     }

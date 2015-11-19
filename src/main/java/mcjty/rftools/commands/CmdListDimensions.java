@@ -48,7 +48,12 @@ public class CmdListDimensions extends AbstractRfToolsCommand {
             DimensionInformation dimensionInformation = dimensionManager.getDimensionInformation(id);
             String dimName = dimensionInformation.getName();
             int energy = dimensionStorage.getEnergyLevel(id);
-            sender.addChatMessage(new ChatComponentText("    RfTools: id:" + id + ", " + dimName + " (power " + energy + ")"));
+            String ownerName = dimensionInformation.getOwnerName();
+            if (ownerName != null && !ownerName.isEmpty()) {
+                sender.addChatMessage(new ChatComponentText("    RfTools: id:" + id + ", " + dimName + " (power " + energy + ") (owner " + ownerName + ")"));
+            } else {
+                sender.addChatMessage(new ChatComponentText("    RfTools: id:" + id + ", " + dimName + " (power " + energy + ")"));
+            }
         }
     }
 }

@@ -49,7 +49,12 @@ public class CmdInfo extends AbstractRfToolsCommand {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not an RFTools dimension!"));
             return;
         }
+        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Dimension ID " + dim));
         sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Description string " + information.getDescriptor().getDescriptionString()));
+        String ownerName = information.getOwnerName();
+        if (ownerName != null && !ownerName.isEmpty()) {
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Owned by: " + ownerName));
+        }
         if (sender instanceof EntityPlayer) {
             information.dump((EntityPlayer) sender);
         }

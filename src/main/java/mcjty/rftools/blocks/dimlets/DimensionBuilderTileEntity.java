@@ -306,7 +306,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
                 RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
                 DimensionDescriptor descriptor = new DimensionDescriptor(tagCompound);
                 String name = tagCompound.getString("name");
-                int id = manager.createNewDimension(worldObj, descriptor, name);
+                int id = manager.createNewDimension(worldObj, descriptor, name, getOwnerName(), getOwnerUUID());
                 tagCompound.setInteger("id", id);
             }
         }
