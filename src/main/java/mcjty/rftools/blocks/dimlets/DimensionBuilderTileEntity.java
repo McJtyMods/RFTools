@@ -284,6 +284,14 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
     private static Random random = new Random();
 
     private int createDimensionTick(NBTTagCompound tagCompound, int ticksLeft) {
+        if (DimletConfiguration.dimensionBuilderNeedsOwner) {
+            if (getOwnerUUID() == null) {
+                // No valid owner so we don't build the dimension.
+                return ticksLeft;
+            }
+        }
+
+
         int createCost = tagCompound.getInteger("rfCreateCost");
         createCost = (int) (createCost * (2.0f - getInfusedFactor()) / 2.0f);
 
