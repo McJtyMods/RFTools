@@ -1098,6 +1098,11 @@ public class DimensionInformation {
         return owner;
     }
 
+    public void setOwner(String name, UUID o) {
+        ownerName = name;
+        owner = o;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
