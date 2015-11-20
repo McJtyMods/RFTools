@@ -355,6 +355,19 @@ public class RfToolsDimensionManager extends WorldSavedData {
         touchSpawnChunk(id);
     }
 
+    public int countOwnedDimensions(UUID player) {
+        int cnt = 0;
+        for (Map.Entry<Integer, DimensionInformation> entry : dimensionInformation.entrySet()) {
+            int id = entry.getKey();
+            DimensionInformation information = entry.getValue();
+            if (player.equals(information.getOwner())) {
+                cnt++;
+            }
+
+        }
+        return cnt;
+    }
+
     public int createNewDimension(World world, DimensionDescriptor descriptor, String name, String playerName, UUID player) {
         int id = 0;
         while (!reclaimedIds.isEmpty()) {

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.dimlets;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ChoiceEvent;
+import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
@@ -23,6 +24,8 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
     private EnergyBar energyBar;
     private ImageLabel stages;
     private Label percentage;
+    private Label error1;
+    private Label error2;
     private ImageChoiceLabel redstoneMode;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensionbuilder.png");
@@ -48,13 +51,17 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
         stages = new ImageLabel(mc, this).setImage(iconStages, 0, 0);
         stages.setLayoutHint(new PositionalLayout.PositionalHint(61, 9, 48, 48));
 
-        percentage = new Label(mc, this).setText("0%");
-        percentage.setLayoutHint(new PositionalLayout.PositionalHint(115, 25, 40, 16));
+        percentage = new Label(mc, this).setText("0%").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        percentage.setLayoutHint(new PositionalLayout.PositionalHint(115, 25, 50, 16));
+        error1 = new Label(mc, this).setText("").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setColor(0xff0000);
+        error1.setLayoutHint(new PositionalLayout.PositionalHint(115, 15, 60, 16));
+        error2 = new Label(mc, this).setText("").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setColor(0xff0000);
+        error2.setLayoutHint(new PositionalLayout.PositionalHint(115, 28, 60, 16));
 
         initRedstoneMode();
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(stages).addChild(percentage).addChild(redstoneMode);
+                addChild(stages).addChild(percentage).addChild(error1).addChild(error2).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -86,10 +93,23 @@ public class GuiDimensionBuilder extends GenericGuiContainer<DimensionBuilderTil
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         int pct = tileEntity.getBuildPercentage();
-        int x = ((pct-1)/4) % 5;
-        int y = ((pct-1)/4) / 5;
-        stages.setImage(iconStages, x * 48, y * 48);
-        percentage.setText(pct + "%");
+
+        if (pct == DimensionBuilderTileEntity.ERROR_NOOWNER) {
+            error1.setText("Builder has");
+            error2.setText("no owner!");
+            percentage.setText("");
+        } else if (pct == DimensionBuilderTileEntity.ERROR_TOOMANYDIMENSIONS) {
+            error1.setText("Too many");
+            error2.setText("dimensions!");
+            percentage.setText("");
+        } else {
+            int x = ((pct - 1) / 4) % 5;
+            int y = ((pct - 1) / 4) / 5;
+            stages.setImage(iconStages, x * 48, y * 48);
+            percentage.setText(pct + "%");
+            error1.setText("");
+            error2.setText("");
+        }
 
         drawWindow();
 

@@ -51,6 +51,11 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int powered = 0;
 
+    public static int OK = 0;
+    public static int ERROR_NOOWNER = -1;
+    public static int ERROR_TOOMANYDIMENSIONS = -2;
+    private int errorMode = 0;
+
     private InventoryHelper inventoryHelper = new InventoryHelper(this, DimensionBuilderContainer.factory, 1);
 
     public DimensionBuilderTileEntity() {
@@ -287,9 +292,23 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
         if (DimletConfiguration.dimensionBuilderNeedsOwner) {
             if (getOwnerUUID() == null) {
                 // No valid owner so we don't build the dimension.
+                errorMode = ERROR_NOOWNER;
                 return ticksLeft;
             }
+            if (DimletConfiguration.maxDimensionsPerPlayer >= 0) {
+                int tickCost = tagCompound.getInteger("tickCost");
+                if (ticksLeft == tickCost) {
+                    // Check if we are allow to make the dimension.
+                    RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
+                    int cnt = manager.countOwnedDimensions(getOwnerUUID());
+                    if (cnt >= DimletConfiguration.maxDimensionsPerPlayer) {
+                        errorMode = ERROR_TOOMANYDIMENSIONS;
+                        return ticksLeft;
+                    }
+                }
+            }
         }
+        errorMode = OK;
 
 
         int createCost = tagCompound.getInteger("rfCreateCost");
@@ -436,9 +455,13 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
                 if (tagCompound == null) {
                     return 0;
                 }
-                int ticksLeft = tagCompound.getInteger("ticksLeft");
-                int tickCost = tagCompound.getInteger("tickCost");
-                return (tickCost - ticksLeft) * 100 / tickCost;
+                if (errorMode != OK) {
+                    return errorMode;
+                } else {
+                    int ticksLeft = tagCompound.getInteger("ticksLeft");
+                    int tickCost = tagCompound.getInteger("tickCost");
+                    return (tickCost - ticksLeft) * 100 / tickCost;
+                }
             }
         }
         return null;

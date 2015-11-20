@@ -73,6 +73,7 @@ public class DimletConfiguration {
     public static boolean dimensionBuilderNeedsOwner = false;
     public static boolean playersCanDeleteDimensions = false;
     public static boolean dimensionFolderIsDeletedWithSafeDel = true;
+    public static int maxDimensionsPerPlayer = -1;
 
     public static float endermanUnknownDimletDrop = 0.01f;
     public static int unknownDimletChestLootMinimum = 1;
@@ -225,6 +226,8 @@ public class DimletConfiguration {
                 "If this is enabled then regular players can delete their own dimensions using the /rftdim safedel <id> command").getBoolean();
         dimensionFolderIsDeletedWithSafeDel = cfg.get(CATEGORY_DIMLETS, "dimensionFolderIsDeletedWithSafeDel", dimensionFolderIsDeletedWithSafeDel,
                 "If this is enabled the /rftdim safedel <id> command will also delete the DIM<id> folder. If false then this has to be done manually").getBoolean();
+        maxDimensionsPerPlayer = cfg.get(CATEGORY_DIMLETS, "maxDimensionsPerPlayer", maxDimensionsPerPlayer,
+                "The maximum amount of dimensions per player. This requires that dimensions are build with an owned builder (dimensionBuilderNeedsOwner must be set). -1 means no maximum").getInt();
 
         brutalMobsFactor = cfg.get(CATEGORY_DIMLETS, "brutalMobsFactor", brutalMobsFactor,
                 "How much stronger mobs should be if spawned in a dimension with the brutal mobs dimlet").getDouble();
