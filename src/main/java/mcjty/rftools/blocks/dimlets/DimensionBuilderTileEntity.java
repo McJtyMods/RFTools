@@ -297,7 +297,7 @@ public class DimensionBuilderTileEntity extends GenericEnergyReceiverTileEntity 
             }
             if (DimletConfiguration.maxDimensionsPerPlayer >= 0) {
                 int tickCost = tagCompound.getInteger("tickCost");
-                if (ticksLeft == tickCost) {
+                if (ticksLeft == tickCost || ticksLeft < 5) {
                     // Check if we are allow to make the dimension.
                     RfToolsDimensionManager manager = RfToolsDimensionManager.getDimensionManager(worldObj);
                     int cnt = manager.countOwnedDimensions(getOwnerUUID());
