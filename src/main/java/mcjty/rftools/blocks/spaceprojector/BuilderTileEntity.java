@@ -1006,7 +1006,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
                     int meta = worldObj.getBlockMetadata(sx, sy, sz);
-                    List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE ? 3 : 0);
+                    List<ItemStack> drops = block.getDrops(worldObj, sx, sy, sz, meta, (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0);
                     if (checkAndInsertItems(drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
