@@ -5,23 +5,31 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockTools;
+import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.dimension.DimensionInformation;
+import mcjty.rftools.dimension.DimensionStorage;
 import mcjty.rftools.dimension.RfToolsDimensionManager;
 import mcjty.rftools.dimension.world.WorldGenerationTools;
 import mcjty.rftools.items.dimlets.*;
 import mcjty.rftools.items.dimlets.types.IDimletType;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.Broadcaster;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity implements ISidedInventory {
@@ -58,6 +66,10 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
                 ticksCost = DimletCosts.baseDimensionTickCost + 1000;
                 ticksLeft = ticksCost;
                 rfPerTick = DimletCosts.baseDimensionCreationCost + 200;
+            } else if (isTNT(injectableItemStack)) {
+                ticksCost = 600;
+                ticksLeft = ticksCost;
+                rfPerTick = 10;
             } else {
                 DimletKey key = KnownDimletConfiguration.getDimletKey(injectableItemStack, worldObj);
                 DimletEntry dimletEntry = KnownDimletConfiguration.getEntry(key);
@@ -92,8 +104,10 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
                         dimWorld.setBlock(8, y, 8, TeleporterSetup.matterReceiverBlock, 0, 2);
                         TeleporterSetup.matterReceiverBlock.onBlockPlaced(dimWorld, 8, y, 8, 0, 0, 0, 0, 0);
                         TeleporterSetup.matterReceiverBlock.onBlockPlacedBy(dimWorld, 8, y, 8, null, injectableItemStack);
-                        dimWorld.setBlockToAir(8, y+1, 8);
-                        dimWorld.setBlockToAir(8, y+2, 8);
+                        dimWorld.setBlockToAir(8, y + 1, 8);
+                        dimWorld.setBlockToAir(8, y + 2, 8);
+                    } else if (isTNT(injectableItemStack)) {
+                        safeDeleteDimension(id, dimensionTab);
                     } else {
                         DimletKey key = KnownDimletConfiguration.getDimletKey(injectableItemStack, worldObj);
 
@@ -113,6 +127,57 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
         setState();
     }
 
+    private void safeDeleteDimension(int id, ItemStack dimensionTab) {
+        World w = DimensionManager.getWorld(id);
+        if (w != null) {
+            // Dimension is still loaded. Do nothing.
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Dimension cannot be deleted. It is still in use!", 10);
+            return;
+        }
+        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+        DimensionInformation information = dimensionManager.getDimensionInformation(id);
+        if (information.getOwner() == null) {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "You cannot delete a dimension without an owner!", 10);
+            return;
+        }
+        if (getOwnerUUID() == null) {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "This machine has no proper owner and cannot delete dimensions!", 10);
+            return;
+        }
+        if (!getOwnerUUID().equals(information.getOwner())) {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "This machine's owner differs from the dimensions owner!", 10);
+            return;
+        }
+
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        destinations.removeDestinationsInDimension(id);
+        destinations.save(worldObj);
+
+        dimensionManager.removeDimension(id);
+        dimensionManager.reclaimId(id);
+        dimensionManager.save(worldObj);
+
+        DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+        dimensionStorage.removeDimension(id);
+        dimensionStorage.save(worldObj);
+
+        if (DimletConfiguration.dimensionFolderIsDeletedWithSafeDel) {
+            File rootDirectory = DimensionManager.getCurrentSaveRootDirectory();
+            try {
+                FileUtils.deleteDirectory(new File(rootDirectory.getPath() + File.separator + "DIM" + id));
+                Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Dimension deleted and dimension folder succesfully wiped!", 10);
+            } catch (IOException e) {
+                Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Dimension deleted but dimension folder could not be completely wiped!", 10);
+            }
+        } else {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Dimension deleted. Please remove the dimension folder from disk!", 10);
+        }
+
+        dimensionTab.getTagCompound().removeTag("id");
+        int tickCost = dimensionTab.getTagCompound().getInteger("tickCost");
+        dimensionTab.getTagCompound().setInteger("ticksLeft", tickCost);
+    }
+
     private int findGoodReceiverLocation(World dimWorld) {
         int y = WorldGenerationTools.findSuitableEmptySpot(dimWorld, 8, 8);
         y++;
@@ -129,6 +194,9 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
         if (isMatterReceiver(itemStack)) {
             return itemStack;
         }
+        if (isTNT(itemStack)) {
+            return canDeleteDimension(itemStack);
+        }
 
         DimletKey key = KnownDimletConfiguration.getDimletKey(itemStack, worldObj);
         DimletType type = key.getType();
@@ -140,10 +208,48 @@ public class DimensionEditorTileEntity extends GenericEnergyReceiverTileEntity i
         }
     }
 
+    private ItemStack canDeleteDimension(ItemStack itemStack) {
+        if (!DimletConfiguration.playersCanDeleteDimensions) {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Players cannot delete dimensions!", 10);
+            return null;
+        }
+        if (!DimletConfiguration.editorCanDeleteDimensions) {
+            Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "Dimension deletion with the editor is not enabled!", 10);
+            return null;
+        }
+        ItemStack dimensionStack = inventoryHelper.getStackInSlot(DimensionEditorContainer.SLOT_DIMENSIONTARGET);
+        if (dimensionStack == null || dimensionStack.stackSize == 0) {
+            return null;
+        }
+
+        NBTTagCompound tagCompound = dimensionStack.getTagCompound();
+        int id = tagCompound.getInteger("id");
+        if (id == 0) {
+            return null;
+        }
+        DimensionInformation information = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(id);
+
+        if (getOwnerUUID() != null && getOwnerUUID().equals(information.getOwner())) {
+            return itemStack;
+        }
+
+        Broadcaster.broadcast(worldObj, xCoord, yCoord, zCoord, "This machine's owner differs from the dimensions owner!", 10);
+        return null;
+    }
+
     private boolean isMatterReceiver(ItemStack itemStack) {
         Block block = BlockTools.getBlock(itemStack);
         if (block == TeleporterSetup.matterReceiverBlock) {
             // We can inject matter receivers too.
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isTNT(ItemStack itemStack) {
+        Block block = BlockTools.getBlock(itemStack);
+        if (block == Blocks.tnt) {
+            // We can inject TNT to destroy a dimension.
             return true;
         }
         return false;

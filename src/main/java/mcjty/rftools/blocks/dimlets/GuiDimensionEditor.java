@@ -7,8 +7,12 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -21,6 +25,7 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
     private EnergyBar energyBar;
     private ImageLabel arrow;
     private Label percentage;
+    private Label destroy;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/dimensioneditor.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -44,11 +49,17 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
         arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
 
+        destroy = new Label(mc, this).setColor(0xff0000);
+        destroy.setText("Destroying dimension!");
+        destroy.setLayoutHint(new PositionalLayout.PositionalHint(30, 53, 150, 16));
+        destroy.setVisible(false);
+
+
         percentage = new Label(mc, this).setText("0%");
         percentage.setLayoutHint(new PositionalLayout.PositionalHint(80, 43, 40, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(arrow).addChild(percentage);
+                addChild(arrow).addChild(percentage).addChild(destroy);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -68,6 +79,15 @@ public class GuiDimensionEditor extends GenericGuiContainer<DimensionEditorTileE
         percentage.setText(pct + "%");
 
         drawWindow();
+
+        destroy.setVisible(false);
+        Slot slot = this.inventorySlots.getSlot(DimensionEditorContainer.SLOT_INJECTINPUT);
+        if (slot.getHasStack()) {
+            Block block = BlockTools.getBlock(slot.getStack());
+            if (block == Blocks.tnt) {
+                destroy.setVisible(true);
+            }
+        }
 
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

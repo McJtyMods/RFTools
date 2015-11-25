@@ -72,6 +72,7 @@ public class DimletConfiguration {
     public static boolean ownerDimletsNeeded = false;
     public static boolean dimensionBuilderNeedsOwner = false;
     public static boolean playersCanDeleteDimensions = false;
+    public static boolean editorCanDeleteDimensions = false;
     public static boolean dimensionFolderIsDeletedWithSafeDel = true;
     public static int maxDimensionsPerPlayer = -1;
 
@@ -224,6 +225,8 @@ public class DimletConfiguration {
                 "If this is enabled then the dimension builder needs a correct owner before you can create dimensions with it").getBoolean();
         playersCanDeleteDimensions = cfg.get(CATEGORY_DIMLETS, "playersCanDeleteDimensions", playersCanDeleteDimensions,
                 "If this is enabled then regular players can delete their own dimensions using the /rftdim safedel <id> command").getBoolean();
+        editorCanDeleteDimensions = cfg.get(CATEGORY_DIMLETS, "editorCanDeleteDimensions", editorCanDeleteDimensions,
+                "If this is enabled then a dimension editor can delete a dimension that is owned by the same player as the dimension editor's player. This works by sending over a block of TNT").getBoolean();
         dimensionFolderIsDeletedWithSafeDel = cfg.get(CATEGORY_DIMLETS, "dimensionFolderIsDeletedWithSafeDel", dimensionFolderIsDeletedWithSafeDel,
                 "If this is enabled the /rftdim safedel <id> command will also delete the DIM<id> folder. If false then this has to be done manually").getBoolean();
         maxDimensionsPerPlayer = cfg.get(CATEGORY_DIMLETS, "maxDimensionsPerPlayer", maxDimensionsPerPlayer,
