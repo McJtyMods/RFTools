@@ -251,7 +251,7 @@ of the dimension tab).
 Hint: If you shift-right click with the dimension tab in your hand
 you can see what random features were selected for creating this
 dimension.
-{-------------------------------------------------------------}                                                                     Yo
+{-------------------------------------------------------------}
 Note on powering very expensive dimensions: the dimension builder
 accepts a maximum of 50,000 RF/tick on every side. So at most it can
 get 300,000 RF/tick if you input energy from all six sides and if
