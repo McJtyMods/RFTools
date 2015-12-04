@@ -123,6 +123,7 @@ item.DimletTypeControllerStructure.name=Dimlet Struktur Controller
 item.DimletTypeControllerSpecial.name=Dimlet Spezialtyp Controller
 item.DimletTypeControllerTerrain.name=Dimlet Landschaft Controller
 item.DimletTypeControllerTime.name=Dimlet Zeit Controller
+item.DimletTypeControllerWeather.name=Dimlet Weather Type Controller
 item.SyringeItem.name=Spritze
 item.PeaceEssence.name=Friedensessenz
 item.StructureEssenceVillage.name=Essenz Struktur Dorf

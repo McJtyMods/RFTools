@@ -123,6 +123,7 @@ item.DimletTypeControllerStructure.name=Dimlet Yapıt Kontrolörü
 item.DimletTypeControllerSpecial.name=Dimlet Özel Kontrolör
 item.DimletTypeControllerTerrain.name=Dimlet Arazi Kontrolörü
 item.DimletTypeControllerTime.name=Dimlet Zaman Kontrolörü
+item.DimletTypeControllerWeather.name=Dimlet Weather Type Controller
 item.SyringeItem.name=Şırınga
 item.PeaceEssence.name=Barış Özü
 item.StructureEssenceVillage.name=Köy Yapı Özü

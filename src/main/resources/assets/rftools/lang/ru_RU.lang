@@ -123,6 +123,7 @@ item.DimletTypeControllerStructure.name=Контроллер типа струк
 item.DimletTypeControllerSpecial.name=Контроллер типа особой функции димлета
 item.DimletTypeControllerTerrain.name=Контроллер типа территории димлета
 item.DimletTypeControllerTime.name=Контроллер типа времени димлета
+item.DimletTypeControllerWeather.name=Dimlet Weather Type Controller
 item.SyringeItem.name=Шприц
 item.PeaceEssence.name=Обычная эссенция
 item.StructureEssenceVillage.name=Эссенция структуры деревни

@@ -123,6 +123,7 @@ item.DimletTypeControllerStructure.name=Dimlet Structure Type Controller
 item.DimletTypeControllerSpecial.name=Dimlet Special Type Controller
 item.DimletTypeControllerTerrain.name=Dimlet Terrain Type Controller
 item.DimletTypeControllerTime.name=Dimlet Time Type Controller
+item.DimletTypeControllerWeather.name=Dimlet Weather Type Controller
 item.SyringeItem.name=Syringe
 item.PeaceEssence.name=Peace Essence
 item.StructureEssenceVillage.name=Structure Village Essence
