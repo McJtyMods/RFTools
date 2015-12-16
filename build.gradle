@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -11,18 +11,20 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
 
 repositories {
     maven { // The repo from which to get waila
         name "Mobius Repo"
         url "http://mobiusstrip.eu/maven"
     }
-    maven { // the repo from which to get NEI and stuff
-        name 'CB Repo'
-        url "http://chickenbones.net/maven/"
+    maven { // JEI
+        url "http://dvs1.progwml6.com/files/maven"
     }
     maven {
         name 'OC Repo'
@@ -32,17 +34,7 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
-    // maven {
-        // name = "forestry"
-        // url = "http://maven.ic2.player.to/"
-    // }
-    // maven { // ttCore
-        // name 'tterrag Repo'
-        // url "http://maven.tterrag.com"
-    // }
 }
-
-apply plugin: 'forge'
 
 version = "4.13"
 def ENV = System.getenv()
@@ -52,14 +44,14 @@ if (ENV.DRONE_BUILD_NUMBER) {
 group= "mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "rftools"
 
-minecraft {
-    version = "1.7.10-10.13.3.1395-1710ls"
-    assetDir = "eclipse/assets"
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
+minecraft {
+    version = "1.8.8-11.15.0.1634-1.8.8"
+    runDir = "run"
+    mappings = "snapshot_20151216"
+    useDepAts = true
 }
 
 task deobfJar(type: Jar) {
@@ -74,29 +66,12 @@ artifacts {
 
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    deobfCompile "mcp.mobius.waila:Waila:1.6.0-B3_1.8.8"
+    deobfCompile "mezz.jei:jei_1.8.8:2.8.3.39"
 
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 
-    compile "mcp.mobius.waila:Waila:1.5.10_1.7.10"
-    // compile "com.enderio:EnderIO:1.7.10-2.2.7.331"
-    compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
-
-    compile "codechicken:CodeChickenLib:1.7.10-1.1.3.136:dev"
-    compile "codechicken:CodeChickenCore:1.7.10-1.0.6.43:dev"
-    compile "codechicken:ForgeMultipart:1.7.10-1.1.2.331:dev"
-
-//    compile "net.sengir.forestry:forestry_1.7.10-3.5.6.15:dev"
-    compile "com.github.mcjty:mcjtylib:1.7.0-SNAPSHOT:dev"
+    //compile "com.github.mcjty:mcjtylib:1.7.0-SNAPSHOT:dev"
 }
 
 processResources
@@ -116,6 +91,5 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-        exclude 'nei_at.cfg'
     }
 }
