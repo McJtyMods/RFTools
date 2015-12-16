@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.common.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -108,12 +108,12 @@ public class RenderWorldLastEventHandler {
             float z = base.getZ() + coordinate.getZ();
             tessellator.addTranslation(x, y, z);
 
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.UP.ordinal(), 1.1f, -0.05f);
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.DOWN.ordinal(), 1.1f, -0.05f);
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.NORTH.ordinal(), 1.1f, -0.05f);
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.SOUTH.ordinal(), 1.1f, -0.05f);
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.WEST.ordinal(), 1.1f, -0.05f);
-            DefaultISBRH.addSideFullTexture(tessellator, ForgeDirection.EAST.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.UP.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.DOWN.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.NORTH.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.SOUTH.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.WEST.ordinal(), 1.1f, -0.05f);
+            DefaultISBRH.addSideFullTexture(tessellator, EnumFacing.EAST.ordinal(), 1.1f, -0.05f);
             tessellator.addTranslation(-x, -y, -z);
 //            renderProtectionBlock(tessellator, base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ());
         }

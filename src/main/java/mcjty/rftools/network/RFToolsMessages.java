@@ -1,36 +1,7 @@
 package mcjty.rftools.network;
 
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 import mcjty.lib.network.PacketHandler;
-import mcjty.rftools.blocks.crafter.PacketCrafter;
-import mcjty.rftools.blocks.monitor.*;
-import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
-import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
-import mcjty.rftools.blocks.screens.network.PacketReturnScreenDataHandler;
-import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
-import mcjty.rftools.blocks.security.PacketGetSecurityName;
-import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
-import mcjty.rftools.blocks.security.PacketSecurityNameReady;
-import mcjty.rftools.blocks.shield.PacketFiltersReady;
-import mcjty.rftools.blocks.shield.PacketGetFilters;
-import mcjty.rftools.blocks.spaceprojector.PacketChamberInfoReady;
-import mcjty.rftools.blocks.spaceprojector.PacketGetChamberInfo;
-import mcjty.rftools.blocks.storage.*;
-import mcjty.rftools.blocks.storagemonitor.PacketGetInventory;
-import mcjty.rftools.blocks.storagemonitor.PacketInventoryReady;
-import mcjty.rftools.blocks.storagemonitor.PacketSearchItems;
-import mcjty.rftools.blocks.storagemonitor.PacketSearchReady;
-import mcjty.rftools.blocks.teleporter.*;
-import mcjty.rftools.dimension.network.*;
-import mcjty.rftools.items.devdelight.PacketDelightingInfoReady;
-import mcjty.rftools.items.devdelight.PacketGetDelightingInfo;
-import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
-import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
-import mcjty.rftools.items.teleportprobe.*;
-import mcjty.rftools.playerprops.PacketSendBuffsToClient;
-import mcjty.rftools.playerprops.PacketSendBuffsToClientHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 public class RFToolsMessages {
     public static SimpleNetworkWrapper INSTANCE;

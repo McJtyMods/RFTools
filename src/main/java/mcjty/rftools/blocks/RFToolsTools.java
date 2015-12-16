@@ -1,13 +1,11 @@
 package mcjty.rftools.blocks;
 
-import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 

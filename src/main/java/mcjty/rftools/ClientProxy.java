@@ -1,15 +1,12 @@
 package mcjty.rftools;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.VillagerRegistry;
-import mcjty.rftools.render.ModRenderers;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientProxy extends CommonProxy {
     private static final ResourceLocation VILLAGER_TEXTURE = new ResourceLocation(RFTools.MODID, "textures/entities/rftoolsvillager.png");
@@ -22,12 +19,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-        ModRenderers.init();
+//        ModRenderers.init();
         MinecraftForge.EVENT_BUS.register(this);
-
-        if (GeneralConfiguration.villagerId != -1) {
-            VillagerRegistry.instance().registerVillagerSkin(GeneralConfiguration.villagerId, VILLAGER_TEXTURE);
-        }
     }
 
     @Override
@@ -38,11 +31,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent evt) {
         RenderWorldLastEventHandler.tick(evt);
-    }
-
-    @SubscribeEvent
-    public void renderGameOverlayEvent(RenderGameOverlayEvent evt) {
-        RenderGameOverlayEventHandler.onRender(evt);
     }
 
 }

@@ -1,9 +1,9 @@
 package mcjty.rftools.apideps;
 
 import buildcraft.api.tools.IToolWrench;
-import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.Loader;
 
 public class BuildCraftChecker {
     private static int buildcraftPresent = 0;

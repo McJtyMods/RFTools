@@ -1,6 +1,6 @@
 package mcjty.rftools.varia;
 
-import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -25,7 +25,7 @@ public class Broadcaster {
             EntityPlayer player = (EntityPlayer) p;
             double sqdist = player.getDistanceSq(x + .5, y + .5, z + .5);
             if (sqdist < radius) {
-                Logging.warn(player, message);
+                RFTools.log.warn(player, message);
             }
         }
     }

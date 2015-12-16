@@ -4,11 +4,8 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.apideps.DraconicEvolutionCompatibility;
-import mcjty.rftools.apideps.EnderIOCompatibility;
-import mcjty.rftools.apideps.MekanismCompatibility;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class EnergyTools {
 
@@ -67,16 +64,16 @@ public class EnergyTools {
             energyStored = MekanismCompatibility.getEnergyLevel(tileEntity);
         } else if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else if (tileEntity instanceof IEnergyReceiver) {
             IEnergyReceiver handler = (IEnergyReceiver) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else if (tileEntity instanceof IEnergyProvider) {
             IEnergyProvider handler = (IEnergyProvider) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else {
             maxEnergyStored = 0;
             energyStored = 0;
@@ -89,16 +86,16 @@ public class EnergyTools {
         int energyStored;
         if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else if (tileEntity instanceof IEnergyReceiver) {
             IEnergyReceiver handler = (IEnergyReceiver) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else if (tileEntity instanceof IEnergyProvider) {
             IEnergyProvider handler = (IEnergyProvider) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(ForgeDirection.DOWN);
-            energyStored = handler.getEnergyStored(ForgeDirection.DOWN);
+            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
+            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else {
             maxEnergyStored = 0;
             energyStored = 0;
@@ -106,7 +103,7 @@ public class EnergyTools {
         return new EnergyLevel(energyStored, maxEnergyStored);
     }
 
-    public static int extractEnergy(TileEntity tileEntity, ForgeDirection from, int maxExtract) {
+    public static int extractEnergy(TileEntity tileEntity, EnumFacing from, int maxExtract) {
         if (tileEntity instanceof IEnergyHandler) {
             return ((IEnergyHandler) tileEntity).extractEnergy(from, maxExtract, false);
         } else if (tileEntity instanceof IEnergyProvider) {
@@ -116,7 +113,7 @@ public class EnergyTools {
         }
     }
 
-    public static int receiveEnergy(TileEntity tileEntity, ForgeDirection from, int maxReceive) {
+    public static int receiveEnergy(TileEntity tileEntity, EnumFacing from, int maxReceive) {
         if (tileEntity instanceof IEnergyHandler) {
             return ((IEnergyHandler) tileEntity).receiveEnergy(from, maxReceive, false);
         } else if (tileEntity instanceof IEnergyReceiver) {
