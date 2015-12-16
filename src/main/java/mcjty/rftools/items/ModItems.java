@@ -1,12 +1,23 @@
 package mcjty.rftools.items;
 
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public final class ModItems {
+
+    public static SmartWrenchItem smartWrenchItem;
 
     public static void init() {
         setupVariousItems();
     }
 
     private static void setupVariousItems() {
-        }
+        smartWrenchItem = new SmartWrenchItem();
+    }
 
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+        smartWrenchItem.setupModel();
+    }
 }

@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.rftools.items.ModItems;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,6 +19,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
 //        ModRenderers.init();
+        ModItems.initClient();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
