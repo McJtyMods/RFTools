@@ -2,6 +2,7 @@ package mcjty.rftools.commands;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -102,7 +103,7 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
         return null;
     }
 
@@ -117,7 +118,7 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(ICommand o) {
         return getCommandName().compareTo(((ICommand)o).getCommandName());
     }
 }

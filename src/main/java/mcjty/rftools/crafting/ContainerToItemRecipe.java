@@ -17,7 +17,7 @@ public class ContainerToItemRecipe extends ShapedRecipes {
 
     private Object getObjectFromStack(Item item) {
         if (item instanceof ItemBlock) {
-            return ((ItemBlock) item).field_150939_a;
+            return ((ItemBlock) item).getBlock();
         } else {
             return item;
         }
@@ -45,7 +45,7 @@ public class ContainerToItemRecipe extends ShapedRecipes {
             if (tagCompound != null) {
                 int damage = tagCompound.getInteger("childDamage");
                 NBTTagCompound newtag = new NBTTagCompound();
-                for (Object o : tagCompound.func_150296_c()) {
+                for (Object o : tagCompound.getKeySet()) {
                     String tag = (String) o;
                     if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag))) {
                         newtag.setTag(tag, tagCompound.getTag(tag));

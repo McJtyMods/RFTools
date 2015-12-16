@@ -10,7 +10,6 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -60,12 +59,7 @@ public abstract class CommonProxy {
 
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
-        MinecraftForge.EVENT_BUS.register(new ClientDisconnectEvent());
-        MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        MinecraftForge.ORE_GEN_BUS.register(new ForgeOregenHandlers());
-        MinecraftForge.TERRAIN_GEN_BUS.register(new ForgeTerrainGenHandlers());
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandlers());
     }
 
     public void postInit(FMLPostInitializationEvent e) {

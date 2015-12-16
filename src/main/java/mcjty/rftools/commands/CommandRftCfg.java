@@ -6,8 +6,6 @@ public class CommandRftCfg extends DefaultCommand {
         registerCommand(new CmdSetBuffBar());
         registerCommand(new CmdSetStyle());
         registerCommand(new CmdReset());
-        registerCommand(new CmdDimletCfg());
-        registerCommand(new CmdDumpClasses());
     }
 
     @Override

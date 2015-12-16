@@ -214,7 +214,7 @@ public class DimensionDictionary
         if (provider instanceof Handler)
             return ((Handler) provider).getDimensionTypes();
 
-        Set<String> types = dimensionTypes.get(provider.dimensionId);
+        Set<String> types = dimensionTypes.get(provider.getDimensionId());
         return types != null ? types : SET_UNCATEGORIZED;
     }
 

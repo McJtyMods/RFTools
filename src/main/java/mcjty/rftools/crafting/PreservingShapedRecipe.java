@@ -18,7 +18,7 @@ public class PreservingShapedRecipe extends ShapedRecipes {
 
     private Object getObjectFromStack(Item item) {
         if (item instanceof ItemBlock) {
-            return ((ItemBlock) item).field_150939_a;
+            return ((ItemBlock) item).getBlock();
         } else {
             return item;
         }

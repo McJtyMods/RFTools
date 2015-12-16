@@ -3,7 +3,6 @@ package mcjty.rftools.varia;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import mcjty.rftools.RFTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -53,16 +52,7 @@ public class EnergyTools {
     public static EnergyLevelMulti getEnergyLevelMulti(TileEntity tileEntity) {
         long maxEnergyStored;
         long energyStored;
-        if (RFTools.instance.enderio && EnderIOCompatibility.isPowerStorage(tileEntity)) {
-            maxEnergyStored = EnderIOCompatibility.getMaxEnergyLevel(tileEntity);
-            energyStored = EnderIOCompatibility.getEnergyLevel(tileEntity);
-        } else if (RFTools.instance.draconicevolution && DraconicEvolutionCompatibility.isPowerStorage(tileEntity)) {
-            maxEnergyStored = DraconicEvolutionCompatibility.getMaxEnergyLevel(tileEntity);
-            energyStored = DraconicEvolutionCompatibility.getEnergyLevel(tileEntity);
-        } else if (RFTools.instance.mekanism && MekanismCompatibility.isPowerStorage(tileEntity)) {
-            maxEnergyStored = MekanismCompatibility.getMaxEnergyLevel(tileEntity);
-            energyStored = MekanismCompatibility.getEnergyLevel(tileEntity);
-        } else if (tileEntity instanceof IEnergyHandler) {
+        if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
             maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
             energyStored = handler.getEnergyStored(EnumFacing.DOWN);

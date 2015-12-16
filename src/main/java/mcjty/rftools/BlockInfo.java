@@ -31,7 +31,7 @@ public class BlockInfo {
     }
 
     public static String getReadableName(Block block, Coordinate coordinate, int metadata, World world) {
-        List<ItemStack> itemStacks = block.getDrops(world, coordinate.getX(), coordinate.getY(), coordinate.getZ(), metadata, 1);
+        List<ItemStack> itemStacks = block.getDrops(world, coordinate, world.getBlockState(coordinate), 1);
         if (itemStacks != null && !itemStacks.isEmpty() && itemStacks.get(0).getItem() != null) {
             return getReadableName(itemStacks.get(0).getItem(), metadata);
         }

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,10 +15,9 @@ public class RFToolsTools {
 
         for (int j = 0; j < worldObj.playerEntities.size(); ++j) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP)worldObj.playerEntities.get(j);
-            ChunkCoordinates chunkcoordinates = entityplayermp.getPlayerCoordinates();
-            double d7 = x - chunkcoordinates.posX;
-            double d8 = y - chunkcoordinates.posY;
-            double d9 = z - chunkcoordinates.posZ;
+            double d7 = x - entityplayermp.posX;
+            double d8 = y - entityplayermp.posY;
+            double d9 = z - entityplayermp.posZ;
             double d10 = d7 * d7 + d8 * d8 + d9 * d9;
 
             if (d10 <= 256.0D) {
@@ -43,7 +41,7 @@ public class RFToolsTools {
 
     public static void convertNBTtoJson(StringBuffer buffer, NBTTagCompound tagCompound, int indent) {
         boolean first = true;
-        for (Object o : tagCompound.func_150296_c()) {
+        for (Object o : tagCompound.getKeySet()) {
             if (!first) {
                 buffer.append(",\n");
             }
@@ -68,19 +66,6 @@ public class RFToolsTools {
         }
         if (!first) {
             buffer.append("\n");
-        }
-    }
-
-    public static String getModidForBlock(Block block) {
-        String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
-        if (nameForObject == null) {
-            return "?";
-        }
-        String[] lst = StringUtils.split(nameForObject, ":");
-        if (lst.length >= 2) {
-            return lst[0];
-        } else {
-            return "?";
         }
     }
 }
