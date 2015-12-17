@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,6 +21,7 @@ public class ClientProxy extends CommonProxy {
         super.init(e);
 //        ModRenderers.init();
         ModItems.initClient();
+        ModBlocks.initClient();
         MinecraftForge.EVENT_BUS.register(this);
     }
 

@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.generator.CoalGeneratorTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.block.material.Material;
@@ -14,11 +15,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
-public abstract class GenericRFToolsBlock extends GenericBlock {
+public abstract class GenericRFToolsBlock<T extends GenericTileEntity> extends GenericBlock {
 
-    public GenericRFToolsBlock(Material material, Class<? extends TileEntity> tileEntityClass, boolean isContainer) {
+    public GenericRFToolsBlock(Material material, Class<? extends TileEntity> tileEntityClass, String unlocalizedName, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, isContainer);
+        setUnlocalizedName(unlocalizedName);
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(this, unlocalizedName);
+        GameRegistry.registerTileEntity(tileEntityClass, unlocalizedName);
     }
 
     @Override

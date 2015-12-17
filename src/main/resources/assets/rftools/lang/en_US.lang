@@ -136,6 +136,7 @@ item.EfficiencyEssence.name=Efficiency Essence
 item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 
 # Blocks
+tile.coalgenerator.name=Coal Generator
 tile.crafterBlock1.name=Crafter Tier 1
 tile.crafterBlock2.name=Crafter Tier 2
 tile.crafterBlock3.name=Crafter Tier 3

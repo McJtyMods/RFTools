@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class MachineBase extends Block {
     public MachineBase() {
@@ -13,6 +14,7 @@ public class MachineBase extends Block {
 //        setBlockTextureName(RFTools.MODID + ":" + "machineSide");
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
         setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(this, "machineBase");
     }
 
     @Override

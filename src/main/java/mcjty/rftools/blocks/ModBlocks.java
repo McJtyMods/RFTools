@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public final class ModBlocks {
     public static MachineFrame machineFrame;
@@ -8,14 +10,18 @@ public final class ModBlocks {
 
     public static void init() {
         initBaseBlocks();
+
+        CoalGeneratorSetup.init();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+        CoalGeneratorSetup.initClient();
     }
 
     private static void initBaseBlocks() {
         machineFrame = new MachineFrame();
-        GameRegistry.registerBlock(machineFrame, "machineFrame");
-
         machineBase = new MachineBase();
-        GameRegistry.registerBlock(machineBase, "machineBase");
     }
 
 }
