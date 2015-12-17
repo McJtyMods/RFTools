@@ -1,8 +1,6 @@
 {
-  "parent": "block/orientable",
+  "parent": "rftools:block/rftoolsblock",
   "textures": {
-    "top": "rftools:blocks/machineTop",
-    "front": "rftools:blocks/machineCoalGenerator",
-    "side": "rftools:blocks/machineSide"
+    "front": "rftools:blocks/machineCoalGenerator"
   }
 }
