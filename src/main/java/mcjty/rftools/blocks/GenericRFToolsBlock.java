@@ -5,6 +5,8 @@ import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.smartwrench.SmartWrench;
+import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,17 +26,17 @@ public abstract class GenericRFToolsBlock extends GenericBlock {
         WrenchUsage usage = super.getWrenchUsage(pos, player, itemStack, wrenchUsed, item);
         if (item instanceof IToolHammer && usage == WrenchUsage.DISABLED) {
             // It is still possible it is a smart wrench.
-//            if (item instanceof SmartWrench) {
-//                SmartWrench smartWrench = (SmartWrench) item;
-//                SmartWrenchMode mode = smartWrench.getMode(itemStack);
-//                if (mode.equals(SmartWrenchMode.MODE_SELECT)) {
-//                    if (player.isSneaking()) {
-//                        usage = WrenchUsage.SNEAK_SELECT;
-//                    } else {
-//                        usage = WrenchUsage.SELECT;
-//                    }
-//                }
-//            }
+            if (item instanceof SmartWrench) {
+                SmartWrench smartWrench = (SmartWrench) item;
+                SmartWrenchMode mode = smartWrench.getMode(itemStack);
+                if (mode.equals(SmartWrenchMode.MODE_SELECT)) {
+                    if (player.isSneaking()) {
+                        usage = WrenchUsage.SNEAK_SELECT;
+                    } else {
+                        usage = WrenchUsage.SELECT;
+                    }
+                }
+            }
         }
         return usage;
     }
