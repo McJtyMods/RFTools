@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks;
 
+import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -12,11 +13,13 @@ public final class ModBlocks {
         initBaseBlocks();
 
         CoalGeneratorSetup.init();
+        CrafterSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         CoalGeneratorSetup.initClient();
+        CrafterSetup.initClient();
     }
 
     private static void initBaseBlocks() {

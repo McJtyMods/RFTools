@@ -137,9 +137,9 @@ item.MediocreEfficiencyEssence.name=Mediocre Efficiency Essence
 
 # Blocks
 tile.coalgenerator.name=Coal Generator
-tile.crafterBlock1.name=Crafter Tier 1
-tile.crafterBlock2.name=Crafter Tier 2
-tile.crafterBlock3.name=Crafter Tier 3
+tile.crafter1.name=Crafter Tier 1
+tile.crafter2.name=Crafter Tier 2
+tile.crafter3.name=Crafter Tier 3
 tile.relayBlock.name=Power Relay
 tile.itemFilterBlock.name=Item Filter
 tile.dimletFilterBlock.name=Dimlet Filter

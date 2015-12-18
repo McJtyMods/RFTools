@@ -1,5 +1,11 @@
 package mcjty.rftools.blocks.generator;
 
+import mcjty.rftools.blocks.ModBlocks;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,4 +20,11 @@ public class CoalGeneratorSetup {
     public static void initClient() {
         coalGeneratorBlock.initModel();
     }
+
+    public static void initCrafting() {
+        Block redstoneTorch = Blocks.redstone_torch;
+
+        GameRegistry.addRecipe(new ItemStack(coalGeneratorBlock), "cTc", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.coal);
+    }
+
 }

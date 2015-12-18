@@ -3,6 +3,7 @@ package mcjty.rftools.blocks;
 import cofh.api.item.IToolHammer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
@@ -42,7 +43,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         this.guiClass = guiClass;
         setUnlocalizedName(unlocalizedName);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this, unlocalizedName);
+        GameRegistry.registerBlock(this, GenericItemBlock.class, unlocalizedName);
         GameRegistry.registerTileEntity(tileEntityClass, unlocalizedName);
     }
 

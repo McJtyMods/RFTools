@@ -1,6 +1,8 @@
 package mcjty.rftools.crafting;
 
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -18,6 +20,9 @@ public final class ModCrafting {
     public static void init() {
         intBaseCrafting();
         initItemCrafting();
+
+        CoalGeneratorSetup.initCrafting();
+        CrafterSetup.initCrafting();
     }
 
     private static void initItemCrafting() {
