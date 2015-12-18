@@ -3,9 +3,9 @@ package mcjty.rftools;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.items.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -47,8 +47,7 @@ public class RFTools implements ModBase {
         @Override
         @SideOnly(Side.CLIENT)
         public Item getTabIconItem() {
-//            return ModItems.rfToolsManualItem;
-            return Items.redstone;
+            return ModItems.rfToolsManualItem;
         }
     };
 
