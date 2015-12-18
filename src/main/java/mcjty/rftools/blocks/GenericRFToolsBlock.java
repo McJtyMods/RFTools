@@ -2,29 +2,86 @@ package mcjty.rftools.blocks;
 
 import cofh.api.item.IToolHammer;
 import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.generator.CoalGeneratorTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class GenericRFToolsBlock<T extends GenericTileEntity> extends GenericBlock {
+import java.lang.reflect.Constructor;
 
-    public GenericRFToolsBlock(Material material, Class<? extends TileEntity> tileEntityClass, String unlocalizedName, boolean isContainer) {
+public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container, G extends GenericGuiContainer> extends GenericBlock {
+
+    private final Class<? extends C> containerClass;
+    private final Class<? extends G> guiClass;
+
+    public GenericRFToolsBlock(Material material,
+                               Class<? extends T> tileEntityClass,
+                               Class<? extends C> containerClass,
+                               Class<? extends G> guiClass,
+                               String unlocalizedName, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, isContainer);
+        this.containerClass = containerClass;
+        this.guiClass = guiClass;
         setUnlocalizedName(unlocalizedName);
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, unlocalizedName);
         GameRegistry.registerTileEntity(tileEntityClass, unlocalizedName);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
+                .register(Item.getItemFromBlock(this), 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        T inventory = (T) tileEntity;
+        C container;
+        G gui;
+        try {
+            Constructor<? extends C> constructor = containerClass.getConstructor(EntityPlayer.class, IInventory.class);
+            container = constructor.newInstance(entityPlayer, inventory);
+            Constructor<? extends G> guiConstructor = guiClass.getConstructor(tileEntityClass, containerClass);
+            gui = guiConstructor.newInstance(inventory, container);
+            return gui;
+        } catch (Exception e) {
+            Logging.logError("Severe exception during creation of gui!");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+        T inventory = (T) tileEntity;
+        C container;
+        try {
+            Constructor<? extends C> constructor = containerClass.getConstructor(EntityPlayer.class, IInventory.class);
+            container = constructor.newInstance(entityPlayer, inventory);
+            return container;
+        } catch (Exception e) {
+            Logging.logError("Severe exception during creation of gui!");
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

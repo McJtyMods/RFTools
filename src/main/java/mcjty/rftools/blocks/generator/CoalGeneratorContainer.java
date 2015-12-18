@@ -6,6 +6,7 @@ import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class CoalGeneratorContainer extends GenericContainer {
@@ -21,7 +22,7 @@ public class CoalGeneratorContainer extends GenericContainer {
         }
     };
 
-    public CoalGeneratorContainer(EntityPlayer player, CoalGeneratorTileEntity containerInventory) {
+    public CoalGeneratorContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
