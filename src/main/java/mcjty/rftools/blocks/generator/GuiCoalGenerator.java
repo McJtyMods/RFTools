@@ -50,7 +50,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
 
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
     }

@@ -78,7 +78,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
         return true;
     }
 
