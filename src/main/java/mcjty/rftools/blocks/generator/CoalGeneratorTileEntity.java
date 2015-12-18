@@ -9,6 +9,8 @@ import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,19 +31,53 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         if (!worldObj.isRemote) {
             handleSendingEnergy();
 
+            boolean working = burning > 0;
+
             if (burning > 0) {
                 burning--;
                 modifyEnergyStored(CoalGeneratorConfiguration.rfPerTick);
-                markDirty();
+                if (burning == 0) {
+                    markDirtyClient();
+                } else {
+                    markDirty();
+                }
                 return;
             }
 
             if (inventoryHelper.containsItem(CoalGeneratorContainer.SLOT_COALINPUT)) {
                 inventoryHelper.decrStackSize(CoalGeneratorContainer.SLOT_COALINPUT, 1);
                 burning = CoalGeneratorConfiguration.ticksPerCoal;
-                markDirty();
+                if (working) {
+                    markDirty();
+                } else {
+                    markDirtyClient();
+                }
+            } else {
+                if (working) {
+                    markDirtyClient();
+                }
             }
         }
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        boolean working = burning > 0;
+
+        super.onDataPacket(net, packet);
+
+        if (worldObj.isRemote) {
+            // If needed send a render update.
+            boolean newWorking = burning > 0;
+            if (newWorking != working) {
+                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                System.out.println("CLIENT UPDATE");
+            }
+        }
+    }
+
+    public boolean isWorking() {
+        return burning > 0;
     }
 
     private void handleSendingEnergy() {
