@@ -71,6 +71,10 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         }
     }
 
+    @Override
+    public InventoryHelper getInventoryHelper() {
+        return inventoryHelper;
+    }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
@@ -85,31 +89,6 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
         return false;
-    }
-
-    @Override
-    public int getSizeInventory() {
-        return inventoryHelper.getCount();
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int index) {
-        return inventoryHelper.getStackInSlot(index);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int count) {
-        return inventoryHelper.decrStackSize(index, count);
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return inventoryHelper.removeStackFromSlot(index);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        inventoryHelper.setInventorySlotContents(64, index, stack);
     }
 
     @Override
