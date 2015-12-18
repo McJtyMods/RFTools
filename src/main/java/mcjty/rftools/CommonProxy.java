@@ -4,6 +4,7 @@ import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
@@ -46,8 +47,10 @@ public abstract class CommonProxy {
         try {
             cfg.load();
             cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
+            cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
 
             GeneralConfiguration.init(cfg);
+            CoalGeneratorConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

@@ -16,7 +16,7 @@ public class CoalGeneratorContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.coal)), CONTAINER_INVENTORY, SLOT_COALINPUT, 64, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.coal)), CONTAINER_INVENTORY, SLOT_COALINPUT, 82, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };
