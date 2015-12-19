@@ -1,19 +1,15 @@
 package mcjty.rftools.items.storage;
 
 import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -23,9 +19,6 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
     private int capacity;
     private int maxReceive;
     private int maxExtract;
-
-    private IIcon iconFull;
-    private IIcon iconEmpty;
 
     public static final int DAMAGE_EMPTY = 0;
     public static final int DAMAGE_FULL = 1;
@@ -43,21 +36,6 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         return 1;
     }
 
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        iconFull = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModuleTablet");
-        iconEmpty = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModuleTabletEmpty");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int damage) {
-        if (damage == DAMAGE_EMPTY) {
-            return iconEmpty;
-        } else {
-            return iconFull;
-        }
-    }
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
@@ -142,40 +120,40 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
     @Override
     public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
-        if (container.stackTagCompound == null) {
-            container.stackTagCompound = new NBTTagCompound();
+        if (container.getTagCompound() == null) {
+            container.setTagCompound(new NBTTagCompound());
         }
-        int energy = container.stackTagCompound.getInteger("Energy");
+        int energy = container.getTagCompound().getInteger("Energy");
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
 
         if (!simulate) {
             energy += energyReceived;
-            container.stackTagCompound.setInteger("Energy", energy);
+            container.getTagCompound().setInteger("Energy", energy);
         }
         return energyReceived;
     }
 
     @Override
     public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Energy")) {
+        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
             return 0;
         }
-        int energy = container.stackTagCompound.getInteger("Energy");
+        int energy = container.getTagCompound().getInteger("Energy");
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.stackTagCompound.setInteger("Energy", energy);
+            container.getTagCompound().setInteger("Energy", energy);
         }
         return energyExtracted;
     }
 
     @Override
     public int getEnergyStored(ItemStack container) {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Energy")) {
+        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
             return 0;
         }
-        return container.stackTagCompound.getInteger("Energy");
+        return container.getTagCompound().getInteger("Energy");
     }
 
     @Override

@@ -4,7 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Comparator;
@@ -58,29 +59,19 @@ public class ModItemSorter implements ItemSorter {
     }
 
     public static String getModidForBlock(Block block) {
-        String nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        ResourceLocation nameForObject = GameData.getBlockRegistry().getNameForObject(block);
         if (nameForObject == null) {
             return "?";
         }
-        String[] lst = StringUtils.split(nameForObject, ":");
-        if (lst.length >= 2) {
-            return lst[0];
-        } else {
-            return "?";
-        }
+        return nameForObject.getResourceDomain();
     }
 
     public static String getModidForItem(Item item) {
-        String nameForObject = GameData.getItemRegistry().getNameForObject(item);
+        ResourceLocation nameForObject = GameData.getItemRegistry().getNameForObject(item);
         if (nameForObject == null) {
             return "?";
         }
-        String[] lst = StringUtils.split(nameForObject, ":");
-        if (lst.length >= 2) {
-            return lst[0];
-        } else {
-            return "?";
-        }
+        return nameForObject.getResourceDomain();
     }
 
 
@@ -92,7 +83,7 @@ public class ModItemSorter implements ItemSorter {
     public static String getMod(ItemStack stack) {
         Item item = stack.getItem();
         if (item instanceof ItemBlock) {
-            Block block = ((ItemBlock) item).field_150939_a;
+            Block block = ((ItemBlock) item).getBlock();
             if (block != null) {
                 return getModidForBlock(block);
             }

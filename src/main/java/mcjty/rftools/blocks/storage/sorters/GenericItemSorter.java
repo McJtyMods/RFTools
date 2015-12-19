@@ -60,7 +60,7 @@ public class GenericItemSorter implements ItemSorter {
     private static String getName(Pair<ItemStack, Integer> object) {
         Item item = object.getKey().getItem();
         if (item instanceof ItemBlock) {
-            Block block = ((ItemBlock) item).field_150939_a;
+            Block block = ((ItemBlock) item).getBlock();
             if (block != null && block.getClass() != null) {
                 String category = ModularStorageConfiguration.getCategory(block.getClass());
                 if (category != null) return category;

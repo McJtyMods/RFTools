@@ -1,27 +1,22 @@
 package mcjty.rftools.items.storage;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
 public class StorageModuleItem extends Item {
-    private final IIcon[] icons = new IIcon[7];
-    private IIcon activeIcon;
-
     public static final int STORAGE_TIER1 = 0;
     public static final int STORAGE_TIER2 = 1;
     public static final int STORAGE_TIER3 = 2;
@@ -32,16 +27,6 @@ public class StorageModuleItem extends Item {
         setMaxStackSize(1);
         setHasSubtypes(true);
         setMaxDamage(0);
-    }
-
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        for (int i = 0 ; i < 7 ; i++) {
-            if (MAXSIZE[i] != 0) {
-                icons[i] = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule" + i);
-            }
-        }
-        activeIcon = iconRegister.registerIcon(RFTools.MODID + ":storage/storageModule6Active");
     }
 
     @Override
@@ -104,22 +89,6 @@ public class StorageModuleItem extends Item {
                 list.add(EnumChatFormatting.GREEN + "Contents id: " + id);
             }
             list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIconIndex(ItemStack stack) {
-        int damage = stack.getItemDamage();
-        if (damage == 6) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
-            if (tagCompound != null && tagCompound.hasKey("id")) {
-                return activeIcon;
-            } else {
-                return icons[damage];
-            }
-        } else {
-            return icons[damage];
         }
     }
 

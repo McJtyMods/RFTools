@@ -1,7 +1,5 @@
 package mcjty.rftools.items.storage;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
@@ -10,6 +8,8 @@ import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class OreDictTypeItem extends StorageTypeItem {
     @Override
     public List<ItemSorter> getSorters() {
         if (sorters == null) {
-            sorters = new ArrayList<ItemSorter>();
+            sorters = new ArrayList<>();
             sorters.add(new NameItemSorter());
             sorters.add(new CountItemSorter());
             sorters.add(new OreTypeItemSorter());

@@ -59,6 +59,9 @@ public class RFTools implements ModBase {
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
+    public static final int GUI_STORAGE_FILTER = modGuiIndex++;
+    public static final int GUI_REMOTE_STORAGE_ITEM = modGuiIndex++;
+    public static final int GUI_MODULAR_STORAGE_ITEM = modGuiIndex++;
 
 
     /**

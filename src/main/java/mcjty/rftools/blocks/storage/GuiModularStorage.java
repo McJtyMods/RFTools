@@ -38,6 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -315,14 +316,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
             Slot slot = getSlotAtPosition(x, y);
             if (slot != null && slot.getHasStack()) {
                 ItemStack stack = slot.getStack();
                 Item item = stack.getItem();
                 if (item instanceof ItemBlock) {
-                    Block block = ((ItemBlock) item).field_150939_a;
+                    Block block = ((ItemBlock) item).getBlock();
                     dumpClasses("Block", block);
                 } else {
                     dumpClasses("Item", item);
@@ -487,7 +488,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) {
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!window.keyTyped(typedChar, keyCode)) {
             if (typedChar >= '1' && typedChar <= '9') {
                 return;
