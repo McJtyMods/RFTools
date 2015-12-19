@@ -4,6 +4,7 @@ import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -29,9 +30,9 @@ public class ModularStorageContainer extends GenericContainer {
         }
     };
 
-    public ModularStorageContainer(EntityPlayer player, ModularStorageTileEntity containerInventory) {
+    public ModularStorageContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
-        modularStorageTileEntity = containerInventory;
+        modularStorageTileEntity = (ModularStorageTileEntity) containerInventory;
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

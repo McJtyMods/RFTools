@@ -38,10 +38,13 @@ public class ModularStorageSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
-//        crafterBlock1.initModel();
-//        crafterBlock2.initModel();
-//        crafterBlock3.initModel();
+        modularStorageBlock.initModel();
+        remoteStorageBlock.initModel();
+        storageModuleTabletItem.initModel();
         storageModuleItem.initModel();
+        oreDictTypeItem.initModel();
+        genericTypeItem.initModel();
+        storageFilterItem.initModel();
     }
 
 

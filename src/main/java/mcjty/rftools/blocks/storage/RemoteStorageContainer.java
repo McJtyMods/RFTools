@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class RemoteStorageContainer extends GenericContainer {
@@ -32,9 +33,9 @@ public class RemoteStorageContainer extends GenericContainer {
         }
     };
 
-    public RemoteStorageContainer(EntityPlayer player, RemoteStorageTileEntity containerInventory) {
+    public RemoteStorageContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
-        remoteStorageTileEntity = containerInventory;
+        remoteStorageTileEntity = (RemoteStorageTileEntity) containerInventory;
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

@@ -1,0 +1,6 @@
+{
+  "parent": "rftools:block/rftoolsblock",
+  "textures": {
+    "front": "rftools:blocks/machineRemoteStorage"
+  }
+}

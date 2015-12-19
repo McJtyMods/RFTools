@@ -35,7 +35,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @SideOnly(Side.CLIENT)
-    public void setupModel() {
+    public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 

@@ -2,9 +2,11 @@ package mcjty.rftools.items.storage;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.*;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,6 +36,12 @@ public class GenericTypeItem extends StorageTypeItem {
         }
         return sorters;
     }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+    }
+
 
     @Override
     public String getLongLabel(ItemStack stack) {
