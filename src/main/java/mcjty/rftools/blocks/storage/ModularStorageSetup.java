@@ -31,25 +31,9 @@ public class ModularStorageSetup {
 
         storageModuleTabletItem = new StorageModuleTabletItem();
         storageModuleItem = new StorageModuleItem();
-
-
         oreDictTypeItem = new OreDictTypeItem();
-        oreDictTypeItem.setUnlocalizedName("OreDictModule");
-        oreDictTypeItem.setCreativeTab(RFTools.tabRfTools);
-//        oreDictTypeItem.setTextureName(RFTools.MODID + ":storage/oreDictModule");
-        GameRegistry.registerItem(oreDictTypeItem, "oreDictTypeItem");
-
         genericTypeItem = new GenericTypeItem();
-        genericTypeItem.setUnlocalizedName("GenericModule");
-        genericTypeItem.setCreativeTab(RFTools.tabRfTools);
-//        genericTypeItem.setTextureName(RFTools.MODID + ":storage/genericModule");
-        GameRegistry.registerItem(genericTypeItem, "genericTypeItem");
-
         storageFilterItem = new StorageFilterItem();
-        storageFilterItem.setUnlocalizedName("FilterModule");
-        storageFilterItem.setCreativeTab(RFTools.tabRfTools);
-//        storageFilterItem.setTextureName(RFTools.MODID + ":storage/filterModule");
-        GameRegistry.registerItem(storageFilterItem, "storageFilterItem");
     }
 
     @SideOnly(Side.CLIENT)
@@ -60,7 +44,7 @@ public class ModularStorageSetup {
     }
 
 
-    public static void setupCrafting() {
+    public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'r', Items.redstone, 'q', Items.quartz);
         GameRegistry.addRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'e', Items.ender_pearl, 'q', Items.quartz);
 

@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -20,6 +21,9 @@ public class OreDictTypeItem extends StorageTypeItem {
 
     public OreDictTypeItem() {
         setMaxStackSize(16);
+        setUnlocalizedName("oredict_module");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "oredict_module");
     }
 
     @Override

@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.storage.sorters.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -17,6 +18,9 @@ public class GenericTypeItem extends StorageTypeItem {
 
     public GenericTypeItem() {
         setMaxStackSize(16);
+        setUnlocalizedName("generic_module");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "generic_module");
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -17,6 +18,9 @@ public class StorageFilterItem extends Item {
 
     public StorageFilterItem() {
         setMaxStackSize(1);
+        setUnlocalizedName("filter_module");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "filter_module");
     }
 
     @SideOnly(Side.CLIENT)
