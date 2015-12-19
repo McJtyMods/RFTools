@@ -2,6 +2,7 @@ package mcjty.rftools.blocks;
 
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,12 +15,14 @@ public final class ModBlocks {
 
         CoalGeneratorSetup.init();
         CrafterSetup.init();
+        ModularStorageSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         CoalGeneratorSetup.initClient();
         CrafterSetup.initClient();
+        ModularStorageSetup.initClient();
     }
 
     private static void initBaseBlocks() {

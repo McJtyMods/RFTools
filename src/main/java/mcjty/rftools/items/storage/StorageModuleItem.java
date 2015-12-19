@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -27,6 +28,10 @@ public class StorageModuleItem extends Item {
         setMaxStackSize(1);
         setHasSubtypes(true);
         setMaxDamage(0);
+        setUnlocalizedName("storage_module");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "storage_module");
+
     }
 
     @Override

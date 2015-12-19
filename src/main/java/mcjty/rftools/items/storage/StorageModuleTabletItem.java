@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
 
@@ -29,6 +30,10 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         capacity = ModularStorageConfiguration.TABLET_MAXENERGY;
         maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK;
         maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+
+        setUnlocalizedName("storage_module_tablet");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "storage_module_tablet");
     }
 
     @Override

@@ -11,6 +11,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
@@ -23,27 +25,12 @@ public class ModularStorageSetup {
     public static GenericTypeItem genericTypeItem;
     public static StorageFilterItem storageFilterItem;
 
-    public static void setupBlocks() {
+    public static void init() {
         modularStorageBlock = new ModularStorageBlock();
-        GameRegistry.registerBlock(modularStorageBlock, GenericItemBlock.class, "modularStorageBlock");
-        GameRegistry.registerTileEntity(ModularStorageTileEntity.class, "ModularStorageTileEntity");
-
         remoteStorageBlock = new RemoteStorageBlock();
-        GameRegistry.registerBlock(remoteStorageBlock, GenericItemBlock.class, "remoteStorageBlock");
-        GameRegistry.registerTileEntity(RemoteStorageTileEntity.class, "RemoteStorageTileEntity");
-    }
 
-    public static void setupItems() {
         storageModuleTabletItem = new StorageModuleTabletItem();
-        storageModuleTabletItem.setUnlocalizedName("StorageModuleTablet");
-        storageModuleTabletItem.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(storageModuleTabletItem, "storageModuleTabletItem");
-
         storageModuleItem = new StorageModuleItem();
-        storageModuleItem.setUnlocalizedName("StorageModule");
-        storageModuleItem.setCreativeTab(RFTools.tabRfTools);
-//        storageModuleItem.setTextureName(RFTools.MODID + ":storage/storageModule");
-        GameRegistry.registerItem(storageModuleItem, "storageModuleItem");
 
 
         oreDictTypeItem = new OreDictTypeItem();
@@ -64,6 +51,14 @@ public class ModularStorageSetup {
 //        storageFilterItem.setTextureName(RFTools.MODID + ":storage/filterModule");
         GameRegistry.registerItem(storageFilterItem, "storageFilterItem");
     }
+
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+//        crafterBlock1.initModel();
+//        crafterBlock2.initModel();
+//        crafterBlock3.initModel();
+    }
+
 
     public static void setupCrafting() {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.chest, 'r', Items.redstone, 'q', Items.quartz);
