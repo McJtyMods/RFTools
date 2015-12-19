@@ -14,14 +14,14 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
+//        ModRenderers.init();
+        ModItems.initClient();
+        ModBlocks.initClient();
     }
 
     @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-//        ModRenderers.init();
-        ModItems.initClient();
-        ModBlocks.initClient();
         MinecraftForge.EVENT_BUS.register(this);
     }
 

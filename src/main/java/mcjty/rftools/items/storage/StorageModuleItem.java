@@ -39,7 +39,6 @@ public class StorageModuleItem extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        System.out.println("StorageModuleItem.initModel ########################################");
         ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module0");
         ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module1");
         ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module2");
@@ -49,8 +48,6 @@ public class StorageModuleItem extends Item {
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER2, new ModelResourceLocation(RFTools.MODID + ":storage_module1", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER3, new ModelResourceLocation(RFTools.MODID + ":storage_module2", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_REMOTE, new ModelResourceLocation(RFTools.MODID + ":storage_module_remote", "inventory"));
-//        ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(RFTools.MODID + ":storage_module" + stack.getItemDamage(), "inventory"));
-//        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 
     @Override
