@@ -2,15 +2,17 @@ package mcjty.rftools.blocks.crafter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.Logging;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, IMessage> {
+public class PacketCrafter implements IMessage {
     private BlockPos pos;
 
     private int recipeIndex;
@@ -20,7 +22,7 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        pos = NetworkTools.readPos(buf);
         keepOne = buf.readBoolean();
         craftInternal = buf.readBoolean();
 
@@ -43,9 +45,7 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getY());
-        buf.writeInt(pos.getZ());
+        NetworkTools.writePos(buf, pos);
         buf.writeBoolean(keepOne);
         buf.writeBoolean(craftInternal);
 
@@ -82,24 +82,28 @@ public class PacketCrafter implements IMessage, IMessageHandler<PacketCrafter, I
         this.craftInternal = craftInternal;
     }
 
-    @Override
-    public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
-        TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
-        if(!(te instanceof CrafterBaseTE)) {
-            // @Todo better logging
-            System.out.println("createPowerMonitotPacket: TileEntity is not a CrafterBlockTileEntity!");
+    public static class Handler implements IMessageHandler<PacketCrafter, IMessage> {
+        @Override
+        public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
             return null;
         }
-        CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;
-        if (message.recipeIndex != -1) {
-            CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
-            recipe.setRecipe(message.items, message.items[9]);
-            recipe.setKeepOne(message.keepOne);
-            recipe.setCraftInternal(message.craftInternal);
-            crafterBlockTileEntity.markDirtyClient();
 
+        private void handle(PacketCrafter message, MessageContext ctx) {
+            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            if(!(te instanceof CrafterBaseTE)) {
+                Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
+                return;
+            }
+            CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;
+            if (message.recipeIndex != -1) {
+                CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
+                recipe.setRecipe(message.items, message.items[9]);
+                recipe.setKeepOne(message.keepOne);
+                recipe.setCraftInternal(message.craftInternal);
+                crafterBlockTileEntity.markDirtyClient();
+
+            }
         }
-        return null;
     }
-
 }

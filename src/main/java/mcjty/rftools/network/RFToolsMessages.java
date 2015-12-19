@@ -12,7 +12,7 @@ public class RFToolsMessages {
         INSTANCE = net;
 
         // Server side
-        net.registerMessage(PacketCrafter.class, PacketCrafter.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketCrafter.Handler.class, PacketCrafter.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
     }

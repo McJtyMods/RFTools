@@ -209,10 +209,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         markDirty();
     }
 
-    @Override
     protected void checkStateServer() {
-        super.checkStateServer();
-
         if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
 
             boolean rs = powered > 0;
