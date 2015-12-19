@@ -4,7 +4,9 @@ import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
+import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
@@ -48,9 +50,14 @@ public abstract class CommonProxy {
             cfg.load();
             cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
             cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
+            cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the crafter");
+            cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
+            cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE_CONFIG, "Generic item module categories for various items");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
+            CrafterConfiguration.init(cfg);
+            ModularStorageConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {
