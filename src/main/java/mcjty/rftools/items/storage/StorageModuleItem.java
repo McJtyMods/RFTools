@@ -3,6 +3,8 @@ package mcjty.rftools.items.storage;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,6 +35,22 @@ public class StorageModuleItem extends Item {
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerItem(this, "storage_module");
 
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        System.out.println("StorageModuleItem.initModel ########################################");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module0");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module1");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module2");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_remote");
+
+        ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER1, new ModelResourceLocation(RFTools.MODID + ":storage_module0", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER2, new ModelResourceLocation(RFTools.MODID + ":storage_module1", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER3, new ModelResourceLocation(RFTools.MODID + ":storage_module2", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, STORAGE_REMOTE, new ModelResourceLocation(RFTools.MODID + ":storage_module_remote", "inventory"));
+//        ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(RFTools.MODID + ":storage_module" + stack.getItemDamage(), "inventory"));
+//        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 
     @Override

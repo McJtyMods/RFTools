@@ -2,12 +2,10 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -46,12 +44,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
         for (int i = 0 ; i < 4 ; i++) {
             global[i] = new ImageChoiceLabel(mc, this);
             final int finalI = i;
-            global[i].addChoiceEvent(new ChoiceEvent() {
-                @Override
-                public void choiceChanged(Widget parent, String newChoice) {
-                    changeGlobal(finalI);
-                }
-            });
+            global[i].addChoiceEvent((parent, newChoice) -> changeGlobal(finalI));
             global[i].addChoice("off" + i, "Inter-dimensional access only", guiElements, 0, 32);
             global[i].addChoice("on" + i, "Cross-dimension access enabled", guiElements, 16, 32);
             global[i].setLayoutHint(new PositionalLayout.PositionalHint(i < 2 ? (43 - 18) : (120 - 18), (i % 2) == 0 ? 9 : 36, 16, 16));

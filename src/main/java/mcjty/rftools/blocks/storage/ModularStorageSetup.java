@@ -41,6 +41,7 @@ public class ModularStorageSetup {
 //        crafterBlock1.initModel();
 //        crafterBlock2.initModel();
 //        crafterBlock3.initModel();
+        storageModuleItem.initModel();
     }
 
 
