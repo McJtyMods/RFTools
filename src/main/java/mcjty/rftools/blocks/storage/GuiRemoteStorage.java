@@ -67,6 +67,6 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
         energyBar.setValue(tileEntity.getCurrentRF());
-        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 }

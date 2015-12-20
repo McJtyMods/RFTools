@@ -36,7 +36,7 @@ public abstract class CommonProxy {
 
         readMainConfig();
 
-        SimpleNetworkWrapper network = PacketHandler.registerMessages("rftools");
+        SimpleNetworkWrapper network = PacketHandler.registerMessages(RFTools.MODID, "rftools");
         RFToolsMessages.registerNetworkMessages(network);
 
         ModItems.init();

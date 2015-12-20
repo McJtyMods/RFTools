@@ -103,7 +103,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         sendChangeToServer(-1, null, null, false, false);
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     private Slider initRecipeList() {
@@ -344,6 +344,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 }

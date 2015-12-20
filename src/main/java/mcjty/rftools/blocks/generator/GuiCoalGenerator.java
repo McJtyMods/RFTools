@@ -42,7 +42,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
 
@@ -52,6 +52,6 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
 
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 }

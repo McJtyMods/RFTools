@@ -66,7 +66,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
             } else {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimensionId(),
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimensionId(),
                             modularStorageTileEntity.getPos())));
                 }
                 int stacks = StorageInfoPacketClient.cntReceived;
