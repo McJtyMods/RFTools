@@ -3,8 +3,11 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -85,18 +88,17 @@ public class TeleportDestinations extends WorldSavedData {
 
     // Server side only
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
-        // @todo
-//        PlayerExtendedProperties properties = null;
-//        if (playerName != null) {
-//            List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-//            for (Object player : list) {
-//                EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
-//                if (playerName.equals(entityplayermp.getDisplayName())) {
-//                    properties = PlayerExtendedProperties.getProperties(entityplayermp);
-//                    break;
-//                }
-//            }
-//        }
+        PlayerExtendedProperties properties = null;
+        if (playerName != null) {
+            List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+            for (Object player : list) {
+                EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+                if (playerName.equals(entityplayermp.getDisplayName())) {
+                    properties = PlayerExtendedProperties.getProperties(entityplayermp);
+                    break;
+                }
+            }
+        }
 
         List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
         for (TeleportDestination destination : destinations.values()) {

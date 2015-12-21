@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -162,9 +164,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         for (Object p : list) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
             if (playerName.equals(entityplayermp.getDisplayName())) {
-                //@todo
-//                PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
-//                properties.getFavoriteDestinationsProperties().setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
+                PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
+                properties.getFavoriteDestinationsProperties().setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
                 return;
             }
         }

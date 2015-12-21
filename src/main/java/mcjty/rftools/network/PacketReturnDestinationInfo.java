@@ -2,7 +2,10 @@ package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketReturnDestinationInfo implements IMessage {
     private int id;
@@ -34,5 +37,14 @@ public class PacketReturnDestinationInfo implements IMessage {
     public PacketReturnDestinationInfo(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static class Handler implements IMessageHandler<PacketReturnDestinationInfo, IMessage> {
+        @Override
+        public IMessage onMessage(PacketReturnDestinationInfo message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(() -> ReturnDestinationInfoHelper.setDestinationInfo(message));
+            return null;
+        }
+
     }
 }
