@@ -1,7 +1,7 @@
 package mcjty.rftools;
 
-import mcjty.lib.varia.Coordinate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -10,18 +10,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * This class holds information on client-side only which are global to the mod.
  */
 public class ClientInfo {
-    private Coordinate selectedTE = null;
-    private Coordinate destinationTE = null;
+    private BlockPos selectedTE = null;
+    private BlockPos destinationTE = null;
 
-    private Coordinate hilightedBlock = null;
+    private BlockPos hilightedBlock = null;
     private long expireHilight = 0;
 
-    public void hilightBlock(Coordinate c, long expireHilight) {
+    public void hilightBlock(BlockPos c, long expireHilight) {
         hilightedBlock = c;
         this.expireHilight = expireHilight;
     }
 
-    public Coordinate getHilightedBlock() {
+    public BlockPos getHilightedBlock() {
         return hilightedBlock;
     }
 
@@ -29,19 +29,19 @@ public class ClientInfo {
         return expireHilight;
     }
 
-    public Coordinate getSelectedTE() {
+    public BlockPos getSelectedTE() {
         return selectedTE;
     }
 
-    public void setSelectedTE(Coordinate selectedTE) {
+    public void setSelectedTE(BlockPos selectedTE) {
         this.selectedTE = selectedTE;
     }
 
-    public Coordinate getDestinationTE() {
+    public BlockPos getDestinationTE() {
         return destinationTE;
     }
 
-    public void setDestinationTE(Coordinate destinationTE) {
+    public void setDestinationTE(BlockPos destinationTE) {
         this.destinationTE = destinationTE;
     }
 
