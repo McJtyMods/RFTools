@@ -56,7 +56,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
 
     @Override
     public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
-        return getBlockLayer() == EnumWorldBlockLayer.SOLID || getBlockLayer() == EnumWorldBlockLayer.CUTOUT;
+        return layer == EnumWorldBlockLayer.SOLID || layer == EnumWorldBlockLayer.CUTOUT;
     }
 
     @SideOnly(Side.CLIENT)

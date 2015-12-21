@@ -18,5 +18,10 @@
       "west": {"y": 270},
       "east": {"y": 90}
     }
+
+    // "type": {
+    //    "dimlet": { "textures": { "overlay": "rftools:blocks/overlayDimlet" } },
+    //    "generic": { "textures": { "overlay": "rftools:blocks/overlayGeneric" } },
+    // }
   }
 }
