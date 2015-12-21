@@ -1,7 +1,13 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "rftools:modular_storage"
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "rftools:modular_storage_aux#main",
+      "Solid": "rftools:modular_storage_aux#main",
+      "Cutout": "rftools:modular_storage_aux#overlay"
+    },
+    "transform": "forge:default-block"
   },
   "variants": {
     "normal": [{}],

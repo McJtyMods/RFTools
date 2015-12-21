@@ -13,6 +13,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -52,6 +53,11 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     }
 
     private static long lastTime = 0;
+
+    @Override
+    public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
+        return getBlockLayer() == EnumWorldBlockLayer.SOLID || getBlockLayer() == EnumWorldBlockLayer.CUTOUT;
+    }
 
     @SideOnly(Side.CLIENT)
     @Override
