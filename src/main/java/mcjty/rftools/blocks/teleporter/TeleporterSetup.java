@@ -1,19 +1,17 @@
 package mcjty.rftools.blocks.teleporter;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class TeleporterSetup {
     public static MatterTransmitterBlock matterTransmitterBlock;
@@ -29,33 +27,17 @@ public class TeleporterSetup {
 
     public static void setupBlocks() {
         matterTransmitterBlock = new MatterTransmitterBlock();
-        GameRegistry.registerBlock(matterTransmitterBlock, GenericItemBlock.class, "matterTransmitterBlock");
-        GameRegistry.registerTileEntity(MatterTransmitterTileEntity.class, "MatterTransmitterTileEntity");
-
         matterReceiverBlock = new MatterReceiverBlock();
-        GameRegistry.registerBlock(matterReceiverBlock, GenericItemBlock.class, "matterReceiverBlock");
-        GameRegistry.registerTileEntity(MatterReceiverTileEntity.class, "MatterReceiverTileEntity");
-
         dialingDeviceBlock = new DialingDeviceBlock();
-        GameRegistry.registerBlock(dialingDeviceBlock, GenericItemBlock.class, "dialingDeviceBlock");
-        GameRegistry.registerTileEntity(DialingDeviceTileEntity.class, "DialingDeviceTileEntity");
-
-        simpleDialerBlock = new SimpleDialerBlock();
-        GameRegistry.registerBlock(simpleDialerBlock, SimpleDialerItemBlock.class, "simpleDialerBlock");
-        GameRegistry.registerTileEntity(SimpleDialerTileEntity.class, "SimpleDialerTileEntity");
-
+//        simpleDialerBlock = new SimpleDialerBlock();
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();
-        GameRegistry.registerBlock(destinationAnalyzerBlock, "destinationAnalyzerBlock");
-
         matterBoosterBlock = new MatterBoosterBlock();
-        GameRegistry.registerBlock(matterBoosterBlock, "matterBoosterBlock");
     }
 
     public static void setupItems() {
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
         teleportProbeItem.setCreativeTab(RFTools.tabRfTools);
-        teleportProbeItem.setTextureName(RFTools.MODID + ":teleportProbeItem");
         GameRegistry.registerItem(teleportProbeItem, "teleportProbeItem");
 
         chargedPorterItem = new ChargedPorterItem();
@@ -70,7 +52,7 @@ public class TeleporterSetup {
     }
 
     public static void setupCrafting() {
-        Object redstoneTorch = Item.itemRegistry.getObject("redstone_torch");
+        Block redstoneTorch = Blocks.redstone_torch;
 
         if (GeneralConfiguration.enableMatterTransmitterRecipe) {
             GameRegistry.addRecipe(new ItemStack(matterTransmitterBlock), "ooo", "rMr", "iii", 'M', ModBlocks.machineFrame,
@@ -90,14 +72,20 @@ public class TeleporterSetup {
                 'B', Blocks.redstone_block);
         GameRegistry.addRecipe(new ItemStack(chargedPorterItem), " e ", "eRe", "iei", 'e', Items.ender_pearl, 'R', Blocks.redstone_block, 'i', Items.iron_ingot);
 
+        // @todo recipe should change if rftools_dimension is present
+//        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+//                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block),
+//                new ItemStack(DimletSetup.infusedDiamond), new ItemStack(chargedPorterItem), new ItemStack(DimletSetup.infusedDiamond),
+//                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block)
+//        }, new ItemStack(advancedChargedPorterItem), 4));
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block),
-                new ItemStack(DimletSetup.infusedDiamond), new ItemStack(chargedPorterItem), new ItemStack(DimletSetup.infusedDiamond),
-                new ItemStack(Blocks.redstone_block), new ItemStack(DimletSetup.infusedDiamond), new ItemStack(Blocks.redstone_block)
+                new ItemStack(Blocks.redstone_block), new ItemStack(Items.diamond), new ItemStack(Blocks.redstone_block),
+                new ItemStack(Items.diamond), new ItemStack(chargedPorterItem), new ItemStack(Items.diamond),
+                new ItemStack(Blocks.redstone_block), new ItemStack(Items.diamond), new ItemStack(Blocks.redstone_block)
         }, new ItemStack(advancedChargedPorterItem), 4));
 
-        if (GeneralConfiguration.enableDialingDeviceRecipe) {
-            GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
-        }
+//        if (GeneralConfiguration.enableDialingDeviceRecipe) {
+//            GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
+//        }
     }
 }

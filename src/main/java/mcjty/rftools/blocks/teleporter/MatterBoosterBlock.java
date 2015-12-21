@@ -12,6 +12,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class MatterBoosterBlock extends Block {
 
@@ -25,6 +26,7 @@ public class MatterBoosterBlock extends Block {
         setStepSound(soundTypeMetal);
         setHarvestLevel("pickaxe", 0);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        GameRegistry.registerBlock(this, "matter_booster");
     }
 
     @Override

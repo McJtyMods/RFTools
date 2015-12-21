@@ -65,6 +65,8 @@ public class RFTools implements ModBase {
     public static final int GUI_DIALING_DEVICE = modGuiIndex++;
     public static final int GUI_MATTER_RECEIVER = modGuiIndex++;
     public static final int GUI_MATTER_TRANSMITTER = modGuiIndex++;
+    public static final int GUI_ADVANCEDPORTER = modGuiIndex++;
+    public static final int GUI_TELEPORTPROBE = modGuiIndex++;
 
 
     /**
