@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -33,6 +34,13 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
         super(Material.iron, MatterTransmitterTileEntity.class, EmptyContainer.class, GuiMatterTransmitter.class, "matter_transmitter", false);
         setCreativeTab(RFTools.tabRfTools);
         setDefaultState(this.blockState.getBaseState());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void initModel() {
+        super.initModel();
+        ClientRegistry.bindTileEntitySpecialRenderer(MatterTransmitterTileEntity.class, new BeamRenderer());
     }
 
     @SideOnly(Side.CLIENT)

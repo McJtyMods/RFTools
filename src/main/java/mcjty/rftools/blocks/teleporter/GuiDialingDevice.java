@@ -94,12 +94,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         interruptButton = new Button(mc, this).setText("Interrupt").setTooltips("Interrupt a connection", "for the selected transmitter").
                 setDesiredHeight(14).setDesiredWidth(65).
                 addButtonEvent(parent -> interruptDial());
-        favoriteButton = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeShowFavorite();
-            }
-        }).setDesiredWidth(10).setDesiredHeight(10);
+        favoriteButton = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeShowFavorite()).setDesiredWidth(10).setDesiredHeight(10);
         favoriteButton.addChoice("No", "Unfavorited receiver", guielements, 131, 19);
         favoriteButton.addChoice("Yes", "Favorited receiver", guielements, 115, 19);
         favoriteButton.setCurrentChoice(tileEntity.isShowOnlyFavorites() ? 1 : 0);
@@ -341,7 +336,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayNameString()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimensionId()),
-                new Argument("c", (Coordinate) null), new Argument("dim", 0)));
+                new Argument("c", (BlockPos) null), new Argument("dim", 0)));
 
         lastDialedTransmitter = true;
         listDirty = 0;
@@ -419,16 +414,11 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             boolean favorite = destination.isFavorite();
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(96).
-                    setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + coordinate.toString() + ")"));
+                    setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + Coordinate.toString(coordinate) + ")"));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
                     .setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName)
                     .setDesiredWidth(110));
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent(new ChoiceEvent() {
-                @Override
-                public void choiceChanged(Widget parent, String newChoice) {
-                    changeFavorite();
-                }
-            }).setDesiredWidth(10);
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeFavorite()).setDesiredWidth(10);
             choiceLabel.addChoice("No", "Not favorited", guielements, 131, 19);
             choiceLabel.addChoice("Yes", "Favorited", guielements, 115, 19);
             choiceLabel.setCurrentChoice(favorite ? 1 : 0);
@@ -469,7 +459,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(102));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(coordinate.toString()).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(Coordinate.toString(coordinate)).setDesiredWidth(90));
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }

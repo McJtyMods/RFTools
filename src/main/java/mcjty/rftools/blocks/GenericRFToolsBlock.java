@@ -60,7 +60,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         G gui;
         try {
             Constructor<? extends C> constructor = containerClass.getConstructor(EntityPlayer.class, IInventory.class);
-            container = constructor.newInstance(entityPlayer, inventory);
+            container = constructor.newInstance(entityPlayer, inventory instanceof IInventory ? inventory : null);
             Constructor<? extends G> guiConstructor = guiClass.getConstructor(tileEntityClass, containerClass);
             gui = guiConstructor.newInstance(inventory, container);
             return gui;
@@ -76,7 +76,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         C container;
         try {
             Constructor<? extends C> constructor = containerClass.getConstructor(EntityPlayer.class, IInventory.class);
-            container = constructor.newInstance(entityPlayer, inventory);
+            container = constructor.newInstance(entityPlayer, inventory instanceof IInventory ? inventory : null);
             return container;
         } catch (Exception e) {
             Logging.logError("Severe exception during creation of gui!");

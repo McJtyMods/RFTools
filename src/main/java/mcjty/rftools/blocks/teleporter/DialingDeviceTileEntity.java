@@ -159,7 +159,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     // Server side only.
-    private void changeFavorite(String playerName, Coordinate receiver, int dimension, boolean favorite) {
+    private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
         List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
         for (Object p : list) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
@@ -240,7 +240,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         }
         if (CMD_FAVORITE.equals(command)) {
             String player = args.get("player").getString();
-            Coordinate receiver = args.get("receiver").getCoordinate();
+            BlockPos receiver = args.get("receiver").getCoordinate();
             int dimension = args.get("dimension").getInteger();
             boolean favorite = args.get("favorite").getBoolean();
             changeFavorite(player, receiver, dimension, favorite);
@@ -261,22 +261,22 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
             return rc;
         }
         if (CMD_CHECKSTATUS.equals(command)) {
-            Coordinate c = args.get("c").getCoordinate();
+            BlockPos c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
             return checkStatus(c, dim);
         } else if (CMD_DIAL.equals(command)) {
             String player = args.get("player").getString();
-            Coordinate transmitter = args.get("trans").getCoordinate();
+            BlockPos transmitter = args.get("trans").getCoordinate();
             int transDim = args.get("transDim").getInteger();
-            Coordinate c = args.get("c").getCoordinate();
+            BlockPos c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
 
             return dial(player, transmitter, transDim, c, dim, false);
         } else if (CMD_DIALONCE.equals(command)) {
             String player = args.get("player").getString();
-            Coordinate transmitter = args.get("trans").getCoordinate();
+            BlockPos transmitter = args.get("trans").getCoordinate();
             int transDim = args.get("transDim").getInteger();
-            Coordinate c = args.get("c").getCoordinate();
+            BlockPos c = args.get("c").getCoordinate();
             int dim = args.get("dim").getInteger();
 
             return dial(player, transmitter, transDim, c, dim, true);
