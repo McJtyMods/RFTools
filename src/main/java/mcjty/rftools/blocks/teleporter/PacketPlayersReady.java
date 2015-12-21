@@ -22,7 +22,7 @@ public class PacketPlayersReady extends PacketListFromServer<PacketPlayersReady,
         super(pos, command, list);
     }
 
-    public class Handler implements IMessageHandler<PacketPlayersReady, IMessage> {
+    public static class Handler implements IMessageHandler<PacketPlayersReady, IMessage> {
         @Override
         public IMessage onMessage(PacketPlayersReady message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
@@ -41,6 +41,7 @@ public class PacketPlayersReady extends PacketListFromServer<PacketPlayersReady,
             }
         }
     }
+
     @Override
     protected PlayerName createItem(ByteBuf buf) {
         return new PlayerName(buf);

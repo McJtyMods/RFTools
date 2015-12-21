@@ -24,7 +24,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
         super(RFTools.MODID, pos, DialingDeviceTileEntity.CMD_GETTRANSMITTERS);
     }
 
-    public class Handler implements IMessageHandler<PacketGetTransmitters, IMessage> {
+    public static class Handler implements IMessageHandler<PacketGetTransmitters, IMessage> {
         @Override
         public IMessage onMessage(PacketGetTransmitters message, MessageContext ctx) {
             MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
@@ -44,13 +44,9 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
                 return;
             }
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
-            PacketTransmittersReady msg = createMessageToClient(message.pos, list);
+            PacketTransmittersReady msg = new PacketTransmittersReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, list);
             wrapper.sendTo(msg, ctx.getServerHandler().playerEntity);
         }
 
-    }
-    @Override
-    protected PacketTransmittersReady createMessageToClient(BlockPos pos, List<TransmitterInfo> result) {
-        return new PacketTransmittersReady(pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, result);
     }
 }

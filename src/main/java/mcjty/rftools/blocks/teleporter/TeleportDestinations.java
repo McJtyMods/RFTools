@@ -199,6 +199,9 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void removeDestination(BlockPos coordinate, int dimension) {
+        if (coordinate == null) {
+            return;
+        }
         GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
         destinations.remove(key);
         Integer id = destinationIdByCoordinate.get(key);

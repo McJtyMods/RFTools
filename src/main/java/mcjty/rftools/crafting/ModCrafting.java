@@ -4,6 +4,7 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ public final class ModCrafting {
         CoalGeneratorSetup.initCrafting();
         CrafterSetup.initCrafting();
         ModularStorageSetup.initCrafting();
+        TeleporterSetup.initCrafting();
     }
 
     private static void initItemCrafting() {

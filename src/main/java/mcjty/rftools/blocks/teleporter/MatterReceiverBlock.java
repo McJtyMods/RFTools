@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +30,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
     public MatterReceiverBlock() {
         super(Material.iron, MatterReceiverTileEntity.class, EmptyContainer.class, GuiMatterReceiver.class, "matter_receiver", false);
         setCreativeTab(RFTools.tabRfTools);
+        setDefaultState(this.blockState.getBaseState());
     }
 
     @SideOnly(Side.CLIENT)
@@ -111,4 +113,18 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         destinations.save(world);
     }
 
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState();
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this);
+    }
 }

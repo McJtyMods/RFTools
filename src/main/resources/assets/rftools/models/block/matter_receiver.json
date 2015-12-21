@@ -1,0 +1,6 @@
+{
+  "parent": "rftools:block/rftoolstopblock",
+  "textures": {
+    "up": "rftools:blocks/machineReceiver"
+  }
+}

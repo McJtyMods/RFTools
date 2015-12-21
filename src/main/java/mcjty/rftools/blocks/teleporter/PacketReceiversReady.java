@@ -1,8 +1,15 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.network.ClientCommandHandler;
 import mcjty.lib.network.PacketListFromServer;
+import mcjty.lib.varia.Logging;
+import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
 
@@ -13,6 +20,26 @@ public class PacketReceiversReady extends PacketListFromServer<PacketReceiversRe
 
     public PacketReceiversReady(BlockPos pos, String command, List<TeleportDestinationClientInfo> list) {
         super(pos, command, list);
+    }
+
+    public static class Handler implements IMessageHandler<PacketReceiversReady, IMessage> {
+        @Override
+        public IMessage onMessage(PacketReceiversReady message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            return null;
+        }
+
+        private void handle(PacketReceiversReady message, MessageContext ctx) {
+            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+            if(!(te instanceof ClientCommandHandler)) {
+                Logging.log("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
+                return;
+            }
+            ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
+            if (!clientCommandHandler.execute(message.command, message.list)) {
+                Logging.log("Command " + message.command + " was not handled!");
+            }
+        }
     }
 
     @Override

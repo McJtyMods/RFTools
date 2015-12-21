@@ -11,6 +11,7 @@ import mcjty.rftools.network.ReturnDestinationInfoHelper;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +32,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
     public MatterTransmitterBlock() {
         super(Material.iron, MatterTransmitterTileEntity.class, EmptyContainer.class, GuiMatterTransmitter.class, "matter_transmitter", false);
         setCreativeTab(RFTools.tabRfTools);
+        setDefaultState(this.blockState.getBaseState());
     }
 
     @SideOnly(Side.CLIENT)
@@ -127,4 +129,20 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
         restoreBlockFromNBT(world, pos, stack);
         setOwner(world, pos, placer);
     }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState();
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this);
+    }
+
 }

@@ -12,6 +12,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TeleporterSetup {
     public static MatterTransmitterBlock matterTransmitterBlock;
@@ -25,16 +27,14 @@ public class TeleporterSetup {
     public static ChargedPorterItem chargedPorterItem;
     public static AdvancedChargedPorterItem advancedChargedPorterItem;
 
-    public static void setupBlocks() {
+    public static void init() {
         matterTransmitterBlock = new MatterTransmitterBlock();
         matterReceiverBlock = new MatterReceiverBlock();
         dialingDeviceBlock = new DialingDeviceBlock();
 //        simpleDialerBlock = new SimpleDialerBlock();
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();
         matterBoosterBlock = new MatterBoosterBlock();
-    }
 
-    public static void setupItems() {
         teleportProbeItem = new TeleportProbeItem();
         teleportProbeItem.setUnlocalizedName("TeleportProbe");
         teleportProbeItem.setCreativeTab(RFTools.tabRfTools);
@@ -51,7 +51,18 @@ public class TeleporterSetup {
         GameRegistry.registerItem(advancedChargedPorterItem, "advancedChargedPorterItem");
     }
 
-    public static void setupCrafting() {
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+        matterTransmitterBlock.initModel();
+        matterReceiverBlock.initModel();
+        dialingDeviceBlock.initModel();
+//        storageModuleItem.initModel();
+//        oreDictTypeItem.initModel();
+//        genericTypeItem.initModel();
+//        storageFilterItem.initModel();
+    }
+
+    public static void initCrafting() {
         Block redstoneTorch = Blocks.redstone_torch;
 
         if (GeneralConfiguration.enableMatterTransmitterRecipe) {

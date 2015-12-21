@@ -22,7 +22,7 @@ public class PacketTransmittersReady extends PacketListFromServer<PacketTransmit
         super(pos, command, list);
     }
 
-    public class Handler implements IMessageHandler<PacketTransmittersReady, IMessage> {
+    public static class Handler implements IMessageHandler<PacketTransmittersReady, IMessage> {
         @Override
         public IMessage onMessage(PacketTransmittersReady message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));

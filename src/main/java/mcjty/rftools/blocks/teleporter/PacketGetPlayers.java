@@ -61,9 +61,4 @@ public class PacketGetPlayers extends PacketRequestListFromServer<PlayerName, Pa
             RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().playerEntity);
         }
     }
-
-    @Override
-    protected PacketPlayersReady createMessageToClient(BlockPos blockPos, List<PlayerName> list) {
-        throw new RuntimeException("Can't get here!");
-    }
 }

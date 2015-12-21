@@ -25,7 +25,7 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
         super(RFTools.MODID, pos, DialingDeviceTileEntity.CMD_GETRECEIVERS, new Argument("player", playerName));
     }
 
-    public class Handler implements IMessageHandler<PacketGetReceivers, IMessage> {
+    public static class Handler implements IMessageHandler<PacketGetReceivers, IMessage> {
         @Override
         public IMessage onMessage(PacketGetReceivers message, MessageContext ctx) {
             MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
@@ -45,14 +45,9 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
                 return;
             }
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
-            PacketReceiversReady msg = createMessageToClient(message.pos, list);
+            PacketReceiversReady msg = new PacketReceiversReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETRECEIVERS, list);
             wrapper.sendTo(msg, ctx.getServerHandler().playerEntity);
         }
 
-    }
-
-    @Override
-    protected PacketReceiversReady createMessageToClient(BlockPos pos, List<TeleportDestinationClientInfo> result) {
-        return new PacketReceiversReady(pos, DialingDeviceTileEntity.CLIENTCMD_GETRECEIVERS, result);
     }
 }

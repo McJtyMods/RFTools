@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "#front",
+    "down": "rftools:blocks/machineBottom",
+    "up": "#up",
+    "north": "rftools:blocks/machineSide",
+    "east": "rftools:blocks/machineSide",
+    "south": "rftools:blocks/machineSide",
+    "west": "rftools:blocks/machineSide"
+  }
+}
