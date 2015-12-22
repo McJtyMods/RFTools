@@ -96,7 +96,7 @@ public class DimensionTickEvent {
             power = 0;
         }
 
-        handleLowPower(id, power, doEffects);
+        handleLowPower(id, power, doEffects, cost);
         if (doEffects && power > 0) {
             handleEffectsForDimension(power, id, information);
         }
@@ -357,7 +357,7 @@ public class DimensionTickEvent {
         }
     }
 
-    private void handleLowPower(Integer id, int power, boolean doEffects) {
+    private void handleLowPower(Integer id, int power, boolean doEffects, int phasedCost) {
         if (power <= 0) {
             // We ran out of power!
             WorldServer world = DimensionManager.getWorld(id);
@@ -365,7 +365,7 @@ public class DimensionTickEvent {
                 List<EntityPlayer> players = new ArrayList<EntityPlayer>(world.playerEntities);
                 if (DimletConfiguration.dimensionDifficulty >= 1) {
                     for (EntityPlayer player : players) {
-                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true)) {
+                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true, phasedCost)) {
                             player.attackEntityFrom(new DamageSourcePowerLow("powerLow"), 1000000.0f);
                         } else {
                             if (doEffects && DimletConfiguration.phasedFieldGeneratorDebuf) {
@@ -378,7 +378,7 @@ public class DimensionTickEvent {
                 } else {
                     Random random = new Random();
                     for (EntityPlayer player : players) {
-                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true)) {
+                        if (!RfToolsDimensionManager.checkValidPhasedFieldGenerator(player, true, phasedCost)) {
                             WorldServer worldServerForDimension = MinecraftServer.getServer().worldServerForDimension(DimletConfiguration.spawnDimension);
                             int x = random.nextInt(2000) - 1000;
                             int z = random.nextInt(2000) - 1000;
