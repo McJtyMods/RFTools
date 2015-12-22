@@ -29,10 +29,9 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             GlStateManager.depthMask(false);
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
+            GlStateManager.disableCull();
             GlStateManager.enableDepth();
-
-            WorldRenderer renderer = tessellator.getWorldRenderer();
-            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            GlStateManager.disableLighting();
 
 //            tessellator.setBrightness(240);
 
@@ -51,29 +50,33 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
 
             GlStateManager.color(1, 1, 1, 1);
 
-            renderer.pos(0, 4, 0).tex(1, i1).endVertex();
-            renderer.pos(1, 4, 0).tex(1, i2).endVertex();
-            renderer.pos(1, 0, 0).tex(0, i2).endVertex();
-            renderer.pos(0, 0, 0).tex(0, i1).endVertex();
+            WorldRenderer renderer = tessellator.getWorldRenderer();
+            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-            renderer.pos(1, 4, 1).tex(1, i1).endVertex();
-            renderer.pos(0, 4, 1).tex(1, i2).endVertex();
-            renderer.pos(0, 0, 1).tex(0, i2).endVertex();
-            renderer.pos(1, 0, 1).tex(0, i1).endVertex();
+            renderer.pos(0, 4, 0).tex(1, i1).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 4, 0).tex(1, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 0, 0).tex(0, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 0, 0).tex(0, i1).color(1, 1, 1, 1).endVertex();
 
-            renderer.pos(0, 4, 1).tex(1, i1).endVertex();
-            renderer.pos(0, 4, 0).tex(1, i2).endVertex();
-            renderer.pos(0, 0, 0).tex(0, i2).endVertex();
-            renderer.pos(0, 0, 1).tex(0, i1).endVertex();
+            renderer.pos(1, 4, 1).tex(1, i1).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 4, 1).tex(1, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 0, 1).tex(0, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 0, 1).tex(0, i1).color(1, 1, 1, 1).endVertex();
 
-            renderer.pos(1, 4, 0).tex(1, i1).endVertex();
-            renderer.pos(1, 4, 1).tex(1, i2).endVertex();
-            renderer.pos(1, 0, 1).tex(0, i2).endVertex();
-            renderer.pos(1, 0, 0).tex(0, i1).endVertex();
+            renderer.pos(0, 4, 1).tex(1, i1).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 4, 0).tex(1, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 0, 0).tex(0, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(0, 0, 1).tex(0, i1).color(1, 1, 1, 1).endVertex();
+
+            renderer.pos(1, 4, 0).tex(1, i1).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 4, 1).tex(1, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 0, 1).tex(0, i2).color(1, 1, 1, 1).endVertex();
+            renderer.pos(1, 0, 0).tex(0, i1).color(1, 1, 1, 1).endVertex();
 
             tessellator.draw();
 
             GlStateManager.depthMask(true);
+            GlStateManager.enableLighting();
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
             GlStateManager.popMatrix();

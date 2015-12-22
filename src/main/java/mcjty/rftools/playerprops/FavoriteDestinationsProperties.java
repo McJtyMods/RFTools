@@ -1,6 +1,5 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,7 +11,7 @@ import java.util.Set;
 
 public class FavoriteDestinationsProperties {
 
-    private Set<GlobalCoordinate> favoriteDestinations = new HashSet<GlobalCoordinate>();
+    private Set<GlobalCoordinate> favoriteDestinations = new HashSet<>();
 
     public FavoriteDestinationsProperties() {
     }

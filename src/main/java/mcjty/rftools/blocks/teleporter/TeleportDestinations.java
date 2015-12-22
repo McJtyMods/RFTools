@@ -132,9 +132,9 @@ public class TeleportDestinations extends WorldSavedData {
                     }
                 }
             }
-//            if (properties != null) {
-//                destinationClientInfo.setFavorite(properties.getFavoriteDestinationsProperties().isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
-//            }
+            if (properties != null) {
+                destinationClientInfo.setFavorite(properties.getFavoriteDestinationsProperties().isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
+            }
             result.add(destinationClientInfo);
         }
 

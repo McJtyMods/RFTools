@@ -649,9 +649,6 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        int xCoord = getPos().getX();
-        int yCoord = getPos().getY();
-        int zCoord = getPos().getZ();
-        return AxisAlignedBB.fromBounds(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 4, zCoord + 1);
+        return new AxisAlignedBB(getPos(), getPos().add(1, 4, 1));
     }
 }
