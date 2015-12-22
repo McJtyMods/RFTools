@@ -2,6 +2,7 @@ package mcjty.rftools.dimension;
 
 import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -223,7 +224,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
             if (slot != null && slot.getItem() == DimletSetup.phasedFieldGeneratorItem) {
                 PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
                 int energyStored = pfg.getEnergyStored(slot);
-                int toConsume = DimensionTickEvent.MAXTICKS * tickCost / 20;
+                int toConsume;
+                if(GeneralConfiguration.enableDynamicPhaseCost) toConsume = DimensionTickEvent.MAXTICKS * tickCost * GeneralConfiguration.dynamicPhaseCostAmount;
+                else toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
                 if (energyStored >= toConsume) {
                     if (consume) {
                         pfg.extractEnergy(slot, toConsume, false);
