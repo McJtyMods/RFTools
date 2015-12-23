@@ -7,7 +7,9 @@
     }],
     "overlay": [{
       "model": "rftools:overlay",
+//      "textures": { "overlay": "#overlay" }
       "textures": { "overlay": "rftools:blocks/overlayGeneric" }
+
     }]
   }
 }

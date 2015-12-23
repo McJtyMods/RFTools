@@ -20,10 +20,11 @@
       "up": {"x": -90},
       "down": {"x": 90}
     }
-
-    // "type": {
-    //    "dimlet": { "textures": { "overlay": "rftools:blocks/overlayDimlet" } },
-    //    "generic": { "textures": { "overlay": "rftools:blocks/overlayGeneric" } },
-    // }
+//  ,
+//    "type": {
+//       "none": { "textures": { "overlay": "rftools:blocks/overlayNone" } },
+//       "ore": { "textures": { "overlay": "rftools:blocks/overlayOre" } },
+//       "generic": { "textures": { "overlay": "rftools:blocks/overlayGeneric" } }
+//    }
   }
 }

@@ -3,30 +3,32 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.network.RFToolsMessages;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-//import mcjty.rftools.items.storage.DimletTypeItem;
-//import mcjty.rftools.items.storage.GenericTypeItem;
-//import mcjty.rftools.items.storage.OreDictTypeItem;
+import static mcjty.rftools.blocks.storage.ModularTypeModule.*;
 
 public class ModularStorageBlock extends GenericRFToolsBlock {
 
-//    private Map<Class<? extends TypeModule>, IIcon> icons = new HashMap<Class<? extends TypeModule>, IIcon>();
+    public static final PropertyEnum<ModularTypeModule> TYPEMODULE = PropertyEnum.create("type", ModularTypeModule.class);
 
     public ModularStorageBlock() {
         super(Material.iron, ModularStorageTileEntity.class, ModularStorageContainer.class, GuiModularStorage.class, "modular_storage", true);
@@ -53,6 +55,25 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     }
 
     private static long lastTime = 0;
+
+//    @Override
+//    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+//        ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
+//        ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+//        if (stack == null) {
+//            return state.withProperty(TYPEMODULE, TYPE_NONE);
+//        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
+//            return state.withProperty(TYPEMODULE, TYPE_GENERIC);
+//        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
+//            return state.withProperty(TYPEMODULE, TYPE_ORE);
+//        }
+//        return state.withProperty(TYPEMODULE, TYPE_NONE);
+//    }
+//
+//    @Override
+//    protected BlockState createBlockState() {
+//        return new BlockState(this, FACING, TYPEMODULE);
+//    }
 
     @Override
     public boolean canRenderInLayer(EnumWorldBlockLayer layer) {

@@ -18,7 +18,6 @@ public class DialingDeviceBlock extends GenericRFToolsBlock implements Infusable
 
     public DialingDeviceBlock() {
         super(Material.iron, DialingDeviceTileEntity.class, EmptyContainer.class, GuiDialingDevice.class, "dialing_device", false);
-        setCreativeTab(RFTools.tabRfTools);
     }
 
     @SideOnly(Side.CLIENT)

@@ -132,9 +132,13 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
                 list.add(EnumChatFormatting.YELLOW + "No storage module installed!");
             }
         }
-        list.add("This RF/charged module can hold a storage module");
-        list.add("and allows the wielder to manipulate the contents of");
-        list.add("this module (remote or normal).");
+        if (player.isSneaking()) {
+            list.add("This RF/charged module can hold a storage module");
+            list.add("and allows the wielder to manipulate the contents of");
+            list.add("this module (remote or normal).");
+        } else {
+            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
     }
 
     @Override
