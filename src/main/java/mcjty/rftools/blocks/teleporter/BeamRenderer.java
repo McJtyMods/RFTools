@@ -17,6 +17,10 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
     private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
     private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
 
+    private void p(WorldRenderer renderer, int x, int y, int z, float u, float v) {
+        renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).endVertex();
+    }
+
     @Override
     public void renderTileEntityAt(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
         if (tileEntity.isDialed() && !tileEntity.isBeamHidden()) {
@@ -28,10 +32,11 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             GlStateManager.enableBlend();
             GlStateManager.depthMask(false);
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+//            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
             GlStateManager.disableCull();
             GlStateManager.enableDepth();
-            GlStateManager.disableLighting();
+//            GlStateManager.disableLighting();
 
 //            tessellator.setBrightness(240);
 
@@ -53,25 +58,25 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             WorldRenderer renderer = tessellator.getWorldRenderer();
             renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-            renderer.pos(0, 4, 0).tex(1, i1).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 4, 0).tex(1, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 0, 0).tex(0, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 0, 0).tex(0, i1).color(1, 1, 1, 1).endVertex();
+            p(renderer, 0, 4, 0, 1, i1);
+            p(renderer, 1, 4, 0, 1, i2);
+            p(renderer, 1, 0, 0, 0, i2);
+            p(renderer, 0, 0, 0, 0, i1);
 
-            renderer.pos(1, 4, 1).tex(1, i1).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 4, 1).tex(1, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 0, 1).tex(0, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 0, 1).tex(0, i1).color(1, 1, 1, 1).endVertex();
+            p(renderer, 1, 4, 1, 1, i1);
+            p(renderer, 0, 4, 1, 1, i2);
+            p(renderer, 0, 0, 1, 0, i2);
+            p(renderer, 1, 0, 1, 0, i1);
 
-            renderer.pos(0, 4, 1).tex(1, i1).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 4, 0).tex(1, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 0, 0).tex(0, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(0, 0, 1).tex(0, i1).color(1, 1, 1, 1).endVertex();
+            p(renderer, 0, 4, 1, 1, i1);
+            p(renderer, 0, 4, 0, 1, i2);
+            p(renderer, 0, 0, 0, 0, i2);
+            p(renderer, 0, 0, 1, 0, i1);
 
-            renderer.pos(1, 4, 0).tex(1, i1).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 4, 1).tex(1, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 0, 1).tex(0, i2).color(1, 1, 1, 1).endVertex();
-            renderer.pos(1, 0, 0).tex(0, i1).color(1, 1, 1, 1).endVertex();
+            p(renderer, 1, 4, 0, 1, i1);
+            p(renderer, 1, 4, 1, 1, i2);
+            p(renderer, 1, 0, 1, 0, i2);
+            p(renderer, 1, 0, 0, 0, i1);
 
             tessellator.draw();
 
