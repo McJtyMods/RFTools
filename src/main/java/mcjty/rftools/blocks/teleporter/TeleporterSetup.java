@@ -44,6 +44,9 @@ public class TeleporterSetup {
         matterTransmitterBlock.initModel();
         matterReceiverBlock.initModel();
         dialingDeviceBlock.initModel();
+        destinationAnalyzerBlock.initModel();
+        matterBoosterBlock.initModel();
+
         teleportProbeItem.initModel();
         chargedPorterItem.initModel();
         advancedChargedPorterItem.initModel();

@@ -5,6 +5,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.items.smartwrench.SmartWrenchMode;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -47,7 +50,10 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_tablet");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_tablet_empty");
+        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_EMPTY, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5)+ "_empty", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_FULL, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 
     @Override
