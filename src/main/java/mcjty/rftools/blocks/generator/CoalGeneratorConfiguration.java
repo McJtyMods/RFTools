@@ -7,7 +7,7 @@ public class CoalGeneratorConfiguration {
     public static final String CATEGORY_COALGEN = "coalgen";
     public static int MAXENERGY = 500000;
     public static int SENDPERTICK = 2000;
-    public static int CHARGEITEMPERTICK = 500;
+    public static int CHARGEITEMPERTICK = 1000;
     public static int rfPerTick = 60;
     public static int ticksPerCoal = 600;
 
