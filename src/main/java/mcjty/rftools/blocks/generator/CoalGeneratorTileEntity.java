@@ -71,7 +71,6 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             boolean newWorking = burning > 0;
             if (newWorking != working) {
                 worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
-                System.out.println("CLIENT UPDATE");
             }
         }
     }

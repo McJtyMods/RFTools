@@ -17,8 +17,8 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
     private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
     private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
 
-    private void p(WorldRenderer renderer, int x, int y, int z, float u, float v) {
-        renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).endVertex();
+    private void p(WorldRenderer renderer, double x, double y, double z, double u, double v) {
+        renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).lightmap(0, 240).endVertex();
     }
 
     @Override
@@ -32,13 +32,9 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             GlStateManager.enableBlend();
             GlStateManager.depthMask(false);
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-//            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
             GlStateManager.disableCull();
             GlStateManager.enableDepth();
-//            GlStateManager.disableLighting();
-
-//            tessellator.setBrightness(240);
 
             int status = tileEntity.getStatus();
             ResourceLocation beamIcon = null;
@@ -56,27 +52,28 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             GlStateManager.color(1, 1, 1, 1);
 
             WorldRenderer renderer = tessellator.getWorldRenderer();
-            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 
-            p(renderer, 0, 4, 0, 1, i1);
-            p(renderer, 1, 4, 0, 1, i2);
-            p(renderer, 1, 0, 0, 0, i2);
-            p(renderer, 0, 0, 0, 0, i1);
+            double o = .15;
+            p(renderer, o, 4, o, 1, i1);
+            p(renderer, 1-o, 4, o, 1, i2);
+            p(renderer, 1-o, 0, o, 0, i2);
+            p(renderer, o, 0, o, 0, i1);
 
-            p(renderer, 1, 4, 1, 1, i1);
-            p(renderer, 0, 4, 1, 1, i2);
-            p(renderer, 0, 0, 1, 0, i2);
-            p(renderer, 1, 0, 1, 0, i1);
+            p(renderer, 1-o, 4, 1-o, 1, i1);
+            p(renderer, o, 4, 1-o, 1, i2);
+            p(renderer, o, 0, 1-o, 0, i2);
+            p(renderer, 1-o, 0, 1-o, 0, i1);
 
-            p(renderer, 0, 4, 1, 1, i1);
-            p(renderer, 0, 4, 0, 1, i2);
-            p(renderer, 0, 0, 0, 0, i2);
-            p(renderer, 0, 0, 1, 0, i1);
+            p(renderer, o, 4, 1-o, 1, i1);
+            p(renderer, o, 4, o, 1, i2);
+            p(renderer, o, 0, o, 0, i2);
+            p(renderer, o, 0, 1-o, 0, i1);
 
-            p(renderer, 1, 4, 0, 1, i1);
-            p(renderer, 1, 4, 1, 1, i2);
-            p(renderer, 1, 0, 1, 0, i2);
-            p(renderer, 1, 0, 0, 0, i1);
+            p(renderer, 1-o, 4, o, 1, i1);
+            p(renderer, 1-o, 4, 1-o, 1, i2);
+            p(renderer, 1-o, 0, 1-o, 0, i2);
+            p(renderer, 1-o, 0, o, 0, i1);
 
             tessellator.draw();
 
