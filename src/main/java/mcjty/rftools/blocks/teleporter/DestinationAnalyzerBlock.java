@@ -36,13 +36,13 @@ public class DestinationAnalyzerBlock extends Block {
 
     public static EnumFacing getFacingFromEntity(BlockPos clickedBlock, EntityLivingBase entityIn) {
         if (MathHelper.abs((float) entityIn.posX - clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - clickedBlock.getZ()) < 2.0F) {
-            double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
+            double d0 = entityIn.posY + entityIn.getEyeHeight();
 
-            if (d0 - (double) clickedBlock.getY() > 2.0D) {
+            if (d0 - clickedBlock.getY() > 2.0D) {
                 return EnumFacing.UP;
             }
 
-            if ((double) clickedBlock.getY() - d0 > 0.0D) {
+            if (clickedBlock.getY() - d0 > 0.0D) {
                 return EnumFacing.DOWN;
             }
         }
