@@ -4,11 +4,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketSetTarget implements IMessage, IMessageHandler<PacketSetTarget, IMessage> {
+public class PacketSetTarget implements IMessage {
     private int target;
 
     @Override
@@ -28,19 +29,26 @@ public class PacketSetTarget implements IMessage, IMessageHandler<PacketSetTarge
         this.target = target;
     }
 
-    @Override
-    public IMessage onMessage(PacketSetTarget message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        ItemStack heldItem = player.getHeldItem();
-        if (heldItem == null) {
+    public static class Handler implements IMessageHandler<PacketSetTarget, IMessage> {
+        @Override
+        public IMessage onMessage(PacketSetTarget message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
             return null;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
-        if (tagCompound == null) {
-            return null;
+
+        private void handle(PacketSetTarget message, MessageContext ctx) {
+            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            ItemStack heldItem = player.getHeldItem();
+            if (heldItem == null) {
+                return;
+            }
+            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            if (tagCompound == null) {
+                return;
+            }
+            tagCompound.setInteger("target", message.target);
         }
-        tagCompound.setInteger("target", message.target);
-        return null;
+
     }
 
 }

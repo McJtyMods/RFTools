@@ -4,11 +4,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketClearTarget implements IMessage, IMessageHandler<PacketClearTarget, IMessage> {
+public class PacketClearTarget implements IMessage {
     private int index;
 
     @Override
@@ -28,25 +29,31 @@ public class PacketClearTarget implements IMessage, IMessageHandler<PacketClearT
         this.index = target;
     }
 
-    @Override
-    public IMessage onMessage(PacketClearTarget message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        ItemStack heldItem = player.getHeldItem();
-        if (heldItem == null) {
+    public static class Handler implements IMessageHandler<PacketClearTarget, IMessage> {
+        @Override
+        public IMessage onMessage(PacketClearTarget message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
             return null;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
-        if (tagCompound == null) {
-            return null;
-        }
-        if (tagCompound.hasKey("target"+message.index)) {
-            int id = tagCompound.getInteger("target"+message.index);
-            if (tagCompound.hasKey("target") && tagCompound.getInteger("target") == id) {
-                tagCompound.removeTag("target");
+
+        private void handle(PacketClearTarget message, MessageContext ctx) {
+            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            ItemStack heldItem = player.getHeldItem();
+            if (heldItem == null) {
+                return;
             }
-            tagCompound.removeTag("target"+message.index);
+            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            if (tagCompound == null) {
+                return;
+            }
+            if (tagCompound.hasKey("target"+message.index)) {
+                int id = tagCompound.getInteger("target"+message.index);
+                if (tagCompound.hasKey("target") && tagCompound.getInteger("target") == id) {
+                    tagCompound.removeTag("target");
+                }
+                tagCompound.removeTag("target"+message.index);
+            }
         }
-        return null;
     }
 
 }

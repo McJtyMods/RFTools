@@ -3,6 +3,7 @@ package mcjty.rftools.items.teleportprobe;
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -10,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketAllReceiversReady implements IMessage, IMessageHandler<PacketAllReceiversReady, IMessage> {
+public class PacketAllReceiversReady implements IMessage {
     private List<TeleportDestinationClientInfo> destinationList;
 
     @Override
@@ -38,10 +39,11 @@ public class PacketAllReceiversReady implements IMessage, IMessageHandler<Packet
         this.destinationList.addAll(destinationList);
     }
 
-    @Override
-    public IMessage onMessage(PacketAllReceiversReady message, MessageContext ctx) {
-        GuiTeleportProbe.setReceivers(message.destinationList);
-        return null;
+    public static class Handler implements IMessageHandler<PacketAllReceiversReady, IMessage> {
+        @Override
+        public IMessage onMessage(PacketAllReceiversReady message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(() -> GuiTeleportProbe.setReceivers(message.destinationList));
+            return null;
+        }
     }
-
 }

@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.storage.PacketCycleStorage;
 import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
 import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.items.teleportprobe.*;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -22,14 +23,21 @@ public class RFToolsMessages {
         net.registerMessage(PacketCycleStorage.Handler.class, PacketCycleStorage.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetPlayers.Handler.class, PacketGetPlayers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetReceivers.Handler.class, PacketGetReceivers.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetAllReceivers.Handler.class, PacketGetAllReceivers.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetTransmitters.Handler.class, PacketGetTransmitters.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetDestinationInfo.Handler.class, PacketGetDestinationInfo.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketClearTarget.Handler.class, PacketClearTarget.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketForceTeleport.Handler.class, PacketForceTeleport.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetTargets.Handler.class, PacketGetTargets.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketSetTarget.Handler.class, PacketSetTarget.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketTransmittersReady.Handler.class, PacketTransmittersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReceiversReady.Handler.class, PacketReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketAllReceiversReady.Handler.class, PacketAllReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnDestinationInfo.Handler.class, PacketReturnDestinationInfo.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketTargetsReady.Handler.class, PacketTargetsReady.class, PacketHandler.nextID(), Side.CLIENT);
 
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);

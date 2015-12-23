@@ -2,11 +2,12 @@ package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketTargetsReady implements IMessage, IMessageHandler<PacketTargetsReady, IMessage> {
+public class PacketTargetsReady implements IMessage {
 
     private int target;
     private int[] targets;
@@ -43,10 +44,17 @@ public class PacketTargetsReady implements IMessage, IMessageHandler<PacketTarge
         this.names = names;
     }
 
-    @Override
-    public IMessage onMessage(PacketTargetsReady message, MessageContext ctx) {
-        GuiAdvancedPorter.setInfo(message.target, message.targets, message.names);
-        return null;
+
+    public static class Handler implements IMessageHandler<PacketTargetsReady, IMessage> {
+        @Override
+        public IMessage onMessage(PacketTargetsReady message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            return null;
+        }
+
+        private void handle(PacketTargetsReady message, MessageContext ctx) {
+            GuiAdvancedPorter.setInfo(message.target, message.targets, message.names);
+        }
     }
 
 }

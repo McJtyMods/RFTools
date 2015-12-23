@@ -71,7 +71,7 @@ public class GuiTeleportProbe extends GuiScreen {
     private void teleport(int index) {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketForceTeleport(c.getX(), c.getY(), c.getZ(), destination.getDimension()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketForceTeleport(c, destination.getDimension()));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {

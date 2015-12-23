@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
@@ -36,19 +35,8 @@ public class TeleporterSetup {
         matterBoosterBlock = new MatterBoosterBlock();
 
         teleportProbeItem = new TeleportProbeItem();
-        teleportProbeItem.setUnlocalizedName("TeleportProbe");
-        teleportProbeItem.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(teleportProbeItem, "teleportProbeItem");
-
         chargedPorterItem = new ChargedPorterItem();
-        chargedPorterItem.setUnlocalizedName("ChargedPorter");
-        chargedPorterItem.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(chargedPorterItem, "chargedPorterItem");
-
         advancedChargedPorterItem = new AdvancedChargedPorterItem();
-        advancedChargedPorterItem.setUnlocalizedName("AdvancedChargedPorter");
-        advancedChargedPorterItem.setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(advancedChargedPorterItem, "advancedChargedPorterItem");
     }
 
     @SideOnly(Side.CLIENT)
@@ -56,10 +44,9 @@ public class TeleporterSetup {
         matterTransmitterBlock.initModel();
         matterReceiverBlock.initModel();
         dialingDeviceBlock.initModel();
-//        storageModuleItem.initModel();
-//        oreDictTypeItem.initModel();
-//        genericTypeItem.initModel();
-//        storageFilterItem.initModel();
+        teleportProbeItem.initModel();
+        chargedPorterItem.initModel();
+        advancedChargedPorterItem.initModel();
     }
 
     public static void initCrafting() {

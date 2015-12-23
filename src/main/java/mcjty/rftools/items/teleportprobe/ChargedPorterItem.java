@@ -7,6 +7,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +19,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -29,10 +36,43 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
     public ChargedPorterItem() {
         setMaxStackSize(1);
+        setup();
 
         capacity = TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
         maxExtract = 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        for (int i = 0 ; i <= 8 ; i++) {
+            ModelBakery.addVariantName(this, RFTools.MODID + ":" + getUnlocalizedName().substring(5) + i);
+        }
+
+        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                NBTTagCompound tagCompound = stack.getTagCompound();
+                int energy = 0;
+                if (tagCompound != null) {
+                    energy = tagCompound.getInteger("Energy");
+                }
+                int level = (9*energy) / capacity;
+                if (level < 0) {
+                    level = 0;
+                } else if (level > 8) {
+                    level = 8;
+                }
+                return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5) + (8-level), "inventory");
+            }
+        });
+    }
+
+
+    protected void setup() {
+        setUnlocalizedName("charged_porter");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerItem(this, "charged_porter");
     }
 
     protected String getIconName() {
