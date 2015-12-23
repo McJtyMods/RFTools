@@ -2,6 +2,7 @@ package mcjty.rftools.dimension;
 
 import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletConfiguration;
 import mcjty.rftools.blocks.dimlets.DimletSetup;
 import mcjty.rftools.dimension.description.DimensionDescriptor;
@@ -216,14 +217,16 @@ public class RfToolsDimensionManager extends WorldSavedData {
         }
     }
 
-    public static boolean checkValidPhasedFieldGenerator(EntityPlayer player, boolean consume) {
+    public static boolean checkValidPhasedFieldGenerator(EntityPlayer player, boolean consume, int tickCost) {
         InventoryPlayer inventory = player.inventory;
         for (int i = 0 ; i < inventory.getHotbarSize() ; i++) {
             ItemStack slot = inventory.getStackInSlot(i);
             if (slot != null && slot.getItem() == DimletSetup.phasedFieldGeneratorItem) {
                 PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
                 int energyStored = pfg.getEnergyStored(slot);
-                int toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
+                int toConsume;
+                if(GeneralConfiguration.enableDynamicPhaseCost) toConsume = DimensionTickEvent.MAXTICKS * tickCost * GeneralConfiguration.dynamicPhaseCostAmount;
+                else toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
                 if (energyStored >= toConsume) {
                     if (consume) {
                         pfg.extractEnergy(slot, toConsume, false);

@@ -22,6 +22,8 @@ public class GeneralConfiguration {
     public static boolean enableShieldProjectorRecipe = true;
     public static boolean enableEndergenRecipe = true;
     public static boolean enableBlockProtectorRecipe = true;
+    public static boolean enableDynamicPhaseCost = false;
+    public static float dynamicPhaseCostAmount = 0.05f;
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
@@ -47,6 +49,10 @@ public class GeneralConfiguration {
                 "Enable the endergenic generator recipe.").getBoolean();
         enableBlockProtectorRecipe = cfg.get(CATEGORY_GENERAL, "enableBlockProtectorRecipe", enableBlockProtectorRecipe,
                 "Enable the block protector recipe.").getBoolean();
+        enableDynamicPhaseCost = cfg.get(CATEGORY_GENERAL, "enableDynamicPhaseCost", enableDynamicPhaseCost,
+                "Enable dynamic scaling of the Phase Field Generator cost based on world tick cost").getBoolean();
+        dynamicPhaseCostAmount = cfg.get(CATEGORY_GENERAL, "dynamicPhaseCostAmount", dynamicPhaseCostAmount,
+                "How much of the tick cost of the world is applied to the PFG cost, as a ratio from 0 to 1").getFloat();
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();
