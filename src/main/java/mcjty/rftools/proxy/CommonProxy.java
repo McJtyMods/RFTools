@@ -1,8 +1,11 @@
-package mcjty.rftools;
+package mcjty.rftools.proxy;
 
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.WrenchChecker;
+import mcjty.rftools.ForgeEventHandlers;
+import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;

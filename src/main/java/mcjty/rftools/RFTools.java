@@ -4,6 +4,7 @@ import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -26,9 +27,9 @@ public class RFTools implements ModBase {
     public static final String VERSION = "4.13beta1";
     public static final String MIN_FORGE_VER = "11.15.0.1637";
 //    public static final String MIN_COFHLIB_VER = "1.0.3";
-    public static final String MIN_MCJTYLIB_VER = "1.8.0";
+    public static final String MIN_MCJTYLIB_VER = "1.8.0beta1";
 
-    @SidedProxy(clientSide="mcjty.rftools.ClientProxy", serverSide="mcjty.rftools.ServerProxy")
+    @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance("rftools")

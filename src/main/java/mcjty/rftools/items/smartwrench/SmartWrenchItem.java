@@ -17,15 +17,12 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "cofh.api.item.IToolHammer", modid = "CoFHLib")})
 public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     public SmartWrenchItem() {
         setUnlocalizedName("smartwrench");
@@ -40,14 +37,12 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    @Optional.Method(modid = "CoFHLib")
     public boolean isUsable(ItemStack item, EntityLivingBase user, int x, int y, int z) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Override
-    @Optional.Method(modid = "CoFHLib")
     public void toolUsed(ItemStack item, EntityLivingBase user, int x, int y, int z) {
     }
 
