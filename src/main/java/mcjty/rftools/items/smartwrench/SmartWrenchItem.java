@@ -5,6 +5,8 @@ import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,8 +35,22 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+        ModelBakery.addVariantName(this, RFTools.MODID + ":smartwrench");
+        ModelBakery.addVariantName(this, RFTools.MODID + ":smartwrench_select");
+
+        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                SmartWrenchMode mode = getCurrentMode(stack);
+                if (mode == SmartWrenchMode.MODE_SELECT) {
+                    return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5)+ "_select", "inventory");
+                } else {
+                    return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory");
+                }
+            }
+        });
     }
+
 
     @Override
     public boolean isUsable(ItemStack item, EntityLivingBase user, int x, int y, int z) {
