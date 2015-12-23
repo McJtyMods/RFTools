@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -32,6 +33,7 @@ public class PacketGetAllReceivers implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetAllReceivers, IMessage> {
         @Override
         public IMessage onMessage(PacketGetAllReceivers message, MessageContext ctx) {
+            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 

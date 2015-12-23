@@ -101,7 +101,7 @@ public class GuiTeleportProbe extends GuiScreen {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(destination.getName()).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(coordinate.toString()).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(Coordinate.toString(coordinate)).setDesiredWidth(75));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText("Id " + dim).setDesiredWidth(75));
             list.addChild(panel);
         }
