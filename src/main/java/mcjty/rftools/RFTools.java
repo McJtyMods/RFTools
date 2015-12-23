@@ -3,6 +3,8 @@ package mcjty.rftools;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
+import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -99,7 +101,8 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         Logging.log("RFTools: server is stopping. Shutting down gracefully");
-//        RemoteStorageIdRegistry.clearInstance();
+        TeleportDestinations.clearInstance();
+        RemoteStorageIdRegistry.clearInstance();
     }
 
     /**
