@@ -232,7 +232,7 @@ public class TeleportDestinations extends WorldSavedData {
         NBTTagList lst = tagCompound.getTagList("destinations", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
-            Coordinate c = new Coordinate(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
+            BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             int dim = tc.getInteger("dim");
             String name = tc.getString("name");
 

@@ -1,7 +1,6 @@
 package mcjty.rftools.items.smartwrench;
 
 import cofh.api.item.IToolHammer;
-import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -183,7 +182,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             int y = tagCompound.getInteger("selectedY");
             int z = tagCompound.getInteger("selectedZ");
             int dim = tagCompound.getInteger("selectedDim");
-            return new GlobalCoordinate(new Coordinate(x, y, z), dim);
+            return new GlobalCoordinate(new BlockPos(x, y, z), dim);
         }
         return null;
     }

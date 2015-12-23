@@ -6,31 +6,32 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
 
 public class BlockInfo {
-    private Coordinate coordinate;
+    private BlockPos coordinate;
     private int energyStored;
     private int maxEnergyStored;
 
-    public BlockInfo(TileEntity tileEntity, Coordinate coordinate) {
+    public BlockInfo(TileEntity tileEntity, BlockPos coordinate) {
         this.coordinate = coordinate;
         fetchEnergyValues(tileEntity);
     }
 
-    public BlockInfo(Coordinate coordinate, int energyStored, int maxEnergyStored) {
+    public BlockInfo(BlockPos coordinate, int energyStored, int maxEnergyStored) {
         this.coordinate = coordinate;
         this.energyStored = energyStored;
         this.maxEnergyStored = maxEnergyStored;
     }
 
-    public Coordinate getCoordinate() {
+    public BlockPos getCoordinate() {
         return coordinate;
     }
 
-    public static String getReadableName(Block block, Coordinate coordinate, int metadata, World world) {
+    public static String getReadableName(Block block, BlockPos coordinate, int metadata, World world) {
         List<ItemStack> itemStacks = block.getDrops(world, coordinate, world.getBlockState(coordinate), 1);
         if (itemStacks != null && !itemStacks.isEmpty() && itemStacks.get(0).getItem() != null) {
             return getReadableName(itemStacks.get(0).getItem(), metadata);
