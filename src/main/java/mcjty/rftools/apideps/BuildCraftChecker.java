@@ -3,6 +3,7 @@ package mcjty.rftools.apideps;
 import buildcraft.api.tools.IToolWrench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.Loader;
 
 public class BuildCraftChecker {
@@ -24,8 +25,8 @@ public class BuildCraftChecker {
     }
 
 
-    public static void useBuildcraftWrench(Item item, EntityPlayer player, int x, int y, int z) {
+    public static void useBuildcraftWrench(Item item, EntityPlayer player, BlockPos pos) {
         IToolWrench wrench = (IToolWrench) item;
-        wrench.wrenchUsed(player, x, y, z);
+        wrench.wrenchUsed(player, pos);
     }
 }
