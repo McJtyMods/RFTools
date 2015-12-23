@@ -4,8 +4,6 @@ import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -16,7 +14,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
-import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -414,7 +412,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             boolean favorite = destination.isFavorite();
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(96).
-                    setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + Coordinate.toString(coordinate) + ")"));
+                    setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + BlockPosTools.toString(coordinate) + ")"));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
                     .setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName)
                     .setDesiredWidth(110));
@@ -459,7 +457,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(102));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(Coordinate.toString(coordinate)).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(90));
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }

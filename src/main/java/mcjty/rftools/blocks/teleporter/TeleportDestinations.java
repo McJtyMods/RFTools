@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.PacketGetDestinationInfo;
@@ -53,7 +53,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
             list.add(EnumChatFormatting.GREEN + "Name: " + name);
 
             boolean dialed = false;
-            BlockPos c = Coordinate.readFromNBT(tagCompound, "dest");
+            BlockPos c = BlockPosTools.readFromNBT(tagCompound, "dest");
             if (c != null && c.getY() >= 0) {
                 dialed = true;
             } else if (tagCompound.hasKey("destId")) {

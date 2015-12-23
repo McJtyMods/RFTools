@@ -8,7 +8,7 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
@@ -101,7 +101,7 @@ public class GuiTeleportProbe extends GuiScreen {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(destination.getName()).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(Coordinate.toString(coordinate)).setDesiredWidth(75));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(75));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText("Id " + dim).setDesiredWidth(75));
             list.addChild(panel);
         }

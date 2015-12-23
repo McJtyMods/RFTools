@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.Coordinate;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import net.minecraft.entity.Entity;
@@ -184,7 +184,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         name = tagCompound.getString("tpName");
-        BlockPos c = Coordinate.readFromNBT(tagCompound, "dest");
+        BlockPos c = BlockPosTools.readFromNBT(tagCompound, "dest");
         if (c == null) {
             teleportDestination = null;
         } else {
@@ -234,7 +234,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (teleportDestination != null) {
             BlockPos c = teleportDestination.getCoordinate();
             if (c != null) {
-                Coordinate.writeToNBT(tagCompound, "dest", c);
+                BlockPosTools.writeToNBT(tagCompound, "dest", c);
                 tagCompound.setInteger("dim", teleportDestination.getDimension());
             }
         }

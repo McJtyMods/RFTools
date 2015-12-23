@@ -1,7 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
 import cofh.api.energy.IEnergyContainerItem;
-import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;

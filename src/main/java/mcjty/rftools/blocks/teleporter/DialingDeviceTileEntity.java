@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.Coordinate;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
