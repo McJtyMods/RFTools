@@ -47,6 +47,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
             ModelBakery.addVariantName(this, RFTools.MODID + ":" + getUnlocalizedName().substring(5) + i);
+//            ModelBakery.addVariantName(this, "l" + i);
         }
 
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
@@ -64,6 +65,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                     level = 8;
                 }
                 return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5) + (8-level), "inventory");
+//                return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "l" + (8-level));
             }
         });
     }

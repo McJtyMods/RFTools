@@ -1,0 +1,18 @@
+{
+  // Not yet working!
+  "forge_marker": 1,
+  "defaults": {
+    "model": "rftools:charged_porter"
+  },
+  "variants": {
+    "l0": { "textures": { "txt": "rftools:items/chargedPorterItemL0" } },
+    "l1": { "textures": { "txt": "rftools:items/chargedPorterItemL1" } },
+    "l2": { "textures": { "txt": "rftools:items/chargedPorterItemL2" } },
+    "l3": { "textures": { "txt": "rftools:items/chargedPorterItemL3" } },
+    "l4": { "textures": { "txt": "rftools:items/chargedPorterItemL4" } },
+    "l5": { "textures": { "txt": "rftools:items/chargedPorterItemL5" } },
+    "l6": { "textures": { "txt": "rftools:items/chargedPorterItemL6" } },
+    "l7": { "textures": { "txt": "rftools:items/chargedPorterItemL7" } },
+    "l8": { "textures": { "txt": "rftools:items/chargedPorterItemL8" } }
+  }
+}
