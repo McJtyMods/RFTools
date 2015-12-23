@@ -6,6 +6,8 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.rftools.items.storage.StorageFilterCache;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -35,7 +37,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private int powered;
 
-// @todo when storage system is implemented    private StorageFilterCache filterCache = null;
+    private StorageFilterCache filterCache = null;
 
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
@@ -94,9 +96,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-//        if (index == CrafterContainer.SLOT_FILTER_MODULE) {
-//            filterCache = null;
-//        }
+        if (index == CrafterContainer.SLOT_FILTER_MODULE) {
+            filterCache = null;
+        }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
@@ -107,9 +109,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void getFilterCache() {
-//        if (filterCache == null) {
-//            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(CrafterContainer.SLOT_FILTER_MODULE));
-//        }
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(CrafterContainer.SLOT_FILTER_MODULE));
+        }
     }
 
     @Override
@@ -117,9 +119,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
             if (inventoryHelper.containsItem(CrafterContainer.SLOT_FILTER_MODULE)) {
                 getFilterCache();
-//                if (filterCache != null) {
-//                    return filterCache.match(stack);
-//                }
+                if (filterCache != null) {
+                    return filterCache.match(stack);
+                }
             }
         }
 

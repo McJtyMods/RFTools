@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.container.*;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -27,8 +28,7 @@ public class CrafterContainer extends GenericContainer {
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 12, 97, 13, 18, 2, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_BUFFEROUT, 31, 142, 2, 18, 2, 18);
 
-//            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 65);
-            addSlot(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 65);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 65);
 
             layoutPlayerInventorySlots(85, 142);
         }
