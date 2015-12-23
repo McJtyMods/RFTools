@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.generator;
 
 
 import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
@@ -18,7 +19,7 @@ import net.minecraft.util.ITickable;
 
 public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CoalGeneratorContainer.factory, 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CoalGeneratorContainer.factory, 2);
 
     private int burning;
 
@@ -29,6 +30,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            handleChargingItem();
             handleSendingEnergy();
 
             boolean working = burning > 0;
@@ -79,6 +81,17 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return burning > 0;
     }
 
+    private void handleChargingItem() {
+        ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
+        if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
+            IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
+            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
+            int received = energyContainerItem.receiveEnergy(stack, rfToGive, false);
+            extractEnergy(EnumFacing.DOWN, received, false);
+        }
+    }
+
     private void handleSendingEnergy() {
         int energyStored = getEnergyStored(EnumFacing.DOWN);
 
@@ -89,12 +102,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
                 IEnergyConnection connection = (IEnergyConnection) te;
                 EnumFacing opposite = facing.getOpposite();
                 if (connection.canConnectEnergy(opposite)) {
-                    int rfToGive;
-                    if (CoalGeneratorConfiguration.SENDPERTICK <= energyStored) {
-                        rfToGive = CoalGeneratorConfiguration.SENDPERTICK;
-                    } else {
-                        rfToGive = energyStored;
-                    }
+                    int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
 
                     int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
@@ -118,6 +126,14 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
+        return isItemValidForSlot(index, stack);
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == CoalGeneratorContainer.SLOT_CHARGEITEM) {
+            return stack.getItem() instanceof IEnergyContainerItem;
+        }
         return true;
     }
 
