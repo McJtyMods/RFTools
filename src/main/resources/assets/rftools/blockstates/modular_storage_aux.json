@@ -5,11 +5,17 @@
       "model": "rftools:rftoolsblock",
       "textures": { "front": "rftools:blocks/machineModularStorage" }
     }],
-    "overlay": [{
+    "overlay_generic": [{
       "model": "rftools:overlay",
-      "textures": { "overlay": "#overlay" }
-//      "textures": { "overlay": "rftools:blocks/overlayGeneric" }
-
+      "textures": { "overlay": "rftools:blocks/overlayGeneric" }
+    }],
+    "overlay_ore": [{
+      "model": "rftools:overlay",
+      "textures": { "overlay": "rftools:blocks/overlayOre" }
+    }],
+    "overlay_none": [{
+      "model": "rftools:overlay",
+      "textures": { "overlay": "rftools:blocks/overlayNone" }
     }]
   }
 }

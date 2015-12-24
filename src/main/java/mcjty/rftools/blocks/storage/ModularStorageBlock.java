@@ -65,24 +65,24 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
 
     private static long lastTime = 0;
 
-//    @Override
-//    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-//        ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
-//        ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
-//        if (stack == null) {
-//            return state.withProperty(TYPEMODULE, TYPE_NONE);
-//        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
-//            return state.withProperty(TYPEMODULE, TYPE_GENERIC);
-//        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
-//            return state.withProperty(TYPEMODULE, TYPE_ORE);
-//        }
-//        return state.withProperty(TYPEMODULE, TYPE_NONE);
-//    }
-//
-//    @Override
-//    protected BlockState createBlockState() {
-//        return new BlockState(this, FACING, TYPEMODULE);
-//    }
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
+        ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+        if (stack == null) {
+            return state.withProperty(TYPEMODULE, TYPE_NONE);
+        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
+            return state.withProperty(TYPEMODULE, TYPE_GENERIC);
+        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
+            return state.withProperty(TYPEMODULE, TYPE_ORE);
+        }
+        return state.withProperty(TYPEMODULE, TYPE_NONE);
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, FACING, TYPEMODULE);
+    }
 
     @Override
     public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
