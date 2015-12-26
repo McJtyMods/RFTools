@@ -25,7 +25,7 @@ public class CrafterContainer extends GenericContainer {
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_INVENTORY, SLOT_CRAFTINPUT, 193, 7, 3, 18, 3, 18);
             addSlot(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_INVENTORY, SLOT_CRAFTOUTPUT, 193, 65);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 12, 97, 13, 18, 2, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 13, 97, 13, 18, 2, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_BUFFEROUT, 31, 142, 2, 18, 2, 18);
 
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 65);
