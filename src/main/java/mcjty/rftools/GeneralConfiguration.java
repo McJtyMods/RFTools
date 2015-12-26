@@ -51,8 +51,8 @@ public class GeneralConfiguration {
                 "Enable the block protector recipe.").getBoolean();
         enableDynamicPhaseCost = cfg.get(CATEGORY_GENERAL, "enableDynamicPhaseCost", enableDynamicPhaseCost,
                 "Enable dynamic scaling of the Phase Field Generator cost based on world tick cost").getBoolean();
-        dynamicPhaseCostAmount = cfg.get(CATEGORY_GENERAL, "dynamicPhaseCostAmount", dynamicPhaseCostAmount,
-                "How much of the tick cost of the world is applied to the PFG cost, as a ratio from 0 to 1").getFloat();
+        dynamicPhaseCostAmount = (float) cfg.get(CATEGORY_GENERAL, "dynamicPhaseCostAmount", dynamicPhaseCostAmount,
+                "How much of the tick cost of the world is applied to the PFG cost, as a ratio from 0 to 1").getDouble();
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();

@@ -141,7 +141,17 @@ public class RfToolsDimensionManager extends WorldSavedData {
             for (Object ent : world.playerEntities) {
                 EntityPlayer player = (EntityPlayer) ent;
                 // Check if this player has a valid PFG but don't consume energy.
-                if (checkValidPhasedFieldGenerator(player, false)) {
+                int cost = 0;
+                if (DimletConfiguration.dimensionDifficulty != -1) {
+                    RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(world);
+                    DimensionInformation information = dimensionManager.getDimensionInformation(world.provider.dimensionId);
+                    cost = information.getActualRfCost();
+                    if (cost == 0) {
+                        DimensionDescriptor descriptor = dimensionManager.getDimensionDescriptor(world.provider.dimensionId);
+                        cost = descriptor.getRfMaintainCost();
+                    }
+                }
+                if (checkValidPhasedFieldGenerator(player, false, cost)) {
                     pfgList.add(new Coordinate((int) player.posX, (int) player.posY, (int) player.posZ));
                 }
             }
@@ -225,8 +235,11 @@ public class RfToolsDimensionManager extends WorldSavedData {
                 PhasedFieldGeneratorItem pfg = (PhasedFieldGeneratorItem) slot.getItem();
                 int energyStored = pfg.getEnergyStored(slot);
                 int toConsume;
-                if(GeneralConfiguration.enableDynamicPhaseCost) toConsume = DimensionTickEvent.MAXTICKS * tickCost * GeneralConfiguration.dynamicPhaseCostAmount;
-                else toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
+                if (GeneralConfiguration.enableDynamicPhaseCost) {
+                    toConsume = (int) (DimensionTickEvent.MAXTICKS * tickCost * GeneralConfiguration.dynamicPhaseCostAmount);
+                } else {
+                    toConsume = DimensionTickEvent.MAXTICKS * DimletConfiguration.PHASEDFIELD_CONSUMEPERTICK;
+                }
                 if (energyStored >= toConsume) {
                     if (consume) {
                         pfg.extractEnergy(slot, toConsume, false);
