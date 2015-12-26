@@ -36,13 +36,13 @@ repositories {
     }
 }
 
-version = "4.13beta1"
+version = "1.8.8-4.13beta1"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
 group= "mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "rftools188"
+archivesBaseName = "rftools"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -71,7 +71,7 @@ dependencies {
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 
-    //compile "com.github.mcjty:mcjtylib:1.7.0-SNAPSHOT:dev"
+    compile "com.github.mcjty:mcjtylib:1.8.8-1.8.0beta1-SNAPSHOT:dev"
 }
 
 processResources
