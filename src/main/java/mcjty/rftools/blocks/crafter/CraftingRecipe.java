@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CraftingRecipe {
@@ -29,12 +30,10 @@ public class CraftingRecipe {
     private boolean craftInternal = false;
 
     public static IRecipe findRecipe(World world, InventoryCrafting inv) {
-        List recipes = CraftingManager.getInstance().getRecipeList();
-        for (Object r : recipes) {
-            IRecipe irecipe = (IRecipe) r;
-
-            if (irecipe.matches(inv, world)) {
-                return irecipe;
+        List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
+        for (IRecipe r : recipes) {
+            if (r.matches(inv, world)) {
+                return r;
             }
         }
         return null;
