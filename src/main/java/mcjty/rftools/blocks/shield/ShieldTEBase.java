@@ -10,7 +10,6 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.entity.SyncedValueList;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Coordinate;
@@ -85,23 +84,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
-    private SyncedValueList<Coordinate> shieldBlocks = new SyncedValueList<Coordinate>() {
-        @Override
-        public Coordinate readElementFromNBT(NBTTagCompound tagCompound) {
-            return Coordinate.readFromNBT(tagCompound, "c");
-        }
-
-        @Override
-        public NBTTagCompound writeElementToNBT(Coordinate element) {
-            return Coordinate.writeToNBT(element);
-        }
-    };
+    private List<RelCoordinate> shieldBlocks = new ArrayList<RelCoordinate>();
 
     private ItemStack stacks[] = new ItemStack[ShieldContainer.BUFFER_SIZE];
 
     public ShieldTEBase(int maxEnergy, int maxReceive) {
         super(maxEnergy, maxReceive);
-        registerSyncedObject(shieldBlocks);
     }
 
     public void setSupportedBlocks(int supportedBlocks) {
@@ -310,7 +298,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     private void upFilter(int selected) {
         ShieldFilter filter1 = filters.get(selected-1);
         ShieldFilter filter2 = filters.get(selected);
-        filters.set(selected-1, filter2);
+        filters.set(selected - 1, filter2);
         filters.set(selected, filter1);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
@@ -577,7 +565,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(stacks[ShieldContainer.SLOT_SHAPE]);
             Coordinate dimension = ShapeCardItem.getClampedDimension(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldDimension);
             Coordinate offset = ShapeCardItem.getClampedOffset(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldOffset);
-            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, shieldBlocks, supportedBlocks, false, null);
+            List<Coordinate> coordinates = new ArrayList<Coordinate>();
+            ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, coordinates, supportedBlocks, false, null);
+            for (Coordinate c : coordinates) {
+                shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
+            }
+
         } else {
             templateMeta = findTemplateMeta();
 
@@ -585,7 +578,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
             shieldBlocks.clear();
             for (Coordinate c : coordinateSet) {
-                shieldBlocks.add(c);
+                shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
             }
         }
         shieldComposed = true;
@@ -639,11 +632,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
             int damageBits = calculateDamageBits();
             Block block = calculateShieldBlock(damageBits);
             for (Coordinate templateBlock : templateBlocks) {
-                shieldBlocks.add(templateBlock);
-                updateShieldBlock(camoId, cddata, damageBits, block, templateBlock);
+                RelCoordinate relc = new RelCoordinate(templateBlock.getX() - xCoord, templateBlock.getY() - yCoord, templateBlock.getZ() - zCoord);
+                shieldBlocks.add(relc);
+                updateShieldBlock(camoId, cddata, damageBits, block, relc);
             }
         } else if (origBlock instanceof AbstractShieldBlock) {
-            shieldBlocks.remove(c);
+            shieldBlocks.remove(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
             if (isShapedShield()) {
                 worldObj.setBlockToAir(x, y, z);
             } else {
@@ -665,9 +659,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         int cddata = calculateShieldCollisionData();
         int damageBits = calculateDamageBits();
         Block block = calculateShieldBlock(damageBits);
-        for (Coordinate c : shieldBlocks) {
+        for (RelCoordinate c : shieldBlocks) {
             if (Blocks.air.equals(block)) {
-                worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
+                worldObj.setBlockToAir(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
             } else {
                 updateShieldBlock(camoId, cddata, damageBits, block, c);
             }
@@ -676,9 +670,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         notifyBlockUpdate();
     }
 
-    private void updateShieldBlock(int[] camoId, int cddata, int damageBits, Block block, Coordinate c) {
-        worldObj.setBlock(c.getX(), c.getY(), c.getZ(), block, camoId[1], 2);
-        TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
+    private void updateShieldBlock(int[] camoId, int cddata, int damageBits, Block block, RelCoordinate c) {
+        worldObj.setBlock(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz(), block, camoId[1], 2);
+        TileEntity te = worldObj.getTileEntity(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
         if (te instanceof ShieldBlockTileEntity) {
             ShieldBlockTileEntity shieldBlockTileEntity = (ShieldBlockTileEntity) te;
             shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
@@ -690,18 +684,21 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
     public void decomposeShield() {
-        for (Coordinate c : shieldBlocks) {
-            Block block = worldObj.getBlock(c.getX(), c.getY(), c.getZ());
-            if (worldObj.isAirBlock(c.getX(), c.getY(), c.getZ()) || block instanceof AbstractShieldBlock) {
+        for (RelCoordinate c : shieldBlocks) {
+            int cx = xCoord + c.getDx();
+            int cy = yCoord + c.getDy();
+            int cz = zCoord + c.getDz();
+            Block block = worldObj.getBlock(cx, cy, cz);
+            if (worldObj.isAirBlock(cx, cy, cz) || block instanceof AbstractShieldBlock) {
                 if (isShapedShield()) {
-                    worldObj.setBlockToAir(c.getX(), c.getY(), c.getZ());
+                    worldObj.setBlockToAir(cx, cy, cz);
                 } else {
-                    worldObj.setBlock(c.getX(), c.getY(), c.getZ(), ShieldSetup.shieldTemplateBlock, templateMeta, 2);
+                    worldObj.setBlock(cx, cy, cz, ShieldSetup.shieldTemplateBlock, templateMeta, 2);
                 }
             } else {
                 if (!isShapedShield()) {
                     // No room, just spawn the block
-                    BlockTools.spawnItemStack(worldObj, c.getX(), c.getY(), c.getZ(), new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                    BlockTools.spawnItemStack(worldObj, cx, cy, cz, new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
                 }
             }
         }
@@ -789,6 +786,20 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         }
     }
 
+    private static short bytesToShort(byte b1, byte b2) {
+        short s1 = (short) (b1 & 0xff);
+        short s2 = (short) (b2 & 0xff);
+        return (short) (s1 * 256 + s2);
+    }
+
+    private static byte shortToByte1(short s) {
+        return (byte) ((s & 0xff00) >> 8);
+    }
+
+    private static byte shortToByte2(short s) {
+        return (byte) (s & 0xff);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -796,7 +807,27 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
         templateMeta = tagCompound.getInteger("templateMeta");
-        shieldBlocks.readFromNBT(tagCompound, "coordinates");
+
+        shieldBlocks.clear();;
+        if (tagCompound.hasKey("coordinates")) {
+            // Support for legacy coordinates field
+            NBTTagCompound compound = tagCompound.getCompoundTag("coordinates");
+            NBTTagList list = compound.getTagList("list", 10);
+            for(int i = 0; i < list.tagCount(); ++i) {
+                Coordinate c = Coordinate.readFromNBT(list.getCompoundTagAt(i), "c");
+                shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
+            }
+        } else {
+            byte[] byteArray = tagCompound.getByteArray("relcoords");
+            int j = 0;
+            for (int i = 0 ; i < byteArray.length / 6 ; i++) {
+                short dx = bytesToShort(byteArray[j+0], byteArray[j+1]);
+                short dy = bytesToShort(byteArray[j+2], byteArray[j+3]);
+                short dz = bytesToShort(byteArray[j+4], byteArray[j+5]);
+                j += 6;
+                shieldBlocks.add(new RelCoordinate(dx, dy, dz));
+            }
+        }
     }
 
     @Override
@@ -848,7 +879,20 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
         tagCompound.setInteger("templateMeta", templateMeta);
-        shieldBlocks.writeToNBT(tagCompound, "coordinates");
+        byte[] blocks = new byte[shieldBlocks.size() * 6];
+        int j = 0;
+        for (RelCoordinate c : shieldBlocks) {
+            blocks[j+0] = shortToByte1((short) c.getDx());
+            blocks[j+1] = shortToByte2((short) c.getDx());
+            blocks[j+2] = shortToByte1((short) c.getDy());
+            blocks[j+3] = shortToByte2((short) c.getDy());
+            blocks[j+4] = shortToByte1((short) c.getDz());
+            blocks[j+5] = shortToByte2((short) c.getDz());
+            j += 6;
+        }
+        tagCompound.setByteArray("relcoords", blocks);
+
+//        shieldBlocksOld.writeToNBT(tagCompound, "coordinates");
     }
 
     @Override
