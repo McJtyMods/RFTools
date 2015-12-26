@@ -56,25 +56,25 @@ public class BeamRenderer extends TileEntitySpecialRenderer {
 
             tessellator.setColorRGBA_F(1.0f, 1.0f, 1.0f, 1.0f);
 
-            tessellator.addVertexWithUV(0, 4, 0, 1, i1);
-            tessellator.addVertexWithUV(1, 4, 0, 1, i2);
-            tessellator.addVertexWithUV(1, 0, 0, 0, i2);
-            tessellator.addVertexWithUV(0, 0, 0, 0, i1);
+            tessellator.addVertexWithUV(.1, 4, .1, 1, i1);
+            tessellator.addVertexWithUV(.9, 4, .1, 1, i2);
+            tessellator.addVertexWithUV(.9, 0, .1, 0, i2);
+            tessellator.addVertexWithUV(.1, 0, .1, 0, i1);
 
-            tessellator.addVertexWithUV(1, 4, 1, 1, i1);
-            tessellator.addVertexWithUV(0, 4, 1, 1, i2);
-            tessellator.addVertexWithUV(0, 0, 1, 0, i2);
-            tessellator.addVertexWithUV(1, 0, 1, 0, i1);
+            tessellator.addVertexWithUV(.9, 4, .9, 1, i1);
+            tessellator.addVertexWithUV(.1, 4, .9, 1, i2);
+            tessellator.addVertexWithUV(.1, 0, .9, 0, i2);
+            tessellator.addVertexWithUV(.9, 0, .9, 0, i1);
 
-            tessellator.addVertexWithUV(0, 4, 1, 1, i1);
-            tessellator.addVertexWithUV(0, 4, 0, 1, i2);
-            tessellator.addVertexWithUV(0, 0, 0, 0, i2);
-            tessellator.addVertexWithUV(0, 0, 1, 0, i1);
+            tessellator.addVertexWithUV(.1, 4, .9, 1, i1);
+            tessellator.addVertexWithUV(.1, 4, .1, 1, i2);
+            tessellator.addVertexWithUV(.1, 0, .1, 0, i2);
+            tessellator.addVertexWithUV(.1, 0, .9, 0, i1);
 
-            tessellator.addVertexWithUV(1, 4, 0, 1, i1);
-            tessellator.addVertexWithUV(1, 4, 1, 1, i2);
-            tessellator.addVertexWithUV(1, 0, 1, 0, i2);
-            tessellator.addVertexWithUV(1, 0, 0, 0, i1);
+            tessellator.addVertexWithUV(.9, 4, .1, 1, i1);
+            tessellator.addVertexWithUV(.9, 4, .9, 1, i2);
+            tessellator.addVertexWithUV(.9, 0, .9, 0, i2);
+            tessellator.addVertexWithUV(.9, 0, .1, 0, i1);
 
             tessellator.draw();
 
