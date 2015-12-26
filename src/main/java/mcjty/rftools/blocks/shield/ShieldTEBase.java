@@ -558,29 +558,27 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements IIn
     }
 
     public void composeShield(boolean ctrl) {
-        if (isShapedShield()) {
-            shieldBlocks.clear();
+        shieldBlocks.clear();
+        Collection<Coordinate> coordinates;
 
+        if (isShapedShield()) {
             // Special shaped mode.
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(stacks[ShieldContainer.SLOT_SHAPE]);
             Coordinate dimension = ShapeCardItem.getClampedDimension(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldDimension);
             Coordinate offset = ShapeCardItem.getClampedOffset(stacks[ShieldContainer.SLOT_SHAPE], ShieldConfiguration.maxShieldOffset);
-            List<Coordinate> coordinates = new ArrayList<Coordinate>();
+            coordinates = new ArrayList<Coordinate>();
             ShapeCardItem.composeShape(shape, worldObj, getCoordinate(), dimension, offset, coordinates, supportedBlocks, false, null);
-            for (Coordinate c : coordinates) {
-                shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
-            }
-
         } else {
             templateMeta = findTemplateMeta();
 
-            Set<Coordinate> coordinateSet = new HashSet<Coordinate>();
-            findTemplateBlocks(coordinateSet, templateMeta, ctrl, getCoordinate());
-            shieldBlocks.clear();
-            for (Coordinate c : coordinateSet) {
-                shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
-            }
+            coordinates = new HashSet<Coordinate>();
+            findTemplateBlocks((Set<Coordinate>)coordinates, templateMeta, ctrl, getCoordinate());
         }
+
+        for (Coordinate c : coordinates) {
+            shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
+        }
+
         shieldComposed = true;
         updateShield();
     }
