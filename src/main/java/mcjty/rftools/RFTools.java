@@ -26,10 +26,10 @@ import java.util.EnumMap;
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "4.13beta1";
+    public static final String VERSION = "4.20beta1";
     public static final String MIN_FORGE_VER = "11.15.0.1637";
 //    public static final String MIN_COFHLIB_VER = "1.0.3";
-    public static final String MIN_MCJTYLIB_VER = "1.8.0beta1";
+    public static final String MIN_MCJTYLIB_VER = "1.8.8-1.8.01eta1";
 
     @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
