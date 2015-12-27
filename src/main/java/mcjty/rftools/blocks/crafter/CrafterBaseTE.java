@@ -29,9 +29,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     public static final int SPEED_FAST = 1;
 
     public static final String CMD_MODE = "mode";
+    public static final String CMD_REMEMBER = "remember";
+    public static final String CMD_FORGET = "forget";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
             10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
+
+    private ItemStack[] ghostSlots = new ItemStack[CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE];
+
     private CraftingRecipe recipes[];
     private int supportedRecipes;
 
@@ -51,6 +56,10 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     public CrafterBaseTE() {
         super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
         setSupportedRecipes(8);
+    }
+
+    public ItemStack[] getGhostSlots() {
+        return ghostSlots;
     }
 
     public void setSupportedRecipes(int supportedRecipes) {
@@ -154,10 +163,23 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
+            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFER];
+            if (ghostSlot != null) {
+                if (!ghostSlot.isItemEqual(stack)) {
+                    return false;
+                }
+            }
             if (inventoryHelper.containsItem(CrafterContainer.SLOT_FILTER_MODULE)) {
                 getFilterCache();
                 if (filterCache != null) {
                     return filterCache.match(stack);
+                }
+            }
+        } else if (index >= CrafterContainer.SLOT_BUFFEROUT && index < CrafterContainer.SLOT_FILTER_MODULE) {
+            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE];
+            if (ghostSlot != null) {
+                if (!ghostSlot.isItemEqual(stack)) {
+                    return false;
                 }
             }
         }
@@ -192,6 +214,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound);
+        readGhostBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
 
         int m = tagCompound.getInteger("rsMode");
@@ -205,6 +228,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             inventoryHelper.setStackInSlot(i+CrafterContainer.SLOT_BUFFER, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+        }
+    }
+
+    private void readGhostBufferFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            ghostSlots[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
 
@@ -225,6 +256,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound);
+        writeGhostBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
         tagCompound.setByte("rsMode", (byte)redstoneMode.ordinal());
         tagCompound.setByte("speedMode", (byte) speedMode);
@@ -241,6 +273,19 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             bufferTagList.appendTag(nbtTagCompound);
         }
         tagCompound.setTag("Items", bufferTagList);
+    }
+
+    private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = new NBTTagList();
+        for (int i = 0 ; i < ghostSlots.length ; i++) {
+            ItemStack stack = ghostSlots[i];
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            if (stack != null) {
+                stack.writeToNBT(nbtTagCompound);
+            }
+            bufferTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("GItems", bufferTagList);
     }
 
     private void writeRecipesToNBT(NBTTagCompound tagCompound) {
@@ -406,7 +451,33 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             start = CrafterContainer.SLOT_BUFFEROUT;
             stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
-        return InventoryHelper.mergeItemStack(this, result, start, stop, undo) == 0;
+        return InventoryHelper.mergeItemStack(this, true, result, start, stop, undo) == 0;
+    }
+
+    private void rememberItems() {
+        for (int i = 0 ; i < ghostSlots.length ; i++) {
+            int slotIdx;
+            if (i < CrafterContainer.BUFFER_SIZE) {
+                slotIdx = i + CrafterContainer.SLOT_BUFFER;
+            } else {
+                slotIdx = i + CrafterContainer.SLOT_BUFFEROUT - CrafterContainer.BUFFER_SIZE;
+            }
+            if (inventoryHelper.containsItem(slotIdx)) {
+                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx);
+                ghostSlots[i] = stack.copy();
+                ghostSlots[i].stackSize = 1;
+            }
+        }
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    private void forgetItems() {
+        for (int i = 0 ; i < ghostSlots.length ; i++) {
+            ghostSlots[i] = null;
+        }
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -419,6 +490,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IS
             String m = args.get("rs").getString();
             setRedstoneMode(RedstoneMode.getMode(m));
             setSpeedMode(args.get("speed").getInteger());
+            return true;
+        } else if (CMD_REMEMBER.equals(command)) {
+            rememberItems();
+            return true;
+        } else if (CMD_FORGET.equals(command)) {
+            forgetItems();
             return true;
         }
         return false;

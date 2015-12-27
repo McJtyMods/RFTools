@@ -55,7 +55,7 @@ public class CmdCreateTab extends AbstractRfToolsCommand {
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
             ItemStack tab = DimensionEnscriberTileEntity.createRealizedTab(dimensionDescriptor, sender.getEntityWorld());
-            InventoryHelper.mergeItemStack(player.inventory, tab, 0, 35, null);
+            InventoryHelper.mergeItemStack(player.inventory, false, tab, 0, 35, null);
         } else {
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This command only works as a player!"));
         }

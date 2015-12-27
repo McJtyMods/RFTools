@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.events.ChoiceEvent;
@@ -18,13 +19,18 @@ import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.awt.*;
 
@@ -39,6 +45,8 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private Button applyButton;
     private ImageChoiceLabel redstoneMode;
     private ImageChoiceLabel speedMode;
+    private Button rememberButton;
+    private Button forgetButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -75,11 +83,32 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
+        rememberButton = new Button(mc, this)
+                .setText("R")
+                .setTooltips("Remember the current items", "in the internal and", "external buffers")
+                .addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget widget) {
+                        rememberItems();
+                    }
+                })
+                .setLayoutHint(new PositionalLayout.PositionalHint(148, 70, 18, 16));
+        forgetButton = new Button(mc, this)
+                .setText("F")
+                .setTooltips("Forget the remembered layout")
+                .addButtonEvent(new ButtonEvent() {
+                    @Override
+                    public void buttonClicked(Widget widget) {
+                        forgetItems();
+                    }
+                })
+                .setLayoutHint(new PositionalLayout.PositionalHint(168, 70, 18, 16));
+
         initRedstoneMode();
         initSpeedMode();
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode);
+                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode).addChild(rememberButton).addChild(forgetButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         selectRecipe();
@@ -168,6 +197,14 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private void changeSpeedMode() {
         tileEntity.setSpeedMode(speedMode.getCurrentChoiceIndex());
         sendChangeToServer();
+    }
+
+    private void rememberItems() {
+        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_REMEMBER);
+    }
+
+    private void forgetItems() {
+        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_FORGET);
     }
 
     private void sendChangeToServer() {
@@ -323,10 +360,58 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFToolsMessages.INSTANCE);
+
+        // Draw the ghost slots here
+        drawGhostSlots();
+    }
+
+    private void drawGhostSlots() {
+        GL11.glPushMatrix();
+        GL11.glTranslatef((float)guiLeft, (float)guiTop, 0.0F);
+        GL11.glColor4f(1.0F, 0.0F, 0.0F, 1.0F);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (short) 240 / 1.0F, (float) (short) 240 / 1.0F);
+
+        ItemStack[] ghostSlots = tileEntity.getGhostSlots();
+        zLevel = 100.0F;
+        itemRender.zLevel = 100.0F;
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_LIGHTING);
+
+        for (int i = 0 ; i < ghostSlots.length ; i++) {
+            ItemStack stack = ghostSlots[i];
+            if (stack != null) {
+                int slotIdx;
+                if (i < CrafterContainer.BUFFER_SIZE) {
+                    slotIdx = i + CrafterContainer.SLOT_BUFFER;
+                } else {
+                    slotIdx = i + CrafterContainer.SLOT_BUFFEROUT - CrafterContainer.BUFFER_SIZE;
+                }
+                Slot slot = inventorySlots.getSlot(slotIdx);
+                if (!slot.getHasStack()) {
+                    itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), stack, slot.xDisplayPosition, slot.yDisplayPosition);
+
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                    this.mc.getTextureManager().bindTexture(iconGuiElements);
+                    RenderHelper.drawTexturedModalRect(slot.xDisplayPosition, slot.yDisplayPosition, 14 * 16, 3 * 16, 16, 16);
+                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                    GL11.glDisable(GL11.GL_BLEND);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                }
+            }
+
+        }
+        itemRender.zLevel = 0.0F;
+        zLevel = 0.0F;
+
+        GL11.glPopMatrix();
     }
 }
