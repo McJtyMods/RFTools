@@ -89,34 +89,19 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         applyButton = new Button(mc, this).
                 setText("Apply").
                 setTooltips("Press to apply the", "recipe to the crafter").
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        applyRecipe();
-                    }
-                }).
+                addButtonEvent(parent -> applyRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
         rememberButton = new Button(mc, this)
                 .setText("R")
                 .setTooltips("Remember the current items", "in the internal and", "external buffers")
-                .addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget widget) {
-                        rememberItems();
-                    }
-                })
+                .addButtonEvent(widget -> rememberItems())
                 .setLayoutHint(new PositionalLayout.PositionalHint(148, 70, 18, 16));
         forgetButton = new Button(mc, this)
                 .setText("F")
                 .setTooltips("Forget the remembered layout")
-                .addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget widget) {
-                        forgetItems();
-                    }
-                })
+                .addButtonEvent(widget -> forgetItems())
                 .setLayoutHint(new PositionalLayout.PositionalHint(168, 70, 18, 16));
 
         initRedstoneMode();
@@ -151,12 +136,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         internalRecipe = new ChoiceLabel(mc, this).
                 addChoices("Ext", "Int").
                 setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        updateRecipe();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> updateRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
     }
@@ -165,24 +145,14 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
                 setTooltips("'Keep' will keep one", "item in every inventory", "slot").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        updateRecipe();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> updateRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 7, 41, 14));
     }
 
     private void initSpeedMode() {
         speedMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeSpeedMode();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> changeSpeedMode()).
                 addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
                 addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
         speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
@@ -191,12 +161,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeRedstoneMode();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
@@ -377,7 +342,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
-        int currentRF = tileEntity.getCurrentRF();
+        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 
