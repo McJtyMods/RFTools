@@ -28,7 +28,7 @@ public class CrafterContainer extends GenericContainer {
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 13, 97, 13, 18, 2, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_BUFFEROUT, 31, 142, 2, 18, 2, 18);
 
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 65);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 157, 43);
 
             layoutPlayerInventorySlots(85, 142);
         }
@@ -46,6 +46,16 @@ public class CrafterContainer extends GenericContainer {
     @Override
     protected Slot createSlot(SlotFactory slotFactory, IInventory inventory, int index, int x, int y, SlotType slotType) {
         if (index >= SLOT_BUFFER && index < SLOT_BUFFEROUT && slotType == SlotType.SLOT_INPUT) {
+            return new BaseSlot(inventory, index, x, y) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    if (!crafterBaseTE.isItemValidForSlot(getSlotIndex(), stack)) {
+                        return false;
+                    }
+                    return super.isItemValid(stack);
+                }
+            };
+        } else if (index >= SLOT_BUFFEROUT && index < SLOT_FILTER_MODULE) {
             return new BaseSlot(inventory, index, x, y) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
