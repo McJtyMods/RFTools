@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.crafter;
 
 import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
@@ -25,10 +26,16 @@ import java.util.List;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer, GuiCrafter> implements Infusable, IRedstoneConnectable {
+public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable, IRedstoneConnectable {
 
     public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
-        super(Material.iron, tileEntityClass, CrafterContainer.class, GuiCrafter.class, blockName, true);
+        super(Material.iron, tileEntityClass, CrafterContainer.class, blockName, true);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiCrafter.class;
     }
 
     @SideOnly(Side.CLIENT)

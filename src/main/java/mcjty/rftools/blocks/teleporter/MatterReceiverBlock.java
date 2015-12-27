@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -28,9 +29,15 @@ import java.util.List;
 public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusable {
 
     public MatterReceiverBlock() {
-        super(Material.iron, MatterReceiverTileEntity.class, EmptyContainer.class, GuiMatterReceiver.class, "matter_receiver", false);
+        super(Material.iron, MatterReceiverTileEntity.class, EmptyContainer.class, "matter_receiver", false);
         setCreativeTab(RFTools.tabRfTools);
         setDefaultState(this.blockState.getBaseState());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiMatterReceiver.class;
     }
 
     @SideOnly(Side.CLIENT)

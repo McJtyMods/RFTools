@@ -28,19 +28,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Constructor;
 
-public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container, G extends GenericGuiContainer> extends GenericBlock {
+public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock {
 
     private final Class<? extends C> containerClass;
-    private final Class<? extends G> guiClass;
 
     public GenericRFToolsBlock(Material material,
                                Class<? extends T> tileEntityClass,
                                Class<? extends C> containerClass,
-                               Class<? extends G> guiClass,
                                String unlocalizedName, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, isContainer);
         this.containerClass = containerClass;
-        this.guiClass = guiClass;
         setUnlocalizedName(unlocalizedName);
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, GenericItemBlock.class, unlocalizedName);
@@ -52,16 +49,21 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 
+    @SideOnly(Side.CLIENT)
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return null;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         T inventory = (T) tileEntity;
         C container;
-        G gui;
+        GenericGuiContainer gui;
         try {
             Constructor<? extends C> constructor = containerClass.getConstructor(EntityPlayer.class, IInventory.class);
             container = constructor.newInstance(entityPlayer, inventory instanceof IInventory ? inventory : null);
-            Constructor<? extends G> guiConstructor = guiClass.getConstructor(tileEntityClass, containerClass);
+            Constructor<? extends GenericGuiContainer> guiConstructor = getGuiClass().getConstructor(tileEntityClass, containerClass);
             gui = guiConstructor.newInstance(inventory, container);
             return gui;
         } catch (Exception e) {

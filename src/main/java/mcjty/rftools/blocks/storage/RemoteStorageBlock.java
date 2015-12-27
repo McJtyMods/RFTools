@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -16,7 +17,13 @@ import java.util.List;
 public class RemoteStorageBlock extends GenericRFToolsBlock implements Infusable {
 
     public RemoteStorageBlock() {
-        super(Material.iron, RemoteStorageTileEntity.class, RemoteStorageContainer.class, GuiRemoteStorage.class, "remote_storage", true);
+        super(Material.iron, RemoteStorageTileEntity.class, RemoteStorageContainer.class, "remote_storage", true);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiRemoteStorage.class;
     }
 
     @Override
