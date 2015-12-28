@@ -351,6 +351,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void drawGhostSlots() {
+        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) guiLeft, (float) guiTop, 0.0F);
         GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
@@ -393,5 +394,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         zLevel = 0.0F;
 
         GlStateManager.popMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
 }
