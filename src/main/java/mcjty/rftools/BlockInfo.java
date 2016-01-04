@@ -2,6 +2,7 @@ package mcjty.rftools;
 
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +29,10 @@ public class BlockInfo {
 
     public BlockPos getCoordinate() {
         return coordinate;
+    }
+
+    public static String getReadableName(IBlockState state) {
+        return getReadableName(state.getBlock(), state.getBlock().getMetaFromState(state));
     }
 
     public static String getReadableName(Block block, BlockPos coordinate, int metadata, World world) {

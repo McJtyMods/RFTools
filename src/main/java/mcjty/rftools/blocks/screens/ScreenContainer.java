@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 
 public class ScreenContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -21,7 +22,7 @@ public class ScreenContainer extends GenericContainer {
     };
 
 
-    public ScreenContainer(EntityPlayer player, ScreenTileEntity containerInventory) {
+    public ScreenContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

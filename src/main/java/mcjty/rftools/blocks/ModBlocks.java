@@ -2,6 +2,7 @@ package mcjty.rftools.blocks;
 
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,6 +19,7 @@ public final class ModBlocks {
         CrafterSetup.init();
         ModularStorageSetup.init();
         TeleporterSetup.init();
+        ScreenSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -28,6 +30,7 @@ public final class ModBlocks {
         CrafterSetup.initClient();
         ModularStorageSetup.initClient();
         TeleporterSetup.initClient();
+        ScreenSetup.initClient();
     }
 
     private static void initBaseBlocks() {

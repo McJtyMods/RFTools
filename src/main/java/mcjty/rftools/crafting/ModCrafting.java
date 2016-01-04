@@ -3,6 +3,7 @@ package mcjty.rftools.crafting;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraft.init.Blocks;
@@ -21,15 +22,12 @@ public final class ModCrafting {
 
     public static void init() {
         intBaseCrafting();
-        initItemCrafting();
 
         CoalGeneratorSetup.initCrafting();
         CrafterSetup.initCrafting();
         ModularStorageSetup.initCrafting();
         TeleporterSetup.initCrafting();
-    }
-
-    private static void initItemCrafting() {
+        ScreenSetup.initCrafting();
     }
 
     private static void intBaseCrafting() {
