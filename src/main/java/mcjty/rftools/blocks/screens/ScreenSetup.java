@@ -46,9 +46,15 @@ public class ScreenSetup {
         screenBlock.initModel();
         screenControllerBlock.initModel();
 
-//        teleportProbeItem.initModel();
-//        chargedPorterItem.initModel();
-//        advancedChargedPorterItem.initModel();
+        textModuleItem.initModel();
+        inventoryModuleItem.initModel();
+        inventoryPlusModuleItem.initModel();
+        energyModuleItem.initModel();
+        energyPlusModuleItem.initModel();
+        clockModuleItem.initModel();
+        fluidModuleItem.initModel();
+        fluidPlusModuleItem.initModel();
+        machineInformationModuleItem.initModel();
     }
 
 

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -18,15 +18,20 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerTileEntity, EmptyContainer> implements Infusable {
+public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerTileEntity, ScreenControllerContainer> implements Infusable {
 
     public ScreenControllerBlock() {
-        super(Material.iron, ScreenControllerTileEntity.class, EmptyContainer.class, "screen_controller", false);
+        super(Material.iron, ScreenControllerTileEntity.class, ScreenControllerContainer.class, "screen_controller", false);
     }
 
     @Override
     public int getGuiID() {
         return RFTools.GUI_SCREENCONTROLLER;
+    }
+
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiScreenController.class;
     }
 
     @SideOnly(Side.CLIENT)
