@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.screens;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -14,15 +16,21 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Random;
 
 public class ScreenHitBlock extends Block implements ITileEntityProvider {
+
+    public static final PropertyDirection FACING = PropertyDirection.create("facing");
+
     public ScreenHitBlock() {
         super(Material.glass);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setUnlocalizedName("screen_hitblock");
+        GameRegistry.registerBlock(this, "screen_hitblock");
+        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
     }
 
     @Override
@@ -71,22 +79,16 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         int meta = state.getBlock().getMetaFromState(state);
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-
-        if (meta == 2) {
+        if (meta == EnumFacing.NORTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
-        }
-
-        if (meta == 3) {
+        } else if (meta == EnumFacing.SOUTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
-        }
-
-        if (meta == 4) {
+        } else if (meta == EnumFacing.WEST.ordinal()) {
             this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-        }
-
-        if (meta == 5) {
+        } else if (meta == EnumFacing.EAST.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+        } else {
+            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 
@@ -97,7 +99,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
 
     @Override
     public int getRenderType() {
-        return -1;              // Invisible
+        return -1;
     }
 
     @Override
@@ -117,5 +119,24 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     @Override
     public int getMobilityFlag() {
         return 2;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, getFacing(meta));
+    }
+
+    public static EnumFacing getFacing(int meta) {
+        return EnumFacing.values()[meta & 7];
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getIndex();
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, FACING);
     }
 }

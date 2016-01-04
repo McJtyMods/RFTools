@@ -165,13 +165,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         } else {
             dim = .46f;
         }
-        int r = (color<<16)%255;
-        int g = (color<<8)%255;
-        int b = color%255;
-        renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 255).endVertex();
-        renderer.pos(dim, dim, -0.08f).color(r, g, b, 255).endVertex();
-        renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 255).endVertex();
-        renderer.pos(-.46f, -.46f, -0.08f).color(r, g, b, 255).endVertex();
+        float r = (float)((color & 16711680) >> 16) / 255.0F;
+        float g = (float)((color & 65280) >> 8) / 255.0F;
+        float b = (float)((color & 255) >> 0) / 255.0F;
+        renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 1f).endVertex();
+        renderer.pos(dim, dim, -0.08f).color(r, g, b, 1f).endVertex();
+        renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 1f).endVertex();
+        renderer.pos(-.46f, -.46f, -0.08f).color(r, g, b, 1f).endVertex();
         tessellator.draw();
 
         GlStateManager.popMatrix();

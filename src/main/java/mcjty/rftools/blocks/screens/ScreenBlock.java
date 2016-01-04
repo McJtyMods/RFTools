@@ -254,22 +254,16 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         int meta = state.getBlock().getMetaFromState(state);
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-
         if (meta == EnumFacing.NORTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
-        }
-
-        if (meta == EnumFacing.SOUTH.ordinal()) {
+        } else if (meta == EnumFacing.SOUTH.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
-        }
-
-        if (meta == EnumFacing.WEST.ordinal()) {
+        } else if (meta == EnumFacing.WEST.ordinal()) {
             this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-        }
-
-        if (meta == EnumFacing.EAST.ordinal()) {
+        } else if (meta == EnumFacing.EAST.ordinal()) {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+        } else {
+            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 
