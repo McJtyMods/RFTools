@@ -36,7 +36,7 @@ repositories {
     }
 }
 
-version = "1.8.9-4.20beta1"
+version = "1.8.9-4.20beta2"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -71,7 +71,7 @@ dependencies {
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 
-    compile "com.github.mcjty:mcjtylib:1.8.9-1.8.1beta2-SNAPSHOT:dev"
+//    compile "com.github.mcjty:mcjtylib:1.8.9-1.8.1beta2-SNAPSHOT:dev"
 }
 
 processResources
