@@ -6,10 +6,10 @@ import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
 
 public class FluidBarClientScreenModule implements ClientScreenModule {
 
@@ -36,7 +36,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
 
     @Override
     public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
-        GL11.glDisable(GL11.GL_LIGHTING);
+        GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty, color);

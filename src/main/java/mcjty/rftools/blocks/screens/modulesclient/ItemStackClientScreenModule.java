@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.screens.ModuleGuiChanged;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -39,54 +40,45 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
         RenderHelper.enableGUIStandardItemLighting();
 //        RenderHelper.enableStandardItemLighting();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-        GL11.glDepthMask(true);
+        GlStateManager.depthMask(true);
 
-        boolean lighting = GL11.glIsEnabled(GL11.GL_LIGHTING);
-        if (!lighting) {
-            GL11.glEnable(GL11.GL_LIGHTING);
-        }
-        boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-        if (!depthTest) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-        }
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
 
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         float f3 = 0.0075F;
-        GL11.glTranslatef(-0.5F, 0.5F, 0.06F);
-        GL11.glScalef(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.translate(-0.5F, 0.5F, 0.06F);
+        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
 //        short short1 = 240;
 //        short short2 = 240;
 //        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
         int x = 10;
-        x = renderSlot(fontRenderer, currenty, screenData, slot1, 0, x);
-        x = renderSlot(fontRenderer, currenty, screenData, slot2, 1, x);
-        x = renderSlot(fontRenderer, currenty, screenData, slot3, 2, x);
-        renderSlot(fontRenderer, currenty, screenData, slot4, 3, x);
+        x = renderSlot(currenty, screenData, slot1, 0, x);
+        x = renderSlot(currenty, screenData, slot2, 1, x);
+        x = renderSlot(currenty, screenData, slot3, 2, x);
+        renderSlot(currenty, screenData, slot4, 3, x);
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(-0.5F, 0.5F, 0.08F);
-        GL11.glScalef(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-0.5F, 0.5F, 0.08F);
+        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
         x = 10;
         x = renderSlotOverlay(fontRenderer, currenty, screenData, slot1, 0, x);
         x = renderSlotOverlay(fontRenderer, currenty, screenData, slot2, 1, x);
         x = renderSlotOverlay(fontRenderer, currenty, screenData, slot3, 2, x);
         renderSlotOverlay(fontRenderer, currenty, screenData, slot4, 3, x);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
-        if (!lighting) {
-            GL11.glDisable(GL11.GL_LIGHTING);
-        }
-        if (!depthTest) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-        }
+        // @todo check?
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
 
-        GL11.glDepthMask(false);
+        GlStateManager.depthMask(false);
         RenderHelper.enableStandardItemLighting();
     }
 
@@ -95,7 +87,7 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
     }
 
-    private int renderSlot(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
+    private int renderSlot(int currenty, Object[] screenData, int slot, int index, int x) {
         if (slot != -1) {
             ItemStack itm = null;
             try {
@@ -143,11 +135,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
                 } else {
                     s1 = String.valueOf(size / 1000000000) + "g";
                 }
-                GL11.glDisable(GL11.GL_LIGHTING);
+                GlStateManager.disableLighting();
 //                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GL11.glDisable(GL11.GL_BLEND);
+                GlStateManager.disableBlend();
                 fontRenderer.drawString(s1, x + 19 - 2 - fontRenderer.getStringWidth(s1), y + 6 + 3, 16777215);
-                GL11.glEnable(GL11.GL_LIGHTING);
+                GlStateManager.enableLighting();
 //                GL11.glEnable(GL11.GL_DEPTH_TEST);
             }
 
@@ -155,11 +147,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
                 double health = itemStack.getItem().getDurabilityForDisplay(itemStack);
                 int j1 = (int) Math.round(13.0D - health * 13.0D);
                 int k = (int) Math.round(255.0D - health * 255.0D);
-                GL11.glDisable(GL11.GL_LIGHTING);
+                GlStateManager.disableLighting();
 //                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glDisable(GL11.GL_ALPHA_TEST);
-                GL11.glDisable(GL11.GL_BLEND);
+                GlStateManager.disableTexture2D();
+                GlStateManager.disableAlpha();
+                GlStateManager.disableBlend();
                 Tessellator tessellator = Tessellator.getInstance();
                 int l = 255 - k << 16 | k << 8;
                 int i1 = (255 - k) / 4 << 16 | 16128;
@@ -167,11 +159,11 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
                 renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.02D);
                 renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.04D);
                 //GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down the line.
-                GL11.glEnable(GL11.GL_ALPHA_TEST);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_LIGHTING);
+                GlStateManager.enableAlpha();
+                GlStateManager.enableTexture2D();
+                GlStateManager.enableLighting();
 //                GL11.glEnable(GL11.GL_DEPTH_TEST);
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
     }

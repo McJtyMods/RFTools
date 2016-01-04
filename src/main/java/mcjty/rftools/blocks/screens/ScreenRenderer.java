@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -28,9 +29,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
-
-        GL11.glPushMatrix();
+//        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
+        GlStateManager.pushAttrib();
+        GlStateManager.pushMatrix();
         float f3;
 
         int meta = tileEntity.getBlockMetadata();
@@ -48,12 +49,12 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             f3 = -90.0F;
         }
 
-        GL11.glTranslatef((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
-        GL11.glRotatef(-f3, 0.0F, 1.0F, 0.0F);
-        GL11.glTranslatef(0.0F, -0.2500F, -0.4375F);
+        GlStateManager.translate((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
+        GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
+        GlStateManager.translate(0.0F, -0.2500F, -0.4375F);
 
         if (!tileEntity.isTransparent()) {
-            GL11.glDisable(GL11.GL_LIGHTING);
+            GlStateManager.disableLighting();
             renderScreenBoard(tileEntity.getSize(), tileEntity.getColor());
         }
 
@@ -61,8 +62,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             FontRenderer fontrenderer = this.getFontRenderer();
 
             ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
-            GL11.glDepthMask(false);
-            GL11.glDisable(GL11.GL_LIGHTING);
+            GlStateManager.depthMask(false);
+            GlStateManager.disableLighting();
 
             Map<Integer, Object[]> screenData = updateScreenData(tileEntity);
 
@@ -70,8 +71,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             renderModules(fontrenderer, mode, modules, screenData, tileEntity.getSize());
         }
 
-        GL11.glPopMatrix();
-        GL11.glPopAttrib();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+//        GL11.glPopAttrib();
     }
 
     private Map<Integer, Object[]> updateScreenData(ScreenTileEntity screenTileEntity) {
@@ -100,25 +102,25 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 if (currenty + height <= 124) {
                     if (module.getTransformMode() != mode) {
                         if (mode != ClientScreenModule.TransformMode.NONE) {
-                            GL11.glPopMatrix();
+                            GlStateManager.popMatrix();
                         }
-                        GL11.glPushMatrix();
+                        GlStateManager.pushMatrix();
                         mode = module.getTransformMode();
 
                         switch (mode) {
                             case TEXT:
-                                GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                                GlStateManager.translate(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F;
-                                GL11.glScalef(f3 * factor, -f3 * factor, f3);
+                                GlStateManager.scale(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case TEXTLARGE:
-                                GL11.glTranslatef(-0.5F, 0.5F, 0.07F);
+                                GlStateManager.translate(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F * 2;
-                                GL11.glScalef(f3 * factor, -f3 * factor, f3);
+                                GlStateManager.scale(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case ITEM:
                                 break;
@@ -135,14 +137,14 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         }
 
         if (mode != ClientScreenModule.TransformMode.NONE) {
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 
     private void renderScreenBoard(int size, int color) {
         this.bindTexture(texture);
-        GL11.glPushMatrix();
-        GL11.glScalef(1, -1, -1);
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(1, -1, -1);
         if (size == ScreenTileEntity.SIZE_HUGE) {
             this.screenModelHuge.render();
         } else if (size == ScreenTileEntity.SIZE_LARGE) {
@@ -151,7 +153,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             this.screenModel.render();
         }
 
-        GL11.glDepthMask(false);
+        GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer renderer = tessellator.getWorldRenderer();
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
@@ -172,6 +174,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         renderer.pos(-.46f, -.46f, -0.08f).endVertex();
         tessellator.draw();
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 }
