@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "rftools:items/energyPlusModuleItem"
+    "layer0": "rftools:items/modules/energyPlusModuleItem"
   },
   "display": {
     "thirdperson": {

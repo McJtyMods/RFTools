@@ -156,22 +156,22 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer renderer = tessellator.getWorldRenderer();
-        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-//        tessellator.setBrightness(240);
-//        tessellator.setColorRGBA_I(color, 255);
-//        tessellator.setColorOpaque(0, 0, 0);
-        float r;
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        float dim;
         if (size == ScreenTileEntity.SIZE_HUGE) {
-            r = 2.46f;
+            dim = 2.46f;
         } else if (size == ScreenTileEntity.SIZE_LARGE) {
-            r = 1.46f;
+            dim = 1.46f;
         } else {
-            r = .46f;
+            dim = .46f;
         }
-        renderer.pos(-.46f, r, -0.08f).endVertex();
-        renderer.pos(r, r, -0.08f).endVertex();
-        renderer.pos(r, -.46f, -0.08f).endVertex();
-        renderer.pos(-.46f, -.46f, -0.08f).endVertex();
+        int r = (color<<16)%255;
+        int g = (color<<8)%255;
+        int b = color%255;
+        renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 255).endVertex();
+        renderer.pos(dim, dim, -0.08f).color(r, g, b, 255).endVertex();
+        renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 255).endVertex();
+        renderer.pos(-.46f, -.46f, -0.08f).color(r, g, b, 255).endVertex();
         tessellator.draw();
 
         GlStateManager.popMatrix();

@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "rftools:items/clockModuleItem"
+    "layer0": "rftools:items/modules/clockModuleItem"
   },
   "display": {
     "thirdperson": {

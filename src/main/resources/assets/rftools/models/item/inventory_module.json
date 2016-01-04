@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "rftools:items/inventoryModuleItem"
+    "layer0": "rftools:items/modules/inventoryModuleItem"
   },
   "display": {
     "thirdperson": {

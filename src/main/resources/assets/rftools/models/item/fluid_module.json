@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "rftools:items/fluidModuleItem"
+    "layer0": "rftools:items/modules/fluidModuleItem"
   },
   "display": {
     "thirdperson": {
