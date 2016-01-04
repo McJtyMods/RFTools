@@ -44,6 +44,7 @@ public class ScreenSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         screenBlock.initModel();
+        screenHitBlock.initModel();
         screenControllerBlock.initModel();
 
         textModuleItem.initModel();
@@ -56,7 +57,6 @@ public class ScreenSetup {
         fluidPlusModuleItem.initModel();
         machineInformationModuleItem.initModel();
     }
-
 
     public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(screenControllerBlock), "ror", "gMg", "rgr", 'r', Items.redstone, 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
