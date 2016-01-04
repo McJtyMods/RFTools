@@ -34,31 +34,32 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlStateManager.pushMatrix();
         float f3;
 
-        int meta = tileEntity.getBlockMetadata();
-        f3 = 0.0F;
+        int meta = tileEntity == null ? 0 : tileEntity.getBlockMetadata();
 
         if (meta == 2) {
             f3 = 180.0F;
-        }
-
-        if (meta == 4) {
+        } else if (meta == 4) {
             f3 = 90.0F;
-        }
-
-        if (meta == 5) {
+        } else if (meta == 5) {
             f3 = -90.0F;
+        } else {
+            f3 = 0.0F;
         }
 
+        // TileEntity can be null if this is used for an item renderer.
         GlStateManager.translate((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
         GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
         GlStateManager.translate(0.0F, -0.2500F, -0.4375F);
 
-        if (!tileEntity.isTransparent()) {
+        if (tileEntity == null) {
+            GlStateManager.disableLighting();
+            renderScreenBoard(0, 0);
+        } else if (!tileEntity.isTransparent()) {
             GlStateManager.disableLighting();
             renderScreenBoard(tileEntity.getSize(), tileEntity.getColor());
         }
 
-        if (tileEntity.isPowerOn()) {
+        if (tileEntity != null && tileEntity.isPowerOn()) {
             FontRenderer fontrenderer = this.getFontRenderer();
 
             ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
