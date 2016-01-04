@@ -1,11 +1,12 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "forge:multi-layer",
-    "custom": {
-      "base": "rftools:modular_storage_aux#main",
-      "Solid": "rftools:modular_storage_aux#main"
-    }
+    "model": "rftools:modular_storage"
+//    "model": "forge:multi-layer",
+//    "custom": {
+//      "base": "rftools:modular_storage_aux#main",
+//      "Solid": "rftools:modular_storage_aux#main"
+//    }
   },
   "variants": {
     "normal": [{}],
@@ -17,11 +18,11 @@
       "up": {"x": -90},
       "down": {"x": 90},
       "north": {}
-    },
-    "type": {
-      "none": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_none" } },
-      "ore": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_ore" } },
-      "generic": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_generic" } }
     }
+//    "type": {
+//      "none": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_none" } },
+//      "ore": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_ore" } },
+//      "generic": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_generic" } }
+//    }
   }
 }
