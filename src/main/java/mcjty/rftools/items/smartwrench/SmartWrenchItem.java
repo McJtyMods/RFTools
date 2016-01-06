@@ -25,26 +25,30 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
+
     public SmartWrenchItem() {
         setUnlocalizedName("smartwrench");
+        setRegistryName("smartwrench");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        GameRegistry.registerItem(this, "smartwrench");
+        GameRegistry.registerItem(this);
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelBakery.addVariantName(this, RFTools.MODID + ":smartwrench");
-        ModelBakery.addVariantName(this, RFTools.MODID + ":smartwrench_select");
+        ModelResourceLocation selectedModel = new ModelResourceLocation(getRegistryName() + "_select", "inventory");
+        ModelResourceLocation normalModel = new ModelResourceLocation(getRegistryName(), "inventory");
+
+        ModelBakery.registerItemVariants(this, selectedModel, normalModel);
 
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
             @Override
             public ModelResourceLocation getModelLocation(ItemStack stack) {
                 SmartWrenchMode mode = getCurrentMode(stack);
                 if (mode == SmartWrenchMode.MODE_SELECT) {
-                    return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5)+ "_select", "inventory");
+                    return selectedModel;
                 } else {
-                    return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory");
+                    return normalModel;
                 }
             }
         });
