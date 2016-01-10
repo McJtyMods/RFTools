@@ -74,6 +74,12 @@ dependencies {
 //    compile "com.github.mcjty:mcjtylib:1.8.9-1.8.1beta2-SNAPSHOT:dev"
 }
 
+jar {
+    manifest {
+        attributes 'FMLAT': 'rftools_at.cfg'
+    }
+}
+
 processResources
 {
     // this will ensure that this task is redone when the versions change.
