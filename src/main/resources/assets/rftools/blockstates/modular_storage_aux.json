@@ -16,6 +16,10 @@
     "overlay_none": [{
       "model": "rftools:overlay",
       "textures": { "overlay": "rftools:blocks/overlayNone" }
+    }],
+    "overlay_g0": [{
+      "model": "rftools:overlayAmount",
+      "textures": { "overlay": "rftools:blocks/overlayG0" }
     }]
   }
 }

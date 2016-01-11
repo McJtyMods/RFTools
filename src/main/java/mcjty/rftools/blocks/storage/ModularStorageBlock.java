@@ -28,11 +28,14 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
+import static mcjty.rftools.blocks.storage.ModularAmountOverlay.AMOUNT_G0;
+import static mcjty.rftools.blocks.storage.ModularAmountOverlay.AMOUNT_NONE;
 import static mcjty.rftools.blocks.storage.ModularTypeModule.*;
 
 public class ModularStorageBlock extends GenericRFToolsBlock {
 
     public static final PropertyEnum<ModularTypeModule> TYPEMODULE = PropertyEnum.create("type", ModularTypeModule.class);
+    public static final PropertyEnum<ModularAmountOverlay> AMOUNT = PropertyEnum.create("amount", ModularAmountOverlay.class);
 
     public ModularStorageBlock() {
         super(Material.iron, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
@@ -77,19 +80,30 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
         ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
-        if (stack == null) {
-            return state.withProperty(TYPEMODULE, TYPE_NONE);
-        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
-            return state.withProperty(TYPEMODULE, TYPE_GENERIC);
-        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
-            return state.withProperty(TYPEMODULE, TYPE_ORE);
+
+        int level = te.getRenderLevel();
+        int remoteId = te.getRemoteId();
+
+        IBlockState newstate;
+        if (level == -1) {
+            newstate = state.withProperty(AMOUNT, AMOUNT_NONE);
+        } else {
+            newstate = state.withProperty(AMOUNT, AMOUNT_G0);
         }
-        return state.withProperty(TYPEMODULE, TYPE_NONE);
+
+        if (stack == null) {
+            return newstate.withProperty(TYPEMODULE, TYPE_NONE);
+        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
+            return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
+        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
+            return newstate.withProperty(TYPEMODULE, TYPE_ORE);
+        }
+        return newstate.withProperty(TYPEMODULE, TYPE_NONE);
     }
 
     @Override
     protected BlockState createBlockState() {
-        return new BlockState(this, FACING, TYPEMODULE);
+        return new BlockState(this, FACING, TYPEMODULE, AMOUNT);
     }
 
     @Override
