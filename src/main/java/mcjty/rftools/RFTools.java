@@ -3,6 +3,7 @@ package mcjty.rftools;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.items.ModItems;
@@ -72,6 +73,9 @@ public class RFTools implements ModBase {
     public static final int GUI_TELEPORTPROBE = modGuiIndex++;
     public static final int GUI_SCREEN = modGuiIndex++;
     public static final int GUI_SCREENCONTROLLER = modGuiIndex++;
+    public static final int GUI_COUNTER = modGuiIndex++;
+    public static final int GUI_SEQUENCER = modGuiIndex++;
+    public static final int GUI_TIMER = modGuiIndex++;
 
 
     /**
@@ -105,6 +109,7 @@ public class RFTools implements ModBase {
         Logging.log("RFTools: server is stopping. Shutting down gracefully");
         TeleportDestinations.clearInstance();
         RemoteStorageIdRegistry.clearInstance();
+        RedstoneChannels.clearInstance();
     }
 
     /**

@@ -35,13 +35,14 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
     public GenericRFToolsBlock(Material material,
                                Class<? extends T> tileEntityClass,
                                Class<? extends C> containerClass,
-                               String unlocalizedName, boolean isContainer) {
+                               String name, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, isContainer);
         this.containerClass = containerClass;
-        setUnlocalizedName(unlocalizedName);
+        setUnlocalizedName(name);
+        setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this, GenericItemBlock.class, unlocalizedName);
-        GameRegistry.registerTileEntity(tileEntityClass, unlocalizedName);
+        GameRegistry.registerBlock(this, GenericItemBlock.class, name);
+        GameRegistry.registerTileEntity(tileEntityClass, name);
     }
 
     @SideOnly(Side.CLIENT)
