@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
+import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
@@ -32,7 +33,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiSequencer(SequencerTileEntity sequencerTileEntity, Container container) {
+    public GuiSequencer(SequencerTileEntity sequencerTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
         xSize = SEQUENCER_WIDTH;
         ySize = SEQUENCER_HEIGHT;

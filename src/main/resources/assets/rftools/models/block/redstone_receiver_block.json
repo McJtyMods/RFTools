@@ -1,0 +1,8 @@
+{
+  "parent": "rftools:block/rftools_logicblock",
+  "textures": {
+    "up": "rftools:blocks/machineRedstoneReceiver",
+    "side": "rftools:blocks/machineSide",
+    "bottom": "rftools:blocks/machineBottom"
+  }
+}

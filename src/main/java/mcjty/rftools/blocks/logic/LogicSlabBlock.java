@@ -7,12 +7,14 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 
 /**
  * The superclass for all logic slabs in RFTools.
@@ -27,6 +29,12 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+    @Override
+    public void initModel() {
+        super.initModel();
+        StateMap.Builder ignorePower = new StateMap.Builder().ignore(OUTPUTPOWER);
+        ModelLoader.setCustomStateMapper(this, ignorePower.build());
+    }
 
     /**
      * Returns the signal strength at one input of the block
@@ -100,6 +108,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         }
     }
 
+
     @Override
     public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
         return getWeakPower(world, pos, state, side);
@@ -119,4 +128,6 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     protected BlockState createBlockState() {
         return new BlockState(this, FACING, OUTPUTPOWER);
     }
+
+
 }

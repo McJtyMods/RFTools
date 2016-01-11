@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
+import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.TextEvent;
@@ -22,7 +23,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
 
     private TextField speedField;
 
-    public GuiTimer(TimerTileEntity timerTileEntity, Container container) {
+    public GuiTimer(TimerTileEntity timerTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
         xSize = TIMER_WIDTH;
         ySize = TIMER_HEIGHT;
