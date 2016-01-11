@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -36,12 +37,20 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
                                Class<? extends T> tileEntityClass,
                                Class<? extends C> containerClass,
                                String name, boolean isContainer) {
+        this(material, tileEntityClass, containerClass, GenericItemBlock.class, name, isContainer);
+    }
+
+    public GenericRFToolsBlock(Material material,
+                               Class<? extends T> tileEntityClass,
+                               Class<? extends C> containerClass,
+                               Class<? extends ItemBlock> itemBlockClass,
+                               String name, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, isContainer);
         this.containerClass = containerClass;
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this, GenericItemBlock.class, name);
+        GameRegistry.registerBlock(this, itemBlockClass, name);
         GameRegistry.registerTileEntity(tileEntityClass, name);
     }
 

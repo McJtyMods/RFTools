@@ -9,6 +9,8 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,6 +31,10 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+    public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
+        super(material, tileEntityClass, containerClass, itemBlockClass, name, false);
+        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
+    }
     @Override
     public void initModel() {
         super.initModel();
@@ -51,13 +57,12 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
-        // @todo check!
-        checkRedstoneWithTE(world, pos);
-//        int meta = world.getBlockMetadata(x, y, z);
-//        ForgeDirection k = BlockTools.getOrientationHoriz(meta);
-//        int power = getInputStrength(world, x, y, z, k.ordinal());
-//        meta = BlockTools.setRedstoneSignalIn(meta, power > 0);
-//        world.setBlockMetadataWithNotify(x, y, z, meta, 2);
+        TileEntity te = world.getTileEntity(pos);
+        if(te instanceof GenericTileEntity) {
+            int powered = getInputStrength(world, pos, state.getValue(FACING_HORIZ));
+            GenericTileEntity genericTileEntity = (GenericTileEntity)te;
+            genericTileEntity.setPowered(powered);
+        }
     }
 
     @Override
