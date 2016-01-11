@@ -80,9 +80,6 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         IBlockState state = world.getBlockState(pos);
         EnumFacing direction = state.getValue(FACING);
         switch (direction) {
-            case DOWN:
-            case UP:
-                return side == EnumFacing.DOWN || side == EnumFacing.UP;
             case NORTH:
             case SOUTH:
                 return side == EnumFacing.NORTH || side == EnumFacing.SOUTH;
@@ -100,7 +97,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-        EnumFacing direction = state.getValue(FACING);
+        EnumFacing direction = state.getValue(FACING_HORIZ);
         if (side == direction) {
             return state.getValue(OUTPUTPOWER) ? 15 : 0;
         } else {
@@ -116,17 +113,17 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, getFacing(meta & 7)).withProperty(OUTPUTPOWER, (meta&8) != 0);
+        return getDefaultState().withProperty(FACING_HORIZ, getFacingHoriz(meta & 3)).withProperty(OUTPUTPOWER, (meta&8) != 0);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex() + (state.getValue(OUTPUTPOWER) ? 8 : 0);
+        return (state.getValue(FACING_HORIZ).getIndex() - 2) + (state.getValue(OUTPUTPOWER) ? 8 : 0);
     }
 
     @Override
     protected BlockState createBlockState() {
-        return new BlockState(this, FACING, OUTPUTPOWER);
+        return new BlockState(this, FACING_HORIZ, OUTPUTPOWER);
     }
 
 
