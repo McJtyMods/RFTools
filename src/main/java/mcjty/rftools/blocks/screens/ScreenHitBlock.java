@@ -112,6 +112,27 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public boolean isBlockNormalCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+        return true;
+    }
+
+
+    @Override
+    public boolean isFullBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
+        return false;
+    }
+
+    @Override
     public int getRenderType() {
         return -1;
     }
