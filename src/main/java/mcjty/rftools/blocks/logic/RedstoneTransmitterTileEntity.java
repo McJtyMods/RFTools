@@ -24,6 +24,7 @@ public class RedstoneTransmitterTileEntity extends GenericTileEntity {
     @Override
     public void setPowered(int powered) {
         this.powered = powered > 0;
+        markDirty();
     }
 
     public void update() {

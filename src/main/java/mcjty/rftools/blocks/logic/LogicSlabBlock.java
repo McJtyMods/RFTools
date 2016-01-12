@@ -46,19 +46,13 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
      * Returns the signal strength at one input of the block
      */
     private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
-        return world.getRedstonePower(pos.offset(side), side);
-//        int dir = Direction.facingToDirection[side];
-//        int xoffset = x + Direction.offsetX[dir];
-//        int zoffset = z + Direction.offsetZ[dir];
-//        int power = world.getIndirectPowerLevelTo(xoffset, y, zoffset, side);
-//        int wirePower = world.getBlock(xoffset, y, zoffset) == Blocks.redstone_wire ? world.getBlockMetadata(xoffset, y, zoffset) : 0;
-//        return power >= 15 ? power : Math.max(power, wirePower);
+        return world.getRedstonePower(pos.offset(side), side.getOpposite());
     }
 
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         TileEntity te = world.getTileEntity(pos);
-        if(te instanceof GenericTileEntity) {
+        if (te instanceof GenericTileEntity) {
             int powered = getInputStrength(world, pos, state.getValue(FACING_HORIZ));
             GenericTileEntity genericTileEntity = (GenericTileEntity)te;
             genericTileEntity.setPowered(powered);
@@ -118,7 +112,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING_HORIZ, getFacingHoriz(meta & 3)).withProperty(OUTPUTPOWER, (meta&8) != 0);
+        return getDefaultState().withProperty(FACING_HORIZ, getFacingHoriz(meta & 3)).withProperty(OUTPUTPOWER, (meta & 8) != 0);
     }
 
     @Override

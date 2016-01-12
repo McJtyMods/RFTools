@@ -91,8 +91,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         }
     }
 
-    @Override
-    protected void checkStateClient() {
+    private void checkStateClient() {
         if (clickedModules.isEmpty()) {
             return;
         }
@@ -111,7 +110,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         clickedModules = newClickedModules;
     }
 
-    protected void checkStateServer() {
+    private void checkStateServer() {
         if (clickedModules.isEmpty()) {
             return;
         }

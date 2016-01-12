@@ -1,9 +1,8 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockTools;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -27,10 +26,9 @@ public class SequencerTileEntity extends GenericTileEntity implements ITickable 
 
     private int delay = 1;
     private int timer = 0;
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public SequencerTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getDelay() {
@@ -100,6 +98,7 @@ public class SequencerTileEntity extends GenericTileEntity implements ITickable 
     @Override
     public void setPowered(int powered) {
         this.powered = powered > 0;
+        markDirty();
     }
 
     private void checkStateServer() {
@@ -121,9 +120,12 @@ public class SequencerTileEntity extends GenericTileEntity implements ITickable 
 
         boolean newout = currentStep != -1 && getCycleBit(currentStep);
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
-            notifyBlockUpdate();
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
+            worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+            worldObj.markBlockForUpdate(this.pos);
         }
 
         handleCycle(powered);
@@ -212,16 +214,9 @@ public class SequencerTileEntity extends GenericTileEntity implements ITickable 
     }
 
     @Override
-    protected int updateMetaData(int meta) {
-        meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
@@ -243,8 +238,7 @@ public class SequencerTileEntity extends GenericTileEntity implements ITickable 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);

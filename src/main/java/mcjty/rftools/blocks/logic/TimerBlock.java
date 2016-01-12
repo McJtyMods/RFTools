@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +19,13 @@ public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> 
     public TimerBlock() {
         super(Material.iron, "timer_block", TimerTileEntity.class, EmptyContainer.class);
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiTimer.class;
+    }
+
 
     @SideOnly(Side.CLIENT)
     @Override

@@ -2,7 +2,9 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -32,14 +34,16 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
         return GuiCounter.class;
     }
 
+    private static long lastTime = 0;
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            int delay = tagCompound.getInteger("counter");
-            list.add(EnumChatFormatting.GREEN + "Counter: " + delay);
+            int counter = tagCompound.getInteger("counter");
+            list.add(EnumChatFormatting.GREEN + "Counter: " + counter);
             int current = tagCompound.getInteger("current");
             list.add(EnumChatFormatting.GREEN + "Current: " + current);
         }
@@ -63,11 +67,15 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int current = tagCompound.getInteger("current");
-            currenttip.add(EnumChatFormatting.GREEN + "Current: " + current);
+
+        if (System.currentTimeMillis() - lastTime > 500) {
+            CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
+            lastTime = System.currentTimeMillis();
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimensionId(),
+                                                                                                                        te.getPos())));
         }
+
+        currenttip.add(EnumChatFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
         return currenttip;
     }
 

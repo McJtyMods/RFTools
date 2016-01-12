@@ -2,6 +2,8 @@ package mcjty.rftools.network;
 
 import mcjty.lib.network.PacketHandler;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
+import mcjty.rftools.blocks.logic.CounterInfoPacketClient;
+import mcjty.rftools.blocks.logic.CounterInfoPacketServer;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
@@ -47,5 +49,6 @@ public class RFToolsMessages {
 
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
+        PacketHandler.register(PacketHandler.nextPacketID(), CounterInfoPacketServer.class, CounterInfoPacketClient.class);
     }
 }

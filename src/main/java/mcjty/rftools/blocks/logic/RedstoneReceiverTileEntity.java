@@ -1,18 +1,16 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
-import mcjty.lib.varia.BlockTools;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 
 public class RedstoneReceiverTileEntity extends GenericTileEntity implements ITickable {
 
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
     private int channel = -1;
 
     public RedstoneReceiverTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getChannel() {
@@ -40,24 +38,20 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity implements ITi
                 newout = ch.getValue() != 0;
             }
 
-            if (newout != redstoneOut.getValue()) {
-                redstoneOut.setValue(newout);
-                notifyBlockUpdate();
+            if (newout != redstoneOut) {
+                redstoneOut = newout;
+                IBlockState state = worldObj.getBlockState(getPos());
+                worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
+                worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+                worldObj.markBlockForUpdate(this.pos);
             }
         }
     }
 
     @Override
-    protected int updateMetaData(int meta) {
-        meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -69,8 +63,7 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity implements ITi
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
     }
 
     @Override

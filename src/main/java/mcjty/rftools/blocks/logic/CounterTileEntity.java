@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockTools;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -46,6 +46,7 @@ public class CounterTileEntity extends GenericTileEntity {
     @Override
     public void setPowered(int powered) {
         this.powered = powered > 0;
+        markDirty();
     }
 
     protected void update() {
@@ -68,17 +69,12 @@ public class CounterTileEntity extends GenericTileEntity {
 
             if (newout != redstoneOut) {
                 redstoneOut = newout;
-                markDirty();
-                notifyBlockUpdate();
+                IBlockState state = worldObj.getBlockState(getPos());
+                worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
+                worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+                worldObj.markBlockForUpdate(this.pos);
             }
         }
-    }
-
-    @Override
-    protected int updateMetaData(int meta) {
-        meta = super.updateMetaData(meta);
-        // @todo
-        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
