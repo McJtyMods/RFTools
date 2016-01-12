@@ -28,8 +28,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-import static mcjty.rftools.blocks.storage.ModularAmountOverlay.AMOUNT_G0;
-import static mcjty.rftools.blocks.storage.ModularAmountOverlay.AMOUNT_NONE;
+import static mcjty.rftools.blocks.storage.ModularAmountOverlay.*;
 import static mcjty.rftools.blocks.storage.ModularTypeModule.*;
 
 public class ModularStorageBlock extends GenericRFToolsBlock {
@@ -84,12 +83,34 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
         int level = te.getRenderLevel();
         int remoteId = te.getRemoteId();
 
-        IBlockState newstate;
-        if (level == -1) {
-            newstate = state.withProperty(AMOUNT, AMOUNT_NONE);
+        ModularAmountOverlay p = AMOUNT_NONE;
+        if (remoteId > 0) {
+            switch (level) {
+                case -1: p = AMOUNT_NONE; break;
+                case 0: p = AMOUNT_R0; break;
+                case 1: p = AMOUNT_R1; break;
+                case 2: p = AMOUNT_R2; break;
+                case 3: p = AMOUNT_R3; break;
+                case 4: p = AMOUNT_R4; break;
+                case 5: p = AMOUNT_R5; break;
+                case 6: p = AMOUNT_R6; break;
+                case 7: p = AMOUNT_R7; break;
+            }
         } else {
-            newstate = state.withProperty(AMOUNT, AMOUNT_G0);
+            switch (level) {
+                case -1: p = AMOUNT_NONE; break;
+                case 0: p = AMOUNT_G0; break;
+                case 1: p = AMOUNT_G1; break;
+                case 2: p = AMOUNT_G2; break;
+                case 3: p = AMOUNT_G3; break;
+                case 4: p = AMOUNT_G4; break;
+                case 5: p = AMOUNT_G5; break;
+                case 6: p = AMOUNT_G6; break;
+                case 7: p = AMOUNT_G7; break;
+            }
         }
+
+        IBlockState newstate = state.withProperty(AMOUNT, p);
 
         if (stack == null) {
             return newstate.withProperty(TYPEMODULE, TYPE_NONE);
