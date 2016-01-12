@@ -8,6 +8,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -16,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory {
 
@@ -133,6 +135,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == CoalGeneratorContainer.SLOT_CHARGEITEM) {
             return stack.getItem() instanceof IEnergyContainerItem;
+        } else if (index == CoalGeneratorContainer.SLOT_COALINPUT) {
+            return stack.getItem() == Items.coal;
         }
         return true;
     }
