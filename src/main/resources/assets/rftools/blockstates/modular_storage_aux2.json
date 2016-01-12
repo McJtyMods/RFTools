@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "main": [{
+      "model": "rftools:rftoolsblock",
+      "textures": { "front": "rftools:blocks/machineModularStorage" }
+    }],
+    "overlay_g0": [{
+      "model": "rftools:overlayAmount",
+      "textures": { "overlaya": "rftools:blocks/overlayG0" }
+    }]
+  }
+}

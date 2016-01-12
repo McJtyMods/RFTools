@@ -19,7 +19,7 @@
     }],
     "overlay_g0": [{
       "model": "rftools:overlayAmount",
-      "textures": { "overlay": "rftools:blocks/overlayG0" }
+      "textures": { "overlaya": "rftools:blocks/overlayG0" }
     }]
   }
 }

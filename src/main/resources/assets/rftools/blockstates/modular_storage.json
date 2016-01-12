@@ -25,7 +25,8 @@
     },
     "amount": {
       "none": { },
-      "g0":  { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_g0" } }
+      "g0":  { "submodel": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage_aux2#overlay_g0" } }
+//      "g0":  { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_g0" } }
     }
   }
 }
