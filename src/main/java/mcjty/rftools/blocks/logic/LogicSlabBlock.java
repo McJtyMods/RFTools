@@ -17,6 +17,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * The superclass for all logic slabs in RFTools.
@@ -40,6 +42,8 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         super(material, tileEntityClass, containerClass, itemBlockClass, name, false);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
+
+    @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
         super.initModel();
