@@ -51,7 +51,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
      * Returns the signal strength at one input of the block
      */
     private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
-        return world.getRedstonePower(pos.offset(side), side.getOpposite());
+        return world.getRedstonePower(pos.offset(side), side);
     }
 
     @Override
