@@ -1,37 +1,26 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modules.TextScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class TextModuleItem extends Item implements ModuleProvider {
+public class TextModuleItem extends GenericRFToolsItem implements ModuleProvider {
 
     public TextModuleItem() {
+        super("text_module");
         setMaxStackSize(16);
-        setUnlocalizedName("text_module");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "text_module");
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
     }
 
     @Override

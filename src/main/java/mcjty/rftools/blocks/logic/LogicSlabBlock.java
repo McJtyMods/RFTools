@@ -31,6 +31,11 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+    @Override
+    public boolean isHorizRotation() {
+        return true;
+    }
+
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
         super(material, tileEntityClass, containerClass, itemBlockClass, name, false);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
@@ -77,7 +82,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     @Override
     public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
         IBlockState state = world.getBlockState(pos);
-        EnumFacing direction = state.getValue(FACING);
+        EnumFacing direction = state.getValue(FACING_HORIZ);
         switch (direction) {
             case NORTH:
             case SOUTH:

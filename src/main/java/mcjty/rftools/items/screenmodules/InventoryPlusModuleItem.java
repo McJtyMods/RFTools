@@ -2,18 +2,16 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,27 +19,17 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class InventoryPlusModuleItem extends Item implements ModuleProvider {
+public class InventoryPlusModuleItem extends GenericRFToolsItem implements ModuleProvider {
 
     public InventoryPlusModuleItem() {
+        super("inventoryplus_module");
         setMaxStackSize(1);
-        setUnlocalizedName("inventoryplus_module");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "inventoryplus_module");
     }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
-    }
-
 
     @SideOnly(Side.CLIENT)
     @Override

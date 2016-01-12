@@ -24,6 +24,10 @@ public class ScreenSetup {
     public static FluidModuleItem fluidModuleItem;
     public static FluidPlusModuleItem fluidPlusModuleItem;
     public static MachineInformationModuleItem machineInformationModuleItem;
+    public static ButtonModuleItem buttonModuleItem;
+    public static RedstoneModuleItem redstoneModuleItem;
+    public static CounterModuleItem counterModuleItem;
+    public static CounterPlusModuleItem counterPlusModuleItem;
 
     public static void init() {
         screenBlock = new ScreenBlock();
@@ -39,6 +43,10 @@ public class ScreenSetup {
         fluidModuleItem = new FluidModuleItem();
         fluidPlusModuleItem = new FluidPlusModuleItem();
         machineInformationModuleItem = new MachineInformationModuleItem();
+        buttonModuleItem = new ButtonModuleItem();
+        redstoneModuleItem = new RedstoneModuleItem();
+        counterModuleItem = new CounterModuleItem();
+        counterPlusModuleItem = new CounterPlusModuleItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -56,6 +64,10 @@ public class ScreenSetup {
         fluidModuleItem.initModel();
         fluidPlusModuleItem.initModel();
         machineInformationModuleItem.initModel();
+        buttonModuleItem.initModel();
+        redstoneModuleItem.initModel();
+        counterModuleItem.initModel();
+        counterPlusModuleItem.initModel();
     }
 
     public static void initCrafting() {
