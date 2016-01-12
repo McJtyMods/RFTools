@@ -1,11 +1,8 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "forge:multi-layer",
-    "custom": {
-      "base": "rftools:modular_storage_aux#main",
-      "Solid": "rftools:modular_storage_aux#main"
-    }
+    "model": "rftools:rftoolsblock",
+    "textures": { "front": "rftools:blocks/machineModularStorage" }
   },
   "variants": {
     "normal": [{}],
@@ -19,14 +16,31 @@
       "north": {}
     },
     "type": {
-      "none": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_none" } },
-      "ore": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_ore" } },
-      "generic": { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_generic" } }
+      "none": { "submodel": { "overlay": { "model": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage#overlay_none" } } } },
+      "ore": { "submodel": { "overlay": { "model": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage#overlay_ore" } } } },
+      "generic": { "submodel": { "overlay": { "model": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage#overlay_generic" } } } }
     },
     "amount": {
       "none": { },
-      "g0":  { "submodel": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage_aux2#overlay_g0" } }
-//      "g0":  { "custom": { "Cutout": "rftools:modular_storage_aux#overlay_g0" } }
-    }
+      "g0": { "submodel": { "overlaya": { "model": "forge:multi-layer", "custom": { "Cutout": "rftools:modular_storage#overlay_g0" } } } }
+    },
+
+    "overlay_generic": [{
+      "model": "rftools:overlay",
+      "textures": { "overlay": "rftools:blocks/overlayGeneric" }
+    }],
+    "overlay_ore": [{
+      "model": "rftools:overlay",
+      "textures": { "overlay": "rftools:blocks/overlayOre" }
+    }],
+    "overlay_none": [{
+      "model": "rftools:overlay",
+      "textures": { "overlay": "rftools:blocks/overlayNone" }
+    }],
+
+    "overlay_g0": [{
+      "model": "rftools:overlayAmount",
+      "textures": { "overlaya": "rftools:blocks/overlayG0" }
+    }]
   }
 }
