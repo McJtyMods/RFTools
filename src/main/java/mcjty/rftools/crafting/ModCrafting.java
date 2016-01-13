@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
+import mcjty.rftools.items.ModItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,7 @@ public final class ModCrafting {
     }
 
     public static void init() {
-        intBaseCrafting();
+        initBaseCrafting();
 
         CoalGeneratorSetup.initCrafting();
         CrafterSetup.initCrafting();
@@ -32,10 +33,12 @@ public final class ModCrafting {
         LogicBlockSetup.initCrafting();
     }
 
-    private static void intBaseCrafting() {
+    private static void initBaseCrafting() {
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.iron_ingot, 'g', Items.gold_nugget, 'l', lapisStack);
-
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.gold_nugget, 's', Blocks.stone);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.redstone, 'b', Items.book);
+        GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
     }
 }
