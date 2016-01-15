@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "rftools:machine_frame"
+    "model": "rftools:machine_base"
   },
   "variants": {
     "normal": [{}],

@@ -27,6 +27,7 @@ public final class ModBlocks {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         machineFrame.initModel();
+        machineBase.initModel();
 
         CoalGeneratorSetup.initClient();
         CrafterSetup.initClient();

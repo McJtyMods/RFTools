@@ -16,13 +16,14 @@ public class MachineFrame extends Block {
     public MachineFrame() {
         super(Material.iron);
         setUnlocalizedName("machine_frame");
+        setRegistryName("machine_frame");
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, "machine_frame");
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override
