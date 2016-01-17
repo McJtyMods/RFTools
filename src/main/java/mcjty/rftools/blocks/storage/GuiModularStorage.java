@@ -3,9 +3,6 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -117,12 +114,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         Panel modePanel = setupModePanel();
 
         cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize-23, 16, 16)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        cycleStorage();
-                    }
-                });
+                addButtonEvent(parent -> cycleStorage());
 
         Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider)
                 .addChild(modePanel)
@@ -149,41 +141,25 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private Panel setupModePanel() {
-        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(3, 3, 57, 13)).setTooltips("Name based filter for items").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                updateSettings();
-            }
-        });
+        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(3, 3, 57, 13)).setTooltips("Name based filter for items")
+                .addTextEvent((parent, newText) -> updateSettings());
 
-        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 19, 16, 16)).setTooltips("Control how items are shown", "in the view").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 19, 16, 16)).setTooltips("Control how items are shown", "in the view")
+                .addChoiceEvent((parent, newChoice) -> updateSettings());
         viewMode.addChoice(VIEW_LIST, "Items are shown in a list view", guiElements, 9 * 16, 16);
         viewMode.addChoice(VIEW_COLUMNS, "Items are shown in columns", guiElements, 10 * 16, 16);
         viewMode.addChoice(VIEW_ICONS, "Items are shown with icons", guiElements, 11 * 16, 16);
 
         updateTypeModule();
 
-        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(23, 19, 16, 16)).setTooltips("Control how items are sorted", "in the view").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(23, 19, 16, 16)).setTooltips("Control how items are sorted", "in the view")
+                .addChoiceEvent((parent, newChoice) -> updateSettings());
         for (ItemSorter sorter : typeModule.getSorters()) {
             sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
         }
 
-        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(42, 19, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(42, 19, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium")
+                .addChoiceEvent((parent, newChoice) -> updateSettings());
         groupMode.addChoice("Off", "Don't show groups", guiElements, 13 * 16, 0);
         groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
 
@@ -193,12 +169,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("?/?");
 
-        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 39, 12, 12)).setText("z").setTooltips("Compact equal stacks").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                compact();
-            }
-        });
+        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 39, 12, 12)).setText("z").setTooltips("Compact equal stacks")
+                .addButtonEvent(parent -> compact());
 
         if (tileEntity != null) {
             filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tileEntity.getFilter());
@@ -285,6 +257,23 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     @Override
+    public boolean isMouseOverSlot(Slot slotIn, int x, int y) {
+        if (slotIn.inventory == tileEntity) {
+            Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+            if (widget instanceof BlockRender) {
+                Object userObject = widget.getUserObject();
+                if (userObject instanceof Integer) {
+                    Integer slotIndex = (Integer) userObject;
+                    return slotIndex == slotIn.getSlotIndex();
+                }
+            }
+            return false;
+        } else {
+            return super.isMouseOverSlot(slotIn, x, y);
+        }
+    }
+
+    @Override
     public Slot getSlotAtPosition(int x, int y) {
         Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
         if (widget != null) {
@@ -366,7 +355,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         int max;
-        List<Pair<ItemStack,Integer>> items = new ArrayList<Pair<ItemStack, Integer>>();
+        List<Pair<ItemStack,Integer>> items = new ArrayList<>();
         if (tileEntity != null) {
             for (int i = ModularStorageContainer.SLOT_STORAGE; i < tileEntity.getSizeInventory(); i++) {
                 ItemStack stack = tileEntity.getStackInSlot(i);
