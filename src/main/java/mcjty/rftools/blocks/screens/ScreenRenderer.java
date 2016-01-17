@@ -72,9 +72,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             renderModules(fontrenderer, mode, modules, screenData, tileEntity.getSize());
         }
 
-        if (tileEntity == null) {
-            GlStateManager.enableLighting();
-        }
+        GlStateManager.enableLighting();
+        GlStateManager.depthMask(true);
 
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
