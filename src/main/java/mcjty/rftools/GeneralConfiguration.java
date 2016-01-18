@@ -7,6 +7,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static net.minecraftforge.common.config.Property.Type.INTEGER;
 
@@ -17,6 +19,27 @@ public class GeneralConfiguration {
     public static boolean enableMatterReceiverRecipe = true;
     public static boolean enableDialingDeviceRecipe = true;
     public static boolean enableEndergenRecipe = true;
+
+    // Craftability of dimensional shards.
+    public static final int CRAFT_NONE = 0;
+    public static final int CRAFT_EASY = 1;
+    public static final int CRAFT_HARD = 2;
+    public static int dimensionalShardRecipeWithDimensions = CRAFT_NONE;
+    public static int dimensionalShardRecipeWithoutDimensions = CRAFT_HARD;
+
+    // Dimensions where dimensional shard ore can generate.
+    private static int[] dimensionalShardOregenWithDimensions = new int[] { };
+    private static int[] dimensionalShardOregenWithoutDimensions = new int[] { 1 };
+    public static Set<Integer> oregenDimensionsWithDimensions = new HashSet<>();
+    public static Set<Integer> oregenDimensionsWithoutDimensions = new HashSet<>();
+
+    // Ore settings
+    public static int oreMinimumVeinSize = 5;
+    public static int oreMaximumVeinSize = 8;
+    public static int oreMaximumVeinCount = 3;
+    public static int oreMinimumHeight = 2;
+    public static int oreMaximumHeight = 40;
+
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
@@ -32,6 +55,22 @@ public class GeneralConfiguration {
                 "Enable the dialing device recipe.").getBoolean();
         enableEndergenRecipe = cfg.get(CATEGORY_GENERAL, "enableEndergenRecipe", enableEndergenRecipe,
                 "Enable the endergenic generator recipe.").getBoolean();
+
+        dimensionalShardRecipeWithDimensions = cfg.get(CATEGORY_GENERAL, "dimensionalShardRecipeWithDimensions", dimensionalShardRecipeWithDimensions,
+                                       "Craftability of dimensional shards if RFTools Dimension is present: 0=not, 1=easy, 2=hard").getInt();
+        dimensionalShardRecipeWithoutDimensions = cfg.get(CATEGORY_GENERAL, "dimensionalShardRecipeWithoutDimensions", dimensionalShardRecipeWithoutDimensions,
+                                       "Craftability of dimensional shards if RFTools Dimension is not present: 0=not, 1=easy, 2=hard").getInt();
+
+        dimensionalShardOregenWithDimensions = cfg.get(CATEGORY_GENERAL, "dimensionalShardOregenWithDimensions", dimensionalShardOregenWithDimensions,
+                                                       "Oregen for dimensional shards in case RFTools Dimensions is present").getIntList();
+        dimensionalShardOregenWithoutDimensions = cfg.get(CATEGORY_GENERAL, "dimensionalShardOregenWithoutDimensions", dimensionalShardOregenWithoutDimensions,
+                                                       "Oregen for dimensional shards in case RFTools Dimensions is not present").getIntList();
+        for (int i : dimensionalShardOregenWithDimensions) {
+            oregenDimensionsWithDimensions.add(i);
+        }
+        for (int i : dimensionalShardOregenWithoutDimensions) {
+            oregenDimensionsWithoutDimensions.add(i);
+        }
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();

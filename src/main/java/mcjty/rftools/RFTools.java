@@ -15,6 +15,7 @@ import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
@@ -43,6 +44,7 @@ public class RFTools implements ModBase {
     public static RFTools instance;
 
     // Are some mods loaded?.
+    public boolean rftoolsDimensions = false;
 
     public static EnumMap<Side, FMLEmbeddedChannel> channels;
 
@@ -127,10 +129,11 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
+        rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
+        if (rftoolsDimensions) {
+            Logging.log("RFTools Detected Dimensions addon: enabling support");
+        }
     }
-
-    // Implementation for ModBase
-
 
     @Mod.EventHandler
     public void imcCallback(FMLInterModComms.IMCEvent event) {

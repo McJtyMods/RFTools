@@ -61,6 +61,7 @@ item.PoisonEModule.name=Poison Module
 item.SlownessEModule.name=Slowness Module
 
 item.SyringeItem.name=Syringe
+item.dimensional_shard.name=Dimensional Shard
 
 # Blocks
 tile.coalgenerator.name=Coal Generator
@@ -99,6 +100,7 @@ tile.blockProtectorBlock.name=Block Protector
 tile.modular_storage.name=Modular Storage
 tile.remote_storage.name=Remote Storage
 tile.securityManagerBlock.name=Security Manager
+tile.dimensional_shard_ore.name=Dimensional Shard Ore
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

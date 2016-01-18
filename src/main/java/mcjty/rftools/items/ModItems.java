@@ -9,6 +9,7 @@ public final class ModItems {
 
     public static RFToolsManualItem rfToolsManualItem;
     public static SmartWrenchItem smartWrenchItem;
+    public static DimensionalShardItem dimensionalShardItem;
 
     public static void init() {
         setupVariousItems();
@@ -17,11 +18,13 @@ public final class ModItems {
     private static void setupVariousItems() {
         smartWrenchItem = new SmartWrenchItem();
         rfToolsManualItem = new RFToolsManualItem();
+        dimensionalShardItem = new DimensionalShardItem();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         smartWrenchItem.initModel();
         rfToolsManualItem.initModel();
+        dimensionalShardItem.initModel();
     }
 }

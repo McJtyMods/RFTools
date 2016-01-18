@@ -1,0 +1,12 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "oretype": {
+      "overworld": { "model": "rftools:dimensional_shard_ore" },
+      "nether": { "model": "rftools:dimensional_shard_ore_nether" },
+      "end": { "model": "rftools:dimensional_shard_ore_end" }
+    }
+  }
+}
