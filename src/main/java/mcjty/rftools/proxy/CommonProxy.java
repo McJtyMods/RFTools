@@ -38,7 +38,7 @@ public abstract class CommonProxy {
         GeneralConfig.preInit(e);
 
         modConfigDir = e.getModConfigurationDirectory();
-        mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "main.cfg"));
+        mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "rftools.cfg"));
 
         readMainConfig();
 
