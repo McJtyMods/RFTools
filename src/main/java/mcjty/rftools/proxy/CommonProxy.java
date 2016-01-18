@@ -47,7 +47,6 @@ public abstract class CommonProxy {
 
         ModItems.init();
         ModBlocks.init();
-        ModCrafting.init();
         ModWorldgen.init();
     }
 
@@ -80,6 +79,7 @@ public abstract class CommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        ModCrafting.init();
     }
 
     public void postInit(FMLPostInitializationEvent e) {
