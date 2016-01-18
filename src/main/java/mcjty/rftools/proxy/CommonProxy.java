@@ -15,7 +15,8 @@ import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.world.RFToolsWorldGenerator;
+import mcjty.rftools.world.ModWorldgen;
+import mcjty.rftools.world.WorldTickHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -24,7 +25,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -48,8 +48,7 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModCrafting.init();
-
-        GameRegistry.registerWorldGenerator(new RFToolsWorldGenerator(), 10);
+        ModWorldgen.init();
     }
 
     private void readMainConfig() {
@@ -79,6 +78,7 @@ public abstract class CommonProxy {
 
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
+        MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
     }
 

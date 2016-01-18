@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class DimensionalShardBlock extends Block {
 
-    enum OreType implements IStringSerializable {
+    public static enum OreType implements IStringSerializable {
         ORE_OVERWORLD("overworld"),
         ORE_NETHER("nether"),
         ORE_END("end");
@@ -53,18 +53,17 @@ public class DimensionalShardBlock extends Block {
         setHarvestLevel("pickaxe", 2);
         setUnlocalizedName("dimensional_shard_ore");
         setRegistryName("dimensional_shard_ore");
+        setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, DimensionalShardItemBlock.class, "dimensional_shard_ore");
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
-
-    @Override
-    public int getLightValue() {
-        return 6;
+        ModelResourceLocation model = new ModelResourceLocation(getRegistryName(), "inventory");
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, model);
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, model);
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 2, model);
     }
 
     @Override

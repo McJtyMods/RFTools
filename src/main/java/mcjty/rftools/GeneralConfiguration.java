@@ -39,6 +39,7 @@ public class GeneralConfiguration {
     public static int oreMaximumVeinCount = 3;
     public static int oreMinimumHeight = 2;
     public static int oreMaximumHeight = 40;
+    public static boolean retrogen = false;
 
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
@@ -55,6 +56,19 @@ public class GeneralConfiguration {
                 "Enable the dialing device recipe.").getBoolean();
         enableEndergenRecipe = cfg.get(CATEGORY_GENERAL, "enableEndergenRecipe", enableEndergenRecipe,
                 "Enable the endergenic generator recipe.").getBoolean();
+
+        oreMinimumVeinSize = cfg.get(CATEGORY_GENERAL, "oreMinimumVeinSize", oreMinimumVeinSize,
+                                     "Minimum vein size of dimensional shard ores").getInt();
+        oreMaximumVeinSize = cfg.get(CATEGORY_GENERAL, "oreMaximumVeinSize", oreMaximumVeinSize,
+                                     "Maximum vein size of dimensional shard ores").getInt();
+        oreMaximumVeinCount = cfg.get(CATEGORY_GENERAL, "oreMaximumVeinCount", oreMaximumVeinCount,
+                                      "Maximum number of veins for dimensional shard ores").getInt();
+        oreMinimumHeight = cfg.get(CATEGORY_GENERAL, "oreMinimumHeight", oreMinimumHeight,
+                                   "Minimum y level for dimensional shard ores").getInt();
+        oreMaximumHeight = cfg.get(CATEGORY_GENERAL, "oreMaximumHeight", oreMaximumHeight,
+                                   "Maximum y level for dimensional shard ores").getInt();
+        retrogen = cfg.get(CATEGORY_GENERAL, "retrogen", retrogen,
+                                   "Set to true to enable retrogen").getBoolean();
 
         dimensionalShardRecipeWithDimensions = cfg.get(CATEGORY_GENERAL, "dimensionalShardRecipeWithDimensions", dimensionalShardRecipeWithDimensions,
                                        "Craftability of dimensional shards if RFTools Dimension is present: 0=not, 1=easy, 2=hard").getInt();
