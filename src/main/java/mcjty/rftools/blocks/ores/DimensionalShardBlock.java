@@ -60,10 +60,9 @@ public class DimensionalShardBlock extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelResourceLocation model = new ModelResourceLocation(getRegistryName(), "inventory");
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, model);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, model);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 2, model);
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "oretype=overworld"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, new ModelResourceLocation(getRegistryName(), "oretype=nether"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 2, new ModelResourceLocation(getRegistryName(), "oretype=end"));
     }
 
     @Override
