@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -53,7 +52,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
 
@@ -134,7 +133,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
 
     @Override
     public int getRenderType() {
-        return -1;
+        return 2;
     }
 
     @Override
