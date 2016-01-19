@@ -47,12 +47,12 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         NBTTagCompound tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             boolean connected = tagCompound.getBoolean("connected");
-            if (connected) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[CONNECTED]");
+            if (!connected) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[NOT CONNECTED]");
             }
             boolean power = tagCompound.getBoolean("powerOn");
-            if (power) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[POWER]");
+            if (!power) {
+                currenttip.add(EnumChatFormatting.YELLOW + "[NO POWER]");
             }
             int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
             currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");

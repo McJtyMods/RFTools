@@ -39,7 +39,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
             if (burning > 0) {
                 burning--;
-                modifyEnergyStored(CoalGeneratorConfiguration.rfPerTick);
+                int rf = getRfPerTick();
+                modifyEnergyStored(rf);
                 if (burning == 0) {
                     markDirtyClient();
                 } else {
@@ -51,6 +52,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             if (inventoryHelper.containsItem(CoalGeneratorContainer.SLOT_COALINPUT)) {
                 inventoryHelper.decrStackSize(CoalGeneratorContainer.SLOT_COALINPUT, 1);
                 burning = CoalGeneratorConfiguration.ticksPerCoal;
+                burning += (int) (burning * getInfusedFactor() / 2.0f);
                 if (working) {
                     markDirty();
                 } else {
@@ -62,6 +64,12 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
                 }
             }
         }
+    }
+
+    public int getRfPerTick() {
+        int rf = CoalGeneratorConfiguration.rfPerTick;
+        rf += (int) (rf * getInfusedFactor());
+        return rf;
     }
 
     @Override
