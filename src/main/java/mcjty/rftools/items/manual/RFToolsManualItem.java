@@ -1,30 +1,17 @@
 package mcjty.rftools.items.manual;
 
 import mcjty.rftools.RFTools;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class RFToolsManualItem extends Item {
+public class RFToolsManualItem extends GenericRFToolsItem {
 
     public RFToolsManualItem() {
+        super("rftools_manual");
         setMaxStackSize(1);
-        setUnlocalizedName("rftools_manual");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "rftools_manual");
     }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
-    }
-
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {

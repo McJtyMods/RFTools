@@ -30,7 +30,6 @@ public class GuiRFToolsManual extends GuiScreen {
     private Button nextButton;
 
     public static int MANUAL_MAIN = 0;
-    public static int MANUAL_DIMENSION = 1;
     private ResourceLocation manualText;
 
     // If this is set when the manual opens the given page will be located.

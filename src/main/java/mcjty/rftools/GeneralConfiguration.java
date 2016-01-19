@@ -29,7 +29,7 @@ public class GeneralConfiguration {
 
     // Dimensions where dimensional shard ore can generate.
     private static int[] dimensionalShardOregenWithDimensions = new int[] { };
-    private static int[] dimensionalShardOregenWithoutDimensions = new int[] { 1 };
+    private static int[] dimensionalShardOregenWithoutDimensions = new int[] { -1, 1 };
     public static Set<Integer> oregenDimensionsWithDimensions = new HashSet<>();
     public static Set<Integer> oregenDimensionsWithoutDimensions = new HashSet<>();
 
@@ -39,7 +39,7 @@ public class GeneralConfiguration {
     public static int oreMaximumVeinCount = 3;
     public static int oreMinimumHeight = 2;
     public static int oreMaximumHeight = 40;
-    public static boolean retrogen = false;
+    public static boolean retrogen = true;
 
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
