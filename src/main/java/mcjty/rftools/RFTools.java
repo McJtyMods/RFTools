@@ -87,6 +87,7 @@ public class RFTools implements ModBase {
     public static final int GUI_COUNTER = modGuiIndex++;
     public static final int GUI_SEQUENCER = modGuiIndex++;
     public static final int GUI_TIMER = modGuiIndex++;
+    public static final int GUI_MACHINE_INFUSER = modGuiIndex++;
 
 
     /**

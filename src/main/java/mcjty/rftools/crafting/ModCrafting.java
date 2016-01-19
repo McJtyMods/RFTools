@@ -4,6 +4,7 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
+import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -33,6 +34,7 @@ public final class ModCrafting {
         TeleporterSetup.initCrafting();
         ScreenSetup.initCrafting();
         LogicBlockSetup.initCrafting();
+        MachineInfuserSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {
