@@ -266,6 +266,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     Integer slotIndex = (Integer) userObject;
                     return slotIndex == slotIn.getSlotIndex();
                 }
+            } else {
+                return super.isMouseOverSlot(slotIn, x, y);
             }
             return false;
         } else {
