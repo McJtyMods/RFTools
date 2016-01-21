@@ -468,14 +468,18 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         Entity nearestPlayer = null;
         double dmax = Double.MAX_VALUE;
         for (Entity entity : l) {
-            EntityPlayer entityPlayer = (EntityPlayer) entity;
+            if (entity instanceof EntityPlayer) {
+                EntityPlayer entityPlayer = (EntityPlayer) entity;
 
-            if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getDisplayName())) {
-                double d1 = entity.getDistanceSq(getPos().getX() + .5, getPos().getY() + 1.5, getPos().getZ() + .5);
+                if (entityPlayer.getDisplayNameString() != null) {
+                    if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getDisplayNameString())) {
+                        double d1 = entity.getDistanceSq(getPos().getX() + .5, getPos().getY() + 1.5, getPos().getZ() + .5);
 
-                if (d1 <= dmax) {
-                    nearestPlayer = entity;
-                    dmax = d1;
+                        if (d1 <= dmax) {
+                            nearestPlayer = entity;
+                            dmax = d1;
+                        }
+                    }
                 }
             }
         }
