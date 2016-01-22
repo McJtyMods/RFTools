@@ -10,6 +10,7 @@ import mcjty.rftools.apiipml.TeleportationManager;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -111,7 +112,7 @@ public class RFTools implements ModBase {
 
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
-//        event.registerServerCommand(new CommandRftTp());
+        event.registerServerCommand(new CommandRftTp());
 //        event.registerServerCommand(new CommandRftDb());
 //        event.registerServerCommand(new CommandRftCfg());
     }

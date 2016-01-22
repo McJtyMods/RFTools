@@ -7,6 +7,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public abstract class DefaultCommand implements ICommand {
 
     @Override
     public List getCommandAliases() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
