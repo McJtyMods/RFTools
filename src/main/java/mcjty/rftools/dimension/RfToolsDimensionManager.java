@@ -94,6 +94,9 @@ public class RfToolsDimensionManager extends WorldSavedData {
     }
 
     public static void unregisterDimensions() {
+        if (instance == null) {
+            return;
+        }
         for (Map.Entry<Integer, DimensionDescriptor> me : instance.getDimensions().entrySet()) {
             int id = me.getKey();
             if (DimensionManager.isDimensionRegistered(id)) {
