@@ -46,4 +46,11 @@ public class TeleportationManager implements ITeleportationManager {
     public void teleportPlayer(EntityPlayer player, int dimension, BlockPos location) {
         TeleportationTools.teleportToDimension(player, dimension, location.getX(), location.getY(), location.getZ());
     }
+
+    @Override
+    public void removeReceiverDestinations(World world, int dim) {
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        destinations.removeDestinationsInDimension(dim);
+        destinations.save(world);
+    }
 }

@@ -24,4 +24,9 @@ public interface ITeleportationManager {
      * Teleport a player to a dimension at the given spot.
      */
     void teleportPlayer(EntityPlayer player, int dimension, BlockPos location);
+
+    /**
+     * Remove all destinations in a dimension.
+     */
+    void removeReceiverDestinations(World world, int dim);
 }
