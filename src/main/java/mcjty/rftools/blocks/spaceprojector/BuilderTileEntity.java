@@ -110,7 +110,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
 
     // For chunkloading with the quarry.
-    private static ForgeChunkManager.Ticket ticket = null;
+    private ForgeChunkManager.Ticket ticket = null;
     // The currently forced chunk.
     private ChunkCoordIntPair forcedChunk = null;
 
