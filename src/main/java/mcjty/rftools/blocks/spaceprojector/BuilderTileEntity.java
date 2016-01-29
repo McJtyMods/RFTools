@@ -962,11 +962,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     List<ItemStack> drops;
                     if (block.canSilkHarvest(worldObj, fakePlayer, sx, sy, sz, meta)) {
                         Item item = Item.getItemFromBlock(block);
-                        int m = 0;
-                        if (item != null && item.getHasSubtypes()) {
-                            m = meta;
+                        if (item != null) {
+                            int m = 0;
+                            if (item.getHasSubtypes()) {
+                                m = meta;
+                            }
+                            drops = Collections.singletonList(new ItemStack(item, 1, m));
+                        } else {
+                            drops = Collections.emptyList();
                         }
-                        drops = Collections.singletonList(new ItemStack(item, 1, m));
                     } else {
                         drops = block.getDrops(worldObj, sx, sy, sz, meta, 0);
                     }
