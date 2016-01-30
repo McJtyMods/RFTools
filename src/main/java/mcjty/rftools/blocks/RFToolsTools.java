@@ -1,11 +1,14 @@
 package mcjty.rftools.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.StringUtils;
 
 public class RFToolsTools {
@@ -67,5 +70,13 @@ public class RFToolsTools {
         if (!first) {
             buffer.append("\n");
         }
+    }
+
+    public static String getModidForBlock(Block block) {
+        ResourceLocation nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        if (nameForObject == null) {
+            return "?";
+        }
+        return nameForObject.getResourceDomain();
     }
 }
