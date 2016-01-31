@@ -126,8 +126,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return null;
         }
 
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        return tagCompound;
+        return itemStack.getTagCompound();
     }
 
     private void makeSupportBlocksShaped() {
@@ -135,7 +134,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPos> blocks = new ArrayList<BlockPos>();
+        List<BlockPos> blocks = new ArrayList<>();
         ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension*256* BuilderConfiguration.maxBuilderDimension, false, null);
         for (BlockPos p : blocks) {

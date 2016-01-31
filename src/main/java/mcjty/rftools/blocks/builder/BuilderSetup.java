@@ -50,7 +50,7 @@ public class BuilderSetup {
 //        spaceChamberBlock.initModel();
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
-//        supportBlock.initModel();
+        supportBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();

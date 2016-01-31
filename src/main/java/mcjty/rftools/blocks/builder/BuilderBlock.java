@@ -70,12 +70,12 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof BuilderTileEntity) {
-            BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
+                BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
                 builderTileEntity.requestCurrentLevel();
             }
-            int scan = builderTileEntity.getCurrentLevel();
+            int scan = BuilderTileEntity.getCurrentLevel();
             currenttip.add(EnumChatFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
         return currenttip;

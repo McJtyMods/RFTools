@@ -40,6 +40,14 @@ item.storage_module_tablet.name=Storage Module Tablet
 item.filter_module.name=Storage Filter Module
 item.oredict_module.name=Ore Dictionary Storage Module
 item.generic_module.name=Generic Storage Module
+item.shape_card.name=Shape Card
+item.shape_card1.name=Shape Card (Void)
+item.shape_card2.name=Shape Card (Quarry)
+item.shape_card3.name=Shape Card (Silk Quarry)
+item.shape_card4.name=Shape Card (Fortune Quarry)
+item.shape_card5.name=Shape Card (Clearing Quarry)
+item.shape_card6.name=Shape Card (Clearing Silk Quarry)
+item.shape_card7.name=Shape Card (Clearing Fortune Quarry)
 
 item.RegenerationEModule.name=Regeneration Module
 item.RegenerationPlusEModule.name=Regeneration Plus Module
@@ -101,6 +109,8 @@ tile.modular_storage.name=Modular Storage
 tile.remote_storage.name=Remote Storage
 tile.securityManagerBlock.name=Security Manager
 tile.dimensional_shard_ore.name=Dimensional Shard Ore
+tile.builder.name=Builder Block
+tile.support_block.name=Support Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

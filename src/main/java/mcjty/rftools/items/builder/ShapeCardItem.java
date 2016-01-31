@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -308,8 +309,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
         Shape shape = getShape(itemStack);
         list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
-        list.add(EnumChatFormatting.GREEN + "Dimension " + getDimension(itemStack));
-        list.add(EnumChatFormatting.GREEN + "Offset " + getOffset(itemStack));
+        list.add(EnumChatFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
+        list.add(EnumChatFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.YELLOW + "Sneak right click on builder to start mark mode");
@@ -669,10 +670,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
             blocks.add(c);
         } else {
-            //@todo
-//            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-//                blocks.add(new BlockPos(x, y, z));
-//            }
+            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
+                blocks.add(new BlockPos(x, y, z));
+            }
         }
     }
 
