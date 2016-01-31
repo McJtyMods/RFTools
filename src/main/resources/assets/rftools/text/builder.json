@@ -1,0 +1,35 @@
+{
+    "movables": [
+        [ "tile.mobSpawner","+",50.0 ],
+        [ "tile.blockAiry","+",2000.0 ],
+        [ "tile.furnace","+",1.0 ],
+        [ "tile.blockReactorPart","w",1.0 ],
+        [ "tile.screenBlock","w",1.0 ],
+        [ "tile.screenControllerBlock","w",1.0 ],
+        [ "tile.matterBeamerBlock","w",1.0 ],
+        [ "tile.spaceChamberBlock","w",1.0 ],
+        [ "tile.spaceChamberControllerBlock","w",1.0 ],
+        [ "tile.builderBlock","w",1.0 ],
+        [ "tile.shieldBlock","-",1.0 ],
+        [ "tile.shieldBlock2","-",1.0 ],
+        [ "tile.shieldBlock3","-",1.0 ],
+        [ "tile.solidShieldBlock","-",1.0 ],
+        [ "tile.invisibleShieldBlock","-",1.0 ],
+        [ "tile.bedrock","-",1.0 ],
+        [ "tile.endPortalFrame","-",1.0 ],
+
+        [ "modid:rftools","+",1.0 ],
+        [ "modid:ExtraUtilities","+",1.0 ],
+        [ "modid:RotaryCraft","+",1.0 ],
+        [ "modid:appliedenergistics2","+",1.0 ],
+        [ "modid:ThermalExpansion","+",1.0 ],
+        [ "modid:ThermalDynamics","w",1.0 ],
+        [ "modid:MineFactoryReloaded","+",1.0 ],
+        [ "modid:BigReactors","+",1.0 ],
+        [ "modid:EnderIO","+",1.0 ]
+    ],
+    "rotatables": [
+        [ "tile.chest","mfff" ],
+        [ "tile.furnace","mfff" ]
+    ]
+}
