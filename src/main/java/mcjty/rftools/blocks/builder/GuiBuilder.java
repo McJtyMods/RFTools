@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 
-import static mcjty.rftools.blocks.spaceprojector.BuilderTileEntity.*;
+import static mcjty.rftools.blocks.builder.BuilderTileEntity.*;
 
 public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     public static final int BUILDER_WIDTH = 180;

@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;

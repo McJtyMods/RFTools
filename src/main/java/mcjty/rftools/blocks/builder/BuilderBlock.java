@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;

@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.BlockMeta;

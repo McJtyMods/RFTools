@@ -2,11 +2,10 @@ package mcjty.rftools.items.builder;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.spaceprojector.BuilderConfiguration;
-import mcjty.rftools.blocks.spaceprojector.SpaceChamberControllerTileEntity;
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
+import mcjty.rftools.blocks.builder.SpaceChamberControllerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

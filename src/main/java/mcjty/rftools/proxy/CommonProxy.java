@@ -11,7 +11,7 @@ import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.blocks.spaceprojector.BuilderConfiguration;
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;

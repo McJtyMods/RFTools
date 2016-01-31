@@ -12,7 +12,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.spaceprojector.PacketGetChamberInfo;
+import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -43,10 +43,10 @@ public class GuiChamberDetails extends GuiItemScreen {
     }
 
     public static void setItemsWithCount(Map<BlockMeta,Integer> items, Map<BlockMeta,Integer> costs, Map<String,Integer> entities, Map<String,Integer> entityCosts) {
-        GuiChamberDetails.items = new HashMap<BlockMeta, Integer>(items);
-        GuiChamberDetails.costs = new HashMap<BlockMeta, Integer>(costs);
-        GuiChamberDetails.entities = new HashMap<String, Integer>(entities);
-        GuiChamberDetails.entityCosts = new HashMap<String, Integer>(entityCosts);
+        GuiChamberDetails.items = new HashMap<>(items);
+        GuiChamberDetails.costs = new HashMap<>(costs);
+        GuiChamberDetails.entities = new HashMap<>(entities);
+        GuiChamberDetails.entityCosts = new HashMap<>(entityCosts);
     }
 
     private void requestChamberInfoFromServer() {

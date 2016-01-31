@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.blocks.spaceprojector.BuilderSetup;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;

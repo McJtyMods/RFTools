@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

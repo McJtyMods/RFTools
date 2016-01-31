@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.BlockPosTools;

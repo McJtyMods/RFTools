@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.blocks.builder;
 
 public enum BuilderTileEntityMode {
     MOVE_FORBIDDEN("forbidden"),
