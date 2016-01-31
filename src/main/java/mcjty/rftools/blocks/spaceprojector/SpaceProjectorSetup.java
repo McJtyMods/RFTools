@@ -2,9 +2,7 @@ package mcjty.rftools.blocks.spaceprojector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RFToolsTools;
@@ -14,16 +12,16 @@ import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SpaceProjectorSetup {
-    public static ProxyBlock proxyBlock;
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
@@ -34,27 +32,20 @@ public class SpaceProjectorSetup {
 
     private static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
 
-    public static void setupBlocks() {
-        proxyBlock = new ProxyBlock();
-//        GameRegistry.registerBlock(proxyBlock, "proxyBlock");
-//        GameRegistry.registerTileEntity(ProxyBlockTileEntity.class, "ProxyBlockTileEntity");
-
+    public static void init() {
         spaceChamberBlock = new SpaceChamberBlock();
-//        GameRegistry.registerBlock(spaceChamberBlock, "spaceChamberBlock");
-
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
-//        GameRegistry.registerBlock(spaceChamberControllerBlock, GenericItemBlock.class, "spaceChamberControllerBlock");
-//        GameRegistry.registerTileEntity(SpaceChamberControllerTileEntity.class, "SpaceChamberControllerTileEntity");
-
         builderBlock = new BuilderBlock();
-//        GameRegistry.registerBlock(builderBlock, GenericItemBlock.class, "builderBlock");
-//        GameRegistry.registerTileEntity(BuilderTileEntity.class, "BuilderTileEntity");
-
         supportBlock = new SupportBlock();
 //        GameRegistry.registerBlock(supportBlock, "supportBlock");
 
         readBuilderBlocksInternal();
         readBuilderBlocksConfig();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+
     }
 
     public static void setupItems() {

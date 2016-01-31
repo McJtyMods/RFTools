@@ -1,33 +1,32 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
+public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChamberControllerTileEntity, EmptyContainer> {
 
     public SpaceChamberControllerBlock() {
-        super(Material.iron, SpaceChamberControllerTileEntity.class, true);
-        setBlockName("spaceChamberControllerBlock");
-        setCreativeTab(RFTools.tabRfTools);
+        super(Material.iron, SpaceChamberControllerTileEntity.class, EmptyContainer.class, "space_chamber_controller", true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -76,47 +75,47 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
 
 
     @Override
-    protected boolean wrenchUse(World world, int x, int y, int z, EntityPlayer player) {
+    protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
-            world.playSound(x, y, z, "note.pling", 1.0f, 1.0f, false);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), "note.pling", 1.0f, 1.0f, false);
         } else {
-            SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             chamberControllerTileEntity.createChamber(player);
         }
         return true;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+        super.onBlockPlacedBy(world, pos, state, entityLivingBase, itemStack);
         if (!world.isRemote) {
             SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
-            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             if (te.getChannel() == -1) {
                 int id = chamberRepository.newChannel();
                 te.setChannel(id);
                 chamberRepository.save(world);
             }
-            onNeighborBlockChange(world, x, y, z, this);
+            onNeighborBlockChange(world, pos, state, this);
         }
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
             SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
-            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(x, y, z);
+            SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             if (te.getChannel() != -1) {
                 chamberRepository.deleteChannel(te.getChannel());
                 chamberRepository.save(world);
             }
         }
-        super.breakBlock(world, x, y, z, block, meta);
+        super.breakBlock(world, pos, state);
     }
 
 
     @Override
-    public boolean renderAsNormalBlock() {
+    public boolean isBlockNormalCube() {
         return false;
     }
 
@@ -126,23 +125,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public int getRenderBlockPass() {
-        return 1;
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
-
-    @Override
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        iconSide = iconRegister.registerIcon(RFTools.MODID + ":machineSpaceChamberController");
-    }
-
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        return iconSide;
-    }
-
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return iconSide;
-    }
-
 }

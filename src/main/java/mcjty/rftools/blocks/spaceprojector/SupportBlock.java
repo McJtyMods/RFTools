@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.spaceprojector;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mcjty.lib.varia.Coordinate;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Facing;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -19,17 +19,14 @@ import java.util.Random;
 
 public class SupportBlock extends Block {
 
-    private IIcon icon;
-    private IIcon iconRed;
-    private IIcon iconYellow;
-
     public static final int STATUS_OK = 0;
     public static final int STATUS_WARN = 1;
     public static final int STATUS_ERROR = 2;
 
     public SupportBlock() {
         super(Material.glass);
-        setBlockName("supportBlock");
+        setUnlocalizedName("support_block");
+        setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
     }
 
@@ -39,12 +36,12 @@ public class SupportBlock extends Block {
     }
 
     @Override
-    public int getRenderBlockPass() {
-        return 1;
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     @Override
-    public boolean renderAsNormalBlock() {
+    public boolean isBlockNormalCube() {
         return false;
     }
 
@@ -54,71 +51,52 @@ public class SupportBlock extends Block {
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        icon = iconRegister.registerIcon(RFTools.MODID + ":" + "supportBlock");
-        iconRed = iconRegister.registerIcon(RFTools.MODID + ":" + "supportRedBlock");
-        iconYellow = iconRegister.registerIcon(RFTools.MODID + ":" + "supportYellowBlock");
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sidex, float sidey, float sidez) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float sidex, float sidey, float sidez) {
         if (!world.isRemote) {
             // Find all connected blocks and remove them.
-            Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
-            todo.add(new Coordinate(x, y, z));
+            Deque<BlockPos> todo = new ArrayDeque<>();
+            todo.add(pos);
             removeBlock(world, todo);
         }
-        return super.onBlockActivated(world, x, y, z, player, side, sidex, sidey, sidez);
+        return super.onBlockActivated(world, pos, state, player, side, sidex, sidey, sidez);
     }
 
-    private void removeBlock(World world, Deque<Coordinate> todo) {
+    private void removeBlock(World world, Deque<BlockPos> todo) {
         while (!todo.isEmpty()) {
-            Coordinate c = todo.pollFirst();
+            BlockPos c = todo.pollFirst();
             int x = c.getX();
             int y = c.getY();
             int z = c.getZ();
-            world.setBlockToAir(x, y, z);
-            if (world.getBlock(x-1, y, z) == this) {
-                todo.push(new Coordinate(x-1, y, z));
+            world.setBlockToAir(c);
+            if (world.getBlockState(c.west()).getBlock() == this) {
+                todo.push(c.west());
             }
-            if (world.getBlock(x+1, y, z) == this) {
-                todo.push(new Coordinate(x + 1, y, z));
+            if (world.getBlockState(c.east()).getBlock() == this) {
+                todo.push(c.east());
             }
-            if (world.getBlock(x, y-1, z) == this) {
-                todo.push(new Coordinate(x, y - 1, z));
+            if (world.getBlockState(c.down()).getBlock() == this) {
+                todo.push(c.down());
             }
-            if (world.getBlock(x, y+1, z) == this) {
-                todo.push(new Coordinate(x, y + 1, z));
+            if (world.getBlockState(c.up()).getBlock() == this) {
+                todo.push(c.up());
             }
-            if (world.getBlock(x, y, z-1) == this) {
-                todo.push(new Coordinate(x, y, z - 1));
+            if (world.getBlockState(c.south()).getBlock() == this) {
+                todo.push(c.south());
             }
-            if (world.getBlock(x, y, z+1) == this) {
-                todo.push(new Coordinate(x, y, z + 1));
+            if (world.getBlockState(c.north()).getBlock() == this) {
+                todo.push(c.north());
             }
         }
     }
 
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (meta == STATUS_ERROR) {
-            return iconRed;
-        } else if (meta == STATUS_WARN) {
-            return iconYellow;
-        } else {
-            return icon;
-        }
-    }
-
-    /**
-     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-     * coordinates.  Args: blockAccess, x, y, z, side
-     */
-    @Override
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-        Block block = blockAccess.getBlock(x, y, z);
-        if (blockAccess.getBlockMetadata(x, y, z) != blockAccess.getBlockMetadata(x - Facing.offsetsXForSide[side], y - Facing.offsetsYForSide[side], z - Facing.offsetsZForSide[side])) {
+    @Override
+    public boolean shouldSideBeRendered(IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        IBlockState state = blockAccess.getBlockState(pos);
+        Block block = state.getBlock();
+        IBlockState state2 = blockAccess.getBlockState(pos.offset(side));
+        Block block2 = state2.getBlock();
+        if (block.getMetaFromState(state) != block2.getMetaFromState(state2)) {
             return true;
         }
 
@@ -126,7 +104,7 @@ public class SupportBlock extends Block {
             return false;
         }
 
-        return block != this && super.shouldSideBeRendered(blockAccess, x, y, z, side);
+        return block != this && super.shouldSideBeRendered(blockAccess, pos, side);
     }
 
 
