@@ -28,18 +28,18 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         int x2 = x1;
         int y2 = y1;
         int z2 = z1;
-        for (int i = 1 ; i < SpaceProjectorConfiguration.maxSpaceChamberDimension; i++) {
+        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
             if (x2 == x1) {
-                if (worldObj.getBlockState(new BlockPos(x1 - i, y1, z1)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+                if (worldObj.getBlockState(new BlockPos(x1 - i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     x2 = x1-i;
-                } else if (worldObj.getBlockState(new BlockPos(x1 + i, y1, z1)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+                } else if (worldObj.getBlockState(new BlockPos(x1 + i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     x2 = x1+i;
                 }
             }
             if (z2 == z1) {
-                if (worldObj.getBlockState(new BlockPos(x1, y1, z1 - i)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+                if (worldObj.getBlockState(new BlockPos(x1, y1, z1 - i)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     z2 = z1-i;
-                } else if (worldObj.getBlockState(new BlockPos(x1, y1, z1 + i)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+                } else if (worldObj.getBlockState(new BlockPos(x1, y1, z1 + i)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     z2 = z1+i;
                 }
             }
@@ -50,17 +50,17 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y1, z2)).getBlock() != SpaceProjectorSetup.spaceChamberBlock) {
+        if (worldObj.getBlockState(new BlockPos(x2, y1, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, EnumChatFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
-        for (int i = 1 ; i < SpaceProjectorConfiguration.maxSpaceChamberDimension; i++) {
-            if (worldObj.getBlockState(new BlockPos(x1, y1 - i, z1)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
+            if (worldObj.getBlockState(new BlockPos(x1, y1 - i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                 y2 = y1-i;
                 break;
             }
-            if (worldObj.getBlockState(new BlockPos(x1, y1 + i, z1)).getBlock() == SpaceProjectorSetup.spaceChamberBlock) {
+            if (worldObj.getBlockState(new BlockPos(x1, y1 + i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                 y2 = y1+i;
                 break;
             }
@@ -71,17 +71,17 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y2, z2)).getBlock() != SpaceProjectorSetup.spaceChamberBlock) {
+        if (worldObj.getBlockState(new BlockPos(x2, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, EnumChatFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x1, y2, z2)).getBlock() != SpaceProjectorSetup.spaceChamberBlock) {
+        if (worldObj.getBlockState(new BlockPos(x1, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, EnumChatFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y2, z1)).getBlock() != SpaceProjectorSetup.spaceChamberBlock) {
+        if (worldObj.getBlockState(new BlockPos(x2, y2, z1)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, EnumChatFormatting.RED + "Not a valid chamber shape!");
             return;
         }

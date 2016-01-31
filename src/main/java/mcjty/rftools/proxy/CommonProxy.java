@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.blocks.spaceprojector.BuilderConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
@@ -62,6 +63,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE_CONFIG, "Generic item module categories for various items");
             cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
             cfg.addCustomCategoryComment(MachineInfuserConfiguration.CATEGORY_INFUSER, "Settings for the infuser");
+            cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
@@ -69,6 +71,7 @@ public abstract class CommonProxy {
             ModularStorageConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
             MachineInfuserConfiguration.init(cfg);
+            BuilderConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

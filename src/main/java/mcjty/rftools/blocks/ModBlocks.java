@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.spaceprojector.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +28,7 @@ public final class ModBlocks {
         ScreenSetup.init();
         LogicBlockSetup.init();
         MachineInfuserSetup.init();
+        BuilderSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -42,6 +44,7 @@ public final class ModBlocks {
         ScreenSetup.initClient();
         LogicBlockSetup.initClient();
         MachineInfuserSetup.initClient();
+        BuilderSetup.initClient();
     }
 
     private static void initBaseBlocks() {

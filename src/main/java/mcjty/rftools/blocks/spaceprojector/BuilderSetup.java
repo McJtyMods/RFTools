@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.spaceprojector;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.RFToolsTools;
@@ -21,7 +22,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpaceProjectorSetup {
+public class BuilderSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
@@ -37,7 +38,8 @@ public class SpaceProjectorSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
-//        GameRegistry.registerBlock(supportBlock, "supportBlock");
+
+        initItems();
 
         readBuilderBlocksInternal();
         readBuilderBlocksConfig();
@@ -45,28 +47,28 @@ public class SpaceProjectorSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
+//        spaceChamberBlock.initModel();
+        spaceChamberControllerBlock.initModel();
+        builderBlock.initModel();
+//        supportBlock.initModel();
 
+        spaceChamberCardItem.initModel();
+        shapeCardItem.initModel();
     }
 
-    public static void setupItems() {
+    private static void initItems() {
         spaceChamberCardItem = new SpaceChamberCardItem();
-//        spaceChamberCardItem.setUnlocalizedName("SpaceChamberCard");
-//        spaceChamberCardItem.setCreativeTab(RFTools.tabRfTools);
-//        spaceChamberCardItem.setTextureName(RFTools.MODID + ":spaceChamberCardItem");
-//        GameRegistry.registerItem(spaceChamberCardItem, "spaceChamberCardItem");
-
         shapeCardItem = new ShapeCardItem();
     }
 
-    public static void setupCrafting() {
+    public static void initCrafting() {
         Block redstoneTorch = Blocks.redstone_torch;
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         GameRegistry.addRecipe(new ItemStack(spaceChamberBlock), "lgl", "gMg", "lgl", 'M', ModBlocks.machineFrame, 'g', Blocks.glass, 'l', lapisStack);
         GameRegistry.addRecipe(new ItemStack(spaceChamberControllerBlock), " e ", "tMt", " e ", 'M', spaceChamberBlock, 't', redstoneTorch, 'e', Items.ender_pearl);
-//@todo
-//        if (GeneralConfiguration.enableBuilderRecipe) {
+        if (GeneralConfiguration.enableBuilderRecipe) {
             GameRegistry.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ender_pearl, 'r', Items.redstone, 'b', Blocks.brick_block);
-//        }
+        }
 
         GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', Items.brick);

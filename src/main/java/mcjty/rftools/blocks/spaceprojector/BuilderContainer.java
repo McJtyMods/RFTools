@@ -17,8 +17,8 @@ public class BuilderContainer extends GenericContainer {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(SpaceProjectorSetup.spaceChamberCardItem),
-                    new ItemStack(SpaceProjectorSetup.shapeCardItem)),
+                    new ItemStack(BuilderSetup.spaceChamberCardItem),
+                    new ItemStack(BuilderSetup.shapeCardItem)),
                     CONTAINER_INVENTORY, SLOT_TAB, 87, 16, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }

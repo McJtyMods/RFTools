@@ -217,7 +217,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private boolean isShapeCard() {
         ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
-        return card != null && card.getItem() == SpaceProjectorSetup.shapeCardItem;
+        return card != null && card.getItem() == BuilderSetup.shapeCardItem;
     }
 
     @Override
@@ -229,7 +229,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         boolean enabled;
         if (card == null) {
             enabled = false;
-        } else if (card.getItem() == SpaceProjectorSetup.shapeCardItem) {
+        } else if (card.getItem() == BuilderSetup.shapeCardItem) {
             enabled = false;
         } else {
             enabled = true;

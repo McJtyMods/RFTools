@@ -109,7 +109,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private Set<Block> cachedVoidableBlocks = null;
 
     public BuilderTileEntity() {
-        super(SpaceProjectorConfiguration.BUILDER_MAXENERGY, SpaceProjectorConfiguration.BUILDER_RECEIVEPERTICK);
+        super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
     }
 
     private boolean isShapeCard() {
@@ -117,7 +117,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (itemStack == null || itemStack.stackSize == 0) {
             return false;
         }
-        return itemStack.getItem() == SpaceProjectorSetup.shapeCardItem;
+        return itemStack.getItem() == BuilderSetup.shapeCardItem;
     }
 
     private NBTTagCompound hasCard() {
@@ -132,17 +132,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void makeSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<BlockPos>();
         ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks,
-                SpaceProjectorConfiguration.maxBuilderDimension*256*SpaceProjectorConfiguration.maxBuilderDimension, false, null);
+                BuilderConfiguration.maxBuilderDimension*256* BuilderConfiguration.maxBuilderDimension, false, null);
         for (BlockPos block : blocks) {
             if (worldObj.isAirBlock(block)) {
                 int error = SupportBlock.STATUS_OK;
                 // @todo: use property
-                worldObj.setBlockState(block, SpaceProjectorSetup.supportBlock.getStateFromMeta(error), 3);
+                worldObj.setBlockState(block, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
 //                worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), error, 3);
             }
         }
@@ -181,11 +181,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
-                            world.setBlockState(src, SpaceProjectorSetup.supportBlock.getStateFromMeta(error), 3);
+                            world.setBlockState(src, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
 //                            world.setBlockMetadataWithNotify(src.getX(), src.getY(), src.getZ(), error, 3);
                         }
                         if (isEmpty(dstBlock) && !isEmpty(srcBlock)) {
-                            worldObj.setBlockState(dest, SpaceProjectorSetup.supportBlock.getStateFromMeta(error), 3);
+                            worldObj.setBlockState(dest, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
 //                            worldObj.setBlockMetadataWithNotify(dest.getX(), dest.getY(), dest.getZ(), error, 3);
                         }
                     }
@@ -196,13 +196,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void clearSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<BlockPos>();
-        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks, SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension*SpaceProjectorConfiguration.maxSpaceChamberDimension, false, null);
+        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension, false, null);
         for (BlockPos block : blocks) {
-            if (worldObj.getBlockState(block).getBlock() == SpaceProjectorSetup.supportBlock) {
+            if (worldObj.getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
                 worldObj.setBlockToAir(block);
             }
         }
@@ -230,13 +230,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         BlockPos src = new BlockPos(x, y, z);
                         if (world != null) {
                             Block srcBlock = world.getBlockState(src).getBlock();
-                            if (srcBlock == SpaceProjectorSetup.supportBlock) {
+                            if (srcBlock == BuilderSetup.supportBlock) {
                                 world.setBlockToAir(src);
                             }
                         }
                         BlockPos dest = sourceToDest(src);
                         Block dstBlock = worldObj.getBlockState(dest).getBlock();
-                        if (dstBlock == SpaceProjectorSetup.supportBlock) {
+                        if (dstBlock == BuilderSetup.supportBlock) {
                             worldObj.setBlockToAir(dest);
                         }
                     }
@@ -339,7 +339,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // Give a dimension, return a min coordinate of the box right in front of the builder
     private BlockPos positionBox(BlockPos dimension) {
         IBlockState state = worldObj.getBlockState(getPos());
-        EnumFacing direction = state.getValue(SpaceProjectorSetup.builderBlock.FACING_HORIZ);
+        EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
         int spanX = dimension.getX();
         int spanY = dimension.getY();
         int spanZ = dimension.getZ();
@@ -418,7 +418,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos maxCorner = new BlockPos(Math.max(minC.getX(), maxC.getX()), Math.max(minC.getY(), maxC.getY()), Math.max(minC.getZ(), maxC.getZ()));
 
         IBlockState state = worldObj.getBlockState(getPos());
-        EnumFacing direction = state.getValue(SpaceProjectorSetup.builderBlock.FACING_HORIZ);
+        EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -480,7 +480,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void checkStateServerShaped() {
         float factor = getInfusedFactor();
-        for (int i = 0 ; i < SpaceProjectorConfiguration.quarryBaseSpeed + (factor * SpaceProjectorConfiguration.quarryInfusionSpeedFactor) ; i++) {
+        for (int i = 0 ; i < BuilderConfiguration.quarryBaseSpeed + (factor * BuilderConfiguration.quarryInfusionSpeedFactor) ; i++) {
             if (scan != null) {
                 handleBlockShaped();
             }
@@ -545,8 +545,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (shapeCard == null) {
             return;
         }
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
 
         BlockPos minCorner = ShapeCardItem.getMinCorner(getPos(), dimension, offset);
         BlockPos maxCorner = ShapeCardItem.getMaxCorner(getPos(), dimension, offset);
@@ -613,10 +613,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             cachedBlocks = new HashSet<BlockPos>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
-            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, SpaceProjectorConfiguration.maxBuilderDimension);
-            BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, SpaceProjectorConfiguration.maxBuilderOffset);
+            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
+            BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
             ShapeCardItem.composeShape(shape, worldObj, getPos(), dimension, offset, cachedBlocks,
-                    SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension * SpaceProjectorConfiguration.maxSpaceChamberDimension,
+                    BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension,
                     !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
             cachedChunk = chunk;
         }
@@ -663,22 +663,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (getCardType()) {
             case ShapeCardItem.CARD_VOID:
-                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor);
+                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY_FORTUNE:
             case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
-                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor);
+                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY_SILK:
             case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
-                rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor);
+                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_QUARRY:
             case ShapeCardItem.CARD_QUARRY_CLEAR:
-                rfNeeded = SpaceProjectorConfiguration.builderRfPerQuarry;
+                rfNeeded = BuilderConfiguration.builderRfPerQuarry;
                 break;
             case ShapeCardItem.CARD_SHAPE:
-                rfNeeded = SpaceProjectorConfiguration.builderRfPerOperation;
+                rfNeeded = BuilderConfiguration.builderRfPerOperation;
                 break;
             default:
                 rfNeeded = 0;
@@ -695,7 +695,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     hardness = 1.0f;
                 } else {
                     if (getCachedVoidableBlocks().contains(block)) {
-                        rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor);
+                        rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                     }
                     hardness = block.getBlockHardness(worldObj, spos);
                 }
@@ -750,7 +750,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private Set<Block> getCachedVoidableBlocks() {
         if (cachedVoidableBlocks == null) {
             ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-            if (card != null && card.getItem() == SpaceProjectorSetup.shapeCardItem) {
+            if (card != null && card.getItem() == BuilderSetup.shapeCardItem) {
                 cachedVoidableBlocks = ShapeCardItem.getVoidedBlocks(card);
             } else {
                 cachedVoidableBlocks = Collections.emptySet();
@@ -1016,29 +1016,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    public static SpaceProjectorSetup.BlockInformation getBlockInformation(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
+    public static BuilderSetup.BlockInformation getBlockInformation(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
         if (isEmpty(block)) {
-            return SpaceProjectorSetup.BlockInformation.FREE;
+            return BuilderSetup.BlockInformation.FREE;
         }
 
         FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
         if (!block.canEntityDestroy(world, new BlockPos(x, y, z), fakePlayer)) {
-            return SpaceProjectorSetup.BlockInformation.INVALID;
+            return BuilderSetup.BlockInformation.INVALID;
         }
 
-        SpaceProjectorSetup.BlockInformation blockInformation = SpaceProjectorSetup.getBlockInformation(block);
+        BuilderSetup.BlockInformation blockInformation = BuilderSetup.getBlockInformation(block);
         if (tileEntity != null) {
-            switch (SpaceProjectorConfiguration.teMode) {
+            switch (BuilderConfiguration.teMode) {
                 case MOVE_FORBIDDEN:
-                    return SpaceProjectorSetup.BlockInformation.INVALID;
+                    return BuilderSetup.BlockInformation.INVALID;
                 case MOVE_WHITELIST:
                     if (blockInformation == null || blockInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
-                        return SpaceProjectorSetup.BlockInformation.INVALID;
+                        return BuilderSetup.BlockInformation.INVALID;
                     }
                     break;
                 case MOVE_BLACKLIST:
                     if (blockInformation != null && blockInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
-                        return SpaceProjectorSetup.BlockInformation.INVALID;
+                        return BuilderSetup.BlockInformation.INVALID;
                     }
                     break;
                 case MOVE_ALLOWED:
@@ -1048,7 +1048,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (blockInformation != null) {
             return blockInformation;
         }
-        return SpaceProjectorSetup.BlockInformation.OK;
+        return BuilderSetup.BlockInformation.OK;
     }
 
     private int isMovable(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
@@ -1071,7 +1071,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (block.getMaterial() == Material.air) {
             return true;
         }
-        if (block == SpaceProjectorSetup.supportBlock) {
+        if (block == BuilderSetup.supportBlock) {
             return true;
         }
         return false;
@@ -1079,7 +1079,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void clearBlock(World world, int x, int y, int z) {
         if (supportMode) {
-            world.setBlockState(new BlockPos(x, y, z), SpaceProjectorSetup.supportBlock.getDefaultState(), 3);
+            world.setBlockState(new BlockPos(x, y, z), BuilderSetup.supportBlock.getDefaultState(), 3);
         } else {
             world.setBlockToAir(new BlockPos(x, y, z));
         }
@@ -1095,7 +1095,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return rotate;
     }
 
-    private int rotateMeta(Block block, int meta, SpaceProjectorSetup.BlockInformation information, int rotMode) {
+    private int rotateMeta(Block block, int meta, BuilderSetup.BlockInformation information, int rotMode) {
         Item item = Item.getItemFromBlock(block);
         if (item != null && item.getHasSubtypes()) {
             // If the item has subtypes we cannot rotate it.
@@ -1104,7 +1104,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (information.getRotateInfo()) {
             // @todo do this the proper way!
-            case SpaceProjectorSetup.BlockInformation.ROTATE_mfff:
+            case BuilderSetup.BlockInformation.ROTATE_mfff:
 //                switch (rotMode) {
 //                    case 0: return meta;
 //                    case 1: {
@@ -1121,7 +1121,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 //                    }
 //                }
                 break;
-            case SpaceProjectorSetup.BlockInformation.ROTATE_mmmm:
+            case BuilderSetup.BlockInformation.ROTATE_mmmm:
                 return meta;
         }
         return meta;
@@ -1129,7 +1129,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
         int rf = getEnergyStored(EnumFacing.DOWN);
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -1146,7 +1146,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
 
-            SpaceProjectorSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, null);
+            BuilderSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             destWorld.setBlockState(new BlockPos(destX, destY, destZ), origBlock.getStateFromMeta(origMeta), 3);
@@ -1160,7 +1160,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private double getDimensionCostFactor(World world, World destWorld) {
-        return destWorld.provider.getDimensionId() == world.provider.getDimensionId() ? 1.0 : SpaceProjectorConfiguration.dimensionCostFactor;
+        return destWorld.provider.getDimensionId() == world.provider.getDimensionId() ? 1.0 : BuilderConfiguration.dimensionCostFactor;
     }
 
     private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
@@ -1181,8 +1181,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (SpaceProjectorConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.fromBounds(x - .1, y - .1, z - .1, x + 1.1, y + 1.1, z + 1.1));
@@ -1200,8 +1200,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (SpaceProjectorConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.fromBounds(x, y, z, x + 1, y + 1, z + 1));
@@ -1277,13 +1277,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             TileEntity origTileEntity = world.getTileEntity(srcPos);
-            SpaceProjectorSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, origTileEntity);
+            BuilderSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, origTileEntity);
             if (information.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                 return;
             }
 
             int rf = getEnergyStored(EnumFacing.DOWN);
-            int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return;
@@ -1328,19 +1328,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        SpaceProjectorSetup.BlockInformation srcInformation = getBlockInformation(world, x, y, z, srcBlock, srcTileEntity);
+        BuilderSetup.BlockInformation srcInformation = getBlockInformation(world, x, y, z, srcBlock, srcTileEntity);
         if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
 
-        SpaceProjectorSetup.BlockInformation dstInformation = getBlockInformation(destWorld, destX, destY, destZ, dstBlock, dstTileEntity);
+        BuilderSetup.BlockInformation dstInformation = getBlockInformation(destWorld, destX, destY, destZ, dstBlock, dstTileEntity);
         if (dstInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
 
         int rf = getEnergyStored(EnumFacing.DOWN);
-        int rfNeeded = (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        rfNeeded += (int) (SpaceProjectorConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -1431,7 +1431,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        if (SpaceProjectorConfiguration.quarryChunkloads) {
+        if (BuilderConfiguration.quarryChunkloads) {
             if (ticket == null) {
                 ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, new ForgeChunkManager.LoadingCallback() {
                     @Override

@@ -79,11 +79,11 @@ public class PacketGetChamberInfo implements IMessage {
                             blocks.increment(bm);
 
                             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-                            SpaceProjectorSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, x, y, z, block, te);
+                            BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, x, y, z, block, te);
                             if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                                 costs.put(bm, -1);
                             } else {
-                                costs.increment(bm, (int) (SpaceProjectorConfiguration.builderRfPerOperation * info.getCostFactor()));
+                                costs.increment(bm, (int) (BuilderConfiguration.builderRfPerOperation * info.getCostFactor()));
                             }
                         }
                     }
@@ -99,9 +99,9 @@ public class PacketGetChamberInfo implements IMessage {
                 String canonicalName = entity.getClass().getCanonicalName();
                 entitiesWithCount.increment(canonicalName);
                 if (entity instanceof EntityPlayer) {
-                    entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerPlayer);
+                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer);
                 } else {
-                    entitiesWithCost.increment(canonicalName, SpaceProjectorConfiguration.builderRfPerEntity);
+                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity);
                 }
             }
 
