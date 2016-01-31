@@ -2,9 +2,11 @@ package mcjty.rftools.gui;
 
 import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.GuiChamberDetails;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.items.storage.GuiStorageFilter;
 import mcjty.rftools.items.storage.StorageFilterContainer;
@@ -20,7 +22,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER) {
+        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER || guiid == RFTools.GUI_SHAPECARD
+                || guiid == RFTools.GUI_CHAMBER_DETAILS) {
             return null;
         } else if (guiid == RFTools.GUI_REMOTE_STORAGE_ITEM) {
             return new RemoteStorageItemContainer(entityPlayer);
@@ -58,6 +61,10 @@ public class GuiProxy implements IGuiHandler {
             return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
             return new GuiStorageFilter(new StorageFilterContainer(entityPlayer));
+        } else if (guiid == RFTools.GUI_SHAPECARD) {
+            return new GuiShapeCard();
+        } else if (guiid == RFTools.GUI_CHAMBER_DETAILS) {
+            return new GuiChamberDetails();
         }
 //        if (guiid == RFTools.GUI_LIST_BLOCKS) {
 //            return new GuiNetworkMonitor();
@@ -65,10 +72,6 @@ public class GuiProxy implements IGuiHandler {
 //            return new GuiDevelopersDelight();
 //        } else if (guiid == RFTools.GUI_MANUAL_DIMENSION) {
 //            return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_DIMENSION);
-//        } else if (guiid == RFTools.GUI_SHAPECARD) {
-//            return new GuiShapeCard();
-//        } else if (guiid == RFTools.GUI_CHAMBER_DETAILS) {
-//            return new GuiChamberDetails();
 //        }
 
         BlockPos pos = new BlockPos(x, y, z);

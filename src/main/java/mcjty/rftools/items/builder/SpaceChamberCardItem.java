@@ -2,6 +2,8 @@ package mcjty.rftools.items.builder;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.spaceprojector.BuilderConfiguration;
+import mcjty.rftools.blocks.spaceprojector.SpaceChamberControllerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -32,7 +34,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         int channel = -1;
@@ -51,8 +53,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
             list.add(EnumChatFormatting.WHITE + "the area contents.");
             list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
             list.add(EnumChatFormatting.WHITE + "linked area");
-            //@todo
-//            list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerOperation + " RF/t per block");
+            list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
             list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
@@ -77,10 +78,9 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
         }
 
         int channel = -1;
-        //@todo
-//        if (te instanceof SpaceChamberControllerTileEntity) {
-//            channel = ((SpaceChamberControllerTileEntity) te).getChannel();
-//        }
+        if (te instanceof SpaceChamberControllerTileEntity) {
+            channel = ((SpaceChamberControllerTileEntity) te).getChannel();
+        }
 
         if (channel == -1) {
             showDetails(world, player, stack);
@@ -106,8 +106,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     private void showDetailsGui(World world, EntityPlayer player) {
         if (world.isRemote) {
-//            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            //@todo
+            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

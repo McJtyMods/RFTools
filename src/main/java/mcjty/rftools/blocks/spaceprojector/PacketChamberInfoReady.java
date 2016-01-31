@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.spaceprojector;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockMeta;
+import mcjty.rftools.items.builder.GuiChamberDetails;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

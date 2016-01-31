@@ -39,11 +39,6 @@ public class StorageModuleItem extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-//        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module0");
-//        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module1");
-//        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module2");
-//        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_remote");
-
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER1, new ModelResourceLocation(RFTools.MODID + ":storage_module0", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER2, new ModelResourceLocation(RFTools.MODID + ":storage_module1", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER3, new ModelResourceLocation(RFTools.MODID + ":storage_module2", "inventory"));

@@ -3,8 +3,11 @@ package mcjty.rftools.items.builder;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.spaceprojector.BuilderConfiguration;
+import mcjty.rftools.blocks.spaceprojector.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -17,6 +20,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -117,6 +121,32 @@ public class ShapeCardItem extends GenericRFToolsItem {
         setMaxDamage(0);
     }
 
+//    @Override
+//    public void registerIcons(IIconRegister iconRegister) {
+//        icons[CARD_SHAPE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardItem");
+//        icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
+//        icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
+//        icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
+//        icons[CARD_QUARRY_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardFortuneItem");
+//        icons[CARD_QUARRY_CLEAR] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCQuarryItem");
+//        icons[CARD_QUARRY_CLEAR_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCSilkItem");
+//        icons[CARD_QUARRY_CLEAR_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCFortuneItem");
+//    }
+
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void initModel() {
+        ModelLoader.setCustomModelResourceLocation(this, CARD_SHAPE, new ModelResourceLocation(RFTools.MODID + ":shape_card_def", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_VOID, new ModelResourceLocation(RFTools.MODID + ":shape_card_void", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_SILK, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_silk", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_fortune", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_SILK, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_silk", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_fortune", "inventory"));
+    }
+
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1;
@@ -128,15 +158,14 @@ public class ShapeCardItem extends GenericRFToolsItem {
             int mode = getMode(stack);
             if (mode == MODE_NONE) {
                 if (player.isSneaking()) {
-                    //@todo
-//                    if (world.getTileEntity(x, y, z) instanceof BuilderTileEntity) {
-//                        setCurrentBlock(stack, new GlobalCoordinate(new BlockPos(x, y, z), world.provider.dimensionId));
-//                        Logging.message(player, EnumChatFormatting.GREEN + "Now select the first corner");
-//                        setMode(stack, MODE_CORNER1);
-//                        setCorner1(stack, null);
-//                    } else {
-//                        Logging.message(player, EnumChatFormatting.RED + "You can only do this on a builder!");
-//                    }
+                    if (world.getTileEntity(pos) instanceof BuilderTileEntity) {
+                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.provider.getDimensionId()));
+                        Logging.message(player, EnumChatFormatting.GREEN + "Now select the first corner");
+                        setMode(stack, MODE_CORNER1);
+                        setCorner1(stack, null);
+                    } else {
+                        Logging.message(player, EnumChatFormatting.RED + "You can only do this on a builder!");
+                    }
                 } else {
                     return false;
                 }
@@ -274,22 +303,21 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         int type = itemStack.getItemDamage();
-        //@todo
-//        if (!SpaceProjectorConfiguration.shapeCardAllowed) {
-//            list.add(EnumChatFormatting.RED + "Disabled in config!");
-//        } else if (type != CARD_SHAPE) {
-//            if (!SpaceProjectorConfiguration.quarryAllowed) {
-//                list.add(EnumChatFormatting.RED + "Disabled in config!");
-//            } else if (isClearingQuarry(type)) {
-//                if (!SpaceProjectorConfiguration.clearingQuarryAllowed) {
-//                    list.add(EnumChatFormatting.RED + "Disabled in config!");
-//                }
-//            }
-//        }
+        if (!BuilderConfiguration.shapeCardAllowed) {
+            list.add(EnumChatFormatting.RED + "Disabled in config!");
+        } else if (type != CARD_SHAPE) {
+            if (!BuilderConfiguration.quarryAllowed) {
+                list.add(EnumChatFormatting.RED + "Disabled in config!");
+            } else if (isClearingQuarry(type)) {
+                if (!BuilderConfiguration.clearingQuarryAllowed) {
+                    list.add(EnumChatFormatting.RED + "Disabled in config!");
+                }
+            }
+        }
 
         Shape shape = getShape(itemStack);
         list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
@@ -303,8 +331,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 case CARD_VOID:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.voidShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_SHAPE:
@@ -312,8 +340,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
                     list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
                     list.add(EnumChatFormatting.WHITE + "actually build the shape");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerOperation + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
                     break;
                 case CARD_QUARRY_SILK:
@@ -321,16 +349,16 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR_SILK:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_FORTUNE:
@@ -338,31 +366,31 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR_FORTUNE:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
                     list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(SpaceProjectorConfiguration.builderRfPerQuarry * SpaceProjectorConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
                     list.add(EnumChatFormatting.WHITE + "them with dirt.");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR:
                     list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
-//                    list.add(EnumChatFormatting.GREEN + "Max area: " + SpaceProjectorConfiguration.maxBuilderDimension + "x" + Math.min(256, SpaceProjectorConfiguration.maxBuilderDimension) + "x" + SpaceProjectorConfiguration.maxBuilderDimension);
-//                    list.add(EnumChatFormatting.GREEN + "Base cost: " + SpaceProjectorConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
                     list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
             }
@@ -536,8 +564,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            //@todo
-//            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return stack;
         }
         return stack;
@@ -917,18 +944,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-//    @Override
-//    public void registerIcons(IIconRegister iconRegister) {
-//        icons[CARD_SHAPE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardItem");
-//        icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
-//        icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
-//        icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
-//        icons[CARD_QUARRY_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardFortuneItem");
-//        icons[CARD_QUARRY_CLEAR] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCQuarryItem");
-//        icons[CARD_QUARRY_CLEAR_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCSilkItem");
-//        icons[CARD_QUARRY_CLEAR_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCFortuneItem");
-//    }
-
     @Override
     public String getUnlocalizedName(ItemStack itemStack) {
         if (itemStack.getItemDamage() == 0) {
@@ -939,10 +954,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-//        for (int i = 0 ; i < icons.length ; i++) {
-//            list.add(new ItemStack(this, 1, i));
-//        }
+    public void getSubItems(Item item, CreativeTabs creativeTabs, List<ItemStack> list) {
+        for (int i = 0 ; i <= 7 ; i++) {
+            list.add(new ItemStack(this, 1, i));
+        }
     }
 
 }

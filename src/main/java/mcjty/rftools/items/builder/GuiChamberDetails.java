@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.spaceprojector;
+package mcjty.rftools.items.builder;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.GuiItemScreen;
@@ -12,6 +12,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.spaceprojector.PacketGetChamberInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;

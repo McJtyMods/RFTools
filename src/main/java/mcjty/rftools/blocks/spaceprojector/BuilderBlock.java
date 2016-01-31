@@ -26,7 +26,7 @@ import java.util.List;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class BuilderBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
+public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, BuilderContainer> implements Infusable, IRedstoneConnectable {
 
     public BuilderBlock() {
         super(Material.iron, BuilderTileEntity.class, BuilderContainer.class, "builder", true);
@@ -49,7 +49,7 @@ public class BuilderBlock extends GenericRFToolsBlock implements Infusable, IRed
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(EnumChatFormatting.WHITE + "This block is linked to a space chamber and");
