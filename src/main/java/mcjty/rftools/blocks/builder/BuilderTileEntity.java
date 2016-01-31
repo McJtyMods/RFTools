@@ -138,12 +138,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         List<BlockPos> blocks = new ArrayList<BlockPos>();
         ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension*256* BuilderConfiguration.maxBuilderDimension, false, null);
-        for (BlockPos block : blocks) {
-            if (worldObj.isAirBlock(block)) {
-                int error = SupportBlock.STATUS_OK;
-                // @todo: use property
-                worldObj.setBlockState(block, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
-//                worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), error, 3);
+        for (BlockPos p : blocks) {
+            if (worldObj.isAirBlock(p)) {
+                worldObj.setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
             }
         }
     }
@@ -181,12 +178,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
-                            world.setBlockState(src, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
-//                            world.setBlockMetadataWithNotify(src.getX(), src.getY(), src.getZ(), error, 3);
+                            worldObj.setBlockState(src, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
                         }
                         if (isEmpty(dstBlock) && !isEmpty(srcBlock)) {
-                            worldObj.setBlockState(dest, BuilderSetup.supportBlock.getStateFromMeta(error), 3);
-//                            worldObj.setBlockMetadataWithNotify(dest.getX(), dest.getY(), dest.getZ(), error, 3);
+                            worldObj.setBlockState(dest, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
                         }
                     }
                 }

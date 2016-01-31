@@ -121,19 +121,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         setMaxDamage(0);
     }
 
-//    @Override
-//    public void registerIcons(IIconRegister iconRegister) {
-//        icons[CARD_SHAPE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardItem");
-//        icons[CARD_VOID] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardVoidItem");
-//        icons[CARD_QUARRY] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardQuarryItem");
-//        icons[CARD_QUARRY_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardSilkItem");
-//        icons[CARD_QUARRY_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardFortuneItem");
-//        icons[CARD_QUARRY_CLEAR] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCQuarryItem");
-//        icons[CARD_QUARRY_CLEAR_SILK] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCSilkItem");
-//        icons[CARD_QUARRY_CLEAR_FORTUNE] = iconRegister.registerIcon(RFTools.MODID + ":shapeCardCFortuneItem");
-//    }
-
-
     @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {

@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.builder;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
@@ -22,6 +24,8 @@ public class SupportBlock extends Block {
     public static final int STATUS_OK = 0;
     public static final int STATUS_WARN = 1;
     public static final int STATUS_ERROR = 2;
+
+    public static PropertyInteger STATUS = PropertyInteger.create("status", 0, 2);
 
     public SupportBlock() {
         super(Material.glass);
@@ -64,9 +68,6 @@ public class SupportBlock extends Block {
     private void removeBlock(World world, Deque<BlockPos> todo) {
         while (!todo.isEmpty()) {
             BlockPos c = todo.pollFirst();
-            int x = c.getX();
-            int y = c.getY();
-            int z = c.getZ();
             world.setBlockToAir(c);
             if (world.getBlockState(c.west()).getBlock() == this) {
                 todo.push(c.west());
@@ -107,5 +108,18 @@ public class SupportBlock extends Block {
         return block != this && super.shouldSideBeRendered(blockAccess, pos, side);
     }
 
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(STATUS, meta);
+    }
 
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(STATUS);
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, STATUS);
+    }
 }

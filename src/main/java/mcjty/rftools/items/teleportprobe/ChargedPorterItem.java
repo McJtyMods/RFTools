@@ -45,7 +45,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
-            ModelBakery.addVariantName(this, RFTools.MODID + ":" + getUnlocalizedName().substring(5) + i);
+            ModelBakery.addVariantName(this, getRegistryName() + i);
 //            ModelBakery.addVariantName(this, "l" + i);
         }
 
@@ -63,7 +63,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                 } else if (level > 8) {
                     level = 8;
                 }
-                return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5) + (8-level), "inventory");
+                return new ModelResourceLocation(getRegistryName() + (8-level), "inventory");
 //                return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "l" + (8-level));
             }
         });

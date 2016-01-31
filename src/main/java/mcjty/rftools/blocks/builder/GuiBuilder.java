@@ -34,7 +34,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
     private ChoiceLabel rotateButton;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spaceprojector.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/builder.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
