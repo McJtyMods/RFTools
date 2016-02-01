@@ -6,7 +6,7 @@
   "variants": {
     "normal": [{}],
     "inventory": [{}],
-    "status" :{
+    "status" : {
       "0": { "textures": { "txt": "rftools:blocks/supportBlock" }},
       "1": { "textures": { "txt": "rftools:blocks/supportYellowBlock" }},
       "2": { "textures": { "txt": "rftools:blocks/supportRedBlock" }}

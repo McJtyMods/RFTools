@@ -3,7 +3,7 @@ package mcjty.rftools.items.storage;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import net.minecraft.client.resources.model.ModelBakery;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,14 +13,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageModuleItem extends Item {
+public class StorageModuleItem extends GenericRFToolsItem {
     public static final int STORAGE_TIER1 = 0;
     public static final int STORAGE_TIER2 = 1;
     public static final int STORAGE_TIER3 = 2;
@@ -28,15 +27,13 @@ public class StorageModuleItem extends Item {
     public static final int MAXSIZE[] = new int[] { 100, 200, 300, 0, 0, 0, -1 };
 
     public StorageModuleItem() {
+        super("storage_module");
         setMaxStackSize(1);
         setHasSubtypes(true);
         setMaxDamage(0);
-        setUnlocalizedName("storage_module");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "storage_module");
-
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, STORAGE_TIER1, new ModelResourceLocation(RFTools.MODID + ":storage_module0", "inventory"));

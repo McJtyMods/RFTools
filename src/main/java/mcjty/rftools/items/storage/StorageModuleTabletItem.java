@@ -5,8 +5,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.items.smartwrench.SmartWrenchMode;
-import net.minecraft.client.renderer.ItemMeshDefinition;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,13 +15,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class StorageModuleTabletItem extends Item implements IEnergyContainerItem {
+public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyContainerItem {
 
     private int capacity;
     private int maxReceive;
@@ -32,15 +30,12 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
     public static final int DAMAGE_FULL = 1;
 
     public StorageModuleTabletItem() {
+        super("storage_module_tablet");
         setMaxStackSize(1);
 
         capacity = ModularStorageConfiguration.TABLET_MAXENERGY;
         maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK;
         maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
-
-        setUnlocalizedName("storage_module_tablet");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "storage_module_tablet");
     }
 
     @Override
@@ -48,6 +43,7 @@ public class StorageModuleTabletItem extends Item implements IEnergyContainerIte
         return 1;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_tablet");

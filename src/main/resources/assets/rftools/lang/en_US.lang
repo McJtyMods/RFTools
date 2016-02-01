@@ -40,6 +40,7 @@ item.storage_module_tablet.name=Storage Module Tablet
 item.filter_module.name=Storage Filter Module
 item.oredict_module.name=Ore Dictionary Storage Module
 item.generic_module.name=Generic Storage Module
+item.powercell_card.name=Powercell Card
 item.space_chamber_card.name=Space Chamber Card
 item.shape_card.name=Shape Card
 item.shape_card1.name=Shape Card (Void)
@@ -114,6 +115,7 @@ tile.builder.name=Builder Block
 tile.support_block.name=Support Block
 tile.space_chamber.name=Space Chamber Corner Block
 tile.space_chamber_controller.name=Space Chamber Controller Block
+tile.powercell.name=Powercell
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

@@ -8,6 +8,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiipml.TeleportationManager;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.powercell.PowerCellNetwork;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftTp;
@@ -126,6 +127,7 @@ public class RFTools implements ModBase {
         TeleportDestinations.clearInstance();
         RemoteStorageIdRegistry.clearInstance();
         RedstoneChannels.clearInstance();
+        PowerCellNetwork.clearInstance();
     }
 
     /**
@@ -147,24 +149,6 @@ public class RFTools implements ModBase {
                 Optional<Function<ITeleportationManager, Void>> value = message.getFunctionValue(ITeleportationManager.class, Void.class);
                 value.get().apply(new TeleportationManager());
             }
-//            if (message.key.equalsIgnoreCase("dimlet_blacklist")) {
-//                String dimletName = message.getStringValue();
-//                KnownDimletConfiguration.blacklistDimlet(dimletName);
-//            } else if (message.key.equalsIgnoreCase("dimlet_configure")) {
-//                String value = message.getStringValue();
-//                String[] splitted = StringUtils.split(value, "=");
-//                if (splitted.length < 2) {
-//                    Logging.logError("Bad format for configdimlet. Needs <Type>.<Name>=<CreateCost>,<MaintainCost>,<TickCost>,<Rarity>!");
-//                    continue;
-//                }
-//                KnownDimletConfiguration.reconfigureDimlet(splitted[0], splitted[1]);
-//            } else if (message.key.equalsIgnoreCase("dimlet_preventworldgen")) {
-//                String dimletName = message.getStringValue();
-//                KnownDimletConfiguration.preventDimletWorldGeneration(dimletName);
-//            } else if (message.key.equalsIgnoreCase("dimlet_preventloot")) {
-//                String dimletName = message.getStringValue();
-//                KnownDimletConfiguration.preventDimletLootGeneration(dimletName);
-//            }
         }
 
     }
