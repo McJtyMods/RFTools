@@ -25,6 +25,11 @@ public class PowerCellSetup {
         powerCellCardItem.initModel();
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void initItemModels() {
+        powerCellBlock.initItemModel();
+    }
+
     public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rer", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.redstone_block,
                 'b', Items.blaze_rod, 'e', Items.emerald);

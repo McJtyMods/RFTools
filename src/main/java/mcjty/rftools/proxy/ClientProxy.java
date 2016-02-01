@@ -1,9 +1,11 @@
 package mcjty.rftools.proxy;
 
+import mcjty.rftools.ClientEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -15,7 +17,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
-//        ModRenderers.init();
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandlers());
+//        OBJLoader.instance.addDomain(MODID);
         ModItems.initClient();
         ModBlocks.initClient();
     }
@@ -24,6 +27,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(this);
+        ModBlocks.initItemModels();
     }
 
     @Override
