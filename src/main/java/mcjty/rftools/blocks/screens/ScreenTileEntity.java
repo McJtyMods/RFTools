@@ -29,7 +29,6 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
-    // @todo dimension in the map!!!
     public static Map<GlobalCoordinate, Map<Integer, Object[]>> screenData = new HashMap<>();
 
     // Cached client screen modules
