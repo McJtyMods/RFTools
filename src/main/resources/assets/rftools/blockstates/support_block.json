@@ -7,9 +7,9 @@
     "normal": [{}],
     "inventory": [{}],
     "status" : {
-      "0": { "textures": { "txt": "rftools:blocks/supportBlock" }},
-      "1": { "textures": { "txt": "rftools:blocks/supportYellowBlock" }},
-      "2": { "textures": { "txt": "rftools:blocks/supportRedBlock" }}
+      "0": { "textures": { "all": "rftools:blocks/supportBlock" }},
+      "1": { "textures": { "all": "rftools:blocks/supportYellowBlock" }},
+      "2": { "textures": { "all": "rftools:blocks/supportRedBlock" }}
     }
   }
 }

@@ -15,6 +15,7 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -35,6 +36,7 @@ public class SupportBlock extends Block {
         setUnlocalizedName("support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(this);
     }
 
     @SideOnly(Side.CLIENT)
