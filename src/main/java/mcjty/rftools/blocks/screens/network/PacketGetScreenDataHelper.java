@@ -7,6 +7,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class PacketGetScreenDataHelper {
     public static void setScreenData(PacketReturnScreenData message) {
-        ScreenTileEntity.screenData.put(message.getPos(), message.screenData);
+        ScreenTileEntity.screenData.put(message.getPos(), message.getScreenData());
     }
 }

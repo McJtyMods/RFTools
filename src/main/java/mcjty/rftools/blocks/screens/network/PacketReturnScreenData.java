@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.screens.modules.ScreenDataType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
@@ -13,12 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketReturnScreenData implements IMessage {
-    private BlockPos pos;
-    Map<Integer, Object[]> screenData;
+    private GlobalCoordinate pos;
+    private Map<Integer, Object[]> screenData;
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
+        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
         int size = buf.readInt();
         screenData = new HashMap<Integer, Object[]>(size);
         for (int i = 0 ; i < size ; i++) {
@@ -36,7 +37,9 @@ public class PacketReturnScreenData implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        NetworkTools.writePos(buf, pos);
+        NetworkTools.writePos(buf, pos.getCoordinate());
+        buf.writeInt(pos.getDimension());
+
         buf.writeInt(screenData.size());
         for (Map.Entry<Integer, Object[]> me : screenData.entrySet()) {
             buf.writeInt(me.getKey());
@@ -51,11 +54,15 @@ public class PacketReturnScreenData implements IMessage {
     public PacketReturnScreenData() {
     }
 
-    public BlockPos getPos() {
+    public GlobalCoordinate getPos() {
         return pos;
     }
 
-    public PacketReturnScreenData(BlockPos pos, Map<Integer, Object[]> screenData) {
+    public Map<Integer, Object[]> getScreenData() {
+        return screenData;
+    }
+
+    public PacketReturnScreenData(GlobalCoordinate pos, Map<Integer, Object[]> screenData) {
         this.pos = pos;
         this.screenData = screenData;
     }

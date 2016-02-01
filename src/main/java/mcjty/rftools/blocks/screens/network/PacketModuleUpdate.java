@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -59,8 +60,7 @@ public class PacketModuleUpdate implements IMessage {
         private void handle(PacketModuleUpdate message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
             if(!(te instanceof ScreenTileEntity)) {
-                // @Todo better logging
-                System.out.println("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
+                Logging.logError("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
                 return;
             }
             ((ScreenTileEntity) te).updateModuleData(message.slotIndex, message.tagCompound);

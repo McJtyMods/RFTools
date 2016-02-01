@@ -5,6 +5,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.screens.modules.ScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.network.RFToolsMessages;
@@ -29,7 +30,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
     // @todo dimension in the map!!!
-    public static Map<BlockPos, Map<Integer, Object[]>> screenData = new HashMap<BlockPos, Map<Integer, Object[]>>();
+    public static Map<GlobalCoordinate, Map<Integer, Object[]>> screenData = new HashMap<>();
 
     // Cached client screen modules
     private List<ClientScreenModule> clientScreenModules = null;

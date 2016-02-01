@@ -5,7 +5,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
-import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.RFToolsTools;
@@ -172,8 +171,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             TileEntity srcTileEntity = world.getTileEntity(src);
                             TileEntity dstTileEntity = worldObj.getTileEntity(dest);
 
-                            int error1 = isMovable(world, src.getX(), src.getY(), src.getZ(), srcBlock, srcTileEntity);
-                            int error2 = isMovable(worldObj, dest.getX(), dest.getY(), dest.getZ(), dstBlock, dstTileEntity);
+                            int error1 = isMovable(world, src, srcBlock, srcTileEntity);
+                            int error2 = isMovable(worldObj, dest, dstBlock, dstTileEntity);
                             error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcBlock) && !isEmpty(dstBlock)) {
@@ -645,6 +644,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Return true if we have to wait at this spot.
     private boolean handleSingleBlock() {
+        BlockPos srcPos = scan;
         int sx = scan.getX();
         int sy = scan.getY();
         int sz = scan.getZ();
@@ -706,34 +706,33 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (getCardType()) {
             case ShapeCardItem.CARD_VOID:
-                return voidBlock(rfNeeded, sx, sy, sz, block);
+                return voidBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_QUARRY:
             case ShapeCardItem.CARD_QUARRY_CLEAR:
-                return quarryBlock(rfNeeded, sx, sy, sz, block);
+                return quarryBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_QUARRY_FORTUNE:
             case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
-                return quarryBlock(rfNeeded, sx, sy, sz, block);
+                return quarryBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_QUARRY_SILK:
             case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
-                return silkQuarryBlock(rfNeeded, sx, sy, sz, block);
+                return silkQuarryBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_SHAPE:
-                return buildBlock(rfNeeded, sx, sy, sz);
+                return buildBlock(rfNeeded, srcPos);
         }
         return true;
     }
 
-    private boolean buildBlock(int rfNeeded, int sx, int sy, int sz) {
-        if (isEmptyOrReplacable(worldObj, sx, sy, sz)) {
-            BlockMeta block = consumeBlock(null, 0);
-            if (block == null) {
+    private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
+        if (isEmptyOrReplacable(worldObj, srcPos)) {
+            IBlockState state = consumeBlock(null);
+            if (state == null) {
                 return true;    // We could not find a block. Wait
             }
 
-            // @todo property?
-            worldObj.setBlockState(new BlockPos(sx, sy, sz), block.getBlock().getStateFromMeta(block.getMeta()), 3);
+            worldObj.setBlockState(srcPos, state, 3);
 //            worldObj.setBlockMetadataWithNotify(sx, sy, sz, block.getMeta(), 3);
             if (!silent) {
-                RFToolsTools.playSound(worldObj, block.getBlock().stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                RFToolsTools.playSound(worldObj, state.getBlock().stepSound.getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -766,10 +765,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private boolean silkQuarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
+    private boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
+        int sx = srcPos.getX();
+        int sy = srcPos.getY();
+        int sz = srcPos.getZ();
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
@@ -777,26 +779,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmpty(block)) {
             return false;
         }
-        BlockPos spos = new BlockPos(sx, sy, sz);
-        if (block.getBlockHardness(worldObj, spos) >= 0) {
+        if (block.getBlockHardness(worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == Blocks.dirt) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if (worldObj.getTileEntity(spos) != null) {
+            if (worldObj.getTileEntity(srcPos) != null) {
                 // Skip tile entities
                 return false;
             }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            if (block.canEntityDestroy(worldObj, spos, fakePlayer)) {
+            if (block.canEntityDestroy(worldObj, srcPos, fakePlayer)) {
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    IBlockState state = worldObj.getBlockState(spos);
+                    IBlockState state = worldObj.getBlockState(srcPos);
                     List<ItemStack> drops;
-                    if (block.canSilkHarvest(worldObj, spos, state, fakePlayer)) {
+                    if (block.canSilkHarvest(worldObj, srcPos, state, fakePlayer)) {
                         Item item = Item.getItemFromBlock(block);
                         if (item != null) {
                             int m = 0;
@@ -808,7 +809,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             drops = Collections.emptyList();
                         }
                     } else {
-                        drops = block.getDrops(worldObj, spos, state, 0);
+                        drops = block.getDrops(worldObj, srcPos, state, 0);
                     }
                     if (checkAndInsertItems(drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
@@ -821,10 +822,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean quarryBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
+    private boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
+        int sx = srcPos.getX();
+        int sy = srcPos.getY();
+        int sz = srcPos.getZ();
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
@@ -832,25 +836,24 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmpty(block)) {
             return false;
         }
-        BlockPos spos = new BlockPos(sx, sy, sz);
-        if (block.getBlockHardness(worldObj, spos) >= 0) {
+        if (block.getBlockHardness(worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == Blocks.dirt) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if (worldObj.getTileEntity(spos) != null) {
+            if (worldObj.getTileEntity(srcPos) != null) {
                 // Skip tile entities
                 return false;
             }
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            if (block.canEntityDestroy(worldObj, spos, fakePlayer)) {
+            if (block.canEntityDestroy(worldObj, srcPos, fakePlayer)) {
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    IBlockState state = worldObj.getBlockState(spos);
-                    List<ItemStack> drops = block.getDrops(worldObj, spos, state, (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0);
+                    IBlockState state = worldObj.getBlockState(srcPos);
+                    List<ItemStack> drops = block.getDrops(worldObj, srcPos, state, (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0);
                     if (checkAndInsertItems(drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
@@ -862,55 +865,58 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean voidBlock(int rfNeeded, int sx, int sy, int sz, Block block) {
+    private boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block) {
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
+        int sx = srcPos.getX();
+        int sy = srcPos.getY();
+        int sz = srcPos.getZ();
         if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        BlockPos spos = new BlockPos(sx, sy, sz);
-        if (block.getBlockHardness(worldObj, spos) >= 0) {
+        if (block.getBlockHardness(worldObj, srcPos) >= 0) {
             if (!silent) {
                 RFToolsTools.playSound(worldObj, block.stepSound.getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
             }
-            worldObj.setBlockToAir(spos);
+            worldObj.setBlockToAir(srcPos);
             consumeEnergy(rfNeeded);
         }
         return false;
     }
 
     private void handleBlock(World world) {
-        BlockPos dest = sourceToDest(scan);
+        BlockPos srcPos = scan;
+        BlockPos destPos = sourceToDest(scan);
         int x = scan.getX();
         int y = scan.getY();
         int z = scan.getZ();
-        int destX = dest.getX();
-        int destY = dest.getY();
-        int destZ = dest.getZ();
+        int destX = destPos.getX();
+        int destY = destPos.getY();
+        int destZ = destPos.getZ();
 
         switch (mode) {
             case MODE_COPY:
-                copyBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                copyBlock(world, srcPos, worldObj, destPos);
                 break;
             case MODE_MOVE:
                 if (entityMode) {
                     moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 }
-                moveBlock(world, x, y, z, worldObj, destX, destY, destZ, rotate);
+                moveBlock(world, srcPos, worldObj, destPos, rotate);
                 break;
             case MODE_BACK:
                 if (entityMode) {
                     moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
                 }
-                moveBlock(worldObj, destX, destY, destZ, world, x, y, z, oppositeRotate());
+                moveBlock(worldObj, destPos, world, srcPos, oppositeRotate());
                 break;
             case MODE_SWAP:
                 if (entityMode) {
                     swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
                 }
-                swapBlock(world, x, y, z, worldObj, destX, destY, destZ);
+                swapBlock(world, srcPos, worldObj, destPos);
                 break;
         }
 
@@ -920,32 +926,34 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private static Random random = new Random();
 
     // Also works if block is null and just picks the first available block.
-    private BlockMeta findAndConsumeBlock(IInventory inventory, Block block, int meta) {
-        if (block == null) {
+    private IBlockState findAndConsumeBlock(IInventory inventory, IBlockState state) {
+        if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
-            List<Integer> slots = new ArrayList<Integer>();
+            List<Integer> slots = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
                     slots.add(i);
                 }
             }
-            if (slots.size() == 0) {
+            if (slots.isEmpty()) {
                 return null;
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
             ItemStack stack = inventory.getStackInSlot(randomSlot);
             ItemBlock itemBlock = (ItemBlock) stack.getItem();
             inventory.decrStackSize(randomSlot, 1);
-            return new BlockMeta(itemBlock.getBlock(), stack.getItemDamage());
+            return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
         } else {
+            Block block = state.getBlock();
+            int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
                     ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                    if (itemBlock.getBlock() == block && (meta == -1 || stack.getItemDamage() == meta)) {
+                    if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
                         inventory.decrStackSize(i, 1);
-                        return new BlockMeta(itemBlock.getBlock(), stack.getItemDamage());
+                        return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
                     }
                 }
             }
@@ -988,17 +996,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
 
-    private BlockMeta consumeBlock(Block block, int meta) {
+    private IBlockState consumeBlock(IBlockState state) {
         TileEntity te = worldObj.getTileEntity(getPos().up());
         if (te instanceof IInventory) {
-            BlockMeta b = findAndConsumeBlock((IInventory) te, block, meta);
+            IBlockState b = findAndConsumeBlock((IInventory) te, state);
             if (b != null) {
                 return b;
             }
         }
         te = worldObj.getTileEntity(getPos().down());
         if (te instanceof IInventory) {
-            BlockMeta b = findAndConsumeBlock((IInventory) te, block, meta);
+            IBlockState b = findAndConsumeBlock((IInventory) te, state);
             if (b != null) {
                 return b;
             }
@@ -1010,13 +1018,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    public static BuilderSetup.BlockInformation getBlockInformation(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
+    public static BuilderSetup.BlockInformation getBlockInformation(World world, BlockPos pos, Block block, TileEntity tileEntity) {
         if (isEmpty(block)) {
             return BuilderSetup.BlockInformation.FREE;
         }
 
         FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-        if (!block.canEntityDestroy(world, new BlockPos(x, y, z), fakePlayer)) {
+        if (!block.canEntityDestroy(world, pos, fakePlayer)) {
             return BuilderSetup.BlockInformation.INVALID;
         }
 
@@ -1045,13 +1053,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return BuilderSetup.BlockInformation.OK;
     }
 
-    private int isMovable(World world, int x, int y, int z, Block block, TileEntity tileEntity) {
-        return getBlockInformation(world, x, y, z, block, tileEntity).getBlockLevel();
+    private int isMovable(World world, BlockPos pos, Block block, TileEntity tileEntity) {
+        return getBlockInformation(world, pos, block, tileEntity).getBlockLevel();
     }
 
-    public static boolean isEmptyOrReplacable(World world, int x, int y, int z) {
-        Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        if (block.isReplaceable(world, new BlockPos(x, y, z))) {
+    public static boolean isEmptyOrReplacable(World world, BlockPos pos) {
+        Block block = world.getBlockState(pos).getBlock();
+        if (block.isReplaceable(world, pos)) {
             return true;
         }
         return isEmpty(block);
@@ -1071,11 +1079,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private void clearBlock(World world, int x, int y, int z) {
+    private void clearBlock(World world, BlockPos pos) {
         if (supportMode) {
-            world.setBlockState(new BlockPos(x, y, z), BuilderSetup.supportBlock.getDefaultState(), 3);
+            world.setBlockState(pos, BuilderSetup.supportBlock.getDefaultState(), 3);
         } else {
-            world.setBlockToAir(new BlockPos(x, y, z));
+            world.setBlockToAir(pos);
         }
     }
 
@@ -1121,7 +1129,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return meta;
     }
 
-    private void copyBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
+    private void copyBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos) {
         int rf = getEnergyStored(EnumFacing.DOWN);
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
@@ -1129,24 +1137,24 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        if (isEmptyOrReplacable(destWorld, destX, destY, destZ)) {
-            IBlockState state = world.getBlockState(getPos());
+        if (isEmptyOrReplacable(destWorld, destPos)) {
+            if (world.isAirBlock(srcPos)) {
+                return;
+            }
+            IBlockState state = world.getBlockState(srcPos);
+            if (consumeBlock(state) == null) {
+                return;
+            }
+
             Block origBlock = state.getBlock();
             int origMeta = origBlock.getMetaFromState(state);
-            if (origBlock == null || origBlock.getMaterial() == Material.air) {
-                return;
-            }
-            if (consumeBlock(origBlock, origMeta) == null) {
-                return;
-            }
-
-            BuilderSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, null);
+            BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
-            destWorld.setBlockState(new BlockPos(destX, destY, destZ), origBlock.getStateFromMeta(origMeta), 3);
+            destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
 //            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
-                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1261,17 +1269,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private void moveBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ, int rotMode) {
-        Block destBlock = destWorld.getBlockState(new BlockPos(destX, destY, destZ)).getBlock();
+    private void moveBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos, int rotMode) {
+        Block destBlock = destWorld.getBlockState(destPos).getBlock();
         if (isEmpty(destBlock)) {
-            BlockPos srcPos = new BlockPos(x, y, z);
             IBlockState state = world.getBlockState(srcPos);
             Block origBlock = state.getBlock();
             if (isEmpty(origBlock)) {
                 return;
             }
             TileEntity origTileEntity = world.getTileEntity(srcPos);
-            BuilderSetup.BlockInformation information = getBlockInformation(world, x, y, z, origBlock, origTileEntity);
+            BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, origTileEntity);
             if (information.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                 return;
             }
@@ -1289,9 +1296,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             origMeta = rotateMeta(origBlock, origMeta, information, rotMode);
 
             world.removeTileEntity(srcPos);
-            clearBlock(world, x, y, z);
+            clearBlock(world, srcPos);
 
-            BlockPos destpos = new BlockPos(destX, destY, destZ);
+            BlockPos destpos = destPos;
             destWorld.setBlockState(destpos, origBlock.getStateFromMeta(origMeta), 3);
 //            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (origTileEntity != null) {
@@ -1301,19 +1308,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 destWorld.markBlockForUpdate(destpos);
             }
             if (!silent) {
-                RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
-                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+                RFToolsTools.playSound(world, origBlock.stepSound.getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, origBlock.stepSound.getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
 
-    private void swapBlock(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        BlockPos srcPos = new BlockPos(x, y, z);
+    private void swapBlock(World world, BlockPos srcPos, World destWorld, BlockPos dstPos) {
         IBlockState srcState = world.getBlockState(srcPos);
         Block srcBlock = srcState.getBlock();
         TileEntity srcTileEntity = world.getTileEntity(srcPos);
 
-        BlockPos dstPos = new BlockPos(destX, destY, destZ);
         IBlockState dstState = destWorld.getBlockState(dstPos);
         Block dstBlock = dstState.getBlock();
         TileEntity dstTileEntity = destWorld.getTileEntity(dstPos);
@@ -1322,12 +1327,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        BuilderSetup.BlockInformation srcInformation = getBlockInformation(world, x, y, z, srcBlock, srcTileEntity);
+        BuilderSetup.BlockInformation srcInformation = getBlockInformation(world, srcPos, srcBlock, srcTileEntity);
         if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
 
-        BuilderSetup.BlockInformation dstInformation = getBlockInformation(destWorld, destX, destY, destZ, dstBlock, dstTileEntity);
+        BuilderSetup.BlockInformation dstInformation = getBlockInformation(destWorld, dstPos, dstBlock, dstTileEntity);
         if (dstInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
@@ -1372,17 +1377,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (!silent) {
             if (!isEmpty(srcBlock)) {
-                RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), x, y, z, 1.0f, 1.0f);
+                RFToolsTools.playSound(world, srcBlock.stepSound.getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
             if (!isEmpty(dstBlock)) {
-                RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), destX, destY, destZ, 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, dstBlock.stepSound.getBreakSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
 
     private BlockPos sourceToDest(BlockPos source) {
-        BlockPos c = rotate(source);
-        return new BlockPos(c.getX() + projDx, c.getY() + projDy, c.getZ() + projDz);
+        return rotate(source).add(projDx, projDy, projDz);
     }
 
     private void restartScan() {

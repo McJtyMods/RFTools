@@ -74,7 +74,6 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
         renderSlotOverlay(fontRenderer, currenty, screenData, slot4, 3, x);
         GlStateManager.popMatrix();
 
-        // @todo check?
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
 

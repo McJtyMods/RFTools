@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
@@ -84,7 +85,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, screenTileEntity.getPos(), millis));
+            GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimensionId());
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
         }
 
         Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(screenTileEntity.getPos());

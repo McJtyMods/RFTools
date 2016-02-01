@@ -71,15 +71,16 @@ public class PacketGetChamberInfo implements IMessage {
             for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
                 for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                     for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
-                        IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+                        BlockPos p = new BlockPos(x, y, z);
+                        IBlockState state = world.getBlockState(p);
                         Block block = state.getBlock();
                         if (!BuilderTileEntity.isEmpty(block)) {
                             int meta = block.getMetaFromState(state);
                             BlockMeta bm = new BlockMeta(block, meta);
                             blocks.increment(bm);
 
-                            TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-                            BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, x, y, z, block, te);
+                            TileEntity te = world.getTileEntity(p);
+                            BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, p, block, te);
                             if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                                 costs.put(bm, -1);
                             } else {

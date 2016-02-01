@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import com.google.common.collect.AbstractIterator;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -583,7 +584,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
         composeShape(shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
-                return null;
+                return new AbstractIterator<BlockPos>() {
+                    @Override
+                    protected BlockPos computeNext() {
+                        return null;
+                    }
+                };
             }
 
             @Override
@@ -670,8 +676,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
             blocks.add(c);
         } else {
-            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, x, y, z) && blocks.size() < maxSize - 1) {
-                blocks.add(new BlockPos(x, y, z));
+            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, c) && blocks.size() < maxSize - 1) {
+                blocks.add(c);
             }
         }
     }
