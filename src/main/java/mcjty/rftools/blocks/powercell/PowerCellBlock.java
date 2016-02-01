@@ -134,6 +134,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
+        if (!world.isRemote) {
+            world.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
+        }
         if (stack.hasTagCompound() && !world.isRemote) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
             if (powerCellTileEntity != null) {

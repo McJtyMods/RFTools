@@ -43,8 +43,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        int oldid = networkId;
         networkId = packet.getNbtCompound().getInteger("id");
         energy = packet.getNbtCompound().getInteger("energy");
+        if (oldid != networkId) {
+            worldObj.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
+        }
     }
 
     public void updateNetwork() {
