@@ -26,6 +26,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     // Only use on the client side
     private int networkId = -1;
 
+    // Only used when this block is not part of a network
+    private int energy = 0;
+
     public PowerCellTileEntity() {
         super();
     }
@@ -34,12 +37,14 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         nbtTag.setInteger("id", getNetworkId());
+        nbtTag.setInteger("energy", energy);
         return new S35PacketUpdateTileEntity(this.pos, 1, nbtTag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
         networkId = packet.getNbtCompound().getInteger("id");
+        energy = packet.getNbtCompound().getInteger("energy");
     }
 
     public void updateNetwork() {
@@ -107,6 +112,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
+        energy = tagCompound.getInteger("energy");
     }
 
     @Override
@@ -118,6 +124,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        tagCompound.setInteger("energy", energy);
     }
 
     protected void checkStateServer() {
@@ -153,15 +160,48 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        return 0;
+        int networkId = getNetworkId();
+        if (networkId == -1) {
+            return receiveEnergyLocal(maxReceive, simulate);
+        } else {
+            return receiveEnergyMulti(maxReceive, simulate);
+        }
+    }
+
+    private int receiveEnergyMulti(int maxReceive, boolean simulate) {
+        PowerCellNetwork.Network network = getNetwork();
+        int maxInsert = Math.max(PowerCellConfiguration.rfPerCell * network.getBlocks().size()-network.getEnergy(), maxReceive);
+        if (maxInsert > 0) {
+            if (!simulate) {
+                network.setEnergy(network.getEnergy() + maxInsert);
+                PowerCellNetwork.getChannels(worldObj).save(worldObj);
+            }
+        }
+        return maxInsert;
+    }
+
+    private int receiveEnergyLocal(int maxReceive, boolean simulate) {
+        int maxInsert = Math.max(PowerCellConfiguration.rfPerCell-energy, maxReceive);
+        if (maxInsert > 0) {
+            if (!simulate) {
+                energy += maxInsert;
+                markDirty();
+            }
+        }
+        return maxInsert;
     }
 
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return 0;
+            return extractEnergyLocal(maxExtract, simulate);
+        } else {
+            return extractEnergyMulti(maxExtract, simulate);
         }
+    }
+
+    private int extractEnergyMulti(int maxExtract, boolean simulate) {
         PowerCellNetwork.Network network = getNetwork();
         int energy = network.getEnergy();
         if (maxExtract > energy) {
@@ -177,11 +217,26 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return maxExtract;
     }
 
+    private int extractEnergyLocal(int maxExtract, boolean simulate) {
+        // We act as a single block
+        if (maxExtract > energy) {
+            maxExtract = energy;
+        }
+        if (maxExtract > PowerCellConfiguration.rfPerTick) {
+            maxExtract = PowerCellConfiguration.rfPerTick;
+        }
+        if (!simulate) {
+            energy -= maxExtract;
+            markDirty();
+        }
+        return maxExtract;
+    }
+
     @Override
     public int getEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return 0;
+            return energy;
         }
         PowerCellNetwork.Network network = getNetwork();
         return network.getEnergy();
@@ -191,7 +246,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public int getMaxEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return 0;
+            return PowerCellConfiguration.rfPerCell;
         }
         PowerCellNetwork.Network network = getNetwork();
         return network.getBlocks().size() * PowerCellConfiguration.rfPerCell;
@@ -209,10 +264,31 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == PowerCellContainer.SLOT_CARD) {
+            if (!worldObj.isRemote) {
+                PowerCellNetwork.Network network = getNetwork();
+                if (inventoryHelper.containsItem(index)) {
+                    // Store the energy locally
+                    if (network != null) {
+                        energy = network.getEnergy() / Math.max(network.getBlocks().size(), 1);
+                        network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
+                    } else {
+                        energy = 0;
+                    }
+                }
+            }
+        }
         this.getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
         if (index == PowerCellContainer.SLOT_CARD) {
             if (!worldObj.isRemote) {
-                updateNetwork();
+                PowerCellNetwork.Network network = getNetwork();
+                if (inventoryHelper.containsItem(index)) {
+                    // Store the energy locally
+                    if (network != null) {
+                        network.setEnergy(energy + network.getEnergy());
+                        network.getBlocks().add(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
+                    }
+                }
             }
         }
     }

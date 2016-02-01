@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -93,13 +94,18 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (stack.hasTagCompound() && !world.isRemote) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
-            if (powerCellTileEntity != null && powerCellTileEntity.getNetworkId() != -1) {
+            if (powerCellTileEntity != null) {
                 powerCellTileEntity.updateNetwork();
-                int energy = stack.getTagCompound().getInteger("energy");
-                PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(world);
-                PowerCellNetwork.Network channel = powerCellNetwork.getChannel(powerCellTileEntity.getNetworkId());
-                channel.setEnergy(energy + channel.getEnergy());
-                powerCellNetwork.save(world);
+                int networkId = powerCellTileEntity.getNetworkId();
+                if (networkId == -1) {
+                    // No network, energy is already restored to the local block
+                } else {
+                    int energy = stack.getTagCompound().getInteger("energy");
+                    PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(world);
+                    PowerCellNetwork.Network channel = powerCellNetwork.getChannel(networkId);
+                    channel.setEnergy(energy + channel.getEnergy());
+                    powerCellNetwork.save(world);
+                }
             }
         }
     }
@@ -127,7 +133,6 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
         return drops;
     }
-
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
