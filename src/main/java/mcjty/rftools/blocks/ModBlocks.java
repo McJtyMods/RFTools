@@ -50,11 +50,6 @@ public final class ModBlocks {
         PowerCellSetup.initClient();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initItemModels() {
-        PowerCellSetup.initItemModels();
-    }
-
     private static void initBaseBlocks() {
         machineFrame = new MachineFrame();
         machineBase = new MachineBase();

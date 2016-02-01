@@ -20,7 +20,7 @@ public class PowerCellNetwork extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,Network> networks = new HashMap<Integer,Network>();
+    private final Map<Integer,Network> networks = new HashMap<>();
 
     public PowerCellNetwork(String identifier) {
         super(identifier);

@@ -18,8 +18,9 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 
-public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory {
+public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 2);
 
@@ -129,6 +130,13 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("energy", energy);
+    }
+
+    @Override
+    public void update() {
+        if (!worldObj.isRemote) {
+            checkStateServer();
+        }
     }
 
     protected void checkStateServer() {
@@ -267,43 +275,80 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public ItemStack removeStackFromSlot(int index) {
+        System.out.println("PowerCellTileEntity.removeStackFromSlot");
         if (index == PowerCellContainer.SLOT_CARD) {
-            if (!worldObj.isRemote) {
-                PowerCellNetwork.Network network = getNetwork();
-                if (inventoryHelper.containsItem(index)) {
-                    // Store the energy locally
-                    if (network != null) {
-                        energy = network.getEnergy() / Math.max(network.getBlocks().size(), 1);
-                        network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
-                    } else {
-                        energy = 0;
-                    }
-                }
-            }
+            beforeRemoveCard(index);
+        }
+        markDirtyClient();
+        return this.getInventoryHelper().removeStackFromSlot(index);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        System.out.println("PowerCellTileEntity.decrStackSize");
+        if (index == PowerCellContainer.SLOT_CARD) {
+            beforeRemoveCard(index);
+        }
+        ItemStack stack = this.getInventoryHelper().decrStackSize(index, count);
+        if (index == PowerCellContainer.SLOT_CARD) {
+            afterInsertCard(index);
+        }
+        markDirtyClient();
+        return stack;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        System.out.println("PowerCellTileEntity.setInventorySlotContents");
+        if (index == PowerCellContainer.SLOT_CARD) {
+            beforeRemoveCard(index);
         }
         this.getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
         if (index == PowerCellContainer.SLOT_CARD) {
-            if (!worldObj.isRemote) {
-                PowerCellNetwork.Network network = getNetwork();
-                if (inventoryHelper.containsItem(index)) {
-                    // Store the energy locally
-                    if (network != null) {
-                        network.setEnergy(energy + network.getEnergy());
-                        network.getBlocks().add(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
-                    }
-                }
-            }
+            afterInsertCard(index);
         }
 
         if (index == PowerCellContainer.SLOT_CARDCOPY) {
-            if (!worldObj.isRemote) {
-                if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD) && inventoryHelper.containsItem(PowerCellContainer.SLOT_CARDCOPY)) {
-                    ItemStack s = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARDCOPY);
-                    if (!s.hasTagCompound()) {
-                        s.setTagCompound(new NBTTagCompound());
-                    }
-                    s.getTagCompound().setInteger("id", getNetworkId());
+            if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD) && inventoryHelper.containsItem(PowerCellContainer.SLOT_CARDCOPY)) {
+                ItemStack s = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARDCOPY);
+                if (!s.hasTagCompound()) {
+                    s.setTagCompound(new NBTTagCompound());
+                }
+                s.getTagCompound().setInteger("id", getNetworkId());
+            }
+        }
+
+        markDirtyClient();
+    }
+
+    private void afterInsertCard(int index) {
+        if (!worldObj.isRemote) {
+            if (inventoryHelper.containsItem(index)) {
+                PowerCellNetwork.Network network = getNetwork();
+                // Store the energy locally
+                if (network != null) {
+                    network.setEnergy(energy + network.getEnergy());
+                    network.getBlocks().add(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
+                    PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
+                    powerCellNetwork.save(worldObj);
+                }
+            }
+        }
+    }
+
+    private void beforeRemoveCard(int index) {
+        if (!worldObj.isRemote) {
+            PowerCellNetwork.Network network = getNetwork();
+            if (inventoryHelper.containsItem(index)) {
+                // Store the energy locally
+                if (network != null) {
+                    energy = network.getEnergy() / Math.max(network.getBlocks().size(), 1);
+                    network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
+                    PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
+                    powerCellNetwork.save(worldObj);
+                } else {
+                    energy = 0;
                 }
             }
         }
