@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "rftools:space_chamber_controller"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

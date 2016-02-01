@@ -40,6 +40,7 @@ item.storage_module_tablet.name=Storage Module Tablet
 item.filter_module.name=Storage Filter Module
 item.oredict_module.name=Ore Dictionary Storage Module
 item.generic_module.name=Generic Storage Module
+item.space_chamber_card.name=Space Chamber Card
 item.shape_card.name=Shape Card
 item.shape_card1.name=Shape Card (Void)
 item.shape_card2.name=Shape Card (Quarry)
@@ -111,6 +112,8 @@ tile.securityManagerBlock.name=Security Manager
 tile.dimensional_shard_ore.name=Dimensional Shard Ore
 tile.builder.name=Builder Block
 tile.support_block.name=Support Block
+tile.space_chamber.name=Space Chamber Corner Block
+tile.space_chamber_controller.name=Space Chamber Controller Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools
