@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.powercell;
 
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

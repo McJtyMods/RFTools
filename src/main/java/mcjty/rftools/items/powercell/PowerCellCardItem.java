@@ -24,7 +24,7 @@ public class PowerCellCardItem extends GenericRFToolsItem {
         if (id == -1) {
             list.add(EnumChatFormatting.YELLOW + "[UNLINKED]");
         } else {
-            list.add(EnumChatFormatting.BLUE + "Link id:" + id);
+            list.add(EnumChatFormatting.GREEN + "Link id: " + id);
         }
     }
 

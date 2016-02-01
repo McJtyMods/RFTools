@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.infuser.MachineInfuserContainer;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -23,7 +22,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/powercell.png");
 
-    public GuiPowerCell(PowerCellTileEntity PowerCellTileEntity, MachineInfuserContainer container) {
+    public GuiPowerCell(PowerCellTileEntity PowerCellTileEntity, PowerCellContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, PowerCellTileEntity, container, 0/*@todoRFTools.GUI_MANUAL_DIMENSION*/, "infuser");
 
         xSize = POWERCELL_WIDTH;
@@ -45,6 +44,11 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     }
 
     private void requestRF() {
+        if (tileEntity.getNetworkId() == -1) {
+            PowerCellInfoPacketClient.tooltipEnergy = 0;
+            PowerCellInfoPacketClient.tooltipBlocks = 0;
+            return;
+        }
         if (System.currentTimeMillis() - lastTime > 250) {
             lastTime = System.currentTimeMillis();
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity.getNetworkId())));
@@ -56,9 +60,8 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
 
+        requestRF();
         energyBar.setMaxValue(PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell);
         energyBar.setValue(PowerCellInfoPacketClient.tooltipEnergy);
-
-        requestRF();
     }
 }

@@ -36,7 +36,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
-        return super.getGuiClass();
+        return GuiPowerCell.class;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_POWERCELL;
     }
 
     @Override
@@ -73,12 +73,17 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         TileEntity tileEntity = accessor.getTileEntity();
         if (tileEntity instanceof PowerCellTileEntity) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
-            currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(powerCellTileEntity.getNetworkId()));
-            if (System.currentTimeMillis() - lastTime > 250) {
-                lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity.getNetworkId())));
+            int id = powerCellTileEntity.getNetworkId();
+            if (id != -1) {
+                currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
+                if (System.currentTimeMillis() - lastTime > 250) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(id)));
+                }
+                currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell) + " RF");
+            } else {
+                currenttip.add(EnumChatFormatting.YELLOW + "No powercard!");
             }
-            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks *PowerCellConfiguration.rfPerCell) + " RF");
         }
         return currenttip;
     }

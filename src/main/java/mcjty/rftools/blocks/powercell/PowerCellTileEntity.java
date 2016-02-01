@@ -12,6 +12,9 @@ import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -20,17 +23,37 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 2);
 
+    // Only use on the client side
+    private int networkId = -1;
+
     public PowerCellTileEntity() {
         super();
     }
 
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound nbtTag = new NBTTagCompound();
+        nbtTag.setInteger("id", getNetworkId());
+        return new S35PacketUpdateTileEntity(this.pos, 1, nbtTag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        networkId = packet.getNbtCompound().getInteger("id");
+    }
+
     public void updateNetwork() {
+        if (!inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD)) {
+            removeBlockFromNetwork();
+            return;
+        }
         PowerCellNetwork.Network network = getNetwork();
         if (network != null) {
             network.getBlocks().add(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
             PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
             powerCellNetwork.save(worldObj);
         }
+        markDirtyClient();
     }
 
     public void removeBlockFromNetwork() {
@@ -41,10 +64,15 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
             PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
             powerCellNetwork.save(worldObj);
+            markDirtyClient();
         }
     }
 
     public int getNetworkId() {
+        // On the client we use the networkId we got synced from the server
+        if (worldObj.isRemote) {
+            return networkId;
+        }
         if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD)) {
             ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARD);
             PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
@@ -178,6 +206,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
     }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        this.getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
+        if (index == PowerCellContainer.SLOT_CARD) {
+            if (!worldObj.isRemote) {
+                updateNetwork();
+            }
+        }
+    }
+
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
