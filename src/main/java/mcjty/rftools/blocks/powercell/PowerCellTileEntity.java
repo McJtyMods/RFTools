@@ -291,6 +291,18 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 }
             }
         }
+
+        if (index == PowerCellContainer.SLOT_CARDCOPY) {
+            if (!worldObj.isRemote) {
+                if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD) && inventoryHelper.containsItem(PowerCellContainer.SLOT_CARDCOPY)) {
+                    ItemStack s = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARDCOPY);
+                    if (!s.hasTagCompound()) {
+                        s.setTagCompound(new NBTTagCompound());
+                    }
+                    s.getTagCompound().setInteger("id", getNetworkId());
+                }
+            }
+        }
     }
 
 

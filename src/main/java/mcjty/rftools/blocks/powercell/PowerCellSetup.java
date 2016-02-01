@@ -1,8 +1,6 @@
 package mcjty.rftools.blocks.powercell;
 
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.infuser.MachineInfuserBlock;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -31,5 +29,6 @@ public class PowerCellSetup {
         GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rer", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.redstone_block,
                 'b', Items.blaze_rod, 'e', Items.emerald);
         GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.paper, 'r', Items.redstone, 'g', Items.gold_nugget);
+        GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "c", 'c', powerCellCardItem);
     }
 }
