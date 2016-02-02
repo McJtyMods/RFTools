@@ -12,9 +12,12 @@ import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable {
@@ -25,6 +28,24 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     // Only used when this block is not part of a network
     private int energy = 0;
+
+    public static enum Mode implements IStringSerializable {
+        MODE_NONE("none"),
+        MODE_INPUT("input"),   // Blue
+        MODE_OUTPUT("output"); // Yellow
+
+        private final String name;
+
+        Mode(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+    }
+    private Mode modes[] = new Mode[] { Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE };
 
     public PowerCellTileEntity() {
         super();
@@ -44,6 +65,18 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        Mode[] old = new Mode[] { modes[0], modes[1], modes[2], modes[3], modes[4], modes[5] };
+        super.onDataPacket(net, packet);
+        for (int i = 0 ; i < 6 ; i++) {
+            if (old[i] != modes[i]) {
+                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                return;
+            }
+        }
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
     }
@@ -54,6 +87,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         readBufferFromNBT(tagCompound, inventoryHelper);
         energy = tagCompound.getInteger("energy");
         networkId = tagCompound.getInteger("networkId");
+        modes[0] = Mode.values()[tagCompound.getByte("m0")];
+        modes[1] = Mode.values()[tagCompound.getByte("m1")];
+        modes[2] = Mode.values()[tagCompound.getByte("m2")];
+        modes[3] = Mode.values()[tagCompound.getByte("m3")];
+        modes[4] = Mode.values()[tagCompound.getByte("m4")];
+        modes[5] = Mode.values()[tagCompound.getByte("m5")];
     }
 
     @Override
@@ -67,6 +106,31 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("energy", energy);
         tagCompound.setInteger("networkId", networkId);
+        tagCompound.setByte("m0", (byte) modes[0].ordinal());
+        tagCompound.setByte("m1", (byte) modes[1].ordinal());
+        tagCompound.setByte("m2", (byte) modes[2].ordinal());
+        tagCompound.setByte("m3", (byte) modes[3].ordinal());
+        tagCompound.setByte("m4", (byte) modes[4].ordinal());
+        tagCompound.setByte("m5", (byte) modes[5].ordinal());
+    }
+
+    public Mode getMode(EnumFacing side) {
+        return modes[side.ordinal()];
+    }
+
+    public void toggleMode(EnumFacing side) {
+        switch (modes[side.ordinal()]) {
+            case MODE_NONE:
+                modes[side.ordinal()] = Mode.MODE_INPUT;
+                break;
+            case MODE_INPUT:
+                modes[side.ordinal()] = Mode.MODE_OUTPUT;
+                break;
+            case MODE_OUTPUT:
+                modes[side.ordinal()] = Mode.MODE_NONE;
+                break;
+        }
+        markDirtyClient();
     }
 
     @Override
@@ -83,24 +147,26 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return;
         }
 
-        for (int i = 0 ; i < 6 ; i++) {
-            BlockPos pos = getPos().offset(EnumFacing.VALUES[i]);
-            TileEntity te = worldObj.getTileEntity(pos);
-            if (EnergyTools.isEnergyTE(te)) {
-                IEnergyConnection connection = (IEnergyConnection) te;
-                EnumFacing opposite = EnumFacing.VALUES[i].getOpposite();
-                if (connection.canConnectEnergy(opposite)) {
-                    int rfToGive;
-                    if (PowerCellConfiguration.rfPerTick <= energyStored) {
-                        rfToGive = PowerCellConfiguration.rfPerTick;
-                    } else {
-                        rfToGive = energyStored;
-                    }
+        for (EnumFacing face : EnumFacing.values()) {
+            if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
+                BlockPos pos = getPos().offset(face);
+                TileEntity te = worldObj.getTileEntity(pos);
+                if (EnergyTools.isEnergyTE(te)) {
+                    IEnergyConnection connection = (IEnergyConnection) te;
+                    EnumFacing opposite = face.getOpposite();
+                    if (connection.canConnectEnergy(opposite)) {
+                        int rfToGive;
+                        if (PowerCellConfiguration.rfPerTick <= energyStored) {
+                            rfToGive = PowerCellConfiguration.rfPerTick;
+                        } else {
+                            rfToGive = energyStored;
+                        }
 
-                    int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
-                    if (energyStored <= 0) {
-                        break;
+                        int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                        energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
+                        if (energyStored <= 0) {
+                            break;
+                        }
                     }
                 }
             }
@@ -178,6 +244,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+        if (modes[from.getOpposite().ordinal()] != Mode.MODE_INPUT) {
+            return 0;
+        }
         int networkId = getNetworkId();
         if (networkId == -1) {
             return receiveEnergyLocal(maxReceive, simulate);

@@ -8,6 +8,8 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,13 +30,12 @@ import java.util.List;
 
 public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> {
 
-    // Properties that indicate if there is the same block in a certain direction.
-//    public static final PropertyBool NORTH = PropertyBool.create("north");
-//    public static final PropertyBool SOUTH = PropertyBool.create("south");
-//    public static final PropertyBool WEST = PropertyBool.create("west");
-//    public static final PropertyBool EAST = PropertyBool.create("east");
-//    public static final PropertyBool UP = PropertyBool.create("up");
-//    public static final PropertyBool DOWN = PropertyBool.create("down");
+    public static final PropertyEnum<PowerCellTileEntity.Mode> NORTH = PropertyEnum.create("north", PowerCellTileEntity.Mode.class);
+    public static final PropertyEnum<PowerCellTileEntity.Mode> SOUTH = PropertyEnum.create("south", PowerCellTileEntity.Mode.class);
+    public static final PropertyEnum<PowerCellTileEntity.Mode> WEST = PropertyEnum.create("west", PowerCellTileEntity.Mode.class);
+    public static final PropertyEnum<PowerCellTileEntity.Mode> EAST = PropertyEnum.create("east", PowerCellTileEntity.Mode.class);
+    public static final PropertyEnum<PowerCellTileEntity.Mode> UP = PropertyEnum.create("up", PowerCellTileEntity.Mode.class);
+    public static final PropertyEnum<PowerCellTileEntity.Mode> DOWN = PropertyEnum.create("down", PowerCellTileEntity.Mode.class);
 
     private static long lastTime = 0;
 
@@ -100,6 +102,18 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     @Override
+    protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof PowerCellTileEntity) {
+                PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
+                powerCellTileEntity.toggleMode(side);
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (stack.hasTagCompound() && !world.isRemote) {
@@ -159,5 +173,32 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             }
         }
         super.breakBlock(world, pos, state);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        PowerCellTileEntity te = (PowerCellTileEntity) world.getTileEntity(pos);
+        PowerCellTileEntity.Mode north = te.getMode(EnumFacing.NORTH);
+        PowerCellTileEntity.Mode south = te.getMode(EnumFacing.SOUTH);
+        PowerCellTileEntity.Mode west = te.getMode(EnumFacing.WEST);
+        PowerCellTileEntity.Mode east = te.getMode(EnumFacing.EAST);
+        PowerCellTileEntity.Mode up = te.getMode(EnumFacing.UP);
+        PowerCellTileEntity.Mode down = te.getMode(EnumFacing.DOWN);
+        return state.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState();
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, NORTH, SOUTH, WEST, EAST, UP, DOWN);
     }
 }
