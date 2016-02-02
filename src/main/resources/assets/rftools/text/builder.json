@@ -1,22 +1,18 @@
 {
     "movables": [
-        [ "tile.mobSpawner","+",50.0 ],
-        [ "tile.blockAiry","+",2000.0 ],
-        [ "tile.furnace","+",1.0 ],
-        [ "tile.blockReactorPart","w",1.0 ],
-        [ "tile.screenBlock","w",1.0 ],
-        [ "tile.screenControllerBlock","w",1.0 ],
-        [ "tile.matterBeamerBlock","w",1.0 ],
-        [ "tile.spaceChamberBlock","w",1.0 ],
-        [ "tile.spaceChamberControllerBlock","w",1.0 ],
-        [ "tile.builderBlock","w",1.0 ],
-        [ "tile.shieldBlock","-",1.0 ],
-        [ "tile.shieldBlock2","-",1.0 ],
-        [ "tile.shieldBlock3","-",1.0 ],
-        [ "tile.solidShieldBlock","-",1.0 ],
-        [ "tile.invisibleShieldBlock","-",1.0 ],
-        [ "tile.bedrock","-",1.0 ],
-        [ "tile.endPortalFrame","-",1.0 ],
+        [ "minecraft:mob_spawner","+",50.0 ],
+        [ "minecraft:furnace","+",1.0 ],
+        [ "rftools:screen","w",1.0 ],
+        [ "rftools:screen_controller","w",1.0 ],
+        [ "rftools:matter_beamer","w",1.0 ],
+        [ "rftools:space_chamber","w",1.0 ],
+        [ "rftools:space_chamber_controller","w",1.0 ],
+        [ "rftools:shield","-",1.0 ],
+        [ "rftools:solid_shield","-",1.0 ],
+        [ "rftools:invisible_shield","-",1.0 ],
+        [ "minecraft:bedrock","-",1.0 ],
+        [ "minecraft:end_portal","-",1.0 ],
+        [ "minecraft:end_portal_frame","-",1.0 ],
 
         [ "modid:rftools","+",1.0 ],
         [ "modid:ExtraUtilities","+",1.0 ],
@@ -29,7 +25,7 @@
         [ "modid:EnderIO","+",1.0 ]
     ],
     "rotatables": [
-        [ "tile.chest","mfff" ],
-        [ "tile.furnace","mfff" ]
+        [ "minecraft:chest","mfff" ],
+        [ "minecraft:furnace","mfff" ]
     ]
 }

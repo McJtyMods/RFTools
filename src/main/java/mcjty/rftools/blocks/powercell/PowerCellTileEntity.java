@@ -8,7 +8,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.blocks.teleporter.GuiMatterReceiver;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +22,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 
-import java.util.List;
 import java.util.Map;
 
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable {
@@ -52,7 +50,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
     }
     private Mode modes[] = new Mode[] { Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE, Mode.MODE_NONE };
