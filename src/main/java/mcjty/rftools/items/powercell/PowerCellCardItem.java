@@ -19,7 +19,7 @@ public class PowerCellCardItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.WHITE + "Use this module to form a powercell multiblock");
+        list.add(EnumChatFormatting.WHITE + "Use to connect a powercell multiblock");
         int id = getId(itemStack);
         if (id == -1) {
             list.add(EnumChatFormatting.YELLOW + "[UNLINKED]");

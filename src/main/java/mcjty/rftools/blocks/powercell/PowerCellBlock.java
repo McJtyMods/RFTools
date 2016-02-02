@@ -105,7 +105,6 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         if (stack.hasTagCompound() && !world.isRemote) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
             if (powerCellTileEntity != null) {
-                powerCellTileEntity.updateNetwork();
                 int networkId = powerCellTileEntity.getNetworkId();
                 if (networkId == -1) {
                     // No network, energy is already restored to the local block
@@ -154,8 +153,6 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     int energy = network.getEnergy() / network.getBlocks().size();
                     network.setEnergy(network.getEnergy() - energy);
                 }
-
-                ((PowerCellTileEntity) te).removeBlockFromNetwork();
             }
         }
         super.breakBlock(world, pos, state);
