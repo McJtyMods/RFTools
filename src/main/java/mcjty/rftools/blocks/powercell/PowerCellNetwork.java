@@ -113,6 +113,16 @@ public class PowerCellNetwork extends WorldSavedData {
             return blocks;
         }
 
+        public int getEnergySingleBlock() {
+            return energy / Math.max(1, blocks.size());
+        }
+
+        public int extractEnergySingleBlock() {
+            int rc = energy / Math.max(1, blocks.size());
+            energy -= rc;
+            return rc;
+        }
+
         public int getEnergy() {
             return energy;
         }

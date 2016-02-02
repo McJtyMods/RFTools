@@ -68,8 +68,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add("Part of a powercell multi-block.");
-            list.add("You can place these in any configuration.");
+            list.add("This block can store power");
+            list.add("Optionally in a big multi");
+            list.add("dimensional structure");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -99,9 +100,6 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (!world.isRemote) {
-            world.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
-        }
         if (stack.hasTagCompound() && !world.isRemote) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
             if (powerCellTileEntity != null) {
@@ -111,8 +109,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 } else {
                     int energy = stack.getTagCompound().getInteger("energy");
                     PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(world);
-                    PowerCellNetwork.Network channel = powerCellNetwork.getChannel(networkId);
-                    channel.setEnergy(energy + channel.getEnergy());
+                    PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
+                    network.setEnergy(energy + network.getEnergy());
+                    network.getBlocks().add(powerCellTileEntity.getGlobalPos());
                     powerCellNetwork.save(world);
                 }
             }
@@ -128,7 +127,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             if (te instanceof PowerCellTileEntity) {
                 PowerCellNetwork.Network network = ((PowerCellTileEntity) te).getNetwork();
                 if (network != null) {
-                    int energy = network.getEnergy() / Math.max(1, network.getBlocks().size());
+                    int energy = network.getEnergySingleBlock();
                     if (!drops.isEmpty()) {
                         NBTTagCompound tagCompound = drops.get(0).getTagCompound();
                         if (tagCompound == null) {
@@ -148,10 +147,12 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof PowerCellTileEntity) {
-                PowerCellNetwork.Network network = ((PowerCellTileEntity) te).getNetwork();
+                PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
+                PowerCellNetwork.Network network = cellTileEntity.getNetwork();
                 if (network != null) {
-                    int energy = network.getEnergy() / network.getBlocks().size();
-                    network.setEnergy(network.getEnergy() - energy);
+                    network.extractEnergySingleBlock();
+                    network.getBlocks().remove(cellTileEntity.getGlobalPos());
+                    PowerCellNetwork.getChannels(world).save(world);
                 }
             }
         }

@@ -3,6 +3,7 @@ package mcjty.rftools.items.powercell;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,4 +39,10 @@ public class PowerCellCardItem extends GenericRFToolsItem {
         return stack.getTagCompound().getInteger("id");
     }
 
+    public static void setId(ItemStack stack, int id) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        stack.getTagCompound().setInteger("id", id);
+    }
 }

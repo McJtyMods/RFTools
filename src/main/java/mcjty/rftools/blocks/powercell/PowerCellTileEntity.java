@@ -12,9 +12,6 @@ import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -31,24 +28,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     public PowerCellTileEntity() {
         super();
-    }
-
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        nbtTag.setInteger("id", getNetworkId());
-        nbtTag.setInteger("energy", energy);
-        return new S35PacketUpdateTileEntity(this.pos, 1, nbtTag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        int oldid = networkId;
-        networkId = packet.getNbtCompound().getInteger("id");
-        energy = packet.getNbtCompound().getInteger("energy");
-        if (oldid != networkId) {
-            worldObj.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
-        }
     }
 
     public int getNetworkId() {
@@ -93,13 +72,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-            checkStateServer();
+            sendOutEnergy();
         }
-    }
-
-    protected void checkStateServer() {
-        handleCardSlots();
-        sendOutEnergy();
     }
 
     private void sendOutEnergy() {
@@ -133,78 +107,69 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
     }
 
-    private void handleCardSlots() {
-        if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARD)) {
-            ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARD);
-            int id = PowerCellCardItem.getId(stack);
-            if (id == -1) {
-                PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(worldObj);
-                id = powerCellNetwork.newChannel();
-                if (!stack.hasTagCompound()) {
-                    stack.setTagCompound(new NBTTagCompound());
-                }
-                stack.getTagCompound().setInteger("id", id);
-                networkId = id;
-                markDirtyClient();
-                addThisToNetwork();
-            } else if (id != networkId) {
-                networkId = id;
-                markDirtyClient();
-                addThisToNetwork();
-            }
-            int e = getNetwork().getEnergy() / Math.max(1, getNetwork().getBlocks().size());
-            if (e != energy) {
-                energy = e;
-                markDirty();
-            }
-
-            if (inventoryHelper.containsItem(PowerCellContainer.SLOT_CARDCOPY)) {
-                ItemStack copy = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARDCOPY);
-                if (!copy.hasTagCompound()) {
-                    copy.setTagCompound(new NBTTagCompound());
-                }
-                copy.getTagCompound().setInteger("id", networkId);
-            }
-
-        } else {
-            if (networkId != -1) {
-                networkId = -1;
-                markDirtyClient();
-            }
+    private void handleCardRemoval() {
+        if (!worldObj.isRemote) {
+            PowerCellNetwork.Network network = getNetwork();
+            energy = network.extractEnergySingleBlock();
+            network.getBlocks().remove(getGlobalPos());
+            PowerCellNetwork.getChannels(worldObj).save(worldObj);
         }
+        networkId = -1;
+        markDirty();
     }
 
-    private void addThisToNetwork() {
-        getNetwork().getBlocks().add(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
-        PowerCellNetwork.getChannels(worldObj).save(worldObj);
+    private void handleCardInsertion() {
+        ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARD);
+        int id = PowerCellCardItem.getId(stack);
+        if (!worldObj.isRemote) {
+            PowerCellNetwork channels = PowerCellNetwork.getChannels(worldObj);
+            if (id == -1) {
+                id = channels.newChannel();
+                PowerCellCardItem.setId(stack, id);
+            }
+            networkId = id;
+            PowerCellNetwork.Network network = getNetwork();
+            network.getBlocks().add(getGlobalPos());
+            network.setEnergy(network.getEnergy() + energy);
+            channels.save(worldObj);
+        } else {
+            networkId = id;
+        }
+        markDirty();
+    }
+
+    public GlobalCoordinate getGlobalPos() {
+        return new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
         if (index == PowerCellContainer.SLOT_CARD) {
-            if (!worldObj.isRemote) {
-                PowerCellNetwork.Network network = getNetwork();
-                network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
-                PowerCellNetwork.getChannels(worldObj).save(worldObj);
-            }
-            networkId = -1;
-            markDirty();
+            handleCardRemoval();
         }
         return inventoryHelper.removeStackFromSlot(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        if (index == PowerCellContainer.SLOT_CARD) {
-            if (!worldObj.isRemote) {
-                PowerCellNetwork.Network network = getNetwork();
-                network.getBlocks().remove(new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
-                PowerCellNetwork.getChannels(worldObj).save(worldObj);
-            }
-            networkId = -1;
-            markDirty();
+        if (index == PowerCellContainer.SLOT_CARD && inventoryHelper.containsItem(index) && count >= inventoryHelper.getStackInSlot(index).stackSize) {
+            handleCardRemoval();
         }
         return inventoryHelper.decrStackSize(index, count);
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == PowerCellContainer.SLOT_CARD) {
+            handleCardRemoval();
+        }
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        if (index == PowerCellContainer.SLOT_CARD && inventoryHelper.containsItem(index)) {
+            handleCardInsertion();
+        }
+        else if (index == PowerCellContainer.SLOT_CARDCOPY && inventoryHelper.containsItem(index)) {
+            PowerCellCardItem.setId(inventoryHelper.getStackInSlot(index), networkId);
+        }
     }
 
     @Override
