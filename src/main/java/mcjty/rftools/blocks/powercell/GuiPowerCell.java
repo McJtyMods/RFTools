@@ -3,16 +3,13 @@ package mcjty.rftools.blocks.powercell;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.EnergyBar;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     public static final int POWERCELL_WIDTH = 180;
@@ -51,8 +48,11 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
                 .setLayoutHint(new PositionalLayout.PositionalHint(140, 44, 32, 15))
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
 
+        Label label = new Label(mc, this);
+        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(62, 24, 40, 18));
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar)
-                .addChild(allNone).addChild(allInput).addChild(allOutput);
+                .addChild(allNone).addChild(allInput).addChild(allOutput).addChild(label);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
