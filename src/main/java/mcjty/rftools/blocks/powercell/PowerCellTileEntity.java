@@ -191,9 +191,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     private void handleCardRemoval() {
         if (!worldObj.isRemote) {
             PowerCellNetwork.Network network = getNetwork();
-            energy = network.extractEnergySingleBlock();
-            network.remove(getGlobalPos());
-            PowerCellNetwork.getChannels(worldObj).save(worldObj);
+            if (network != null) {
+                energy = network.extractEnergySingleBlock();
+                network.remove(getGlobalPos());
+                PowerCellNetwork.getChannels(worldObj).save(worldObj);
+            }
         }
         networkId = -1;
         markDirty();
@@ -379,16 +381,19 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             for (EnumFacing facing : EnumFacing.values()) {
                 modes[facing.ordinal()] = Mode.MODE_NONE;
             }
+            markDirtyClient();
             return true;
         } else if (CMD_SETINPUT.equals(command)) {
             for (EnumFacing facing : EnumFacing.values()) {
                 modes[facing.ordinal()] = Mode.MODE_INPUT;
             }
+            markDirtyClient();
             return true;
         } else if (CMD_SETOUTPUT.equals(command)) {
             for (EnumFacing facing : EnumFacing.values()) {
                 modes[facing.ordinal()] = Mode.MODE_OUTPUT;
             }
+            markDirtyClient();
             return true;
         }
         return false;

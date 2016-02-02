@@ -3,14 +3,16 @@ package mcjty.rftools.blocks.powercell;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     public static final int POWERCELL_WIDTH = 180;
@@ -58,14 +60,9 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     }
 
     private void requestRF() {
-        if (tileEntity.getNetworkId() == -1) {
-            PowerCellInfoPacketClient.tooltipEnergy = tileEntity.getEnergy();
-            PowerCellInfoPacketClient.tooltipBlocks = 1;
-        } else {
-            if (System.currentTimeMillis() - lastTime > 250) {
-                lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity.getNetworkId())));
-            }
+        if (System.currentTimeMillis() - lastTime > 250) {
+            lastTime = System.currentTimeMillis();
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity)));
         }
     }
 

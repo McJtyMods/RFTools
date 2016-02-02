@@ -17,31 +17,45 @@ import java.util.Optional;
 public class PowerCellInfoPacketServer implements InfoPacketServer {
 
     private int id;
+    private BlockPos pos;
 
     public PowerCellInfoPacketServer() {
     }
 
-    public PowerCellInfoPacketServer(int id) {
-        this.id = id;
+    public PowerCellInfoPacketServer(PowerCellTileEntity tileEntity) {
+        this.id = tileEntity.getNetworkId();
+        pos = tileEntity.getPos();
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
+        pos = NetworkTools.readPos(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
+        NetworkTools.writePos(buf, pos);
     }
 
     @Override
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP player) {
         World world = player.worldObj;
 
-        PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
-        PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
+        if (id == -1) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof PowerCellTileEntity) {
+                PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
+                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1));
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
+            PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
 
-        return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount()));
+            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount()));
+        }
     }
 }

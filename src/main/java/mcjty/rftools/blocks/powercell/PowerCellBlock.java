@@ -87,16 +87,20 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             int id = powerCellTileEntity.getNetworkId();
             if (id != -1) {
                 currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
-                if (System.currentTimeMillis() - lastTime > 250) {
-                    lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(id)));
-                }
             } else {
                 currenttip.add(EnumChatFormatting.GREEN + "Local storage!");
-                PowerCellInfoPacketClient.tooltipEnergy = powerCellTileEntity.getEnergy();
-                PowerCellInfoPacketClient.tooltipBlocks = 1;
+            }
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
             currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell) + " RF");
+            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
+            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
+                currenttip.add(EnumChatFormatting.YELLOW + "Side: input mode");
+            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
+                currenttip.add(EnumChatFormatting.YELLOW + "Side: output mode");
+            }
         }
         return currenttip;
     }
