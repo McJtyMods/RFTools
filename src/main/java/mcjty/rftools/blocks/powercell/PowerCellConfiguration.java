@@ -8,7 +8,7 @@ public class PowerCellConfiguration {
     public static int rfPerCell = 200000;
     public static int rfPerTick = 5000;
 
-    public static double powerCellCostFactor = 1.1;
+    public static double powerCellCostFactor = 1.05;
 
     public static void init(Configuration cfg) {
         rfPerTick = cfg.get(CATEGORY_POWERCELL, "rfPerTick", rfPerTick, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
