@@ -42,6 +42,6 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
         PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
         PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
 
-        return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlocks().size()));
+        return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount()));
     }
 }
