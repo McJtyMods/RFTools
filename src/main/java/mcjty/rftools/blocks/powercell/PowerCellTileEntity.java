@@ -6,10 +6,13 @@ import cofh.api.energy.IEnergyReceiver;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.blocks.teleporter.GuiMatterReceiver;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -20,7 +23,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 
+import java.util.List;
+import java.util.Map;
+
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable {
+
+    public static String CMD_SETNONE = "setNone";
+    public static String CMD_SETINPUT = "setInput";
+    public static String CMD_SETOUTPUT = "setOutput";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 2);
 
@@ -354,5 +364,28 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return canPlayerAccess(player);
     }
 
-
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETNONE.equals(command)) {
+            for (EnumFacing facing : EnumFacing.values()) {
+                modes[facing.ordinal()] = Mode.MODE_NONE;
+            }
+            return true;
+        } else if (CMD_SETINPUT.equals(command)) {
+            for (EnumFacing facing : EnumFacing.values()) {
+                modes[facing.ordinal()] = Mode.MODE_INPUT;
+            }
+            return true;
+        } else if (CMD_SETOUTPUT.equals(command)) {
+            for (EnumFacing facing : EnumFacing.values()) {
+                modes[facing.ordinal()] = Mode.MODE_OUTPUT;
+            }
+            return true;
+        }
+        return false;
+    }
 }
