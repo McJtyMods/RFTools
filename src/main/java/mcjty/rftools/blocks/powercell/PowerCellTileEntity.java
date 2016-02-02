@@ -138,6 +138,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         markDirty();
     }
 
+    public int getEnergy() {
+        return energy;
+    }
+
     public GlobalCoordinate getGlobalPos() {
         return new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
     }

@@ -45,13 +45,13 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
     private void requestRF() {
         if (tileEntity.getNetworkId() == -1) {
-            PowerCellInfoPacketClient.tooltipEnergy = 0;
-            PowerCellInfoPacketClient.tooltipBlocks = 0;
-            return;
-        }
-        if (System.currentTimeMillis() - lastTime > 250) {
-            lastTime = System.currentTimeMillis();
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity.getNetworkId())));
+            PowerCellInfoPacketClient.tooltipEnergy = tileEntity.getEnergy();
+            PowerCellInfoPacketClient.tooltipBlocks = 1;
+        } else {
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity.getNetworkId())));
+            }
         }
     }
 

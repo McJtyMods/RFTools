@@ -89,10 +89,12 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     lastTime = System.currentTimeMillis();
                     RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(id)));
                 }
-                currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell) + " RF");
             } else {
-                currenttip.add(EnumChatFormatting.YELLOW + "No powercard!");
+                currenttip.add(EnumChatFormatting.GREEN + "Local storage!");
+                PowerCellInfoPacketClient.tooltipEnergy = powerCellTileEntity.getEnergy();
+                PowerCellInfoPacketClient.tooltipBlocks = 1;
             }
+            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell) + " RF");
         }
         return currenttip;
     }
