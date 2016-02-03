@@ -51,7 +51,7 @@ public class SupportBlock extends Block {
 
     @Override
     public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT;
+        return EnumWorldBlockLayer.TRANSLUCENT;
     }
 
     @Override
