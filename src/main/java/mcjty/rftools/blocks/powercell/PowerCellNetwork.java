@@ -1,12 +1,15 @@
 package mcjty.rftools.blocks.powercell;
 
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.apideps.RFToolsDimensionChecker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -130,18 +133,29 @@ public class PowerCellNetwork extends WorldSavedData {
         }
 
         private double calculateBlobDistance(Set<GlobalCoordinate> blob1, Set<GlobalCoordinate> blob2) {
-            // @todo, make rftools dimensions more efficient
-
             GlobalCoordinate c1 = blob1.iterator().next();
             GlobalCoordinate c2 = blob2.iterator().next();
+
+            boolean dim1rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c1.getDimension());
+            boolean dim2rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c2.getDimension());
+            double rftoolsdimMult = 1.0;
+            if (dim1rftools) {
+                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
+            }
+            if (dim2rftools) {
+                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
+            }
+
             if (c1.getDimension() != c2.getDimension()) {
-                return 10000.0;
+                return PowerCellConfiguration.powerCellDistanceCap * rftoolsdimMult;
             }
             double dist = Math.sqrt(c1.getCoordinate().distanceSq(c2.getCoordinate()));
-            if (dist > 10000.0) {
-                dist = 10000.0;
+            if (dist > PowerCellConfiguration.powerCellDistanceCap) {
+                dist = PowerCellConfiguration.powerCellDistanceCap;
+            } else if (dist < PowerCellConfiguration.powerCellMinDistance) {
+                dist = PowerCellConfiguration.powerCellMinDistance;
             }
-            return dist;
+            return dist * rftoolsdimMult;
         }
 
         private void updateCostFactor(World world) {
@@ -169,7 +183,7 @@ public class PowerCellNetwork extends WorldSavedData {
 
                             // 'factor' indicates the cost of getting power out of blocks part of 'blob2'
                             // from the perspective of 'blob'.
-                            double factor = 1 + (dist / 10000.0) * (PowerCellConfiguration.powerCellCostFactor - 1) * part;
+                            double factor = 1 + (dist / PowerCellConfiguration.powerCellDistanceCap) * (PowerCellConfiguration.powerCellCostFactor - 1) * part;
 
                             totalfactor += factor;
                         }

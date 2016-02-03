@@ -1,7 +1,7 @@
 package mcjty.rftoolsdim.api.dimension;
 
 /**
- * RFTools dimension providers will implement this interface. You can query for this to ask information
+ * RFTools dimension providers will implement this interface. You can querry for this to ask information
  * about this dimension:
  *     (RFToolsWorldProvider)(world.provider)
  */

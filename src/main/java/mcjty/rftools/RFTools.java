@@ -139,6 +139,7 @@ public class RFTools implements ModBase {
         rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
         if (rftoolsDimensions) {
             Logging.log("RFTools Detected Dimensions addon: enabling support");
+            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
         }
     }
 
