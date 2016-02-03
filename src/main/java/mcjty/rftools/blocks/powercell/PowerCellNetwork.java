@@ -241,6 +241,7 @@ public class PowerCellNetwork extends WorldSavedData {
                 tag.setInteger("x", block.getCoordinate().getX());
                 tag.setInteger("y", block.getCoordinate().getY());
                 tag.setInteger("z", block.getCoordinate().getZ());
+                list.appendTag(tag);
             }
 
             tagCompound.setTag("blocks", list);
