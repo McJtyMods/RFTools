@@ -6,7 +6,7 @@ import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
-import mcjty.rftools.apiipml.TeleportationManager;
+import mcjty.rftools.apiimpl.TeleportationManager;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;

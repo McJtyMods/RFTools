@@ -1,4 +1,4 @@
-package mcjty.rftools.apiipml;
+package mcjty.rftools.apiimpl;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
