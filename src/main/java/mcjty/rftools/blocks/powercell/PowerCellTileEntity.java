@@ -261,7 +261,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if (modes[from.getOpposite().ordinal()] != Mode.MODE_INPUT) {
+        if (modes[from.ordinal()] != Mode.MODE_INPUT) {
             return 0;
         }
         int networkId = getNetworkId();
