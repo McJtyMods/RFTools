@@ -71,9 +71,11 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add("This block can store power");
-            list.add("Optionally in a big multi");
-            list.add("dimensional structure");
+            list.add(EnumChatFormatting.WHITE + "This block can store power");
+            list.add(EnumChatFormatting.WHITE + "Optionally in a big multi");
+            list.add(EnumChatFormatting.WHITE + "dimensional structure");
+            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power extraction");
+            list.add(EnumChatFormatting.YELLOW + "cost and increased RF/tick output");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

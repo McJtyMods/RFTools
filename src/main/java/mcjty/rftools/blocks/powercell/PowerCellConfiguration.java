@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Configuration;
 public class PowerCellConfiguration {
 
     public static final String CATEGORY_POWERCELL = "powercell";
-    public static int rfPerCell = 200000;
+    public static int rfPerCell = 500000;
     public static int rfPerTick = 5000;
 
     public static double powerCellCostFactor = 1.10;

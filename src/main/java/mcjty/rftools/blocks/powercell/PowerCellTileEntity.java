@@ -8,6 +8,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -155,15 +156,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return;
         }
 
-        float factor;
-        if (getNetworkId() == -1) {
-            factor = 1.0f; // Local energy
-        } else {
-            factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
-            float infusedFactor = getInfusedFactor();
-            factor = (factor - 1) * (1-infusedFactor/2) + 1;
-        }
-
         for (EnumFacing face : EnumFacing.values()) {
             if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
                 BlockPos pos = getPos().offset(face);
@@ -174,9 +166,21 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                         IEnergyConnection connection = (IEnergyConnection) te;
                         EnumFacing opposite = face.getOpposite();
                         if (connection.canConnectEnergy(opposite)) {
+                            float infusedFactor = getInfusedFactor();
+
+                            float factor;
+                            if (getNetworkId() == -1) {
+                                factor = 1.0f; // Local energy
+                            } else {
+                                factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
+                                factor = (factor - 1) * (1-infusedFactor/2) + 1;
+                            }
+
+                            int rfPerTick = (int) (PowerCellConfiguration.rfPerTick * (infusedFactor*.5+1));
+
                             int rfToGive;
-                            if (PowerCellConfiguration.rfPerTick <= ((int) (energyStored / factor))) {
-                                rfToGive = PowerCellConfiguration.rfPerTick;
+                            if (rfPerTick <= ((int) (energyStored / factor))) {
+                                rfToGive = rfPerTick;
                             } else {
                                 rfToGive = (int) (energyStored / factor);
                             }
