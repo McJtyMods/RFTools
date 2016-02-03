@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.powercell;
 
+import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
@@ -28,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> {
+public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> implements Infusable {
 
     public static final PropertyEnum<PowerCellTileEntity.Mode> NORTH = PropertyEnum.create("north", PowerCellTileEntity.Mode.class);
     public static final PropertyEnum<PowerCellTileEntity.Mode> SOUTH = PropertyEnum.create("south", PowerCellTileEntity.Mode.class);

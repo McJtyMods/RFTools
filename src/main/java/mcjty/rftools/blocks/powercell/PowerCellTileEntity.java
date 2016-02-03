@@ -160,6 +160,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             factor = 1.0f; // Local energy
         } else {
             factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
+            float infusedFactor = getInfusedFactor();
+            factor = (factor - 1) * (1-infusedFactor/2) + 1;
         }
 
         for (EnumFacing face : EnumFacing.values()) {
@@ -167,20 +169,23 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 BlockPos pos = getPos().offset(face);
                 TileEntity te = worldObj.getTileEntity(pos);
                 if (EnergyTools.isEnergyTE(te)) {
-                    IEnergyConnection connection = (IEnergyConnection) te;
-                    EnumFacing opposite = face.getOpposite();
-                    if (connection.canConnectEnergy(opposite)) {
-                        int rfToGive;
-                        if (PowerCellConfiguration.rfPerTick <= ((int) (energyStored / factor))) {
-                            rfToGive = PowerCellConfiguration.rfPerTick;
-                        } else {
-                            rfToGive = (int) (energyStored / factor);
-                        }
+                    // If the adjacent block is also a powercell then we only send energy if this cell is local or the other cell has a different id
+                    if ((!(te instanceof PowerCellTileEntity)) || getNetworkId() == -1 || ((PowerCellTileEntity) te).getNetworkId() != getNetworkId()) {
+                        IEnergyConnection connection = (IEnergyConnection) te;
+                        EnumFacing opposite = face.getOpposite();
+                        if (connection.canConnectEnergy(opposite)) {
+                            int rfToGive;
+                            if (PowerCellConfiguration.rfPerTick <= ((int) (energyStored / factor))) {
+                                rfToGive = PowerCellConfiguration.rfPerTick;
+                            } else {
+                                rfToGive = (int) (energyStored / factor);
+                            }
 
-                        int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                        energyStored -= extractEnergy(EnumFacing.DOWN, (int) (received * factor), false);
-                        if (energyStored <= 0) {
-                            break;
+                            int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                            energyStored -= extractEnergy(EnumFacing.DOWN, (int) (received * factor), false);
+                            if (energyStored <= 0) {
+                                break;
+                            }
                         }
                     }
                 }
