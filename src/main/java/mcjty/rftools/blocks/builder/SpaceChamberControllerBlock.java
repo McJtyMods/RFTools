@@ -29,6 +29,11 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
         super(Material.iron, SpaceChamberControllerTileEntity.class, EmptyContainer.class, "space_chamber_controller", true);
     }
 
+    @Override
+    public boolean hasNoRotation() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {

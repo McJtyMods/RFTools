@@ -47,7 +47,7 @@ public class BuilderSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
-//        spaceChamberBlock.initModel();
+        spaceChamberBlock.initModel();
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
         supportBlock.initModel();
