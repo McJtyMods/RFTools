@@ -6,7 +6,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
@@ -142,12 +141,7 @@ public class BuilderSetup {
     }
 
     public static BlockInformation getBlockInformation(Block block) {
-        BlockInformation blockInformation = blockInformationMap.get(block.getUnlocalizedName());
-        if (blockInformation == null) {
-            String modid = RFToolsTools.getModidForBlock(block);
-            blockInformation = blockInformationMap.get("modid:" + modid);
-        }
-        return blockInformation;
+        return blockInformationMap.get(block.getRegistryName());
     }
 
     public static class BlockInformation {
