@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
@@ -18,10 +17,9 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
 
     private boolean needpulse = false;
 
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public EnderMonitorTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public EnderMonitorMode getMode() {
@@ -58,8 +56,8 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
             needpulse = false;
         }
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
             Logging.log(worldObj, this, "Ender Monitor output to " + newout);
             notifyBlockUpdate();
         }
@@ -68,14 +66,13 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
 
         needpulse = tagCompound.getBoolean("needPulse");
     }
@@ -90,8 +87,7 @@ public class EnderMonitorTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("needPulse", needpulse);
     }
 

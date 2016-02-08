@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,10 +18,9 @@ public class CounterTileEntity extends GenericTileEntity {
 
     private int counter = 1;
     private int current = 0;
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public CounterTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getCounter() {
@@ -71,8 +69,8 @@ public class CounterTileEntity extends GenericTileEntity {
 
             markDirty();
 
-            if (newout != redstoneOut.getValue()) {
-                redstoneOut.setValue(newout);
+            if (newout != redstoneOut) {
+                redstoneOut = newout;
                 notifyBlockUpdate();
             }
         }
@@ -81,14 +79,13 @@ public class CounterTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
     }
 
@@ -105,8 +102,7 @@ public class CounterTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
     }
 

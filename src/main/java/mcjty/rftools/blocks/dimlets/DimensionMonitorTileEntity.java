@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.dimlets;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.dimension.DimensionStorage;
@@ -16,10 +15,9 @@ public class DimensionMonitorTileEntity extends GenericTileEntity {
 
     private int alarmLevel = 0;
     private int ticker = 10;
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public DimensionMonitorTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getAlarmLevel() {
@@ -47,8 +45,8 @@ public class DimensionMonitorTileEntity extends GenericTileEntity {
         int pct = energy / (DimletConfiguration.MAX_DIMENSION_POWER / 100);
         boolean newout = pct < alarmLevel;
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
             notifyBlockUpdate();
         }
     }
@@ -56,14 +54,13 @@ public class DimensionMonitorTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -75,8 +72,7 @@ public class DimensionMonitorTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
     }
 
     @Override

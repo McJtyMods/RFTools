@@ -1,17 +1,15 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class RedstoneReceiverTileEntity extends GenericTileEntity {
 
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
     private int channel = -1;
 
     public RedstoneReceiverTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getChannel() {
@@ -36,8 +34,8 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity {
                 newout = ch.getValue() != 0;
             }
 
-            if (newout != redstoneOut.getValue()) {
-                redstoneOut.setValue(newout);
+            if (newout != redstoneOut) {
+                redstoneOut = newout;
                 notifyBlockUpdate();
             }
         }
@@ -46,14 +44,13 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -65,8 +62,7 @@ public class RedstoneReceiverTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
     }
 
     @Override

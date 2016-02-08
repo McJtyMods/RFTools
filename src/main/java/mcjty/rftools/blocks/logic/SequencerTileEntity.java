@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,10 +24,9 @@ public class SequencerTileEntity extends GenericTileEntity {
 
     private int delay = 1;
     private int timer = 0;
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public SequencerTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getDelay() {
@@ -116,8 +114,8 @@ public class SequencerTileEntity extends GenericTileEntity {
 
         boolean newout = currentStep != -1 && getCycleBit(currentStep);
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
             notifyBlockUpdate();
         }
 
@@ -209,14 +207,13 @@ public class SequencerTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
@@ -237,8 +234,7 @@ public class SequencerTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);

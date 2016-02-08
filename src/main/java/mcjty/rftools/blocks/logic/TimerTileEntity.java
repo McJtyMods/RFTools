@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.SyncedValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,17 +11,15 @@ import java.util.Map;
 public class TimerTileEntity extends GenericTileEntity {
 
     public static final String CMD_SETDELAY = "setDelay";
-    public static final String CMD_SETCURRENT = "setDelay";
 
     // For pulse detection.
     private boolean prevIn = false;
 
     private int delay = 1;
     private int timer = 0;
-    private SyncedValue<Boolean> redstoneOut = new SyncedValue<Boolean>(false);
+    private boolean redstoneOut = false;
 
     public TimerTileEntity() {
-        registerSyncedObject(redstoneOut);
     }
 
     public int getDelay() {
@@ -60,8 +57,8 @@ public class TimerTileEntity extends GenericTileEntity {
             newout = false;
         }
 
-        if (newout != redstoneOut.getValue()) {
-            redstoneOut.setValue(newout);
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
             notifyBlockUpdate();
         }
     }
@@ -69,14 +66,13 @@ public class TimerTileEntity extends GenericTileEntity {
     @Override
     protected int updateMetaData(int meta) {
         meta = super.updateMetaData(meta);
-        Boolean value = redstoneOut.getValue();
-        return BlockTools.setRedstoneSignalOut(meta, value == null ? false : value);
+        return BlockTools.setRedstoneSignalOut(meta, redstoneOut);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut.setValue(tagCompound.getBoolean("rs"));
+        redstoneOut = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
     }
@@ -90,8 +86,7 @@ public class TimerTileEntity extends GenericTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        Boolean value = redstoneOut.getValue();
-        tagCompound.setBoolean("rs", value == null ? false : value);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
     }
