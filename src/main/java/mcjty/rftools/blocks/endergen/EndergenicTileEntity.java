@@ -85,9 +85,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
 
-    // List of monitors for this endergenic.
-    private List<Coordinate> monitors = new ArrayList<Coordinate>();
-
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
     private static int rfPerHit[] = new int[]{ 0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100 };
@@ -209,43 +206,25 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         /* RFTools.log(worldObj, this, message);*/
     }
 
-    public void addMonitor(Coordinate c) {
-        monitors.add(c);
-        markDirty();
-    }
-
-    public void removeMonitor(Coordinate c) {
-        monitors.remove(c);
-        markDirty();
-    }
+    public static final ForgeDirection[] HORIZ_DIRECTIONS = {ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.EAST};
 
     /**
      * Something happens, we need to notify all ender monitors.
      * @param mode is the new mode
      */
     private void fireMonitors(EnderMonitorMode mode) {
-        boolean cleanup = false;
-        for (Coordinate c : monitors) {
+        Coordinate pos = getCoordinate();
+        for (ForgeDirection dir : HORIZ_DIRECTIONS) {
+            Coordinate c = pos.addDirection(dir);
             TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
             if (te instanceof EnderMonitorTileEntity) {
-                EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                enderMonitorTileEntity.fireFromEndergenic(mode);
-            } else {
-                cleanup = true;
-            }
-        }
-        // This should normally not be needed but to be safe we make sure that we clean
-        // up defunct monitor references.
-        if (cleanup) {
-            List<Coordinate> newMonitors = new ArrayList<Coordinate>();
-            for (Coordinate c : monitors) {
-                TileEntity te = worldObj.getTileEntity(c.getX(), c.getY(), c.getZ());
-                if (te instanceof EnderMonitorTileEntity) {
-                    newMonitors.add(c);
+                int meta = worldObj.getBlockMetadata(c.getX(), c.getY(), c.getZ());
+                ForgeDirection k = BlockTools.getOrientationHoriz(meta);
+                if (k == dir.getOpposite()) {
+                    EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
+                    enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
             }
-            monitors = newMonitors;
-            markDirty();
         }
     }
 
@@ -508,16 +487,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             EndergenicPearl pearl = new EndergenicPearl(tc);
             pearls.add(pearl);
         }
-
-        monitors.clear();
-        NBTTagList monitorList = tagCompound.getTagList("monitors", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < monitorList.tagCount() ; i++) {
-            NBTTagCompound tc = monitorList.getCompoundTagAt(i);
-            Coordinate c = Coordinate.readFromNBT(tc, "c");
-            if (c != null) {
-                monitors.add(c);
-            }
-        }
     }
 
     @Override
@@ -535,12 +504,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             pearlList.appendTag(pearl.getTagCompound());
         }
         tagCompound.setTag("pearls", pearlList);
-
-        NBTTagList monitorList = new NBTTagList();
-        for (Coordinate c : monitors) {
-            monitorList.appendTag(Coordinate.writeToNBT(c));
-        }
-        tagCompound.setTag("monitors", monitorList);
     }
 
     @Override
