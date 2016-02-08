@@ -78,24 +78,8 @@ public class EndergenicBlock extends GenericRFToolsBlock implements Infusable, I
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, entityLivingBase, itemStack);
-        checkForMonitor4Sides(world, x, y, z);
         if (entityLivingBase instanceof EntityPlayer) {
             Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.hardPower);
-        }
-    }
-
-    private void checkForMonitor4Sides(World world, int x, int y, int z) {
-        if (!world.isRemote) {
-            checkForMonitor(world, x+1, y, z);
-            checkForMonitor(world, x-1, y, z);
-            checkForMonitor(world, x, y, z+1);
-            checkForMonitor(world, x, y, z - 1);
-        }
-    }
-
-    private void checkForMonitor(World world, int x, int y, int z) {
-        if (EndergenicSetup.enderMonitorBlock.equals(world.getBlock(x, y, z))) {
-            EndergenicSetup.enderMonitorBlock.registerWithEndergenic(world, x, y, z);
         }
     }
 
