@@ -181,7 +181,10 @@ public class TerrainDimletType implements IDimletType {
             } else {
                 // Nothing was specified. With a relatively big chance we use stone. But there is also a chance that the material will be something else.
                 // Note that in this particular case we disallow randomly selecting 'expensive' blocks like glass.
-                if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
+                // If the terrain type is void we always pick stone as a random material.
+                if (terrainType == TerrainType.TERRAIN_VOID) {
+                    baseBlockForTerrain = BlockMeta.STONE;
+                } else if (random.nextFloat() < DimletConfiguration.randomBaseBlockChance) {
                     DimletKey key = DimletRandomizer.getRandomMaterialBlock(random, false);
                     dimensionInformation.updateCostFactor(key);
                     baseBlockForTerrain = DimletObjectMapping.idToBlock.get(key);
@@ -199,7 +202,10 @@ public class TerrainDimletType implements IDimletType {
                 fluidForTerrain = Blocks.water;         // This is the default.
             }
         } else {
-            if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
+            // If the terrain type is void we always pick water as the random liquid.
+            if (terrainType == TerrainType.TERRAIN_VOID) {
+                fluidForTerrain = Blocks.water;
+            } else if (random.nextFloat() < DimletConfiguration.randomOceanLiquidChance) {
                 DimletKey key = DimletRandomizer.getRandomFluidBlock(random, false);
                 dimensionInformation.updateCostFactor(key);
                 fluidForTerrain = DimletObjectMapping.idToFluid.get(key);
