@@ -51,7 +51,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, itemBlockClass, name);
-        GameRegistry.registerTileEntity(tileEntityClass, name);
+        GameRegistry.registerTileEntityWithAlternatives(tileEntityClass, RFTools.MODID + "_" + name, name);
     }
 
     @SideOnly(Side.CLIENT)
