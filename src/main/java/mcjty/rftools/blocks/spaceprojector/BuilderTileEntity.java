@@ -948,7 +948,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if (worldObj.getTileEntity(sx, sy, sz) != null) {
+            if (SpaceProjectorConfiguration.quarrySkipTileEntities && worldObj.getTileEntity(sx, sy, sz) != null) {
                 // Skip tile entities
                 return false;
             }
@@ -999,7 +999,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if (worldObj.getTileEntity(sx, sy, sz) != null) {
+            if (SpaceProjectorConfiguration.quarrySkipTileEntities && worldObj.getTileEntity(sx, sy, sz) != null) {
                 // Skip tile entities
                 return false;
             }

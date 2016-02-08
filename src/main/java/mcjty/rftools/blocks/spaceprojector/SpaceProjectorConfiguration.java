@@ -32,6 +32,7 @@ public class SpaceProjectorConfiguration {
 
     public static int quarryBaseSpeed = 8;
     public static int quarryInfusionSpeedFactor = 20;
+    public static boolean quarrySkipTileEntities = true;
 
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
@@ -69,8 +70,10 @@ public class SpaceProjectorConfiguration {
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_SPACEPROJECTOR, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
 
+        quarrySkipTileEntities = cfg.get(CATEGORY_SPACEPROJECTOR, "quarrySkipTileEntities", quarrySkipTileEntities,
+                                   "If true the quarry will skip all tile entities. Set this to false to allow harvesting ores that are tile entities. Be careful with this!").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryChunkloads", quarryChunkloads,
-                "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
+                                   "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
         shapeCardAllowed = cfg.get(CATEGORY_SPACEPROJECTOR, "shapeCardAllowed", shapeCardAllowed,
                 "If true we allow shape cards to be crafted. Note that in order to use the quarry system you must also enable this").getBoolean();
         quarryAllowed = cfg.get(CATEGORY_SPACEPROJECTOR, "quarryAllowed", quarryAllowed,
