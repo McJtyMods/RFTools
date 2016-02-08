@@ -391,6 +391,7 @@ public class ShapeCardItem extends Item {
     }
 
     private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
+        blocks.add(block);
         if (oredict) {
             int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
             for (int id : iDs) {
@@ -402,8 +403,6 @@ public class ShapeCardItem extends Item {
                     }
                 }
             }
-        } else {
-            blocks.add(block);
         }
     }
 
