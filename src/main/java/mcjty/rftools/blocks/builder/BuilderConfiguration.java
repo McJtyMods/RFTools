@@ -32,6 +32,7 @@ public class BuilderConfiguration {
 
     public static int quarryBaseSpeed = 8;
     public static int quarryInfusionSpeedFactor = 20;
+    public static boolean quarrySkipTileEntities = true;
 
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
@@ -69,6 +70,8 @@ public class BuilderConfiguration {
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
 
+        quarrySkipTileEntities = cfg.get(CATEGORY_BUILDER, "quarrySkipTileEntities", quarrySkipTileEntities,
+                "If true the quarry will skip all tile entities. Set this to false to allow harvesting ores that are tile entities. Be careful with this!").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,
                 "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
         shapeCardAllowed = cfg.get(CATEGORY_BUILDER, "shapeCardAllowed", shapeCardAllowed,
