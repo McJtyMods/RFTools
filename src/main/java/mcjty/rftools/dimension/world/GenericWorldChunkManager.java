@@ -1,5 +1,6 @@
 package mcjty.rftools.dimension.world;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.dimension.DimensionInformation;
 import mcjty.rftools.dimension.world.types.ControllerType;
 import net.minecraft.world.WorldType;
@@ -20,6 +21,9 @@ public class GenericWorldChunkManager extends WorldChunkManager {
         super(seed, worldType);
         this.dimensionInformation = dimensionInformation;
     }
+
+    // To work around a possible bug in climate control
+    private static boolean workaroundErrorReported = false;
 
     @Override
     public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
@@ -58,7 +62,15 @@ public class GenericWorldChunkManager extends WorldChunkManager {
                 break;
         }
         GenLayerVoronoiZoom zoomLayer = new GenLayerVoronoiZoom(10L, rflayer);
-        zoomLayer.initWorldGenSeed(seed);
+        try {
+            zoomLayer.initWorldGenSeed(seed);
+        } catch (Exception e) {
+            if (!workaroundErrorReported) {
+                Logging.logError("Error in RFTools getModdedBiomeGenerators possibly caused by another biome changing mod");
+                workaroundErrorReported = true;
+                e.printStackTrace();
+            }
+        }
         return new GenLayer[] {rflayer, zoomLayer, rflayer};
     }
 }
