@@ -407,6 +407,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
+        blocks.add(block);
         if (oredict) {
             int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
             for (int id : iDs) {
@@ -418,8 +419,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     }
                 }
             }
-        } else {
-            blocks.add(block);
         }
     }
 
