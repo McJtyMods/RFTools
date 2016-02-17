@@ -21,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class InventoryModuleItem extends GenericRFToolsItem implements ModulePro
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (te instanceof IInventory) {
+        if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) || te instanceof IInventory) {
             tagCompound.setInteger("dim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());

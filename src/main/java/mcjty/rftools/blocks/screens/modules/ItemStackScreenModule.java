@@ -9,6 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class ItemStackScreenModule implements ScreenModule {
     private int slot1 = -1;
@@ -31,15 +33,27 @@ public class ItemStackScreenModule implements ScreenModule {
         }
 
         TileEntity te = world.getTileEntity(coordinate);
-        if (!(te instanceof IInventory)) {
+        if (te == null) {
             return null;
         }
-        IInventory inventory = (IInventory) te;
-        ItemStack stack1 = getItemStack(inventory, slot1);
-        ItemStack stack2 = getItemStack(inventory, slot2);
-        ItemStack stack3 = getItemStack(inventory, slot3);
-        ItemStack stack4 = getItemStack(inventory, slot4);
-        return new Object[] { stack1, stack2, stack3, stack4 };
+
+        if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            ItemStack stack1 = getItemStack(itemHandler, slot1);
+            ItemStack stack2 = getItemStack(itemHandler, slot2);
+            ItemStack stack3 = getItemStack(itemHandler, slot3);
+            ItemStack stack4 = getItemStack(itemHandler, slot4);
+            return new Object[] { stack1, stack2, stack3, stack4 };
+        } else if (te instanceof IInventory) {
+            IInventory inventory = (IInventory) te;
+            ItemStack stack1 = getItemStack(inventory, slot1);
+            ItemStack stack2 = getItemStack(inventory, slot2);
+            ItemStack stack3 = getItemStack(inventory, slot3);
+            ItemStack stack4 = getItemStack(inventory, slot4);
+            return new Object[]{stack1, stack2, stack3, stack4};
+        } else {
+            return null;
+        }
     }
 
     private ItemStack getItemStack(IInventory inventory, int slot) {
@@ -53,6 +67,22 @@ public class ItemStackScreenModule implements ScreenModule {
 //                return MFRCompatibility.getContents(inventory);
 //            }
             return inventory.getStackInSlot(slot);
+        } else {
+            return null;
+        }
+    }
+
+    private ItemStack getItemStack(IItemHandler itemHandler, int slot) {
+        if (slot == -1) {
+            return null;
+        }
+        if (slot < itemHandler.getSlots()) {
+//            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
+//                return MFRCompatibility.getContents(inventory);
+//            } else if (RFTools.instance.jabba && MFRCompatibility.isExtendedStorage(inventory)) {
+//                return MFRCompatibility.getContents(inventory);
+//            }
+            return itemHandler.getStackInSlot(slot);
         } else {
             return null;
         }

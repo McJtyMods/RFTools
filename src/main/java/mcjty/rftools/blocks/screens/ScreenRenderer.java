@@ -89,7 +89,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
         }
 
-        Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(screenTileEntity.getPos());
+        GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimensionId());
+        Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(key);
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
