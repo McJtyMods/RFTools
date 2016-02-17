@@ -136,8 +136,8 @@ public class PowerCellNetwork extends WorldSavedData {
             GlobalCoordinate c1 = blob1.iterator().next();
             GlobalCoordinate c2 = blob2.iterator().next();
 
-            boolean dim1rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c1.getDimension());
-            boolean dim2rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c2.getDimension());
+            boolean dim1rftools = false;//@todo RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c1.getDimension());
+            boolean dim2rftools = false;//@todo RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c2.getDimension());
             double rftoolsdimMult = 1.0;
             if (dim1rftools) {
                 rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
