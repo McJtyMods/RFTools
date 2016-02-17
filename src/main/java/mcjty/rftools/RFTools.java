@@ -112,6 +112,12 @@ public class RFTools implements ModBase {
         this.proxy.init(e);
 
         Achievements.init();
+
+        rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
+        if (rftoolsDimensions) {
+            Logging.log("RFTools Detected Dimensions addon: enabling support");
+            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
+        }
     }
 
     @Mod.EventHandler
@@ -136,11 +142,6 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         this.proxy.postInit(e);
-        rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
-        if (rftoolsDimensions) {
-            Logging.log("RFTools Detected Dimensions addon: enabling support");
-            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
-        }
     }
 
     @Mod.EventHandler
