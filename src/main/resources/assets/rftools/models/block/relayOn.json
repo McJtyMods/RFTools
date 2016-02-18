@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "rftools:blocks/machineRelay",
+    "down": "rftools:blocks/machineRelayD",
+    "up": "rftools:blocks/machineRelayU",
+    "north": "rftools:blocks/machineRelay_on",
+    "east": "rftools:blocks/machineRelayW",
+    "south": "rftools:blocks/machineRelayN",
+    "west": "rftools:blocks/machineRelayE"
+  }
+}
