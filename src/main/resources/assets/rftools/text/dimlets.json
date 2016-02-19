@@ -313,7 +313,7 @@
         [ "Effect", "Invisibility", 100000, 40000, 900, 5, 0, 0 ],
         [ "Effect", "Nightvision", 80000, 10000, 900, 4, 0, 0 ],
         [ "Effect", "Health Boost", 90000, 35000, 900, 4, 0, 0 ],
-        [ "Effect", "Health Boost II", 950000, 40000, 900, 5, 0, 0 ],
+        [ "Effect", "Health Boost II", 95000, 40000, 900, 5, 0, 0 ],
         [ "Effect", "Health Boost III", 100000, 42000, 900, 6, 0, 0 ],
         [ "Effect", "Absorption", 90000, 30000, 900, 4, 0, 0 ],
         [ "Effect", "Absorption II", 950000, 32000, 900, 5, 0, 0 ],
