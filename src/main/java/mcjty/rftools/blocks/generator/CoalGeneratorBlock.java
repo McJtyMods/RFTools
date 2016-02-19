@@ -13,6 +13,7 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -71,8 +72,11 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        CoalGeneratorTileEntity te = (CoalGeneratorTileEntity) world.getTileEntity(pos);
-        Boolean working = te.isWorking();
+        TileEntity te = world.getTileEntity(pos);
+        boolean working = false;
+        if (te instanceof CoalGeneratorTileEntity) {
+            working = ((CoalGeneratorTileEntity)te).isWorking();
+        }
         return state.withProperty(WORKING, working);
     }
 

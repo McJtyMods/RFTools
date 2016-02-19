@@ -95,6 +95,8 @@ public class RFTools implements ModBase {
     public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
     public static final int GUI_POWERCELL = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;
+    public static final int GUI_LIQUID_MONITOR = modGuiIndex++;
+    public static final int GUI_RF_MONITOR = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
