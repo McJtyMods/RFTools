@@ -8,7 +8,9 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleProvider;
+import mcjty.rftools.blocks.screens.modulesclient.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
@@ -27,7 +29,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private Panel toplevel;
     private ToggleButton buttons[] = new ToggleButton[ScreenContainer.SCREEN_MODULES];
     private Panel modulePanels[] = new Panel[ScreenContainer.SCREEN_MODULES];
-    private ClientScreenModule[] clientScreenModules = new ClientScreenModule[ScreenContainer.SCREEN_MODULES];
+    private IClientScreenModule[] clientScreenModules = new IClientScreenModule[ScreenContainer.SCREEN_MODULES];
 
     private int selected = -1;
 
@@ -77,9 +79,9 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private void refreshButtons() {
         for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
             final ItemStack slot = tileEntity.getStackInSlot(i);
-            if (slot != null && slot.getItem() != null && slot.getItem() instanceof ModuleProvider) {
-                ModuleProvider moduleProvider = (ModuleProvider) slot.getItem();
-                Class<? extends ClientScreenModule> clientScreenModuleClass = moduleProvider.getClientScreenModule();
+            if (slot != null && slot.getItem() != null && slot.getItem() instanceof IModuleProvider) {
+                IModuleProvider moduleProvider = (IModuleProvider) slot.getItem();
+                Class<? extends IClientScreenModule> clientScreenModuleClass = moduleProvider.getClientScreenModule();
                 if (!clientScreenModuleClass.isInstance(clientScreenModules[i])) {
                     installModuleGui(i, slot, moduleProvider, clientScreenModuleClass);
                 }
@@ -105,11 +107,11 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
     }
 
-    private void installModuleGui(int i, final ItemStack slot, ModuleProvider moduleProvider, Class<? extends ClientScreenModule> clientScreenModuleClass) {
+    private void installModuleGui(int i, final ItemStack slot, IModuleProvider moduleProvider, Class<? extends IClientScreenModule> clientScreenModuleClass) {
         buttons[i].setEnabled(true);
         toplevel.removeChild(modulePanels[i]);
         try {
-            ClientScreenModule clientScreenModule = clientScreenModuleClass.newInstance();
+            IClientScreenModule clientScreenModule = clientScreenModuleClass.newInstance();
             clientScreenModules[i] = clientScreenModule;
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
@@ -124,14 +126,13 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
 
         final NBTTagCompound finalTagCompound = tagCompound;
         final int finalI = i;
-        modulePanels[i] = clientScreenModules[i].createGui(mc, this, tagCompound, new ModuleGuiChanged() {
-            @Override
-            public void updateData() {
-                slot.setTagCompound(finalTagCompound);
-                tileEntity.setInventorySlotContents(finalI, slot);
-                RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), finalI, finalTagCompound));
-            }
+        ScreenModuleGuiBuilder guiBuilder = new ScreenModuleGuiBuilder(mc, this, tagCompound, () -> {
+            slot.setTagCompound(finalTagCompound);
+            tileEntity.setInventorySlotContents(finalI, slot);
+            RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), finalI, finalTagCompound));
         });
+        clientScreenModules[i].createGui(guiBuilder);
+        modulePanels[i] = guiBuilder.build();
         modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 8, 170, 130));
         modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);
 

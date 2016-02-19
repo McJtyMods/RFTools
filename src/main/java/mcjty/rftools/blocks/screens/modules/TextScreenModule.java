@@ -1,10 +1,11 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class TextScreenModule implements ScreenModule {
+public class TextScreenModule implements IScreenModule {
 
     @Override
     public Object[] getData(World worldObj, long millis) {

@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class ClockClientScreenModule implements ClientScreenModule {
+public class ClockClientScreenModule implements IClientScreenModule {
     private int color = 0xffffff;
     private String line = "";
     private boolean large = false;
@@ -25,7 +25,7 @@ public class ClockClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         Minecraft minecraft = Minecraft.getMinecraft();
         double time = 0.0D;
@@ -67,11 +67,10 @@ public class ClockClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Label:").text("text", "Label text").color("color", "Label color").nl().
-                toggle("large", "Large", "Large or small font").nl().
-                build();
+                toggle("large", "Large", "Large or small font").nl();
     }
 
     @Override

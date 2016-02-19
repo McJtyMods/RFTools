@@ -3,11 +3,11 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
-import mcjty.rftools.blocks.screens.modules.ScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.MachineInformationClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class MachineInformationModuleItem extends GenericRFToolsItem implements ModuleProvider {
+public class MachineInformationModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public MachineInformationModuleItem() {
         super("machineinformation_module");
@@ -37,12 +37,12 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
     }
 
     @Override
-    public Class<? extends ScreenModule> getServerScreenModule() {
+    public Class<? extends IScreenModule> getServerScreenModule() {
         return MachineInformationScreenModule.class;
     }
 
     @Override
-    public Class<? extends ClientScreenModule> getClientScreenModule() {
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
         return MachineInformationClientScreenModule.class;
     }
 

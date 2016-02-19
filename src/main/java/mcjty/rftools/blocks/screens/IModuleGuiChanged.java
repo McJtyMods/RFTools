@@ -1,5 +1,5 @@
 package mcjty.rftools.blocks.screens;
 
-public interface ModuleGuiChanged {
+public interface IModuleGuiChanged {
     void updateData();
 }

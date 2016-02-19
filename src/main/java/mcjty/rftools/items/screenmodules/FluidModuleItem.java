@@ -2,11 +2,11 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidBarScreenModule;
-import mcjty.rftools.blocks.screens.modules.ScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidBarClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class FluidModuleItem extends GenericRFToolsItem implements ModuleProvider {
+public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public FluidModuleItem() {
         super("fluid_module");
@@ -37,12 +37,12 @@ public class FluidModuleItem extends GenericRFToolsItem implements ModuleProvide
     }
 
     @Override
-    public Class<? extends ScreenModule> getServerScreenModule() {
+    public Class<? extends IScreenModule> getServerScreenModule() {
         return FluidBarScreenModule.class;
     }
 
     @Override
-    public Class<? extends ClientScreenModule> getClientScreenModule() {
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
         return FluidBarClientScreenModule.class;
     }
 

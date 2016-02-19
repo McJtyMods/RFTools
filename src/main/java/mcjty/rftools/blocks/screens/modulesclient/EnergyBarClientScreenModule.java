@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class EnergyBarClientScreenModule implements ClientScreenModule {
+public class EnergyBarClientScreenModule implements IClientScreenModule {
 
     private String line = "";
     private int color = 0xffffff;
@@ -36,7 +36,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -47,7 +47,7 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
         }
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
-            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format);
+            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
@@ -59,13 +59,12 @@ public class EnergyBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
                 label("RF+:").color("rfcolor", "Color for the RF text").label("RF-:").color("rfcolor_neg", "Color for the negative", "RF/tick ratio").nl().
                 toggleNegative("hidebar", "Bar", "Toggle visibility of the", "energy bar").mode("RF").format().nl().
-                label("Block:").monitor().nl().
-                build();
+                label("Block:").monitor().nl();
     }
 
     @Override

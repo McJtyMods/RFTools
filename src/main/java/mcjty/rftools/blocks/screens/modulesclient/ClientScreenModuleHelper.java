@@ -1,13 +1,16 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.text.DecimalFormat;
 
-public class ClientScreenModuleHelper {
+public class ClientScreenModuleHelper implements IModuleRenderHelper {
 
-    public static void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, Object[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
+    @Override
+    public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, Object[] screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                                    int poscolor, int negcolor,
                                    int gradient1, int gradient2, FormatStyle formatStyle) {
         if (screenData == null) {
@@ -62,7 +65,8 @@ public class ClientScreenModuleHelper {
 
     private static DecimalFormat dfCommas = new DecimalFormat("###,###");
 
-    public static String format(String in, FormatStyle style) {
+    @Override
+    public String format(String in, FormatStyle style) {
         switch (style) {
             case MODE_FULL:
                 return in;

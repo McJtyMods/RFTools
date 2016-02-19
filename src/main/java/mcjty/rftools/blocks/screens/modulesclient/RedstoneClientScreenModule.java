@@ -1,15 +1,14 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class RedstoneClientScreenModule implements ClientScreenModule {
+public class RedstoneClientScreenModule implements IClientScreenModule {
 
     private String line = "";
     private String yestext = "on";
@@ -30,7 +29,7 @@ public class RedstoneClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -54,13 +53,12 @@ public class RedstoneClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
                 label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl().
                 label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl().
-                label("Block:").monitor().nl().
-                build();
+                label("Block:").monitor().nl();
     }
 
     @Override

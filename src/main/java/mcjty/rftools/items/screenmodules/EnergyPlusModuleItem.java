@@ -2,11 +2,11 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.EnergyPlusBarScreenModule;
-import mcjty.rftools.blocks.screens.modules.ScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.EnergyPlusBarClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.EnergyTools;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class EnergyPlusModuleItem extends GenericRFToolsItem implements ModuleProvider {
+public class EnergyPlusModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public EnergyPlusModuleItem() {
         super("energyplus_module");
@@ -37,12 +37,12 @@ public class EnergyPlusModuleItem extends GenericRFToolsItem implements ModulePr
     }
 
     @Override
-    public Class<? extends ScreenModule> getServerScreenModule() {
+    public Class<? extends IScreenModule> getServerScreenModule() {
         return EnergyPlusBarScreenModule.class;
     }
 
     @Override
-    public Class<? extends ClientScreenModule> getClientScreenModule() {
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
         return EnergyPlusBarClientScreenModule.class;
     }
 

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class RedstoneScreenModule implements ScreenModule {
+public class RedstoneScreenModule implements IScreenModule {
     private int channel = -1;
     private BlockPos coordinate = BlockPosTools.INVALID;
     private int dim = 0;

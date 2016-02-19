@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -9,7 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class MachineInformationScreenModule implements ScreenModule {
+public class MachineInformationScreenModule implements IScreenModule {
     private int tag;
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;

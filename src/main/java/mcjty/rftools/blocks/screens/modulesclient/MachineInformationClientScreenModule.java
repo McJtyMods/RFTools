@@ -3,13 +3,15 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.ColorChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.blocks.screens.IModuleGuiChanged;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -23,7 +25,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineInformationClientScreenModule implements ClientScreenModule {
+public class MachineInformationClientScreenModule implements IClientScreenModule {
 
     private String line = "";
     private int labcolor = 0xffffff;
@@ -42,7 +44,7 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -65,14 +67,18 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        // @todo Hacky, solve this better
+        ScreenModuleGuiBuilder screenModuleGuiBuilder = (ScreenModuleGuiBuilder) guiBuilder;
+        Minecraft mc = Minecraft.getMinecraft();
+        Gui gui = screenModuleGuiBuilder.getGui();
+        NBTTagCompound currentData = screenModuleGuiBuilder.getCurrentData();
+        IModuleGuiChanged moduleGuiChanged = screenModuleGuiBuilder.getModuleGuiChanged();
+
         Panel panel = new Panel(mc, gui).setLayout(new VerticalLayout());
-        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                currentData.setString("text", newText);
-                moduleGuiChanged.updateData();
-            }
+        TextField textField = new TextField(mc, gui).setDesiredHeight(16).setTooltips("Text to use as label").addTextEvent((parent, newText) -> {
+            currentData.setString("text", newText);
+            moduleGuiChanged.updateData();
         });
         panel.addChild(textField);
         addColorPanel(mc, gui, currentData, moduleGuiChanged, panel);
@@ -83,10 +89,10 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
             textField.setText(currentData.getString("text"));
         }
 
-        return panel;
+        screenModuleGuiBuilder.overridePanel(panel);
     }
 
-    private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
+    private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
         final Map<String,Integer> choiceToIndex = new HashMap<String, Integer>();
@@ -158,7 +164,7 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
         panel.addChild(new Label(mc, gui).setText(monitoring));
     }
 
-    private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, Panel panel) {
+    private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, Panel panel) {
         ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
         ColorChoiceLabel txtColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "txtcolor").setTooltips("Color for the text");
         Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
@@ -169,7 +175,7 @@ public class MachineInformationClientScreenModule implements ClientScreenModule 
     }
 
 
-    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged, final String tagName) {
+    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, final String tagName) {
         ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
             @Override
             public void choiceChanged(Widget parent, Integer newColor) {

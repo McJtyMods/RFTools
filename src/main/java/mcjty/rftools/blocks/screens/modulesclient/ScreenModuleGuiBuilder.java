@@ -8,7 +8,9 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.blocks.screens.IModuleGuiChanged;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -19,16 +21,16 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreenModuleGuiBuilder {
+public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     private Minecraft mc;
     private Gui gui;
     private NBTTagCompound currentData;
-    private ModuleGuiChanged moduleGuiChanged;
+    private IModuleGuiChanged moduleGuiChanged;
 
     private Panel panel;
-    private List<Widget> row = new ArrayList<Widget>();
+    private List<Widget> row = new ArrayList<>();
 
-    public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, NBTTagCompound currentData, ModuleGuiChanged moduleGuiChanged) {
+    public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, NBTTagCompound currentData, IModuleGuiChanged moduleGuiChanged) {
         this.gui = gui;
         this.mc = mc;
         this.moduleGuiChanged = moduleGuiChanged;
@@ -36,23 +38,43 @@ public class ScreenModuleGuiBuilder {
         panel = new Panel(mc, gui).setLayout(new VerticalLayout().setVerticalMargin(5));
     }
 
+    public NBTTagCompound getCurrentData() {
+        return currentData;
+    }
+
+    public IModuleGuiChanged getModuleGuiChanged() {
+        return moduleGuiChanged;
+    }
+
+    public Gui getGui() {
+        return gui;
+    }
+
+    public ScreenModuleGuiBuilder overridePanel(Panel p) {
+        panel = p;
+        return this;
+    }
+
     public Panel build() {
         nl();
         return panel;
     }
 
+    @Override
     public ScreenModuleGuiBuilder label(String text) {
         Label label = new Label(mc, gui).setText(text);
         row.add(label);
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder leftLabel(String text) {
         Label label = new Label(mc, gui).setText(text).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         row.add(label);
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder text(final String tagname, String... tooltip) {
         TextField textField = new TextField(mc, gui).setDesiredHeight(15).setTooltips(tooltip).addTextEvent(new TextEvent() {
             @Override
@@ -68,6 +90,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder integer(final String tagname, String... tooltip) {
         TextField textField = new TextField(mc, gui).setDesiredHeight(15).setTooltips(tooltip).addTextEvent(new TextEvent() {
             @Override
@@ -89,6 +112,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder toggle(final String tagname, String label, String... tooltip) {
         final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setCheckMarker(true);
         toggleButton.addButtonEvent(new ButtonEvent() {
@@ -106,6 +130,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder toggleNegative(final String tagname, String label, String... tooltip) {
         final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setDesiredWidth(36).setCheckMarker(true);
         toggleButton.addButtonEvent(new ButtonEvent() {
@@ -125,6 +150,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder color(final String tagname, String... tooltip) {
         ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip)
                 .addColors(0xffffff, 0x888888, 0x010101, 0xff0000, 0x880000, 0x00ff00, 0x008800, 0x0000ff, 0x000088, 0xffff00, 0x888800, 0xff00ff, 0x880088, 0x00ffff, 0x008888)
@@ -145,18 +171,21 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder format() {
         ChoiceLabel label = setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
         row.add(label);
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder mode(String componentName) {
         ChoiceLabel label = setupModeCombo(mc, gui, componentName, currentData, moduleGuiChanged);
         row.add(label);
         return this;
     }
 
+    @Override
     public ScreenModuleGuiBuilder monitor() {
         String monitoring;
         if (currentData.hasKey("monitorx")) {
@@ -182,6 +211,7 @@ public class ScreenModuleGuiBuilder {
     }
 
 
+    @Override
     public ScreenModuleGuiBuilder nl() {
         if (row.size() == 1) {
             panel.addChild(row.get(0).setDesiredHeight(16));
@@ -198,7 +228,7 @@ public class ScreenModuleGuiBuilder {
         return this;
     }
 
-    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
@@ -220,7 +250,7 @@ public class ScreenModuleGuiBuilder {
         return modeButton;
     }
 
-    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
         String modeNone = "None";
         final String modePertick = componentName + "/t";
         final String modePct = componentName + "%";

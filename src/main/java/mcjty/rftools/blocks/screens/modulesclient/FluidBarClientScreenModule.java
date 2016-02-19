@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class FluidBarClientScreenModule implements ClientScreenModule {
+public class FluidBarClientScreenModule implements IClientScreenModule {
 
     private String line = "";
     private int color = 0xffffff;
@@ -35,7 +35,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -47,7 +47,7 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             int mbcolorNeg = 0xffffff;
-            ClientScreenModuleHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format);
+            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
@@ -59,13 +59,12 @@ public class FluidBarClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
                 label("mb+:").color("rfcolor", "Color for the mb text").label("mb-:").color("rfcolor_neg", "Color for the negative", "mb/tick ratio").nl().
                 toggleNegative("hidebar", "Bar", "Toggle visibility of the", "fluid bar").mode("mb").format().nl().
-                label("Block:").monitor().nl().
-                build();
+                label("Block:").monitor().nl();
     }
 
     @Override

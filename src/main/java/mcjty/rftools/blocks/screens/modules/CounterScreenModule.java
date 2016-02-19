@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class CounterScreenModule implements ScreenModule {
+public class CounterScreenModule implements IScreenModule {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 

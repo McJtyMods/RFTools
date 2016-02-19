@@ -1,10 +1,10 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.blocks.screens.modules.ScreenModule;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.modules.TextScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class TextModuleItem extends GenericRFToolsItem implements ModuleProvider {
+public class TextModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public TextModuleItem() {
         super("text_module");
@@ -40,12 +40,12 @@ public class TextModuleItem extends GenericRFToolsItem implements ModuleProvider
     }
 
     @Override
-    public Class<? extends ScreenModule> getServerScreenModule() {
+    public Class<? extends IScreenModule> getServerScreenModule() {
         return TextScreenModule.class;
     }
 
     @Override
-    public Class<? extends ClientScreenModule> getClientScreenModule() {
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
         return TextClientScreenModule.class;
     }
 

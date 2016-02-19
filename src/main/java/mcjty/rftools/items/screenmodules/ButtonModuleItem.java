@@ -4,12 +4,12 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.logic.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.RedstoneTransmitterTileEntity;
-import mcjty.rftools.blocks.screens.ModuleProvider;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ButtonScreenModule;
-import mcjty.rftools.blocks.screens.modules.ScreenModule;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ButtonClientScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ButtonModuleItem extends GenericRFToolsItem implements ModuleProvider {
+public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public ButtonModuleItem() {
         super("button_module");
@@ -36,12 +36,12 @@ public class ButtonModuleItem extends GenericRFToolsItem implements ModuleProvid
     }
 
     @Override
-    public Class<? extends ScreenModule> getServerScreenModule() {
+    public Class<? extends IScreenModule> getServerScreenModule() {
         return ButtonScreenModule.class;
     }
 
     @Override
-    public Class<? extends ClientScreenModule> getClientScreenModule() {
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
         return ButtonClientScreenModule.class;
     }
 

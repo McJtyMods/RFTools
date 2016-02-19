@@ -1,11 +1,12 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class ButtonScreenModule implements ScreenModule {
+public class ButtonScreenModule implements IScreenModule {
     private String line = "";
     private int channel = -1;
     private boolean toggle;

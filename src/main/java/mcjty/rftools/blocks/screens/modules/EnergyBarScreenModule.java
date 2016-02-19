@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class EnergyBarScreenModule implements ScreenModule {
+public class EnergyBarScreenModule implements IScreenModule {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();

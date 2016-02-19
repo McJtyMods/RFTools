@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.screens.modulesclient;
+package mcjty.rftools.api.screens;
 
 public enum FormatStyle {
     MODE_FULL("Full"),

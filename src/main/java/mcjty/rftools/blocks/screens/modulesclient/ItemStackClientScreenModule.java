@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,7 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-public class ItemStackClientScreenModule implements ClientScreenModule {
+public class ItemStackClientScreenModule implements IClientScreenModule {
     private int slot1 = -1;
     private int slot2 = -1;
     private int slot3 = -1;
@@ -33,7 +33,7 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         if (screenData == null) {
             return;
         }
@@ -180,13 +180,12 @@ public class ItemStackClientScreenModule implements ClientScreenModule {
 
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Slot 1:").integer("slot1", "Slot index to show").nl().
                 label("Slot 2:").integer("slot2", "Slot index to show").nl().
                 label("Slot 3:").integer("slot3", "Slot index to show").nl().
-                label("Slot 4:").integer("slot4", "Slot index to show").nl().
-                build();
+                label("Slot 4:").integer("slot4", "Slot index to show").nl();
     }
 
     @Override

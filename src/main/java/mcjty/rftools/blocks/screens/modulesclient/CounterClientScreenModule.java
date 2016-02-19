@@ -1,17 +1,17 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.blocks.screens.ModuleGuiChanged;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class CounterClientScreenModule implements ClientScreenModule {
+public class CounterClientScreenModule implements IClientScreenModule {
 
     private String line = "";
     private int color = 0xffffff;
@@ -31,7 +31,7 @@ public class CounterClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public void render(FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -48,7 +48,7 @@ public class CounterClientScreenModule implements ClientScreenModule {
             } else {
                 counter = 0;
             }
-            fontRenderer.drawString(ClientScreenModuleHelper.format(String.valueOf(counter), format), xoffset, currenty, cntcolor);
+            fontRenderer.drawString(renderHelper.format(String.valueOf(counter), format), xoffset, currenty, cntcolor);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }
@@ -60,13 +60,12 @@ public class CounterClientScreenModule implements ClientScreenModule {
     }
 
     @Override
-    public Panel createGui(Minecraft mc, Gui gui, final NBTTagCompound currentData, final ModuleGuiChanged moduleGuiChanged) {
-        return new ScreenModuleGuiBuilder(mc, gui, currentData, moduleGuiChanged).
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
                 label("Label:").text("text", "Label text").nl().
                 label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl().
                 format().nl().
-                label("Block:").monitor().nl().
-                build();
+                label("Block:").monitor().nl();
     }
 
     @Override

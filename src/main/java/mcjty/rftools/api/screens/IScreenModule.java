@@ -1,9 +1,9 @@
-package mcjty.rftools.blocks.screens.modules;
+package mcjty.rftools.api.screens;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public interface ScreenModule {
+public interface IScreenModule {
     Object[] getData(World worldObj, long millis);
 
     void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z);

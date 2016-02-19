@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -11,7 +12,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class FluidBarScreenModule implements ScreenModule {
+public class FluidBarScreenModule implements IScreenModule {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();

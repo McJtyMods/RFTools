@@ -2,7 +2,8 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModule;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.FontRenderer;
@@ -63,13 +64,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         if (tileEntity != null && tileEntity.isPowerOn()) {
             FontRenderer fontrenderer = this.getFontRenderer();
 
-            ClientScreenModule.TransformMode mode = ClientScreenModule.TransformMode.NONE;
+            IClientScreenModule.TransformMode mode = IClientScreenModule.TransformMode.NONE;
             GlStateManager.depthMask(false);
             GlStateManager.disableLighting();
 
             Map<Integer, Object[]> screenData = updateScreenData(tileEntity);
 
-            List<ClientScreenModule> modules = tileEntity.getClientScreenModules();
+            List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData, tileEntity.getSize());
         }
 
@@ -97,18 +98,20 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         return screenData;
     }
 
-    private void renderModules(FontRenderer fontrenderer, ClientScreenModule.TransformMode mode, List<ClientScreenModule> modules, Map<Integer, Object[]> screenData, int size) {
+    private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
+
+    private void renderModules(FontRenderer fontrenderer, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, Object[]> screenData, int size) {
         float f3;
         float factor = size + 1.0f;
         int currenty = 7;
         int moduleIndex = 0;
-        for (ClientScreenModule module : modules) {
+        for (IClientScreenModule module : modules) {
             if (module != null) {
                 int height = module.getHeight();
                 // Check if this module has enough room
                 if (currenty + height <= 124) {
                     if (module.getTransformMode() != mode) {
-                        if (mode != ClientScreenModule.TransformMode.NONE) {
+                        if (mode != IClientScreenModule.TransformMode.NONE) {
                             GlStateManager.popMatrix();
                         }
                         GlStateManager.pushMatrix();
@@ -136,14 +139,14 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                         }
                     }
 
-                    module.render(fontrenderer, currenty, screenData.get(moduleIndex), factor);
+                    module.render(clientScreenModuleHelper, fontrenderer, currenty, screenData.get(moduleIndex), factor);
                     currenty += height;
                 }
             }
             moduleIndex++;
         }
 
-        if (mode != ClientScreenModule.TransformMode.NONE) {
+        if (mode != IClientScreenModule.TransformMode.NONE) {
             GlStateManager.popMatrix();
         }
     }
