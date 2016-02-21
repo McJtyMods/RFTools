@@ -7,13 +7,11 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.api.screens.*;
-import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.api.screens.data.IModuleDataBoolean;
-import mcjty.rftools.api.screens.data.IModuleDataInteger;
-import mcjty.rftools.api.screens.data.IModuleDataString;
+import mcjty.rftools.api.screens.data.*;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
+import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -460,6 +458,11 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         @Override
         public IModuleDataString createString(String b) {
             return new ModuleDataString(b);
+        }
+
+        @Override
+        public IModuleDataContents createContents(long contents, long maxContents, long lastPerTick) {
+            return new ScreenModuleHelper.ModuleDataContents(contents, maxContents, lastPerTick);
         }
     };
 

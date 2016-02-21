@@ -2,6 +2,7 @@ package mcjty.rftools.api.screens;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 
@@ -15,4 +16,6 @@ public interface IScreenDataHelper {
     IModuleDataBoolean createBoolean(boolean b);
 
     IModuleDataString createString(String b);
+
+    IModuleDataContents createContents(long contents, long maxContents, long lastPerTick);
 }
