@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.RedstoneChannels;

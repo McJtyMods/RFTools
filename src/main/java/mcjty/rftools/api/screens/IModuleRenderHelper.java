@@ -1,5 +1,6 @@
 package mcjty.rftools.api.screens;
 
+import mcjty.rftools.api.screens.data.IModuleDataContents;
 import net.minecraft.client.gui.FontRenderer;
 
 /**
@@ -7,7 +8,7 @@ import net.minecraft.client.gui.FontRenderer;
  */
 public interface IModuleRenderHelper {
 
-    void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleData screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
+    void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                             int poscolor, int negcolor,
                             int gradient1, int gradient2, FormatStyle formatStyle);
 

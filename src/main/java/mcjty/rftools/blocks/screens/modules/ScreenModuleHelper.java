@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.data.IModuleDataContents;
 
 public class ScreenModuleHelper {
     private boolean showdiff = false;
@@ -10,7 +10,7 @@ public class ScreenModuleHelper {
     private long prevContents = 0;
     private long lastPerTick = 0;
 
-    public static class ModuleDataContents implements IModuleData {
+    public static class ModuleDataContents implements IModuleDataContents {
 
         public static final String ID = RFTools.MODID + ":contents";
 
@@ -35,14 +35,17 @@ public class ScreenModuleHelper {
             lastPerTick = buf.readLong();
         }
 
+        @Override
         public long getContents() {
             return contents;
         }
 
+        @Override
         public long getMaxContents() {
             return maxContents;
         }
 
+        @Override
         public long getLastPerTick() {
             return lastPerTick;
         }
@@ -56,7 +59,7 @@ public class ScreenModuleHelper {
     }
 
 
-    public ScreenModuleHelper.ModuleDataContents getContentsValue(long millis, long contents, long maxContents) {
+    public IModuleDataContents getContentsValue(long millis, long contents, long maxContents) {
         if (showdiff) {
             if (prevMillis == 0 || millis <= prevMillis + 100) {        // <= prevMillis + 100 to make sure we show last value if the timing is too short
                 prevMillis = millis;

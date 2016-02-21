@@ -1,4 +1,4 @@
-package mcjty.rftools.api.screens;
+package mcjty.rftools.api.screens.data;
 
 /**
  * An integer.

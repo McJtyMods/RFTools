@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;

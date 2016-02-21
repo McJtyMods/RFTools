@@ -1,5 +1,7 @@
 package mcjty.rftools.api.screens;
 
+import mcjty.rftools.api.screens.data.IModuleDataFactory;
+
 /**
  * Get a reference to an implementation of this interface by calling:
  *         FMLInterModComms.sendFunctionMessage("rftools", "getScreenModuleRegistry", "<whatever>.YourClass$GetDimensionManager");

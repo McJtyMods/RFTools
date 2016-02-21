@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens.data;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IModuleDataString;
+import mcjty.rftools.api.screens.data.IModuleDataString;
 
 public class ModuleDataString implements IModuleDataString {
 

@@ -9,7 +9,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleDataString;
+import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
 import mcjty.rftools.api.screens.IModuleRenderHelper;

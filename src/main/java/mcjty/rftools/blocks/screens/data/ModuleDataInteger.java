@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens.data;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IModuleDataInteger;
+import mcjty.rftools.api.screens.data.IModuleDataInteger;
 
 public class ModuleDataInteger implements IModuleDataInteger {
     public static final String ID = RFTools.MODID + ":integer";

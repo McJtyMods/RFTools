@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.rftools.api.screens.*;
+import mcjty.rftools.api.screens.data.IModuleData;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;

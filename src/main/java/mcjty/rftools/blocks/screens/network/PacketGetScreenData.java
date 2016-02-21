@@ -5,7 +5,7 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;

@@ -1,15 +1,16 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
+import mcjty.rftools.api.screens.data.IModuleData;
+import mcjty.rftools.api.screens.data.IModuleDataContents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class EnergyBarClientScreenModule implements IClientScreenModule {
+public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleDataContents> {
 
     private String line = "";
     private int color = 0xffffff;
@@ -34,7 +35,7 @@ public class EnergyBarClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataContents screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {

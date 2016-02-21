@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens.data;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 
 public class ModuleDataBoolean implements IModuleDataBoolean {
 

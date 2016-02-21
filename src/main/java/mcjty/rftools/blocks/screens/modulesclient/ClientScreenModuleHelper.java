@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.api.screens.FormatStyle;
-import mcjty.rftools.api.screens.IModuleData;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -12,19 +12,17 @@ import java.text.DecimalFormat;
 public class ClientScreenModuleHelper implements IModuleRenderHelper {
 
     @Override
-    public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleData screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
+    public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
                                    int poscolor, int negcolor,
                                    int gradient1, int gradient2, FormatStyle formatStyle) {
-        if (!(screenData instanceof ScreenModuleHelper.ModuleDataContents)) {
+        if (screenData == null) {
             return;
         }
 
-        ScreenModuleHelper.ModuleDataContents sd = (ScreenModuleHelper.ModuleDataContents) screenData;
-
-        long maxContents  = sd.getMaxContents();
+        long maxContents  = screenData.getMaxContents();
         if (maxContents > 0) {
             if (!hidebar) {
-                long contents = sd.getContents();
+                long contents = screenData.getContents();
 
                 int width = 80 - xoffset + 7 + 40;
                 long value = contents * width / maxContents;
@@ -38,7 +36,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
         }
         if (!hidetext) {
             if (showdiff) {
-                long diff = sd.getLastPerTick();
+                long diff = screenData.getLastPerTick();
                 if (diff < 0) {
                     fontRenderer.drawString(diff + " " + label + "/t", xoffset, currenty, negcolor);
                 } else {
@@ -46,7 +44,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 }
 
             } else if (maxContents > 0) {
-                long contents = sd.getContents();
+                long contents = screenData.getContents();
                 if (showpct) {
                     long value = contents * 100 / maxContents;
                     if (value < 0) {

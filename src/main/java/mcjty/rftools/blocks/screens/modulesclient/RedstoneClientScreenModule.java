@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;

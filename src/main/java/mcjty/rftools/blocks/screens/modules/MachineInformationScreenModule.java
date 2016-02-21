@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
-import mcjty.rftools.api.screens.IModuleDataString;
+import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;

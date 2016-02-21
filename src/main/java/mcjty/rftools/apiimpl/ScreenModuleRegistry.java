@@ -1,8 +1,6 @@
 package mcjty.rftools.apiimpl;
 
-import io.netty.buffer.ByteBuf;
-import mcjty.rftools.api.screens.IModuleData;
-import mcjty.rftools.api.screens.IModuleDataFactory;
+import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
