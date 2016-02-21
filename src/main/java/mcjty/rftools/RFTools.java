@@ -5,7 +5,9 @@ import com.google.common.base.Optional;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
+import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
@@ -48,7 +50,7 @@ public class RFTools implements ModBase {
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;
 
-    public static EnumMap<Side, FMLEmbeddedChannel> channels;
+    public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
     /** This is used to keep track of GUIs that we make*/
     private static int modGuiIndex = 0;
@@ -150,9 +152,12 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void imcCallback(FMLInterModComms.IMCEvent event) {
         for (FMLInterModComms.IMCMessage message : event.getMessages()) {
-            if (message.key.equalsIgnoreCase("getApi")) {
+            if (message.key.equalsIgnoreCase("getApi") || message.key.equalsIgnoreCase("getTeleportationManager")) {
                 Optional<Function<ITeleportationManager, Void>> value = message.getFunctionValue(ITeleportationManager.class, Void.class);
                 value.get().apply(new TeleportationManager());
+            } else if (message.key.equalsIgnoreCase("getScreenModuleRegistry")) {
+                Optional<Function<IScreenModuleRegistry, Void>> value = message.getFunctionValue(IScreenModuleRegistry.class, Void.class);
+                value.get().apply(screenModuleRegistry);
             }
         }
 

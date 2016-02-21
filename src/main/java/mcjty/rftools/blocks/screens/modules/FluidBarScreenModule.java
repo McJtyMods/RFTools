@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,13 +14,13 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class FluidBarScreenModule implements IScreenModule {
+public class FluidBarScreenModule implements IScreenModule<ScreenModuleHelper.ModuleDataContents> {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public ScreenModuleHelper.ModuleDataContents getData(IScreenDataHelper h, World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;

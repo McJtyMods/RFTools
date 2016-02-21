@@ -1,15 +1,14 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.lib.gui.RenderHelper;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.*;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class ButtonClientScreenModule implements IClientScreenModule {
+public class ButtonClientScreenModule implements IClientScreenModule<IModuleDataBoolean> {
     private String line = "";
     private String button = "";
     private boolean toggle = false;
@@ -28,7 +27,7 @@ public class ButtonClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -40,8 +39,8 @@ public class ButtonClientScreenModule implements IClientScreenModule {
 
         boolean act = false;
         if (toggle) {
-            if (screenData != null && screenData.length >= 1 && screenData[0] instanceof Integer) {
-                act = ((Integer) screenData[0]) > 0;
+            if (screenData != null) {
+                act = screenData.get();
             }
         } else {
             act = activated;

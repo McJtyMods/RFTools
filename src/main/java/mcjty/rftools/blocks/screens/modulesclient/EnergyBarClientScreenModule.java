@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.FormatStyle;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.*;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +34,7 @@ public class EnergyBarClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {

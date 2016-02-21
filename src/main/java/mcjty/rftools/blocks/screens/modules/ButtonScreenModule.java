@@ -1,22 +1,22 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class ButtonScreenModule implements IScreenModule {
+public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
     private String line = "";
     private int channel = -1;
     private boolean toggle;
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleDataBoolean getData(IScreenDataHelper helper, World worldObj, long millis) {
         if (channel != -1 && toggle) {
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
-            return new Object[] { ch.getValue()};
+            return helper.createBoolean(ch.getValue() > 0);
         }
         return null;
     }

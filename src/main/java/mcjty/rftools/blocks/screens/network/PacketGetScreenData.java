@@ -5,10 +5,10 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.api.screens.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -63,7 +63,7 @@ public class PacketGetScreenData implements IMessage {
                 Logging.logError("PacketGetScreenData: TileEntity is not a SimpleScreenTileEntity!");
                 return;
             }
-            Map<Integer, Object[]> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
+            Map<Integer, IModuleData> screenData = ((ScreenTileEntity) te).getScreenData(message.millis);
 
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketReturnScreenData msg = new PacketReturnScreenData(message.pos, screenData);

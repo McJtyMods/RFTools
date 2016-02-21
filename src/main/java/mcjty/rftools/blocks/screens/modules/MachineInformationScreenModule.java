@@ -2,6 +2,8 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenDataHelper;
+import mcjty.rftools.api.screens.IModuleDataString;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,13 +12,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class MachineInformationScreenModule implements IScreenModule {
+public class MachineInformationScreenModule implements IScreenModule<IModuleDataString> {
     private int tag;
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleDataString getData(IScreenDataHelper helper, World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -32,7 +34,7 @@ public class MachineInformationScreenModule implements IScreenModule {
         }
         MachineInformation information = (MachineInformation) te;
         String info = information.getData(tag, millis);
-        return new Object[] { info };
+        return helper.createString(info);
     }
 
     @Override

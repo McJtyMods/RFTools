@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleDataBoolean;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
@@ -8,7 +9,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class RedstoneClientScreenModule implements IClientScreenModule {
+public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDataBoolean> {
 
     private String line = "";
     private String yestext = "on";
@@ -29,7 +30,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -39,8 +40,8 @@ public class RedstoneClientScreenModule implements IClientScreenModule {
             xoffset = 7;
         }
 
-        if (screenData != null && screenData.length > 0 && screenData[0] instanceof Boolean) {
-            boolean rs = (Boolean) screenData[0];
+        if (screenData != null) {
+            boolean rs = screenData.get();
             fontRenderer.drawString(rs ? yestext : notext, xoffset, currenty, rs ? yescolor : nocolor);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);

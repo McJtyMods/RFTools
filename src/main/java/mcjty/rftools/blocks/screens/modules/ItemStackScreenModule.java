@@ -1,6 +1,11 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import io.netty.buffer.ByteBuf;
+import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.inventory.IInventory;
@@ -13,7 +18,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ItemStackScreenModule implements IScreenModule {
+public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModule.ModuleDataStacks> {
     private int slot1 = -1;
     private int slot2 = -1;
     private int slot3 = -1;
@@ -22,8 +27,58 @@ public class ItemStackScreenModule implements IScreenModule {
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
 
+    public static class ModuleDataStacks implements IModuleData {
+
+        public static final String ID = RFTools.MODID + ":itemStacks";
+
+        private final ItemStack[] stacks = new ItemStack[4];
+
+        @Override
+        public String getId() {
+            return ID;
+        }
+
+        public ModuleDataStacks(ItemStack stack1, ItemStack stack2, ItemStack stack3, ItemStack stack4) {
+            this.stacks[0] = stack1;
+            this.stacks[1] = stack2;
+            this.stacks[2] = stack3;
+            this.stacks[3] = stack4;
+        }
+
+        public ModuleDataStacks(ByteBuf buf) {
+            for (int i = 0 ; i < 4 ; i++) {
+                if (buf.readBoolean()) {
+                    stacks[i] = NetworkTools.readItemStack(buf);
+                } else {
+                    stacks[i] = null;
+                }
+            }
+        }
+
+        public ItemStack getStack(int idx) {
+            return stacks[idx];
+        }
+
+        @Override
+        public void writeToBuf(ByteBuf buf) {
+            writeStack(buf, stacks[0]);
+            writeStack(buf, stacks[1]);
+            writeStack(buf, stacks[2]);
+            writeStack(buf, stacks[3]);
+        }
+
+        private void writeStack(ByteBuf buf, ItemStack stack) {
+            if (stack != null) {
+                buf.writeBoolean(true);
+                NetworkTools.writeItemStack(buf, stack);
+            } else {
+                buf.writeBoolean(false);
+            }
+        }
+    }
+
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public ModuleDataStacks getData(IScreenDataHelper helper, World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -38,20 +93,24 @@ public class ItemStackScreenModule implements IScreenModule {
             return null;
         }
 
+        ItemStack stack1;
+        ItemStack stack2;
+        ItemStack stack3;
+        ItemStack stack4;
         if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
             IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            ItemStack stack1 = getItemStack(itemHandler, slot1);
-            ItemStack stack2 = getItemStack(itemHandler, slot2);
-            ItemStack stack3 = getItemStack(itemHandler, slot3);
-            ItemStack stack4 = getItemStack(itemHandler, slot4);
-            return new Object[] { stack1, stack2, stack3, stack4 };
+            stack1 = getItemStack(itemHandler, slot1);
+            stack2 = getItemStack(itemHandler, slot2);
+            stack3 = getItemStack(itemHandler, slot3);
+            stack4 = getItemStack(itemHandler, slot4);
+            return new ModuleDataStacks(stack1, stack2, stack3, stack4);
         } else if (te instanceof IInventory) {
             IInventory inventory = (IInventory) te;
-            ItemStack stack1 = getItemStack(inventory, slot1);
-            ItemStack stack2 = getItemStack(inventory, slot2);
-            ItemStack stack3 = getItemStack(inventory, slot3);
-            ItemStack stack4 = getItemStack(inventory, slot4);
-            return new Object[]{stack1, stack2, stack3, stack4};
+            stack1 = getItemStack(inventory, slot1);
+            stack2 = getItemStack(inventory, slot2);
+            stack3 = getItemStack(inventory, slot3);
+            stack4 = getItemStack(inventory, slot4);
+            return new ModuleDataStacks(stack1, stack2, stack3, stack4);
         } else {
             return null;
         }

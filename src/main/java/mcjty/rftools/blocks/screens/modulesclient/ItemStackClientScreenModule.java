@@ -1,8 +1,11 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.IScreenDataHelper;
+import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-public class ItemStackClientScreenModule implements IClientScreenModule {
+public class ItemStackClientScreenModule implements IClientScreenModule<ItemStackScreenModule.ModuleDataStacks> {
     private int slot1 = -1;
     private int slot2 = -1;
     private int slot3 = -1;
@@ -33,7 +36,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, float factor) {
         if (screenData == null) {
             return;
         }
@@ -86,11 +89,11 @@ public class ItemStackClientScreenModule implements IClientScreenModule {
 
     }
 
-    private int renderSlot(int currenty, Object[] screenData, int slot, int index, int x) {
+    private int renderSlot(int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
             ItemStack itm = null;
             try {
-                itm = (ItemStack) screenData[index];
+                itm = screenData.getStack(index);
             } catch (Exception e) {
                 // Ignore this.
             }
@@ -103,14 +106,9 @@ public class ItemStackClientScreenModule implements IClientScreenModule {
         return x;
     }
 
-    private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, Object[] screenData, int slot, int index, int x) {
+    private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
-            ItemStack itm = null;
-            try {
-                itm = (ItemStack) screenData[index];
-            } catch (Exception e) {
-                // Ignore this.
-            }
+            ItemStack itm = screenData.getStack(index);
             if (itm != null) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
                 renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);

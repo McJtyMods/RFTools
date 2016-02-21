@@ -1,17 +1,15 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.FormatStyle;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.*;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class CounterClientScreenModule implements IClientScreenModule {
+public class CounterClientScreenModule implements IClientScreenModule<IModuleDataInteger> {
 
     private String line = "";
     private int color = 0xffffff;
@@ -31,7 +29,7 @@ public class CounterClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataInteger screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -43,8 +41,8 @@ public class CounterClientScreenModule implements IClientScreenModule {
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             int counter;
-            if (screenData != null && screenData.length > 0 && screenData[0] instanceof Integer) {
-                counter = (Integer) screenData[0];
+            if (screenData != null) {
+                counter = screenData.get();
             } else {
                 counter = 0;
             }

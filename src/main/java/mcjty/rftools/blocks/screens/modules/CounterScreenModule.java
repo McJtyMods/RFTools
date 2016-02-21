@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IScreenDataHelper;
+import mcjty.rftools.api.screens.IModuleDataInteger;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -10,12 +12,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class CounterScreenModule implements IScreenModule {
+public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleDataInteger getData(IScreenDataHelper helper, World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -32,7 +34,7 @@ public class CounterScreenModule implements IScreenModule {
         }
 
         CounterTileEntity counterTileEntity = (CounterTileEntity) te;
-        return new Object[] { counterTileEntity.getCurrent() };
+        return helper.createInteger(counterTileEntity.getCurrent());
     }
 
     @Override

@@ -4,6 +4,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Get a reference to an implementation of this interface by calling:
+ *         FMLInterModComms.sendFunctionMessage("rftools", "getTeleportationManager", "<whatever>.YourClass$GetDimensionManager");
+ */
 public interface ITeleportationManager {
 
     /**

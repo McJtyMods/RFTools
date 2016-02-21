@@ -5,13 +5,14 @@ import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class FluidBarClientScreenModule implements IClientScreenModule {
+public class FluidBarClientScreenModule implements IClientScreenModule<ScreenModuleHelper.ModuleDataContents> {
 
     private String line = "";
     private int color = 0xffffff;
@@ -35,7 +36,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, ScreenModuleHelper.ModuleDataContents screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {

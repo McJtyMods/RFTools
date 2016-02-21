@@ -1,14 +1,16 @@
 package mcjty.rftools.blocks.screens;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
-import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.*;
+import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
+import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
+import mcjty.rftools.blocks.screens.data.ModuleDataString;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,7 +34,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
-    public static Map<GlobalCoordinate, Map<Integer, Object[]>> screenData = new HashMap<>();
+    public static Map<GlobalCoordinate, Map<Integer, IModuleData>> screenData = new HashMap<>();
 
     // Cached client screen modules
     private List<IClientScreenModule> clientScreenModules = null;
@@ -441,14 +443,46 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 //        return computerModules.keySet();
 //    }
 
+    private IScreenDataHelper screenDataHelper = new IScreenDataHelper() {
+        @Override
+        public IModuleDataInteger createInteger(int i) {
+            return new ModuleDataInteger(i);
+        }
+
+        @Override
+        public IModuleDataInteger createInteger(ByteBuf buf) {
+            return new ModuleDataInteger(buf);
+        }
+
+        @Override
+        public IModuleDataBoolean createBoolean(boolean b) {
+            return new ModuleDataBoolean(b);
+        }
+
+        @Override
+        public IModuleDataBoolean createBoolean(ByteBuf buf) {
+            return new ModuleDataBoolean(buf);
+        }
+
+        @Override
+        public IModuleDataString createString(String b) {
+            return new ModuleDataString(b);
+        }
+
+        @Override
+        public IModuleDataString createString(ByteBuf buf) {
+            return new ModuleDataString(buf);
+        }
+    };
+
     // This is called server side.
-    public Map<Integer, Object[]> getScreenData(long millis) {
-        Map<Integer, Object[]> map = new HashMap<Integer, Object[]>();
+    public Map<Integer, IModuleData> getScreenData(long millis) {
+        Map<Integer, IModuleData> map = new HashMap<>();
         List<IScreenModule> screenModules = getScreenModules();
         int moduleIndex = 0;
         for (IScreenModule module : screenModules) {
             if (module != null) {
-                Object[] data = module.getData(worldObj, millis);
+                IModuleData data = module.getData(screenDataHelper, worldObj, millis);
                 if (data != null) {
                     map.put(moduleIndex, data);
                 }

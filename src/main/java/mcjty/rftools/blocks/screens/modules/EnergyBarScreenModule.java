@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.varia.EnergyTools;
@@ -16,7 +18,7 @@ public class EnergyBarScreenModule implements IScreenModule {
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleData getData(IScreenDataHelper h, World worldObj, long millis) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;

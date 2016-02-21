@@ -9,6 +9,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleDataString;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -25,7 +26,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineInformationClientScreenModule implements IClientScreenModule {
+public class MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
 
     private String line = "";
     private int labcolor = 0xffffff;
@@ -44,7 +45,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, Object[] screenData, float factor) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataString screenData, float factor) {
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
@@ -54,8 +55,8 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
             xoffset = 7;
         }
 
-        if ((!BlockPosTools.INVALID.equals(coordinate)) && screenData != null && screenData.length >= 1 && screenData[0] instanceof String) {
-            fontRenderer.drawString((String)screenData[0], xoffset, currenty, txtcolor);
+        if ((!BlockPosTools.INVALID.equals(coordinate)) && screenData != null) {
+            fontRenderer.drawString(screenData.get(), xoffset, currenty, txtcolor);
         } else {
             fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
         }

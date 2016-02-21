@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.api.screens.IModuleDataBoolean;
+import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -10,14 +12,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class RedstoneScreenModule implements IScreenModule {
+public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
     private int channel = -1;
     private BlockPos coordinate = BlockPosTools.INVALID;
     private int dim = 0;
     private EnumFacing side = null;
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleDataBoolean getData(IScreenDataHelper helper, World worldObj, long millis) {
         if (channel == -1) {
             // If we are monitoring some block then we can use that.
             if (!BlockPosTools.INVALID.equals(coordinate)) {
@@ -27,7 +29,7 @@ public class RedstoneScreenModule implements IScreenModule {
                     int powerTo = world.getRedstonePower(coordinate.offset(side), side.getOpposite());
 //                    int powerTo = world.getIndirectPowerLevelTo(coordinate.getX(), coordinate.getY(), coordinate.getZ(), side);
 
-                    return new Object[] { powerTo > 0 ? true : false };
+                    return helper.createBoolean(powerTo > 0);
                 }
             }
             return null;
@@ -40,7 +42,7 @@ public class RedstoneScreenModule implements IScreenModule {
         if (ch == null) {
             return null;
         }
-        return new Object[] { ch.getValue() != 0 ? true : false };
+        return helper.createBoolean(ch.getValue() != 0);
     }
 
     @Override

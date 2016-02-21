@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.rftools.api.screens.IModuleData;
+import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +10,7 @@ import net.minecraft.world.World;
 public class ClockScreenModule implements IScreenModule {
 
     @Override
-    public Object[] getData(World worldObj, long millis) {
+    public IModuleData getData(IScreenDataHelper helper, World worldObj, long millis) {
         return null;
     }
 

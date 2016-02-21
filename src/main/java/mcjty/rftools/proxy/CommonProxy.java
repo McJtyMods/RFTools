@@ -51,6 +51,8 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModWorldgen.init();
+
+        RFTools.screenModuleRegistry.registerBuiltins();
     }
 
     private void readMainConfig() {

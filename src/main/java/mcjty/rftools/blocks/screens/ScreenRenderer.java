@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
@@ -68,7 +69,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             GlStateManager.depthMask(false);
             GlStateManager.disableLighting();
 
-            Map<Integer, Object[]> screenData = updateScreenData(tileEntity);
+            Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
 
             List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
             renderModules(fontrenderer, mode, modules, screenData, tileEntity.getSize());
@@ -82,7 +83,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 //        GL11.glPopAttrib();
     }
 
-    private Map<Integer, Object[]> updateScreenData(ScreenTileEntity screenTileEntity) {
+    private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
@@ -91,7 +92,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         }
 
         GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimensionId());
-        Map<Integer,Object[]> screenData = ScreenTileEntity.screenData.get(key);
+        Map<Integer,IModuleData> screenData = ScreenTileEntity.screenData.get(key);
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
         }
@@ -100,7 +101,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
 
-    private void renderModules(FontRenderer fontrenderer, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, Object[]> screenData, int size) {
+    private void renderModules(FontRenderer fontrenderer, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, IModuleData> screenData, int size) {
         float f3;
         float factor = size + 1.0f;
         int currenty = 7;
