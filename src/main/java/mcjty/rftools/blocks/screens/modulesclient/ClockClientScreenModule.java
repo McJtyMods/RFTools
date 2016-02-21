@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class ClockClientScreenModule implements IClientScreenModule {
@@ -73,7 +74,7 @@ public class ClockClientScreenModule implements IClientScreenModule {
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("color")) {

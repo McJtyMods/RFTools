@@ -40,7 +40,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
@@ -48,9 +48,9 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
                 this.dim = tagCompound.getInteger("dim");
                 if (dim == this.dim) {
                     BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
-                    int dx = Math.abs(c.getX() - x);
-                    int dy = Math.abs(c.getY() - y);
-                    int dz = Math.abs(c.getZ() - z);
+                    int dx = Math.abs(c.getX() - pos.getX());
+                    int dy = Math.abs(c.getY() - pos.getY());
+                    int dz = Math.abs(c.getZ() - pos.getZ());
                     if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
                     }

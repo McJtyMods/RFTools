@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 public class EnergyPlusBarClientScreenModule extends EnergyBarClientScreenModule {
 
     @Override
-    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             this.dim = tagCompound.getInteger("dim");

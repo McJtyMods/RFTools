@@ -1,7 +1,8 @@
 package mcjty.rftools.api.screens;
 
 /**
- * A builder to help create gui's for your screen modules
+ * A builder to help create gui's for your screen modules. The 'tagname' parameter is what will
+ * be set in the NBT. With 'monitor' it will use the tags 'monitorx', 'monitory', 'monitorz', and 'dim'.
  */
 public interface IModuleGuiBuilder {
 

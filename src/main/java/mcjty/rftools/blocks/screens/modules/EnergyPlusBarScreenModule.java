@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;

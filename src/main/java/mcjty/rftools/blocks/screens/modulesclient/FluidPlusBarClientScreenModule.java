@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 public class FluidPlusBarClientScreenModule extends FluidBarClientScreenModule {
 
     @Override
-    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             this.dim = tagCompound.getInteger("dim");

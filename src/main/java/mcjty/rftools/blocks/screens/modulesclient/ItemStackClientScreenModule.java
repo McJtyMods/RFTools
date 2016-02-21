@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -16,6 +14,7 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -187,7 +186,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             if (tagCompound.hasKey("slot1")) {
                 slot1 = tagCompound.getInteger("slot1");

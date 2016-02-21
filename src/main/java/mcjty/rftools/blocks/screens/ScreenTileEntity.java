@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
@@ -359,7 +358,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public List<IClientScreenModule> getClientScreenModules() {
         if (clientScreenModules == null) {
             needsServerData = false;
-            clientScreenModules = new ArrayList<IClientScreenModule>();
+            clientScreenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (itemStack != null && itemStack.getItem() instanceof IModuleProvider) {
@@ -374,7 +373,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos().getX(), getPos().getY(), getPos().getZ());
+                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos());
                     clientScreenModules.add(clientScreenModule);
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
@@ -418,7 +417,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos().getX(), getPos().getY(), getPos().getZ());
+                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
 
@@ -454,28 +453,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         }
 
         @Override
-        public IModuleDataInteger createInteger(ByteBuf buf) {
-            return new ModuleDataInteger(buf);
-        }
-
-        @Override
         public IModuleDataBoolean createBoolean(boolean b) {
             return new ModuleDataBoolean(b);
         }
 
         @Override
-        public IModuleDataBoolean createBoolean(ByteBuf buf) {
-            return new ModuleDataBoolean(buf);
-        }
-
-        @Override
         public IModuleDataString createString(String b) {
             return new ModuleDataString(b);
-        }
-
-        @Override
-        public IModuleDataString createString(ByteBuf buf) {
-            return new ModuleDataString(buf);
         }
     };
 

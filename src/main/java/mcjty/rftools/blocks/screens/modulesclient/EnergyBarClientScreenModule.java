@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
-import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -67,7 +66,7 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("color")) {
@@ -92,19 +91,19 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
             showpct = tagCompound.getBoolean("showpct");
             format = FormatStyle.values()[tagCompound.getInteger("format")];
 
-            setupCoordinateFromNBT(tagCompound, dim, x, y, z);
+            setupCoordinateFromNBT(tagCompound, dim, pos);
         }
     }
 
-    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, int x, int y, int z) {
+    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             this.dim = tagCompound.getInteger("dim");
             if (dim == this.dim) {
                 BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
-                int dx = Math.abs(c.getX() - x);
-                int dy = Math.abs(c.getY() - y);
-                int dz = Math.abs(c.getZ() - z);
+                int dx = Math.abs(c.getX() - pos.getX());
+                int dy = Math.abs(c.getY() - pos.getY());
+                int dz = Math.abs(c.getZ() - pos.getZ());
                 if (dx <= 64 && dy <= 64 && dz <= 64) {
                     coordinate = c;
                 }
