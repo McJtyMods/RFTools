@@ -100,7 +100,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         final ChoiceLabel tagButton = new ChoiceLabel(mc, gui).setDesiredHeight(16).setDesiredWidth(80);
         optionPanel.addChild(tagButton);
 
-//        int dim = currentData.getInteger("dim");
+//        int dim = currentData.getInteger("monitordim");
         int x = currentData.getInteger("monitorx");
         int y = currentData.getInteger("monitory");
         int z = currentData.getInteger("monitorz");
@@ -145,7 +145,12 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
                 setDesiredHeight(16);
         String monitoring;
         if (currentData.hasKey("monitorx")) {
-            int dim = currentData.getInteger("dim");
+            if (currentData.hasKey("monitordim")) {
+                this.dim = currentData.getInteger("monitordim");
+            } else {
+                // Compatibility reasons
+                this.dim = currentData.getInteger("dim");
+            }
             World world = mc.thePlayer.worldObj;
             if (dim == world.provider.getDimensionId()) {
                 int x = currentData.getInteger("monitorx");
@@ -215,7 +220,12 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
-            this.dim = tagCompound.getInteger("dim");
+            if (tagCompound.hasKey("monitordim")) {
+                this.dim = tagCompound.getInteger("monitordim");
+            } else {
+                // Compatibility reasons
+                this.dim = tagCompound.getInteger("dim");
+            }
             if (dim == this.dim) {
                 BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());

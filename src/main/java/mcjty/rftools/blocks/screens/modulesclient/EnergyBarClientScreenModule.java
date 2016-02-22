@@ -61,8 +61,8 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
         guiBuilder.
                 label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
                 label("RF+:").color("rfcolor", "Color for the RF text").label("RF-:").color("rfcolor_neg", "Color for the negative", "RF/tick ratio").nl().
-                toggleNegative("hidebar", "Bar", "Toggle visibility of the", "energy bar").mode("RF").format().nl().
-                label("Block:").monitor().nl();
+                toggleNegative("hidebar", "Bar", "Toggle visibility of the", "energy bar").mode("RF").format("format").nl().
+                label("Block:").block("monitor").nl();
     }
 
     @Override
@@ -98,7 +98,12 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
-            this.dim = tagCompound.getInteger("dim");
+            if (tagCompound.hasKey("monitordim")) {
+                this.dim = tagCompound.getInteger("monitordim");
+            } else {
+                // Compatibility reasons
+                this.dim = tagCompound.getInteger("dim");
+            }
             if (dim == this.dim) {
                 BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());

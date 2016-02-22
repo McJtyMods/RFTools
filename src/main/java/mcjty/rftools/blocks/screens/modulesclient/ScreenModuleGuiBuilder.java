@@ -153,8 +153,8 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     }
 
     @Override
-    public ScreenModuleGuiBuilder format() {
-        ChoiceLabel label = setupFormatCombo(mc, gui, currentData, moduleGuiChanged);
+    public ScreenModuleGuiBuilder format(String tagname) {
+        ChoiceLabel label = setupFormatCombo(mc, gui, tagname, currentData, moduleGuiChanged);
         row.add(label);
         return this;
     }
@@ -167,16 +167,22 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     }
 
     @Override
-    public ScreenModuleGuiBuilder monitor() {
+    public ScreenModuleGuiBuilder block(String tagnamePos) {
         String monitoring;
-        if (currentData.hasKey("monitorx")) {
-            int dim = currentData.getInteger("dim");
+        if (currentData.hasKey(tagnamePos + "x")) {
+            int dim;
+            if (currentData.hasKey(tagnamePos + "dim")) {
+                dim = currentData.getInteger(tagnamePos + "dim");
+            } else {
+                // For compatibility reasons.
+                dim = currentData.getInteger("dim");
+            }
             World world = mc.thePlayer.worldObj;
             if (dim == world.provider.getDimensionId()) {
-                int x = currentData.getInteger("monitorx");
-                int y = currentData.getInteger("monitory");
-                int z = currentData.getInteger("monitorz");
-                monitoring = currentData.getString("monitorname");
+                int x = currentData.getInteger(tagnamePos+"x");
+                int y = currentData.getInteger(tagnamePos+"y");
+                int z = currentData.getInteger(tagnamePos+"z");
+                monitoring = currentData.getString(tagnamePos+"name");
                 Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
                 row.add(new BlockRender(mc, gui).setRenderItem(block).setDesiredWidth(20));
                 row.add(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
@@ -209,7 +215,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return this;
     }
 
-    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, String tagname, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
@@ -218,11 +224,11 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 setChoiceTooltip(modeCompact, "Compact format: 3.1M").
                 setChoiceTooltip(modeCommas, "Comma format: 3,123,555").
                 addChoiceEvent((parent, newChoice) -> {
-                    currentData.setInteger("format", FormatStyle.getStyle(newChoice).ordinal());
+                    currentData.setInteger(tagname, FormatStyle.getStyle(newChoice).ordinal());
                     moduleGuiChanged.updateData();
                 });
 
-        FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger("format")];
+        FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger(tagname)];
         modeButton.setChoice(currentFormat.getName());
 
         return modeButton;

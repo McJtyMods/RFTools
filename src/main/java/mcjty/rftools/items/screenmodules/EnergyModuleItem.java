@@ -83,7 +83,7 @@ public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvi
             tagCompound = new NBTTagCompound();
         }
         if (EnergyTools.isEnergyTE(te)) {
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -97,7 +97,7 @@ public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvi
                 Logging.message(player, "Energy module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("dim");
+            tagCompound.removeTag("monitordim");
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");

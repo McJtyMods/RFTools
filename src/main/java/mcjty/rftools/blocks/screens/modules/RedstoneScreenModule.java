@@ -54,7 +54,12 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
             }
             if (tagCompound.hasKey("monitorx")) {
                 side = EnumFacing.values()[tagCompound.getInteger("monitorside")];
-                this.dim = tagCompound.getInteger("dim");
+                if (tagCompound.hasKey("monitordim")) {
+                    this.dim = tagCompound.getInteger("monitordim");
+                } else {
+                    // Compatibility reasons
+                    this.dim = tagCompound.getInteger("dim");
+                }
                 if (dim == this.dim) {
                     BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
                     int dx = Math.abs(c.getX() - pos.getX());

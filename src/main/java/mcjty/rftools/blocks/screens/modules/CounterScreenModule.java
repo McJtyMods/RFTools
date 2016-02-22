@@ -42,7 +42,12 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.hasKey("monitorx")) {
-                this.dim = tagCompound.getInteger("dim");
+                if (tagCompound.hasKey("monitordim")) {
+                    this.dim = tagCompound.getInteger("monitordim");
+                } else {
+                    // Compatibility reasons
+                    this.dim = tagCompound.getInteger("dim");
+                }
                 if (dim == this.dim) {
                     BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
                     int dx = Math.abs(c.getX() - pos.getX());

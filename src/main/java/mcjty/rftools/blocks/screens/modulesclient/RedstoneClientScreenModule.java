@@ -60,7 +60,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
                 label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
                 label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl().
                 label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl().
-                label("Block:").monitor().nl();
+                label("Block:").block("monitor").nl();
     }
 
     @Override

@@ -83,7 +83,7 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
             tagCompound = new NBTTagCompound();
         }
         if (te instanceof IFluidHandler) {
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -97,7 +97,7 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
                 Logging.message(player, "Fluid module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("dim");
+            tagCompound.removeTag("monitordim");
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");

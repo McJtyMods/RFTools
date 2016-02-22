@@ -41,7 +41,13 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
         if (tagCompound != null) {
             list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             if (tagCompound.hasKey("monitorx")) {
-                int dim = tagCompound.getInteger("dim");
+                int dim;
+                if (tagCompound.hasKey("monitordim")) {
+                    dim = tagCompound.getInteger("monitordim");
+                } else {
+                    // Compatibility reasons
+                    dim = tagCompound.getInteger("dim");
+                }
                 int monitorx = tagCompound.getInteger("monitorx");
                 int monitory = tagCompound.getInteger("monitory");
                 int monitorz = tagCompound.getInteger("monitorz");
@@ -65,7 +71,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
             tagCompound = new NBTTagCompound();
         }
         if (te instanceof IInventory) {
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -79,7 +85,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
                 Logging.message(player, "Inventory module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("dim");
+            tagCompound.removeTag("monitordim");
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");

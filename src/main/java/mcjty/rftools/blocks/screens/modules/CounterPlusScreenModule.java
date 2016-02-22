@@ -13,7 +13,12 @@ public class CounterPlusScreenModule extends CounterScreenModule {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.hasKey("monitorx")) {
-                this.dim = tagCompound.getInteger("dim");
+                if (tagCompound.hasKey("monitordim")) {
+                    this.dim = tagCompound.getInteger("monitordim");
+                } else {
+                    // Compatibility reasons
+                    this.dim = tagCompound.getInteger("dim");
+                }
                 coordinate = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
             }
         }

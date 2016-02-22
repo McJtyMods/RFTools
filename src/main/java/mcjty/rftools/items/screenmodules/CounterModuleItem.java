@@ -84,7 +84,7 @@ public class CounterModuleItem extends GenericRFToolsItem implements IModuleProv
             tagCompound = new NBTTagCompound();
         }
         if (te instanceof CounterTileEntity) {
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -99,7 +99,7 @@ public class CounterModuleItem extends GenericRFToolsItem implements IModuleProv
                 Logging.message(player, "Counter module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("dim");
+            tagCompound.removeTag("monitordim");
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");

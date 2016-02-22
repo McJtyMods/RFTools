@@ -64,7 +64,7 @@ public class InventoryModuleItem extends GenericRFToolsItem implements IModulePr
             tagCompound = new NBTTagCompound();
         }
         if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) || te instanceof IInventory) {
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -78,7 +78,7 @@ public class InventoryModuleItem extends GenericRFToolsItem implements IModulePr
                 Logging.message(player, "Inventory module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("dim");
+            tagCompound.removeTag("monitordim");
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");

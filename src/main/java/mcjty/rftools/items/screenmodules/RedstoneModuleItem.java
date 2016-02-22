@@ -102,7 +102,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
         } else {
             // We selected a random block.
             tagCompound.setInteger("channel", -1);
-            tagCompound.setInteger("dim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -114,7 +114,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
             return true;
         }
 
-        tagCompound.removeTag("dim");
+        tagCompound.removeTag("monitordim");
         tagCompound.removeTag("monitorx");
         tagCompound.removeTag("monitory");
         tagCompound.removeTag("monitorz");
