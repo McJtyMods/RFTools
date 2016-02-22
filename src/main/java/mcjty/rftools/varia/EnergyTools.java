@@ -45,7 +45,7 @@ public class EnergyTools {
     }
 
     public static boolean isEnergyTE(TileEntity te) {
-        return te instanceof IEnergyHandler || te instanceof IEnergyReceiver || te instanceof IEnergyProvider;
+        return te instanceof IEnergyHandler;
     }
 
     // Get energy level with possible support for multiblocks (like EnderIO capacitor bank).
@@ -54,14 +54,6 @@ public class EnergyTools {
         long energyStored;
         if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
-            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
-        } else if (tileEntity instanceof IEnergyReceiver) {
-            IEnergyReceiver handler = (IEnergyReceiver) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
-            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
-        } else if (tileEntity instanceof IEnergyProvider) {
-            IEnergyProvider handler = (IEnergyProvider) tileEntity;
             maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
             energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else {
@@ -76,14 +68,6 @@ public class EnergyTools {
         int energyStored;
         if (tileEntity instanceof IEnergyHandler) {
             IEnergyHandler handler = (IEnergyHandler) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
-            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
-        } else if (tileEntity instanceof IEnergyReceiver) {
-            IEnergyReceiver handler = (IEnergyReceiver) tileEntity;
-            maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
-            energyStored = handler.getEnergyStored(EnumFacing.DOWN);
-        } else if (tileEntity instanceof IEnergyProvider) {
-            IEnergyProvider handler = (IEnergyProvider) tileEntity;
             maxEnergyStored = handler.getMaxEnergyStored(EnumFacing.DOWN);
             energyStored = handler.getEnergyStored(EnumFacing.DOWN);
         } else {
