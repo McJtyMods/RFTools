@@ -6,7 +6,9 @@ public class PowerCellConfiguration {
 
     public static final String CATEGORY_POWERCELL = "powercell";
     public static int rfPerCell = 500000;
+    public static int rfPerCellAdvanced = 2000000;
     public static int rfPerTick = 5000;
+    public static int rfPerTickAdvanced = 20000;
 
     public static double powerCellCostFactor = 1.10;
     public static double powerCellDistanceCap = 10000;
@@ -18,6 +20,8 @@ public class PowerCellConfiguration {
     public static void init(Configuration cfg) {
         rfPerTick = cfg.get(CATEGORY_POWERCELL, "rfPerTick", rfPerTick, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
         rfPerCell = cfg.get(CATEGORY_POWERCELL, "rfPerCell", rfPerCell, "Maximum RF storage that a single cell can hold").getInt();
+        rfPerTickAdvanced = cfg.get(CATEGORY_POWERCELL, "rfPerTickAdvanced", rfPerTickAdvanced, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
+        rfPerCellAdvanced = cfg.get(CATEGORY_POWERCELL, "rfPerCellAdvanced", rfPerCellAdvanced, "Maximum RF storage that an advanced single cell can hold").getInt();
 
         powerCellCostFactor = cfg.get(CATEGORY_POWERCELL, "powerCellCostFactor", powerCellCostFactor,
                                       "The maximum cost factor for extracting energy out of a powercell for blocks in other dimensions or farther away then 10000 blocks").getDouble();

@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
@@ -40,8 +41,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     private static long lastTime = 0;
 
-    public PowerCellBlock() {
-        super(Material.iron, PowerCellTileEntity.class, PowerCellContainer.class, "powercell", true);
+    public PowerCellBlock(String name) {
+        super(Material.iron, PowerCellTileEntity.class, PowerCellContainer.class, name, true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -97,7 +98,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
-            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + (PowerCellInfoPacketClient.tooltipBlocks * PowerCellConfiguration.rfPerCell) + " RF");
+            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
+                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCellAdvanced;
+            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
             if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
                 currenttip.add(EnumChatFormatting.YELLOW + "Side: input mode");
@@ -134,7 +137,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(world);
                     PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
                     network.setEnergy(energy + network.getEnergy());
-                    network.add(powerCellTileEntity.getGlobalPos());
+                    Block block = world.getBlockState(pos).getBlock();
+                    network.add(powerCellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
                     powerCellNetwork.save(world);
                 }
             }
@@ -174,7 +178,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 PowerCellNetwork.Network network = cellTileEntity.getNetwork();
                 if (network != null) {
                     network.extractEnergySingleBlock();
-                    network.remove(cellTileEntity.getGlobalPos());
+                    Block block = world.getBlockState(pos).getBlock();
+                    network.remove(cellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
                     PowerCellNetwork.getChannels(world).save(world);
                 }
             }

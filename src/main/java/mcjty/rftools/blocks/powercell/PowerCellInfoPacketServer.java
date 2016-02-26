@@ -47,7 +47,7 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
-                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1));
+                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1, world.getBlockState(pos).getBlock() == PowerCellSetup.advancedPowerCellBlock ? 1 : 0));
             } else {
                 return Optional.empty();
             }
@@ -55,7 +55,7 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
             PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
             PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
 
-            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount()));
+            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(), network.getAdvancedBlockCount()));
         }
     }
 }

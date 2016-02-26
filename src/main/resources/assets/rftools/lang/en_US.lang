@@ -116,6 +116,7 @@ tile.support_block.name=Support Block
 tile.space_chamber.name=Space Chamber Corner Block
 tile.space_chamber_controller.name=Space Chamber Controller Block
 tile.powercell.name=Powercell
+tile.powercell_advanced.name=Advanced Powercell
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

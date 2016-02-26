@@ -109,6 +109,7 @@ public class PowerCellNetwork extends WorldSavedData {
     public static class Network {
         private int energy = 0;
         private Set<GlobalCoordinate> blocks = new HashSet<>();
+        private int advancedBlocks = 0;
 
         // Connectivity information that calculates the cost of extracting energy depending
         // on distance factors. Is recalculated automatically if it is null.
@@ -118,17 +119,27 @@ public class PowerCellNetwork extends WorldSavedData {
             return blocks.size();
         }
 
-        public void add(GlobalCoordinate g) {
+        public int getAdvancedBlockCount() {
+            return advancedBlocks;
+        }
+
+        public void add(GlobalCoordinate g, boolean advanced) {
             if (!blocks.contains(g)) {
                 blocks.add(g);
                 costFactor = null;
+                if (advanced) {
+                    advancedBlocks++;
+                }
             }
         }
 
-        public void remove(GlobalCoordinate g) {
+        public void remove(GlobalCoordinate g, boolean advanced) {
             if (blocks.contains(g)) {
                 blocks.remove(g);
                 costFactor = null;
+                if (advanced) {
+                    advancedBlocks--;
+                }
             }
         }
 
@@ -248,6 +259,7 @@ public class PowerCellNetwork extends WorldSavedData {
 
         public void writeToNBT(NBTTagCompound tagCompound){
             tagCompound.setInteger("energy", energy);
+            tagCompound.setInteger("advanced", advancedBlocks);
             NBTTagList list = new NBTTagList();
             for (GlobalCoordinate block : blocks) {
                 NBTTagCompound tag = new NBTTagCompound();
@@ -263,6 +275,7 @@ public class PowerCellNetwork extends WorldSavedData {
 
         public void readFromNBT(NBTTagCompound tagCompound){
             this.energy = tagCompound.getInteger("energy");
+            this.advancedBlocks = tagCompound.getInteger("advanced");
             blocks.clear();
             NBTTagList list = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < list.tagCount() ; i++) {
