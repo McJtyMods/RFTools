@@ -25,7 +25,6 @@ Table of contents:
 {l:envctrl}Environmental Control
 {l:spawner}Spawner System
 {l:builder}Builder
-{l:dimlet}Dimension Builder
 {-------------------------------------------------------------}
 {b}General Tips
 {n:general}
@@ -47,7 +46,7 @@ mining the block but they will not be able to change ownership
 you can clear ownership for your own blocks (unless you are an
 admin, then you can do it all the time).
 
-{ri:orphaningCardItem}
+{ri:orphaning_card}
 {-------------------------------------------------------------}
 Only if you are the owner of a block can you change the security
 settings of that block. Basically that means you can control
@@ -55,10 +54,10 @@ who can access the user interface. To change the security settings
 of a block you have to right click it with a properly set up
 Security Card:
 
-{ri:securityCardItem}
+{ri:security_card}
 {-------------------------------------------------------------}
 Security Cards need to be configured in the Security Manager:
-{rb:securityManagerBlock}
+{rb:security_manager}
 
 You insert the card you want to configure in the top-left slot
 and then you can change the name of the channel, add players
@@ -97,7 +96,7 @@ on a block in WAILA.
 {-------------------------------------------------------------}
 {b}Smart Wrench
 {n:smartwrench}
-{ri:smartWrenchItem}
+{ri:smartwrench}
 The Smart Wrench works as a normal wrench. However it has two modes:
 'wrench' and 'select'. To switch modes just right click in the air.
 
@@ -110,7 +109,7 @@ blocks to protect.
 {-------------------------------------------------------------}
 {b}RF Network Monitor Item
 {n:netmon}
-{ri:networkMonitorItem}
+{ri:network_monitor}
 With the RF Network Monitor you can select a block and it will try
 to find all blocks that use or produce RF which are connected
 (directly or inderectly) to the selected block. It will also show
@@ -125,9 +124,9 @@ filter the output.
 {-------------------------------------------------------------}
 {b}Base Ingredients
 {n:base}
-{rb:machineFrame}
+{rb:machine_frame}
 The machine frame is the base ingredient for most machines in this mod.
-{rb:machineBase}
+{rb:machine_base}
 The machine base is the base ingredient for a few other machines.
 {-------------------------------------------------------------}
 {b}Logic Gates
@@ -142,7 +141,7 @@ The machine base is the base ingredient for a few other machines.
 {-------------------------------------------------------------} 
 {b}Sequencer
 {n:sequencer}
-{rb:sequencerBlock}
+{rb:sequencer_block}
 The sequencer is an advanced redstone based sequencer. It is
 capable of giving out a series of 64 different signals. You can
 edit the pattern of these signals in the gui of this block.
@@ -165,7 +164,7 @@ It has seven different modes:
 {-------------------------------------------------------------}
 {b}Timer
 {n:timer}
-{rb:timerBlock}
+{rb:timer_block}
 The timer is a simple gate that will repeatedly send a redstone pulse.
 You can input any value for the delay so it can be used for very long
 timeouts.
@@ -177,7 +176,7 @@ block can be used as a way to detect that a certain activity is overdue.
 {-------------------------------------------------------------}
 {b}Counter
 {n:counter}
-{rb:counterBlock}
+{rb:counter_block}
 The counter is a simple block that will count redstone pulses and
 emit a redstone signal when it reaches a certain amount. Then it
 starts over. You can see in the GUI how many redstone pulses it
@@ -185,7 +184,7 @@ already got.
 {-------------------------------------------------------------}
 {b}Ender Monitor
 {n:endermon}
-{rb:enderMonitorBlock}
+{rb:ender_monitor_block}
 The Ender Monitor only works in combination with the Endergenic
 Generator. It will send a pulse based on three different conditions:
 
@@ -198,7 +197,7 @@ has to face away from the Endergenic Generator.
 {-------------------------------------------------------------}
 {b}Redstone Transmitter
 {n:redtrans}
-{rb:redstoneTransmitterBlock}
+{rb:redstone_transmitter_block}
 This block will wirelessly send out a redstone signal on a
 specific channel when it gets a redstone signal. Use this in
 combination with the redstone receiver block. If you place this
@@ -208,7 +207,7 @@ transmitter or receiver.
 {-------------------------------------------------------------}
 {b}Redstone Receiver
 {n:redrec}
-{rb:redstoneReceiverBlock}
+{rb:redstone_receiver_block}
 This block will receive a redstone signal from a linked
 redstone transmitter. To link this receiver with a transmitter
 right-select the transmitter (or another linked receiver) with
@@ -216,7 +215,7 @@ this block.
 {-------------------------------------------------------------}
 {b}RF Monitor
 {n:monitor}
-{rb:rfMonitorBlock}
+{rb:rf_monitor}
 The RF Monitor is a block that you place in the world and that
 can examine a nearby (3x3x3 area around the monitor) block and
 gives a visual indication of how much RF is left in that block.
@@ -227,13 +226,13 @@ parts of your RF network.
 {-------------------------------------------------------------} 
 {b}Liquid Monitor
 {n:liqmonitor}
-{rb:liquidMonitorBlock}
+{rb:liquid_monitor}
 The Liquid Monitor is a block that works like the RF Monitor except
 that it can examine the contents of a nearby liquid tank.
 {-------------------------------------------------------------}
 {b}Storage Scanner
 {n:stomon}
-{rb:storageScannerBlock}
+{rb:storage_scanner}
 The Storage Scanner is a block that can scan the surrounding
 area for inventories (chests, furnaces, other devices, basically
 anything that can hold items) and show them in a list. You can
@@ -268,7 +267,7 @@ take a while.
 {-------------------------------------------------------------}
 {b}Storage System
 {n:storage}
-{rb:modularStorageBlock}
+{rb:modular_storage}
 The Modular Storage Block is an advanced chest. Before you can use it
 you must insert a storage module. There are three tiers: 100, 200,
 or 300 stacks. You can insert modules to make the chest work better
@@ -281,7 +280,7 @@ a filter module to restrict items going into the storage.
 {-------------------------------------------------------------}
 {n:remotestor}
 There is also a Remote Storage Block:
-{rb:remoteStorageBlock}
+{rb:remote_storage}
 With this block you can make a storage module available remotely.
 You can put up to four storage modules in the remote storage block.
 Then you can create Remote Storage Module items. These need
@@ -294,7 +293,7 @@ or you can insert the module in a modular chest block.
 {-------------------------------------------------------------}
 {n:storfilter}
 Offline access with the Tablet:
-{ri:storageModuleTabletItem}
+{ri:storage_module_tablet}
 With this item you can open the contents of a remote or normal
 storage module from within your hotbar. To use it you need to
 craft the tablet together with the storage module and you must
@@ -303,7 +302,7 @@ more RF to open. To get the storage module and empty tablet
 back you just put the tablet in your crafting grid.
 {-------------------------------------------------------------}
 Filtering items for your storage:
-{ri:storageFilterItem}
+{ri:filter_module}
 With this item you can control what is allowed in the chest and
 what not. You can whitelist or blacklist and also filter with
 NBT, damage, ore dictionary or even based on mod.
@@ -316,7 +315,7 @@ by having the filter in your hand (outside of the machine).
 {-------------------------------------------------------------}
 {b}Automatic Crafter
 {n:crafter}
-{rb:crafterBlock1}
+{rb:crafter1}
 The Crafter is a powerful automatic crafting machine that can handle
 up to eight different recipes in a single block. It can be used to
 craft multiple items independent from each other or else it can be
@@ -349,7 +348,7 @@ to slow by default. Fast mode uses more energy.
 {-------------------------------------------------------------}
 {b}Block Protector
 {n:protect}
-{rb:blockProtectorBlock}
+{rb:block_protector}
 With the block protector you can protect blocks from being harvested
 or affected by explosions. Use the 'sneak-select' mode on the Smart
 Wrench to select the protector and then just 'select' all blocks you
@@ -368,7 +367,7 @@ protector itself.
 {-------------------------------------------------------------}
 {b}RF Power Relay
 {n:prelay}
-{rb:relayBlock}
+{rb:relay}
 The Power Relay allows you to control how much RF to output based on a
 redstone signal. In its GUI you can set the amount of RF/tick to give
 in case redstone signal is off and also in case redstone signal is on.
@@ -407,7 +406,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {-------------------------------------------------------------} 
 {b}Matter Transmitter
 {n:tptransmitter}
-{rb:matterTransmitterBlock}
+{rb:matter_transmitter}
 The matter transmitter is placed on the ground and (when dialed to a
 valid destination) will teleport a player that is standing on it. There
 is a fixed energy cost which is consumed immediatelly when the player
@@ -419,7 +418,7 @@ then potentially very bad things can happen to the player.
 {-------------------------------------------------------------} 
 {b}Matter Receiver
 {n:tpreceiver}
-{rb:matterReceiverBlock}
+{rb:matter_receiver}
 The matter receiver is also placed on the ground. Players that teleport
 to a receiver will appear on top of this block. Note that a receiver needs
 energy. If the receiver doesn't have enough energy then teleportation will
@@ -431,7 +430,7 @@ be shown in the dialing device which makes it easier to recognize.
 {-------------------------------------------------------------} 
 {b}Dialing Device
 {n:tpdialer}
-{rb:dialingDeviceBlock}
+{rb:dialing_device}
 The dialing device is an important block which is needed to connect
 nearby matter transmitters to receivers anywhere in the world. It shows
 a list of all transmitters in the vicinity (by default an area of 21x11x21).
@@ -444,7 +443,7 @@ analyzer connected to this machine (see below).
 {-------------------------------------------------------------} 
 {b}Destination Analyzer
 {n:tpdestcheck}
-{rb:destinationAnalyzerBlock}
+{rb:destination_analyzer}
 This is a passive block that you can place next to a dialing device. It
 enables the dialing device to check the status of a receiver or destination
 dimension. This way you can be sure that a receiver and/or dimension has
@@ -457,7 +456,7 @@ actual problem in the dialing device.
 {-------------------------------------------------------------}
 {b}Matter Booster
 {n:tpbooster}
-{rb:matterBoosterBlock}
+{rb:matter_booster}
 This is another passive block that you can place next to a matter
 transmitter. If this block is present it gives the transmitter the
 capability to teleport the user to an unpowered receiver. This does
@@ -487,7 +486,7 @@ sneak-right click) and charge up. Right clicking the porter will teleport
 you. Note that this requires more power compared to normal teleportation.
 Also note that the receiver still needs power! To craft this use:
 
-{ri:chargedPorterItem}
+{ri:charged_porter}
 
 The advanced version that can store more power, teleports faster and
 allows 4 destinations (sneak right click to add receiver and sneak right
@@ -500,7 +499,7 @@ transmitter/receiver combination when it gets a redstone signal.
 To set the transmitter and/or receiver you have to sneak-right
 click with this block on the transmitter and/or the receiver.
 
-{ri:simpleDialerBlock}
+{rb:simple_dialer}
 {-------------------------------------------------------------}
 {b}Power Generator
 {n:power}
@@ -529,7 +528,7 @@ at all times.
 {-------------------------------------------------------------}
 {b}Endergenic Generator
 {n:powendergenic}
-{rb:endergenicBlock}
+{rb:endergenic_generator}
 
 The Endergenic Generator is the main block in the power generator system.
 This device can capture endergenic pearls and fire them again. It has three
@@ -580,7 +579,7 @@ be the best way to proceed.
 {-------------------------------------------------------------}
 {b}Pearl Injector
 {n:powinjector}
-{rb:pearlInjectorBlock}
+{rb:pearl_injector}
 
 This block has to be placed facing an Endergenic Generator or else
 directly below it. This machine provides the only way to inject an ender
@@ -611,13 +610,13 @@ shield again to get the template blocks back. By doing that you
 can change the shape of your shield in case you're not happy with it.
 {-------------------------------------------------------------}
 To craft the Shield Template Blocks you use the following recipe:
-{rb:shieldTemplateBlock}
+{rb:shield_template}
 
 Note that there are four different template blocks so you can use them
 to make adjacent distinct shields. Every projector will only take one color.
 
 To craft the Shield Block you use the following recipe:
-{rb:shieldBlock}
+{rb:shield}
 {-------------------------------------------------------------}
 The shield has three visualization options:
 
@@ -654,7 +653,7 @@ the shield.
 {-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
-{rb:itemFilterBlock}
+{rb:itemfilter}
 The Item Filter allows controlled input/output from any side of the
 block. It has nine storage slots that can be configured to only hold
 a specific type of item. For each of these storage slots you can
@@ -678,7 +677,7 @@ You can also color a screen by selecting it with a dye item.
 {-------------------------------------------------------------}
 Screens are not directly powered but get power from a Screen
 Controller that you can craft as follows:
-{rb:screenControllerBlock}
+{rb:screen_controller}
 
 In the GUI of this block you can press 'Scan'. This will locate
 all screens in a 65x33x65 area around the controller (or 129x33x129
@@ -686,7 +685,7 @@ for a maximum infused controller). From that point on these
 screens will receive power from this controller.
 {-------------------------------------------------------------}
 You can craft a screen as follows:
-{rb:screenBlock}
+{rb:screen}
 
 A screen with no modules is just black. So to make things interesting you
 should add one or more module.
@@ -719,7 +718,7 @@ other machines that way.
 {-------------------------------------------------------------}
 {b}Environmental Controller
 {n:envctrl}
-{rb:environmentalControllerBlock}
+{rb:environmental_controller}
 
 Using the environmental controller you can improve the area
 around it in various ways. There are modules to give you saturation,
@@ -730,7 +729,7 @@ with a maximum radius of 100 from bottom to top of the world
 {-------------------------------------------------------------}
 {b}Spawner System
 {n:spawner}
-{rb:spawnerBlock}
+{rb:spawner}
 
 With this block you can spawn many kinds of mobs. Using it requires
 a bit of setup work though. First you need a full syringe for the
@@ -740,7 +739,7 @@ of this type.
 {-------------------------------------------------------------}
 To get the materials into the spawner you need to set up
 at least one, preferably three or even more matter beamers:
-{rb:matterBeamerBlock}
+{rb:matter_beamer}
 
 This block has a single slot for items. You can connect
 it to a spawner by first selecting the beamer and then the
@@ -762,7 +761,7 @@ give a bigger bonus.
 {-------------------------------------------------------------}
 {b}Builder
 {n:builder}
-{rb:builderBlock}
+{rb:builder}
 The Builder is one of the most versatile machine in RFTools. It can do:
     - Move a structure from one spot (even other dimension) to another
     - Rebuild a structure from one spot to another
@@ -791,11 +790,11 @@ linked to a space chamber.
 You can use Space Chamber blocks to mark the corners of the source
 area that you want to work. One of these corners should be a
 Space Chamber Controller block.
-{rb:spaceChamberBlock}
-{rb:spaceChamberControllerBlock}
+{rb:space_chamber}
+{rb:space_chamber_controller}
 {-------------------------------------------------------------}
 {n:chambercard}
-{ri:spaceChamberCardItem}
+{ri:space_chamber_card}
 Right selecting the controller block with a wrench will let it form the
 chamber. If all is correct you will get a message saying so. Then you need
 to use a Space Chamber Card (right click it on the controller) to link the
@@ -809,7 +808,7 @@ of all blocks and entities together with the cost of moving them.
 {-------------------------------------------------------------}
 For building geometrical shapes, voiding and quarrying areas you
 need shape cards:
-{ri:shapeCardItem}
+{ri:shape_card}
 
 Right clicking such a card will open a GUI where you can set the shape as
 well as the dimensions. A shape card can be upgraded in the crafting table
@@ -817,12 +816,4 @@ to make the void card and one of the quarry cards.
 
 Note that several options in the GUI of the builder are unused if you use
 shape cards.
-{-------------------------------------------------------------}
-{b}Dimension Builder
-{n:dimlet}
-
-The dimension builder is explained in another book. You can
-craft the dimension builder manual as follows:
-
-{ri:rfToolsManualDimensionItem}
 {-------------------------------------------------------------}
