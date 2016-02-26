@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.powercell;
 
 import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyContainerItem;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import mcjty.lib.container.DefaultSidedInventory;
@@ -8,7 +9,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +35,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public static String CMD_SETINPUT = "setInput";
     public static String CMD_SETOUTPUT = "setOutput";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 3);
 
     private int networkId = -1;
 
@@ -149,16 +149,29 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            if (energyStored <= 0) {
+                return;
+            }
+
+            handleChargingItem();
             sendOutEnergy();
+        }
+    }
+
+    private void handleChargingItem() {
+        ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CHARGEITEM);
+        if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
+            IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
+            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
+            int received = energyContainerItem.receiveEnergy(stack, rfToGive, false);
+            extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
         }
     }
 
     private void sendOutEnergy() {
         int energyStored = getEnergyStored(EnumFacing.DOWN);
-
-        if (energyStored <= 0) {
-            return;
-        }
 
         for (EnumFacing face : EnumFacing.values()) {
             if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
@@ -310,22 +323,26 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return extractEnergyInternal(maxExtract, simulate, PowerCellConfiguration.rfPerTick);
+    }
+
+    private int extractEnergyInternal(int maxExtract, boolean simulate, int maximum) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return extractEnergyLocal(maxExtract, simulate);
+            return extractEnergyLocal(maxExtract, simulate, maximum);
         } else {
-            return extractEnergyMulti(maxExtract, simulate);
+            return extractEnergyMulti(maxExtract, simulate, maximum);
         }
     }
 
-    private int extractEnergyMulti(int maxExtract, boolean simulate) {
+    private int extractEnergyMulti(int maxExtract, boolean simulate, int maximum) {
         PowerCellNetwork.Network network = getNetwork();
         int energy = network.getEnergy();
         if (maxExtract > energy) {
             maxExtract = energy;
         }
-        if (maxExtract > PowerCellConfiguration.rfPerTick) {
-            maxExtract = PowerCellConfiguration.rfPerTick;
+        if (maxExtract > maximum) {
+            maxExtract = maximum;
         }
         if (!simulate) {
             network.setEnergy(energy - maxExtract);
@@ -334,13 +351,13 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return maxExtract;
     }
 
-    private int extractEnergyLocal(int maxExtract, boolean simulate) {
+    private int extractEnergyLocal(int maxExtract, boolean simulate, int maximum) {
         // We act as a single block
         if (maxExtract > energy) {
             maxExtract = energy;
         }
-        if (maxExtract > PowerCellConfiguration.rfPerTick) {
-            maxExtract = PowerCellConfiguration.rfPerTick;
+        if (maxExtract > maximum) {
+            maxExtract = maximum;
         }
         if (!simulate) {
             energy -= maxExtract;

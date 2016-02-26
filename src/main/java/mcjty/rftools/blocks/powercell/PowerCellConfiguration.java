@@ -13,6 +13,8 @@ public class PowerCellConfiguration {
     public static double powerCellMinDistance = 100;
     public static double powerCellRFToolsDimensionAdvantage = .5;
 
+    public static int CHARGEITEMPERTICK = 30000;
+
     public static void init(Configuration cfg) {
         rfPerTick = cfg.get(CATEGORY_POWERCELL, "rfPerTick", rfPerTick, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
         rfPerCell = cfg.get(CATEGORY_POWERCELL, "rfPerCell", rfPerCell, "Maximum RF storage that a single cell can hold").getInt();
@@ -25,5 +27,8 @@ public class PowerCellConfiguration {
                                        "As soon as powercells are not connected this value will be taken as the minimum distance to base the cost factor from").getDouble();
         powerCellRFToolsDimensionAdvantage = cfg.get(CATEGORY_POWERCELL, "powerCellRFToolsDimensionAdvantage", powerCellRFToolsDimensionAdvantage,
                                        "A multiplier for the distance if RFTools dimensions are involved. If both sides are RFTools dimensions then this multiplier is done twice").getDouble();
+
+        CHARGEITEMPERTICK = cfg.get(CATEGORY_POWERCELL, "powercellChargePerTick", CHARGEITEMPERTICK,
+                                    "RF per tick that the powrcell can charge items with").getInt();
     }
 }

@@ -24,7 +24,7 @@ public class TeleportConfiguration {
 
     public static int ADVANCED_CHARGEDPORTER_MAXENERGY = 1000000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
     public static int CHARGEDPORTER_MAXENERGY = 200000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
-    public static int CHARGEDPORTER_RECEIVEPERTICK = 400;
+    public static int CHARGEDPORTER_RECEIVEPERTICK = 2000;
 
     public static int advancedSpeedBonus = 4;               // How much faster the speed of the advanced porter is
 

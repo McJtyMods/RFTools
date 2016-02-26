@@ -49,7 +49,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
 
         Label label = new Label(mc, this);
-        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(62, 24, 40, 18));
+        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(26, 46, 40, 18));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar)
                 .addChild(allNone).addChild(allInput).addChild(allOutput).addChild(label);

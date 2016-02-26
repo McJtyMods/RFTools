@@ -14,12 +14,14 @@ public class PowerCellContainer extends GenericContainer {
 
     public static final int SLOT_CARD = 0;
     public static final int SLOT_CARDCOPY = 1;
+    public static final int SLOT_CHARGEITEM = 2;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARD, 28, 24, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARDCOPY, 100, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARDCOPY, 64, 46, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_CHARGEITEM, 64, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };
