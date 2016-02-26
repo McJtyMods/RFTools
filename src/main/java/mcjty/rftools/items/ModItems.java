@@ -12,6 +12,7 @@ public final class ModItems {
     public static SmartWrenchItem smartWrenchItem;
     public static DimensionalShardItem dimensionalShardItem;
     public static ShardWandItem shardWandItem;
+    public static InfusedDiamond infusedDiamond;
 
     public static void init() {
         setupVariousItems();
@@ -22,6 +23,7 @@ public final class ModItems {
         rfToolsManualItem = new RFToolsManualItem();
         dimensionalShardItem = new DimensionalShardItem();
         shardWandItem = new ShardWandItem();
+        infusedDiamond = new InfusedDiamond();
     }
 
     @SideOnly(Side.CLIENT)
@@ -30,5 +32,6 @@ public final class ModItems {
         rfToolsManualItem.initModel();
         dimensionalShardItem.initModel();
         shardWandItem.initModel();
+        infusedDiamond.initModel();
     }
 }
