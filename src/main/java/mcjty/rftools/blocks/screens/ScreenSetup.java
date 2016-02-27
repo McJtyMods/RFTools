@@ -94,17 +94,17 @@ public class ScreenSetup {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(inventoryModuleItem), " c ", "rir", " b ", 'c', Blocks.chest, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
-//        GameRegistry.addRecipe(new ItemStack(counterModuleItem), " c ", "rir", " b ", 'c', Items.comparator, 'r', Items.redstone, 'i', Items.iron_ingot,
-//                'b', inkSac);
-//        GameRegistry.addRecipe(new ItemStack(redstoneModuleItem), " c ", "rir", " b ", 'c', Items.repeater, 'r', Items.redstone, 'i', Items.iron_ingot,
-//                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(counterModuleItem), " c ", "rir", " b ", 'c', Items.comparator, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(redstoneModuleItem), " c ", "rir", " b ", 'c', Items.repeater, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(machineInformationModuleItem), " f ", "rir", " b ", 'f', Blocks.furnace, 'r', Items.redstone, 'i', Items.iron_ingot,
                 'b', inkSac);
 //        GameRegistry.addRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.redstone, 'i', Items.iron_ingot,
 //                'b', inkSac);
-//        GameRegistry.addRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
-//                'b', inkSac);
-//        GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
+        GameRegistry.addRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,
@@ -118,9 +118,9 @@ public class ScreenSetup {
                 null, new ItemStack(Items.ender_pearl), null,
                 new ItemStack(Items.gold_ingot), new ItemStack(inventoryModuleItem), new ItemStack(Items.gold_ingot),
                 null, new ItemStack(Items.ender_pearl), null }, new ItemStack(inventoryPlusModuleItem), 4));
-//        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                null, new ItemStack(Items.ender_pearl), null,
-//                new ItemStack(Items.gold_ingot), new ItemStack(counterModuleItem), new ItemStack(Items.gold_ingot),
-//                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(counterPlusModuleItem), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                null, new ItemStack(Items.ender_pearl), null,
+                new ItemStack(Items.gold_ingot), new ItemStack(counterModuleItem), new ItemStack(Items.gold_ingot),
+                null, new ItemStack(Items.ender_pearl), null }, new ItemStack(counterPlusModuleItem), 4));
     }
 }
