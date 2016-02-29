@@ -5,6 +5,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 
 public class ScreenModuleHelper {
+    public static final double SMOOTHING = 0.5;
     private boolean showdiff = false;
     private long prevMillis = 0;
     private long prevContents = 0;
@@ -61,20 +62,25 @@ public class ScreenModuleHelper {
 
     public IModuleDataContents getContentsValue(long millis, long contents, long maxContents) {
         if (showdiff) {
-            if (prevMillis == 0 || millis <= prevMillis + 100) {        // <= prevMillis + 100 to make sure we show last value if the timing is too short
+            if (prevMillis == 0) {
                 prevMillis = millis;
                 prevContents = contents;
                 return new ModuleDataContents(contents, maxContents, lastPerTick);
             } else {
-                long diff = millis - prevMillis;
-                int ticks = (int) (diff * 20 / 1000);
-                if (ticks == 0) {
-                    ticks = 1;
+                if (millis > prevMillis + 500) {
+                    long diffEnergy = contents - prevContents;
+                    long diff = millis - prevMillis;
+                    int ticks = (int) (diff * 20 / 1000);
+                    if (ticks == 0) {
+                        ticks = 1;
+                    }
+
+                    long measurement = diffEnergy / ticks;
+                    lastPerTick = (long) ((lastPerTick * SMOOTHING) + (measurement * (1.0 - SMOOTHING)));
+
+                    prevMillis = millis;
+                    prevContents = contents;
                 }
-                long diffEnergy = contents - prevContents;
-                prevMillis = millis;
-                prevContents = contents;
-                lastPerTick = diffEnergy / ticks;
                 return new ModuleDataContents(contents, maxContents, lastPerTick);
             }
         } else {
