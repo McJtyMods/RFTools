@@ -19,6 +19,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     private Button allNone;
     private Button allInput;
     private Button allOutput;
+    private Button stats;
 
     private static long lastTime = 0;
 
@@ -48,11 +49,15 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
                 .setLayoutHint(new PositionalLayout.PositionalHint(140, 44, 32, 15))
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
 
+        stats = new Button(mc, this).setText("Stats").setTooltips("Power statistics. Press to clear:")
+                .setLayoutHint(new PositionalLayout.PositionalHint(100, 10, 32, 15))
+                .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_CLEARSTATS));
+
         Label label = new Label(mc, this);
-        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(26, 46, 40, 18));
+        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(26, 30, 40, 18));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar)
-                .addChild(allNone).addChild(allInput).addChild(allOutput).addChild(label);
+                .addChild(allNone).addChild(allInput).addChild(allOutput).addChild(label).addChild(stats);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -72,8 +77,11 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
         drawWindow();
 
         requestRF();
+
+        stats.setTooltips("Power statistics. Press to clear:", "Inserted: " + PowerCellInfoPacketClient.tooltipInserted, "Extracted: " + PowerCellInfoPacketClient.tooltipExtracted);
+
         energyBar.setMaxValue((PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-            PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor);
+                PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor);
         energyBar.setValue(PowerCellInfoPacketClient.tooltipEnergy);
     }
 }

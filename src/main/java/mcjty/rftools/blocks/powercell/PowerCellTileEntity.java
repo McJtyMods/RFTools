@@ -310,6 +310,14 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
     }
 
+    public int getTotalExtracted() {
+        return totalExtracted;
+    }
+
+    public int getTotalInserted() {
+        return totalInserted;
+    }
+
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {
@@ -508,11 +516,16 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             } else {
                 Block block = w.getBlockState(b.getCoordinate()).getBlock();
                 if (block == PowerCellSetup.powerCellBlock) {
-                    msg = "normal powercell";
+                    msg = "normal";
                 } else if (block == PowerCellSetup.advancedPowerCellBlock) {
-                    msg = "advanced powercell";
+                    msg = "advanced";
                 } else {
                     msg = "not a powercell!";
+                }
+                TileEntity te = w.getTileEntity(b.getCoordinate());
+                if (te instanceof PowerCellTileEntity) {
+                    PowerCellTileEntity power = (PowerCellTileEntity) te;
+                    msg += " (+:" + power.getTotalInserted() + ", -:" + power.getTotalExtracted() + ")";
                 }
             }
 

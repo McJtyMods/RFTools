@@ -43,19 +43,28 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP player) {
         World world = player.worldObj;
 
+        TileEntity te = world.getTileEntity(pos);
         if (id == -1) {
-            TileEntity te = world.getTileEntity(pos);
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
-                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1, world.getBlockState(pos).getBlock() == PowerCellSetup.advancedPowerCellBlock ? 1 : 0));
+                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1, world.getBlockState(pos).getBlock() == PowerCellSetup.advancedPowerCellBlock ? 1 : 0,
+                        powerCellTileEntity.getTotalInserted(), powerCellTileEntity.getTotalExtracted()));
             } else {
                 return Optional.empty();
             }
         } else {
             PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
             PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
+            int totInserted = 0;
+            int totExtracted = 0;
+            if (te instanceof PowerCellTileEntity) {
+                PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
+                totInserted = powerCellTileEntity.getTotalInserted();
+                totExtracted = powerCellTileEntity.getTotalExtracted();
+            }
 
-            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(), network.getAdvancedBlockCount()));
+            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(), network.getAdvancedBlockCount(),
+                    totInserted, totExtracted));
         }
     }
 }

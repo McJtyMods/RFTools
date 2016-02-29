@@ -9,18 +9,24 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     private int energy;
     private int blocks;
     private int advancedBlocks;
+    private int totalInserted;
+    private int totalExtracted;
 
     public static int tooltipEnergy = 0;
     public static int tooltipBlocks = 0;
     public static int tooltipAdvancedBlocks = 0;
+    public static int tooltipInserted = 0;
+    public static int tooltipExtracted = 0;
 
     public PowerCellInfoPacketClient() {
     }
 
-    public PowerCellInfoPacketClient(int energy, int blocks, int advancedBlocks) {
+    public PowerCellInfoPacketClient(int energy, int blocks, int advancedBlocks, int totalInserted, int totalExtracted) {
         this.energy = energy;
         this.blocks = blocks;
         this.advancedBlocks = advancedBlocks;
+        this.totalInserted = totalInserted;
+        this.totalExtracted = totalExtracted;
     }
 
     @Override
@@ -28,6 +34,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         energy = buf.readInt();
         blocks = buf.readInt();
         advancedBlocks = buf.readInt();
+        totalInserted = buf.readInt();
+        totalExtracted = buf.readInt();
     }
 
     @Override
@@ -35,6 +43,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         buf.writeInt(energy);
         buf.writeInt(blocks);
         buf.writeInt(advancedBlocks);
+        buf.writeInt(totalInserted);
+        buf.writeInt(totalExtracted);
     }
 
     @Override
@@ -42,5 +52,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         tooltipEnergy = energy;
         tooltipBlocks = blocks;
         tooltipAdvancedBlocks = advancedBlocks;
+        tooltipInserted= totalInserted;
+        tooltipExtracted = totalExtracted;
     }
 }
