@@ -41,6 +41,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public static String CMD_SETNONE = "setNone";
     public static String CMD_SETINPUT = "setInput";
     public static String CMD_SETOUTPUT = "setOutput";
+    public static String CMD_CLEARSTATS = "clearStats";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 3);
 
@@ -48,6 +49,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     // Only used when this block is not part of a network
     private int energy = 0;
+
+    // Total amount of energy extracted from this block (local or not)
+    private int totalExtracted = 0;
+    // Total amount of energy inserted in this block (local or not)
+    private int totalInserted = 0;
 
     public enum Mode implements IStringSerializable {
         MODE_NONE("none"),
@@ -106,6 +112,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         energy = tagCompound.getInteger("energy");
+        totalInserted = tagCompound.getInteger("totIns");
+        totalExtracted = tagCompound.getInteger("totExt");
         networkId = tagCompound.getInteger("networkId");
         modes[0] = Mode.values()[tagCompound.getByte("m0")];
         modes[1] = Mode.values()[tagCompound.getByte("m1")];
@@ -125,6 +133,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("energy", energy);
+        tagCompound.setInteger("totIns", totalInserted);
+        tagCompound.setInteger("totExt", totalExtracted);
         tagCompound.setInteger("networkId", networkId);
         tagCompound.setByte("m0", (byte) modes[0].ordinal());
         tagCompound.setByte("m1", (byte) modes[1].ordinal());
@@ -306,11 +316,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return 0;
         }
         int networkId = getNetworkId();
+        int received;
         if (networkId == -1) {
-            return receiveEnergyLocal(maxReceive, simulate);
+            received = receiveEnergyLocal(maxReceive, simulate);
         } else {
-            return receiveEnergyMulti(maxReceive, simulate);
+            received = receiveEnergyMulti(maxReceive, simulate);
         }
+        if (!simulate) {
+            totalInserted += received;
+            markDirty();
+        }
+        return received;
     }
 
     private int receiveEnergyMulti(int maxReceive, boolean simulate) {
@@ -344,11 +360,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private int extractEnergyInternal(int maxExtract, boolean simulate, int maximum) {
         int networkId = getNetworkId();
+        int extracted;
         if (networkId == -1) {
-            return extractEnergyLocal(maxExtract, simulate, maximum);
+            extracted = extractEnergyLocal(maxExtract, simulate, maximum);
         } else {
-            return extractEnergyMulti(maxExtract, simulate, maximum);
+            extracted =  extractEnergyMulti(maxExtract, simulate, maximum);
         }
+        if (!simulate) {
+            totalExtracted += extracted;
+            markDirty();
+        }
+        return extracted;
     }
 
     private int extractEnergyMulti(int maxExtract, boolean simulate, int maximum) {
@@ -441,6 +463,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 modes[facing.ordinal()] = Mode.MODE_OUTPUT;
             }
             markDirtyClient();
+            return true;
+        } else if (CMD_CLEARSTATS.equals(command)) {
+            totalExtracted = 0;
+            totalInserted = 0;
+            markDirty();
             return true;
         }
         return false;
