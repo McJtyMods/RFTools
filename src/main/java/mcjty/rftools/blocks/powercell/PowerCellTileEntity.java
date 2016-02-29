@@ -8,9 +8,14 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
+import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import mcjty.rftools.varia.EnergyTools;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -22,14 +27,16 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.Map;
+import java.util.Set;
 
-public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable {
+public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable, SmartWrenchSelector {
 
     public static String CMD_SETNONE = "setNone";
     public static String CMD_SETINPUT = "setInput";
@@ -42,7 +49,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     // Only used when this block is not part of a network
     private int energy = 0;
 
-    public static enum Mode implements IStringSerializable {
+    public enum Mode implements IStringSerializable {
         MODE_NONE("none"),
         MODE_INPUT("input"),   // Blue
         MODE_OUTPUT("output"); // Yellow
@@ -456,4 +463,34 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
         return super.getCapability(capability, facing);
     }
+
+    @Override
+    public void selectBlock(EntityPlayer player, BlockPos pos) {
+        dumpNetwork(player, this);
+    }
+
+    public static void dumpNetwork(EntityPlayer player, PowerCellTileEntity powerCellTileEntity) {
+        PowerCellNetwork.Network network = powerCellTileEntity.getNetwork();
+        Set<GlobalCoordinate> blocks = network.getBlocks();
+        System.out.println("blocks.size() = " + blocks.size());
+        blocks.forEach(b -> {
+            String msg;
+            World w = TeleportationTools.getWorldForDimension(b.getDimension());
+            if (w == null) {
+                msg = "dimension missing!";
+            } else {
+                Block block = w.getBlockState(b.getCoordinate()).getBlock();
+                if (block == PowerCellSetup.powerCellBlock) {
+                    msg = "normal powercell";
+                } else if (block == PowerCellSetup.advancedPowerCellBlock) {
+                    msg = "advanced powercell";
+                } else {
+                    msg = "not a powercell!";
+                }
+            }
+
+            Logging.message(player, "Block: " + BlockPosTools.toString(b.getCoordinate()) + " (" + b.getDimension() + "): " + msg);
+        });
+    }
+
 }

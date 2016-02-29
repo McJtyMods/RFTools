@@ -5,6 +5,8 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -118,6 +120,21 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             }
         }
         return currenttip;
+    }
+
+    @Override
+    protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
+        if (!world.isRemote) {
+            SmartWrenchMode currentMode = SmartWrenchItem.getCurrentMode(player.getHeldItem());
+            if (currentMode == SmartWrenchMode.MODE_SELECT) {
+                TileEntity te = world.getTileEntity(pos);
+                if (te instanceof PowerCellTileEntity) {
+                    PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
+                    PowerCellTileEntity.dumpNetwork(player, powerCellTileEntity);
+                }
+            }
+        }
+        return true;
     }
 
     @Override

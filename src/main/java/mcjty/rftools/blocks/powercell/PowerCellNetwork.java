@@ -115,6 +115,11 @@ public class PowerCellNetwork extends WorldSavedData {
         // on distance factors. Is recalculated automatically if it is null.
         private Map<GlobalCoordinate, Float> costFactor = null;
 
+        // Be careful with this! Don't modify the set
+        public Set<GlobalCoordinate> getBlocks() {
+            return blocks;
+        }
+
         public int getBlockCount() {
             return blocks.size();
         }
