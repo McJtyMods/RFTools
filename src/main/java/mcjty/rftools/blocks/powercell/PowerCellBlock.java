@@ -93,6 +93,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     @Override
     @SideOnly(Side.CLIENT)
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity tileEntity = accessor.getTileEntity();
         if (tileEntity instanceof PowerCellTileEntity) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
