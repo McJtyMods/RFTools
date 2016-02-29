@@ -243,8 +243,12 @@ public class PowerCellNetwork extends WorldSavedData {
             return energy / Math.max(1, blocks.size());
         }
 
-        public int extractEnergySingleBlock() {
-            int rc = energy / Math.max(1, blocks.size());
+        public int extractEnergySingleBlock(boolean advanced) {
+            // Calculate the average energy with advanced blocks seen as the equivalent number of normal blocks
+            int rc = energy / Math.max(1, (blocks.size() - advancedBlocks) + advancedBlocks * PowerCellConfiguration.advancedFactor);
+            if (advanced) {
+                rc *= PowerCellConfiguration.advancedFactor;
+            }
             energy -= rc;
             return rc;
         }

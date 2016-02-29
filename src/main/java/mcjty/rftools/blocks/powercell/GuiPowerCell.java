@@ -73,7 +73,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
         requestRF();
         energyBar.setMaxValue((PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-        PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCellAdvanced);
+            PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor);
         energyBar.setValue(PowerCellInfoPacketClient.tooltipEnergy);
     }
 }

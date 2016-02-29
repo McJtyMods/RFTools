@@ -193,7 +193,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                                 factor = (factor - 1) * (1-infusedFactor/2) + 1;
                             }
 
-                            int rfPerTick = (int) ((blockType == PowerCellSetup.advancedPowerCellBlock ? PowerCellConfiguration.rfPerTickAdvanced : PowerCellConfiguration.rfPerTick) * (infusedFactor*.5+1));
+                            int rfPerTick = (int) (PowerCellConfiguration.rfPerTick * getAdvancedFactor() * (infusedFactor*.5+1));
 
                             int rfToGive;
                             if (rfPerTick <= ((int) (energyStored / factor))) {
@@ -218,8 +218,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (!worldObj.isRemote) {
             PowerCellNetwork.Network network = getNetwork();
             if (network != null) {
-                energy = network.extractEnergySingleBlock();
-                network.remove(getGlobalPos(), blockType == PowerCellSetup.advancedPowerCellBlock);
+                energy = network.extractEnergySingleBlock(isAdvanced());
+                network.remove(getGlobalPos(), isAdvanced());
                 PowerCellNetwork.getChannels(worldObj).save(worldObj);
             }
         }
@@ -238,13 +238,21 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             }
             networkId = id;
             PowerCellNetwork.Network network = getNetwork();
-            network.add(getGlobalPos(), blockType == PowerCellSetup.advancedPowerCellBlock);
+            network.add(getGlobalPos(), isAdvanced());
             network.setEnergy(network.getEnergy() + energy);
             channels.save(worldObj);
         } else {
             networkId = id;
         }
         markDirty();
+    }
+
+    private boolean isAdvanced() {
+        return blockType == PowerCellSetup.advancedPowerCellBlock;
+    }
+
+    private int getAdvancedFactor() {
+        return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
     }
 
     public int getEnergy() {
@@ -300,7 +308,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private int receiveEnergyMulti(int maxReceive, boolean simulate) {
         PowerCellNetwork.Network network = getNetwork();
-        int totEnergy = PowerCellConfiguration.rfPerCell * (network.getBlockCount() - network.getAdvancedBlockCount()) + PowerCellConfiguration.rfPerCellAdvanced * network.getAdvancedBlockCount();
+        int totEnergy = PowerCellConfiguration.rfPerCell * (network.getBlockCount() - network.getAdvancedBlockCount()) + PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor * network.getAdvancedBlockCount();
         int maxInsert = Math.min(totEnergy - network.getEnergy(), maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
@@ -312,7 +320,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private int receiveEnergyLocal(int maxReceive, boolean simulate) {
-        int maxInsert = Math.min(blockType == PowerCellSetup.advancedPowerCellBlock ? PowerCellConfiguration.rfPerCellAdvanced : PowerCellConfiguration.rfPerCell - energy, maxReceive);
+        int maxInsert = Math.min(PowerCellConfiguration.rfPerCell * getAdvancedFactor() - energy, maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
                 energy += maxInsert;
@@ -324,7 +332,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return extractEnergyInternal(maxExtract, simulate, blockType == PowerCellSetup.advancedPowerCellBlock ? PowerCellConfiguration.rfPerTickAdvanced : PowerCellConfiguration.rfPerTick);
+        return extractEnergyInternal(maxExtract, simulate, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
     }
 
     private int extractEnergyInternal(int maxExtract, boolean simulate, int maximum) {
@@ -381,11 +389,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public int getMaxEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return blockType == PowerCellSetup.advancedPowerCellBlock ? PowerCellConfiguration.rfPerCellAdvanced : PowerCellConfiguration.rfPerCell;
+            return PowerCellConfiguration.rfPerCell * getAdvancedFactor();
         }
         PowerCellNetwork.Network network = getNetwork();
         return (network.getBlockCount() - network.getAdvancedBlockCount()) * PowerCellConfiguration.rfPerCell +
-                network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerCellAdvanced;
+                network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
     }
 
     @Override

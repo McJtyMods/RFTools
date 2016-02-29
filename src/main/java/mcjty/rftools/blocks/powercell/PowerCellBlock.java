@@ -72,7 +72,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int totpower = this == PowerCellSetup.advancedPowerCellBlock ? PowerCellConfiguration.rfPerCellAdvanced : PowerCellConfiguration.rfPerCell;
+            int totpower = PowerCellConfiguration.rfPerCell * getAdvancedFactor();
             list.add(EnumChatFormatting.WHITE + "This block can store power (" + totpower + " RF)");
             list.add(EnumChatFormatting.WHITE + "Optionally in a big multi dimensional structure");
             list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced long distance power");
@@ -80,6 +80,14 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    private boolean isAdvanced() {
+        return this == PowerCellSetup.advancedPowerCellBlock;
+    }
+
+    private int getAdvancedFactor() {
+        return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
     }
 
     @Override
@@ -99,7 +107,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
             int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCellAdvanced;
+                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
             currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
             if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
@@ -177,7 +185,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
                 PowerCellNetwork.Network network = cellTileEntity.getNetwork();
                 if (network != null) {
-                    network.extractEnergySingleBlock();
+                    network.extractEnergySingleBlock(isAdvanced());
                     Block block = world.getBlockState(pos).getBlock();
                     network.remove(cellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
                     PowerCellNetwork.getChannels(world).save(world);
