@@ -140,7 +140,12 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                         }
                     }
 
-                    module.render(clientScreenModuleHelper, fontrenderer, currenty, screenData.get(moduleIndex), factor);
+                    IModuleData data = screenData.get(moduleIndex);
+                    // @todo this is a bit clumsy way to check if the data is compatible with the given module:
+                    try {
+                        module.render(clientScreenModuleHelper, fontrenderer, currenty, data, factor);
+                    } catch (ClassCastException e) {
+                    }
                     currenty += height;
                 }
             }
