@@ -20,7 +20,7 @@ public class PowerCellContainer extends GenericContainer {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARD, 28, 8, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARDCOPY, 48, 46, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(PowerCellSetup.powerCellCardItem)), CONTAINER_INVENTORY, SLOT_CARDCOPY, 64, 30, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_CHARGEITEM, 64, 8, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
