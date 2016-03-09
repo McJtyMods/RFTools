@@ -10,6 +10,7 @@ import mcjty.rftools.blocks.powercell.PowerCellSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,6 +36,7 @@ public final class ModBlocks {
         PowerCellSetup.init();
         RelaySetup.init();
         MonitorSetup.init();
+        ShieldSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -54,6 +56,7 @@ public final class ModBlocks {
         PowerCellSetup.initClient();
         RelaySetup.initClient();
         MonitorSetup.initClient();
+        ShieldSetup.initClient();
     }
 
     private static void initBaseBlocks() {

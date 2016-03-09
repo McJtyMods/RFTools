@@ -1,0 +1,117 @@
+package mcjty.rftools.blocks.shield;
+
+import mcjty.rftools.RFTools;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
+
+public class ShieldTemplateBlock extends Block {
+
+    public static enum TemplateColor implements IStringSerializable {
+        BLUE("blue"), RED("red"), GREEN("green"), YELLOW("yellow");
+
+        private final String name;
+
+        TemplateColor(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName() + "_blue", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, new ModelResourceLocation(getRegistryName() + "_red", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 2, new ModelResourceLocation(getRegistryName() + "_green", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName() + "_yellow", "inventory"));
+    }
+
+    public final static PropertyEnum<TemplateColor> COLOR = PropertyEnum.<TemplateColor>create("color", TemplateColor.class);
+
+    public ShieldTemplateBlock() {
+        super(Material.glass);
+        setUnlocalizedName("shield_template_block");
+        setRegistryName("shield_template_block");
+        setCreativeTab(RFTools.tabRfTools);
+        GameRegistry.registerBlock(this, ShieldTemplateItemBlock.class);
+        setDefaultState(this.blockState.getBaseState().withProperty(COLOR, TemplateColor.BLUE));
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(COLOR).ordinal();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+        for (TemplateColor enumdyecolor : TemplateColor.values()) {
+            list.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(COLOR, TemplateColor.values()[meta & 3]);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(COLOR).ordinal();
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, COLOR);
+    }
+
+    public static class ShieldTemplateItemBlock extends ItemBlock {
+        public ShieldTemplateItemBlock(Block block) {
+            super(block);
+        }
+
+        @Override
+        public int getMetadata(int damage) {
+            return damage;
+        }
+    }
+}

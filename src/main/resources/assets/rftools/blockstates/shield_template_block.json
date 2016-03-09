@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "color": {
+      "blue": { "model": "rftools:shield_template_block_blue" },
+      "green": { "model": "rftools:shield_template_block_green" },
+      "red": { "model": "rftools:shield_template_block_red" },
+      "yellow": { "model": "rftools:shield_template_block_yellow" }
+    }
+  }
+}

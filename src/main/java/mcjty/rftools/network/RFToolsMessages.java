@@ -12,6 +12,8 @@ import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
+import mcjty.rftools.blocks.shield.PacketFiltersReady;
+import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.storage.PacketCompact;
 import mcjty.rftools.blocks.storage.PacketCycleStorage;
 import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
@@ -46,6 +48,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetAdjacentBlocks.Handler.class, PacketGetAdjacentBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetAdjacentTankBlocks.Handler.class, PacketGetAdjacentTankBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketContentsMonitor.Handler.class, PacketContentsMonitor.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetFilters.Handler.class, PacketGetFilters.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -58,6 +61,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketChamberInfoReady.Handler.class, PacketChamberInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAdjacentBlocksReady.Handler.class, PacketAdjacentBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAdjacentTankBlocksReady.Handler.class, PacketAdjacentTankBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketFiltersReady.Handler.class, PacketFiltersReady.class, PacketHandler.nextID(), Side.CLIENT);
 
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);

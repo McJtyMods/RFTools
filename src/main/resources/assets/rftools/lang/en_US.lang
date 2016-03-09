@@ -117,6 +117,15 @@ tile.space_chamber.name=Space Chamber Corner Block
 tile.space_chamber_controller.name=Space Chamber Controller Block
 tile.powercell.name=Powercell
 tile.powercell_advanced.name=Advanced Powercell
+tile.shield_template_block.name=Shield Template
+tile.shield_block1.name=Shield Projector Tier 1
+tile.shield_block2.name=Shield Projector Tier 2
+tile.shield_block3.name=Shield Projector Tier 3
+tile.shield_block4.name=Shield Projector Tier 4
+tile.invisible_shield_block.name=Invisible Shield Block
+tile.notick_invisible_shield_block.name=Invisible Shield Block
+tile.solid_shield_block.name=Solid Shield Block
+tile.notick_solid_shield_block.name=Solid Shield Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

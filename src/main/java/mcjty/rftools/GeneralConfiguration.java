@@ -20,6 +20,7 @@ public class GeneralConfiguration {
     public static boolean enableDialingDeviceRecipe = true;
     public static boolean enableEndergenRecipe = true;
     public static boolean enableBuilderRecipe = true;
+    public static boolean enableShieldProjectorRecipe = true;
 
     // Craftability of dimensional shards.
     public static final int CRAFT_NONE = 0;
@@ -59,6 +60,8 @@ public class GeneralConfiguration {
                 "Enable the endergenic generator recipe.").getBoolean();
         enableBuilderRecipe = cfg.get(CATEGORY_GENERAL, "enableBuilderRecipe", enableBuilderRecipe,
                 "Enable the builder recipe.").getBoolean();
+        enableShieldProjectorRecipe = cfg.get(CATEGORY_GENERAL, "enableShieldProjectorRecipe", enableShieldProjectorRecipe,
+                                              "Enable the shield projector recipe.").getBoolean();
 
         oreMinimumVeinSize = cfg.get(CATEGORY_GENERAL, "oreMinimumVeinSize", oreMinimumVeinSize,
                                      "Minimum vein size of dimensional shard ores").getInt();
