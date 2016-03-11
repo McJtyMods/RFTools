@@ -33,8 +33,14 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     public void setDamageBits(int damageBits) {
         this.damageBits = damageBits;
+        markDirtyClient();
+    }
+
+    private void markDirtyClient() {
         markDirty();
-        worldObj.markBlockForUpdate(getPos());
+        if (worldObj != null) {
+            worldObj.markBlockForUpdate(getPos());
+        }
     }
 
     public int getCollisionData() {
@@ -43,8 +49,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     public void setCollisionData(int collisionData) {
         this.collisionData = collisionData;
-        markDirty();
-        worldObj.markBlockForUpdate(getPos());
+        markDirtyClient();
     }
 
     public int getShieldColor() {
@@ -53,8 +58,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     public void setShieldColor(int shieldColor) {
         this.shieldColor = shieldColor;
-        markDirty();
-        worldObj.markBlockForUpdate(getPos());
+        markDirtyClient();
     }
 
     public void setCamoBlock(int camoId, int hasTe) {
@@ -65,18 +69,12 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         } else {
             block = Block.getBlockById(camoId);
         }
-        markDirty();
-        if (worldObj != null) {
-            worldObj.markBlockForUpdate(getPos());
-        }
+        markDirtyClient();
     }
 
     public void setShieldBlock(BlockPos c) {
         shieldBlock = c;
-        markDirty();
-        if (worldObj != null) {
-            worldObj.markBlockForUpdate(getPos());
-        }
+        markDirtyClient();
     }
 
     public BlockPos getShieldBlock() {
