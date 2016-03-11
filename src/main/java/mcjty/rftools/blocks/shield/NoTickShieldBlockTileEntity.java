@@ -66,13 +66,17 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
             block = Block.getBlockById(camoId);
         }
         markDirty();
-        worldObj.markBlockForUpdate(getPos());
+        if (worldObj != null) {
+            worldObj.markBlockForUpdate(getPos());
+        }
     }
 
     public void setShieldBlock(BlockPos c) {
         shieldBlock = c;
         markDirty();
-        worldObj.markBlockForUpdate(getPos());
+        if (worldObj != null) {
+            worldObj.markBlockForUpdate(getPos());
+        }
     }
 
     public BlockPos getShieldBlock() {
