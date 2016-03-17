@@ -28,8 +28,8 @@ public class LogicItemBlock extends GenericItemBlock {
             float dz = Math.abs(0.5f - hitZ);
 
             side = side.getOpposite();
-            System.out.println("LogicItemBlock.placeBlockAt");
-            System.out.println("  side = " + side);
+//            System.out.println("LogicItemBlock.placeBlockAt");
+//            System.out.println("  side = " + side);
             LogicFacing facing;
             switch (side) {
                 case DOWN:
@@ -78,8 +78,8 @@ public class LogicItemBlock extends GenericItemBlock {
                     facing = DOWN_TOWEST;
                     break;
             }
-            System.out.println("  facing = " + facing);
-            System.out.println("  facing.getOutputSide() = " + facing.getOutputSide());
+//            System.out.println("  facing = " + facing);
+//            System.out.println("  facing.getOutputSide() = " + facing.getOutputSide());
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
             logicTileEntity.setFacing(facing);
             world.setBlockState(pos, newState.getBlock().getDefaultState().withProperty(LogicSlabBlock.META_INTERMEDIATE, facing.getMeta()), 3);
