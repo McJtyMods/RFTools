@@ -1,11 +1,10 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 
-public class RedstoneReceiverTileEntity extends GenericTileEntity implements ITickable {
+public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITickable {
 
     private boolean redstoneOut = false;
     private int channel = -1;

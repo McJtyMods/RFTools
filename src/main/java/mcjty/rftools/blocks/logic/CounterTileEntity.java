@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
 
-public class CounterTileEntity extends GenericTileEntity {
+public class CounterTileEntity extends LogicTileEntity {
 
     public static final String CMD_SETCOUNTER = "setCounter";
     public static final String CMD_SETCURRENT = "setCurrent";

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +11,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class RedstoneReceiverItemBlock extends GenericItemBlock {
+public class RedstoneReceiverItemBlock extends LogicItemBlock {
     public RedstoneReceiverItemBlock(Block block) {
         super(block);
     }

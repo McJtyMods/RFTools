@@ -5,6 +5,8 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -20,21 +22,24 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import static net.minecraft.util.EnumFacing.*;
+
 /**
  * The superclass for all logic slabs in RFTools.
  */
 public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Container> extends GenericRFToolsBlock {
 
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
-
+    public static PropertyInteger META_INTERMEDIATE = PropertyInteger.create("intermediate", 0, 3);
+    public static PropertyEnum<LogicFacing> LOGIC_FACING = PropertyEnum.create("logic_facing", LogicFacing.class);
 
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass) {
-        super(material, tileEntityClass, containerClass, name, false);
+        super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, false);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
     @Override
-    public boolean isHorizRotation() {
+    public boolean hasNoRotation() {
         return true;
     }
 
@@ -43,11 +48,41 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof LogicTileEntity) {
+            LogicTileEntity logicTileEntity = (LogicTileEntity) te;
+            EnumFacing side = logicTileEntity.getFacing().getSide();
+            switch (side) {
+                case DOWN:
+                    setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
+                    break;
+                case UP:
+                    setBlockBounds(0.0F, 0.7F, 0.0F, 1.0F, 1.0F, 1.0F);
+                    break;
+                case NORTH:
+                    setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.3F);
+                    break;
+                case SOUTH:
+                    setBlockBounds(0.0F, 0.0F, 0.7F, 1.0F, 1.0F, 1.0F);
+                    break;
+                case WEST:
+                    setBlockBounds(0.0F, 0.0F, 0.0F, 0.3F, 1.0F, 1.0F);
+                    break;
+                case EAST:
+                    setBlockBounds(0.7F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+                    break;
+            }
+        }
+    }
+
+
     @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
         super.initModel();
-        StateMap.Builder ignorePower = new StateMap.Builder().ignore(OUTPUTPOWER);
+        StateMap.Builder ignorePower = new StateMap.Builder().ignore(OUTPUTPOWER).ignore(META_INTERMEDIATE);
         ModelLoader.setCustomStateMapper(this, ignorePower.build());
     }
 
@@ -61,10 +96,11 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof GenericTileEntity) {
-            int powered = getInputStrength(world, pos, state.getValue(FACING_HORIZ));
-            GenericTileEntity genericTileEntity = (GenericTileEntity)te;
-            genericTileEntity.setPowered(powered);
+        if (te instanceof LogicTileEntity) {
+//            int powered = getInputStrength(world, pos, state.getValue(LOGIC_FACING).getOutputSide());
+            LogicTileEntity logicTileEntity = (LogicTileEntity)te;
+            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
+            logicTileEntity.setPowered(powered);
         }
     }
 
@@ -85,15 +121,22 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        IBlockState state = world.getBlockState(pos);
-        EnumFacing direction = state.getValue(FACING_HORIZ);
-        switch (direction) {
-            case NORTH:
-            case SOUTH:
-                return side == EnumFacing.NORTH || side == EnumFacing.SOUTH;
-            case WEST:
-            case EAST:
-                return side == EnumFacing.WEST || side == EnumFacing.EAST;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof LogicTileEntity) {
+            LogicTileEntity logicTileEntity = (LogicTileEntity)te;
+//            IBlockState state = world.getBlockState(pos);
+            EnumFacing direction = logicTileEntity.getFacing().getOutputSide();
+            switch (direction) {
+                case NORTH:
+                case SOUTH:
+                    return side == NORTH || side == SOUTH;
+                case WEST:
+                case EAST:
+                    return side == WEST || side == EAST;
+                case DOWN:
+                case UP:
+                    return side == DOWN || side == UP;
+            }
         }
         return false;
     }
@@ -105,12 +148,16 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
 
     @Override
     public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-        EnumFacing direction = state.getValue(FACING_HORIZ);
-        if (side == direction) {
-            return state.getValue(OUTPUTPOWER) ? 15 : 0;
-        } else {
-            return 0;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof LogicTileEntity) {
+            LogicTileEntity logicTileEntity = (LogicTileEntity) te;
+            if (side == logicTileEntity.getFacing().getOutputSide()) {
+                return state.getValue(OUTPUTPOWER) ? 15 : 0;
+            } else {
+                return 0;
+            }
         }
+        return 0;
     }
 
 
@@ -120,18 +167,32 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     }
 
     @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        int meta = state.getValue(META_INTERMEDIATE);
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof LogicTileEntity) {
+            LogicTileEntity logicTileEntity = (LogicTileEntity) te;
+            LogicFacing facing = logicTileEntity.getFacing();
+            facing = LogicFacing.getFacingWithMeta(facing, meta);
+            return state.withProperty(LOGIC_FACING, facing);
+        } else {
+            return state.withProperty(LOGIC_FACING, LogicFacing.DOWN_TONORTH);
+        }
+    }
+
+    @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING_HORIZ, getFacingHoriz(meta & 3)).withProperty(OUTPUTPOWER, (meta & 8) != 0);
+        return getDefaultState().withProperty(META_INTERMEDIATE, meta & 3).withProperty(OUTPUTPOWER, (meta & 8) != 0);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return (state.getValue(FACING_HORIZ).getIndex() - 2) + (state.getValue(OUTPUTPOWER) ? 8 : 0);
+        return state.getValue(META_INTERMEDIATE) + (state.getValue(OUTPUTPOWER) ? 8 : 0);
     }
 
     @Override
     protected BlockState createBlockState() {
-        return new BlockState(this, FACING_HORIZ, OUTPUTPOWER);
+        return new BlockState(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER);
     }
 
 

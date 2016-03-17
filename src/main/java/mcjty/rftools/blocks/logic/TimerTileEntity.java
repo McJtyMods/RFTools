@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -9,7 +8,7 @@ import net.minecraft.util.ITickable;
 
 import java.util.Map;
 
-public class TimerTileEntity extends GenericTileEntity implements ITickable {
+public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
     public static final String CMD_SETDELAY = "setDelay";
     public static final String CMD_SETCURRENT = "setDelay";

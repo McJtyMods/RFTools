@@ -1,9 +1,8 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class RedstoneTransmitterTileEntity extends GenericTileEntity {
+public class RedstoneTransmitterTileEntity extends LogicTileEntity {
 
     private int channel = -1;
     private boolean prevValue = false;
