@@ -96,6 +96,7 @@ tile.pearlInjectorBlock.name=Pearl Injector
 tile.sequencer_block.name=Sequencer
 tile.counter_block.name=Counter
 tile.timer_block.name=Timer
+tile.logic_block.name=Logic Gate
 tile.redstone_transmitter_block.name=Redstone Transmitter
 tile.redstone_receiver_block.name=Redstone Receiver
 tile.enderMonitorBlock.name=Ender Monitor

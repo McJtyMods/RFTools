@@ -14,16 +14,16 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> {
+public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyContainer> {
 
-    public TimerBlock() {
-        super(Material.iron, "timer_block", TimerTileEntity.class, EmptyContainer.class);
+    public ThreeLogicBlock() {
+        super(Material.iron, "logic_block", ThreeLogicTileEntity.class, EmptyContainer.class);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
-        return GuiTimer.class;
+        return GuiThreeLogic.class;
     }
 
 
@@ -31,16 +31,10 @@ public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound != null) {
-            int delay = tagCompound.getInteger("delay");
-            list.add(EnumChatFormatting.GREEN + "Delay: " + delay);
-        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This logic block emits a redstone pulse");
-            list.add(EnumChatFormatting.WHITE + "after a certain amount of time unless it");
-            list.add(EnumChatFormatting.WHITE + "receives a redstone pulse itself before that.");
+            list.add(EnumChatFormatting.WHITE + "This logic block can do various logical");
+            list.add(EnumChatFormatting.WHITE + "operations on three inputs.");
         } else {
             list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -49,6 +43,6 @@ public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> 
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_TIMER;
+        return RFTools.GUI_THREE_LOGIC;
     }
 }

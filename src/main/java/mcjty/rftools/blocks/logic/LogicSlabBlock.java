@@ -97,7 +97,6 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
-//            int powered = getInputStrength(world, pos, state.getValue(LOGIC_FACING).getOutputSide());
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
             int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
             logicTileEntity.setPowered(powered);
@@ -124,7 +123,6 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-//            IBlockState state = world.getBlockState(pos);
             EnumFacing direction = logicTileEntity.getFacing().getOutputSide();
             switch (direction) {
                 case NORTH:

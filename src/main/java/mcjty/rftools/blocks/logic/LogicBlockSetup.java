@@ -15,6 +15,7 @@ public class LogicBlockSetup {
     public static CounterBlock counterBlock;
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
+    public static ThreeLogicBlock threeLogicBlock;
 
     public static void init() {
         sequencerBlock = new SequencerBlock();
@@ -22,6 +23,7 @@ public class LogicBlockSetup {
         counterBlock = new CounterBlock();
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
+        threeLogicBlock = new ThreeLogicBlock();
     }
 
     @SideOnly(Side.CLIENT)
@@ -31,6 +33,7 @@ public class LogicBlockSetup {
         counterBlock.initModel();
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
+        threeLogicBlock.initModel();
     }
 
     public static void initCrafting() {
@@ -38,6 +41,7 @@ public class LogicBlockSetup {
         GameRegistry.addRecipe(new ItemStack(sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(counterBlock), "gcg", "TMT", "rTr", 'c', Items.clock, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'g', Items.gold_nugget);
         GameRegistry.addRecipe(new ItemStack(timerBlock), "rcr", "TMT", "rTr", 'c', Items.clock, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(threeLogicBlock), "rcr", "cMc", "rcr", 'c', Items.comparator, 'r', Items.redstone, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', redstoneTorch, 'R', Blocks.redstone_block, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', Items.comparator, 'R', Blocks.redstone_block, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
