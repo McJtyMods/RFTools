@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.entity.GenericTileEntity;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -27,7 +26,7 @@ import static net.minecraft.util.EnumFacing.*;
 /**
  * The superclass for all logic slabs in RFTools.
  */
-public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Container> extends GenericRFToolsBlock {
+public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Container> extends GenericRFToolsBlock {
 
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
     public static PropertyInteger META_INTERMEDIATE = PropertyInteger.create("intermediate", 0, 3);
@@ -89,7 +88,7 @@ public abstract class LogicSlabBlock<T extends GenericTileEntity, C extends Cont
     /**
      * Returns the signal strength at one input of the block
      */
-    private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
+    protected int getInputStrength(World world, BlockPos pos, EnumFacing side) {
         return world.getRedstonePower(pos.offset(side), side);
     }
 

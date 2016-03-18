@@ -10,28 +10,13 @@ import java.util.Map;
 
 public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
 
-    public static final String CMD_SETDELAY = "setDelay";
-    public static final String CMD_SETCURRENT = "setDelay";
+    public static final String CMD_SETSTATE = "setState";
 
-    // For pulse detection.
-    private boolean prevIn = false;
-    private boolean powered = false;
-
-    private int delay = 20;
-    private int timer = 0;
+    private int powered = 0;
     private boolean redstoneOut = false;
+    private int[] logicTable = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };    // 0 == off, 1 == on, -1 == keep
 
     public ThreeLogicTileEntity() {
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-        timer = delay;
-        markDirtyClient();
     }
 
     @Override
@@ -43,68 +28,59 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
 
     @Override
     public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
+        if (this.powered != powered) {
+            this.powered = powered;
+            markDirty();
+        }
+    }
+
+    public int getState(int index) {
+        return logicTable[index];
     }
 
     private void checkStateServer() {
-        boolean pulse = powered && !prevIn;
-        prevIn = powered;
-
-        markDirty();
-
-        if (pulse) {
-            timer = delay;
+        int s = logicTable[powered];
+        if (s == -1) {
+            return; // Nothing happens (keep mode)
         }
-
-        boolean newout;
-
-        timer--;
-        if (timer <= 0) {
-            timer = delay;
-            newout = true;
-        } else {
-            newout = false;
+        if ((s == 1) == redstoneOut) {
+            return; // Output already ok.
         }
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
-            worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-            worldObj.markBlockForUpdate(this.pos);
-        }
-
+        redstoneOut = s == 1;
+        IBlockState state = worldObj.getBlockState(getPos());
+        worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
+        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        worldObj.markBlockForUpdate(this.pos);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         redstoneOut = tagCompound.getBoolean("rs");
-        prevIn = tagCompound.getBoolean("prevIn");
-        timer = tagCompound.getInteger("timer");
-        powered = tagCompound.getBoolean("powered");
+        powered = tagCompound.getInteger("powered");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        delay = tagCompound.getInteger("delay");
+        for (int i = 0 ; i < 8 ; i++) {
+            logicTable[i] = tagCompound.getInteger("state" + i);
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
-        tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setInteger("timer", timer);
-        tagCompound.setBoolean("powered", powered);
+        tagCompound.setInteger("powered", powered);
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("delay", delay);
+        for (int i = 0 ; i < 8 ; i++) {
+            tagCompound.setInteger("state" + i, logicTable[i]);
+        }
     }
 
     @Override
@@ -113,8 +89,10 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
         if (rc) {
             return true;
         }
-        if (CMD_SETDELAY.equals(command)) {
-            setDelay(args.get("delay").getInteger());
+        if (CMD_SETSTATE.equals(command)) {
+            logicTable[args.get("index").getInteger()] = args.get("state").getInteger();
+            markDirty();
+            markDirtyClient();
             return true;
         }
         return false;

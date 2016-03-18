@@ -36,12 +36,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
         Label label = new Label(mc, this).setText("Delay:");
-        speedField = new TextField(mc, this).setTooltips("Set the delay in ticks", "(20 ticks is one second)").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setDelay();
-            }
-        });
+        speedField = new TextField(mc, this).setTooltips("Set the delay in ticks", "(20 ticks is one second)").addTextEvent((parent, newText) -> setDelay());
         int delay = tileEntity.getDelay();
         if (delay <= 0) {
             delay = 1;
