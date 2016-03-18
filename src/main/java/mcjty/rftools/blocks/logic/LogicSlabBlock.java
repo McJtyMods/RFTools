@@ -164,6 +164,29 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof LogicTileEntity) {
+            LogicTileEntity logicTileEntity = (LogicTileEntity) te;
+            LogicFacing facing = logicTileEntity.getFacing();
+            int meta = facing.getMeta();
+            switch (meta) {
+                case 0: meta = 2; break;
+                case 1: meta = 3; break;
+                case 2: meta = 1; break;
+                case 3: meta = 0; break;
+            }
+            LogicFacing newfacing = LogicFacing.getFacingWithMeta(facing, meta);
+            logicTileEntity.setFacing(newfacing);
+            world.setBlockState(pos, world.getBlockState(pos).getBlock().getDefaultState()
+                    .withProperty(META_INTERMEDIATE, meta)
+                    .withProperty(OUTPUTPOWER, false), 3);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         int meta = state.getValue(META_INTERMEDIATE);
         TileEntity te = worldIn.getTileEntity(pos);
