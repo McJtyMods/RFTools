@@ -2,8 +2,8 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.varia.Logging;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextComponentString;
+import net.minecraft.util.TextFormatting;
 
 public class CmdDebugToggle extends AbstractRfToolsCommand {
     @Override
@@ -30,9 +30,9 @@ public class CmdDebugToggle extends AbstractRfToolsCommand {
     public void execute(ICommandSender sender, String[] args) {
         Logging.debugMode = !Logging.debugMode;
         if (Logging.debugMode) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "RFTools Debug Mode enabled!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.YELLOW + "RFTools Debug Mode enabled!"));
         } else {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "RFTools Debug Mode disabled!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.YELLOW + "RFTools Debug Mode disabled!"));
         }
     }
 }

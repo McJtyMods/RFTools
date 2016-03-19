@@ -4,8 +4,8 @@ import mcjty.lib.gui.GuiStyle;
 import mcjty.lib.preferences.PlayerPreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class CmdSetStyle extends AbstractRfToolsCommand {
     @Override
@@ -26,12 +26,12 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 2) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Too many parameters!"));
             return;
         }
 
         if (!(sender instanceof EntityPlayer)) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This command only works as a player!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
             return;
         }
 
@@ -40,7 +40,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
 
         if (args.length < 2) {
             GuiStyle style = properties.getPreferencesProperties().getStyle();
-            ((EntityPlayer) sender).addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Current GUI style: " + style.getStyle()));
+            ((EntityPlayer) sender).addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle()));
             return;
         }
 
@@ -52,7 +52,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
                 buf = buf + " " + style.getStyle();
             }
 
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown style! Options:" + buf));
+            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Unknown style! Options:" + buf));
         }
     }
 }

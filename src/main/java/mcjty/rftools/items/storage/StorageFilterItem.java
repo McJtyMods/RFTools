@@ -5,7 +5,7 @@ import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,14 +40,14 @@ public class StorageFilterItem extends GenericRFToolsItem {
             if (tagCompound.getBoolean("modMode")) {
                 modeLine += ", Mod";
             }
-            list.add(EnumChatFormatting.BLUE + modeLine);
+            list.add(TextFormatting.BLUE + modeLine);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This filter module is for the Modular Storage block.");
-            list.add(EnumChatFormatting.WHITE + "This module can make sure the storage block only accepts");
-            list.add(EnumChatFormatting.WHITE + "certain types of items");
+            list.add(TextFormatting.WHITE + "This filter module is for the Modular Storage block.");
+            list.add(TextFormatting.WHITE + "This module can make sure the storage block only accepts");
+            list.add(TextFormatting.WHITE + "certain types of items");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

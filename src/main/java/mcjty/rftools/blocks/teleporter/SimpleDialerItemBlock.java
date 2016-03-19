@@ -19,7 +19,7 @@ public class SimpleDialerItemBlock {}
 //                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
 //
 //                if (!matterTransmitterTileEntity.checkAccess(player.getDisplayName())) {
-//                    Logging.message(player, EnumChatFormatting.RED + "You have no access to this matter transmitter!");
+//                    Logging.message(player, TextFormatting.RED + "You have no access to this matter transmitter!");
 //                    return true;
 //                }
 //
@@ -32,15 +32,15 @@ public class SimpleDialerItemBlock {}
 //                    Integer id = matterTransmitterTileEntity.getTeleportId();
 //                    boolean access = checkReceiverAccess(player, world, id);
 //                    if (!access) {
-//                        Logging.message(player, EnumChatFormatting.RED + "You have no access to the matter receiver!");
+//                        Logging.message(player, TextFormatting.RED + "You have no access to the matter receiver!");
 //                        return true;
 //                    }
 //
 //                    tagCompound.setInteger("receiver", id);
-//                    Logging.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+//                    Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
 //                }
 //
-//                Logging.message(player, EnumChatFormatting.YELLOW + "Transmitter set!");
+//                Logging.message(player, TextFormatting.YELLOW + "Transmitter set!");
 //            }
 //        } else if (te instanceof MatterReceiverTileEntity) {
 //            if (!world.isRemote) {
@@ -49,12 +49,12 @@ public class SimpleDialerItemBlock {}
 //                Integer id  = matterReceiverTileEntity.getOrCalculateID();
 //                boolean access = checkReceiverAccess(player, world, id);
 //                if (!access) {
-//                    Logging.message(player, EnumChatFormatting.RED + "You have no access to this matter receiver!");
+//                    Logging.message(player, TextFormatting.RED + "You have no access to this matter receiver!");
 //                    return true;
 //                }
 //
 //                tagCompound.setInteger("receiver", id);
-//                Logging.message(player, EnumChatFormatting.YELLOW + "Receiver set!");
+//                Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
 //            }
 //        } else {
 //            return super.onItemUse(stack, player, world, x, y, z, side, sx, sy, sz);

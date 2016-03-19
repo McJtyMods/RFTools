@@ -15,8 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -54,20 +54,20 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
+            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             int channel = tagCompound.getInteger("channel");
             if (channel != -1) {
-                list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+                list.add(TextFormatting.YELLOW + "Channel: " + channel);
             }
         }
-        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a redstone receiver");
-        list.add(EnumChatFormatting.WHITE + "to create a channel for this module and also");
-        list.add(EnumChatFormatting.WHITE + "set it to the receiver. You can also use this");
-        list.add(EnumChatFormatting.WHITE + "on a transmitter or already set receiver to copy");
-        list.add(EnumChatFormatting.WHITE + "the channel to the button");
+        list.add(TextFormatting.WHITE + "Sneak right-click on a redstone receiver");
+        list.add(TextFormatting.WHITE + "to create a channel for this module and also");
+        list.add(TextFormatting.WHITE + "set it to the receiver. You can also use this");
+        list.add(TextFormatting.WHITE + "on a transmitter or already set receiver to copy");
+        list.add(TextFormatting.WHITE + "the channel to the button");
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
                     return true;
                 }
             }
-            Logging.message(player, EnumChatFormatting.RED + "Nothing happens!");
+            Logging.message(player, TextFormatting.RED + "Nothing happens!");
 
         } else if (te instanceof RedstoneReceiverTileEntity) {
             int blockChannel = ((RedstoneReceiverTileEntity)te).getChannel();
@@ -119,7 +119,7 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
             ((RedstoneReceiverTileEntity) te).setChannel(channel);
             Logging.message(player, "Receiver is set to channel " + channel);
         } else {
-            Logging.message(player, EnumChatFormatting.RED + "You can only use this on a redstone receiver/transmitter!");
+            Logging.message(player, TextFormatting.RED + "You can only use this on a redstone receiver/transmitter!");
         }
 
         return true;

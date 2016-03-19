@@ -8,7 +8,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -48,14 +48,14 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         if (tagCompound != null) {
             boolean connected = tagCompound.getBoolean("connected");
             if (!connected) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[NOT CONNECTED]");
+                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
             }
             boolean power = tagCompound.getBoolean("powerOn");
             if (!power) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[NO POWER]");
+                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
             }
             int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-            currenttip.add(EnumChatFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
         }
         return currenttip;
     }
@@ -344,12 +344,12 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
             boolean transparent = tagCompound.getBoolean("transparent");
             if (size == ScreenTileEntity.SIZE_HUGE) {
-                list.add(EnumChatFormatting.BLUE + "Huge screen.");
+                list.add(TextFormatting.BLUE + "Huge screen.");
             } else if (size == ScreenTileEntity.SIZE_LARGE) {
-                list.add(EnumChatFormatting.BLUE + "Large screen.");
+                list.add(TextFormatting.BLUE + "Large screen.");
             }
             if (transparent) {
-                list.add(EnumChatFormatting.BLUE + "Transparent screen.");
+                list.add(TextFormatting.BLUE + "Transparent screen.");
             }
             int rc = 0;
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -362,16 +362,16 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                     }
                 }
             }
-            list.add(EnumChatFormatting.BLUE + String.valueOf(rc) + " modules");
+            list.add(TextFormatting.BLUE + String.valueOf(rc) + " modules");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
-            list.add(EnumChatFormatting.WHITE + "You must insert modules to control what you can see.");
-            list.add(EnumChatFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
-            list.add(EnumChatFormatting.WHITE + "powered by a nearby Screen Controller.");
+            list.add(TextFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
+            list.add(TextFormatting.WHITE + "You must insert modules to control what you can see.");
+            list.add(TextFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
+            list.add(TextFormatting.WHITE + "powered by a nearby Screen Controller.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

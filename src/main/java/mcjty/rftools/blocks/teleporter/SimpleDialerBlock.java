@@ -18,22 +18,22 @@ public class SimpleDialerBlock {}
 //                int transY = tagCompound.getInteger("transY");
 //                int transZ = tagCompound.getInteger("transZ");
 //                int dim = tagCompound.getInteger("transDim");
-//                list.add(EnumChatFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
+//                list.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
 //            }
 //            if (tagCompound.hasKey("receiver")) {
 //                int receiver = tagCompound.getInteger("receiver");
-//                list.add(EnumChatFormatting.GREEN + "Receiver: " + receiver);
+//                list.add(TextFormatting.GREEN + "Receiver: " + receiver);
 //            }
 //            if (tagCompound.getBoolean("once")) {
-//                list.add(EnumChatFormatting.GREEN + "Dial Once mode enabled");
+//                list.add(TextFormatting.GREEN + "Dial Once mode enabled");
 //            }
 //        }
 //
 //        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-//            list.add(EnumChatFormatting.WHITE + "When this block gets a redstone signal it");
-//            list.add(EnumChatFormatting.WHITE + "dials or interrupts a transmitter.");
+//            list.add(TextFormatting.WHITE + "When this block gets a redstone signal it");
+//            list.add(TextFormatting.WHITE + "dials or interrupts a transmitter.");
 //        } else {
-//            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+//            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
 //        }
 //    }
 //
@@ -48,14 +48,14 @@ public class SimpleDialerBlock {}
 //                int transY = tagCompound.getInteger("transY");
 //                int transZ = tagCompound.getInteger("transZ");
 //                int dim = tagCompound.getInteger("transDim");
-//                currenttip.add(EnumChatFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
+//                currenttip.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
 //            }
 //            if (tagCompound.hasKey("receiver")) {
 //                int receiver = tagCompound.getInteger("receiver");
-//                currenttip.add(EnumChatFormatting.GREEN + "Receiver: " + receiver);
+//                currenttip.add(TextFormatting.GREEN + "Receiver: " + receiver);
 //            }
 //            if (tagCompound.getBoolean("once")) {
-//                currenttip.add(EnumChatFormatting.GREEN + "Dial Once mode enabled");
+//                currenttip.add(TextFormatting.GREEN + "Dial Once mode enabled");
 //            }
 //        }
 //        return currenttip;

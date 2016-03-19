@@ -21,9 +21,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
@@ -91,7 +91,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
         Mode[] old = new Mode[] { modes[0], modes[1], modes[2], modes[3], modes[4], modes[5] };
         super.onDataPacket(net, packet);
         for (int i = 0 ; i < 6 ; i++) {
@@ -277,7 +277,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     public GlobalCoordinate getGlobalPos() {
-        return new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
+        return new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
     }
 
     @Override

@@ -4,7 +4,7 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.blocks.teleporter.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class TeleportationManager implements ITeleportationManager {

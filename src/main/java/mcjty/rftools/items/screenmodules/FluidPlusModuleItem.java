@@ -14,8 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -55,11 +55,11 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.FLUIDPLUS_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.FLUIDPLUS_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
+            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             if (tagCompound.hasKey("monitorx")) {
                 int dim;
                 if (tagCompound.hasKey("monitordim")) {
@@ -72,14 +72,14 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
                 int monitory = tagCompound.getInteger("monitory");
                 int monitorz = tagCompound.getInteger("monitorz");
                 String monitorname = tagCompound.getString("monitorname");
-                list.add(EnumChatFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
-                list.add(EnumChatFormatting.YELLOW + "Dimension: " + dim);
+                list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                list.add(TextFormatting.YELLOW + "Dimension: " + dim);
                 hasTarget = true;
             }
         }
         if (!hasTarget) {
-            list.add(EnumChatFormatting.YELLOW + "Sneak right-click on a tank to set the");
-            list.add(EnumChatFormatting.YELLOW + "target for this fluid module");
+            list.add(TextFormatting.YELLOW + "Sneak right-click on a tank to set the");
+            list.add(TextFormatting.YELLOW + "target for this fluid module");
         }
     }
 

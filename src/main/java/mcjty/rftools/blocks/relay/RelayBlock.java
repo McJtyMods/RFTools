@@ -13,8 +13,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -62,12 +62,12 @@ public class RelayBlock extends GenericRFToolsBlock implements IRedstoneConnecta
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This device can (based on a redstone signal) limit");
-            list.add(EnumChatFormatting.WHITE + "the amount of RF that can go through this. Using this");
-            list.add(EnumChatFormatting.WHITE + "you can throttle down (or even disable) a number of");
-            list.add(EnumChatFormatting.WHITE + "machines in case power is low.");
+            list.add(TextFormatting.WHITE + "This device can (based on a redstone signal) limit");
+            list.add(TextFormatting.WHITE + "the amount of RF that can go through this. Using this");
+            list.add(TextFormatting.WHITE + "you can throttle down (or even disable) a number of");
+            list.add(TextFormatting.WHITE + "machines in case power is low.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

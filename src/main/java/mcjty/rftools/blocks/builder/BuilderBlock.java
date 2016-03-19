@@ -13,8 +13,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
@@ -52,13 +52,13 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This block is linked to a space chamber and");
-            list.add(EnumChatFormatting.WHITE + "can move/copy/swap the blocks from the space chamber");
-            list.add(EnumChatFormatting.WHITE + "to here. Insert a chamber card to make a link.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(EnumChatFormatting.YELLOW + "increased building speed.");
+            list.add(TextFormatting.WHITE + "This block is linked to a space chamber and");
+            list.add(TextFormatting.WHITE + "can move/copy/swap the blocks from the space chamber");
+            list.add(TextFormatting.WHITE + "to here. Insert a chamber card to make a link.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(TextFormatting.YELLOW + "increased building speed.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -76,7 +76,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
                 builderTileEntity.requestCurrentLevel();
             }
             int scan = BuilderTileEntity.getCurrentLevel();
-            currenttip.add(EnumChatFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+            currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
         return currenttip;
 

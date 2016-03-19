@@ -5,10 +5,10 @@ import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.blocks.storage.sorters.NameItemSorter;
 import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -59,10 +59,10 @@ public class OreDictTypeItem extends StorageTypeItem {
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This module extends the Modular Storage block");
-            list.add(EnumChatFormatting.WHITE + "with Ore dictionary specific capabilities");
+            list.add(TextFormatting.WHITE + "This module extends the Modular Storage block");
+            list.add(TextFormatting.WHITE + "with Ore dictionary specific capabilities");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

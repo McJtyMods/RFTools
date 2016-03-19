@@ -19,8 +19,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,7 +57,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
-            list.add(EnumChatFormatting.GREEN + "Name: " + name);
+            list.add(TextFormatting.GREEN + "Name: " + name);
 
             boolean dialed = false;
             BlockPos c = BlockPosTools.readFromNBT(tagCompound, "dest");
@@ -80,27 +80,27 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
                 if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == destId) {
                     destname = ReturnDestinationInfoHelper.name;
                 }
-                list.add(EnumChatFormatting.YELLOW + "[DIALED to " + destname + "]");
+                list.add(TextFormatting.YELLOW + "[DIALED to " + destname + "]");
             }
 
             boolean once = tagCompound.getBoolean("once");
             if (once) {
-                list.add(EnumChatFormatting.YELLOW + "[ONCE]");
+                list.add(TextFormatting.YELLOW + "[ONCE]");
             }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "If you place this block near a Dialing Device then");
-            list.add(EnumChatFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give");
-            list.add(EnumChatFormatting.WHITE + "it sufficient power!");
-            list.add(EnumChatFormatting.WHITE + "Use a Destination Analyzer adjacent to this block");
-            list.add(EnumChatFormatting.WHITE + "to check destination status (red is bad, green ok,");
-            list.add(EnumChatFormatting.WHITE + "yellow is unknown).");
-            list.add(EnumChatFormatting.WHITE + "Use a  Matter Booster adjacent to this block");
-            list.add(EnumChatFormatting.WHITE + "to be able to teleport to unpowered receivers.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(EnumChatFormatting.YELLOW + "increased teleportation speed.");
+            list.add(TextFormatting.WHITE + "If you place this block near a Dialing Device then");
+            list.add(TextFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give");
+            list.add(TextFormatting.WHITE + "it sufficient power!");
+            list.add(TextFormatting.WHITE + "Use a Destination Analyzer adjacent to this block");
+            list.add(TextFormatting.WHITE + "to check destination status (red is bad, green ok,");
+            list.add(TextFormatting.WHITE + "yellow is unknown).");
+            list.add(TextFormatting.WHITE + "Use a  Matter Booster adjacent to this block");
+            list.add(TextFormatting.WHITE + "to be able to teleport to unpowered receivers.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(TextFormatting.YELLOW + "increased teleportation speed.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -113,7 +113,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
         TileEntity te = accessor.getTileEntity();
         if (te instanceof MatterTransmitterTileEntity) {
             MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-            currenttip.add(EnumChatFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
+            currenttip.add(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
             if (matterTransmitterTileEntity.isDialed()) {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
@@ -124,10 +124,10 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
                 if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
                     name = ReturnDestinationInfoHelper.name;
                 }
-                currenttip.add(EnumChatFormatting.YELLOW + "[DIALED to " + name + "]");
+                currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
             }
             if (matterTransmitterTileEntity.isOnce()) {
-                currenttip.add(EnumChatFormatting.YELLOW + "[ONCE]");
+                currenttip.add(TextFormatting.YELLOW + "[ONCE]");
             }
         }
         return currenttip;

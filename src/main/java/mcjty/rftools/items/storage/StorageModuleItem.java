@@ -4,13 +4,13 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,7 +45,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
+            Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
             return stack;
         }
         return stack;
@@ -74,15 +74,15 @@ public class StorageModuleItem extends GenericRFToolsItem {
             addModuleInformation(list, max, tagCompound);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This storage module is for the Modular Storage block.");
+            list.add(TextFormatting.WHITE + "This storage module is for the Modular Storage block.");
             if (max == -1) {
-                list.add(EnumChatFormatting.WHITE + "This module supports a remote inventory.");
-                list.add(EnumChatFormatting.WHITE + "Link to another storage module in the remote storage block.");
+                list.add(TextFormatting.WHITE + "This module supports a remote inventory.");
+                list.add(TextFormatting.WHITE + "Link to another storage module in the remote storage block.");
             } else {
-                list.add(EnumChatFormatting.WHITE + "This module supports " + max + " stacks");
+                list.add(TextFormatting.WHITE + "This module supports " + max + " stacks");
             }
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -91,17 +91,17 @@ public class StorageModuleItem extends GenericRFToolsItem {
             // This is a remote storage module.
             if (tagCompound.hasKey("id")) {
                 int id = tagCompound.getInteger("id");
-                list.add(EnumChatFormatting.GREEN + "Remote id: " + id);
+                list.add(TextFormatting.GREEN + "Remote id: " + id);
             } else {
-                list.add(EnumChatFormatting.YELLOW + "Unlinked");
+                list.add(TextFormatting.YELLOW + "Unlinked");
             }
         } else {
             int cnt = tagCompound.getInteger("count");
             if (tagCompound.hasKey("id")) {
                 int id = tagCompound.getInteger("id");
-                list.add(EnumChatFormatting.GREEN + "Contents id: " + id);
+                list.add(TextFormatting.GREEN + "Contents id: " + id);
             }
-            list.add(EnumChatFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
+            list.add(TextFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");
         }
     }
 

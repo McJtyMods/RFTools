@@ -10,7 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -57,7 +57,7 @@ public class PacketCompact implements IMessage {
                     remoteStorage.compact(id);
                     remoteStorage.markDirty();
                 } else {
-                    Logging.message(playerEntity, EnumChatFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
+                    Logging.message(playerEntity, TextFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
                 }
             } else {
                 GenericContainer genericContainer = (GenericContainer) playerEntity.openContainer;

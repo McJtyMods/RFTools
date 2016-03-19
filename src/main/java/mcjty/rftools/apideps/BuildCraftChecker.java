@@ -3,7 +3,7 @@ package mcjty.rftools.apideps;
 import buildcraft.api.tools.IToolWrench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Loader;
 
 public class BuildCraftChecker {

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.builder;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.client.model.ModelLoader;

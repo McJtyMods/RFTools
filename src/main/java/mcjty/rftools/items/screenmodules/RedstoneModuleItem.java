@@ -10,15 +10,17 @@ import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -66,28 +68,28 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.GREEN + "Uses " + ScreenConfiguration.REDSTONE_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.REDSTONE_RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
+            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             int channel = tagCompound.getInteger("channel");
             if (channel != -1) {
-                list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+                list.add(TextFormatting.YELLOW + "Channel: " + channel);
             } else if (tagCompound.hasKey("monitorx")) {
                 int mx = tagCompound.getInteger("monitorx");
                 int my = tagCompound.getInteger("monitory");
                 int mz = tagCompound.getInteger("monitorz");
-                list.add(EnumChatFormatting.YELLOW + "Block at: " + mx + "," + my + "," + mz);
+                list.add(TextFormatting.YELLOW + "Block at: " + mx + "," + my + "," + mz);
             }
         }
-        list.add(EnumChatFormatting.WHITE + "Sneak right-click on a redstone transmitter or");
-        list.add(EnumChatFormatting.WHITE + "receiver to set the channel for this module.");
-        list.add(EnumChatFormatting.WHITE + "Or else sneak right-click on the side of any");
-        list.add(EnumChatFormatting.WHITE + "block to monitor the redstone output on that side");
+        list.add(TextFormatting.WHITE + "Sneak right-click on a redstone transmitter or");
+        list.add(TextFormatting.WHITE + "receiver to set the channel for this module.");
+        list.add(TextFormatting.WHITE + "Or else sneak right-click on the side of any");
+        list.add(TextFormatting.WHITE + "block to monitor the redstone output on that side");
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -102,7 +104,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
         } else {
             // We selected a random block.
             tagCompound.setInteger("channel", -1);
-            tagCompound.setInteger("monitordim", world.provider.getDimensionId());
+            tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
@@ -111,7 +113,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
                 Logging.message(player, "Redstone module is set to " + pos);
             }
 
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
         tagCompound.removeTag("monitordim");
@@ -131,6 +133,6 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
                 Logging.message(player, "Redstone module is cleared");
             }
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 }

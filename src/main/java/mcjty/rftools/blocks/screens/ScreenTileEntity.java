@@ -6,7 +6,10 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.api.screens.*;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleProvider;
+import mcjty.rftools.api.screens.IScreenDataHelper;
+import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.*;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
@@ -17,9 +20,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,7 +30,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
 
@@ -86,7 +92,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        return AxisAlignedBB.fromBounds(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1);
+        return new AxisAlignedBB(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1);
     }
 
     @Override
@@ -372,7 +378,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos());
+                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimension(), getPos());
                     clientScreenModules.add(clientScreenModule);
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
@@ -416,7 +422,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimensionId(), getPos());
+                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimension(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
 

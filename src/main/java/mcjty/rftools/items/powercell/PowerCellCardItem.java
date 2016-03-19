@@ -4,7 +4,7 @@ import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,12 +20,12 @@ public class PowerCellCardItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(EnumChatFormatting.WHITE + "Use to connect a powercell multiblock");
+        list.add(TextFormatting.WHITE + "Use to connect a powercell multiblock");
         int id = getId(itemStack);
         if (id == -1) {
-            list.add(EnumChatFormatting.YELLOW + "[UNLINKED]");
+            list.add(TextFormatting.YELLOW + "[UNLINKED]");
         } else {
-            list.add(EnumChatFormatting.GREEN + "Link id: " + id);
+            list.add(TextFormatting.GREEN + "Link id: " + id);
         }
     }
 

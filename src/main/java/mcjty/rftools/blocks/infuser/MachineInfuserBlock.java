@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -37,12 +37,12 @@ public class MachineInfuserBlock extends GenericRFToolsBlock<MachineInfuserTileE
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "With this machine you can improve most other machines");
-            list.add(EnumChatFormatting.WHITE + "in RFTools in various ways. This needs dimensional");
-            list.add(EnumChatFormatting.WHITE + "shards.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            list.add(TextFormatting.WHITE + "With this machine you can improve most other machines");
+            list.add(TextFormatting.WHITE + "in RFTools in various ways. This needs dimensional");
+            list.add(TextFormatting.WHITE + "shards.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -27,15 +27,15 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             int channel = tagCompound.getInteger("channel");
-            list.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            list.add(TextFormatting.GREEN + "Channel: " + channel);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This logic block sends redstone signals from");
-            list.add(EnumChatFormatting.WHITE + "a linked transmitter. Right click on a transmitter");
-            list.add(EnumChatFormatting.WHITE + "(or other receiver) to link");
+            list.add(TextFormatting.WHITE + "This logic block sends redstone signals from");
+            list.add(TextFormatting.WHITE + "a linked transmitter. Right click on a transmitter");
+            list.add(TextFormatting.WHITE + "(or other receiver) to link");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -46,7 +46,7 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         NBTTagCompound tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             int channel = tagCompound.getInteger("channel");
-            currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
         }
         return currenttip;
     }

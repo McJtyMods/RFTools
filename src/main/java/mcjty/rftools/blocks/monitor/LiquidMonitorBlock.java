@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
@@ -102,12 +102,12 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This device monitors the amount of liquid in an adjacent");
-            list.add(EnumChatFormatting.WHITE + "machine (select it with the GUI). It can also send");
-            list.add(EnumChatFormatting.WHITE + "out a redstone signal if the liquid goes above or below");
-            list.add(EnumChatFormatting.WHITE + "some value.");
+            list.add(TextFormatting.WHITE + "This device monitors the amount of liquid in an adjacent");
+            list.add(TextFormatting.WHITE + "machine (select it with the GUI). It can also send");
+            list.add(TextFormatting.WHITE + "out a redstone signal if the liquid goes above or below");
+            list.add(TextFormatting.WHITE + "some value.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

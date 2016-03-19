@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -33,21 +33,21 @@ public class SequencerBlock extends LogicSlabBlock<SequencerTileEntity, EmptyCon
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             int delay = tagCompound.getInteger("delay");
-            list.add(EnumChatFormatting.GREEN + "Delay: " + delay);
+            list.add(TextFormatting.GREEN + "Delay: " + delay);
             long cycleBits = tagCompound.getLong("bits");
 
             int mode = tagCompound.getInteger("mode");
             String smode = SequencerMode.values()[mode].getDescription();
-            list.add(EnumChatFormatting.GREEN + "Mode: " + smode);
+            list.add(TextFormatting.GREEN + "Mode: " + smode);
 
-            list.add(EnumChatFormatting.GREEN + "Bits: " + Long.toHexString(cycleBits));
+            list.add(TextFormatting.GREEN + "Bits: " + Long.toHexString(cycleBits));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This logic block emits a series of redstone");
-            list.add(EnumChatFormatting.WHITE + "signals in a pattern that you can set in the GUI.");
+            list.add(TextFormatting.WHITE + "This logic block emits a series of redstone");
+            list.add(TextFormatting.WHITE + "signals in a pattern that you can set in the GUI.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

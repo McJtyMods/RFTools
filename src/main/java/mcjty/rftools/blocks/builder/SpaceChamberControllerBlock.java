@@ -3,19 +3,15 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,37 +37,38 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             int channel = tagCompound.getInteger("channel");
-            list.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            list.add(TextFormatting.GREEN + "Channel: " + channel);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This block is one of the eight corners of an");
-            list.add(EnumChatFormatting.WHITE + "area of space you want to copy/move elsewhere");
+            list.add(TextFormatting.WHITE + "This block is one of the eight corners of an");
+            list.add(TextFormatting.WHITE + "area of space you want to copy/move elsewhere");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof SpaceChamberControllerTileEntity) {
-            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
-            int channel = spaceChamberControllerTileEntity.getChannel();
-            currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
-            if (channel != -1) {
-                int size = spaceChamberControllerTileEntity.getChamberSize();
-                if (size == -1) {
-                    currenttip.add(EnumChatFormatting.YELLOW + "Chamber not formed!");
-                } else {
-                    currenttip.add(EnumChatFormatting.GREEN + "Area: " + size + " blocks");
-                }
-            }
-        }
-        return currenttip;
-    }
+//@todo
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof SpaceChamberControllerTileEntity) {
+//            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
+//            int channel = spaceChamberControllerTileEntity.getChannel();
+//            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+//            if (channel != -1) {
+//                int size = spaceChamberControllerTileEntity.getChamberSize();
+//                if (size == -1) {
+//                    currenttip.add(TextFormatting.YELLOW + "Chamber not formed!");
+//                } else {
+//                    currenttip.add(TextFormatting.GREEN + "Area: " + size + " blocks");
+//                }
+//            }
+//        }
+//        return currenttip;
+//    }
 
     @Override
     public int getGuiID() {
@@ -82,7 +79,8 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
     @Override
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
-            world.playSound(pos.getX(), pos.getY(), pos.getZ(), "note.pling", 1.0f, 1.0f, false);
+            SoundEvent pling = SoundEvent.soundEventRegistry.getObject(new ResourceLocation("block.note.pling"));
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), pling, SoundCategory.BLOCKS, 1.0f, 1.0f, false);
         } else {
             SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             chamberControllerTileEntity.createChamber(player);
@@ -120,17 +118,18 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
 
 
     @Override
-    public boolean isBlockNormalCube() {
+    public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.TRANSLUCENT;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
     }
 }

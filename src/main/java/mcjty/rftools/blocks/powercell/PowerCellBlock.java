@@ -8,21 +8,20 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -70,17 +69,17 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.YELLOW + "Energy: " + tagCompound.getInteger("energy"));
+            list.add(TextFormatting.YELLOW + "Energy: " + tagCompound.getInteger("energy"));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             int totpower = PowerCellConfiguration.rfPerCell * getAdvancedFactor();
-            list.add(EnumChatFormatting.WHITE + "This block can store power (" + totpower + " RF)");
-            list.add(EnumChatFormatting.WHITE + "Optionally in a big multi dimensional structure");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced long distance power");
-            list.add(EnumChatFormatting.YELLOW + "extraction cost and increased RF/tick output");
+            list.add(TextFormatting.WHITE + "This block can store power (" + totpower + " RF)");
+            list.add(TextFormatting.WHITE + "Optionally in a big multi dimensional structure");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
+            list.add(TextFormatting.YELLOW + "extraction cost and increased RF/tick output");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -92,40 +91,41 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity tileEntity = accessor.getTileEntity();
-        if (tileEntity instanceof PowerCellTileEntity) {
-            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
-            int id = powerCellTileEntity.getNetworkId();
-            if (id != -1) {
-                currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
-            } else {
-                currenttip.add(EnumChatFormatting.GREEN + "Local storage!");
-            }
-            if (System.currentTimeMillis() - lastTime > 250) {
-                lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
-            }
-            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
-            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF");
-            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
-            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
-                currenttip.add(EnumChatFormatting.YELLOW + "Side: input mode");
-            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
-                currenttip.add(EnumChatFormatting.YELLOW + "Side: output mode");
-            }
-        }
-        return currenttip;
-    }
+    //@todo
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity tileEntity = accessor.getTileEntity();
+//        if (tileEntity instanceof PowerCellTileEntity) {
+//            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
+//            int id = powerCellTileEntity.getNetworkId();
+//            if (id != -1) {
+//                currenttip.add(TextFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
+//            } else {
+//                currenttip.add(TextFormatting.GREEN + "Local storage!");
+//            }
+//            if (System.currentTimeMillis() - lastTime > 250) {
+//                lastTime = System.currentTimeMillis();
+//                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
+//            }
+//            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
+//                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
+//            currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF");
+//            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
+//            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
+//                currenttip.add(TextFormatting.YELLOW + "Side: input mode");
+//            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
+//                currenttip.add(TextFormatting.YELLOW + "Side: output mode");
+//            }
+//        }
+//        return currenttip;
+//    }
 
     @Override
     protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
         if (!world.isRemote) {
-            SmartWrenchMode currentMode = SmartWrenchItem.getCurrentMode(player.getHeldItem());
+            SmartWrenchMode currentMode = SmartWrenchItem.getCurrentMode(player.getHeldItem(EnumHand.MAIN_HAND));
             if (currentMode == SmartWrenchMode.MODE_SELECT) {
                 TileEntity te = world.getTileEntity(pos);
                 if (te instanceof PowerCellTileEntity) {
@@ -236,7 +236,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, NORTH, SOUTH, WEST, EAST, UP, DOWN);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, NORTH, SOUTH, WEST, EAST, UP, DOWN);
     }
 }

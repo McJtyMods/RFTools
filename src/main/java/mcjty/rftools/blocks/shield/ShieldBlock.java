@@ -15,9 +15,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,18 +59,18 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IReds
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
-        list.add(EnumChatFormatting.GREEN + "Supports " + max + " blocks");
+        list.add(TextFormatting.GREEN + "Supports " + max + " blocks");
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This machine forms a shield out of adjacent");
-            list.add(EnumChatFormatting.WHITE + "template blocks. It can filter based on type of");
-            list.add(EnumChatFormatting.WHITE + "mob and do various things (damage, solid, ...)");
-            list.add(EnumChatFormatting.WHITE + "Use the Smart Wrench to add sections to the shield");
-            list.add(EnumChatFormatting.RED + "Note: block mimic and colored shields not implemented yet!");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(EnumChatFormatting.YELLOW + "increased damage.");
+            list.add(TextFormatting.WHITE + "This machine forms a shield out of adjacent");
+            list.add(TextFormatting.WHITE + "template blocks. It can filter based on type of");
+            list.add(TextFormatting.WHITE + "mob and do various things (damage, solid, ...)");
+            list.add(TextFormatting.WHITE + "Use the Smart Wrench to add sections to the shield");
+            list.add(TextFormatting.RED + "Note: block mimic and colored shields not implemented yet!");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
+            list.add(TextFormatting.YELLOW + "increased damage.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -95,13 +96,13 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IReds
     @Override
     protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
         if (!world.isRemote) {
-            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem());
+            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(), new GlobalCoordinate(pos, world.provider.getDimensionId()));
-                Logging.message(player, EnumChatFormatting.YELLOW + "Selected block");
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
+                Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(), null);
-                Logging.message(player, EnumChatFormatting.YELLOW + "Cleared selected block");
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), null);
+                Logging.message(player, TextFormatting.YELLOW + "Cleared selected block");
             }
         }
         return true;

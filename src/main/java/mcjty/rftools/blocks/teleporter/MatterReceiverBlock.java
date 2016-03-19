@@ -16,8 +16,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,15 +48,15 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
             int id = tagCompound.getInteger("destinationId");
-            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            list.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "If you place this block anywhere in the world then");
-            list.add(EnumChatFormatting.WHITE + "you can dial to it using a Dialing Device. Before");
-            list.add(EnumChatFormatting.WHITE + "teleporting to this block make sure to give it power!");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            list.add(TextFormatting.WHITE + "If you place this block anywhere in the world then");
+            list.add(TextFormatting.WHITE + "you can dial to it using a Dialing Device. Before");
+            list.add(TextFormatting.WHITE + "teleporting to this block make sure to give it power!");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -69,7 +69,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            currenttip.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
         }
         return currenttip;
     }

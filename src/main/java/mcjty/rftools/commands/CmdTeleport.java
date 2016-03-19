@@ -3,8 +3,8 @@ package mcjty.rftools.commands;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextComponentString;
+import net.minecraft.util.TextFormatting;
 
 public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
@@ -30,10 +30,10 @@ public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length < 5) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Several parameters are missing!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Several parameters are missing!"));
             return;
         } else if (args.length > 5) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Too many parameters!"));
+            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Too many parameters!"));
             return;
         }
 

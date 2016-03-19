@@ -12,7 +12,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;

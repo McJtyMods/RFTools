@@ -14,8 +14,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -48,12 +48,12 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This machine produces RF (" + CoalGeneratorConfiguration.rfPerTick + " RF/t)");
-            list.add(EnumChatFormatting.WHITE + "from coal or charcoal");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: more power generation");
-            list.add(EnumChatFormatting.YELLOW + "and lasts longer on a single fuel");
+            list.add(TextFormatting.WHITE + "This machine produces RF (" + CoalGeneratorConfiguration.rfPerTick + " RF/t)");
+            list.add(TextFormatting.WHITE + "from coal or charcoal");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: more power generation");
+            list.add(TextFormatting.YELLOW + "and lasts longer on a single fuel");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -64,7 +64,7 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
         CoalGeneratorTileEntity te = (CoalGeneratorTileEntity) accessor.getTileEntity();
         Boolean working = te.isWorking();
         if (working) {
-            currenttip.add(EnumChatFormatting.GREEN + "Producing " + te.getRfPerTick() + " RF/t");
+            currenttip.add(TextFormatting.GREEN + "Producing " + te.getRfPerTick() + " RF/t");
         }
 
         return currenttip;

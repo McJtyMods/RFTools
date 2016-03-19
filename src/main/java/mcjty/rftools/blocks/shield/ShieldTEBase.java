@@ -23,6 +23,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -618,13 +620,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     @Override
     public void selectBlock(EntityPlayer player, BlockPos pos) {
         if (!shieldComposed) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "Shield is not composed. Nothing happens!");
+            Logging.message(player, TextFormatting.YELLOW + "Shield is not composed. Nothing happens!");
             return;
         }
 
         float squaredDistance = (float) getPos().distanceSq(pos.getX(), pos.getY(), pos.getZ());
         if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance * ShieldConfiguration.maxDisjointShieldDistance) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "This template is too far to connect to the shield!");
+            Logging.message(player, TextFormatting.YELLOW + "This template is too far to connect to the shield!");
             return;
         }
 
@@ -636,7 +638,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         BlockPos c = pos;
         if (origBlock == ShieldSetup.shieldTemplateBlock) {
             if (isShapedShield()) {
-                Logging.message(player, EnumChatFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
+                Logging.message(player, TextFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
                 return;
             }
             Set<BlockPos> templateBlocks = new HashSet<>();
@@ -660,7 +662,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 worldObj.setBlockState(c, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
             }
         } else {
-            Logging.message(player, EnumChatFormatting.YELLOW + "The selected shield can't do anything with this block!");
+            Logging.message(player, TextFormatting.YELLOW + "The selected shield can't do anything with this block!");
             return;
         }
         markDirtyClient();

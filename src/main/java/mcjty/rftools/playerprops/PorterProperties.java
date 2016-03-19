@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 
 public class PorterProperties {
     private int target;
@@ -46,7 +46,7 @@ public class PorterProperties {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(entity.worldObj);
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
-                Logging.message(player, EnumChatFormatting.RED + "Something went wrong! The target has disappeared!");
+                Logging.message(player, TextFormatting.RED + "Something went wrong! The target has disappeared!");
                 TeleportationTools.applyEffectForSeverity(player, 3, false);
                 return;
             }

@@ -1,7 +1,7 @@
 package mcjty.rftools.items.smartwrench;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface SmartWrenchSelector {
 

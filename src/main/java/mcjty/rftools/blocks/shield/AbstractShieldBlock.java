@@ -4,9 +4,10 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
@@ -14,8 +15,8 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -56,7 +57,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public boolean canEntityDestroy(IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         return false;
     }
 
@@ -70,12 +71,12 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public int getMobilityFlag() {
-        return 2;
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        return EnumPushReaction.BLOCK;
     }
 
     @Override
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity entity) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         int cdData = shieldBlockTileEntity.getCollisionData();
 
@@ -86,7 +87,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_HOSTILE) != 0) {
             if (entity instanceof IMob) {
                 if (checkEntityCD(world, pos, HostileFilter.HOSTILE)) {
-                    super.addCollisionBoxesToList(world, pos, state, mask, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
@@ -94,7 +95,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PASSIVE) != 0) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
                 if (checkEntityCD(world, pos, AnimalFilter.ANIMAL)) {
-                    super.addCollisionBoxesToList(world, pos, state, mask, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
@@ -102,14 +103,14 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
                 if (checkPlayerCD(world, pos, (EntityPlayer) entity)) {
-                    super.addCollisionBoxesToList(world, pos, state, mask, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
             }
         }
         if ((cdData & META_ITEMS) != 0) {
             if (!(entity instanceof EntityLivingBase)) {
                 if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
-                    super.addCollisionBoxesToList(world, pos, state, mask, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
@@ -186,24 +187,19 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
 //
 
 
-    // Subclasses can call this to override the slightly more expensive version in this class.
-    protected boolean blockShouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return super.shouldSideBeRendered(world, pos, side);
-    }
-
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         BlockPos thispos = pos.offset(side.getOpposite());
 
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);
         if (shieldBlockTileEntity == null) {
-            return super.shouldSideBeRendered(world, pos, side);
+            return super.shouldSideBeRendered(state, world, pos, side);
         }
         Block block = shieldBlockTileEntity.getBlock();
         if (block == null) {
-            return super.shouldSideBeRendered(world, pos, side);
+            return super.shouldSideBeRendered(state, world, pos, side);
         } else {
-            return block.shouldSideBeRendered(world, pos, side);
+            return block.shouldSideBeRendered(state, world, pos, side);
         }
     }
 

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.monitor;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ByteBufConverter;
 import mcjty.lib.network.NetworkTools;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class BlockPosNet implements ByteBufConverter {
 

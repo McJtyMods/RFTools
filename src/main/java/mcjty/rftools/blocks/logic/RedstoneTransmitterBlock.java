@@ -11,8 +11,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,16 +33,16 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             int channel = tagCompound.getInteger("channel");
-            list.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            list.add(TextFormatting.GREEN + "Channel: " + channel);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This logic block accepts redstone signals and");
-            list.add(EnumChatFormatting.WHITE + "sends them out wirelessly to linked receivers");
-            list.add(EnumChatFormatting.WHITE + "Place down to create a channel or else right");
-            list.add(EnumChatFormatting.WHITE + "click on receiver/transmitter to use that channel");
+            list.add(TextFormatting.WHITE + "This logic block accepts redstone signals and");
+            list.add(TextFormatting.WHITE + "sends them out wirelessly to linked receivers");
+            list.add(TextFormatting.WHITE + "Place down to create a channel or else right");
+            list.add(TextFormatting.WHITE + "click on receiver/transmitter to use that channel");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -53,7 +53,7 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         NBTTagCompound tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             int channel = tagCompound.getInteger("channel");
-            currenttip.add(EnumChatFormatting.GREEN + "Channel: " + channel);
+            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
         }
         return currenttip;
     }

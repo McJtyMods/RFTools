@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ByteBufConverter;
 import mcjty.lib.network.NetworkTools;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class TeleportDestination implements ByteBufConverter {
     private final BlockPos coordinate;

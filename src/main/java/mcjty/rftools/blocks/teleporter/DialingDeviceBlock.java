@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -33,15 +33,15 @@ public class DialingDeviceBlock extends GenericRFToolsBlock implements Infusable
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "With the dialing device you can 'dial-up' any");
-            list.add(EnumChatFormatting.WHITE + "nearby matter transmitter to any matter receiver");
-            list.add(EnumChatFormatting.WHITE + "in the Minecraft universe. This requires power.");
-            list.add(EnumChatFormatting.WHITE + "If a Destination Analyzer is adjacent to this block");
-            list.add(EnumChatFormatting.WHITE + "you will also be able to check if the destination");
-            list.add(EnumChatFormatting.WHITE + "has enough power to be safe.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            list.add(TextFormatting.WHITE + "With the dialing device you can 'dial-up' any");
+            list.add(TextFormatting.WHITE + "nearby matter transmitter to any matter receiver");
+            list.add(TextFormatting.WHITE + "in the Minecraft universe. This requires power.");
+            list.add(TextFormatting.WHITE + "If a Destination Analyzer is adjacent to this block");
+            list.add(TextFormatting.WHITE + "you will also be able to check if the destination");
+            list.add(TextFormatting.WHITE + "has enough power to be safe.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

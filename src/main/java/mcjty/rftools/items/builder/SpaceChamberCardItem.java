@@ -9,8 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,21 +41,21 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
             channel = tagCompound.getInteger("channel");
         }
         if (channel != -1) {
-            list.add(EnumChatFormatting.YELLOW + "Channel: " + channel);
+            list.add(TextFormatting.YELLOW + "Channel: " + channel);
         } else {
-            list.add(EnumChatFormatting.YELLOW + "Channel is not set!");
+            list.add(TextFormatting.YELLOW + "Channel is not set!");
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "Sneak right-click on a space chamber controller");
-            list.add(EnumChatFormatting.WHITE + "to set the channel for this card.");
-            list.add(EnumChatFormatting.WHITE + "Right-click in the air to show an overview of");
-            list.add(EnumChatFormatting.WHITE + "the area contents.");
-            list.add(EnumChatFormatting.WHITE + "Insert it in a builder to copy/move the");
-            list.add(EnumChatFormatting.WHITE + "linked area");
-            list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
-            list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
+            list.add(TextFormatting.WHITE + "Sneak right-click on a space chamber controller");
+            list.add(TextFormatting.WHITE + "to set the channel for this card.");
+            list.add(TextFormatting.WHITE + "Right-click in the air to show an overview of");
+            list.add(TextFormatting.WHITE + "the area contents.");
+            list.add(TextFormatting.WHITE + "Insert it in a builder to copy/move the");
+            list.add(TextFormatting.WHITE + "linked area");
+            list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
+            list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -98,7 +98,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
             if (channel != -1) {
                 showDetailsGui(world, player);
             } else {
-                Logging.message(player, EnumChatFormatting.YELLOW + "Card is not linked!");
+                Logging.message(player, TextFormatting.YELLOW + "Card is not linked!");
             }
         }
     }

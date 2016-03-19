@@ -7,7 +7,7 @@ import mcjty.rftools.api.screens.IModuleRenderHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDataBoolean> {

@@ -9,8 +9,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,14 +40,14 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "Before screens can work they need to get power from");
-            list.add(EnumChatFormatting.WHITE + "this controller. Even a screen that has only modules");
-            list.add(EnumChatFormatting.WHITE + "that require no power will need to have a controller.");
-            list.add(EnumChatFormatting.WHITE + "One controller can power many screens as long as they");
-            list.add(EnumChatFormatting.WHITE + "are in range.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: increased range for screens.");
+            list.add(TextFormatting.WHITE + "Before screens can work they need to get power from");
+            list.add(TextFormatting.WHITE + "this controller. Even a screen that has only modules");
+            list.add(TextFormatting.WHITE + "that require no power will need to have a controller.");
+            list.add(TextFormatting.WHITE + "One controller can power many screens as long as they");
+            list.add(TextFormatting.WHITE + "are in range.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: increased range for screens.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

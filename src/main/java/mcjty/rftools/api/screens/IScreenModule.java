@@ -2,7 +2,7 @@ package mcjty.rftools.api.screens;
 
 import mcjty.rftools.api.screens.data.IModuleData;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**

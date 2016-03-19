@@ -7,12 +7,12 @@ import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,7 +57,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
-                Logging.message(player, EnumChatFormatting.YELLOW + "This tablet contains no storage module!");
+                Logging.message(player, TextFormatting.YELLOW + "This tablet contains no storage module!");
                 return stack;
             }
 
@@ -69,7 +69,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
             int energy = tagCompound.getInteger("Energy");
             if (energy < rfNeeded) {
-                Logging.message(player, EnumChatFormatting.YELLOW + "Not enough energy to open the contents!");
+                Logging.message(player, TextFormatting.YELLOW + "Not enough energy to open the contents!");
                 return stack;
             }
 
@@ -78,7 +78,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
             if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
-                    Logging.message(player, EnumChatFormatting.YELLOW + "This remote storage module is not linked!");
+                    Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                     return stack;
                 }
                 player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
@@ -120,12 +120,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(EnumChatFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
+            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
             if (itemStack.getItemDamage() == DAMAGE_FULL) {
                 int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("childDamage")];
                 StorageModuleItem.addModuleInformation(list, max, tagCompound);
             } else {
-                list.add(EnumChatFormatting.YELLOW + "No storage module installed!");
+                list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
         }
         if (player.isSneaking()) {
@@ -133,7 +133,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

@@ -6,7 +6,7 @@ import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -40,7 +40,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
         for (int i = 0 ; i < MAXTARGETS ; i++) {
             if (tagCompound.hasKey("target"+i) && tagCompound.getInteger("target"+i) == id) {
                 // Id is already there.
-                Logging.message(player, EnumChatFormatting.YELLOW + "Receiver " + id + " was already added to the charged porter.");
+                Logging.message(player, TextFormatting.YELLOW + "Receiver " + id + " was already added to the charged porter.");
                 return;
             }
         }
@@ -59,7 +59,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
         }
 
         if (world.isRemote) {
-            Logging.message(player, EnumChatFormatting.YELLOW + "Charged porter has no free targets!");
+            Logging.message(player, TextFormatting.YELLOW + "Charged porter has no free targets!");
         }
     }
 

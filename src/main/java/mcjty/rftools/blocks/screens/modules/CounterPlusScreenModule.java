@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class CounterPlusScreenModule extends CounterScreenModule {

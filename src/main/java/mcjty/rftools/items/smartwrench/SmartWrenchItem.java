@@ -5,17 +5,21 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -66,7 +70,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_WRENCH) {
@@ -80,21 +84,21 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 stack.setTagCompound(tagCompound);
             }
             tagCompound.setString("mode", mode.getCode());
-            Logging.message(player, EnumChatFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
+            Logging.message(player, TextFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
         }
-        return super.onItemRightClick(stack, world, player);
+        return super.onItemRightClick(stack, world, player, hand);
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate b = getCurrentBlock(stack);
                 if (b != null) {
-                    if (b.getDimension() != world.provider.getDimensionId()) {
-                        Logging.message(player, EnumChatFormatting.RED + "The selected block is in another dimension!");
-                        return true;
+                    if (b.getDimension() != world.provider.getDimension()) {
+                        Logging.message(player, TextFormatting.RED + "The selected block is in another dimension!");
+                        return EnumActionResult.FAIL;
                     }
                     TileEntity te = world.getTileEntity(b.getCoordinate());
                     if (te instanceof SmartWrenchSelector) {
@@ -104,11 +108,11 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 }
             }
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return true;
     }
 
@@ -118,19 +122,19 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         super.addInformation(itemStack, player, list, whatIsThis);
         GlobalCoordinate b = getCurrentBlock(itemStack);
         if (b != null) {
-            list.add(EnumChatFormatting.GREEN + "Block: " + b.getCoordinate().toString() + " at dimension " + b.getDimension());
+            list.add(TextFormatting.GREEN + "Block: " + b.getCoordinate().toString() + " at dimension " + b.getDimension());
         }
         SmartWrenchMode mode = getCurrentMode(itemStack);
-        list.add(EnumChatFormatting.WHITE + "Right-click on air to change mode.");
-        list.add(EnumChatFormatting.GREEN + "Mode: " + mode.getName());
+        list.add(TextFormatting.WHITE + "Right-click on air to change mode.");
+        list.add(TextFormatting.GREEN + "Mode: " + mode.getName());
         if (mode == SmartWrenchMode.MODE_WRENCH) {
-            list.add(EnumChatFormatting.WHITE + "Use as a normal wrench:");
-            list.add(EnumChatFormatting.WHITE + "    Sneak-right-click to pick up machines.");
-            list.add(EnumChatFormatting.WHITE + "    Right-click to rotate machines.");
+            list.add(TextFormatting.WHITE + "Use as a normal wrench:");
+            list.add(TextFormatting.WHITE + "    Sneak-right-click to pick up machines.");
+            list.add(TextFormatting.WHITE + "    Right-click to rotate machines.");
         } else if (mode == SmartWrenchMode.MODE_SELECT) {
-            list.add(EnumChatFormatting.WHITE + "Use as a block selector:");
-            list.add(EnumChatFormatting.WHITE + "    Sneak-right-click select master block.");
-            list.add(EnumChatFormatting.WHITE + "    Right-click to associate blocks with master.");
+            list.add(TextFormatting.WHITE + "Use as a block selector:");
+            list.add(TextFormatting.WHITE + "    Sneak-right-click select master block.");
+            list.add(TextFormatting.WHITE + "    Right-click to associate blocks with master.");
         }
     }
 

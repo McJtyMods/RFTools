@@ -6,15 +6,15 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -34,7 +34,6 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass) {
         super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, false);
-        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
     @Override
@@ -44,36 +43,31 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
         super(material, tileEntityClass, containerClass, itemBlockClass, name, false);
-        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
     }
 
+    public static final AxisAlignedBB BLOCK_DOWN = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
+    public static final AxisAlignedBB BLOCK_UP = new AxisAlignedBB(0.0F, 0.7F, 0.0F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB BLOCK_NORTH = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.3F);
+    public static final AxisAlignedBB BLOCK_SOUTH = new AxisAlignedBB(0.0F, 0.0F, 0.7F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB BLOCK_WEST = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.3F, 1.0F, 1.0F);
+    public static final AxisAlignedBB BLOCK_EAST = new AxisAlignedBB(0.7F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
             EnumFacing side = logicTileEntity.getFacing().getSide();
             switch (side) {
-                case DOWN:
-                    setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
-                    break;
-                case UP:
-                    setBlockBounds(0.0F, 0.7F, 0.0F, 1.0F, 1.0F, 1.0F);
-                    break;
-                case NORTH:
-                    setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.3F);
-                    break;
-                case SOUTH:
-                    setBlockBounds(0.0F, 0.0F, 0.7F, 1.0F, 1.0F, 1.0F);
-                    break;
-                case WEST:
-                    setBlockBounds(0.0F, 0.0F, 0.0F, 0.3F, 1.0F, 1.0F);
-                    break;
-                case EAST:
-                    setBlockBounds(0.7F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-                    break;
+                case DOWN: return BLOCK_DOWN;
+                case UP: return BLOCK_UP;
+                case NORTH: return BLOCK_NORTH;
+                case SOUTH: return BLOCK_SOUTH;
+                case WEST: return BLOCK_WEST;
+                case EAST: return BLOCK_EAST;
             }
         }
+        return BLOCK_DOWN;
     }
 
 
@@ -103,22 +97,22 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public boolean isFullBlock() {
-        return super.isFullBlock();
+    public boolean isFullBlock(IBlockState state) {
+        return super.isFullBlock(state);
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         return null;
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
@@ -139,12 +133,12 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public boolean canProvidePower() {
+    public boolean canProvidePower(IBlockState state) {
         return true;
     }
 
     @Override
-    public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
@@ -159,8 +153,8 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
 
     @Override
-    public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-        return getWeakPower(world, pos, state, side);
+    public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return getWeakPower(state, world, pos, side);
     }
 
     @Override
@@ -210,9 +204,10 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         return state.getValue(META_INTERMEDIATE) + (state.getValue(OUTPUTPOWER) ? 8 : 0);
     }
 
+
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER);
     }
 
 

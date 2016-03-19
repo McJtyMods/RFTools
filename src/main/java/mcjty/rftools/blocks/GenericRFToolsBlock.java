@@ -12,7 +12,7 @@ import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -20,7 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -127,7 +127,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
 //                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
 //                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
 //                    if (channel.isWhitelist() != playerListed) {
-//                        Logging.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
+//                        Logging.message(player, TextFormatting.RED + "You have no permission to use this block!");
 //                        return true;
 //                    }
 //                }

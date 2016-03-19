@@ -11,14 +11,14 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
@@ -64,12 +64,12 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "This modular storage system can store a lot");
-            list.add(EnumChatFormatting.WHITE + "of items and allows easy searching and filtering.");
-            list.add(EnumChatFormatting.WHITE + "You must first insert a storage module item before");
-            list.add(EnumChatFormatting.WHITE + "you can use it");
+            list.add(TextFormatting.WHITE + "This modular storage system can store a lot");
+            list.add(TextFormatting.WHITE + "of items and allows easy searching and filtering.");
+            list.add(TextFormatting.WHITE + "You must first insert a storage module item before");
+            list.add(TextFormatting.WHITE + "you can use it");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
@@ -141,7 +141,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
             ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
             int maxSize = modularStorageTileEntity.getMaxSize();
             if (maxSize == 0) {
-                currenttip.add(EnumChatFormatting.YELLOW + "No storage module!");
+                currenttip.add(TextFormatting.YELLOW + "No storage module!");
             } else {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
@@ -150,9 +150,9 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
                 }
                 int stacks = StorageInfoPacketClient.cntReceived;
                 if (stacks == -1) {
-                    currenttip.add(EnumChatFormatting.YELLOW + "Maximum size: " + maxSize);
+                    currenttip.add(TextFormatting.YELLOW + "Maximum size: " + maxSize);
                 } else {
-                    currenttip.add(EnumChatFormatting.GREEN + "" + stacks + " out of " + maxSize);
+                    currenttip.add(TextFormatting.GREEN + "" + stacks + " out of " + maxSize);
                 }
             }
         }

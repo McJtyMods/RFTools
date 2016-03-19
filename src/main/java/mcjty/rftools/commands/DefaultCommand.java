@@ -2,9 +2,9 @@ package mcjty.rftools.commands;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.Collections;
@@ -24,9 +24,9 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     public void showHelp(ICommandSender sender) {
-        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + getCommandName() + " <subcommand> <args>"));
+        sender.addChatMessage(new TextComponentString(TextFormatting.BLUE + getCommandName() + " <subcommand> <args>"));
         for (Map.Entry<String,RfToolsCommand> me : commands.entrySet()) {
-            sender.addChatMessage(new ChatComponentText("    " + me.getKey() + " " + me.getValue().getHelp()));
+            sender.addChatMessage(new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp()));
         }
     }
 
@@ -78,7 +78,7 @@ public abstract class DefaultCommand implements ICommand {
             RfToolsCommand command = commands.get(args[0]);
             if (command == null) {
                 if (!world.isRemote) {
-                    sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown RfTools command: " + args[0]));
+                    sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]));
                 }
             } else {
                 if (world.isRemote) {
@@ -89,7 +89,7 @@ public abstract class DefaultCommand implements ICommand {
                 } else {
                     // Server-side.
                     if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
-                        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Command is not allowed!"));
+                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
                     } else {
                         command.execute(sender, args);
                     }
@@ -98,15 +98,18 @@ public abstract class DefaultCommand implements ICommand {
         }
     }
 
-    @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        return true;
-    }
 
-    @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        return null;
-    }
+    //@todo
+
+//    @Override
+//    public boolean canCommandSenderUseCommand(ICommandSender sender) {
+//        return true;
+//    }
+//
+//    @Override
+//    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+//        return null;
+//    }
 
     @Override
     public boolean isUsernameIndex(String[] sender, int p_82358_2_) {

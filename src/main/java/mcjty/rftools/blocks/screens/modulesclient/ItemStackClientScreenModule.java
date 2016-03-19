@@ -6,15 +6,11 @@ import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -165,13 +161,13 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     }
 
     private static void renderQuad(Tessellator tessellator, int x, int y, int width, int height, int color, double offset) {
-        WorldRenderer renderer = tessellator.getWorldRenderer();
-        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        VertexBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 //        tessellator.setColorOpaque_I(color);
-        renderer.pos(x, y, offset);
-        renderer.pos(x, (y + height), offset);
-        renderer.pos((x + width), (y + height), offset);
-        renderer.pos((x + width), y, offset);
+        buffer.pos(x, y, offset);
+        buffer.pos(x, (y + height), offset);
+        buffer.pos((x + width), (y + height), offset);
+        buffer.pos((x + width), y, offset);
         tessellator.draw();
     }
 

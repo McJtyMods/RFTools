@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -37,11 +37,11 @@ public class RemoteStorageBlock extends GenericRFToolsBlock implements Infusable
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.WHITE + "Make storage modules remotely available.");
-            list.add(EnumChatFormatting.WHITE + "Requires energy to do this.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption");
+            list.add(TextFormatting.WHITE + "Make storage modules remotely available.");
+            list.add(TextFormatting.WHITE + "Requires energy to do this.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 }

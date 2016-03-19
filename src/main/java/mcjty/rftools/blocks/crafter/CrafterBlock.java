@@ -12,8 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -58,7 +58,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 }
             }
 
-            list.add(EnumChatFormatting.GREEN + "Contents: " + rc + " stacks");
+            list.add(TextFormatting.GREEN + "Contents: " + rc + " stacks");
 
             rc = 0;
             for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
@@ -72,7 +72,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 }
             }
 
-            list.add(EnumChatFormatting.GREEN + "Recipes: " + rc + " recipes");
+            list.add(TextFormatting.GREEN + "Recipes: " + rc + " recipes");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -84,12 +84,12 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
             } else {
                 amount = 8;
             }
-            list.add(EnumChatFormatting.WHITE + "This machine can handle up to " + amount + " recipes");
-            list.add(EnumChatFormatting.WHITE + "at once and allows recipes to use the crafting results");
-            list.add(EnumChatFormatting.WHITE + "of previous steps.");
-            list.add(EnumChatFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            list.add(TextFormatting.WHITE + "This machine can handle up to " + amount + " recipes");
+            list.add(TextFormatting.WHITE + "at once and allows recipes to use the crafting results");
+            list.add(TextFormatting.WHITE + "of previous steps.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 

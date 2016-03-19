@@ -9,7 +9,7 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -17,8 +17,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -149,11 +149,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 if (player.isSneaking()) {
                     if (world.getTileEntity(pos) instanceof BuilderTileEntity) {
                         setCurrentBlock(stack, new GlobalCoordinate(pos, world.provider.getDimensionId()));
-                        Logging.message(player, EnumChatFormatting.GREEN + "Now select the first corner");
+                        Logging.message(player, TextFormatting.GREEN + "Now select the first corner");
                         setMode(stack, MODE_CORNER1);
                         setCorner1(stack, null);
                     } else {
-                        Logging.message(player, EnumChatFormatting.RED + "You can only do this on a builder!");
+                        Logging.message(player, TextFormatting.RED + "You can only do this on a builder!");
                     }
                 } else {
                     return false;
@@ -161,21 +161,21 @@ public class ShapeCardItem extends GenericRFToolsItem {
             } else if (mode == MODE_CORNER1) {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
                 if (currentBlock.getDimension() != world.provider.getDimensionId()) {
-                    Logging.message(player, EnumChatFormatting.RED + "The Builder is in another dimension!");
+                    Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
-                    Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                    Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
-                    Logging.message(player, EnumChatFormatting.GREEN + "Now select the second corner");
+                    Logging.message(player, TextFormatting.GREEN + "Now select the second corner");
                     setMode(stack, MODE_CORNER2);
                     setCorner1(stack, pos);
                 }
             } else {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
                 if (currentBlock.getDimension() != world.provider.getDimensionId()) {
-                    Logging.message(player, EnumChatFormatting.RED + "The Builder is in another dimension!");
+                    Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
-                    Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                    Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
                     NBTTagCompound tag = stack.getTagCompound();
@@ -185,10 +185,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     }
                     BlockPos c1 = getCorner1(stack);
                     if (c1 == null) {
-                        Logging.message(player, EnumChatFormatting.RED + "Cleared area selection mode!");
+                        Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                         setMode(stack, MODE_NONE);
                     } else {
-                        Logging.message(player, EnumChatFormatting.GREEN + "New settings copied to the shape card!");
+                        Logging.message(player, TextFormatting.GREEN + "New settings copied to the shape card!");
                         System.out.println("currentBlock = " + currentBlock.getCoordinate());
                         System.out.println("corner1 = " + c1);
                         System.out.println("corner2 = " + pos);
@@ -297,94 +297,94 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
         int type = itemStack.getItemDamage();
         if (!BuilderConfiguration.shapeCardAllowed) {
-            list.add(EnumChatFormatting.RED + "Disabled in config!");
+            list.add(TextFormatting.RED + "Disabled in config!");
         } else if (type != CARD_SHAPE) {
             if (!BuilderConfiguration.quarryAllowed) {
-                list.add(EnumChatFormatting.RED + "Disabled in config!");
+                list.add(TextFormatting.RED + "Disabled in config!");
             } else if (isClearingQuarry(type)) {
                 if (!BuilderConfiguration.clearingQuarryAllowed) {
-                    list.add(EnumChatFormatting.RED + "Disabled in config!");
+                    list.add(TextFormatting.RED + "Disabled in config!");
                 }
             }
         }
 
         Shape shape = getShape(itemStack);
-        list.add(EnumChatFormatting.GREEN + "Shape " + shape.getDescription());
-        list.add(EnumChatFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
-        list.add(EnumChatFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
+        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription());
+        list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
+        list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(EnumChatFormatting.YELLOW + "Sneak right click on builder to start mark mode");
-            list.add(EnumChatFormatting.YELLOW + "Then right click to mark two corners of wanted area");
+            list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
+            list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             switch (type) {
                 case CARD_VOID:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to void");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor) + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to void");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_SHAPE:
-                    list.add(EnumChatFormatting.WHITE + "This item can be configured as a shape. You");
-                    list.add(EnumChatFormatting.WHITE + "can then use it in the shield projector to make");
-                    list.add(EnumChatFormatting.WHITE + "a shield of that shape or in the builder to");
-                    list.add(EnumChatFormatting.WHITE + "actually build the shape");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level)");
+                    list.add(TextFormatting.WHITE + "This item can be configured as a shape. You");
+                    list.add(TextFormatting.WHITE + "can then use it in the shield projector to make");
+                    list.add(TextFormatting.WHITE + "a shield of that shape or in the builder to");
+                    list.add(TextFormatting.WHITE + "actually build the shape");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
                     break;
                 case CARD_QUARRY_SILK:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
-                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR_SILK:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with silk touch");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(TextFormatting.WHITE + "Blocks are harvested with silk touch");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_FORTUNE:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
-                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR_FORTUNE:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(EnumChatFormatting.WHITE + "Blocks are harvested with fortune");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
+                    list.add(TextFormatting.WHITE + "Blocks are harvested with fortune");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(EnumChatFormatting.WHITE + "them with dirt.");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
+                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
                 case CARD_QUARRY_CLEAR:
-                    list.add(EnumChatFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(EnumChatFormatting.WHITE + "all blocks in the configured space");
-                    list.add(EnumChatFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(EnumChatFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
-                    list.add(EnumChatFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
+                    list.add(TextFormatting.WHITE + "all blocks in the configured space");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
                     break;
             }
         } else {
-            list.add(EnumChatFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
