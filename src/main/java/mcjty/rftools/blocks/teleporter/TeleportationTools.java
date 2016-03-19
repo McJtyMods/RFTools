@@ -331,6 +331,10 @@ public class TeleportationTools {
         MinecraftServer server = ((EntityPlayerMP) player).worldObj.getMinecraftServer();
         WorldServer worldServer = server.worldServerForDimension(dimension);
         player.addExperienceLevel(0);
+
+
+        entityPlayerMP.changeDimension(dimension);
+        player.setPositionAndUpdate(x, y, z);
         //@todo
 //        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
 //                new RfToolsTeleporter(worldServer, x, y, z));

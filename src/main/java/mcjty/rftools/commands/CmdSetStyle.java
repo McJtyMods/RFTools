@@ -2,6 +2,7 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.gui.GuiStyle;
 import mcjty.lib.preferences.PlayerPreferencesProperties;
+import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -36,16 +37,16 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
         }
 
         EntityPlayer player = (EntityPlayer) sender;
-        PlayerPreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
+        PreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
 
         if (args.length < 2) {
-            GuiStyle style = properties.getPreferencesProperties().getStyle();
+            GuiStyle style = properties.getStyle();
             ((EntityPlayer) sender).addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle()));
             return;
         }
 
         String s = fetchString(sender, args, 1, "");
-        boolean b = properties.getPreferencesProperties().setStyle(s);
+        boolean b = properties.setStyle(s);
         if (!b) {
             String buf = "";
             for (GuiStyle style : GuiStyle.values()) {

@@ -1,6 +1,7 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.preferences.PlayerPreferencesProperties;
+import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -35,9 +36,9 @@ public class CmdReset extends AbstractRfToolsCommand {
         }
 
         EntityPlayer player = (EntityPlayer) sender;
-        PlayerPreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
-        if (properties != null) {
-            properties.getPreferencesProperties().reset();
+        PreferencesProperties preferencesProperties = PlayerPreferencesProperties.getProperties(player);
+        if (preferencesProperties != null) {
+            preferencesProperties.reset();
         }
     }
 }

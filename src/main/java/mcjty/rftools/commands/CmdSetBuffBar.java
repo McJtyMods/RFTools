@@ -1,6 +1,7 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.preferences.PlayerPreferencesProperties;
+import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -35,17 +36,17 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
         }
 
         EntityPlayer player = (EntityPlayer) sender;
-        PlayerPreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
+        PreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
 
         if (args.length < 3) {
-            int buffX = properties.getPreferencesProperties().getBuffX();
-            int buffY = properties.getPreferencesProperties().getBuffY();
+            int buffX = properties.getBuffX();
+            int buffY = properties.getBuffY();
             ((EntityPlayer) sender).addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY));
             return;
         }
 
         int x = fetchInt(sender, args, 1, 0);
         int y = fetchInt(sender, args, 2, 0);
-        properties.getPreferencesProperties().setBuffXY(x, y);
+        properties.setBuffXY(x, y);
     }
 }

@@ -32,6 +32,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
 
     @Override
     public void initGui() {
+        System.out.println("GuiCoalGenerator.initGui");
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
