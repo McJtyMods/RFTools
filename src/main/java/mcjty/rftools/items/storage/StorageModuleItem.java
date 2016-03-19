@@ -10,7 +10,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,12 +46,12 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
             Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
-            return stack;
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        return stack;
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.

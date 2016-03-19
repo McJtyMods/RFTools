@@ -10,7 +10,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -87,11 +87,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         long millis = System.currentTimeMillis();
         if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
-            GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimensionId());
+            GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
         }
 
-        GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimensionId());
+        GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
         Map<Integer,IModuleData> screenData = ScreenTileEntity.screenData.get(key);
         if (screenData == null) {
             screenData = Collections.EMPTY_MAP;
@@ -171,7 +171,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
         GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer renderer = tessellator.getWorldRenderer();
+        VertexBuffer renderer = tessellator.getBuffer();
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         float dim;
         if (size == ScreenTileEntity.SIZE_HUGE) {

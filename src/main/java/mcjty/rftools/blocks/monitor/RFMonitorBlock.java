@@ -7,15 +7,15 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,12 +52,12 @@ public class RFMonitorBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public boolean canProvidePower() {
+    public boolean canProvidePower(IBlockState state) {
         return true;
     }
 
     @Override
-    public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+    public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         EnumFacing direction = state.getValue(FACING);
         if (side == direction) {
             return state.getValue(OUTPUTPOWER) ? 15 : 0;
@@ -67,8 +67,8 @@ public class RFMonitorBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-        return getWeakPower(world, pos, state, side);
+    public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return getWeakPower(state, world, pos, side);
     }
 
     @Override
@@ -92,8 +92,8 @@ public class RFMonitorBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, FACING, OUTPUTPOWER, LEVEL);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING, OUTPUTPOWER, LEVEL);
     }
 
     @SideOnly(Side.CLIENT)

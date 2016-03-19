@@ -6,19 +6,16 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.TextFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,19 +57,20 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof MatterReceiverTileEntity) {
-            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-            String name = matterReceiverTileEntity.getName();
-            int id = matterReceiverTileEntity.getId();
-            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-        }
-        return currenttip;
-    }
+    //@todo
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof MatterReceiverTileEntity) {
+//            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+//            String name = matterReceiverTileEntity.getName();
+//            int id = matterReceiverTileEntity.getId();
+//            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+//        }
+//        return currenttip;
+//    }
 
     @Override
     public int getGuiID() {
@@ -87,7 +85,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
 
-        GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimensionId());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimension());
 
         destinations.getNewId(gc);
         destinations.addDestination(gc);
@@ -116,7 +114,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
             return;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        destinations.removeDestination(pos, world.provider.getDimensionId());
+        destinations.removeDestination(pos, world.provider.getDimension());
         destinations.save(world);
     }
 
@@ -131,7 +129,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this);
     }
 }

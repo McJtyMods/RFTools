@@ -2,17 +2,18 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -28,7 +29,7 @@ public class DestinationAnalyzerBlock extends Block {
         setUnlocalizedName("destination_analyzer");
         setCreativeTab(RFTools.tabRfTools);
         setHardness(2.0f);
-        setStepSound(soundTypeMetal);
+        setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         GameRegistry.registerBlock(this, "destination_analyzer");
@@ -76,7 +77,7 @@ public class DestinationAnalyzerBlock extends Block {
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, FACING);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
     }
 }

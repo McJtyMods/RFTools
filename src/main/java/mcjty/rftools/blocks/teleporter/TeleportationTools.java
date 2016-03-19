@@ -9,9 +9,11 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -21,51 +23,64 @@ public class TeleportationTools {
     public static final int STATUS_WARN = 1;
     public static final int STATUS_UNKNOWN = 2;
 
+    public static Potion confusion;
+    public static Potion harm;
+    public static Potion wither;
+
+    public static void getPotions() {
+        if (confusion == null) {
+            confusion = Potion.potionRegistry.getObject(new ResourceLocation("nausea"));
+            harm = Potion.potionRegistry.getObject(new ResourceLocation("instant_damage"));
+            wither = Potion.potionRegistry.getObject(new ResourceLocation("wither"));
+        }
+    }
+
     public static void applyEffectForSeverity(EntityPlayer player, int severity, boolean boostNeeded) {
+        getPotions();
         switch (severity) {
             case 1:
                 if (boostNeeded) {
-                    player.addPotionEffect(new PotionEffect(Potion.confusion.getId(), 100));
-                    player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 5));
+                    player.addPotionEffect(new PotionEffect(confusion, 100));
+                    player.addPotionEffect(new PotionEffect(harm, 5));
                 }
                 break;
             case 2:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
+                player.addPotionEffect(new PotionEffect(harm, 100));
                 break;
             case 3:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 100));
+                player.addPotionEffect(new PotionEffect(harm, 100));
                 player.attackEntityFrom(DamageSource.generic, 0.5f);
                 break;
             case 4:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
+                player.addPotionEffect(new PotionEffect(harm, 200));
                 player.attackEntityFrom(DamageSource.generic, 0.5f);
                 break;
             case 5:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 200));
+                player.addPotionEffect(new PotionEffect(harm, 200));
                 player.attackEntityFrom(DamageSource.generic, 1.0f);
                 break;
             case 6:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
+                player.addPotionEffect(new PotionEffect(harm, 300));
                 player.attackEntityFrom(DamageSource.generic, 1.0f);
                 break;
             case 7:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 300));
-                player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 200));
+                player.addPotionEffect(new PotionEffect(harm, 300));
+                player.addPotionEffect(new PotionEffect(wither, 200));
                 player.attackEntityFrom(DamageSource.generic, 2.0f);
                 break;
             case 8:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
-                player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 300));
+                player.addPotionEffect(new PotionEffect(harm, 400));
+                player.addPotionEffect(new PotionEffect(wither, 300));
                 player.attackEntityFrom(DamageSource.generic, 2.0f);
                 break;
             case 9:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 400));
-                player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 400));
+                player.addPotionEffect(new PotionEffect(harm, 400));
+                player.addPotionEffect(new PotionEffect(wither, 400));
                 player.attackEntityFrom(DamageSource.generic, 3.0f);
                 break;
             case 10:
-                player.addPotionEffect(new PotionEffect(Potion.harm.getId(), 500));
-                player.addPotionEffect(new PotionEffect(Potion.wither.getId(), 500));
+                player.addPotionEffect(new PotionEffect(harm, 500));
+                player.addPotionEffect(new PotionEffect(wither, 500));
                 player.attackEntityFrom(DamageSource.generic, 3.0f);
                 break;
         }
@@ -79,11 +94,11 @@ public class TeleportationTools {
      * @return
      */
     public static int calculateRFCost(World world, BlockPos c1, TeleportDestination teleportDestination) {
-        if (world.provider.getDimensionId() != teleportDestination.getDimension()) {
+        if (world.provider.getDimension() != teleportDestination.getDimension()) {
             return TeleportConfiguration.rfStartTeleportBaseDim;
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
-            double dist = new Vec3(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3(c2.getX(), c2.getY(), c2.getZ()));
+            double dist = new Vec3d(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3d(c2.getX(), c2.getY(), c2.getZ()));
             int rf = TeleportConfiguration.rfStartTeleportBaseLocal + (int)(TeleportConfiguration.rfStartTeleportDist * dist);
             if (rf > TeleportConfiguration.rfStartTeleportBaseDim) {
                 rf = TeleportConfiguration.rfStartTeleportBaseDim;
@@ -100,11 +115,11 @@ public class TeleportationTools {
      * @return
      */
     public static int calculateTime(World world, BlockPos c1, TeleportDestination teleportDestination) {
-        if (world.provider.getDimensionId() != teleportDestination.getDimension()) {
+        if (world.provider.getDimension() != teleportDestination.getDimension()) {
             return TeleportConfiguration.timeTeleportBaseDim;
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
-            double dist = new Vec3(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3(c2.getX(), c2.getY(), c2.getZ()));
+            double dist = new Vec3d(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3d(c2.getX(), c2.getY(), c2.getZ()));
             int time = TeleportConfiguration.timeTeleportBaseLocal + (int)(TeleportConfiguration.timeTeleportDist * dist / 1000);
             if (time > TeleportConfiguration.timeTeleportBaseDim) {
                 time = TeleportConfiguration.timeTeleportBaseDim;
@@ -118,7 +133,7 @@ public class TeleportationTools {
         BlockPos c = dest.getCoordinate();
 
         BlockPos old = new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ);
-        int oldId = player.worldObj.provider.getDimensionId();
+        int oldId = player.worldObj.provider.getDimension();
         if (oldId != dest.getDimension()) {
             TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
         } else {
@@ -139,7 +154,8 @@ public class TeleportationTools {
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
         if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
-                ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
+                // @todo
+//                ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, RFTools.MODID + ":teleport_whoosh", TeleportConfiguration.teleportVolume, 1.0f);
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {

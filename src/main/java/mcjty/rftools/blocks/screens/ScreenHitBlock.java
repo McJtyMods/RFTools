@@ -2,19 +2,24 @@ package mcjty.rftools.blocks.screens;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -69,14 +74,14 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
             }
 
 
-            MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
             screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - pos.getX() - dx, mouseOver.hitVec.yCoord - pos.getY() - dy, mouseOver.hitVec.zCoord - pos.getZ() - dz, mouseOver.sideHit);
         }
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float sidex, float sidey, float sidez) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float sidex, float sidey, float sidez) {
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
@@ -85,33 +90,38 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
         if (block != ScreenSetup.screenBlock) {
             return false;
         }
-        return block.onBlockActivated(world, pos.add(dx, dy, dz), state, player, side, sidex, sidey, sidez);
+        return block.onBlockActivated(world, pos.add(dx, dy, dz), state, player, hand, heldItem, side, sidex, sidey, sidez);
     }
 
+    public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
+    public static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
+    public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         int meta = state.getBlock().getMetaFromState(state);
         if (meta == EnumFacing.NORTH.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
+            return NORTH_AABB;
         } else if (meta == EnumFacing.SOUTH.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
+            return SOUTH_AABB;
         } else if (meta == EnumFacing.WEST.ordinal()) {
-            this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+            return WEST_AABB;
         } else if (meta == EnumFacing.EAST.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+            return EAST_AABB;
         } else {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+            return BLOCK_AABB;
         }
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isBlockNormalCube() {
+    public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
 
@@ -122,22 +132,22 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
 
 
     @Override
-    public boolean isFullBlock() {
+    public boolean isFullBlock(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public int getRenderType() {
-        return 2;
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public boolean canEntityDestroy(IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         return false;
     }
 
@@ -151,8 +161,8 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public int getMobilityFlag() {
-        return 2;
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        return EnumPushReaction.BLOCK;
     }
 
     @Override
@@ -170,7 +180,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, FACING);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
     }
 }

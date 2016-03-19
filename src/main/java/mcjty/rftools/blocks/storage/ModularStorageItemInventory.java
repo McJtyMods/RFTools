@@ -6,7 +6,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class ModularStorageItemInventory implements IInventory {
@@ -17,10 +18,10 @@ public class ModularStorageItemInventory implements IInventory {
         this.entityPlayer = player;
         int maxSize = getMaxSize();
         stacks = new ItemStack[maxSize];
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem().setTagCompound(tagCompound);
+            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
         }
         tagCompound.setInteger("maxSize", maxSize);
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -31,7 +32,7 @@ public class ModularStorageItemInventory implements IInventory {
     }
 
     private int getMaxSize() {
-        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getTagCompound().getInteger("childDamage")];
+        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage")];
     }
 
     public ItemStack[] getStacks() {
@@ -106,7 +107,7 @@ public class ModularStorageItemInventory implements IInventory {
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
         tagCompound.setInteger("count", numStacks);
     }
@@ -169,7 +170,7 @@ public class ModularStorageItemInventory implements IInventory {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         return null;
     }
 }

@@ -5,8 +5,6 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -63,21 +61,22 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
         counterTileEntity.update();
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-
-        if (System.currentTimeMillis() - lastTime > 500) {
-            CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
-            lastTime = System.currentTimeMillis();
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimensionId(),
-                                                                                                                        te.getPos())));
-        }
-
-        currenttip.add(TextFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
-        return currenttip;
-    }
+    //@todo
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//
+//        if (System.currentTimeMillis() - lastTime > 500) {
+//            CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
+//            lastTime = System.currentTimeMillis();
+//            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimensionId(),
+//                                                                                                                        te.getPos())));
+//        }
+//
+//        currenttip.add(TextFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
+//        return currenttip;
+//    }
 
 
     @Override

@@ -17,9 +17,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -142,13 +145,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             int mode = getMode(stack);
             if (mode == MODE_NONE) {
                 if (player.isSneaking()) {
                     if (world.getTileEntity(pos) instanceof BuilderTileEntity) {
-                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.provider.getDimensionId()));
+                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.provider.getDimension()));
                         Logging.message(player, TextFormatting.GREEN + "Now select the first corner");
                         setMode(stack, MODE_CORNER1);
                         setCorner1(stack, null);
@@ -156,11 +159,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
                         Logging.message(player, TextFormatting.RED + "You can only do this on a builder!");
                     }
                 } else {
-                    return false;
+                    return EnumActionResult.SUCCESS;
                 }
             } else if (mode == MODE_CORNER1) {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.provider.getDimensionId()) {
+                if (currentBlock.getDimension() != world.provider.getDimension()) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -172,7 +175,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 }
             } else {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.provider.getDimensionId()) {
+                if (currentBlock.getDimension() != world.provider.getDimension()) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -208,7 +211,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 }
             }
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 
     public static void setCorner1(ItemStack itemStack, BlockPos corner) {
@@ -550,12 +553,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            return stack;
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        return stack;
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     public static BlockPos getMinCorner(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {

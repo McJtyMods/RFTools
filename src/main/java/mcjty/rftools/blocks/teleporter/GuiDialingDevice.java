@@ -18,10 +18,10 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -187,9 +187,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
 
         BlockPos c = destination.getCoordinate();
-        double distance = new Vec3(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPositionVector());
+        double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPositionVector());
 
-        if (destination.getDimension() != mc.theWorld.provider.getDimensionId() || distance > 150) {
+        if (destination.getDimension() != mc.theWorld.provider.getDimension() || distance > 150) {
             Logging.warn(mc.thePlayer, "Receiver is too far to hilight!");
             mc.getMinecraft().thePlayer.closeScreen();
             return;
@@ -307,7 +307,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayNameString()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimensionId()),
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
                 new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
         lastDialedTransmitter = true;
@@ -333,7 +333,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 new Argument("player", mc.thePlayer.getDisplayNameString()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimensionId()),
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
                 new Argument("c", (BlockPos) null), new Argument("dim", 0)));
 
         lastDialedTransmitter = true;

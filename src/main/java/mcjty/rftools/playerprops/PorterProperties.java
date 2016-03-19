@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 public class PorterProperties {
     private int target;

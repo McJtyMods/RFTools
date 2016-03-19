@@ -14,10 +14,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -393,13 +393,15 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
             } else {
-                w = MinecraftServer.getServer().worldServerForDimension(dimension);
+                w = worldObj.getMinecraftServer().worldServerForDimension(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
         BlockPos c = destination.getCoordinate();
 
-        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        //@todo check!
+//        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        boolean exists = w.getChunkProvider().getLoadedChunk(c.getX() >> 4, c.getZ() >> 4) != null;
         if (!exists) {
             if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
@@ -446,7 +448,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             int xCoord = getPos().getX();
             int yCoord = getPos().getY();
             int zCoord = getPos().getZ();
-            beamBox = AxisAlignedBB.fromBounds(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
+            beamBox = new AxisAlignedBB(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
         }
 
         List<Entity> l = worldObj.getEntitiesWithinAABB(EntityPlayer.class, beamBox);
@@ -570,7 +572,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
                 return;
             }
 
-            int srcId = worldObj.provider.getDimensionId();
+            int srcId = worldObj.provider.getDimension();
             int dstId = dest.getDimension();
             if (!TeleportationTools.checkValidTeleport(player, srcId, dstId)) {
                 cooldownTimer = 80;

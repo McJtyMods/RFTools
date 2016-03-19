@@ -4,7 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.TextComponentString;
+import net.minecraft.util.text.TextComponentString;
 
 import java.util.Collection;
 

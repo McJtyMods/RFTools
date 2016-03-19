@@ -6,13 +6,16 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,19 +49,20 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_tablet");
-        ModelBakery.addVariantName(this, RFTools.MODID + ":storage_module_tablet_empty");
-        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_EMPTY, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5)+ "_empty", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_FULL, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
+        ModelBakery.registerItemVariants(this,
+                new ModelResourceLocation(getRegistryName() + "_empty", "inventory"),
+                new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_EMPTY, new ModelResourceLocation(getRegistryName() + "_empty", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_FULL, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
                 Logging.message(player, TextFormatting.YELLOW + "This tablet contains no storage module!");
-                return stack;
+                return new ActionResult<>(EnumActionResult.FAIL, stack);
             }
 
             int moduleDamage = tagCompound.getInteger("childDamage");
@@ -70,7 +74,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             int energy = tagCompound.getInteger("Energy");
             if (energy < rfNeeded) {
                 Logging.message(player, TextFormatting.YELLOW + "Not enough energy to open the contents!");
-                return stack;
+                return new ActionResult<>(EnumActionResult.FAIL, stack);
             }
 
             energy -= rfNeeded;
@@ -79,15 +83,15 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
-                    return stack;
+                    return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
                 player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             } else {
                 player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             }
-            return stack;
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        return stack;
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     @Override

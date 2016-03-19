@@ -9,12 +9,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -36,13 +37,13 @@ public class PacketGetChamberInfo implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetChamberInfo, IMessage> {
         @Override
         public IMessage onMessage(PacketGetChamberInfo message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(ctx));
             return null;
         }
 
         private void handle(MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
-            ItemStack cardItem = player.getHeldItem();
+            ItemStack cardItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (cardItem == null || cardItem.getTagCompound() == null) {
                 return;
             }
@@ -74,7 +75,7 @@ public class PacketGetChamberInfo implements IMessage {
                         BlockPos p = new BlockPos(x, y, z);
                         IBlockState state = world.getBlockState(p);
                         Block block = state.getBlock();
-                        if (!BuilderTileEntity.isEmpty(block)) {
+                        if (!BuilderTileEntity.isEmpty(state, block)) {
                             int meta = block.getMetaFromState(state);
                             BlockMeta bm = new BlockMeta(block, meta);
                             blocks.increment(bm);
@@ -93,7 +94,7 @@ public class PacketGetChamberInfo implements IMessage {
 
             Counter<String> entitiesWithCount = new Counter<>();
             Counter<String> entitiesWithCost = new Counter<>();
-            List entities = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.fromBounds(
+            List entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(
                     minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX() + 1, maxCorner.getY() + 1, maxCorner.getZ() + 1));
             for (Object o : entities) {
                 Entity entity = (Entity) o;

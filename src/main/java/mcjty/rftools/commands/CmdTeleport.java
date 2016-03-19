@@ -3,8 +3,8 @@ package mcjty.rftools.commands;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.TextComponentString;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
@@ -45,7 +45,7 @@ public class CmdTeleport extends AbstractRfToolsCommand {
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
 
-            int currentId = player.worldObj.provider.getDimensionId();
+            int currentId = player.worldObj.provider.getDimension();
             if (currentId != dim) {
                 TeleportationTools.teleportToDimension(player, dim, x, y, z);
             } else {

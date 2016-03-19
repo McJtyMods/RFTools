@@ -5,9 +5,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -39,7 +39,8 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     private void markDirtyClient() {
         markDirty();
         if (worldObj != null) {
-            worldObj.markBlockForUpdate(getPos());
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
 
@@ -136,11 +137,11 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
-        return new S35PacketUpdateTileEntity(getPos(), 1, nbtTag);
+        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
         readFromNBT(packet.getNbtCompound());
     }
 }

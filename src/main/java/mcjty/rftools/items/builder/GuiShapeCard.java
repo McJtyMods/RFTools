@@ -20,10 +20,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -92,7 +93,7 @@ public class GuiShapeCard extends GuiScreen {
                 updateSettings();
             }
         });
-        ItemStack heldItem = mc.thePlayer.getHeldItem();
+        ItemStack heldItem = mc.thePlayer.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem == null) {
             // Cannot happen!
             return;
@@ -346,16 +347,17 @@ public class GuiShapeCard extends GuiScreen {
         float f1 = (color >> 8 & 255) / 255.0F;
         float f2 = (color & 255) / 255.0F;
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer renderer = tessellator.getWorldRenderer();
-        renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        VertexBuffer buffer = tessellator.getBuffer();
+
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.disableDepth();
         GL11.glLineWidth(2.0f);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.color(f, f1, f2, f3);
-        renderer.pos(x1, y1, 0.0D).endVertex();
-        renderer.pos(x2, y2, 0.0D).endVertex();
+        buffer.pos(x1, y1, 0.0D).endVertex();
+        buffer.pos(x2, y2, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
         GlStateManager.enableDepth();

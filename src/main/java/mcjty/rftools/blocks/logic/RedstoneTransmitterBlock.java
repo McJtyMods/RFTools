@@ -2,8 +2,6 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -12,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,17 +44,18 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
-            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
-        }
-        return currenttip;
-    }
+    //@todo
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        NBTTagCompound tagCompound = accessor.getNBTData();
+//        if (tagCompound != null) {
+//            int channel = tagCompound.getInteger("channel");
+//            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+//        }
+//        return currenttip;
+//    }
 
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {

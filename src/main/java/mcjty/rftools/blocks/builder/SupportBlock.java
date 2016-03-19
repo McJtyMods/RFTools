@@ -4,14 +4,16 @@ import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -45,17 +47,18 @@ public class SupportBlock extends Block {
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.TRANSLUCENT;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
-    public boolean isBlockNormalCube() {
+    public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
 
@@ -65,14 +68,14 @@ public class SupportBlock extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float sidex, float sidey, float sidez) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float sidex, float sidey, float sidez) {
         if (!world.isRemote) {
             // Find all connected blocks and remove them.
             Deque<BlockPos> todo = new ArrayDeque<>();
             todo.add(pos);
             removeBlock(world, todo);
         }
-        return super.onBlockActivated(world, pos, state, player, side, sidex, sidey, sidez);
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, sidex, sidey, sidez);
     }
 
     private void removeBlock(World world, Deque<BlockPos> todo) {
@@ -102,7 +105,7 @@ public class SupportBlock extends Block {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         IBlockState state = blockAccess.getBlockState(pos);
         Block block = state.getBlock();
         IBlockState state2 = blockAccess.getBlockState(pos.offset(side));
@@ -115,7 +118,7 @@ public class SupportBlock extends Block {
             return false;
         }
 
-        return block != this && super.shouldSideBeRendered(blockAccess, pos, side);
+        return block != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @Override
@@ -129,7 +132,7 @@ public class SupportBlock extends Block {
     }
 
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, STATUS);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, STATUS);
     }
 }

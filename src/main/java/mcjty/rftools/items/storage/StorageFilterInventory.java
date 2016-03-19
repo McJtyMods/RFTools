@@ -5,7 +5,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class StorageFilterInventory implements IInventory {
@@ -14,10 +15,10 @@ public class StorageFilterInventory implements IInventory {
 
     public StorageFilterInventory(EntityPlayer player) {
         this.entityPlayer = player;
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem().setTagCompound(tagCompound);
+            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
         }
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
@@ -97,7 +98,7 @@ public class StorageFilterInventory implements IInventory {
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem().getTagCompound();
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
     }
 
@@ -159,7 +160,7 @@ public class StorageFilterInventory implements IInventory {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         return null;
     }
 }

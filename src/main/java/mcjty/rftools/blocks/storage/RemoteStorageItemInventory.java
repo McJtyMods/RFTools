@@ -3,7 +3,8 @@ package mcjty.rftools.blocks.storage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 
 public class RemoteStorageItemInventory implements IInventory {
     private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
@@ -22,10 +23,10 @@ public class RemoteStorageItemInventory implements IInventory {
     }
 
     private int getStorageID() {
-        if (entityPlayer.getHeldItem() == null || entityPlayer.getHeldItem().getTagCompound() == null) {
+        if (entityPlayer.getHeldItem(EnumHand.MAIN_HAND) == null || entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound() == null) {
             return -1;
         }
-        return entityPlayer.getHeldItem().getTagCompound().getInteger("id");
+        return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("id");
     }
 
     private boolean isServer() {
@@ -44,7 +45,7 @@ public class RemoteStorageItemInventory implements IInventory {
             }
             return storage.getRemoteStacks(si);
         } else {
-            int maxSize = entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
+            int maxSize = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
             if (maxSize != stacks.length) {
                 stacks = new ItemStack[maxSize];
             }
@@ -64,10 +65,10 @@ public class RemoteStorageItemInventory implements IInventory {
                 return 0;
             }
             int maxStacks = storage.getMaxStacks(si);
-            entityPlayer.getHeldItem().getTagCompound().setInteger("maxSize", maxStacks);
+            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", maxStacks);
             return maxStacks;
         } else {
-            return entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
+            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
         }
     }
 
@@ -233,7 +234,7 @@ public class RemoteStorageItemInventory implements IInventory {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         return null;
     }
 }

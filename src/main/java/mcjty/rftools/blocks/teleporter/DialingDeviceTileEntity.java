@@ -7,10 +7,11 @@ import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -59,12 +60,12 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
      * @return the distance or else 'dimension warp' in case it is another dimension.
      */
     public static String calculateDistance(World world, TransmitterInfo transmitterInfo, TeleportDestination teleportDestination) {
-        if (world.provider.getDimensionId() != teleportDestination.getDimension()) {
+        if (world.provider.getDimension() != teleportDestination.getDimension()) {
             return "dimension warp";
         } else {
             BlockPos c1 = transmitterInfo.getCoordinate();
             BlockPos c2 = teleportDestination.getCoordinate();
-            double dist = new Vec3(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3(c2.getX(), c2.getY(), c2.getZ()));
+            double dist = new Vec3d(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3d(c2.getX(), c2.getY(), c2.getZ()));
             return Integer.toString((int) dist);
         }
     }
@@ -159,9 +160,9 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (Object p : list) {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
+        PlayerList playerList = worldObj.getMinecraftServer().getPlayerList();
+        List<EntityPlayerMP> list = playerList.getPlayerList();
+        for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getDisplayName())) {
                 PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
                 properties.getFavoriteDestinationsProperties().setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);

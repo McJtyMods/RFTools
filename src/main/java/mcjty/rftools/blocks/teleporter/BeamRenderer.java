@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +17,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
     private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
     private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
 
-    private void p(WorldRenderer renderer, double x, double y, double z, double u, double v) {
+    private void p(VertexBuffer renderer, double x, double y, double z, double u, double v) {
         renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).lightmap(0, 240).endVertex();
     }
 
@@ -51,7 +51,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
 
             GlStateManager.color(1, 1, 1, 1);
 
-            WorldRenderer renderer = tessellator.getWorldRenderer();
+            VertexBuffer renderer = tessellator.getBuffer();
             renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 
             double o = .15;

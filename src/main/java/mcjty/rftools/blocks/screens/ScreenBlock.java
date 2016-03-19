@@ -3,8 +3,6 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -18,7 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -35,30 +39,28 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     public ScreenBlock() {
         super(Material.iron, ScreenTileEntity.class, ScreenContainer.class, "screen", true);
-        float width = 0.5F;
-        float height = 1.0F;
-        this.setBlockBounds(0.5F - width, 0.0F, 0.5F - width, 0.5F + width, height, 0.5F + width);
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            boolean connected = tagCompound.getBoolean("connected");
-            if (!connected) {
-                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-            }
-            boolean power = tagCompound.getBoolean("powerOn");
-            if (!power) {
-                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
-            }
-            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
-        }
-        return currenttip;
-    }
+    //@todo
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        NBTTagCompound tagCompound = accessor.getNBTData();
+//        if (tagCompound != null) {
+//            boolean connected = tagCompound.getBoolean("connected");
+//            if (!connected) {
+//                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+//            }
+//            boolean power = tagCompound.getBoolean("powerOn");
+//            if (!power) {
+//                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
+//            }
+//            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+//            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+//        }
+//        return currenttip;
+//    }
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -71,7 +73,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (world.isRemote) {
-            MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
             screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - pos.getX(), mouseOver.hitVec.yCoord - pos.getY(), mouseOver.hitVec.zCoord - pos.getZ(), mouseOver.sideHit);
         }
@@ -236,7 +238,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @Override
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
-        ItemStack itemStack = player.getHeldItem();
+        ItemStack itemStack = player.getHeldItem(EnumHand.MAIN_HAND);
         if (itemStack != null && itemStack.getItem() == Items.dye) {
             int damage = itemStack.getItemDamage();
             if (damage < 0) {
@@ -253,43 +255,35 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
     }
 
-    /**
-     * Updates the blocks bounds based on its current state. Args: world, x, y, z
-     */
+    public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
+    public static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
+    public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         int meta = state.getBlock().getMetaFromState(state);
         if (meta == EnumFacing.NORTH.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
+            return NORTH_AABB;
         } else if (meta == EnumFacing.SOUTH.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
+            return SOUTH_AABB;
         } else if (meta == EnumFacing.WEST.ordinal()) {
-            this.setBlockBounds(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+            return WEST_AABB;
         } else if (meta == EnumFacing.EAST.ordinal()) {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+            return EAST_AABB;
         } else {
-            this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+            return BLOCK_AABB;
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
-        this.setBlockBoundsBasedOnState(world, pos);
-        return super.getSelectedBoundingBox(world, pos);
-    }
-
-    /**
-     * The type of render function that is called for this block
-     */
-    @Override
-    public int getRenderType() {
-        return 2;
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public boolean isBlockNormalCube() {
+    public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
 
@@ -300,12 +294,12 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
 
     @Override
-    public boolean isFullBlock() {
+    public boolean isFullBlock(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
@@ -314,7 +308,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
      * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
      */
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
