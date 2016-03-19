@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -33,7 +34,7 @@ public class PacketGetDestinationInfo implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetDestinationInfo, IMessage> {
         @Override
         public IMessage onMessage(PacketGetDestinationInfo message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 

@@ -84,7 +84,10 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+        //@todo check
+//        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+
+        if (world.getChunkProvider().getLoadedChunk(coordinate.getX() >> 4, coordinate.getZ() >> 4) == null) {
             return null;
         }
 

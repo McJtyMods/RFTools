@@ -5,6 +5,7 @@ import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 public class ModularStorageItemContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -30,7 +31,7 @@ public class ModularStorageItemContainer extends GenericContainer {
     }
 
     private int getMaxSize() {
-        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem().getTagCompound().getInteger("childDamage")];
+        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage")];
     }
 
     @Override

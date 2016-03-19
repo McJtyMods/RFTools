@@ -2,8 +2,8 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.varia.Logging;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.TextComponentString;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class CmdDebugToggle extends AbstractRfToolsCommand {
     @Override

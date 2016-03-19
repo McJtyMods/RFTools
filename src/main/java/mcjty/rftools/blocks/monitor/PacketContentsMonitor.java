@@ -3,9 +3,9 @@ package mcjty.rftools.blocks.monitor;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.Logging;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -63,7 +63,7 @@ public class PacketContentsMonitor implements IMessage {
     public static class Handler implements IMessageHandler<PacketContentsMonitor, IMessage> {
         @Override
         public IMessage onMessage(PacketContentsMonitor message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 

@@ -187,17 +187,17 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         }
         consumeEnergy(cost);
 
-        World w = TeleportationTools.getWorldForDimension(dim);
+        World w = TeleportationTools.getWorldForDimension(worldObj, dim);
         if (w == null) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid();
+            destinations.cleanupInvalid(worldObj);
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c);
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid();
+            destinations.cleanupInvalid(worldObj);
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 

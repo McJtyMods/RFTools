@@ -8,6 +8,7 @@ import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -304,7 +305,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
-            worldObj.markBlockForUpdate(getPos());
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         } else if (index == ModularStorageContainer.SLOT_FILTER_MODULE) {
             filterCache = null;
         }
@@ -641,7 +643,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             setViewMode(args.get("viewMode").getString());
             setSortMode(args.get("sortMode").getString());
             setGroupMode(args.get("groupMode").getBoolean());
-            worldObj.markBlockForUpdate(getPos());
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
             return true;
         } else if (CMD_COMPACT.equals(command)) {
             compact();

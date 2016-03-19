@@ -4,7 +4,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumHand;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -32,13 +33,13 @@ public class PacketClearTarget implements IMessage {
     public static class Handler implements IMessageHandler<PacketClearTarget, IMessage> {
         @Override
         public IMessage onMessage(PacketClearTarget message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
         private void handle(PacketClearTarget message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
-            ItemStack heldItem = player.getHeldItem();
+            ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (heldItem == null) {
                 return;
             }

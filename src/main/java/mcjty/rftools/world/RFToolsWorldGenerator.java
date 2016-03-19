@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -27,7 +28,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
     public static RFToolsWorldGenerator instance = new RFToolsWorldGenerator();
 
     @Override
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
         generateWorld(random, chunkX, chunkZ, world, true);
     }
 
@@ -43,13 +44,13 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
             oregen = GeneralConfiguration.oregenDimensionsWithoutDimensions;
         }
 
-        if (oregen.contains(world.provider.getDimensionId())) {
+        if (oregen.contains(world.provider.getDimension())) {
             IBlockState ore;
             IBlockState base;
-            if (world.provider.getDimensionId() == 1) {
+            if (world.provider.getDimension() == 1) {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState().withProperty(DimensionalShardBlock.ORETYPE, DimensionalShardBlock.OreType.ORE_END);
                 base = Blocks.end_stone.getDefaultState();
-            } else if (world.provider.getDimensionId() == -1) {
+            } else if (world.provider.getDimension() == -1) {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState().withProperty(DimensionalShardBlock.ORETYPE, DimensionalShardBlock.OreType.ORE_NETHER);
                 base = Blocks.netherrack.getDefaultState();
             } else {
@@ -92,7 +93,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
     @SubscribeEvent
     public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
-        int dim = event.world.provider.getDimensionId();
+        int dim = event.world.provider.getDimension();
 
         boolean regen = false;
         NBTTagCompound tag = (NBTTagCompound) event.getData().getTag(RETRO_NAME);

@@ -5,8 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity imple
             int xCoord = getPos().getX();
             int yCoord = getPos().getY();
             int zCoord = getPos().getZ();
-            beamBox = AxisAlignedBB.fromBounds(xCoord - .4, yCoord - .4, zCoord - .4, xCoord + 1.4, yCoord + 2.0, zCoord + 1.4);
+            beamBox = new AxisAlignedBB(xCoord - .4, yCoord - .4, zCoord - .4, xCoord + 1.4, yCoord + 2.0, zCoord + 1.4);
         }
 
         if (shieldBlock != null) {

@@ -4,6 +4,7 @@ import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -96,10 +97,10 @@ public class ModularStorageContainer extends GenericContainer {
 
 
     @Override
-    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+    public ItemStack func_184996_a(int index, int button, ClickType mode, EntityPlayer player) {
         if (index == SLOT_STORAGE_MODULE && !player.worldObj.isRemote) {
             modularStorageTileEntity.copyToModule();
         }
-        return super.slotClick(index, button, mode, player);
+        return super.func_184996_a(index, button, mode, player);
     }
 }

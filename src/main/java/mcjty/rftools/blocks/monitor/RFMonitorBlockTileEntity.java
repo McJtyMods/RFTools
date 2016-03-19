@@ -166,9 +166,10 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
 
     private void setRedstoneOut(boolean a) {
         IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.setBlockState(getPos(), state.withProperty(RFMonitorBlock.OUTPUTPOWER, a), 2);
+        IBlockState newState = state.withProperty(RFMonitorBlock.OUTPUTPOWER, a);
+        worldObj.setBlockState(getPos(), newState, 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.markBlockForUpdate(this.pos);
+        worldObj.notifyBlockUpdate(this.pos, state, newState, 3);
     }
 
 

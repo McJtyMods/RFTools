@@ -4,13 +4,14 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -42,7 +43,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     public int getOrCalculateID() {
         if (id == -1) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
             id = destinations.getNewId(gc);
 
             destinations.save(worldObj);
@@ -63,7 +64,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     public void setName(String name) {
         this.name = name;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination destination = destinations.getDestination(getPos(), worldObj.provider.getDimensionId());
+        TeleportDestination destination = destinations.getDestination(getPos(), worldObj.provider.getDimension());
         if (destination != null) {
             destination.setName(name);
             destinations.save(worldObj);
@@ -83,11 +84,11 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
         if (!getPos().equals(cachedPos)) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
 
-            destinations.removeDestination(cachedPos, worldObj.provider.getDimensionId());
+            destinations.removeDestination(cachedPos, worldObj.provider.getDimension());
 
             cachedPos = getPos();
 
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
 
             if (id == -1) {
                 id = destinations.getNewId(gc);
@@ -108,7 +109,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     public void updateDestination() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
         TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());
         if (destination != null) {
             destination.setName(name);
@@ -164,12 +165,13 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public int checkStatus() {
-        Block block = worldObj.getBlockState(getPos().up()).getBlock();
-        if (!block.isAir(worldObj, getPos().up())) {
+        IBlockState state = worldObj.getBlockState(getPos().up());
+        Block block = state.getBlock();
+        if (!block.isAir(state, worldObj, getPos().up())) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
         block = worldObj.getBlockState(getPos().up(2)).getBlock();
-        if (!block.isAir(worldObj, getPos().up(2))) {
+        if (!block.isAir(state, worldObj, getPos().up(2))) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 

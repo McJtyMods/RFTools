@@ -175,7 +175,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         IBlockState state = worldObj.getBlockState(getPos());
         worldObj.setBlockState(getPos(), state.withProperty(RFMonitorBlock.OUTPUTPOWER, a), 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.markBlockForUpdate(this.pos);
+        worldObj.notifyBlockUpdate(this.pos, state, state, 3);
     }
 
     @Override

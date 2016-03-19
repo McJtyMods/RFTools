@@ -29,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -178,7 +179,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
         } else {
-            NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound();
+            NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
             filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
             setViewMode(tagCompound.getString("viewMode"));
             setSortMode(tagCompound.getString("sortMode"));
@@ -381,7 +382,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     }
                 }
             }
-            max = mc.thePlayer.getHeldItem().getTagCompound().getInteger("maxSize");
+            max = mc.thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
         }
         amountLabel.setText(items.size() + "/" + max);
         compactButton.setEnabled(max > 0);
@@ -414,7 +415,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             return false;
         }
-        int storageType = mc.thePlayer.getHeldItem().getTagCompound().getInteger("childDamage");
+        int storageType = mc.thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage");
         return storageType == StorageModuleItem.STORAGE_REMOTE;
     }
 

@@ -24,6 +24,7 @@ public class Achievements {
         if (achievement.parentAchievement != null) {
             trigger(player, achievement.parentAchievement);
         }
-        player.triggerAchievement(achievement);
+        //@todo
+//        player.triggerAchievement(achievement);
     }
 }

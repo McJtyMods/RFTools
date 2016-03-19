@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -94,7 +95,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                     markDirty();
 
                     int id = tagCompound.getInteger("id");
-                    registry.publishStorage(id, new GlobalCoordinate(getPos(), worldObj.provider.getDimensionId()));
+                    registry.publishStorage(id, new GlobalCoordinate(getPos(), worldObj.provider.getDimension()));
                 }
             }
         }
@@ -131,7 +132,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        worldObj.markBlockForUpdate(getPos());
+        IBlockState state = worldObj.getBlockState(getPos());
+        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -216,7 +218,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             copyFromModule(stack, index);
         }
 
-        worldObj.markBlockForUpdate(getPos());
+        IBlockState state = worldObj.getBlockState(getPos());
+        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         if (!worldObj.isRemote) {
             link(index);
         }

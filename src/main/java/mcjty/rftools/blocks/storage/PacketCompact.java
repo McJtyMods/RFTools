@@ -9,8 +9,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.TextFormatting;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -30,13 +31,13 @@ public class PacketCompact implements IMessage {
     public static class Handler implements IMessageHandler<PacketCompact, IMessage> {
         @Override
         public IMessage onMessage(PacketCompact message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
         public void handle(PacketCompact message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
-            ItemStack heldItem = playerEntity.getHeldItem();
+            ItemStack heldItem = playerEntity.getHeldItem(EnumHand.MAIN_HAND);
             if (heldItem == null) {
                 return;
             }

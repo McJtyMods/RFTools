@@ -43,10 +43,10 @@ public class TeleportDestinations extends WorldSavedData {
         }
     }
 
-    public void cleanupInvalid() {
+    public void cleanupInvalid(World world) {
         Set<GlobalCoordinate> keys = new HashSet<GlobalCoordinate>(destinations.keySet());
         for (GlobalCoordinate key : keys) {
-            World transWorld = TeleportationTools.getWorldForDimension(key.getDimension());
+            World transWorld = TeleportationTools.getWorldForDimension(world, key.getDimension());
             boolean removed = false;
             if (transWorld == null) {
                 Logging.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");
@@ -89,9 +89,8 @@ public class TeleportDestinations extends WorldSavedData {
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         PlayerExtendedProperties properties = null;
         if (playerName != null) {
-            List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-            for (Object player : list) {
-                EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
+            for (EntityPlayerMP entityplayermp : list) {
                 if (playerName.equals(entityplayermp.getDisplayName())) {
                     properties = PlayerExtendedProperties.getProperties(entityplayermp);
                     break;
@@ -106,7 +105,7 @@ public class TeleportDestinations extends WorldSavedData {
             World world = DimensionManager.getWorld(destination.getDimension());
             String dimName = null;
             if (world != null) {
-                dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionName();
+                dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionType().getName();
             }
 
             // @todo

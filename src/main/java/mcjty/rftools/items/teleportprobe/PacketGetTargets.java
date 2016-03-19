@@ -8,7 +8,8 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumHand;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -28,13 +29,13 @@ public class PacketGetTargets implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetTargets, IMessage> {
         @Override
         public IMessage onMessage(PacketGetTargets message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
         private void handle(PacketGetTargets message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            ItemStack heldItem = player.getHeldItem();
+            ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (heldItem == null) {
                 return;
             }

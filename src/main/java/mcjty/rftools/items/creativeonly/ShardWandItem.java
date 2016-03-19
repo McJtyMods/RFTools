@@ -9,6 +9,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -26,7 +28,7 @@ public class ShardWandItem extends GenericRFToolsItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             Block block = world.getBlockState(pos).getBlock();
             if (block instanceof Infusable) {
@@ -48,8 +50,8 @@ public class ShardWandItem extends GenericRFToolsItem {
             } else {
                 Logging.message(player, "This block is not infusable!");
             }
-            return true;
+            return EnumActionResult.SUCCESS;
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 }

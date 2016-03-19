@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -37,7 +38,7 @@ public class PacketForceTeleport implements IMessage {
     public static class Handler implements IMessageHandler<PacketForceTeleport, IMessage> {
         @Override
         public IMessage onMessage(PacketForceTeleport message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
@@ -47,7 +48,7 @@ public class PacketForceTeleport implements IMessage {
             int x = message.pos.getX();
             int y = message.pos.getY();
             int z = message.pos.getZ();
-            int currentId = player.worldObj.provider.getDimensionId();
+            int currentId = player.worldObj.provider.getDimension();
             if (currentId != message.dim) {
                 TeleportationTools.teleportToDimension(player, message.dim, x + .5, y + 1, z + .5);
             } else {

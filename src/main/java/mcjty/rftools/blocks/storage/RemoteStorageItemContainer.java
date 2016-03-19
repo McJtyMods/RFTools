@@ -4,6 +4,7 @@ import mcjty.lib.container.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 public class RemoteStorageItemContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -33,7 +34,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
                     maxStacks = remoteStorageTileEntity.getMaxStacks(si);
                 }
             }
-            ItemStack stack = player.getHeldItem();
+            ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
             stack.getTagCompound().setInteger("maxSize", maxStacks);
         }
 
@@ -49,7 +50,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
 
     private int getStorageID() {
         // We assume the item is right here
-        return entityPlayer.getHeldItem().getTagCompound().getInteger("id");
+        return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("id");
     }
 
     private boolean isServer() {
@@ -85,14 +86,14 @@ public class RemoteStorageItemContainer extends GenericContainer {
                                 si = storage.findRemoteIndex(getStorageID());
                             }
                             if (si != -1) {
-                                entityPlayer.getHeldItem().getTagCompound().setInteger("maxSize", storage.getMaxStacks(si));
+                                entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", storage.getMaxStacks(si));
                                 return storage.isItemValidForSlot(getSlotIndex(), stack);
                             } else {
-                                entityPlayer.getHeldItem().getTagCompound().setInteger("maxSize", 0);
+                                entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", 0);
                                 return false;
                             }
                         } else {
-                            int maxSize = entityPlayer.getHeldItem().getTagCompound().getInteger("maxSize");
+                            int maxSize = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
                             if (getSlotIndex() >= maxSize) {
                                 return false;
                             }

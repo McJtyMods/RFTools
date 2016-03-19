@@ -1,16 +1,15 @@
 package mcjty.rftools.commands;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class DefaultCommand implements ICommand {
     protected final Map<String,RfToolsCommand> commands = new HashMap<String, RfToolsCommand>();
@@ -67,8 +66,9 @@ public abstract class DefaultCommand implements ICommand {
         return Collections.emptyList();
     }
 
+
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         World world = sender.getEntityWorld();
         if (args.length <= 0) {
             if (!world.isRemote) {
@@ -98,18 +98,15 @@ public abstract class DefaultCommand implements ICommand {
         }
     }
 
+    @Override
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+        return new ArrayList<>();
+    }
 
-    //@todo
-
-//    @Override
-//    public boolean canCommandSenderUseCommand(ICommandSender sender) {
-//        return true;
-//    }
-//
-//    @Override
-//    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-//        return null;
-//    }
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true;
+    }
 
     @Override
     public boolean isUsernameIndex(String[] sender, int p_82358_2_) {

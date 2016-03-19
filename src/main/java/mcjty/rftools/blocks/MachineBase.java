@@ -3,9 +3,12 @@ package mcjty.rftools.blocks;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -17,9 +20,15 @@ public class MachineBase extends Block {
         super(Material.iron);
         setUnlocalizedName("machine_base");
         setRegistryName("machine_base");
-        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.registerBlock(this, "machine_base");
+    }
+
+    public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BLOCK_AABB;
     }
 
     @SideOnly(Side.CLIENT)
