@@ -8,6 +8,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -27,7 +28,7 @@ public class PacketGetAdjacentTankBlocks extends PacketRequestListFromServer<Blo
     public static class Handler implements IMessageHandler<PacketGetAdjacentTankBlocks, IMessage> {
         @Override
         public IMessage onMessage(PacketGetAdjacentTankBlocks message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 

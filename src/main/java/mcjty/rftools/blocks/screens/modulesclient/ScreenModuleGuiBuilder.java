@@ -178,7 +178,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 dim = currentData.getInteger("dim");
             }
             World world = mc.thePlayer.worldObj;
-            if (dim == world.provider.getDimensionId()) {
+            if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger(tagnamePos+"x");
                 int y = currentData.getInteger(tagnamePos+"y");
                 int z = currentData.getInteger(tagnamePos+"z");

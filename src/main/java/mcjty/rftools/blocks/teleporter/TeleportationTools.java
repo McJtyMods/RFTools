@@ -331,8 +331,9 @@ public class TeleportationTools {
         MinecraftServer server = ((EntityPlayerMP) player).worldObj.getMinecraftServer();
         WorldServer worldServer = server.worldServerForDimension(dimension);
         player.addExperienceLevel(0);
-        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
-                new RfToolsTeleporter(worldServer, x, y, z));
+        //@todo
+//        MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(entityPlayerMP, dimension,
+//                new RfToolsTeleporter(worldServer, x, y, z));
         if (oldDimension == 1) {
             // For some reason teleporting out of the end does weird things.
             player.setPositionAndUpdate(x, y, z);

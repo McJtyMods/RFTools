@@ -124,7 +124,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             IBlockState state = worldObj.getBlockState(getPos());
             worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
             worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-            worldObj.markBlockForUpdate(this.pos);
+            worldObj.notifyBlockUpdate(this.pos, state, state, 3);
         }
 
         handleCycle(powered);

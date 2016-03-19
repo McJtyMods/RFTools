@@ -6,11 +6,11 @@ import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -33,7 +33,7 @@ public class PacketGetAllReceivers implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetAllReceivers, IMessage> {
         @Override
         public IMessage onMessage(PacketGetAllReceivers message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
@@ -50,11 +50,11 @@ public class PacketGetAllReceivers implements IMessage {
         private void addDimensions(List<TeleportDestinationClientInfo> destinationList) {
             WorldServer[] worlds = DimensionManager.getWorlds();
             for (WorldServer world : worlds) {
-                int id = world.provider.getDimensionId();
+                int id = world.provider.getDimension();
                 TeleportDestination destination = new TeleportDestination(new BlockPos(0, 70, 0), id);
                 destination.setName("Dimension: " + id);
                 TeleportDestinationClientInfo teleportDestinationClientInfo = new TeleportDestinationClientInfo(destination);
-                String dimName = world.provider.getDimensionName();
+                String dimName = world.provider.getDimensionType().getName();
                 teleportDestinationClientInfo.setDimensionName(dimName);
                 destinationList.add(teleportDestinationClientInfo);
             }

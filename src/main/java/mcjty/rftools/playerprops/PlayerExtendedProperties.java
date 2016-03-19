@@ -20,8 +20,10 @@ public class PlayerExtendedProperties implements IExtendedEntityProperties {
     }
 
     public static PlayerExtendedProperties getProperties(EntityPlayer player) {
-        IExtendedEntityProperties properties = player.getExtendedProperties(ID);
-        return (PlayerExtendedProperties) properties;
+        //@todo
+//        IExtendedEntityProperties properties = player.getExtendedProperties(ID);
+//        return (PlayerExtendedProperties) properties;
+        return null;
     }
 
     public void tick() {

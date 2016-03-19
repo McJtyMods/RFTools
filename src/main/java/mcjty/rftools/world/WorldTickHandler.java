@@ -27,7 +27,7 @@ public class WorldTickHandler {
             return;
         }
         World world = event.world;
-        int dim = world.provider.getDimensionId();
+        int dim = world.provider.getDimension();
 
         if (event.phase == TickEvent.Phase.END) {
             ArrayDeque<RetroChunkCoord> chunks = chunksToGen.get(dim);

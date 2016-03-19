@@ -7,9 +7,9 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -49,13 +49,13 @@ public class PacketGetScreenData implements IMessage {
     public static class Handler implements IMessageHandler<PacketGetScreenData, IMessage> {
         @Override
         public IMessage onMessage(PacketGetScreenData message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
         private void handle(PacketGetScreenData message, MessageContext ctx) {
             World world = ctx.getServerHandler().playerEntity.worldObj;
-            if (message.pos.getDimension() != world.provider.getDimensionId()) {
+            if (message.pos.getDimension() != world.provider.getDimension()) {
                 return;
             }
             TileEntity te = world.getTileEntity(message.pos.getCoordinate());

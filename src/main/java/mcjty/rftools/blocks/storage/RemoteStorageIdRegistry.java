@@ -60,7 +60,9 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
             return null;
         }
         BlockPos c = coordinate.getCoordinate();
-        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        //@todo
+//        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        boolean exists = w.getChunkProvider().getLoadedChunk(c.getX() >> 4, c.getZ() >> 4) != null;
         if (!exists) {
             return null;
         }
@@ -71,7 +73,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
             if (index == -1) {
                 return null;
             }
-            if (remoteStorageTileEntity.isGlobal(index) || world.provider.getDimensionId() == coordinate.getDimension()) {
+            if (remoteStorageTileEntity.isGlobal(index) || world.provider.getDimension() == coordinate.getDimension()) {
                 return remoteStorageTileEntity;
             } else {
                 return null;

@@ -5,9 +5,9 @@ import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -27,7 +27,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
     public static class Handler implements IMessageHandler<PacketGetTransmitters, IMessage> {
         @Override
         public IMessage onMessage(PacketGetTransmitters message, MessageContext ctx) {
-            MinecraftServer.getServer().addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
