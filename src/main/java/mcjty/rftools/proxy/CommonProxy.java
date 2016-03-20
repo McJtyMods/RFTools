@@ -2,6 +2,7 @@ package mcjty.rftools.proxy;
 
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.preferences.PreferencesProperties;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
@@ -19,9 +20,15 @@ import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
+import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -43,6 +50,52 @@ public abstract class CommonProxy {
 
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "rftools.cfg"));
+
+        CapabilityManager.INSTANCE.register(PreferencesProperties.class, new Capability.IStorage<PreferencesProperties>() {
+            @Override
+            public NBTBase writeNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
+
+        CapabilityManager.INSTANCE.register(PorterProperties.class, new Capability.IStorage<PorterProperties>() {
+            @Override
+            public NBTBase writeNBT(Capability<PorterProperties> capability, PorterProperties instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<PorterProperties> capability, PorterProperties instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
+
+        CapabilityManager.INSTANCE.register(FavoriteDestinationsProperties.class, new Capability.IStorage<FavoriteDestinationsProperties>() {
+            @Override
+            public NBTBase writeNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
+
 
         readMainConfig();
 
