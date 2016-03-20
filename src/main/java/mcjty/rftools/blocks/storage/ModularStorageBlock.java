@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;

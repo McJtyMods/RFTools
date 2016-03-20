@@ -2,11 +2,11 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -87,12 +87,12 @@ public class TeleportDestinations extends WorldSavedData {
 
     // Server side only
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
-        PlayerExtendedProperties properties = null;
+        FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
             List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
             for (EntityPlayerMP entityplayermp : list) {
                 if (playerName.equals(entityplayermp.getDisplayName())) {
-                    properties = PlayerExtendedProperties.getProperties(entityplayermp);
+                    properties = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
                     break;
                 }
             }
@@ -131,7 +131,7 @@ public class TeleportDestinations extends WorldSavedData {
                 }
             }
             if (properties != null) {
-                destinationClientInfo.setFavorite(properties.getFavoriteDestinationsProperties().isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
+                destinationClientInfo.setFavorite(properties.isDestinationFavorite(new GlobalCoordinate(c, destination.getDimension())));
             }
             result.add(destinationClientInfo);
         }

@@ -1,7 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.container.GenericItemBlock;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.ContainerAndItemRecipe;
 import mcjty.rftools.crafting.ContainerToItemRecipe;

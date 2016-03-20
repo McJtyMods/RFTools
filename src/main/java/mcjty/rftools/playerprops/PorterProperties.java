@@ -5,7 +5,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
@@ -14,15 +13,9 @@ public class PorterProperties {
     private int target;
     private int teleportTimeout;
 
-    private Entity entity = null;
-
     public PorterProperties() {
         target = -1;
         teleportTimeout = -1;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
     }
 
     public boolean isTeleporting() {
@@ -34,16 +27,14 @@ public class PorterProperties {
         this.teleportTimeout = ticks;
     }
 
-    public void tickTeleport() {
+    public void tickTeleport(EntityPlayer player) {
         if (teleportTimeout < 0) {
             return;
         }
         teleportTimeout--;
         if (teleportTimeout <= 0) {
 
-            EntityPlayer player = (EntityPlayer) entity;
-
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(entity.worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
             if (coordinate == null) {
                 Logging.message(player, TextFormatting.RED + "Something went wrong! The target has disappeared!");
@@ -51,7 +42,7 @@ public class PorterProperties {
                 return;
             }
             TeleportDestination destination = destinations.getDestination(coordinate);
-            TeleportationTools.performTeleport((EntityPlayer) entity, destination, 0, 10, false);
+            TeleportationTools.performTeleport(player, destination, 0, 10, false);
 
             teleportTimeout = -1;
             target = -1;

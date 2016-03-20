@@ -23,11 +23,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.EnumMap;
 
 @Mod(modid = RFTools.MODID, name="RFTools", dependencies =
         "required-after:Forge@["+RFTools.MIN_FORGE_VER+

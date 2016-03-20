@@ -13,7 +13,6 @@ import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.inventory.Container;
 
 import java.awt.*;
 

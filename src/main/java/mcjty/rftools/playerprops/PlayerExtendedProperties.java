@@ -1,67 +1,18 @@
 package mcjty.rftools.playerprops;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.common.capabilities.Capability;
 
-public class PlayerExtendedProperties implements IExtendedEntityProperties {
-    public static final String ID = "RFToolsPlayerProperties";
+public class PlayerExtendedProperties {
 
-//    private BuffProperties buffProperties;
-    private PorterProperties porterProperties;
-    private FavoriteDestinationsProperties favoriteDestinationsProperties;
+    public static Capability<FavoriteDestinationsProperties> FAVORITE_DESTINATIONS_CAPABILITY;
+    public static Capability<PorterProperties> PORTER_CAPABILITY;
 
-    public PlayerExtendedProperties() {
-//        buffProperties = new BuffProperties();
-        porterProperties = new PorterProperties();
-        favoriteDestinationsProperties = new FavoriteDestinationsProperties();
+    public static FavoriteDestinationsProperties getFavoriteDestinations(EntityPlayer player) {
+        return player.getCapability(FAVORITE_DESTINATIONS_CAPABILITY, null);
     }
 
-    public static PlayerExtendedProperties getProperties(EntityPlayer player) {
-        //@todo
-//        IExtendedEntityProperties properties = player.getExtendedProperties(ID);
-//        return (PlayerExtendedProperties) properties;
-        return null;
-    }
-
-    public void tick() {
-        porterProperties.tickTeleport();
-//        buffProperties.tickBuffs();
-    }
-
-    @Override
-    public void saveNBTData(NBTTagCompound compound) {
-        porterProperties.saveNBTData(compound);
-//        buffProperties.saveNBTData(compound);
-        favoriteDestinationsProperties.saveNBTData(compound);
-    }
-
-
-    @Override
-    public void loadNBTData(NBTTagCompound compound) {
-        porterProperties.loadNBTData(compound);
-//        buffProperties.loadNBTData(compound);
-        favoriteDestinationsProperties.loadNBTData(compound);
-    }
-
-
-    @Override
-    public void init(Entity entity, World world) {
-//        buffProperties.setEntity(entity);
-        porterProperties.setEntity(entity);
-    }
-
-//    public BuffProperties getBuffProperties() {
-//        return buffProperties;
-//    }
-
-    public PorterProperties getPorterProperties() {
-        return porterProperties;
-    }
-
-    public FavoriteDestinationsProperties getFavoriteDestinationsProperties() {
-        return favoriteDestinationsProperties;
+    public static PorterProperties getPorterProperties(EntityPlayer player) {
+        return player.getCapability(PORTER_CAPABILITY, null);
     }
 }

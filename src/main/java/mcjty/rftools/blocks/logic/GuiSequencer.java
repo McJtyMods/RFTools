@@ -16,7 +16,6 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;

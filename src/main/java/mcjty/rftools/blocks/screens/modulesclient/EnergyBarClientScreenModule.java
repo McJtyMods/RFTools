@@ -1,7 +1,10 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.*;
+import mcjty.rftools.api.screens.FormatStyle;
+import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
+import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;

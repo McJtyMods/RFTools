@@ -4,7 +4,6 @@ import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
-import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.text.DecimalFormat;

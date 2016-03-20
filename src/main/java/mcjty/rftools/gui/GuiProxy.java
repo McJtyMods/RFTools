@@ -2,10 +2,10 @@ package mcjty.rftools.gui;
 
 import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.builder.GuiChamberDetails;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.items.builder.GuiChamberDetails;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.items.storage.GuiStorageFilter;

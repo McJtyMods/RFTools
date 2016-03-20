@@ -1,7 +1,6 @@
 package mcjty.rftools.varia;
 
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 

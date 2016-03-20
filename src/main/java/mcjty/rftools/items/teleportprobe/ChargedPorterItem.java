@@ -6,6 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.PorterProperties;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -16,13 +17,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -126,13 +126,14 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         }
 
         if (!world.isRemote) {
-            // @todo
-//            IExtendedEntityProperties properties = player.getExtendedProperties(PlayerExtendedProperties.ID);
-//            PlayerExtendedProperties playerExtendedProperties = (PlayerExtendedProperties) properties;
-//            if (playerExtendedProperties.getPorterProperties().isTeleporting()) {
-//                Logging.message(player, TextFormatting.RED + "Already teleporting!");
-//                return;
-//            }
+            PorterProperties porterProperties = PlayerExtendedProperties.getPorterProperties(player);
+            if (porterProperties != null) {
+                if (porterProperties.isTeleporting()) {
+                    Logging.message(player, TextFormatting.RED + "Already teleporting!");
+                    return;
+                }
+
+            }
 
             int target = tagCompound.getInteger("target");
 
@@ -161,8 +162,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
             ticks /= getSpeedBonus();
-            //@todo
-//            playerExtendedProperties.getPorterProperties().startTeleport(target, ticks);
+            if (porterProperties != null) {
+                porterProperties.startTeleport(target, ticks);
+            }
             Logging.message(player, TextFormatting.YELLOW + "Start teleportation!");
         }
     }

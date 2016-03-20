@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
-import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.blocks.logic.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;

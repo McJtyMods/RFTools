@@ -1,7 +1,7 @@
 package mcjty.rftools.apiimpl;
 
-import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import mcjty.rftools.api.screens.IScreenModuleRegistry;
+import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
