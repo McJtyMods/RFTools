@@ -21,13 +21,9 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     @Override
     protected void setup() {
         setUnlocalizedName("advanced_charged_porter");
+        setRegistryName("advanced_charged_porter");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "advanced_charged_porter");
-    }
-
-    @Override
-    protected String getIconName() {
-        return "advChargedPorterItemL";
+        GameRegistry.registerItem(this);
     }
 
     @Override

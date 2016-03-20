@@ -48,8 +48,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
-            ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName() + i));
-//            ModelBakery.addVariantName(this, "l" + i);
+            ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName() + i, "inventory"));
         }
 
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
@@ -67,7 +66,6 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                     level = 8;
                 }
                 return new ModelResourceLocation(getRegistryName() + (8 - level), "inventory");
-//                return new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "l" + (8-level));
             }
         });
     }
@@ -75,12 +73,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
 
     protected void setup() {
         setUnlocalizedName("charged_porter");
+        setRegistryName("charged_porter");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "charged_porter");
-    }
-
-    protected String getIconName() {
-        return "chargedPorterItemL";
+        GameRegistry.registerItem(this);
     }
 
     protected int getSpeedBonus() {
