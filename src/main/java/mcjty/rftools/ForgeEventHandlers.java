@@ -7,6 +7,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -26,7 +27,7 @@ public class ForgeEventHandlers {
 //                playerExtendedProperties.tick();
 //            }
             PreferencesProperties preferencesProperties = PlayerPreferencesProperties.getProperties(event.player);
-            preferencesProperties.tick(RFToolsMessages.INSTANCE);
+            preferencesProperties.tick((EntityPlayerMP) event.player, RFToolsMessages.INSTANCE);
         }
     }
 
