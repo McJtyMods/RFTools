@@ -306,7 +306,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.thePlayer.getDisplayNameString()),
+                new Argument("player", mc.thePlayer.getName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
                 new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
@@ -332,7 +332,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.thePlayer.getDisplayNameString()),
+                new Argument("player", mc.thePlayer.getName()),
                 new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
                 new Argument("c", (BlockPos) null), new Argument("dim", 0)));
 
@@ -341,7 +341,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void requestReceivers() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), mc.thePlayer.getDisplayNameString()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), mc.thePlayer.getName()));
     }
 
     private void requestTransmitters() {
@@ -366,7 +366,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         boolean favorite = destination.isFavorite();
         destination.setFavorite(!favorite);
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
-                new Argument("player", mc.thePlayer.getDisplayNameString()),
+                new Argument("player", mc.thePlayer.getName()),
                 new Argument("receiver", destination.getCoordinate()),
                 new Argument("dimension", destination.getDimension()),
                 new Argument("favorite", !favorite));

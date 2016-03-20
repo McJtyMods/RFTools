@@ -178,7 +178,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         int id = -1;
         if (te instanceof MatterReceiverTileEntity) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-            if (!matterReceiverTileEntity.checkAccess(player.getDisplayNameString())) {
+            if (!matterReceiverTileEntity.checkAccess(player.getName())) {
                 Logging.message(player, TextFormatting.RED + "You have no access to target this receiver!");
                 return;
             }

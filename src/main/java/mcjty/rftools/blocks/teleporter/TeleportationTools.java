@@ -159,7 +159,7 @@ public class TeleportationTools {
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {
-            Logging.log("Teleport: Player " + player.getDisplayName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
+            Logging.log("Teleport: Player " + player.getName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
         }
         return boostNeeded;
     }

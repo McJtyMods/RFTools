@@ -218,7 +218,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         tagCompound.setInteger("goodTicks", goodTicks);
         tagCompound.setInteger("badTicks", badTicks);
         if (teleportingPlayer != null) {
-            tagCompound.setString("tpPlayer", teleportingPlayer.getDisplayNameString());
+            tagCompound.setString("tpPlayer", teleportingPlayer.getName());
         }
         tagCompound.setInteger("status", status);
         tagCompound.setInteger("rfPerTick", rfPerTick);
@@ -472,8 +472,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (entity instanceof EntityPlayer) {
                 EntityPlayer entityPlayer = (EntityPlayer) entity;
 
-                if (entityPlayer.getDisplayNameString() != null) {
-                    if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getDisplayNameString())) {
+                if (entityPlayer.getName() != null) {
+                    if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getName())) {
                         double d1 = entity.getDistanceSq(getPos().getX() + .5, getPos().getY() + 1.5, getPos().getZ() + .5);
 
                         if (d1 <= dmax) {
