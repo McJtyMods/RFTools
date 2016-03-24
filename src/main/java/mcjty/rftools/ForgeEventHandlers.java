@@ -31,15 +31,19 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntityConstructing(AttachCapabilitiesEvent.Entity event){
+
         // @todo move to a mcjtylib helper
         if (event.getEntity() instanceof EntityPlayer) {
-            if (!event.getEntity().hasCapability(PlayerPreferencesProperties.PREFERENCES_CAPABILITY, null)) {
-                event.addCapability(new ResourceLocation("McJtyLib", "Preferences"), new PreferencesDispatcher());
+            ResourceLocation key = new ResourceLocation("McJtyLib", "Preferences");
+            if (!event.getCapabilities().containsKey(key)) {
+                if (!event.getEntity().hasCapability(PlayerPreferencesProperties.PREFERENCES_CAPABILITY, null)) {
+                    event.addCapability(key, new PreferencesDispatcher());
+                }
             }
+
             if (!event.getEntity().hasCapability(PlayerExtendedProperties.PORTER_CAPABILITY, null)) {
                 event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
-
         }
     }
 }
