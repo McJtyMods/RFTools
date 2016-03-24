@@ -741,7 +741,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             worldObj.setBlockState(srcPos, state, 3);
 //            worldObj.setBlockMetadataWithNotify(sx, sy, sz, block.getMeta(), 3);
             if (!silent) {
-                RFToolsTools.playSound(worldObj, state.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(worldObj, state.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -770,7 +770,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
-            RFToolsTools.playSound(worldObj, block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+            RFToolsTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
         }
     }
 
@@ -888,7 +888,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             if (!silent) {
-                RFToolsTools.playSound(worldObj, block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                RFToolsTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
             }
             worldObj.setBlockToAir(srcPos);
             consumeEnergy(rfNeeded);
@@ -1166,7 +1166,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
 //            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
-                RFToolsTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1322,8 +1322,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
             }
             if (!silent) {
-                RFToolsTools.playSound(world, origBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
-                RFToolsTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
@@ -1393,10 +1393,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (!silent) {
             if (!isEmpty(srcState, srcBlock)) {
-                RFToolsTools.playSound(world, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(world, srcBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
             if (!isEmpty(dstState, dstBlock)) {
-                RFToolsTools.playSound(destWorld, dstBlock.getSoundType().getBreakSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
+                RFToolsTools.playSound(destWorld, dstBlock.getSoundType().breakSound, dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
