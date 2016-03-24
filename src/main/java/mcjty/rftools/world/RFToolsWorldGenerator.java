@@ -103,7 +103,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         if (tag != null) {
             boolean generated = GeneralConfiguration.retrogen && !tag.hasKey("generated");
             if (generated) {
-                Logging.log("Queuing Retrogen for chunk: " + cCoord.toString() + ".");
+//                Logging.log("Queuing Retrogen for chunk: " + cCoord.toString() + ".");
                 regen = true;
             }
         } else {

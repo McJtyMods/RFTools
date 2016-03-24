@@ -35,7 +35,7 @@ public class WorldTickHandler {
             if (chunks != null && !chunks.isEmpty()) {
                 RetroChunkCoord r = chunks.pollFirst();
                 Pair<Integer,Integer> c = r.coord;
-                Logging.log("Retrogen " + c.toString() + ".");
+//                Logging.log("Retrogen " + c.toString() + ".");
                 long worldSeed = world.getSeed();
                 Random rand = new Random(worldSeed);
                 long xSeed = rand.nextLong() >> 2 + 1L;
@@ -51,7 +51,7 @@ public class WorldTickHandler {
 
             if (chunks != null && !chunks.isEmpty()) {
                 Pair<Integer,Integer> c = chunks.pollFirst();
-                Logging.log("Pregen " + c.toString() + ".");
+//                Logging.log("Pregen " + c.toString() + ".");
                 world.getChunkFromChunkCoords(c.getLeft(), c.getRight());
             } else if (chunks != null) {
                 chunksToPreGen.remove(dim);
