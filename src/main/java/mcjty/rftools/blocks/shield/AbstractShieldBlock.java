@@ -188,8 +188,8 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
 
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        BlockPos thispos = pos.offset(side.getOpposite());
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos thispos, EnumFacing side) {
+        BlockPos pos = thispos.offset(side);
 
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);
         if (shieldBlockTileEntity == null) {

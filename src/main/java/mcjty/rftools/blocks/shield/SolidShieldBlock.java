@@ -64,7 +64,7 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        Block block = world.getBlockState(pos).getBlock();
+        Block block = world.getBlockState(pos.offset(side)).getBlock();
         if (block == ShieldSetup.solidShieldBlock || block == ShieldSetup.noTickSolidShieldBlock) {
             return false;
         }
