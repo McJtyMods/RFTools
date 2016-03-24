@@ -114,11 +114,11 @@ public class SupportBlock extends Block {
             return true;
         }
 
-        if (block == this) {
+        if (block2 == this) {
             return false;
         }
 
-        return block != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+        return block2 != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @Override
