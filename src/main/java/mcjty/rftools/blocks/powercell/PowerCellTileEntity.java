@@ -200,17 +200,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                         IEnergyConnection connection = (IEnergyConnection) te;
                         EnumFacing opposite = face.getOpposite();
                         if (connection.canConnectEnergy(opposite)) {
-                            float infusedFactor = getInfusedFactor();
-
-                            float factor;
-                            if (getNetworkId() == -1) {
-                                factor = 1.0f; // Local energy
-                            } else {
-                                factor = getNetwork().calculateCostFactor(getGlobalPos());
-                                factor = (factor - 1) * (1-infusedFactor/2) + 1;
-                            }
-
-                            int rfPerTick = (int) (PowerCellConfiguration.rfPerTick * getAdvancedFactor() * (infusedFactor*.5+1));
+                            float factor = getCostFactor();
+                            int rfPerTick = getRfPerTickPerSide();
 
                             int rfToGive;
                             if (rfPerTick <= ((int) (energyStored / factor))) {
@@ -229,6 +220,23 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 }
             }
         }
+    }
+
+    public float getCostFactor() {
+        float infusedFactor = getInfusedFactor();
+
+        float factor;
+        if (getNetworkId() == -1) {
+            factor = 1.0f; // Local energy
+        } else {
+            factor = getNetwork().calculateCostFactor(getGlobalPos());
+            factor = (factor - 1) * (1-infusedFactor/2) + 1;
+        }
+        return factor;
+    }
+
+    public int getRfPerTickPerSide() {
+        return (int) (PowerCellConfiguration.rfPerTick * getAdvancedFactor() * (getInfusedFactor()*.5+1));
     }
 
     private void handleCardRemoval() {
@@ -265,7 +273,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private boolean isAdvanced() {
-        return blockType == PowerCellSetup.advancedPowerCellBlock;
+        return worldObj.getBlockState(getPos()).getBlock() == PowerCellSetup.advancedPowerCellBlock;
     }
 
     private int getAdvancedFactor() {

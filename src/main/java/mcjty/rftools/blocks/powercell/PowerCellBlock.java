@@ -108,12 +108,15 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 //            }
 //            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
 //                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
-//            currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF");
+//            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
+//                PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
 //            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
 //            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
 //                currenttip.add(TextFormatting.YELLOW + "Side: input mode");
 //            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
 //                currenttip.add(TextFormatting.YELLOW + "Side: output mode");
+//                int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
+//                currenttip.add(EnumChatFormatting.YELLOW + "Extraction cost: " + cost / 10 + "." + cost % 10 + "%");
 //            }
 //        }
 //        return currenttip;

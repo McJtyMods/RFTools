@@ -45,7 +45,8 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
                 return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1, world.getBlockState(pos).getBlock() == PowerCellSetup.advancedPowerCellBlock ? 1 : 0,
-                        powerCellTileEntity.getTotalInserted(), powerCellTileEntity.getTotalExtracted()));
+                        powerCellTileEntity.getTotalInserted(), powerCellTileEntity.getTotalExtracted(),
+                                                                 powerCellTileEntity.getRfPerTickPerSide(), 1.0f));
             } else {
                 return Optional.empty();
             }
@@ -54,14 +55,19 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
             PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
             int totInserted = 0;
             int totExtracted = 0;
+            int rfPerTick = 0;
+            float costFactor = 0;
+
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
                 totInserted = powerCellTileEntity.getTotalInserted();
                 totExtracted = powerCellTileEntity.getTotalExtracted();
+                rfPerTick = powerCellTileEntity.getRfPerTickPerSide();
+                costFactor = powerCellTileEntity.getCostFactor();
             }
 
             return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(), network.getAdvancedBlockCount(),
-                    totInserted, totExtracted));
+                    totInserted, totExtracted, rfPerTick, costFactor));
         }
     }
 }
