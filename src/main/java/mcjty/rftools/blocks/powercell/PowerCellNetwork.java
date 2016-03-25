@@ -1,8 +1,11 @@
 package mcjty.rftools.blocks.powercell;
 
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.RFToolsDimensionChecker;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -128,6 +131,25 @@ public class PowerCellNetwork extends WorldSavedData {
             return advancedBlocks;
         }
 
+        public void updateNetwork() {
+            advancedBlocks = 0;
+            Iterable<GlobalCoordinate> copy = new HashSet<GlobalCoordinate>(blocks);
+            blocks.clear();
+            for (GlobalCoordinate c : copy) {
+                World world = TeleportationTools.getWorldForDimension(c.getDimension());
+                IBlockState state = world.getBlockState(c.getCoordinate());
+                if (state.getBlock() == PowerCellSetup.powerCellBlock) {
+                    blocks.add(c);
+                } else if (state.getBlock() == PowerCellSetup.advancedPowerCellBlock) {
+                    blocks.add(c);
+                    advancedBlocks++;
+                } else {
+                    Logging.log("Warning! Powercell network data was not up-to-date!");
+                }
+            }
+
+        }
+
         public void add(GlobalCoordinate g, boolean advanced) {
             if (!blocks.contains(g)) {
                 blocks.add(g);
@@ -135,6 +157,7 @@ public class PowerCellNetwork extends WorldSavedData {
                 if (advanced) {
                     advancedBlocks++;
                 }
+                updateNetwork();
             }
         }
 
@@ -145,6 +168,7 @@ public class PowerCellNetwork extends WorldSavedData {
                 if (advanced) {
                     advancedBlocks--;
                 }
+                updateNetwork();
             }
         }
 
@@ -174,7 +198,7 @@ public class PowerCellNetwork extends WorldSavedData {
             return dist * rftoolsdimMult;
         }
 
-        private void updateCostFactor(World world) {
+        private void updateCostFactor() {
             if (costFactor == null) {
                 costFactor = new HashMap<>();
                 // Here we calculate the different blobs of powercells (all connected cells)
@@ -238,8 +262,8 @@ public class PowerCellNetwork extends WorldSavedData {
             }
         }
 
-        public float calculateCostFactor(World world, GlobalCoordinate g) {
-            updateCostFactor(world);
+        public float calculateCostFactor(GlobalCoordinate g) {
+            updateCostFactor();
             Float f = costFactor.get(g);
             return f == null ? 1.0f : f;
         }
