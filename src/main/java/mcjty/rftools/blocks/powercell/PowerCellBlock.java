@@ -161,7 +161,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
                     network.setEnergy(energy + network.getEnergy());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.add(powerCellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
+                    network.add(world, powerCellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
                     powerCellNetwork.save(world);
                 }
             }
@@ -202,7 +202,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 if (network != null) {
                     network.extractEnergySingleBlock(isAdvanced());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.remove(cellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
+                    network.remove(world, cellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
                     PowerCellNetwork.getChannels(world).save(world);
                 }
             }

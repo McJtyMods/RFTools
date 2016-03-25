@@ -206,7 +206,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                             if (getNetworkId() == -1) {
                                 factor = 1.0f; // Local energy
                             } else {
-                                factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
+                                factor = getNetwork().calculateCostFactor(getGlobalPos());
                                 factor = (factor - 1) * (1-infusedFactor/2) + 1;
                             }
 
@@ -236,7 +236,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             PowerCellNetwork.Network network = getNetwork();
             if (network != null) {
                 energy = network.extractEnergySingleBlock(isAdvanced());
-                network.remove(getGlobalPos(), isAdvanced());
+                network.remove(worldObj, getGlobalPos(), isAdvanced());
                 PowerCellNetwork.getChannels(worldObj).save(worldObj);
             }
         }
@@ -255,7 +255,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             }
             networkId = id;
             PowerCellNetwork.Network network = getNetwork();
-            network.add(getGlobalPos(), isAdvanced());
+            network.add(worldObj, getGlobalPos(), isAdvanced());
             network.setEnergy(network.getEnergy() + energy);
             channels.save(worldObj);
         } else {
