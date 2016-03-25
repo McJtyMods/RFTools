@@ -117,7 +117,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 //                currenttip.add(TextFormatting.YELLOW + "Side: input");
 //            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
 //                int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
-//                 currenttip.add(EnumChatFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%");
+//                 currenttip.add(EnumChatFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
 //            }
 //        }
 //        return currenttip;
