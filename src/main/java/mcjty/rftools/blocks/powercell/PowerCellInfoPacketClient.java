@@ -11,22 +11,28 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     private int advancedBlocks;
     private int totalInserted;
     private int totalExtracted;
+    private int rfPerTick;
+    private float costFactor;
 
     public static int tooltipEnergy = 0;
     public static int tooltipBlocks = 0;
     public static int tooltipAdvancedBlocks = 0;
     public static int tooltipInserted = 0;
     public static int tooltipExtracted = 0;
+    public static int tooltipRfPerTick = 0;
+    public static float tooltipCostFactor = 0;
 
     public PowerCellInfoPacketClient() {
     }
 
-    public PowerCellInfoPacketClient(int energy, int blocks, int advancedBlocks, int totalInserted, int totalExtracted) {
+    public PowerCellInfoPacketClient(int energy, int blocks, int advancedBlocks, int totalInserted, int totalExtracted, int rfPerTick, float costFactor) {
         this.energy = energy;
         this.blocks = blocks;
         this.advancedBlocks = advancedBlocks;
         this.totalInserted = totalInserted;
         this.totalExtracted = totalExtracted;
+        this.rfPerTick = rfPerTick;
+        this.costFactor = costFactor;
     }
 
     @Override
@@ -36,6 +42,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         advancedBlocks = buf.readInt();
         totalInserted = buf.readInt();
         totalExtracted = buf.readInt();
+        rfPerTick = buf.readInt();
+        costFactor = buf.readFloat();
     }
 
     @Override
@@ -45,6 +53,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         buf.writeInt(advancedBlocks);
         buf.writeInt(totalInserted);
         buf.writeInt(totalExtracted);
+        buf.writeInt(rfPerTick);
+        buf.writeFloat(costFactor);
     }
 
     @Override
@@ -54,5 +64,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         tooltipAdvancedBlocks = advancedBlocks;
         tooltipInserted= totalInserted;
         tooltipExtracted = totalExtracted;
+        tooltipRfPerTick = rfPerTick;
+        tooltipCostFactor = costFactor;
     }
 }
