@@ -100,10 +100,12 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         if (tileEntity instanceof PowerCellTileEntity) {
             PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
             int id = powerCellTileEntity.getNetworkId();
-            if (id != -1) {
-                currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
-            } else {
-                currenttip.add(EnumChatFormatting.GREEN + "Local storage!");
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (id != -1) {
+                    currenttip.add(EnumChatFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
+                } else {
+                    currenttip.add(EnumChatFormatting.GREEN + "Local storage!");
+                }
             }
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
@@ -115,11 +117,10 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
             if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
-                currenttip.add(EnumChatFormatting.YELLOW + "Side: input mode");
+                currenttip.add(EnumChatFormatting.YELLOW + "Side: input");
             } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
-                currenttip.add(EnumChatFormatting.YELLOW + "Side: output mode");
                 int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
-                currenttip.add(EnumChatFormatting.YELLOW + "Extraction cost: " + cost / 10 + "." + cost % 10 + "%");
+                currenttip.add(EnumChatFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%");
             }
         }
         return currenttip;
