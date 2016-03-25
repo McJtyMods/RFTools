@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import mcjty.lib.preferences.PlayerPreferencesProperties;
+import mcjty.lib.McJtyLib;
 import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +36,7 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
         }
 
         EntityPlayer player = (EntityPlayer) sender;
-        PreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
+        PreferencesProperties properties = McJtyLib.getPreferencesProperties(player);
 
         if (args.length < 3) {
             int buffX = properties.getBuffX();

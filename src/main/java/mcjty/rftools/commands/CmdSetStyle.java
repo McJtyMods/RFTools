@@ -1,7 +1,7 @@
 package mcjty.rftools.commands;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.gui.GuiStyle;
-import mcjty.lib.preferences.PlayerPreferencesProperties;
 import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +37,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
         }
 
         EntityPlayer player = (EntityPlayer) sender;
-        PreferencesProperties properties = PlayerPreferencesProperties.getProperties(player);
+        PreferencesProperties properties = McJtyLib.getPreferencesProperties(player);
 
         if (args.length < 2) {
             GuiStyle style = properties.getStyle();

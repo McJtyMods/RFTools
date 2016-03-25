@@ -1,5 +1,6 @@
 package mcjty.rftools.proxy;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.preferences.PreferencesProperties;
@@ -46,6 +47,8 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        McJtyLib.preInit(e);
+
         GeneralConfig.preInit(e);
 
         modConfigDir = e.getModConfigurationDirectory();
