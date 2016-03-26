@@ -1,6 +1,6 @@
 {
-    "deep_rumble" : {"category": "block", "sounds": ["deep_rumble"]},
-    "teleport_whoosh" : {"category": "block", "sounds": ["teleport_whoosh"]},
-    "teleport_error" : {"category": "block", "sounds": ["teleport_error"]},
-    "wolfhowl" : {"category": "ambient", "sounds": ["wolfhowl"]}
+    "deep_rumble" : {"category": "block", "sounds": ["rftools:deep_rumble"]},
+    "teleport_whoosh" : {"category": "block", "sounds": ["rftools:teleport_whoosh"]},
+    "teleport_error" : {"category": "block", "sounds": ["rftools:teleport_error"]},
+    "wolfhowl" : {"category": "ambient", "sounds": ["rftools:wolfhowl"]}
 }

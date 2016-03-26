@@ -7,6 +7,7 @@ import mcjty.lib.preferences.PreferencesProperties;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.ModSounds;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
@@ -108,6 +109,7 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModWorldgen.init();
+        ModSounds.init();
 
         RFTools.screenModuleRegistry.registerBuiltins();
     }
