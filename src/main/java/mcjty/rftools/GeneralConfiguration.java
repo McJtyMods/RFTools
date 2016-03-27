@@ -98,7 +98,7 @@ public class GeneralConfiguration {
             villagerId = findFreeVillagerId();
             ConfigCategory category = cfg.getCategory(CATEGORY_GENERAL);
             Property property = new Property("villagerId", Integer.toString(GeneralConfiguration.villagerId), INTEGER);
-            property.comment = "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id";
+            property.setComment("The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id");
             category.put("villagerId", property);
         }
     }

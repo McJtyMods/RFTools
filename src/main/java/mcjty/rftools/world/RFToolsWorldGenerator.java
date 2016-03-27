@@ -93,7 +93,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
     @SubscribeEvent
     public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
-        int dim = event.world.provider.getDimension();
+        int dim = event.getWorld().provider.getDimension();
 
         boolean regen = false;
         NBTTagCompound tag = (NBTTagCompound) event.getData().getTag(RETRO_NAME);
