@@ -8,6 +8,7 @@ import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,7 +85,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 

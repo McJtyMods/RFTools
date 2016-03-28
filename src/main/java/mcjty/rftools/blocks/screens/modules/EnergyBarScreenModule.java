@@ -7,6 +7,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.varia.EnergyTools;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -25,7 +26,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
             return null;
         }
 
-        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
+        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 

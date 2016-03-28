@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks;
+package mcjty.rftools.varia;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -6,12 +6,19 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.StringUtils;
 
 public class RFToolsTools {
+
+    public static boolean chunkLoaded(World world, BlockPos pos) {
+        return world.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4) && world.getChunkFromBlockCoords(pos).isLoaded();
+    }
+
+
     // Server side: play a sound to all nearby players
     public static void playSound(World worldObj, String soundName, double x, double y, double z, double volume, double pitch) {
         S29PacketSoundEffect soundEffect = new S29PacketSoundEffect(soundName, x, y, z, (float) volume, (float) pitch);

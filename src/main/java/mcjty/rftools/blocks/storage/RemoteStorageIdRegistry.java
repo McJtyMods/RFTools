@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -60,7 +61,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
             return null;
         }
         BlockPos c = coordinate.getCoordinate();
-        boolean exists = w.getChunkProvider().chunkExists(c.getX() >> 4, c.getZ() >> 4);
+        boolean exists = RFToolsTools.chunkLoaded(w, c);
         if (!exists) {
             return null;
         }
