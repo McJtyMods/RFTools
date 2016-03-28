@@ -8,6 +8,7 @@ import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -51,6 +52,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     private int prevLevel = -3;     // -3 means to check, -2 means invalid
     private int timer = 10;
 
+    private RemoteStorageTileEntity cachedRemoteStorage;
+    private int cachedRemoteStorageId;
+
     @Override
     public void update() {
         if (!worldObj.isRemote) {
@@ -64,6 +68,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return;
         }
         timer = 10;
+        cachedRemoteStorage = null;
+        cachedRemoteStorageId = -1;
 
         if (isRemote()) {
             // Only if we have a remote storage module do we have to do anything.
@@ -332,8 +338,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return false;
         }
 
-        if (index < ModularStorageContainer.SLOT_STORAGE) {
-            return true;
+        switch (index) {
+            case ModularStorageContainer.SLOT_STORAGE_MODULE:
+                return stack != null && ModularStorageSetup.storageModuleItem == stack.getItem();
+            case ModularStorageContainer.SLOT_FILTER_MODULE:
+                return stack != null && stack.getItem() instanceof StorageFilterItem;
+            case ModularStorageContainer.SLOT_TYPE_MODULE:
+                return stack != null && stack.getItem() instanceof StorageTypeItem;
         }
 
         if (isStorageAvailableRemotely(index)) {
@@ -393,6 +404,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (stack == null) {
             setMaxSize(0);
             numStacks = -1;
+//            System.out.println("ModularStorageTileEntity.copyFromModule: 1");
             return;
         }
 
@@ -402,6 +414,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (tagCompound == null || !tagCompound.hasKey("id")) {
                 setMaxSize(0);
                 numStacks = -1;
+//                System.out.println("ModularStorageTileEntity.copyFromModule: 2");
                 return;
             }
             remoteId = tagCompound.getInteger("id");
@@ -409,12 +422,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (remoteStorageTileEntity == null) {
                 setMaxSize(0);
                 numStacks = -1;
+//                System.out.println("ModularStorageTileEntity.copyFromModule: 3");
                 return;
             }
             ItemStack storageStack = remoteStorageTileEntity.findStorageWithId(remoteId);
             if (storageStack == null) {
                 setMaxSize(0);
                 numStacks = -1;
+//                System.out.println("ModularStorageTileEntity.copyFromModule: 4");
                 return;
             }
             setMaxSize(StorageModuleItem.MAXSIZE[storageStack.getItemDamage()]);
@@ -430,9 +445,22 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     private RemoteStorageTileEntity getRemoteStorage(int id) {
-        World world = getWorldSafe();
-        return RemoteStorageIdRegistry.getRemoteStorage(world, id);
+        if (id != cachedRemoteStorageId) {
+            cachedRemoteStorage = null;
+        }
+        if (cachedRemoteStorage != null) {
+            return cachedRemoteStorage;
+        }
 
+        World world = getWorldSafe();
+        cachedRemoteStorage = RemoteStorageIdRegistry.getRemoteStorage(world, id);
+        if (cachedRemoteStorage != null) {
+            cachedRemoteStorageId = id;
+        } else {
+            cachedRemoteStorageId = -1;
+        }
+
+        return cachedRemoteStorage;
     }
 
     private void updateStackCount() {
@@ -501,7 +529,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         super.readRestorableFromNBT(tagCompound);
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
-//        System.out.println((isServer() ? "SERVER" : "CLIENT") + ": loc=" + xCoord + "," + yCoord + "," + zCoord + ", #stacks=" + numStacks + ", max=" + maxSize);
         remoteId = tagCompound.getInteger("remoteId");
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
