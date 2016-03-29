@@ -1441,11 +1441,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int cx = x >> 4;
         int cz = z >> 4;
 
-//        if (worldObj.getChunkProvider().chunkExists(cx, cz)) {
-//            return true;
-//        }
-        // @todo is this right?
-        if (worldObj.getChunkProvider().getLoadedChunk(cx, cz) != null) {
+        if (RFToolsTools.chunkLoaded(worldObj, new BlockPos(x, 0, z))) {
             return true;
         }
 

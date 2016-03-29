@@ -4,6 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
+import mcjty.rftools.blocks.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -26,9 +27,7 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
             return null;
         }
 
-        //@todo
-//        if (!world.getChunkProvider().chunkExists(coordinate.getX() >> 4, coordinate.getZ() >> 4)) {
-        if (world.getChunkProvider().getLoadedChunk(coordinate.getX() >> 4, coordinate.getZ() >> 4) == null) {
+        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 

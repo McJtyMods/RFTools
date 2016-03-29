@@ -9,11 +9,17 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.StringUtils;
 
 public class RFToolsTools {
+
+    public static boolean chunkLoaded(World world, BlockPos pos) {
+        return world.getChunkProvider().getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) != null && world.getChunkFromBlockCoords(pos).isLoaded();
+    }
+
     // Server side: play a sound to all nearby players
     public static void playSound(World worldObj, SoundEvent sound, double x, double y, double z, double volume, double pitch) {
         SPacketSoundEffect soundEffect = new SPacketSoundEffect(sound, SoundCategory.BLOCKS, x, y, z, (float) volume, (float) pitch);
