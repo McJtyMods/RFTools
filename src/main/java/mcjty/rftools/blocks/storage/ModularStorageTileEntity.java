@@ -8,6 +8,7 @@ import mcjty.rftools.ClientInfo;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.items.storage.StorageTypeItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,6 +53,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     private int prevLevel = -3;     // -3 means to check, -2 means invalid
     private int timer = 10;
 
+    private RemoteStorageTileEntity cachedRemoteStorage;
+    private int cachedRemoteStorageId;
+
     @Override
     public void update() {
         if (!worldObj.isRemote) {
@@ -65,6 +69,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return;
         }
         timer = 10;
+        cachedRemoteStorage = null;
+        cachedRemoteStorageId = -1;
 
         if (isRemote()) {
             // Only if we have a remote storage module do we have to do anything.
@@ -334,6 +340,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return false;
         }
 
+        switch (index) {
+            case ModularStorageContainer.SLOT_STORAGE_MODULE:
+                return stack != null && ModularStorageSetup.storageModuleItem == stack.getItem();
+            case ModularStorageContainer.SLOT_FILTER_MODULE:
+                return stack != null && stack.getItem() instanceof StorageFilterItem;
+            case ModularStorageContainer.SLOT_TYPE_MODULE:
+                return stack != null && stack.getItem() instanceof StorageTypeItem;
+        }
+
         if (index < ModularStorageContainer.SLOT_STORAGE) {
             return true;
         }
@@ -432,9 +447,22 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     private RemoteStorageTileEntity getRemoteStorage(int id) {
-        World world = getWorldSafe();
-        return RemoteStorageIdRegistry.getRemoteStorage(world, id);
+        if (id != cachedRemoteStorageId) {
+            cachedRemoteStorage = null;
+        }
+        if (cachedRemoteStorage != null) {
+            return cachedRemoteStorage;
+        }
 
+        World world = getWorldSafe();
+        cachedRemoteStorage = RemoteStorageIdRegistry.getRemoteStorage(world, id);
+        if (cachedRemoteStorage != null) {
+            cachedRemoteStorageId = id;
+        } else {
+            cachedRemoteStorageId = -1;
+        }
+
+        return cachedRemoteStorage;
     }
 
     private void updateStackCount() {
