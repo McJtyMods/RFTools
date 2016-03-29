@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
+import mcjty.rftools.varia.CustomSidedInvWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.*;
 
@@ -1058,7 +1058,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return canPlayerAccess(player);
     }
 
-    IItemHandler invHandler = new InvWrapper(this);
+    IItemHandler invHandler = new CustomSidedInvWrapper(this);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {

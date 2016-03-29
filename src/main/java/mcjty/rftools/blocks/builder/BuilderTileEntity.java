@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.varia.CustomSidedInvWrapper;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import java.util.*;
 
@@ -1701,7 +1703,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
 
-    IItemHandler invHandler = new InvWrapper(this);
+    IItemHandler invHandler = new CustomSidedInvWrapper(this);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
