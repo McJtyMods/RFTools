@@ -55,20 +55,20 @@ public abstract class CommonProxy {
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "rftools.cfg"));
 
-        CapabilityManager.INSTANCE.register(PreferencesProperties.class, new Capability.IStorage<PreferencesProperties>() {
-            @Override
-            public NBTBase writeNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void readNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side, NBTBase nbt) {
-                throw new UnsupportedOperationException();
-            }
-
-        }, () -> {
-            throw new UnsupportedOperationException();
-        });
+//        CapabilityManager.INSTANCE.register(PreferencesProperties.class, new Capability.IStorage<PreferencesProperties>() {
+//            @Override
+//            public NBTBase writeNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side) {
+//                throw new UnsupportedOperationException();
+//            }
+//
+//            @Override
+//            public void readNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side, NBTBase nbt) {
+//                throw new UnsupportedOperationException();
+//            }
+//
+//        }, () -> {
+//            throw new UnsupportedOperationException();
+//        });
 
         CapabilityManager.INSTANCE.register(PorterProperties.class, new Capability.IStorage<PorterProperties>() {
             @Override
