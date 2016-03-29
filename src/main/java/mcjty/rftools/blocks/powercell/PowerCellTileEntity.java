@@ -14,6 +14,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
+import mcjty.rftools.varia.CustomSidedInvWrapper;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,7 +32,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.Map;
 import java.util.Set;
@@ -489,7 +489,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return false;
     }
 
-    IItemHandler invHandler = new InvWrapper(this);
+    IItemHandler invHandler = new CustomSidedInvWrapper(this);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
