@@ -7,7 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.RFToolsTools;
+import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;

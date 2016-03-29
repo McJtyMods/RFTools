@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks;
+package mcjty.rftools.varia;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;

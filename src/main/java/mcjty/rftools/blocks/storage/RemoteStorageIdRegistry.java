@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.blocks.RFToolsTools;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
