@@ -229,7 +229,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (getNetworkId() == -1) {
             factor = 1.0f; // Local energy
         } else {
-            factor = getNetwork().calculateCostFactor(getGlobalPos());
+            factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
             factor = (factor - 1) * (1-infusedFactor/2) + 1;
         }
         return factor;

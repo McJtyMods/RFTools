@@ -171,12 +171,12 @@ public class PowerCellNetwork extends WorldSavedData {
             }
         }
 
-        private double calculateBlobDistance(Set<GlobalCoordinate> blob1, Set<GlobalCoordinate> blob2) {
+        private double calculateBlobDistance(World world, Set<GlobalCoordinate> blob1, Set<GlobalCoordinate> blob2) {
             GlobalCoordinate c1 = blob1.iterator().next();
             GlobalCoordinate c2 = blob2.iterator().next();
 
-            boolean dim1rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c1.getDimension());
-            boolean dim2rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(c2.getDimension());
+            boolean dim1rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c1.getDimension());
+            boolean dim2rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c2.getDimension());
             double rftoolsdimMult = 1.0;
             if (dim1rftools) {
                 rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
@@ -197,7 +197,7 @@ public class PowerCellNetwork extends WorldSavedData {
             return dist * rftoolsdimMult;
         }
 
-        private void updateCostFactor() {
+        private void updateCostFactor(World world) {
             if (costFactor == null) {
                 costFactor = new HashMap<>();
                 // Here we calculate the different blobs of powercells (all connected cells)
@@ -213,7 +213,7 @@ public class PowerCellNetwork extends WorldSavedData {
                     for (Set<GlobalCoordinate> blob2 : blobs) {
                         if (blob2 != blob) {
                             // The distance between the local blob and the other blob:
-                            double dist = calculateBlobDistance(blob, blob2);
+                            double dist = calculateBlobDistance(world, blob, blob2);
 
                             // 'part' is a number indicating how relevant this blob is for calculating
                             // the extraction cost. A big blob will have a big influence. If there is only
@@ -261,8 +261,8 @@ public class PowerCellNetwork extends WorldSavedData {
             }
         }
 
-        public float calculateCostFactor(GlobalCoordinate g) {
-            updateCostFactor();
+        public float calculateCostFactor(World world, GlobalCoordinate g) {
+            updateCostFactor(world);
             Float f = costFactor.get(g);
             return f == null ? 1.0f : f;
         }
