@@ -23,7 +23,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
         setUnlocalizedName("advanced_charged_porter");
         setRegistryName("advanced_charged_porter");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this);
+        GameRegistry.register(this);
     }
 
     @Override

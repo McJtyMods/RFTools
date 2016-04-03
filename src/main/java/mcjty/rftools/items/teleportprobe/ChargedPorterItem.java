@@ -79,7 +79,7 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         setUnlocalizedName("charged_porter");
         setRegistryName("charged_porter");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this);
+        GameRegistry.register(this);
     }
 
     protected int getSpeedBonus() {

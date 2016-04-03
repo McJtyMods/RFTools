@@ -24,8 +24,9 @@ public class OreDictTypeItem extends StorageTypeItem {
     public OreDictTypeItem() {
         setMaxStackSize(16);
         setUnlocalizedName("oredict_module");
+        setRegistryName("oredict_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "oredict_module");
+        GameRegistry.register(this);
     }
 
     @Override

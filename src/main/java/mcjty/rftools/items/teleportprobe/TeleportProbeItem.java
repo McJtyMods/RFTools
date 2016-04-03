@@ -21,7 +21,7 @@ public class TeleportProbeItem extends Item {
         setRegistryName("teleport_probe");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        GameRegistry.registerItem(this);
+        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

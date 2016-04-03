@@ -34,8 +34,9 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
     public RedstoneModuleItem() {
         setMaxStackSize(1);
         setUnlocalizedName("redstone_module");
+        setRegistryName("redstone_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "redstone_module");
+        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

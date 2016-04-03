@@ -14,7 +14,7 @@ public class GenericRFToolsItem extends Item {
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, name);
+        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

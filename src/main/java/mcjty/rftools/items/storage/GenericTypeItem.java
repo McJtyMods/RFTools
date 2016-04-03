@@ -21,8 +21,9 @@ public class GenericTypeItem extends StorageTypeItem {
     public GenericTypeItem() {
         setMaxStackSize(16);
         setUnlocalizedName("generic_module");
+        setRegistryName("generic_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerItem(this, "generic_module");
+        GameRegistry.register(this);
     }
 
     @Override
