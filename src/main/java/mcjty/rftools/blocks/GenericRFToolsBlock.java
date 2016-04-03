@@ -10,6 +10,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -20,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock {
 
@@ -50,8 +53,22 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this, itemBlockClass, name);
+        GameRegistry.register(this);
+        if (itemBlockClass != null) {
+            GameRegistry.register(createItemBlock(itemBlockClass), getRegistryName());
+        }
         GameRegistry.registerTileEntityWithAlternatives(tileEntityClass, RFTools.MODID + "_" + name, name);
+    }
+
+    private ItemBlock createItemBlock(Class<? extends ItemBlock> itemBlockClass) {
+        try {
+            Class<?>[] ctorArgClasses = new Class<?>[1];
+            ctorArgClasses[0] = Block.class;
+            Constructor<? extends ItemBlock> itemCtor = itemBlockClass.getConstructor(ctorArgClasses);
+            return itemCtor.newInstance(this);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SideOnly(Side.CLIENT)

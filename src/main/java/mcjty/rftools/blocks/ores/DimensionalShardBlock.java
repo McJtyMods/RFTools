@@ -55,7 +55,8 @@ public class DimensionalShardBlock extends Block {
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this, DimensionalShardItemBlock.class, "dimensional_shard_ore");
+        GameRegistry.register(this);
+        GameRegistry.register(new DimensionalShardItemBlock(this), getRegistryName());
     }
 
     @SideOnly(Side.CLIENT)

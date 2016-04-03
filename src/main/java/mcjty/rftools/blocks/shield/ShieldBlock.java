@@ -141,9 +141,4 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IReds
     public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
         return true;
     }
-
-//    @Override
-//    public void registerBlockIcons(IIconRegister iconRegister) {
-//        iconSide = iconRegister.registerIcon(RFTools.MODID + ":" + "machineShieldProjector");
-//    }
 }

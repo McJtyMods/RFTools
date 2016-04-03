@@ -105,10 +105,11 @@ public class GeneralConfiguration {
 
     private static int findFreeVillagerId() {
         int id = 10;
-        Collection<Integer> registeredVillagers = VillagerRegistry.getRegisteredVillagers();
-        while (registeredVillagers.contains(id)) {
-            id++;
-        }
+//        Collection<Integer> registeredVillagers = VillagerRegistry.getRegisteredVillagers();
+//        while (registeredVillagers.contains(id)) {
+//            id++;
+//        }
+        //@todo
         return id;
     }
 

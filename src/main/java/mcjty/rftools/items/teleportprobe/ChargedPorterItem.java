@@ -48,7 +48,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
-            ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName() + i, "inventory"));
+            String path = getRegistryName().getResourcePath();
+            ModelResourceLocation location = new ModelResourceLocation(getRegistryName().getResourceDomain(), path + i);
+            ModelBakery.registerItemVariants(this, new ModelResourceLocation(location, "inventory"));
         }
 
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
@@ -65,7 +67,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                 } else if (level > 8) {
                     level = 8;
                 }
-                return new ModelResourceLocation(getRegistryName() + (8 - level), "inventory");
+                String path = getRegistryName().getResourcePath();
+                ModelResourceLocation location = new ModelResourceLocation(getRegistryName().getResourceDomain(), path + (8 - level));
+                return new ModelResourceLocation(location, "inventory");
             }
         });
     }

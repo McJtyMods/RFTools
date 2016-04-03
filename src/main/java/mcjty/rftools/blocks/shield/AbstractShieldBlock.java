@@ -14,6 +14,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -43,7 +44,8 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.registerBlock(this);
+        GameRegistry.register(this);
+        GameRegistry.register(new ItemBlock(this), getRegistryName());
         initTE();
     }
 
@@ -175,17 +177,6 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
 
         // Possibly check for damage.
     }
-
-//    @Override
-//    public void registerBlockIcons(IIconRegister iconRegister) {
-//        icon = iconRegister.registerIcon(RFTools.MODID + ":shieldtexture");
-//        icons[0] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield0");
-//        icons[1] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield1");
-//        icons[2] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield2");
-//        icons[3] = iconRegister.registerIcon(RFTools.MODID + ":shield/shield3");
-//    }
-//
-
 
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos thispos, EnumFacing side) {

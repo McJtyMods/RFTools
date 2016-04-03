@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -40,7 +41,9 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setUnlocalizedName("screen_hitblock");
-        GameRegistry.registerBlock(this, "screen_hitblock");
+        setRegistryName("screen_hitblock");
+        GameRegistry.register(this);
+        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
     }
 
