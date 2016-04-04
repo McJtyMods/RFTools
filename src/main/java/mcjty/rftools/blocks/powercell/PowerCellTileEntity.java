@@ -166,6 +166,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            if (isCreative()) {
+                // A creative powercell automatically generates 1000000 RF/tick
+                int gain = 1000000;
+                int networkId = getNetworkId();
+                if (networkId == -1) {
+                    receiveEnergyLocal(gain, false);
+                } else {
+                    receiveEnergyMulti(gain, false);
+                }
+            }
+
             int energyStored = getEnergyStored(EnumFacing.DOWN);
             if (energyStored <= 0) {
                 return;
@@ -273,7 +284,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private boolean isAdvanced() {
-        return worldObj.getBlockState(getPos()).getBlock() == PowerCellSetup.advancedPowerCellBlock;
+        return PowerCellBlock.isAdvanced(worldObj.getBlockState(getPos()).getBlock());
+    }
+
+    private boolean isCreative() {
+        return PowerCellBlock.isCreative(worldObj.getBlockState(getPos()).getBlock());
     }
 
     private int getAdvancedFactor() {
@@ -527,6 +542,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                     msg = "normal";
                 } else if (block == PowerCellSetup.advancedPowerCellBlock) {
                     msg = "advanced";
+                } else if (block == PowerCellSetup.creativePowerCellBlock) {
+                    msg = "creative";
                 } else {
                     msg = "not a powercell!";
                 }

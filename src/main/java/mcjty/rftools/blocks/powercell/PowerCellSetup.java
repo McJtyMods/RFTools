@@ -15,12 +15,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PowerCellSetup {
     public static PowerCellBlock powerCellBlock;
     public static PowerCellBlock advancedPowerCellBlock;
+    public static PowerCellBlock creativePowerCellBlock;
 
     public static PowerCellCardItem powerCellCardItem;
 
     public static void init() {
         powerCellBlock = new PowerCellBlock("powercell");
         advancedPowerCellBlock = new PowerCellBlock("powercell_advanced");
+        creativePowerCellBlock = new PowerCellBlock("powercell_creative");
         powerCellCardItem = new PowerCellCardItem();
     }
 
@@ -29,6 +31,7 @@ public class PowerCellSetup {
         powerCellBlock.initModel();
         powerCellCardItem.initModel();
         advancedPowerCellBlock.initModel();
+        creativePowerCellBlock.initModel();
     }
 
     public static void initCrafting() {

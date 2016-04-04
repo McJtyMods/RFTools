@@ -81,7 +81,15 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     private boolean isAdvanced() {
-        return this == PowerCellSetup.advancedPowerCellBlock;
+        return isAdvanced(this);
+    }
+
+    public static boolean isAdvanced(Block block) {
+        return block == PowerCellSetup.advancedPowerCellBlock || block == PowerCellSetup.creativePowerCellBlock;
+    }
+
+    public static boolean isCreative(Block block) {
+        return block == PowerCellSetup.creativePowerCellBlock;
     }
 
     private int getAdvancedFactor() {
@@ -165,7 +173,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
                     network.setEnergy(energy + network.getEnergy());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.add(world, powerCellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
+                    network.add(world, powerCellTileEntity.getGlobalPos(), isAdvanced(block));
                     powerCellNetwork.save(world);
                 }
             }
@@ -206,7 +214,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 if (network != null) {
                     network.extractEnergySingleBlock(isAdvanced());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.remove(world, cellTileEntity.getGlobalPos(), block == PowerCellSetup.advancedPowerCellBlock);
+                    network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block));
                     PowerCellNetwork.getChannels(world).save(world);
                 }
             }

@@ -118,6 +118,7 @@ tile.space_chamber.name=Space Chamber Corner Block
 tile.space_chamber_controller.name=Space Chamber Controller Block
 tile.powercell.name=Powercell
 tile.powercell_advanced.name=Advanced Powercell
+tile.powercell_creative.name=Creative Powercell
 tile.shield_template_block.name=Shield Template
 tile.shield_block1.name=Shield Projector Tier 1
 tile.shield_block2.name=Shield Projector Tier 2

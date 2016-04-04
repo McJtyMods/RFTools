@@ -44,7 +44,8 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
         if (id == -1) {
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
-                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1, world.getBlockState(pos).getBlock() == PowerCellSetup.advancedPowerCellBlock ? 1 : 0,
+                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1,
+                                                                 PowerCellBlock.isAdvanced(world.getBlockState(pos).getBlock()) ? 1 : 0,
                         powerCellTileEntity.getTotalInserted(), powerCellTileEntity.getTotalExtracted(),
                                                                  powerCellTileEntity.getRfPerTickPerSide(), 1.0f));
             } else {

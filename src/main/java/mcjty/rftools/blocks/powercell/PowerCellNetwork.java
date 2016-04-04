@@ -139,7 +139,7 @@ public class PowerCellNetwork extends WorldSavedData {
                 IBlockState state = world.getBlockState(c.getCoordinate());
                 if (state.getBlock() == PowerCellSetup.powerCellBlock) {
                     blocks.add(c);
-                } else if (state.getBlock() == PowerCellSetup.advancedPowerCellBlock) {
+                } else if (PowerCellBlock.isAdvanced(state.getBlock())) {
                     blocks.add(c);
                     advancedBlocks++;
                 } else {
