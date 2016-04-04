@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shield;
 
-import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -20,16 +19,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IRedstoneConnectable {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
 
     private final int max;
 
@@ -136,9 +134,9 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable, IReds
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         checkRedstoneWithTE(world, pos);
     }
-
-    @Override
-    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
-        return true;
-    }
+//
+//    @Override
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//        return true;
+//    }
 }

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.relay;
 
-import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
@@ -13,21 +12,19 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class RelayBlock extends GenericRFToolsBlock implements IRedstoneConnectable {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConnectable */ {
 
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
@@ -51,10 +48,10 @@ public class RelayBlock extends GenericRFToolsBlock implements IRedstoneConnecta
         checkRedstoneWithTE(worldIn, pos);
     }
 
-    @Override
-    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
-        return true;
-    }
+//    @Override
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//        return true;
+//    }
 
     @SideOnly(Side.CLIENT)
     @Override

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.builder;
 
-import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
@@ -15,16 +14,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, BuilderContainer> implements Infusable, IRedstoneConnectable {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, BuilderContainer> implements Infusable /*, IRedstoneConnectable */ {
 
     public BuilderBlock() {
         super(Material.iron, BuilderTileEntity.class, BuilderContainer.class, "builder", true);
@@ -40,10 +38,10 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
         checkRedstoneWithTE(world, pos);
     }
 
-    @Override
-    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
-        return true;
-    }
+//    @Override
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//        return true;
+//    }
 
     @SideOnly(Side.CLIENT)
     @Override

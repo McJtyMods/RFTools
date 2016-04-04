@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.crafter;
 
-import crazypants.enderio.api.redstone.IRedstoneConnectable;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
@@ -12,21 +11,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable, IRedstoneConnectable {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
+public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
     public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
         super(Material.iron, tileEntityClass, CrafterContainer.class, blockName, true);
@@ -98,11 +95,11 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
         checkRedstoneWithTE(world, pos);
     }
 
-    @Override
-    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
-        return true;
-    }
-
+//    @Override
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//        return true;
+//    }
+//
     @Override
     public int getGuiID() {
         return RFTools.GUI_CRAFTER;
