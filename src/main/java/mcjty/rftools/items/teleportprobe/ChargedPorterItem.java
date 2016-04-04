@@ -15,10 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -48,9 +45,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
+            String domain = getRegistryName().getResourceDomain();
             String path = getRegistryName().getResourcePath();
-            ModelResourceLocation location = new ModelResourceLocation(getRegistryName().getResourceDomain(), path + i);
-            ModelBakery.registerItemVariants(this, new ModelResourceLocation(location, "inventory"));
+            ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
         }
 
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
@@ -67,9 +64,9 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
                 } else if (level > 8) {
                     level = 8;
                 }
+                String domain = getRegistryName().getResourceDomain();
                 String path = getRegistryName().getResourcePath();
-                ModelResourceLocation location = new ModelResourceLocation(getRegistryName().getResourceDomain(), path + (8 - level));
-                return new ModelResourceLocation(location, "inventory");
+                return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
             }
         });
     }
