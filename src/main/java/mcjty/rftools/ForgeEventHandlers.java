@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
@@ -17,6 +18,11 @@ public class ForgeEventHandlers {
             PorterProperties porterProperties = PlayerExtendedProperties.getPorterProperties(event.player);
             if (porterProperties != null) {
                 porterProperties.tickTeleport(event.player);
+            }
+
+            BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(event.player);
+            if (buffProperties != null) {
+                buffProperties.tickBuffs();
             }
         }
     }

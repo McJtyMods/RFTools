@@ -22,6 +22,7 @@ import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.world.ModWorldgen;
@@ -55,20 +56,20 @@ public abstract class CommonProxy {
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "rftools.cfg"));
 
-//        CapabilityManager.INSTANCE.register(PreferencesProperties.class, new Capability.IStorage<PreferencesProperties>() {
-//            @Override
-//            public NBTBase writeNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side) {
-//                throw new UnsupportedOperationException();
-//            }
-//
-//            @Override
-//            public void readNBT(Capability<PreferencesProperties> capability, PreferencesProperties instance, EnumFacing side, NBTBase nbt) {
-//                throw new UnsupportedOperationException();
-//            }
-//
-//        }, () -> {
-//            throw new UnsupportedOperationException();
-//        });
+        CapabilityManager.INSTANCE.register(BuffProperties.class, new Capability.IStorage<BuffProperties>() {
+            @Override
+            public NBTBase writeNBT(Capability<BuffProperties> capability, BuffProperties instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<BuffProperties> capability, BuffProperties instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
 
         CapabilityManager.INSTANCE.register(PorterProperties.class, new Capability.IStorage<PorterProperties>() {
             @Override

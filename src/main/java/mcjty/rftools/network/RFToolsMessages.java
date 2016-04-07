@@ -20,6 +20,7 @@ import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
 import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.teleportprobe.*;
+import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -62,6 +63,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketAdjacentBlocksReady.Handler.class, PacketAdjacentBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAdjacentTankBlocksReady.Handler.class, PacketAdjacentTankBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketFiltersReady.Handler.class, PacketFiltersReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketSendBuffsToClient.Handler.class, PacketSendBuffsToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);

@@ -10,10 +10,13 @@ public class PropertiesDispatcher implements ICapabilityProvider, INBTSerializab
 
     private FavoriteDestinationsProperties favoriteDestinationsProperties = new FavoriteDestinationsProperties();
     private PorterProperties porterProperties = new PorterProperties();
+    private BuffProperties buffProperties = new BuffProperties();
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == PlayerExtendedProperties.PORTER_CAPABILITY || capability == PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY;
+        return capability == PlayerExtendedProperties.PORTER_CAPABILITY
+                || capability == PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY
+                || capability == PlayerExtendedProperties.BUFF_CAPABILITY;
     }
 
     @Override
@@ -24,6 +27,9 @@ public class PropertiesDispatcher implements ICapabilityProvider, INBTSerializab
         if (capability == PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY) {
             return (T) favoriteDestinationsProperties;
         }
+        if (capability == PlayerExtendedProperties.BUFF_CAPABILITY) {
+            return (T) buffProperties;
+        }
         return null;
     }
 
@@ -32,6 +38,7 @@ public class PropertiesDispatcher implements ICapabilityProvider, INBTSerializab
         NBTTagCompound nbt = new NBTTagCompound();
         favoriteDestinationsProperties.saveNBTData(nbt);
         porterProperties.saveNBTData(nbt);
+        buffProperties.saveNBTData(nbt);
         return nbt;
     }
 
@@ -39,5 +46,6 @@ public class PropertiesDispatcher implements ICapabilityProvider, INBTSerializab
     public void deserializeNBT(NBTTagCompound nbt) {
         favoriteDestinationsProperties.loadNBTData(nbt);
         porterProperties.loadNBTData(nbt);
+        buffProperties.loadNBTData(nbt);
     }
 }
