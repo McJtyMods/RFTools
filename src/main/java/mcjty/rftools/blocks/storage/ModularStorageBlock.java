@@ -124,8 +124,8 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public boolean canRenderInLayer(BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT;
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return /*layer == BlockRenderLayer.SOLID || */ layer == BlockRenderLayer.CUTOUT;
     }
 
     //@todo
