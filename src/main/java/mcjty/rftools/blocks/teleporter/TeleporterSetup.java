@@ -30,7 +30,7 @@ public class TeleporterSetup {
         matterTransmitterBlock = new MatterTransmitterBlock();
         matterReceiverBlock = new MatterReceiverBlock();
         dialingDeviceBlock = new DialingDeviceBlock();
-//        simpleDialerBlock = new SimpleDialerBlock();
+        simpleDialerBlock = new SimpleDialerBlock();
         destinationAnalyzerBlock = new DestinationAnalyzerBlock();
         matterBoosterBlock = new MatterBoosterBlock();
 
@@ -46,6 +46,7 @@ public class TeleporterSetup {
         dialingDeviceBlock.initModel();
         destinationAnalyzerBlock.initModel();
         matterBoosterBlock.initModel();
+        simpleDialerBlock.initModel();
 
         teleportProbeItem.initModel();
         chargedPorterItem.initModel();
@@ -85,8 +86,8 @@ public class TeleporterSetup {
                 new ItemStack(Blocks.redstone_block), new ItemStack(Items.diamond), new ItemStack(Blocks.redstone_block)
         }, new ItemStack(advancedChargedPorterItem), 4));
 
-//        if (GeneralConfiguration.enableDialingDeviceRecipe) {
-//            GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
-//        }
+        if (GeneralConfiguration.enableDialingDeviceRecipe) {
+            GameRegistry.addRecipe(new ItemStack(simpleDialerBlock), "rRr", "TMT", "rRr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'R', Blocks.redstone_block);
+        }
     }
 }
