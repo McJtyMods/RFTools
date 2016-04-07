@@ -28,15 +28,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = RFTools.MODID, name="RFTools", dependencies =
         "required-after:Forge@["+RFTools.MIN_FORGE_VER+
-//        ",);required-after:CoFHLib@["+RFTools.MIN_COFHLIB_VER+
         ",);required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "4.23beta39";
+    public static final String VERSION = "4.23beta40";
     public static final String MIN_FORGE_VER = "12.16.0.1835";
-//    public static final String MIN_COFHLIB_VER = "1.0.3";
-    public static final String MIN_MCJTYLIB_VER = "1.9.0-1.8.1beta13";
+    public static final String MIN_MCJTYLIB_VER = "1.9.0-1.8.1beta14";
 
     @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
