@@ -6,6 +6,8 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -13,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -57,20 +60,19 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         }
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof MatterReceiverTileEntity) {
-//            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-//            String name = matterReceiverTileEntity.getName();
-//            int id = matterReceiverTileEntity.getId();
-//            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof MatterReceiverTileEntity) {
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+            String name = matterReceiverTileEntity.getName();
+            int id = matterReceiverTileEntity.getId();
+            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+        }
+        return currenttip;
+    }
 
     @Override
     public int getGuiID() {

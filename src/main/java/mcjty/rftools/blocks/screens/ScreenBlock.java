@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -41,26 +43,25 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         super(Material.iron, ScreenTileEntity.class, ScreenContainer.class, "screen", true);
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null) {
-//            boolean connected = tagCompound.getBoolean("connected");
-//            if (!connected) {
-//                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-//            }
-//            boolean power = tagCompound.getBoolean("powerOn");
-//            if (!power) {
-//                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
-//            }
-//            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-//            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            boolean connected = tagCompound.getBoolean("connected");
+            if (!connected) {
+                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+            }
+            boolean power = tagCompound.getBoolean("powerOn");
+            if (!power) {
+                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
+            }
+            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+        }
+        return currenttip;
+    }
 
     @SideOnly(Side.CLIENT)
     @Override

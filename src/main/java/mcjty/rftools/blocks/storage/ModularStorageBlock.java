@@ -1,8 +1,12 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.network.RFToolsMessages;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -128,33 +132,32 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
         return /*layer == BlockRenderLayer.SOLID || */ layer == BlockRenderLayer.CUTOUT;
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof ModularStorageTileEntity) {
-//            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
-//            int maxSize = modularStorageTileEntity.getMaxSize();
-//            if (maxSize == 0) {
-//                currenttip.add(TextFormatting.YELLOW + "No storage module!");
-//            } else {
-//                if (System.currentTimeMillis() - lastTime > 500) {
-//                    lastTime = System.currentTimeMillis();
-//                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimensionId(),
-//                            modularStorageTileEntity.getPos())));
-//                }
-//                int stacks = StorageInfoPacketClient.cntReceived;
-//                if (stacks == -1) {
-//                    currenttip.add(TextFormatting.YELLOW + "Maximum size: " + maxSize);
-//                } else {
-//                    currenttip.add(TextFormatting.GREEN + "" + stacks + " out of " + maxSize);
-//                }
-//            }
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
+            int maxSize = modularStorageTileEntity.getMaxSize();
+            if (maxSize == 0) {
+                currenttip.add(TextFormatting.YELLOW + "No storage module!");
+            } else {
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimension(),
+                            modularStorageTileEntity.getPos())));
+                }
+                int stacks = StorageInfoPacketClient.cntReceived;
+                if (stacks == -1) {
+                    currenttip.add(TextFormatting.YELLOW + "Maximum size: " + maxSize);
+                } else {
+                    currenttip.add(TextFormatting.GREEN + "" + stacks + " out of " + maxSize);
+                }
+            }
+        }
+        return currenttip;
+    }
 
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {

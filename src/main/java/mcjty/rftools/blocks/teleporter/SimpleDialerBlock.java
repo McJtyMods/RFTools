@@ -4,6 +4,8 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -57,30 +59,29 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
         }
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null) {
-//            if (tagCompound.hasKey("transX")) {
-//                int transX = tagCompound.getInteger("transX");
-//                int transY = tagCompound.getInteger("transY");
-//                int transZ = tagCompound.getInteger("transZ");
-//                int dim = tagCompound.getInteger("transDim");
-//                currenttip.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
-//            }
-//            if (tagCompound.hasKey("receiver")) {
-//                int receiver = tagCompound.getInteger("receiver");
-//                currenttip.add(TextFormatting.GREEN + "Receiver: " + receiver);
-//            }
-//            if (tagCompound.getBoolean("once")) {
-//                currenttip.add(TextFormatting.GREEN + "Dial Once mode enabled");
-//            }
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            if (tagCompound.hasKey("transX")) {
+                int transX = tagCompound.getInteger("transX");
+                int transY = tagCompound.getInteger("transY");
+                int transZ = tagCompound.getInteger("transZ");
+                int dim = tagCompound.getInteger("transDim");
+                currenttip.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
+            }
+            if (tagCompound.hasKey("receiver")) {
+                int receiver = tagCompound.getInteger("receiver");
+                currenttip.add(TextFormatting.GREEN + "Receiver: " + receiver);
+            }
+            if (tagCompound.getBoolean("once")) {
+                currenttip.add(TextFormatting.GREEN + "Dial Once mode enabled");
+            }
+        }
+        return currenttip;
+    }
 
 
     @Override

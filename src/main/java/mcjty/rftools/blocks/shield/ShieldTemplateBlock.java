@@ -48,7 +48,7 @@ public class ShieldTemplateBlock extends Block {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName() + "_yellow", "inventory"));
     }
 
-    public final static PropertyEnum<TemplateColor> COLOR = PropertyEnum.<TemplateColor>create("color", TemplateColor.class);
+    public static final PropertyEnum<TemplateColor> COLOR = PropertyEnum.<TemplateColor>create("color", TemplateColor.class);
 
     public ShieldTemplateBlock() {
         super(Material.glass);

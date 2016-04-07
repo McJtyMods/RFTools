@@ -2,6 +2,8 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -37,18 +39,17 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         }
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        NBTTagCompound tagCompound = accessor.getNBTData();
-//        if (tagCompound != null) {
-//            int channel = tagCompound.getInteger("channel");
-//            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            int channel = tagCompound.getInteger("channel");
+            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+        }
+        return currenttip;
+    }
 
     @Override
     public int getGuiID() {

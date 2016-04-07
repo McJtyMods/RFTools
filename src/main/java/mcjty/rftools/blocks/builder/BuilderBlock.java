@@ -4,6 +4,8 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -60,24 +62,23 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
 
     private static long lastTime = 0;
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof BuilderTileEntity) {
-//            if (System.currentTimeMillis() - lastTime > 250) {
-//                lastTime = System.currentTimeMillis();
-//                BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
-//                builderTileEntity.requestCurrentLevel();
-//            }
-//            int scan = BuilderTileEntity.getCurrentLevel();
-//            currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
-//        }
-//        return currenttip;
-//
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof BuilderTileEntity) {
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
+                builderTileEntity.requestCurrentLevel();
+            }
+            int scan = BuilderTileEntity.getCurrentLevel();
+            currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+        }
+        return currenttip;
+
+    }
 
     @Override
     public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {

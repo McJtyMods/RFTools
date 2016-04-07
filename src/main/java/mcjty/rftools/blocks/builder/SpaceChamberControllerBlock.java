@@ -3,12 +3,15 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -48,27 +51,26 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
         }
     }
 
-//@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof SpaceChamberControllerTileEntity) {
-//            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
-//            int channel = spaceChamberControllerTileEntity.getChannel();
-//            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
-//            if (channel != -1) {
-//                int size = spaceChamberControllerTileEntity.getChamberSize();
-//                if (size == -1) {
-//                    currenttip.add(TextFormatting.YELLOW + "Chamber not formed!");
-//                } else {
-//                    currenttip.add(TextFormatting.GREEN + "Area: " + size + " blocks");
-//                }
-//            }
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof SpaceChamberControllerTileEntity) {
+            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
+            int channel = spaceChamberControllerTileEntity.getChannel();
+            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+            if (channel != -1) {
+                int size = spaceChamberControllerTileEntity.getChamberSize();
+                if (size == -1) {
+                    currenttip.add(TextFormatting.YELLOW + "Chamber not formed!");
+                } else {
+                    currenttip.add(TextFormatting.GREEN + "Area: " + size + " blocks");
+                }
+            }
+        }
+        return currenttip;
+    }
 
     @Override
     public int getGuiID() {

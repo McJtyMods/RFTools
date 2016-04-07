@@ -2,7 +2,11 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.RFToolsMessages;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -59,22 +63,21 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
         counterTileEntity.update();
     }
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//
-//        if (System.currentTimeMillis() - lastTime > 500) {
-//            CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
-//            lastTime = System.currentTimeMillis();
-//            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimensionId(),
-//                                                                                                                        te.getPos())));
-//        }
-//
-//        currenttip.add(TextFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+
+        if (System.currentTimeMillis() - lastTime > 500) {
+            CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
+            lastTime = System.currentTimeMillis();
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimension(),
+                                                                                                                        te.getPos())));
+        }
+
+        currenttip.add(TextFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
+        return currenttip;
+    }
 
 
     @Override

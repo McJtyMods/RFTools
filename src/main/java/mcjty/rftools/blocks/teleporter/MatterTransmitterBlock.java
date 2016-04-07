@@ -9,6 +9,8 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.network.ReturnDestinationInfoHelper;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -16,6 +18,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -103,33 +106,32 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
 
     private static long lastTime = 0;
 
-    //@todo
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof MatterTransmitterTileEntity) {
-//            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-//            currenttip.add(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
-//            if (matterTransmitterTileEntity.isDialed()) {
-//                if (System.currentTimeMillis() - lastTime > 500) {
-//                    lastTime = System.currentTimeMillis();
-//                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
-//                }
-//
-//                String name = "?";
-//                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
-//                    name = ReturnDestinationInfoHelper.name;
-//                }
-//                currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
-//            }
-//            if (matterTransmitterTileEntity.isOnce()) {
-//                currenttip.add(TextFormatting.YELLOW + "[ONCE]");
-//            }
-//        }
-//        return currenttip;
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof MatterTransmitterTileEntity) {
+            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+            currenttip.add(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
+            if (matterTransmitterTileEntity.isDialed()) {
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                }
+
+                String name = "?";
+                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
+                    name = ReturnDestinationInfoHelper.name;
+                }
+                currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
+            }
+            if (matterTransmitterTileEntity.isOnce()) {
+                currenttip.add(TextFormatting.YELLOW + "[ONCE]");
+            }
+        }
+        return currenttip;
+    }
 
     @Override
     public int getGuiID() {

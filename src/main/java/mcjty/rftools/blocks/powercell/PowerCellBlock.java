@@ -2,10 +2,14 @@ package mcjty.rftools.blocks.powercell;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
+import mcjty.rftools.network.RFToolsMessages;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -26,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> implements Infusable {
@@ -96,40 +101,39 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
     }
 
-    //@todo
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        super.getWailaBody(itemStack, currenttip, accessor, config);
-//        TileEntity tileEntity = accessor.getTileEntity();
-//        if (tileEntity instanceof PowerCellTileEntity) {
-//            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
-//            int id = powerCellTileEntity.getNetworkId();
-//            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-//            if (id != -1) {
-//                currenttip.add(TextFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
-//            } else {
-//                currenttip.add(TextFormatting.GREEN + "Local storage!");
-//            }
-//           }
-//            if (System.currentTimeMillis() - lastTime > 250) {
-//                lastTime = System.currentTimeMillis();
-//                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
-//            }
-//            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-//                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
-//            currenttip.add(EnumChatFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
-//                PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
-//            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
-//            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
-//                currenttip.add(TextFormatting.YELLOW + "Side: input");
-//            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
-//                int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
-//                 currenttip.add(EnumChatFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
-//            }
-//        }
-//        return currenttip;
-//    }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity tileEntity = accessor.getTileEntity();
+        if (tileEntity instanceof PowerCellTileEntity) {
+            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
+            int id = powerCellTileEntity.getNetworkId();
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if (id != -1) {
+                currenttip.add(TextFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
+            } else {
+                currenttip.add(TextFormatting.GREEN + "Local storage!");
+            }
+           }
+            if (System.currentTimeMillis() - lastTime > 250) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
+            }
+            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
+                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
+            currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
+                PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
+            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
+            if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
+                currenttip.add(TextFormatting.YELLOW + "Side: input");
+            } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
+                int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
+                 currenttip.add(TextFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
+            }
+        }
+        return currenttip;
+    }
 
     @Override
     protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {

@@ -66,7 +66,7 @@ artifacts {
 
 
 dependencies {
-    //deobfCompile "mcp.mobius.waila:Waila:1.6.0-B3_1.8.8"
+    deobfCompile "mcp.mobius.waila:Waila:1.7.0-B2_1.9"
     deobfCompile "mezz.jei:jei_1.9:3.2.4.177"
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
