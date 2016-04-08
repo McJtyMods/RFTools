@@ -61,13 +61,16 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
         if (tagCompound != null) {
             EnvironmentalControllerTileEntity tileEntity = (EnvironmentalControllerTileEntity) accessor.getTileEntity();
             int rfPerTick = tileEntity.getTotalRfPerTick();
-            currenttip.add(TextFormatting.GREEN + "Consuming " + rfPerTick + " RF/tick");
+            int volume = tileEntity.getVolume();
+            if (tileEntity.isActive()) {
+                currenttip.add(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+            } else {
+                currenttip.add(TextFormatting.GREEN + "Inactive " + rfPerTick + " RF/tick (" + volume + " blocks)");
+            }
             int radius = tileEntity.getRadius();
             int miny = tileEntity.getMiny();
             int maxy = tileEntity.getMaxy();
             currenttip.add(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
-            int volume = tileEntity.getVolume();
-            currenttip.add(TextFormatting.GREEN + "Volume " + volume + " blocks");
         }
         return currenttip;
     }
