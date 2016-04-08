@@ -154,7 +154,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
                         String name = playerFilter.getName();
                         if ((name == null || name.isEmpty())) {
                             return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
-                        } else if (name.equals(entity.getDisplayName())) {
+                        } else if (name.equals(entity.getName())) {
                             return (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
                         }
                     }
