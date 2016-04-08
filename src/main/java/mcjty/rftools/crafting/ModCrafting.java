@@ -16,6 +16,11 @@ import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityMooshroom;
+import net.minecraft.entity.passive.EntityOcelot;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -57,6 +62,17 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.redstone, 'b', Items.book);
         GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
         GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.diamond);
+
+        GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
+
+        String[] syringeMatcher = new String[] { "level", "mobName" };
+
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                                                     new ItemStack[]{EnvironmentalSetup.createMobSyringe(EntityIronGolem.class), EnvironmentalSetup.createMobSyringe(EntityEnderman.class), EnvironmentalSetup.createMobSyringe(EntitySnowman.class),
+                                                             EnvironmentalSetup.createMobSyringe(EntityBat.class), EnvironmentalSetup.createMobSyringe(EntityOcelot.class), EnvironmentalSetup.createMobSyringe(EntityGuardian.class),
+                                                             EnvironmentalSetup.createMobSyringe(EntityWolf.class), EnvironmentalSetup.createMobSyringe(EntityPigZombie.class), EnvironmentalSetup.createMobSyringe(EntityMooshroom.class)},
+                                                     new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
+                                                     new ItemStack(ModItems.peaceEssenceItem)));
 
         int dimShardCraftability;
         if (Loader.isModLoaded("rftoolsdim")) {

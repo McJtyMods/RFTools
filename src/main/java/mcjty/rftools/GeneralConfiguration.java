@@ -43,6 +43,9 @@ public class GeneralConfiguration {
     public static int oreMaximumHeight = 40;
     public static boolean retrogen = true;
 
+    // For the syringe
+    public static int maxMobInjections = 10;        // Maximum amount of injections we need to do a full mob extraction.
+
 
     public static int villagerId = 0;               // -1 means disable, 0 means auto-id, other means fixed id
 
@@ -91,6 +94,9 @@ public class GeneralConfiguration {
         for (int i : dimensionalShardOregenWithoutDimensions) {
             oregenDimensionsWithoutDimensions.add(i);
         }
+
+        maxMobInjections = cfg.get(CATEGORY_GENERAL, "maxMobInjections", maxMobInjections,
+                                   "Amount of injections needed to get a fully absorbed mob essence").getInt();
 
         villagerId = cfg.get(CATEGORY_GENERAL, "villagerId", villagerId,
                 "The ID for the RFTools villager. -1 means disable, 0 means to automatically assigns an id, any other number will use that as fixed id").getInt();

@@ -1,14 +1,27 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.envmodules.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.monster.EntityCaveSpider;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -94,14 +107,14 @@ public class EnvironmentalSetup {
         String[] syringeMatcher = new String[] { "level", "mobName" };
         String[] pickMatcher = new String[] { "ench" };
 
-        ItemStack ironGolemSyringe = createMobSyringe("Iron Golem");
-        ItemStack ghastSyringe = createMobSyringe("Ghast");
-        ItemStack chickenSyringe = createMobSyringe("Chicken");
-        ItemStack batSyringe = createMobSyringe("Bat");
-        ItemStack horseSyringe = createMobSyringe("Horse");
-        ItemStack zombieSyringe = createMobSyringe("Zombie");
-        ItemStack squidSyringe = createMobSyringe("Squid");
-        ItemStack caveSpiderSyringe = createMobSyringe("Cave Spider");
+        ItemStack ironGolemSyringe = createMobSyringe(EntityIronGolem.class);
+        ItemStack ghastSyringe = createMobSyringe(EntityGhast.class);
+        ItemStack chickenSyringe = createMobSyringe(EntityChicken.class);
+        ItemStack batSyringe = createMobSyringe(EntityBat.class);
+        ItemStack horseSyringe = createMobSyringe(EntityHorse.class);
+        ItemStack zombieSyringe = createMobSyringe(EntityZombie.class);
+        ItemStack squidSyringe = createMobSyringe(EntitySquid.class);
+        ItemStack caveSpiderSyringe = createMobSyringe(EntityCaveSpider.class);
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.enchantmentRegistry.getObject(new ResourceLocation("efficiency")), 3);
         ItemStack reds = new ItemStack(Items.redstone);
         ItemStack gold = new ItemStack(Items.gold_ingot);
@@ -173,9 +186,8 @@ public class EnvironmentalSetup {
                 new String[][] {null, syringeMatcher, syringeMatcher, null},
                 new ItemStack(featherFallingPlusEModuleItem)));
 
-        // @todo
-//        GameRegistry.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', DimletConstructionSetup.peaceEssenceItem,
-//                'r', reds, 'g', gold, 'i', ink);
+        GameRegistry.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', ModItems.peaceEssenceItem,
+                'r', reds, 'g', gold, 'i', ink);
 
         if (EnvironmentalConfiguration.blindnessAvailable) {
             GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
@@ -214,14 +226,13 @@ public class EnvironmentalSetup {
         return stack;
     }
 
-    public static ItemStack createMobSyringe(String mobName) {
-//        ItemStack syringe = new ItemStack(DimletConstructionSetup.syringeItem);
-//        NBTTagCompound tagCompound = new NBTTagCompound();
-//        tagCompound.setString("mobName", mobName);
-//        tagCompound.setInteger("level", DimletConstructionConfiguration.maxMobInjections);
-//        syringe.setTagCompound(tagCompound);
-        // @todo
-        ItemStack syringe = new ItemStack(Items.glass_bottle);
+    public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
+        ItemStack syringe = new ItemStack(ModItems.syringeItem);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setString("mobClass", mobClass.getCanonicalName());
+        tagCompound.setString("mobName", EntityList.getEntityStringFromClass(mobClass));
+        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections);
+        syringe.setTagCompound(tagCompound);
         return syringe;
     }
 }

@@ -8,22 +8,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class AdvancedChargedPorterItem extends ChargedPorterItem {
     public static final int MAXTARGETS = 4;
 
     public AdvancedChargedPorterItem() {
-        super();
+        super("advanced_charged_porter");
         capacity = TeleportConfiguration.ADVANCED_CHARGEDPORTER_MAXENERGY;
-    }
-
-    @Override
-    protected void setup() {
-        setUnlocalizedName("advanced_charged_porter");
-        setRegistryName("advanced_charged_porter");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
     }
 
     @Override

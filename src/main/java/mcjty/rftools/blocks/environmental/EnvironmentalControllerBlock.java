@@ -65,7 +65,7 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
             if (tileEntity.isActive()) {
                 currenttip.add(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
             } else {
-                currenttip.add(TextFormatting.GREEN + "Inactive " + rfPerTick + " RF/tick (" + volume + " blocks)");
+                currenttip.add(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
             }
             int radius = tileEntity.getRadius();
             int miny = tileEntity.getMiny();

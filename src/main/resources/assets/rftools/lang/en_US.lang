@@ -70,7 +70,8 @@ item.weakness_module.name=Weakness Module
 item.poison_module.name=Poison Module
 item.slowness_module.name=Slowness Module
 
-item.SyringeItem.name=Syringe
+item.syringe.name=Syringe
+item.peace_essence.name=Peace Essence
 item.dimensional_shard.name=Dimensional Shard
 
 # Blocks

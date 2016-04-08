@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PeacefulAreaManager {
-    private static final Map<GlobalCoordinate,PeacefulArea> areas = new HashMap<GlobalCoordinate, PeacefulArea>();
+    private static final Map<GlobalCoordinate,PeacefulArea> areas = new HashMap<>();
 
     public static void markArea(GlobalCoordinate coordinate, int radius, int miny, int maxy) {
         if (areas.containsKey(coordinate)) {

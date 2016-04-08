@@ -5,13 +5,13 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PorterProperties;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,28 +20,32 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ChargedPorterItem extends Item implements IEnergyContainerItem {
+public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyContainerItem {
 
     protected int capacity;
     private int maxReceive;
     private int maxExtract;
 
     public ChargedPorterItem() {
+        this("charged_porter");
+    }
+
+    protected ChargedPorterItem(String name) {
+        super(name);
         setMaxStackSize(1);
-        setup();
 
         capacity = TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
         maxExtract = 0;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0 ; i <= 8 ; i++) {
@@ -71,13 +75,6 @@ public class ChargedPorterItem extends Item implements IEnergyContainerItem {
         });
     }
 
-
-    protected void setup() {
-        setUnlocalizedName("charged_porter");
-        setRegistryName("charged_porter");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-    }
 
     protected int getSpeedBonus() {
         return 1;
