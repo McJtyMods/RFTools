@@ -16,7 +16,7 @@ import java.util.List;
 public class WaterBreathingEModuleItem extends GenericRFToolsItem implements EnvModuleProvider {
 
     public WaterBreathingEModuleItem() {
-        super("weatherbreathing_module");
+        super("waterbreathing_module");
         setMaxStackSize(16);
     }
 

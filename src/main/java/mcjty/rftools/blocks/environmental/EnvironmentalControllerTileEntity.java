@@ -128,9 +128,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public boolean isPlayerAffected(EntityPlayer player) {
         if (whitelistMode) {
-            return players.contains(player.getDisplayName());
+            return players.contains(player.getName());
         } else {
-            return !players.contains(player.getDisplayName());
+            return !players.contains(player.getName());
         }
     }
 
