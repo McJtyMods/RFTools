@@ -2,6 +2,7 @@ package mcjty.rftools.blocks;
 
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
@@ -37,6 +38,7 @@ public final class ModBlocks {
         RelaySetup.init();
         MonitorSetup.init();
         ShieldSetup.init();
+        EnvironmentalSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -57,6 +59,7 @@ public final class ModBlocks {
         RelaySetup.initClient();
         MonitorSetup.initClient();
         ShieldSetup.initClient();
+        EnvironmentalSetup.initClient();
     }
 
     private static void initBaseBlocks() {

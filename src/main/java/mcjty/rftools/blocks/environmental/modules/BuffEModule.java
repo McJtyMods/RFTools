@@ -47,7 +47,7 @@ public abstract class BuffEModule implements EnvironmentModule {
                 double sqdist = (px-pos.getX()) * (px-pos.getX()) + (pz-pos.getZ()) * (pz-pos.getZ());
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isPlayerAffected(player)) {
-                        BuffProperties.addBuff(player, buff, MAXTICKS);
+                        BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
                     }
                 }
             }

@@ -2,7 +2,6 @@ package mcjty.rftools.playerprops;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +18,6 @@ public class BuffProperties {
     private boolean oldAllowFlying = false;
     private boolean allowFlying = false;
 
-    private Entity entity = null;
     private boolean globalSyncNeeded = true;
 
     public BuffProperties() {
@@ -27,16 +25,11 @@ public class BuffProperties {
         globalSyncNeeded = true;
     }
 
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-        globalSyncNeeded = true;
+    private void syncBuffs(EntityPlayerMP player) {
+        RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), player);
     }
 
-    private void syncBuffs() {
-        RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), (EntityPlayerMP) entity);
-    }
-
-    public void tickBuffs() {
+    public void tickBuffs(EntityPlayerMP player) {
         buffTimeout--;
         if (buffTimeout <= 0) {
             buffTimeout = BuffProperties.BUFF_MAXTICKS;
@@ -55,23 +48,22 @@ public class BuffProperties {
                 }
             }
             if (syncNeeded) {
-                syncBuffs();
-                performBuffs();
+                syncBuffs(player);
+                performBuffs(player);
                 globalSyncNeeded = false;
             }
         }
 
         if (globalSyncNeeded) {
             globalSyncNeeded = false;
-            syncBuffs();
-            performBuffs();
+            syncBuffs(player);
+            performBuffs(player);
         }
     }
 
-    private void performBuffs() {
+    private void performBuffs(EntityPlayerMP player) {
         // Perform all buffs that we can perform here (not potion effects and also not
         // passive effects like feather falling.
-        EntityPlayer player = (EntityPlayer) entity;
         boolean enableFlight = false;
         for (PlayerBuff buff : buffs.keySet()) {
             if (buff == PlayerBuff.BUFF_FLIGHT) {
@@ -109,16 +101,16 @@ public class BuffProperties {
     }
 
 
-    public static void addBuff(EntityPlayer player, PlayerBuff buff, int ticks) {
+    public static void addBuffToPlayer(EntityPlayer player, PlayerBuff buff, int ticks) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-        buffProperties.addBuff(buff, ticks);
+        buffProperties.addBuff((EntityPlayerMP) player, buff, ticks);
     }
 
-    public void addBuff(PlayerBuff buff, int ticks) {
+    public void addBuff(EntityPlayerMP player, PlayerBuff buff, int ticks) {
         //. We add a bit to the ticks to make sure we can live long enough.
         buffs.put(buff, ticks + 5);
-        syncBuffs();
-        performBuffs();
+        syncBuffs(player);
+        performBuffs(player);
     }
 
     public Map<PlayerBuff, Integer> getBuffs() {

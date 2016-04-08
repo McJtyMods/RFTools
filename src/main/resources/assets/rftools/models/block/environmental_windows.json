@@ -1,0 +1,14 @@
+{
+  "elements": [
+    {
+      "from": [ 1, 0, 1 ],
+      "to": [ 15, 16, 15 ],
+      "faces": {
+        "north": { "texture": "#overlay", "cullface": "north" },
+        "south": { "texture": "#overlay", "cullface": "south" },
+        "west":  { "texture": "#overlay", "cullface": "west" },
+        "east":  { "texture": "#overlay", "cullface": "east" }
+      }
+    }
+  ]
+}

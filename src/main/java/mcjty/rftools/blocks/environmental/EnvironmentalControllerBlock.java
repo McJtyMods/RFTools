@@ -15,10 +15,12 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -31,6 +33,18 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
 
     public EnvironmentalControllerBlock() {
         super(Material.iron, EnvironmentalControllerTileEntity.class, EnvironmentalControllerContainer.class, "environmental_controller", true);
+    }
+
+    @Override
+    public boolean hasNoRotation() {
+        return true;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void initModel() {
+        super.initModel();
+        ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalTESR());
     }
 
     @SideOnly(Side.CLIENT)
@@ -115,6 +129,17 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
 //            return getLightValue();
 //        }
     }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
 
     @Override
     public int getGuiID() {

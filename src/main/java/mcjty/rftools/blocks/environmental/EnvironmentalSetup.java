@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
 import mcjty.rftools.items.envmodules.*;
@@ -12,6 +11,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,13 +40,8 @@ public class EnvironmentalSetup {
     public static PoisonEModuleItem poisonEModuleItem;
     public static SlownessEModuleItem slownessEModuleItem;
 
-    public static void setupBlocks() {
+    public static void init() {
         environmentalControllerBlock = new EnvironmentalControllerBlock();
-        GameRegistry.registerBlock(environmentalControllerBlock, GenericItemBlock.class, "environmentalControllerBlock");
-        GameRegistry.registerTileEntity(EnvironmentalControllerTileEntity.class, "EnvironmentalControllerTileEntity");
-    }
-
-    public static void setupItems() {
         regenerationEModuleItem = new RegenerationEModuleItem();
         regenerationPlusEModuleItem = new RegenerationPlusEModuleItem();
         speedEModuleItem = new SpeedEModuleItem();
@@ -66,7 +62,30 @@ public class EnvironmentalSetup {
         slownessEModuleItem = new SlownessEModuleItem();
     }
 
-    public static void setupCrafting() {
+    @SideOnly(Side.CLIENT)
+    public static void initClient() {
+        environmentalControllerBlock.initModel();
+        regenerationEModuleItem.initModel();
+        regenerationPlusEModuleItem.initModel();
+        speedEModuleItem.initModel();
+        speedPlusEModuleItem.initModel();
+        hasteEModuleItem.initModel();
+        hastePlusEModuleItem.initModel();
+        saturationEModuleItem.initModel();
+        saturationPlusEModuleItem.initModel();
+        featherFallingEModuleItem.initModel();
+        featherFallingPlusEModuleItem.initModel();
+        flightEModuleItem.initModel();
+        peacefulEModuleItem.initModel();
+        waterBreathingEModuleItem.initModel();
+        nightVisionEModuleItem.initModel();
+        blindnessEModuleItem.initModel();
+        weaknessEModuleItem.initModel();
+        poisonEModuleItem.initModel();
+        slownessEModuleItem.initModel();
+    }
+
+    public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
                 'D', Blocks.diamond_block, 'E', Blocks.emerald_block, 'G', Blocks.gold_block, 'I', Blocks.iron_block);
 

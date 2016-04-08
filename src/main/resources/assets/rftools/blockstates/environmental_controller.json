@@ -1,0 +1,23 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "rftools:environmental_controller#base",
+      "Solid": "rftools:environmental_controller#base",
+      "Translucent": "rftools:environmental_controller#window"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "base": [{
+      "custom": { "flip-v": true },
+      "model": "rftools:environmental.obj"
+    }],
+    "window": [{
+      "model": "rftools:environmental_windows", "textures": { "overlay": "rftools:blocks/machineEnvironmentalController" }
+    }]
+  }
+}

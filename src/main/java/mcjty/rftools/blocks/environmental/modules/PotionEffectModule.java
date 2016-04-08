@@ -54,7 +54,7 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                         player.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
                         PlayerBuff buff = getBuff();
                         if (buff != null) {
-                            BuffProperties.addBuff(player, buff, MAXTICKS);
+                            BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
                         }
                     }
                 }
