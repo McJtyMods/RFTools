@@ -53,7 +53,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private int status = TeleportationTools.STATUS_OK;
 
     // Server side: the player we're currently teleporting.
-    private EntityPlayer teleportingPlayer = null;
+    private String teleportingPlayer = null;
     private int teleportTimer = 0;
     private int cooldownTimer = 0;
     private int totalTicks;
@@ -170,10 +170,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         totalTicks = tagCompound.getInteger("totalTicks");
         goodTicks = tagCompound.getInteger("goodTicks");
         badTicks = tagCompound.getInteger("badTicks");
-        String playerName = tagCompound.getString("tpPlayer");
-        if (playerName != null && !playerName.isEmpty()) {
-            teleportingPlayer = worldObj.getPlayerEntityByName(playerName);
-        } else {
+        teleportingPlayer = tagCompound.getString("tpPlayer");
+        if (teleportingPlayer.isEmpty()) {
             teleportingPlayer = null;
         }
         status = tagCompound.getInteger("status");
@@ -219,7 +217,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         tagCompound.setInteger("goodTicks", goodTicks);
         tagCompound.setInteger("badTicks", badTicks);
         if (teleportingPlayer != null) {
-            tagCompound.setString("tpPlayer", teleportingPlayer.getName());
+            tagCompound.setString("tpPlayer", teleportingPlayer);
         }
         tagCompound.setInteger("status", status);
         tagCompound.setInteger("rfPerTick", rfPerTick);
@@ -341,7 +339,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             }
         } else if (teleportDestination == null && teleportId == null) {
             // We were teleporting a player but for some reason the destination went away. Interrupt.
-            Logging.warn(teleportingPlayer, "The destination vanished! Aborting.");
+            Logging.warn(worldObj.getPlayerEntityByName(teleportingPlayer), "The destination vanished! Aborting.");
             clearTeleport(80);
         } else if (isPlayerOutsideBeam()) {
             // The player moved outside the beam. Interrupt the teleport.
@@ -421,7 +419,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private void clearTeleport(int cooldown) {
         markDirty();
-        TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 0, badTicks, totalTicks, false);
+        TeleportationTools.applyBadEffectIfNeeded(worldObj.getPlayerEntityByName(teleportingPlayer), 0, badTicks, totalTicks, false);
         cooldownTimer = cooldown;
         teleportingPlayer = null;
     }
@@ -489,8 +487,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private void performTeleport() {
         // First check if the destination is still valid.
         if (!isDestinationStillValid()) {
-            TeleportationTools.applyBadEffectIfNeeded(teleportingPlayer, 10, badTicks, totalTicks, false);
-            Logging.warn(teleportingPlayer, "Missing destination!");
+            EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+            TeleportationTools.applyBadEffectIfNeeded(player, 10, badTicks, totalTicks, false);
+            Logging.warn(player, "Missing destination!");
             clearTeleport(200);
             return;
         }
@@ -507,7 +506,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             // Not enough energy. We cannot do a boosted teleport.
             boosted = false;
         }
-        boolean boostNeeded = TeleportationTools.performTeleport(teleportingPlayer, dest, badTicks, totalTicks, boosted);
+        boolean boostNeeded = TeleportationTools.performTeleport(worldObj.getPlayerEntityByName(teleportingPlayer), dest, badTicks, totalTicks, boosted);
         if (boostNeeded) {
             consumeEnergy(TeleportConfiguration.rfBoostedTeleport);
         }
@@ -526,16 +525,17 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         badTicks++;
         if (TeleportationTools.mustInterrupt(badTicks, totalTicks)) {
             // Too many bad ticks. Total failure!
-            Logging.warn(teleportingPlayer, "Power failure during transit!");
+            Logging.warn(worldObj.getPlayerEntityByName(teleportingPlayer), "Power failure during transit!");
             clearTeleport(200);
         }
         return;
     }
 
     private boolean isPlayerOutsideBeam() {
-        AxisAlignedBB playerBB = teleportingPlayer.getEntityBoundingBox();
+        EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+        AxisAlignedBB playerBB = player.getEntityBoundingBox();
         if (!playerBB.intersectsWith(beamBox)) {
-            Logging.message(teleportingPlayer, "Teleportation was interrupted!");
+            Logging.message(player, "Teleportation was interrupted!");
             return true;
         }
         return false;
@@ -578,7 +578,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             }
 
             Logging.message(player, "Start teleportation...");
-            teleportingPlayer = player;
+            teleportingPlayer = player.getName();
             teleportTimer = TeleportationTools.calculateTime(worldObj, getPos(), dest);
             teleportTimer = (int) (teleportTimer * (1.2f - getInfusedFactor()) / 1.2f);
 
