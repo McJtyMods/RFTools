@@ -411,7 +411,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 The matter transmitter is placed on the ground and (when dialed to a
 valid destination) will teleport a player that is standing on it. There
 is a fixed energy cost which is consumed immediatelly when the player
-stands on it. Then during the duration of the teleport (witch varies
+stands on it. Then during the duration of the teleport (which varies
 depending on the traveled distance) power is also consumed. If there
 is not sufficient power during the first power usage then teleportation
 will simply not start. But if there is a power failure during transit
