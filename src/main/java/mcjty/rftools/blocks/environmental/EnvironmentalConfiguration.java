@@ -35,6 +35,8 @@ public class EnvironmentalConfiguration {
     public static boolean poisonAvailable = false;
     public static boolean slownessAvailable = false;
 
+    public static float mobsPowerMultiplier = 2.0f;
+
     public static void init(Configuration cfg) {
         ENVIRONMENTAL_MAXENERGY = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRF", ENVIRONMENTAL_MAXENERGY,
                 "Maximum RF storage that the environmental controller can hold").getInt();
@@ -42,6 +44,9 @@ public class EnvironmentalConfiguration {
                 "RF per tick that the the environmental controller can receive").getInt();
         MIN_USAGE = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMinRFUsage", MIN_USAGE,
                 "The minimum RF/tick usage that an active controller consumes").getInt();
+
+        mobsPowerMultiplier = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "mobsPowerMultiplier", mobsPowerMultiplier,
+                "When the environmental controller is used on mobs the power usage is multiplied with this").getDouble();
 
         FEATHERFALLING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingRFPerTick", FEATHERFALLING_RFPERTICK,
                 "RF per tick/per block for the feather falling module").getDouble();

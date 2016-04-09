@@ -139,6 +139,20 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         markDirtyClient();
     }
 
+    private float getPowerMultiplier() {
+        switch (mode) {
+            case MODE_BLACKLIST:
+            case MODE_WHITELIST:
+                return 1.0f;
+            case MODE_HOSTILE:
+            case MODE_PASSIVE:
+            case MODE_MOBS:
+            case MODE_ALL:
+                return EnvironmentalConfiguration.mobsPowerMultiplier;
+        }
+        return 1.0f;
+    }
+
     public boolean isEntityAffected(Entity entity) {
         switch (mode) {
             case MODE_BLACKLIST:
@@ -209,7 +223,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (environmentModules == null) {
             getEnvironmentModules();
         }
-        int rfNeeded = (int) (totalRfPerTick * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (totalRfPerTick * getPowerMultiplier() * (4.0f - getInfusedFactor()) / 4.0f);
         if (environmentModules.isEmpty()) {
             return rfNeeded;
         }

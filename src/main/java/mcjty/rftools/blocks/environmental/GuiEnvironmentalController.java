@@ -124,7 +124,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(12);
         radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
 
-        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(17);
         minyTextField = new TextField(mc, this).setText(Integer.toString(miny)).addTextEvent((parent, newText) -> sendBounds(true));
         maxyTextField = new TextField(mc, this).setText(Integer.toString(maxy)).addTextEvent((parent, newText) -> sendBounds(false));
         minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
@@ -142,10 +142,10 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 .setDesiredHeight(15)
                 .setChoiceTooltip(MODE_BLACKLIST, "Players in the list above will not get the effects")
                 .setChoiceTooltip(MODE_WHITELIST, "Players in the list above will get the effects")
-                .setChoiceTooltip(MODE_MOBS, "Affect hostile and passive mobs")
-                .setChoiceTooltip(MODE_HOSTILE, "Affect hostile mobs")
-                .setChoiceTooltip(MODE_PASSIVE, "Affect passive mobs")
-                .setChoiceTooltip(MODE_ALL, "Affect all mobs and players")
+                .setChoiceTooltip(MODE_MOBS, "Affect hostile and passive mobs", "(needs more power)")
+                .setChoiceTooltip(MODE_HOSTILE, "Affect hostile mobs", "(needs more power)")
+                .setChoiceTooltip(MODE_PASSIVE, "Affect passive mobs", "(needs more power)")
+                .setChoiceTooltip(MODE_ALL, "Affect all mobs and players", "(needs more power)")
                 .addChoiceEvent((parent, newChoice) -> changeMode(newChoice));
         EnvironmentalControllerTileEntity.EnvironmentalMode mode = tileEntity.getMode();
         switch (mode) {
