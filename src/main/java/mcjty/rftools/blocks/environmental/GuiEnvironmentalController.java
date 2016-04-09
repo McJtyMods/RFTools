@@ -2,14 +2,12 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
-import mcjty.lib.gui.events.ValueEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
@@ -21,6 +19,7 @@ import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.teleporter.PacketGetPlayers;
 import mcjty.rftools.blocks.teleporter.PlayerName;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -33,6 +32,10 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     public static final int ENV_HEIGHT = 224;
     public static final String MODE_BLACKLIST = "BL";
     public static final String MODE_WHITELIST = "WL";
+    public static final String MODE_HOSTILE = "Host";
+    public static final String MODE_PASSIVE = "Pass";
+    public static final String MODE_MOBS = "Mobs";
+    public static final String MODE_ALL = "All";
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/environmentalcontroller.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -40,10 +43,11 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     // A copy of the players we're currently showing.
     private List<String> players = null;
     private int listDirty = 0;
+    private EnergyBar energyBar;
 
-    private static Set<String> fromServer_players = new HashSet<String>();
+    private static Set<String> fromServer_players = new HashSet<>();
     public static void storePlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<String>();
+        Set<String> p = new HashSet<>();
         for (PlayerName n : players) {
             p.add(n.getName());
         }
@@ -70,86 +74,17 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     public void initGui() {
         super.initGui();
 
+        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 141, 10, 76)).setShowText(false);
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+
         toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        int r = tileEntity.getRadius();
-        if (r < 5) {
-            r = 5;
-        } else if (r > 100) {
-            r = 100;
-        }
-        int miny = tileEntity.getMiny();
-        int maxy = tileEntity.getMaxy();
+        Panel areaPanel = initAreaPanel();
+        Panel playersPanel = initPlayerPanel();
+        Panel controlPanel = initControlPanel();
 
-        Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 6, ENV_WIDTH - 30, 16));
-        ScrollableLabel radius = new ScrollableLabel(mc, this).setRealMinimum(5).setRealMaximum(100).setRealValue(r).setDesiredWidth(24).addValueEvent(new ValueEvent() {
-            @Override
-            public void valueChanged(Widget parent, int newValue) {
-                sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue));
-            }
-        });
-        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(12);
-        radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
-
-        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(25, 24, ENV_WIDTH - 30, 16));
-        minyTextField = new TextField(mc, this).setText(Integer.toString(miny)).addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                sendBounds(true);
-            }
-        });
-        maxyTextField = new TextField(mc, this).setText(Integer.toString(maxy)).addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                sendBounds(false);
-            }
-        });
-
-        minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
-
-        playersList = new WidgetList(mc, this);
-        Slider playerSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(playersList);
-        Panel playersPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 30, 72))
-                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(playersList).addChild(playerSlider);
-
-        Panel controlPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(25, 118, ENV_WIDTH - 30, 16))
-                .setLayout(new HorizontalLayout().setHorizontalMargin(1).setVerticalMargin(0).setSpacing(1));
-        ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices(MODE_BLACKLIST, MODE_WHITELIST)
-                .setDesiredWidth(30)
-                .setDesiredHeight(15)
-                .setChoiceTooltip(MODE_BLACKLIST, "Players in the list above will not get the effects")
-                .setChoiceTooltip(MODE_WHITELIST, "Players in the list above will get the effects")
-                .addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeBlacklistMode(newChoice);
-                    }
-                });
-        if (tileEntity.isWhitelistMode()) {
-            blacklist.setChoice(MODE_WHITELIST);
-        } else {
-            blacklist.setChoice(MODE_BLACKLIST);
-        }
-        addButton = new Button(mc, this).setText("+").setDesiredHeight(15).setTooltips("Add a player to the list").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                addPlayer();
-            }
-        });
-        delButton = new Button(mc, this).setText("-").setDesiredHeight(15).setTooltips("Remove selected player from the list").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                delPlayer();
-            }
-        });
-        nameField = new TextField(mc, this);
-
-        initRedstoneMode();
-        controlPanel.addChild(blacklist).addChild(addButton).addChild(delButton).addChild(nameField).addChild(redstoneMode);
-
-        toplevel.addChild(radiusPanel).addChild(minPanel).addChild(playersPanel).addChild(controlPanel);
+        toplevel.addChild(areaPanel).addChild(playersPanel).addChild(controlPanel).addChild(energyBar);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -160,24 +95,115 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         requestPlayers();
     }
 
+    private Panel initPlayerPanel() {
+        playersList = new WidgetList(mc, this);
+        Slider playerSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(playersList);
+        return new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 27, 78))
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(playersList).addChild(playerSlider);
+    }
+
+    private Panel initAreaPanel() {
+        int r = tileEntity.getRadius();
+        if (r < 5) {
+            r = 5;
+        } else if (r > 100) {
+            r = 100;
+        }
+        int miny = tileEntity.getMiny();
+        int maxy = tileEntity.getMaxy();
+
+        Panel areaPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(28, 6, ENV_WIDTH - 33, 37))
+                .setLayout(new VerticalLayout().setVerticalMargin(2).setSpacing(0))
+                .setFilledRectThickness(-2)
+                .setFilledBackground(StyleConfig.colorListBackground);
+
+        Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+        ScrollableLabel radius = new ScrollableLabel(mc, this).setRealMinimum(5).setRealMaximum(100).setRealValue(r).setDesiredWidth(24).addValueEvent((parent, newValue) -> sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue)));
+        Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(12);
+        radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
+
+        Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+        minyTextField = new TextField(mc, this).setText(Integer.toString(miny)).addTextEvent((parent, newText) -> sendBounds(true));
+        maxyTextField = new TextField(mc, this).setText(Integer.toString(maxy)).addTextEvent((parent, newText) -> sendBounds(false));
+        minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
+
+        areaPanel.addChild(radiusPanel).addChild(minPanel);
+        return areaPanel;
+    }
+
+    private Panel initControlPanel() {
+        Panel controlPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(26, 120, ENV_WIDTH - 32, 16))
+                .setLayout(new HorizontalLayout().setHorizontalMargin(1).setVerticalMargin(0).setSpacing(1));
+        ChoiceLabel blacklist = new ChoiceLabel(mc, this).addChoices(MODE_BLACKLIST, MODE_WHITELIST, MODE_MOBS, MODE_HOSTILE, MODE_PASSIVE, MODE_ALL)
+                .setDesiredWidth(40)
+                .setDesiredHeight(15)
+                .setChoiceTooltip(MODE_BLACKLIST, "Players in the list above will not get the effects")
+                .setChoiceTooltip(MODE_WHITELIST, "Players in the list above will get the effects")
+                .setChoiceTooltip(MODE_MOBS, "Affect hostile and passive mobs")
+                .setChoiceTooltip(MODE_HOSTILE, "Affect hostile mobs")
+                .setChoiceTooltip(MODE_PASSIVE, "Affect passive mobs")
+                .setChoiceTooltip(MODE_ALL, "Affect all mobs and players")
+                .addChoiceEvent((parent, newChoice) -> changeMode(newChoice));
+        EnvironmentalControllerTileEntity.EnvironmentalMode mode = tileEntity.getMode();
+        switch (mode) {
+            case MODE_BLACKLIST:
+                blacklist.setChoice(MODE_BLACKLIST);
+                break;
+            case MODE_WHITELIST:
+                blacklist.setChoice(MODE_WHITELIST);
+                break;
+            case MODE_HOSTILE:
+                blacklist.setChoice(MODE_HOSTILE);
+                break;
+            case MODE_PASSIVE:
+                blacklist.setChoice(MODE_PASSIVE);
+                break;
+            case MODE_MOBS:
+                blacklist.setChoice(MODE_MOBS);
+                break;
+            case MODE_ALL:
+                blacklist.setChoice(MODE_ALL);
+                break;
+        }
+        addButton = new Button(mc, this).setText("+").setDesiredHeight(15).setTooltips("Add a player to the list").addButtonEvent(parent -> addPlayer());
+        delButton = new Button(mc, this).setText("-").setDesiredHeight(15).setTooltips("Remove selected player from the list").addButtonEvent(parent -> delPlayer());
+        nameField = new TextField(mc, this);
+
+        initRedstoneMode();
+        controlPanel.addChild(blacklist).addChild(addButton).addChild(delButton).addChild(nameField).addChild(redstoneMode);
+        return controlPanel;
+    }
+
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
                 setDesiredHeight(16).
                 setDesiredWidth(16).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeRedstoneMode();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
     }
 
-    private void changeBlacklistMode(String newAccess) {
-        sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETBLACKLIST, new Argument("blacklist", MODE_BLACKLIST.equals(newAccess)));
+    private void changeMode(String newAccess) {
+        EnvironmentalControllerTileEntity.EnvironmentalMode newmode;
+        if (MODE_ALL.equals(newAccess)) {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_ALL;
+        } else if (MODE_BLACKLIST.equals(newAccess)) {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_BLACKLIST;
+        } else if (MODE_WHITELIST.equals(newAccess)) {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_WHITELIST;
+        } else if (MODE_MOBS.equals(newAccess)) {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_MOBS;
+        } else if (MODE_PASSIVE.equals(newAccess)) {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_PASSIVE;
+        } else {
+            newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_HOSTILE;
+        }
+        sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETMODE, new Argument("mode", newmode.ordinal()));
     }
 
     private void changeRedstoneMode() {
@@ -254,6 +280,10 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         requestListsIfNeeded();
         populatePlayers();
         enableButtons();
+
+        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        energyBar.setValue(currentRF);
+        tileEntity.requestRfFromServer(RFTools.MODID);
 
         drawWindow();
     }

@@ -8,6 +8,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.teleporter.PlayerName;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -28,7 +31,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
     public static final String CMD_RSMODE = "rsMode";
-    public static final String CMD_SETBLACKLIST = "setBlacklist";
+    public static final String CMD_SETMODE = "setBlacklist";
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
     public static final String CMD_GETPLAYERS = "getPlayers";
@@ -38,10 +41,19 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
 
+    public enum EnvironmentalMode {
+        MODE_BLACKLIST,
+        MODE_WHITELIST,
+        MODE_HOSTILE,
+        MODE_PASSIVE,
+        MODE_MOBS,
+        MODE_ALL
+    }
+
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
     private Set<String> players = new HashSet<String>();
-    private boolean whitelistMode = false;
+    private EnvironmentalMode mode = EnvironmentalMode.MODE_BLACKLIST;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
     private int miny = 30;
@@ -117,24 +129,57 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 //        return setRedstoneMode(mode);
 //    }
 
-    public boolean isWhitelistMode() {
-        return whitelistMode;
+
+    public EnvironmentalMode getMode() {
+        return mode;
     }
 
-    public void setWhitelistMode(boolean w) {
-        whitelistMode = w;
+    public void setMode(EnvironmentalMode mode) {
+        this.mode = mode;
         markDirtyClient();
     }
 
+    public boolean isEntityAffected(Entity entity) {
+        switch (mode) {
+            case MODE_BLACKLIST:
+                if (entity instanceof EntityPlayer) {
+                    return isPlayerAffected((EntityPlayer) entity);
+                } else {
+                    return false;
+                }
+            case MODE_WHITELIST:
+                if (entity instanceof EntityPlayer) {
+                    return isPlayerAffected((EntityPlayer) entity);
+                } else {
+                    return false;
+                }
+            case MODE_HOSTILE:
+                return entity instanceof IMob;
+            case MODE_PASSIVE:
+                return entity instanceof IAnimals && !(entity instanceof IMob);
+            case MODE_MOBS:
+                return entity instanceof IAnimals;
+            case MODE_ALL:
+                if (entity instanceof EntityPlayer) {
+                    return isPlayerAffected((EntityPlayer) entity);
+                } else {
+                    return true;
+                }
+        }
+        return false;
+    }
+
     public boolean isPlayerAffected(EntityPlayer player) {
-        if (whitelistMode) {
+        if (mode == EnvironmentalMode.MODE_WHITELIST) {
             return players.contains(player.getName());
-        } else {
+        } else if (mode == EnvironmentalMode.MODE_BLACKLIST){
             return !players.contains(player.getName());
+        } else {
+            return mode == EnvironmentalMode.MODE_ALL;
         }
     }
 
-    public List<PlayerName> getPlayersAsList() {
+    private List<PlayerName> getPlayersAsList() {
         List<PlayerName> p = new ArrayList<PlayerName>();
         for (String player : players) {
             p.add(new PlayerName(player));
@@ -142,14 +187,14 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return p;
     }
 
-    public void addPlayer(String player) {
+    private void addPlayer(String player) {
         if (!players.contains(player)) {
             players.add(player);
             markDirtyClient();
         }
     }
 
-    public void delPlayer(String player) {
+    private void delPlayer(String player) {
         if (players.contains(player)) {
             players.remove(player);
             markDirtyClient();
@@ -390,7 +435,14 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         int m = tagCompound.getByte("rsMode");
         redstoneMode = RedstoneMode.values()[m];
 
-        whitelistMode = tagCompound.getBoolean("whitelist");
+        // Compatibility
+        if (tagCompound.hasKey("whitelist")) {
+            boolean wl = tagCompound.getBoolean("whitelist");
+            mode = wl ? EnvironmentalMode.MODE_WHITELIST : EnvironmentalMode.MODE_BLACKLIST;
+        } else {
+            m = tagCompound.getInteger("mode");
+            mode = EnvironmentalMode.values()[m];
+        }
 
         players.clear();
         NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
@@ -419,7 +471,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         tagCompound.setInteger("maxy", maxy);
         tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
 
-        tagCompound.setBoolean("whitelist", whitelistMode);
+        tagCompound.setInteger("mode", mode.ordinal());
 
         NBTTagList playerTagList = new NBTTagList();
         for (String player : players) {
@@ -453,8 +505,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         } else if (CMD_DELPLAYER.equals(command)) {
             delPlayer(args.get("player").getString());
             return true;
-        } else if (CMD_SETBLACKLIST.equals(command)) {
-            setWhitelistMode(!args.get("blacklist").getBoolean());
+        } else if (CMD_SETMODE.equals(command)) {
+            Integer m = args.get("mode").getInteger();
+            setMode(EnvironmentalMode.values()[m]);
             return true;
         }
         return false;

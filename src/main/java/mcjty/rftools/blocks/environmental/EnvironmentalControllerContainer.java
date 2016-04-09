@@ -16,7 +16,7 @@ public class EnvironmentalControllerContainer extends GenericContainer {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULES, 7, 7, 1, 18, ENV_MODULES, 18);
-            layoutPlayerInventorySlots(9, 142);
+            layoutPlayerInventorySlots(27, 142);
         }
     };
 
