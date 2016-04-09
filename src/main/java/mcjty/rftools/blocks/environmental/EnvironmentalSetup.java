@@ -9,10 +9,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityHorse;
@@ -114,6 +111,7 @@ public class EnvironmentalSetup {
         ItemStack horseSyringe = createMobSyringe(EntityHorse.class);
         ItemStack zombieSyringe = createMobSyringe(EntityZombie.class);
         ItemStack squidSyringe = createMobSyringe(EntitySquid.class);
+        ItemStack guardianSyringe = createMobSyringe(EntityGuardian.class);
         ItemStack caveSpiderSyringe = createMobSyringe(EntityCaveSpider.class);
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.enchantmentRegistry.getObject(new ResourceLocation("efficiency")), 3);
         ItemStack reds = new ItemStack(Items.redstone);
@@ -152,7 +150,7 @@ public class EnvironmentalSetup {
                 new ItemStack(flightEModuleItem)));
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                new ItemStack[] {null, squidSyringe, null, reds, gold, reds, null, ink, null},
+                new ItemStack[] {null, guardianSyringe, null, reds, gold, reds, null, ink, null},
                 new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
                 new ItemStack(waterBreathingEModuleItem)));
 
