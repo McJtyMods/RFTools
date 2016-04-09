@@ -98,6 +98,9 @@ public class RenderGameOverlayEventHandler {
             case BUFF_PEACEFUL:
                 item = EnvironmentalSetup.peacefulEModuleItem;
                 break;
+            case BUFF_GLOWING:
+                item = EnvironmentalSetup.glowingEModuleItem;
+                break;
             case BUFF_WATERBREATHING:
                 item = EnvironmentalSetup.waterBreathingEModuleItem;
                 break;

@@ -11,6 +11,7 @@ public class EnvironmentalConfiguration {
     public static float FEATHERFALLING_RFPERTICK = 0.001f;
     public static float FEATHERFALLINGPLUS_RFPERTICK = 0.003f;
     public static float FLIGHT_RFPERTICK = 0.004f;
+    public static float GLOWING_RFPERTICK = 0.001f;
     public static float HASTE_RFPERTICK = 0.001f;
     public static float HASTEPLUS_RFPERTICK = 0.003f;
     public static float NIGHTVISION_RFPERTICK = 0.001f;
@@ -48,6 +49,8 @@ public class EnvironmentalConfiguration {
                 "RF per tick/per block for the feather falling plus module").getDouble();
         FLIGHT_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "flightRFPerTick", FLIGHT_RFPERTICK,
                 "RF per tick/per block for the flight module").getDouble();
+        GLOWING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "glowingRFPerTick", GLOWING_RFPERTICK,
+                "RF per tick/per block for the glowing module").getDouble();
         HASTE_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hasteRFPerTick", HASTE_RFPERTICK,
                 "RF per tick/per block for the haste module").getDouble();
         HASTEPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hastePlusRFPerTick", HASTEPLUS_RFPERTICK,
