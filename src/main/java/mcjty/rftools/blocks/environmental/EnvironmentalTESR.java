@@ -28,6 +28,7 @@ public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalCo
             GlStateManager.depthMask(false);
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+            GlStateManager.disableAlpha();
 
             GlStateManager.pushMatrix();
             GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
