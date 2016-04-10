@@ -108,8 +108,13 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private Panel setupModePanel() {
-        modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK])
+        modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK], MODES[MODE_COLLECT])
                 .setTooltips("Set the building mode").setLayoutHint(new PositionalLayout.PositionalHint(4, 4, 42, 14))
+                .setChoiceTooltip(MODES[MODE_COPY], "Copy from space chamber to here", "Chest on top or below with materials")
+                .setChoiceTooltip(MODES[MODE_MOVE], "Move from space chamber to here")
+                .setChoiceTooltip(MODES[MODE_SWAP], "Swap space chamber contents with here")
+                .setChoiceTooltip(MODES[MODE_BACK], "Move back from here to space chamber")
+                .setChoiceTooltip(MODES[MODE_COLLECT], "Collect items in space chamber", "Items will go to chest on top or below")
                 .addChoiceEvent((parent, newChoice) -> updateMode());
         modeChoice.setChoice(MODES[tileEntity.getMode()]);
 

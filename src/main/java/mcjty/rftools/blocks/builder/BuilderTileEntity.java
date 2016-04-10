@@ -18,6 +18,7 @@ import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.*;
 
@@ -63,8 +65,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int MODE_MOVE = 1;
     public static final int MODE_SWAP = 2;
     public static final int MODE_BACK = 3;
+    public static final int MODE_COLLECT = 4;
 
-    public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back" };
+    public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back", "Collect" };
 
     public static final String ROTATE_0 = "0";
     public static final String ROTATE_90 = "90";
@@ -533,10 +536,27 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        float factor = getInfusedFactor();
-        for (int i = 0 ; i < 2 + (factor * 40) ; i++) {
-            if (scan != null) {
-                handleBlock(world);
+        if (mode == MODE_COLLECT) {
+            // Collect item mode
+            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(minBox, maxBox));
+            // @todo slow down a little
+            // @todo RF usage
+            for (EntityItem item : items) {
+                BlockPos position = item.getPosition();
+                ItemStack stack = item.getEntityItem();
+                world.removeEntity(item);
+                stack = insertItem(stack);
+                if (stack != null) {
+                    EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
+                    worldObj.spawnEntityInWorld(entityItem);
+                }
+            }
+        } else {
+            float factor = getInfusedFactor();
+            for (int i = 0; i < 2 + (factor * 40); i++) {
+                if (scan != null) {
+                    handleBlock(world);
+                }
             }
         }
     }
@@ -936,6 +956,42 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private static Random random = new Random();
 
     // Also works if block is null and just picks the first available block.
+    private IBlockState findAndConsumeBlock(IItemHandler inventory, IBlockState state) {
+        if (state == null) {
+            // We are not looking for a specific block. Pick a random one out of the chest.
+            List<Integer> slots = new ArrayList<>();
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                    slots.add(i);
+                }
+            }
+            if (slots.isEmpty()) {
+                return null;
+            }
+            int randomSlot = slots.get(random.nextInt(slots.size()));
+            ItemStack stack = inventory.getStackInSlot(randomSlot);
+            ItemBlock itemBlock = (ItemBlock) stack.getItem();
+            inventory.extractItem(randomSlot, 1, false);
+            return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+        } else {
+            Block block = state.getBlock();
+            int meta = block.getMetaFromState(state);
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
+                    if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
+                        inventory.extractItem(i, 1, false);
+                        return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Also works if block is null and just picks the first available block.
     private IBlockState findAndConsumeBlock(IInventory inventory, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
@@ -1005,22 +1061,78 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    // Return what could not be inserted
+    private ItemStack insertItem(ItemStack s) {
+        TileEntity te = worldObj.getTileEntity(getPos().up());
+        if (te != null) {
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)) {
+                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+                s = ItemHandlerHelper.insertItem(capability, s, false);
+                if (s == null) {
+                    return null;
+                }
+            } else if (te instanceof IInventory) {
+                int i = InventoryHelper.mergeItemStackSafe((IInventory) te, true, EnumFacing.DOWN, s, 0, ((IInventory) te).getSizeInventory(), null);
+                if (i == 0) {
+                    return null;
+                }
+                s.stackSize = i;
+            }
+        }
+
+        te = worldObj.getTileEntity(getPos().down());
+        if (te != null) {
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
+                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+                s = ItemHandlerHelper.insertItem(capability, s, false);
+                if (s == null) {
+                    return null;
+                }
+            } else if (te instanceof IInventory) {
+                int i = InventoryHelper.mergeItemStackSafe((IInventory) te, true, EnumFacing.UP, s, 0, ((IInventory) te).getSizeInventory(), null);
+                if (i == 0) {
+                    return null;
+                }
+                s.stackSize = i;
+            }
+        }
+
+        return s;
+    }
 
     private IBlockState consumeBlock(IBlockState state) {
         TileEntity te = worldObj.getTileEntity(getPos().up());
-        if (te instanceof IInventory) {
-            IBlockState b = findAndConsumeBlock((IInventory) te, state);
-            if (b != null) {
-                return b;
+        if (te != null) {
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)) {
+                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+                IBlockState b = findAndConsumeBlock(capability, state);
+                if (b != null) {
+                    return b;
+                }
+            } else if (te instanceof IInventory) {
+                IBlockState b = findAndConsumeBlock((IInventory) te, state);
+                if (b != null) {
+                    return b;
+                }
             }
         }
+
         te = worldObj.getTileEntity(getPos().down());
-        if (te instanceof IInventory) {
-            IBlockState b = findAndConsumeBlock((IInventory) te, state);
-            if (b != null) {
-                return b;
+        if (te != null) {
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
+                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+                IBlockState b = findAndConsumeBlock(capability, state);
+                if (b != null) {
+                    return b;
+                }
+            } else if (te instanceof IInventory) {
+                IBlockState b = findAndConsumeBlock((IInventory) te, state);
+                if (b != null) {
+                    return b;
+                }
             }
         }
+
 //        if (meta != -1) {
             // Try a second time with meta equal to -1 (which means to ignore meta).
 //            return consumeBlock(block, -1);
