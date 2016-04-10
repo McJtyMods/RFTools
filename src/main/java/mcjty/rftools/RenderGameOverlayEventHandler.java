@@ -119,6 +119,9 @@ public class RenderGameOverlayEventHandler {
             case BUFF_SLOWNESS:
                 item = EnvironmentalSetup.slownessEModuleItem;
                 break;
+            case BUFF_LUCK:
+                item = EnvironmentalSetup.luckEModuleItem;
+                break;
             default:
                 item = null;
         }

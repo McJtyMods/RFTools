@@ -70,6 +70,7 @@ item.weakness_module.name=Weakness Module
 item.poison_module.name=Poison Module
 item.slowness_module.name=Slowness Module
 item.glowing_module.name=Glowing Module
+item.luck_module.name=Luck Module
 
 item.syringe.name=Syringe
 item.peace_essence.name=Peace Essence

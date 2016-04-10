@@ -45,6 +45,7 @@ public class EnvironmentalSetup {
     public static WaterBreathingEModuleItem waterBreathingEModuleItem;
     public static NightVisionEModuleItem nightVisionEModuleItem;
     public static GlowingEModuleItem glowingEModuleItem;
+    public static LuckEModuleItem luckEModuleItem;
 
     public static BlindnessEModuleItem blindnessEModuleItem;
     public static WeaknessEModuleItem weaknessEModuleItem;
@@ -72,6 +73,7 @@ public class EnvironmentalSetup {
         poisonEModuleItem = new PoisonEModuleItem();
         slownessEModuleItem = new SlownessEModuleItem();
         glowingEModuleItem = new GlowingEModuleItem();
+        luckEModuleItem = new LuckEModuleItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -96,6 +98,7 @@ public class EnvironmentalSetup {
         poisonEModuleItem.initModel();
         slownessEModuleItem.initModel();
         glowingEModuleItem.initModel();
+        luckEModuleItem.initModel();
     }
 
     public static void initCrafting() {
@@ -117,6 +120,7 @@ public class EnvironmentalSetup {
         ItemStack guardianSyringe = createMobSyringe(EntityGuardian.class);
         ItemStack caveSpiderSyringe = createMobSyringe(EntityCaveSpider.class);
         ItemStack blazeSyringe = createMobSyringe(EntityBlaze.class);
+        ItemStack shulkerEntity = createMobSyringe(EntityShulker.class);
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.enchantmentRegistry.getObject(new ResourceLocation("efficiency")), 3);
         ItemStack reds = new ItemStack(Items.redstone);
         ItemStack gold = new ItemStack(Items.gold_ingot);
@@ -192,6 +196,11 @@ public class EnvironmentalSetup {
                 new ItemStack[] {null, blazeSyringe, null, reds, gold, reds, null, ink, null},
                 new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
                 new ItemStack(glowingEModuleItem)));
+
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[] {null, shulkerEntity, null, reds, gold, reds, null, ink, null},
+                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(luckEModuleItem)));
 
         GameRegistry.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', ModItems.peaceEssenceItem,
                 'r', reds, 'g', gold, 'i', ink);

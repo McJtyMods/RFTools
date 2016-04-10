@@ -20,4 +20,5 @@ public enum PlayerBuff {
     BUFF_POISON,
     BUFF_SLOWNESS,
     BUFF_GLOWING,
+    BUFF_LUCK,
 }
