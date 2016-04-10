@@ -18,4 +18,10 @@ public class SlownessEModule extends PotionEffectModule {
     protected PlayerBuff getBuff() {
         return PlayerBuff.BUFF_SLOWNESS;
     }
+
+    @Override
+    protected boolean allowedForPlayers() {
+        return EnvironmentalConfiguration.slownessAvailable;
+    }
+
 }

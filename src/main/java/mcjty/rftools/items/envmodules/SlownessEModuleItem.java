@@ -28,7 +28,7 @@ public class SlownessEModuleItem extends GenericRFToolsItem implements EnvModule
         list.add("used in the environmental controller.");
         list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.SLOWNESS_RFPERTICK + " RF/tick (per cubic block)");
         if (!EnvironmentalConfiguration.slownessAvailable) {
-            list.add(TextFormatting.RED + "This module is disabled in config!");
+            list.add(TextFormatting.RED + "This module only works on mobs (see config)");
         }
     }
 

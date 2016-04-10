@@ -18,4 +18,9 @@ public class BlindnessEModule extends PotionEffectModule {
     protected PlayerBuff getBuff() {
         return PlayerBuff.BUFF_BLINDNESS;
     }
+
+    @Override
+    protected boolean allowedForPlayers() {
+        return EnvironmentalConfiguration.blindnessAvailable;
+    }
 }

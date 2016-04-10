@@ -18,4 +18,10 @@ public class WeaknessEModule extends PotionEffectModule {
     protected PlayerBuff getBuff() {
         return PlayerBuff.BUFF_WEAKNESS;
     }
+
+    @Override
+    protected boolean allowedForPlayers() {
+        return EnvironmentalConfiguration.weaknessAvailable;
+    }
+
 }

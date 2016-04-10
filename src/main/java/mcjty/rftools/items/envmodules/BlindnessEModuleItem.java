@@ -28,7 +28,7 @@ public class BlindnessEModuleItem extends GenericRFToolsItem implements EnvModul
         list.add("used in the environmental controller.");
         list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.BLINDNESS_RFPERTICK + " RF/tick (per cubic block)");
         if (!EnvironmentalConfiguration.blindnessAvailable) {
-            list.add(TextFormatting.RED + "This module is disabled in config!");
+            list.add(TextFormatting.RED + "This module only works on mobs (see config)");
         }
     }
 

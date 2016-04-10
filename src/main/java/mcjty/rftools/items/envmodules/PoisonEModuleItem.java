@@ -28,7 +28,7 @@ public class PoisonEModuleItem extends GenericRFToolsItem implements EnvModulePr
         list.add("used in the environmental controller.");
         list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.POISON_RFPERTICK + " RF/tick (per cubic block)");
         if (!EnvironmentalConfiguration.poisonAvailable) {
-            list.add(TextFormatting.RED + "This module is disabled in config!");
+            list.add(TextFormatting.RED + "This module only works on mobs (see config)");
         }
     }
 

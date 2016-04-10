@@ -85,18 +85,18 @@ public class EnvironmentalConfiguration {
         BLINDNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessRFPerTick", BLINDNESS_RFPERTICK,
                 "RF per tick/per block for the blindness module").getDouble();
         blindnessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessAvailable", blindnessAvailable,
-                "Set to true to make the blindness module available").getBoolean();
+                "Set to true to make the blindness module work on players").getBoolean();
         WEAKNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessRFPerTick", WEAKNESS_RFPERTICK,
                 "RF per tick/per block for the weakness module").getDouble();
         weaknessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessAvailable", weaknessAvailable,
-                "Set to true to make the weakness module available").getBoolean();
+                "Set to true to make the weakness module work on players").getBoolean();
         POISON_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "poisonRFPerTick", POISON_RFPERTICK,
                 "RF per tick/per block for the poison module").getDouble();
         poisonAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "poisonAvailable", poisonAvailable,
-                "Set to true to make the poison module available").getBoolean();
+                "Set to true to make the poison module work on players").getBoolean();
         SLOWNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "slownessRFPerTick", SLOWNESS_RFPERTICK,
                 "RF per tick/per block for the slowness module").getDouble();
         slownessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "slownessAvailable", slownessAvailable,
-                "Set to true to make the slowness module available").getBoolean();
+                "Set to true to make the slowness module work on players").getBoolean();
     }
 }

@@ -18,4 +18,10 @@ public class PoisonEModule extends PotionEffectModule {
     protected PlayerBuff getBuff() {
         return PlayerBuff.BUFF_POISON;
     }
+
+    @Override
+    protected boolean allowedForPlayers() {
+        return EnvironmentalConfiguration.poisonAvailable;
+    }
+
 }

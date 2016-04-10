@@ -31,6 +31,10 @@ public abstract class PotionEffectModule implements EnvironmentModule {
 
     protected abstract PlayerBuff getBuff();
 
+    protected boolean allowedForPlayers() {
+        return true;
+    }
+
     @Override
     public void tick(World world, BlockPos pos, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         if (!active) {
@@ -47,7 +51,9 @@ public abstract class PotionEffectModule implements EnvironmentModule {
         switch (mode) {
             case MODE_BLACKLIST:
             case MODE_WHITELIST:
-                processPlayers(world, pos, radius, miny, maxy, controllerTileEntity);
+                if (allowedForPlayers()) {
+                    processPlayers(world, pos, radius, miny, maxy, controllerTileEntity);
+                }
                 break;
             case MODE_HOSTILE:
             case MODE_PASSIVE:
@@ -93,11 +99,13 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double sqdist = (px-pos.getX()) * (px-pos.getX()) + (pz-pos.getZ()) * (pz-pos.getZ());
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isEntityAffected(entity)) {
-                        entity.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
-                        PlayerBuff buff = getBuff();
-                        if (buff != null) {
-                            if (entity instanceof EntityPlayer) {
-                                BuffProperties.addBuffToPlayer((EntityPlayer) entity, buff, MAXTICKS);
+                        if (!(entity instanceof EntityPlayer) || allowedForPlayers()) {
+                            entity.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
+                            PlayerBuff buff = getBuff();
+                            if (buff != null) {
+                                if (entity instanceof EntityPlayer) {
+                                    BuffProperties.addBuffToPlayer((EntityPlayer) entity, buff, MAXTICKS);
+                                }
                             }
                         }
                     } else if (entity instanceof EntityPlayer) {

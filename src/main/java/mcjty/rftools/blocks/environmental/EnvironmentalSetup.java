@@ -205,33 +205,25 @@ public class EnvironmentalSetup {
         GameRegistry.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', ModItems.peaceEssenceItem,
                 'r', reds, 'g', gold, 'i', ink);
 
-        if (EnvironmentalConfiguration.blindnessAvailable) {
-            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                    new ItemStack[]{null, squidSyringe, null, lapis, obsidian, lapis, null, ink, null},
-                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-                    new ItemStack(blindnessEModuleItem)));
-        }
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{null, squidSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(blindnessEModuleItem)));
 
-        if (EnvironmentalConfiguration.weaknessAvailable) {
-            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                    new ItemStack[]{null, batSyringe, null, lapis, obsidian, lapis, null, ink, null},
-                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-                    new ItemStack(weaknessEModuleItem)));
-        }
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{null, batSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(weaknessEModuleItem)));
 
-        if (EnvironmentalConfiguration.poisonAvailable) {
-            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                    new ItemStack[]{null, caveSpiderSyringe, null, lapis, obsidian, lapis, null, ink, null},
-                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-                    new ItemStack(poisonEModuleItem)));
-        }
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{null, caveSpiderSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(poisonEModuleItem)));
 
-        if (EnvironmentalConfiguration.slownessAvailable) {
-            GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                    new ItemStack[]{null, new ItemStack(Items.clock), null, lapis, obsidian, lapis, null, ink, null},
-                    new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-                    new ItemStack(slownessEModuleItem)));
-        }
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{null, new ItemStack(Items.clock), null, lapis, obsidian, lapis, null, ink, null},
+                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(slownessEModuleItem)));
     }
 
     public static ItemStack createEnchantedItem(Item item, Enchantment effectId, int amount) {
