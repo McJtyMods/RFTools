@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 
 public class MatterBeamerContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -19,7 +20,7 @@ public class MatterBeamerContainer extends GenericContainer {
         }
     };
 
-    public MatterBeamerContainer(EntityPlayer player, MatterBeamerTileEntity containerInventory) {
+    public MatterBeamerContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

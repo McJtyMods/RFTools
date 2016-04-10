@@ -8,6 +8,8 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,6 +20,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,8 +33,15 @@ import java.util.List;
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
 public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
 
+    public static final PropertyBool WORKING = PropertyBool.create("working");
+
     public MatterBeamerBlock() {
         super(Material.iron, MatterBeamerTileEntity.class, MatterBeamerContainer.class, "matter_beamer", true);
+    }
+
+    @Override
+    public boolean hasNoRotation() {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)
@@ -104,4 +114,20 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
         checkRedstoneWithTE(world, pos);
     }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        boolean working = false;
+        if (te instanceof MatterBeamerTileEntity) {
+            working = ((MatterBeamerTileEntity)te).isGlowing();
+        }
+        return state.withProperty(WORKING, working);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, WORKING);
+    }
+
 }

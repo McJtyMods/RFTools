@@ -13,6 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -117,16 +119,31 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     private void disableBlockGlow() {
         if (glowing) {
             glowing = false;
-            markDirty();
+            markDirtyClient();
         }
     }
 
     private void enableBlockGlow() {
         if (!glowing) {
             glowing = true;
-            markDirty();
+            markDirtyClient();
         }
     }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+        boolean oldglowing = glowing;
+
+        super.onDataPacket(net, packet);
+
+        if (worldObj.isRemote) {
+            // If needed send a render update.
+            if (oldglowing != glowing) {
+                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            }
+        }
+    }
+
 
     @Override
     public boolean shouldRenderInPass(int pass) {
@@ -214,6 +231,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         super.readFromNBT(tagCompound);
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
         powered = tagCompound.getByte("powered");
+        glowing = tagCompound.getBoolean("glowing");
     }
 
     @Override
@@ -228,6 +246,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         super.writeToNBT(tagCompound);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setByte("powered", (byte) powered);
+        tagCompound.setBoolean("glowing", glowing);
     }
 
     @Override

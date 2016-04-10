@@ -13,6 +13,7 @@ import mcjty.rftools.blocks.powercell.PowerCellSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
+import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;
@@ -52,6 +53,7 @@ public final class ModCrafting {
         MonitorSetup.initCrafting();
         ShieldSetup.initCrafting();
         EnvironmentalSetup.initCrafting();
+        SpawnerSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {

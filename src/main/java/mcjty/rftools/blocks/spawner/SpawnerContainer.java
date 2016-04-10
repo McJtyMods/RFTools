@@ -6,6 +6,7 @@ import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class SpawnerContainer extends GenericContainer {
@@ -21,7 +22,7 @@ public class SpawnerContainer extends GenericContainer {
         }
     };
 
-    public SpawnerContainer(EntityPlayer player, SpawnerTileEntity containerInventory) {
+    public SpawnerContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

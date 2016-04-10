@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -29,7 +30,9 @@ public class SpawnerConfiguration {
     public static final String CATEGORY_LIVINGMATTER = "livingmatter";
 
     public static final Map<String,Integer> mobSpawnRf = new HashMap<>();
+    public static int defaultMobSpawnRf;
     public static final Map<String,List<MobSpawnAmount>> mobSpawnAmounts = new HashMap<>();
+    public static final List<MobSpawnAmount> defaultSpawnAmounts = new ArrayList<>();
     public static final Map<Object,Float> livingMatter = new HashMap<>();
 
     public static final int MATERIALTYPE_KEY = 0;
@@ -72,9 +75,10 @@ public class SpawnerConfiguration {
 //                "If the number of entities around the spawner exceeds this number it will automatically stop spawning").getInt();
 
         readLivingConfig(cfg);
+        readMobSpawnAmountConfig(cfg);
     }
 
-    public static void readLivingConfig(Configuration cfg) {
+    private static void readLivingConfig(Configuration cfg) {
         ConfigCategory category = cfg.getCategory(CATEGORY_LIVINGMATTER);
         if (category.isEmpty()) {
             setupInitialLivingConfig(cfg);
@@ -86,10 +90,10 @@ public class SpawnerConfiguration {
                     String name = value[1];
                     Float factor = Float.parseFloat(value[2]);
                     if ("B".equals(type)) {
-                        Object block = Block.blockRegistry.getObject(new ResourceLocation(name));//@todo
+                        Object block = Block.blockRegistry.getObject(new ResourceLocation(name));
                         livingMatter.put(block, factor);
                     } else {
-                        Object item = Item.itemRegistry.getObject(new ResourceLocation(name)); //@todo
+                        Object item = Item.itemRegistry.getObject(new ResourceLocation(name));
                         livingMatter.put(item, factor);
                     }
                 } catch (Exception e) {
@@ -108,6 +112,11 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Blocks.hay_block, counter, 1.0f);
         counter = addLiving(cfg, Blocks.melon_block, counter, 1.0f);
         counter = addLiving(cfg, Blocks.cactus, counter, 0.8f);
+        counter = addLiving(cfg, Blocks.red_flower, counter, 0.6f);
+        counter = addLiving(cfg, Blocks.yellow_flower, counter, 0.6f);
+        counter = addLiving(cfg, Blocks.chorus_flower, counter, 0.6f);
+        counter = addLiving(cfg, Blocks.brown_mushroom, counter, 0.4f);
+        counter = addLiving(cfg, Blocks.red_mushroom, counter, 0.4f);
         counter = addLiving(cfg, Items.apple, counter, 1.0f);
         counter = addLiving(cfg, Items.wheat, counter, 1.5f);
         counter = addLiving(cfg, Items.wheat_seeds, counter, 0.8f);
@@ -118,23 +127,30 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Items.beef, counter, 2.0f);
         counter = addLiving(cfg, Items.porkchop, counter, 2.0f);
         counter = addLiving(cfg, Items.chicken, counter, 2.0f);
+        counter = addLiving(cfg, Items.beetroot, counter, 1.0f);
+        counter = addLiving(cfg, Items.beetroot_seeds, counter, 0.8f);
+        counter = addLiving(cfg, Items.chorus_fruit, counter, 1.5f);
+        counter = addLiving(cfg, Items.fish, counter, 1.5f);
     }
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
-        ResourceLocation name = Block.blockRegistry.getNameForObject(block);// @todo
-        cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", name.toString(), Float.toString(factor) });
+        cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", block.getRegistryName().toString(), Float.toString(factor) });
         livingMatter.put(block, factor);
         return counter+1;
     }
 
     private static int addLiving(Configuration cfg, Item item, int counter, float factor) {
-        ResourceLocation name = Item.itemRegistry.getNameForObject(item); //@todo
-        cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", name.toString(), Float.toString(factor) });
+        cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", item.getRegistryName().toString(), Float.toString(factor) });
         livingMatter.put(item, factor);
         return counter+1;
     }
 
     public static void readMobSpawnAmountConfig(Configuration cfg) {
+        defaultMobSpawnRf = 10000;
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.diamond), 1.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.dirt), 20));
+        defaultSpawnAmounts.add(new MobSpawnAmount(null, 50.0f));
+
         addMobSpawnRF(cfg, EntityBat.class, 100);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_KEY, Items.feather, 0, .1f);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
@@ -178,7 +194,7 @@ public class SpawnerConfiguration {
         addMobSpawnRF(cfg, EntityIronGolem.class, 2000);
         addMobSpawnAmount(cfg, EntityIronGolem.class, MATERIALTYPE_KEY, Items.iron_ingot, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityIronGolem.class, MATERIALTYPE_BULK, Blocks.dirt, 0, 1.0f);
-        addMobSpawnAmount(cfg, EntityIronGolem.class, MATERIALTYPE_LIVING, 38, 0, 0.1f);     // Poppy @todo
+        addMobSpawnAmount(cfg, EntityIronGolem.class, MATERIALTYPE_LIVING, Blocks.red_flower, 0, 0.1f);
         addMobSpawnRF(cfg, EntityMagmaCube.class, 600);
         addMobSpawnAmount(cfg, EntityMagmaCube.class, MATERIALTYPE_KEY, Items.magma_cream, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityMagmaCube.class, MATERIALTYPE_BULK, Blocks.netherrack, 0, .2f);
@@ -202,7 +218,7 @@ public class SpawnerConfiguration {
         addMobSpawnRF(cfg, EntitySkeleton.class, 800);
         addMobSpawnAmount(cfg, EntitySkeleton.class, MATERIALTYPE_KEY, Items.bone, 0, 0.1f);
         addMobSpawnAmount(cfg, EntitySkeleton.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .5f);
-        addMobSpawnAmount(cfg, EntitySkeleton.class, MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnAmount(cfg, EntitySkeleton.class, MATERIALTYPE_LIVING, null, 0, 8);
         addMobSpawnRF(cfg, EntitySlime.class, 600);
         addMobSpawnAmount(cfg, EntitySlime.class, MATERIALTYPE_KEY, Items.slime_ball, 0, 0.1f);
         addMobSpawnAmount(cfg, EntitySlime.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .5f);
@@ -222,35 +238,35 @@ public class SpawnerConfiguration {
         addMobSpawnRF(cfg, EntityVillager.class, 2000);
         addMobSpawnAmount(cfg, EntityVillager.class, MATERIALTYPE_KEY, Items.book, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityVillager.class, MATERIALTYPE_BULK, Blocks.dirt, 0, 5.0f);
-        addMobSpawnAmount(cfg, EntityVillager.class, MATERIALTYPE_LIVING, null, 0, 7);
+        addMobSpawnAmount(cfg, EntityVillager.class, MATERIALTYPE_LIVING, null, 0, 12);
         addMobSpawnRF(cfg, EntityWitch.class, 1200);
         addMobSpawnAmount(cfg, EntityWitch.class, MATERIALTYPE_KEY, Items.glass_bottle, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityWitch.class, MATERIALTYPE_BULK, Blocks.dirt, 0, 1.0f);
-        addMobSpawnAmount(cfg, EntityWitch.class, MATERIALTYPE_LIVING, null, 0, 7);
+        addMobSpawnAmount(cfg, EntityWitch.class, MATERIALTYPE_LIVING, null, 0, 12);
         addMobSpawnRF(cfg, EntityWither.class, 20000);
         addMobSpawnAmount(cfg, EntityWither.class, MATERIALTYPE_KEY, Items.nether_star, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityWither.class, MATERIALTYPE_BULK, Blocks.soul_sand, 0, 0.5f);
-        addMobSpawnAmount(cfg, EntityWither.class, MATERIALTYPE_LIVING, null, 0, 6);
+        addMobSpawnAmount(cfg, EntityWither.class, MATERIALTYPE_LIVING, null, 0, 30);
         addMobSpawnRF(cfg, EntityWolf.class, 800);
         addMobSpawnAmount(cfg, EntityWolf.class, MATERIALTYPE_KEY, Items.bone, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityWolf.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .5f);
-        addMobSpawnAmount(cfg, EntityWolf.class, MATERIALTYPE_LIVING, null, 0, 8);
+        addMobSpawnAmount(cfg, EntityWolf.class, MATERIALTYPE_LIVING, null, 0, 10);
         addMobSpawnRF(cfg, EntityPigZombie.class, 1200);
         addMobSpawnAmount(cfg, EntityPigZombie.class, MATERIALTYPE_KEY, Items.gold_nugget, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityPigZombie.class, MATERIALTYPE_BULK, Blocks.netherrack, 0, .5f);
-        addMobSpawnAmount(cfg, EntityPigZombie.class, MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnAmount(cfg, EntityPigZombie.class, MATERIALTYPE_LIVING, null, 0, 8);
         addMobSpawnRF(cfg, EntityZombie.class, 800);
         addMobSpawnAmount(cfg, EntityZombie.class, MATERIALTYPE_KEY, Items.rotten_flesh, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityZombie.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
-        addMobSpawnAmount(cfg, EntityZombie.class, MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnAmount(cfg, EntityZombie.class, MATERIALTYPE_LIVING, null, 0, 8);
         addMobSpawnRF(cfg, EntityGuardian.class, 1000);
         addMobSpawnAmount(cfg, EntityGuardian.class, MATERIALTYPE_KEY, Items.prismarine_shard, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityGuardian.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
-        addMobSpawnAmount(cfg, EntityGuardian.class, MATERIALTYPE_LIVING, null, 0, 20);
+        addMobSpawnAmount(cfg, EntityGuardian.class, MATERIALTYPE_LIVING, null, 0, 15);
         addMobSpawnRF(cfg, EntityShulker.class, 600);
         addMobSpawnAmount(cfg, EntityShulker.class, MATERIALTYPE_KEY, Items.ender_pearl, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityShulker.class, MATERIALTYPE_BULK, Blocks.end_stone, 0, .2f);
-        addMobSpawnAmount(cfg, EntityShulker.class, MATERIALTYPE_LIVING, null, 0, 20);
+        addMobSpawnAmount(cfg, EntityShulker.class, MATERIALTYPE_LIVING, null, 0, 15);
         addMobSpawnRF(cfg, EntityEndermite.class, 400);
         addMobSpawnAmount(cfg, EntityEndermite.class, MATERIALTYPE_KEY, Items.ender_pearl, 0, 0.05f);
         addMobSpawnAmount(cfg, EntityEndermite.class, MATERIALTYPE_BULK, Blocks.end_stone, 0, .2f);
@@ -259,18 +275,20 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_KEY, Items.iron_ingot, 0, 0.05f);
         addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
         addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_LIVING, null, 0, 5);
+        addMobSpawnRF(cfg, EntityRabbit.class, 300);
+        addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_KEY, Items.rabbit_stew, 0, 0.1f);
+        addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
+        addMobSpawnAmount(cfg, EntitySilverfish.class, MATERIALTYPE_LIVING, null, 0, 8);
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
-        String name = clazz.getCanonicalName();
+        String name = EntityList.classToStringMapping.get(clazz);
         rf = cfg.get(CATEGORY_MOBSPAWNRF, name, rf).getInt();
         mobSpawnRf.put(name, rf);
     }
 
-    // @todo use class parameter here!
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
-        // @todo
-        String name = clazz.getCanonicalName();
+        String name = EntityList.classToStringMapping.get(clazz);
         List<MobSpawnAmount> list = mobSpawnAmounts.get(name);
         if (list == null) {
             list = new ArrayList<>(3);
@@ -279,76 +297,46 @@ public class SpawnerConfiguration {
             list.add(null);
             mobSpawnAmounts.put(name, list);
         }
-        ItemStack stack;
+
+        String type;
+        ResourceLocation itemname;
         if (object instanceof Item) {
-            stack = new ItemStack((Item) object, 1, meta);
+            type = "I";
+            itemname = Item.itemRegistry.getNameForObject((Item) object);
         } else if (object instanceof Block) {
-            stack = new ItemStack((Block) object, 1, meta);
+            type = "B";
+            itemname = Block.blockRegistry.getNameForObject((Block) object);
         } else {
-            stack = null;
+            type = "L";
+            itemname = null;
+        }
+        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, name + ".spawnamount." + materialType,
+                new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
+        try {
+            type = splitted[0];
+            String n = splitted[1];
+            if ("".equals(n)) {
+                itemname = null;
+            } else {
+                itemname = new ResourceLocation(n);
+            }
+            meta = Integer.parseInt(splitted[2]);
+            amount = Float.parseFloat(splitted[3]);
+        } catch (NumberFormatException e) {
+            Logging.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
+            return;
+        }
+
+        ItemStack stack = null;
+        if ("I".equals(type)) {
+            Item item = Item.itemRegistry.getObject(itemname);
+            stack = new ItemStack(item, 1, meta);
+        } else if ("B".equals(type)) {
+            Block block = Block.blockRegistry.getObject(itemname);
+            stack = new ItemStack(block, 1, meta);
+        } else if ("S".equals(type)) {
         }
         list.set(materialType, new MobSpawnAmount(stack, amount));
-
-
-
-//        String type;
-//        ResourceLocation itemname;
-//        if (object instanceof Item) {
-//            type = "I";
-//            itemname = Item.itemRegistry.getNameForObject((Item) object);
-//        } else if (object instanceof Block) {
-//            type = "B";
-//            itemname = Block.blockRegistry.getNameForObject((Block) object);
-//        } else if (object instanceof String) {
-//            type = "S";
-//            itemname = new ResourceLocation((String) object);
-//        } else {
-//            type = "L";
-//            itemname = null;
-//        }
-//        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, name + ".spawnamount." + materialType,
-//                new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
-//
-//        try {
-//            type = splitted[0];
-//            itemname = splitted[1];
-//            meta = Integer.parseInt(splitted[2]);
-//            amount = Float.parseFloat(splitted[3]);
-//        } catch (NumberFormatException e) {
-//            Logging.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
-//            return;
-//        }
-//        ItemStack stack = null;
-//        if ("I".equals(type)) {
-//            Item item;
-//            try {
-//                Integer id = Integer.parseInt(itemname);
-//                item = (Item) Item.itemRegistry.getObjectById(id);
-//            } catch (NumberFormatException e) {
-//                item = (Item) Item.itemRegistry.getObject(itemname);
-//            }
-//            stack = new ItemStack(item, 1, meta);
-//        } else if ("B".equals(type)) {
-//            Block block;
-//            try {
-//                Integer id = Integer.parseInt(itemname);
-//                block = (Block) Block.blockRegistry.getObjectById(id);
-//            } catch (NumberFormatException e) {
-//                block = (Block) Block.blockRegistry.getObject(itemname);
-//            }
-//            stack = new ItemStack(block, 1, meta);
-//        } else if ("S".equals(type)) {
-//        }
-//
-//        List<MobSpawnAmount> list = mobSpawnAmounts.get(name);
-//        if (list == null) {
-//            list = new ArrayList<MobSpawnAmount>(3);
-//            list.add(null);
-//            list.add(null);
-//            list.add(null);
-//            mobSpawnAmounts.put(name, list);
-//        }
-//        list.set(materialType, new MobSpawnAmount(stack, amount));
     }
 
     public static class MobSpawnAmount {

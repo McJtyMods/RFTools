@@ -10,6 +10,8 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.varia.CustomSidedInvWrapper;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,7 +41,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private float matter[] = new float[] { 0, 0, 0 };
     private boolean checkSyringe = true;
-    private String mobClass = "";
+    private String mobId = "";
 
     private AxisAlignedBB entityCheckBox = null;
 
@@ -73,7 +75,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             case 0: return Float.toString(matter[0]);
             case 1: return Float.toString(matter[1]);
             case 2: return Float.toString(matter[2]);
-            case 3: return mobClass;
+            case 3: return mobId;
         }
         return null;
     }
@@ -83,7 +85,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
         checkSyringe = false;
-        mobClass = "";
+        mobId = null;
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
         if (itemStack == null || itemStack.stackSize == 0) {
             clearMatter();
@@ -106,7 +108,13 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             clearMatter();
             return;
         }
-        mobClass = mob;
+
+        try {
+            Class<?> clazz = Class.forName(mob);
+            mobId = EntityList.classToStringMapping.get(clazz);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void clearMatter() {
@@ -118,12 +126,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public void addMatter(ItemStack stack, int m) {
         testSyringe();
-        if (mobClass.isEmpty()) {
+        if (mobId == null && mobId.isEmpty()) {
             return;       // No matter was added.
         }
         int materialType = 0;
         Float factor = null;
-        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobClass);
+        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = getSpawnAmounts();
         for (SpawnerConfiguration.MobSpawnAmount spawnAmount : spawnAmounts) {
             factor = spawnAmount.match(stack);
             if (factor != null) {
@@ -146,6 +154,14 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirtyClient();
     }
 
+    private List<SpawnerConfiguration.MobSpawnAmount> getSpawnAmounts() {
+        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobId);
+        if (spawnAmounts == null) {
+            spawnAmounts = SpawnerConfiguration.defaultSpawnAmounts;
+        }
+        return spawnAmounts;
+    }
+
     public float[] getMatter() {
         return matter;
     }
@@ -159,11 +175,11 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void checkStateServer() {
         testSyringe();
-        if (mobClass.isEmpty()) {
+        if (mobId == null || mobId.isEmpty()) {
             return;
         }
 
-        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobClass);
+        List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = getSpawnAmounts();
         for (int i = 0 ; i < 3 ; i++) {
             if (matter[i] < spawnAmounts.get(i).getAmount()) {
                 return;     // Not enough material yet.
@@ -171,7 +187,11 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         // We have enough materials. Check power.
-        int rf = SpawnerConfiguration.mobSpawnRf.get(mobClass);
+        Integer rf = SpawnerConfiguration.mobSpawnRf.get(mobId);
+        if (rf == null) {
+            rf = SpawnerConfiguration.defaultMobSpawnRf;
+        }
+
         rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
         if (getEnergyStored(EnumFacing.DOWN) < rf) {
             return;
@@ -208,22 +228,19 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         EntityLiving entityLiving;
         try {
-            Class<?> clazz = Class.forName(mobClass);
+            Class<? extends Entity> clazz = EntityList.stringToClassMapping.get(mobId);
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
         } catch (InstantiationException e) {
-            Logging.logError("Fail to spawn mob: " + mobClass);
+            Logging.logError("Fail to spawn mob: " + mobId);
             return;
         } catch (IllegalAccessException e) {
-            Logging.logError("Fail to spawn mob: " + mobClass);
+            Logging.logError("Fail to spawn mob: " + mobId);
             return;
         } catch (InvocationTargetException e) {
-            Logging.logError("Fail to spawn mob: " + mobClass);
+            Logging.logError("Fail to spawn mob: " + mobId);
             return;
         } catch (NoSuchMethodException e) {
-            Logging.logError("Fail to spawn mob: " + mobClass);
-            return;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Logging.logError("Fail to spawn mob: " + mobId);
             return;
         }
 
@@ -303,7 +320,11 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
         checkSyringe = tagCompound.getBoolean("checkSyringe");
-        mobClass = tagCompound.getString("mobClass");
+        if (tagCompound.hasKey("mobId")) {
+            mobId = tagCompound.getString("mobId");
+        } else {
+            mobId = null;
+        }
     }
 
     @Override
@@ -319,7 +340,9 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setFloat("matter1", matter[1]);
         tagCompound.setFloat("matter2", matter[2]);
         tagCompound.setBoolean("checkSyringe", checkSyringe);
-        tagCompound.setString("mobClass", mobClass);
+        if (mobId != null && !mobId.isEmpty()) {
+            tagCompound.setString("mobId", mobId);
+        }
     }
 
     @Override

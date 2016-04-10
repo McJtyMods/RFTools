@@ -18,6 +18,7 @@ import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.powercell.PowerCellConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
@@ -131,6 +132,10 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(PowerCellConfiguration.CATEGORY_POWERCELL, "Settings for the powercell");
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
+            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_SPAWNER, "Settings for the spawner system");
+            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNAMOUNTS, "Amount of materials needed to spawn mobs");
+            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNRF, "Amount of RF needed to spawn mobs");
+            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_LIVINGMATTER, "Blocks and items that are seen as living for the spawner");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
@@ -142,6 +147,7 @@ public abstract class CommonProxy {
             PowerCellConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
             EnvironmentalConfiguration.init(cfg);
+            SpawnerConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

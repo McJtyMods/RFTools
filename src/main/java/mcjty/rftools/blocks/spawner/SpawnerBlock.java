@@ -26,7 +26,7 @@ import java.util.List;
 public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
 
     public SpawnerBlock() {
-        super(Material.iron, SpawnerTileEntity.class, SpawnerContainer.class, "spawnwer", true);
+        super(Material.iron, SpawnerTileEntity.class, SpawnerContainer.class, "spawner", true);
     }
 
     @SideOnly(Side.CLIENT)

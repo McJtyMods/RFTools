@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "rftools:matter_beamer"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "working": {
+      "false": { "model": "rftools:matter_beamer_off" },
+      "true": { }
+    }
+  }
+}
