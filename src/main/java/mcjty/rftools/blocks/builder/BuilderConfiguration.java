@@ -41,6 +41,7 @@ public class BuilderConfiguration {
 
     public static int collectTimer = 10;
     public static int collectRFPerItem = 20;
+    public static float collectRFPerXP = 2;
     public static float collectRFPerTickPerArea = 0.5f;
 
 
@@ -72,6 +73,8 @@ public class BuilderConfiguration {
                 "How many ticks we wait before collecting again (with the builder 'collect items' mode)").getInt();
         collectRFPerItem = cfg.get(CATEGORY_BUILDER, "collectRFPerItem", collectRFPerItem,
                 "The cost of collecting an item (builder 'collect items' mode))").getInt();
+        collectRFPerXP = (float) cfg.get(CATEGORY_BUILDER, "collectRFPerXP", collectRFPerXP,
+                "The cost of collecting 1 XP level (builder 'collect items' mode))").getDouble();
         collectRFPerTickPerArea = (float) cfg.get(CATEGORY_BUILDER, "collectRFPerTickPerArea", collectRFPerTickPerArea,
                 "The RF/t per area to keep checking for items in a given area (builder 'collect items' mode))").getDouble();
 

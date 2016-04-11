@@ -20,9 +20,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -92,6 +94,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private int powered = 0;
     private int collectCounter = BuilderConfiguration.collectTimer;
+    private int collectXP = 0;
 
     private boolean boxValid = false;
     private BlockPos minBox = null;
@@ -567,27 +570,72 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         consumeEnergy(rfNeeded);
 
-        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                new AxisAlignedBB(minBox.getX()-.8, minBox.getY()-.8, minBox.getZ()-.8, maxBox.getX()+.8, maxBox.getY()+.8, maxBox.getZ()+.8));
-        for (EntityItem item : items) {
-            BlockPos position = item.getPosition();
-            ItemStack stack = item.getEntityItem();
-
-            rf = getEnergyStored(EnumFacing.DOWN);
-            rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.stackSize;
-            if (rfNeeded > rf) {
-                // Not enough energy.
-                return;
-            }
-            consumeEnergy(rfNeeded);
-
-            world.removeEntity(item);
-            stack = insertItem(stack);
-            if (stack != null) {
-                EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
-                worldObj.spawnEntityInWorld(entityItem);
+        AxisAlignedBB bb = new AxisAlignedBB(minBox.getX() - .8, minBox.getY() - .8, minBox.getZ() - .8, maxBox.getX() + .8, maxBox.getY() + .8, maxBox.getZ() + .8);
+        List<Entity> items = world.getEntitiesWithinAABB(Entity.class, bb);
+        for (Entity entity : items) {
+            if (entity instanceof EntityItem) {
+                if (collectItem(world, infusedFactor, (EntityItem) entity)) {
+                    return;
+                }
+            } else if (entity instanceof EntityXPOrb) {
+                if (collectXP(world, infusedFactor, (EntityXPOrb) entity)) {
+                    return;
+                }
             }
         }
+    }
+
+    private boolean collectXP(World world, float infusedFactor, EntityXPOrb orb) {
+        int rf;
+        int rfNeeded;
+
+        int xp = orb.getXpValue();
+
+        rf = getEnergyStored(EnumFacing.DOWN);
+        rfNeeded = (int) (BuilderConfiguration.collectRFPerXP * infusedFactor * xp);
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return true;
+        }
+
+        collectXP += xp;
+
+        int bottles = collectXP / 7;
+        if (bottles > 0) {
+            if (insertItem(new ItemStack(Items.experience_bottle, bottles)) == null) {
+                collectXP = collectXP % 7;
+                world.removeEntity(orb);
+                consumeEnergy(rfNeeded);
+            } else {
+                collectXP = 0;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean collectItem(World world, float infusedFactor, EntityItem item) {
+        int rf;
+        int rfNeeded;
+
+        ItemStack stack = item.getEntityItem();
+
+        rf = getEnergyStored(EnumFacing.DOWN);
+        rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.stackSize;
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return true;
+        }
+        consumeEnergy(rfNeeded);
+
+        world.removeEntity(item);
+        stack = insertItem(stack);
+        if (stack != null) {
+            BlockPos position = item.getPosition();
+            EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
+            worldObj.spawnEntityInWorld(entityItem);
+        }
+        return false;
     }
 
     private void calculateBoxShaped() {
@@ -788,7 +836,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             worldObj.setBlockState(srcPos, state, 3);
-//            worldObj.setBlockMetadataWithNotify(sx, sy, sz, block.getMeta(), 3);
             if (!silent) {
                 SoundTools.playSound(worldObj, state.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
