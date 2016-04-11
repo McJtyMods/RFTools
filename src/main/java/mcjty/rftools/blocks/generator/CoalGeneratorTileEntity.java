@@ -6,7 +6,7 @@ import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
-import mcjty.rftools.varia.CustomSidedInvWrapper;
+import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;

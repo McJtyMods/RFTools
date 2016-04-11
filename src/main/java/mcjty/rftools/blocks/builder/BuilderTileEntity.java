@@ -6,11 +6,12 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CustomSidedInvWrapper;
+import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.varia.CustomSidedInvWrapper;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
@@ -41,7 +42,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.*;
 
@@ -790,7 +790,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             worldObj.setBlockState(srcPos, state, 3);
 //            worldObj.setBlockMetadataWithNotify(sx, sy, sz, block.getMeta(), 3);
             if (!silent) {
-                RFToolsTools.playSound(worldObj, state.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(worldObj, state.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -819,7 +819,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
-            RFToolsTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+            SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
         }
     }
 
@@ -937,7 +937,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             if (!silent) {
-                RFToolsTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+                SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
             }
             worldObj.setBlockToAir(srcPos);
             consumeEnergy(rfNeeded);
@@ -1057,116 +1057,54 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean checkAndInsertItems(List<ItemStack> items) {
-        TileEntity teAbove = worldObj.getTileEntity(getPos().up());
-        boolean ok = false;
-        if (teAbove instanceof IInventory) {
-            ok = checkAndInsertItems(items, (IInventory) teAbove);
-        }
-        if (ok) {
-            return true;
-        }
-        TileEntity teDown = worldObj.getTileEntity(getPos().down());
-        if (teDown instanceof IInventory) {
-            ok = checkAndInsertItems(items, (IInventory) teDown);
+        TileEntity te = worldObj.getTileEntity(getPos().up());
+        boolean ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.DOWN);
+        if (!ok) {
+            te = worldObj.getTileEntity(getPos().down());
+            ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.UP);
         }
         return ok;
     }
 
-    private boolean checkAndInsertItems(List<ItemStack> items, IInventory inventory) {
-        Map<Integer, ItemStack> undo = new HashMap<>();
-        for (ItemStack item : items) {
-            int remaining = InventoryHelper.mergeItemStackSafe(inventory, false, EnumFacing.DOWN, item, 0, inventory.getSizeInventory(), undo);
-            if (remaining > 0) {
-                undo(undo, inventory);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void undo(Map<Integer,ItemStack> undo, IInventory inventory) {
-        for (Map.Entry<Integer, ItemStack> entry : undo.entrySet()) {
-            inventory.setInventorySlotContents(entry.getKey(), entry.getValue());
-        }
-    }
-
     // Return what could not be inserted
     private ItemStack insertItem(ItemStack s) {
-        TileEntity te = worldObj.getTileEntity(getPos().up());
-        if (te != null) {
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)) {
-                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-                s = ItemHandlerHelper.insertItem(capability, s, false);
-                if (s == null) {
-                    return null;
-                }
-            } else if (te instanceof IInventory) {
-                int i = InventoryHelper.mergeItemStackSafe((IInventory) te, true, EnumFacing.DOWN, s, 0, ((IInventory) te).getSizeInventory(), null);
-                if (i == 0) {
-                    return null;
-                }
-                s.stackSize = i;
-            }
+        s = InventoryHelper.insertItem(worldObj, getPos(), EnumFacing.UP, s);
+        if (s != null) {
+            s = InventoryHelper.insertItem(worldObj, getPos(), EnumFacing.DOWN, s);
         }
-
-        te = worldObj.getTileEntity(getPos().down());
-        if (te != null) {
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
-                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                s = ItemHandlerHelper.insertItem(capability, s, false);
-                if (s == null) {
-                    return null;
-                }
-            } else if (te instanceof IInventory) {
-                int i = InventoryHelper.mergeItemStackSafe((IInventory) te, true, EnumFacing.UP, s, 0, ((IInventory) te).getSizeInventory(), null);
-                if (i == 0) {
-                    return null;
-                }
-                s.stackSize = i;
-            }
-        }
-
         return s;
     }
 
-    private IBlockState consumeBlock(IBlockState state) {
-        TileEntity te = worldObj.getTileEntity(getPos().up());
+    /**
+     * Consume a block out of an inventory. Returns a blockstate
+     * from that inventory or else null if nothing could be found.
+     * If the given blockstate parameter is null then a random block will be
+     * returned. Otherwise the returned block has to match.
+     */
+    private IBlockState consumeBlock(EnumFacing direction, IBlockState state) {
+        TileEntity te = worldObj.getTileEntity(getPos().offset(direction));
         if (te != null) {
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)) {
-                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-                IBlockState b = findAndConsumeBlock(capability, state);
-                if (b != null) {
-                    return b;
-                }
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite())) {
+                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite());
+                return findAndConsumeBlock(capability, state);
             } else if (te instanceof IInventory) {
-                IBlockState b = findAndConsumeBlock((IInventory) te, state);
-                if (b != null) {
-                    return b;
-                }
+                return findAndConsumeBlock((IInventory) te, state);
             }
         }
+        return null;
+    }
 
-        te = worldObj.getTileEntity(getPos().down());
-        if (te != null) {
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
-                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                IBlockState b = findAndConsumeBlock(capability, state);
-                if (b != null) {
-                    return b;
-                }
-            } else if (te instanceof IInventory) {
-                IBlockState b = findAndConsumeBlock((IInventory) te, state);
-                if (b != null) {
-                    return b;
-                }
-            }
+    private IBlockState consumeBlock(IBlockState state) {
+        IBlockState b = consumeBlock(EnumFacing.UP, state);
+        if (b == null) {
+            b = consumeBlock(EnumFacing.UP, state);
         }
+        return b;
 
 //        if (meta != -1) {
             // Try a second time with meta equal to -1 (which means to ignore meta).
 //            return consumeBlock(block, -1);
 //        }
-        return null;
     }
 
     public static BuilderSetup.BlockInformation getBlockInformation(World world, BlockPos pos, Block block, TileEntity tileEntity) {
@@ -1307,7 +1245,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
 //            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
-                RFToolsTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1463,8 +1401,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
             }
             if (!silent) {
-                RFToolsTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
-                RFToolsTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
@@ -1534,10 +1472,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (!silent) {
             if (!isEmpty(srcState, srcBlock)) {
-                RFToolsTools.playSound(world, srcBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(world, srcBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
             if (!isEmpty(dstState, dstBlock)) {
-                RFToolsTools.playSound(destWorld, dstBlock.getSoundType().breakSound, dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, dstBlock.getSoundType().breakSound, dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
         }
     }

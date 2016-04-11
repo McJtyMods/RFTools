@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
@@ -48,7 +48,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
 
                 this.bindTexture(redglow);
 
-                mcjty.rftools.varia.RenderHelper.drawBeam(start, end, player, tileEntity.isGlowing() ? .1f : .05f);
+                RenderHelper.drawBeam(start, end, player, tileEntity.isGlowing() ? .1f : .05f);
 
                 tessellator.draw();
                 GlStateManager.popMatrix();
@@ -66,27 +66,8 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
 
         if (txt != null) {
             this.bindTexture(txt);
-
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, z);
-
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 1.1f, -0.05f);
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 1.1f, -0.05f);
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), 1.1f, -0.05f);
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), 1.1f, -0.05f);
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1.1f, -0.05f);
-            mcjty.rftools.varia.RenderHelper.addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1.1f, -0.05f);
-
-            tessellator.draw();
-            GlStateManager.popMatrix();
+            RenderGlowEffect.renderGlow(tessellator, x, y, z);
         }
     }
-
-
 }
 

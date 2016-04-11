@@ -5,10 +5,10 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.varia.CustomSidedInvWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -126,7 +126,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public void addMatter(ItemStack stack, int m) {
         testSyringe();
-        if (mobId == null && mobId.isEmpty()) {
+        if (mobId == null || mobId.isEmpty()) {
             return;       // No matter was added.
         }
         int materialType = 0;
