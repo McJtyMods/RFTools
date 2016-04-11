@@ -91,6 +91,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private static int currentLevel = 0;
 
     private int powered = 0;
+    private int collectCounter = BuilderConfiguration.collectTimer;
 
     private boolean boxValid = false;
     private BlockPos minBox = null;
@@ -537,26 +538,54 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (mode == MODE_COLLECT) {
-            // Collect item mode
-            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(minBox, maxBox));
-            // @todo slow down a little
-            // @todo RF usage
-            for (EntityItem item : items) {
-                BlockPos position = item.getPosition();
-                ItemStack stack = item.getEntityItem();
-                world.removeEntity(item);
-                stack = insertItem(stack);
-                if (stack != null) {
-                    EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
-                    worldObj.spawnEntityInWorld(entityItem);
-                }
-            }
+            collectItems(world);
         } else {
             float factor = getInfusedFactor();
             for (int i = 0; i < 2 + (factor * 40); i++) {
                 if (scan != null) {
                     handleBlock(world);
                 }
+            }
+        }
+    }
+
+    private void collectItems(World world) {
+        // Collect item mode
+        collectCounter--;
+        if (collectCounter > 0) {
+            return;
+        }
+        collectCounter = BuilderConfiguration.collectTimer;
+
+        int rf = getEnergyStored(EnumFacing.DOWN);
+        float area = (maxBox.getX() - minBox.getX() + 1) * (maxBox.getY() - minBox.getY() + 1) * (maxBox.getZ() - minBox.getZ() + 1);
+        float infusedFactor = (4.0f - getInfusedFactor()) / 4.0f;
+        int rfNeeded = (int) (BuilderConfiguration.collectRFPerTickPerArea * area * infusedFactor) * BuilderConfiguration.collectTimer;
+        if (rfNeeded > rf) {
+            // Not enough energy.
+            return;
+        }
+        consumeEnergy(rfNeeded);
+
+        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
+                new AxisAlignedBB(minBox.getX()-.8, minBox.getY()-.8, minBox.getZ()-.8, maxBox.getX()+.8, maxBox.getY()+.8, maxBox.getZ()+.8));
+        for (EntityItem item : items) {
+            BlockPos position = item.getPosition();
+            ItemStack stack = item.getEntityItem();
+
+            rf = getEnergyStored(EnumFacing.DOWN);
+            rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.stackSize;
+            if (rfNeeded > rf) {
+                // Not enough energy.
+                return;
+            }
+            consumeEnergy(rfNeeded);
+
+            world.removeEntity(item);
+            stack = insertItem(stack);
+            if (stack != null) {
+                EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
+                worldObj.spawnEntityInWorld(entityItem);
             }
         }
     }

@@ -39,6 +39,11 @@ public class BuilderConfiguration {
 
     public static boolean oldSphereCylinderShape = false;
 
+    public static int collectTimer = 10;
+    public static int collectRFPerItem = 20;
+    public static float collectRFPerTickPerArea = 0.5f;
+
+
     public static void init(Configuration cfg) {
         SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_BUILDER, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
                 "Maximum RF storage that the space projector can hold").getInt();
@@ -62,6 +67,13 @@ public class BuilderConfiguration {
                 "Maximum dimension for the space chamber").getInt();
         dimensionCostFactor = cfg.get(CATEGORY_BUILDER, "dimensionCostFactor", dimensionCostFactor,
                 "How much more expensive a move accross dimensions is").getDouble();
+
+        collectTimer = cfg.get(CATEGORY_BUILDER, "collectTimer", collectTimer,
+                "How many ticks we wait before collecting again (with the builder 'collect items' mode)").getInt();
+        collectRFPerItem = cfg.get(CATEGORY_BUILDER, "collectRFPerItem", collectRFPerItem,
+                "The cost of collecting an item (builder 'collect items' mode))").getInt();
+        collectRFPerTickPerArea = (float) cfg.get(CATEGORY_BUILDER, "collectRFPerTickPerArea", collectRFPerTickPerArea,
+                "The RF/t per area to keep checking for items in a given area (builder 'collect items' mode))").getDouble();
 
         voidShapeCardFactor = cfg.get(CATEGORY_BUILDER, "voidShapeCardFactor", voidShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the void shape card").getDouble();
