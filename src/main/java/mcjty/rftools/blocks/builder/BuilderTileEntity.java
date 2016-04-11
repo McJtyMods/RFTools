@@ -559,6 +559,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
         collectCounter = BuilderConfiguration.collectTimer;
+        if (!loopMode) {
+            scan = null;
+        }
 
         int rf = getEnergyStored(EnumFacing.DOWN);
         float area = (maxBox.getX() - minBox.getX() + 1) * (maxBox.getY() - minBox.getY() + 1) * (maxBox.getZ() - minBox.getZ() + 1);
@@ -1371,6 +1374,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void teleportEntity(World world, World destWorld, Entity entity, double newX, double newY, double newZ) {
+        if (!TeleportationTools.allowTeleport(entity, world.provider.getDimension(), entity.getPosition(), destWorld.provider.getDimension(), new BlockPos(newX, newY, newZ))) {
+            return;
+        }
         if (entity instanceof EntityPlayer) {
             if (world.provider.getDimension() != destWorld.provider.getDimension()) {
                 TeleportationTools.teleportToDimension((EntityPlayer) entity, destWorld.provider.getDimension(), newX, newY, newZ);

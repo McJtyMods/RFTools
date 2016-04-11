@@ -2,9 +2,12 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
+import mcjty.rftools.blocks.environmental.modules.NoTeleportEModule;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -13,31 +16,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PeacefulAreaManager {
-    private static final Map<GlobalCoordinate,PeacefulArea> areas = new HashMap<>();
+public class NoTeleportAreaManager {
+    private static final Map<GlobalCoordinate,NoTeleportArea> areas = new HashMap<>();
 
     public static void markArea(GlobalCoordinate coordinate, int radius, int miny, int maxy) {
         if (areas.containsKey(coordinate)) {
             areas.get(coordinate).touch().setArea(radius, miny, maxy);
         } else {
-            PeacefulArea area = new PeacefulArea(radius, miny, maxy);
+            NoTeleportArea area = new NoTeleportArea(radius, miny, maxy);
             areas.put(coordinate, area);
         }
     }
 
-    public static boolean isPeaceful(GlobalCoordinate coordinate) {
+    public static boolean isTeleportPrevented(Entity entity, GlobalCoordinate coordinate) {
         if (areas.isEmpty()) {
             return false;
         }
         List<GlobalCoordinate> toRemove = new ArrayList<>();
-        boolean peaceful = false;
+        boolean noTeleport = false;
         long curtime = System.currentTimeMillis() - 10000;
 
-        for (Map.Entry<GlobalCoordinate, PeacefulArea> entry : areas.entrySet()) {
-            PeacefulArea area = entry.getValue();
+        for (Map.Entry<GlobalCoordinate, NoTeleportArea> entry : areas.entrySet()) {
+            NoTeleportArea area = entry.getValue();
             GlobalCoordinate entryCoordinate = entry.getKey();
             if (area.in(coordinate, entryCoordinate)) {
-                peaceful = true;
+                World world = TeleportationTools.getWorldForDimension(entity.getEntityWorld(), entryCoordinate.getDimension());
+                TileEntity te = world.getTileEntity(entryCoordinate.getCoordinate());
+                if (te instanceof EnvironmentalControllerTileEntity) {
+                    EnvironmentalControllerTileEntity controllerTileEntity = (EnvironmentalControllerTileEntity) te;
+                    noTeleport = controllerTileEntity.isEntityAffected(entity);
+                }
             }
             if (area.getLastTouched() < curtime) {
                 // Hasn't been touched for at least 10 seconds. Probably no longer valid.
@@ -52,8 +60,8 @@ public class PeacefulAreaManager {
                         if (te instanceof EnvironmentalControllerTileEntity) {
                             EnvironmentalControllerTileEntity controllerTileEntity = (EnvironmentalControllerTileEntity) te;
                             for (EnvironmentModule module : controllerTileEntity.getEnvironmentModules()) {
-                                if (module instanceof PeacefulEModule) {
-                                    if (((PeacefulEModule) module).isActive()) {
+                                if (module instanceof NoTeleportEModule) {
+                                    if (((NoTeleportEModule) module).isActive()) {
                                         removeArea = false;
                                         break;
                                     }
@@ -72,24 +80,24 @@ public class PeacefulAreaManager {
             areas.remove(globalCoordinate);
         }
 
-        return peaceful;
+        return noTeleport;
     }
 
 
-    public static class PeacefulArea {
+    public static class NoTeleportArea {
         private float sqradius;
         private int miny;
         private int maxy;
         private long lastTouched;
 
-        public PeacefulArea(float radius, int miny, int maxy) {
+        public NoTeleportArea(float radius, int miny, int maxy) {
             this.sqradius = radius * radius;
             this.miny = miny;
             this.maxy = maxy;
             touch();
         }
 
-        public PeacefulArea setArea(float radius, int miny, int maxy) {
+        public NoTeleportArea setArea(float radius, int miny, int maxy) {
             this.sqradius = radius * radius;
             this.miny = miny;
             this.maxy = maxy;
@@ -98,7 +106,7 @@ public class PeacefulAreaManager {
 
         @Override
         public String toString() {
-            return "PeacefulArea{" +
+            return "NoTeleportArea{" +
                     "sqradius=" + sqradius +
                     ", miny=" + miny +
                     ", maxy=" + maxy +
@@ -110,7 +118,7 @@ public class PeacefulAreaManager {
             return lastTouched;
         }
 
-        public PeacefulArea touch() {
+        public NoTeleportArea touch() {
             lastTouched = System.currentTimeMillis();
             return this;
         }

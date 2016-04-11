@@ -24,6 +24,7 @@ public class EnvironmentalConfiguration {
     public static float SPEEDPLUS_RFPERTICK = 0.003f;
     public static float WATERBREATHING_RFPERTICK = 0.001f;
     public static float LUCK_RFPERTICK = 0.002f;
+    public static float NOTELEPORT_RFPERTICK = 0.002f;
 
     // Debuffs
     public static float BLINDNESS_RFPERTICK = 0.01f;
@@ -81,6 +82,8 @@ public class EnvironmentalConfiguration {
                 "RF per tick/per block for the wather breathing module").getDouble();
         LUCK_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "luckRFPerTick", LUCK_RFPERTICK,
                 "RF per tick/per block for the luck module").getDouble();
+        NOTELEPORT_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "noTeleportRFPerTick", NOTELEPORT_RFPERTICK,
+                "RF per tick/per block for the noTeleport module").getDouble();
 
         BLINDNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessRFPerTick", BLINDNESS_RFPERTICK,
                 "RF per tick/per block for the blindness module").getDouble();

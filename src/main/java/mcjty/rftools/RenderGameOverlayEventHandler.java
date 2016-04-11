@@ -122,6 +122,9 @@ public class RenderGameOverlayEventHandler {
             case BUFF_LUCK:
                 item = EnvironmentalSetup.luckEModuleItem;
                 break;
+            case BUFF_NOTELEPORT:
+                item = EnvironmentalSetup.noTeleportEModuleItem;
+                break;
             default:
                 item = null;
         }

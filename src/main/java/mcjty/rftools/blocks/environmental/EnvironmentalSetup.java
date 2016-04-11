@@ -46,6 +46,7 @@ public class EnvironmentalSetup {
     public static NightVisionEModuleItem nightVisionEModuleItem;
     public static GlowingEModuleItem glowingEModuleItem;
     public static LuckEModuleItem luckEModuleItem;
+    public static NoTeleportEModuleItem noTeleportEModuleItem;
 
     public static BlindnessEModuleItem blindnessEModuleItem;
     public static WeaknessEModuleItem weaknessEModuleItem;
@@ -74,6 +75,7 @@ public class EnvironmentalSetup {
         slownessEModuleItem = new SlownessEModuleItem();
         glowingEModuleItem = new GlowingEModuleItem();
         luckEModuleItem = new LuckEModuleItem();
+        noTeleportEModuleItem = new NoTeleportEModuleItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -99,6 +101,7 @@ public class EnvironmentalSetup {
         slownessEModuleItem.initModel();
         glowingEModuleItem.initModel();
         luckEModuleItem.initModel();
+        noTeleportEModuleItem.initModel();
     }
 
     public static void initCrafting() {
@@ -111,6 +114,7 @@ public class EnvironmentalSetup {
         String[] pickMatcher = new String[] { "ench" };
 
         ItemStack ironGolemSyringe = createMobSyringe(EntityIronGolem.class);
+        ItemStack endermanSyringe = createMobSyringe(EntityEnderman.class);
         ItemStack ghastSyringe = createMobSyringe(EntityGhast.class);
         ItemStack chickenSyringe = createMobSyringe(EntityChicken.class);
         ItemStack batSyringe = createMobSyringe(EntityBat.class);
@@ -222,8 +226,13 @@ public class EnvironmentalSetup {
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
                 new ItemStack[]{null, new ItemStack(Items.clock), null, lapis, obsidian, lapis, null, ink, null},
-                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new String[][]{null, null, null, null, null, null, null, null, null},
                 new ItemStack(slownessEModuleItem)));
+
+        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
+                new ItemStack[]{null, endermanSyringe, null, lapis, obsidian, lapis, null, ink, null},
+                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                new ItemStack(noTeleportEModuleItem)));
     }
 
     public static ItemStack createEnchantedItem(Item item, Enchantment effectId, int amount) {

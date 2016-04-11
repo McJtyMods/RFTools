@@ -1,10 +1,13 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.Potion;
@@ -137,6 +140,11 @@ public class TeleportationTools {
 
         BlockPos old = new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ);
         int oldId = player.worldObj.provider.getDimension();
+
+        if (!TeleportationTools.allowTeleport(player, oldId, old, dest.getDimension(), dest.getCoordinate())) {
+            return false;
+        }
+
         if (oldId != dest.getDimension()) {
             TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
         } else {
@@ -325,6 +333,16 @@ public class TeleportationTools {
 
     public static boolean mustInterrupt(int bad, int total) {
         return bad > (total / 2);
+    }
+
+    public static boolean allowTeleport(Entity entity, int sourceDim, BlockPos source, int destDim, BlockPos dest) {
+        if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(source, sourceDim))) {
+            return false;
+        }
+        if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(dest, destDim))) {
+            return false;
+        }
+        return true;
     }
 
     public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {

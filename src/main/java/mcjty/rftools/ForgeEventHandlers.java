@@ -2,6 +2,7 @@ package mcjty.rftools;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -15,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,13 +41,32 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntityConstructing(AttachCapabilitiesEvent.Entity event){
-
         if (event.getEntity() instanceof EntityPlayer) {
             if (!event.getEntity().hasCapability(PlayerExtendedProperties.PORTER_CAPABILITY, null)) {
                 event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
         }
     }
+
+    @SubscribeEvent
+    public void onEntityTeleport(EnderTeleportEvent event) {
+        World world = event.getEntity().getEntityWorld();
+        int id = world.provider.getDimension();
+
+        Entity entity = event.getEntity();
+        BlockPos coordinate = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
+        if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(coordinate, id))) {
+            event.setCanceled(true);
+            Logging.logDebug("No Teleport manager: Prevented teleport of " + entity.getClass().getName());
+        } else {
+            coordinate = new BlockPos((int) event.getTargetX(), (int) event.getTargetY(), (int) event.getTargetZ());
+            if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(coordinate, id))) {
+                event.setCanceled(true);
+                Logging.logDebug("No Teleport manager: Prevented teleport of " + entity.getClass().getName());
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
