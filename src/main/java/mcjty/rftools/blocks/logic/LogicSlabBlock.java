@@ -9,6 +9,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
@@ -91,18 +92,18 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-//            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
-            boolean isPowered = world.isBlockPowered(pos);
-            EnumFacing inputSide = logicTileEntity.getFacing().getOutputSide();
-            System.out.println("pos = " + pos);
-            System.out.println("inputSide = " + inputSide + " (" + this.getClass().getCanonicalName() + ")");
-            Block b = world.getBlockState(pos.offset(inputSide)).getBlock();
-            System.out.println("b = " + b);
+            EnumFacing inputSide = logicTileEntity.getFacing().getInputSide();
             int power = getInputStrength(world, pos, inputSide);
-            int power2 = world.getStrongPower(pos.offset(inputSide), inputSide.getOpposite());
-//            int power = world.getRedstonePower(pos.offset(inputSide), inputSide.getOpposite());
-            System.out.println("power = " + power);
-            System.out.println("power2 = " + power2);
+            if (power == 0) {
+                // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
+                // not detected with getInputStrength().
+                // @todo this is a bit of a hack. Don't know how to do it better right now
+                IBlockState blockState = world.getBlockState(pos.offset(inputSide));
+                Block b = blockState.getBlock();
+                if (b == Blocks.redstone_wire) {
+                    power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
+                }
+            }
             logicTileEntity.setPowered(power);
         }
     }
@@ -127,7 +128,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            EnumFacing direction = logicTileEntity.getFacing().getOutputSide();
+            EnumFacing direction = logicTileEntity.getFacing().getInputSide();
             switch (direction) {
                 case NORTH:
                 case SOUTH:
@@ -153,7 +154,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            if (side == logicTileEntity.getFacing().getOutputSide()) {
+            if (side == logicTileEntity.getFacing().getInputSide()) {
                 return state.getValue(OUTPUTPOWER) ? 15 : 0;
             } else {
                 return 0;

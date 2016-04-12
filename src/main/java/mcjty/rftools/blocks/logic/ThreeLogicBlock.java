@@ -50,9 +50,9 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            int powered1 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide().rotateY()) > 0 ? 1 : 0;
-            int powered2 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide()) > 0 ? 2 : 0;
-            int powered3 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide().rotateYCCW()) > 0 ? 4 : 0;
+            int powered1 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide().rotateY()) > 0 ? 1 : 0;
+            int powered2 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide()) > 0 ? 2 : 0;
+            int powered3 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide().rotateYCCW()) > 0 ? 4 : 0;
             logicTileEntity.setPowered(powered1 + powered2 + powered3);
         }
     }

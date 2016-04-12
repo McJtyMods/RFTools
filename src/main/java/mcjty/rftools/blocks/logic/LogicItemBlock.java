@@ -79,7 +79,7 @@ public class LogicItemBlock extends GenericItemBlock {
                     break;
             }
 //            System.out.println("  facing = " + facing);
-//            System.out.println("  facing.getOutputSide() = " + facing.getOutputSide());
+//            System.out.println("  facing.getInputSide() = " + facing.getInputSide());
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
             logicTileEntity.setFacing(facing);
             world.setBlockState(pos, newState.getBlock().getDefaultState().withProperty(LogicSlabBlock.META_INTERMEDIATE, facing.getMeta()).withProperty(LogicSlabBlock.OUTPUTPOWER, false), 3);
