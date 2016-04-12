@@ -110,7 +110,6 @@ public class RenderWorldLastEventHandler {
             float y = base.getY() + coordinate.getY();
             float z = base.getZ() + coordinate.getZ();
             buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-//            GlStateManager.translate(x, y, z);
 
             RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 1.1f, -0.05f);
             RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 1.1f, -0.05f);
@@ -119,9 +118,6 @@ public class RenderWorldLastEventHandler {
             RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1.1f, -0.05f);
             RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1.1f, -0.05f);
             buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
-//            GlStateManager.translate(-x, -y, -z);
-//            tessellator.addTranslation(-x, -y, -z);
-//            renderProtectionBlock(tessellator, base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ());
         }
         tessellator.draw();
 
@@ -137,6 +133,7 @@ public class RenderWorldLastEventHandler {
         }
         tessellator.draw();
 
+        GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
     }
 
@@ -210,6 +207,7 @@ public class RenderWorldLastEventHandler {
 
         tessellator.draw();
 
+        GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
     }
 }

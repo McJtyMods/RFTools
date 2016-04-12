@@ -1,6 +1,7 @@
 package mcjty.rftools.items.smartwrench;
 
 import cofh.api.item.IToolHammer;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -122,7 +123,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         super.addInformation(itemStack, player, list, whatIsThis);
         GlobalCoordinate b = getCurrentBlock(itemStack);
         if (b != null) {
-            list.add(TextFormatting.GREEN + "Block: " + b.getCoordinate().toString() + " at dimension " + b.getDimension());
+            list.add(TextFormatting.GREEN + "Block: " + BlockPosTools.toString(b.getCoordinate()) + " at dimension " + b.getDimension());
         }
         SmartWrenchMode mode = getCurrentMode(itemStack);
         list.add(TextFormatting.WHITE + "Right-click on air to change mode.");
