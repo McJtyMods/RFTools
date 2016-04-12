@@ -10,6 +10,7 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.ModSounds;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
@@ -136,6 +137,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNAMOUNTS, "Amount of materials needed to spawn mobs");
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNRF, "Amount of RF needed to spawn mobs");
             cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_LIVINGMATTER, "Blocks and items that are seen as living for the spawner");
+            cfg.addCustomCategoryComment(BlockProtectorConfiguration.CATEGORY_BLOCKPROTECTOR, "Settings for the block protector machine");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
@@ -148,6 +150,7 @@ public abstract class CommonProxy {
             ShieldConfiguration.init(cfg);
             EnvironmentalConfiguration.init(cfg);
             SpawnerConfiguration.init(cfg);
+            BlockProtectorConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {

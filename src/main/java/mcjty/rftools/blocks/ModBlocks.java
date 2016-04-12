@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks;
 
+import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
@@ -41,6 +42,7 @@ public final class ModBlocks {
         ShieldSetup.init();
         EnvironmentalSetup.init();
         SpawnerSetup.init();
+        BlockProtectorSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -63,6 +65,7 @@ public final class ModBlocks {
         ShieldSetup.initClient();
         EnvironmentalSetup.initClient();
         SpawnerSetup.initClient();
+        BlockProtectorSetup.initClient();
     }
 
     private static void initBaseBlocks() {

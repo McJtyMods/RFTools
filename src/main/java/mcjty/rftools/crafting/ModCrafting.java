@@ -2,6 +2,7 @@ package mcjty.rftools.crafting;
 
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
@@ -54,6 +55,7 @@ public final class ModCrafting {
         ShieldSetup.initCrafting();
         EnvironmentalSetup.initCrafting();
         SpawnerSetup.initCrafting();
+        BlockProtectorSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {

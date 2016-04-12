@@ -21,6 +21,7 @@ public class GeneralConfiguration {
     public static boolean enableEndergenRecipe = true;
     public static boolean enableBuilderRecipe = true;
     public static boolean enableShieldProjectorRecipe = true;
+    public static boolean enableBlockProtectorRecipe = true;
 
     // Craftability of dimensional shards.
     public static final int CRAFT_NONE = 0;
@@ -63,6 +64,8 @@ public class GeneralConfiguration {
                 "Enable the endergenic generator recipe.").getBoolean();
         enableBuilderRecipe = cfg.get(CATEGORY_GENERAL, "enableBuilderRecipe", enableBuilderRecipe,
                 "Enable the builder recipe.").getBoolean();
+        enableBlockProtectorRecipe = cfg.get(CATEGORY_GENERAL, "enableBlockProtectorRecipe", enableBlockProtectorRecipe,
+                "Enable the block protector recipe.").getBoolean();
         enableShieldProjectorRecipe = cfg.get(CATEGORY_GENERAL, "enableShieldProjectorRecipe", enableShieldProjectorRecipe,
                                               "Enable the shield projector recipe.").getBoolean();
 
