@@ -91,8 +91,19 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
-            logicTileEntity.setPowered(powered);
+//            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
+            boolean isPowered = world.isBlockPowered(pos);
+            EnumFacing inputSide = logicTileEntity.getFacing().getOutputSide();
+            System.out.println("pos = " + pos);
+            System.out.println("inputSide = " + inputSide + " (" + this.getClass().getCanonicalName() + ")");
+            Block b = world.getBlockState(pos.offset(inputSide)).getBlock();
+            System.out.println("b = " + b);
+            int power = getInputStrength(world, pos, inputSide);
+            int power2 = world.getStrongPower(pos.offset(inputSide), inputSide.getOpposite());
+//            int power = world.getRedstonePower(pos.offset(inputSide), inputSide.getOpposite());
+            System.out.println("power = " + power);
+            System.out.println("power2 = " + power2);
+            logicTileEntity.setPowered(power);
         }
     }
 
