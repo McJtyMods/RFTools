@@ -100,6 +100,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MATTER_BEAMER = modGuiIndex++;
     public static final int GUI_SPAWNER = modGuiIndex++;
     public static final int GUI_BLOCK_PROTECTOR = modGuiIndex++;
+    public static final int GUI_ITEMFILTER = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and

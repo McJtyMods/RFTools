@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
+import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.monitor.MonitorSetup;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
@@ -43,6 +44,7 @@ public final class ModBlocks {
         EnvironmentalSetup.init();
         SpawnerSetup.init();
         BlockProtectorSetup.init();
+        ItemFilterSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -66,6 +68,7 @@ public final class ModBlocks {
         EnvironmentalSetup.initClient();
         SpawnerSetup.initClient();
         BlockProtectorSetup.initClient();
+        ItemFilterSetup.initClient();
     }
 
     private static void initBaseBlocks() {

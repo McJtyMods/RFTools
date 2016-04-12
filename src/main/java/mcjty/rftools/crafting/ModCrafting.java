@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
+import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.monitor.MonitorSetup;
 import mcjty.rftools.blocks.powercell.PowerCellSetup;
@@ -56,6 +57,7 @@ public final class ModCrafting {
         EnvironmentalSetup.initCrafting();
         SpawnerSetup.initCrafting();
         BlockProtectorSetup.initCrafting();
+        ItemFilterSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {
