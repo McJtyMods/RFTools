@@ -1,5 +1,6 @@
 package mcjty.rftools.items;
 
+import mcjty.rftools.items.creativeonly.DevelopersDelightItem;
 import mcjty.rftools.items.creativeonly.ShardWandItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -15,6 +16,7 @@ public final class ModItems {
     public static InfusedDiamond infusedDiamond;
     public static SyringeItem syringeItem;
     public static PeaceEssenceItem peaceEssenceItem;
+    public static DevelopersDelightItem developersDelightItem;
 
     public static void init() {
         setupVariousItems();
@@ -28,6 +30,7 @@ public final class ModItems {
         infusedDiamond = new InfusedDiamond();
         syringeItem = new SyringeItem();
         peaceEssenceItem = new PeaceEssenceItem();
+        developersDelightItem = new DevelopersDelightItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -39,5 +42,6 @@ public final class ModItems {
         infusedDiamond.initModel();
         syringeItem.initModel();
         peaceEssenceItem.initModel();
+        developersDelightItem.initModel();
     }
 }

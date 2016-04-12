@@ -23,6 +23,8 @@ import mcjty.rftools.blocks.storage.PacketCycleStorage;
 import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
 import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
+import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
 import mcjty.rftools.items.teleportprobe.*;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -56,6 +58,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetFilters.Handler.class, PacketGetFilters.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetSecurityInfo.Handler.class, PacketGetSecurityInfo.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetSecurityName.Handler.class, PacketGetSecurityName.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetDelightingInfo.Handler.class, PacketGetDelightingInfo.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -72,6 +75,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketSendBuffsToClient.Handler.class, PacketSendBuffsToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityInfoReady.Handler.class, PacketSecurityInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityNameReady.Handler.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
