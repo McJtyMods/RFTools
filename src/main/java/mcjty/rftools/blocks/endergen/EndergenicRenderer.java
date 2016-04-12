@@ -14,7 +14,7 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
 
     private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingPearl.png");
     private ResourceLocation whiteflash = new ResourceLocation(RFTools.MODID, "textures/entities/whiteflash.png");
-    private ResourceLocation blackflash = new ResourceLocation(RFTools.MODID, "textures/entities/blackflash.png");
+    private ResourceLocation blackflash = new ResourceLocation(RFTools.MODID, "textures/entities/redflash.png");
 
     private static final ResourceLocation redglow = new ResourceLocation(RFTools.MODID, "textures/blocks/redglow.png");
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
@@ -48,13 +48,16 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
         }
         RenderHelper.renderBillboardQuadBright(0.2f + s * 0.3f);// + random.nextFloat() * .05f);
 
+//        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
         if (tileEntity.getGoodCounter() > 0) {
             this.bindTexture(whiteflash);
             RenderHelper.renderBillboardQuadBright(0.8f * (tileEntity.getGoodCounter() / 10.0f));
         }
         if (tileEntity.getBadCounter() > 0) {
             this.bindTexture(blackflash);
-            RenderHelper.renderBillboardQuadBright(0.8f * (tileEntity.getBadCounter() / 10.0f));
+            RenderHelper.renderBillboardQuadBright(0.8f * (tileEntity.getBadCounter() / 20.0f));
         }
 
         GlStateManager.popMatrix();

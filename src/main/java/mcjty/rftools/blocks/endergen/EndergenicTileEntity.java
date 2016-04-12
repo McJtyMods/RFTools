@@ -313,7 +313,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private void discardPearl() {
 //        spawnParticles("smoke", EndergenicConfiguration.badParticleCount);
-        badCounter = 10;
+        badCounter = 20;
         markDirtyClient();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
