@@ -105,6 +105,7 @@ public class RFTools implements ModBase {
     public static final int GUI_ITEMFILTER = modGuiIndex++;
     public static final int GUI_SECURITY_MANAGER = modGuiIndex++;
     public static final int GUI_DEVELOPERS_DELIGHT = modGuiIndex++;
+    public static final int GUI_LIST_BLOCKS = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and

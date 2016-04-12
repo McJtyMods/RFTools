@@ -7,7 +7,7 @@ achievement.clearVision=Your Vision Clears!
 achievement.clearVision.desc=Place a modular screen
 
 # Items
-item.NetworkMonitor.name=RF Network Monitor
+item.network_monitor.name=RF Network Monitor
 item.teleport_probe.name=Teleporter Probe
 item.charged_porter.name=Charged Porter
 item.advanced_charged_porter.name=Advanced Charged Porter

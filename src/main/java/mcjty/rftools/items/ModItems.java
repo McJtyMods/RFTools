@@ -3,6 +3,7 @@ package mcjty.rftools.items;
 import mcjty.rftools.items.creativeonly.DevelopersDelightItem;
 import mcjty.rftools.items.creativeonly.ShardWandItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
+import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,6 +18,7 @@ public final class ModItems {
     public static SyringeItem syringeItem;
     public static PeaceEssenceItem peaceEssenceItem;
     public static DevelopersDelightItem developersDelightItem;
+    public static NetworkMonitorItem networkMonitorItem;
 
     public static void init() {
         setupVariousItems();
@@ -31,6 +33,7 @@ public final class ModItems {
         syringeItem = new SyringeItem();
         peaceEssenceItem = new PeaceEssenceItem();
         developersDelightItem = new DevelopersDelightItem();
+        networkMonitorItem = new NetworkMonitorItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -43,5 +46,6 @@ public final class ModItems {
         syringeItem.initModel();
         peaceEssenceItem.initModel();
         developersDelightItem.initModel();
+        networkMonitorItem.initModel();
     }
 }
