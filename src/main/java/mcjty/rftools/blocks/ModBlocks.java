@@ -3,6 +3,7 @@ package mcjty.rftools.blocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
 import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
@@ -47,6 +48,7 @@ public final class ModBlocks {
         BlockProtectorSetup.init();
         ItemFilterSetup.init();
         SecuritySetup.init();
+        EndergenicSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -72,6 +74,7 @@ public final class ModBlocks {
         BlockProtectorSetup.initClient();
         ItemFilterSetup.initClient();
         SecuritySetup.initClient();
+        EndergenicSetup.initClient();
     }
 
     private static void initBaseBlocks() {
