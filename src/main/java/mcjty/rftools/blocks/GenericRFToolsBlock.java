@@ -7,7 +7,10 @@ import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.SecurityTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.security.OrphaningCardItem;
+import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.items.smartwrench.SmartWrench;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.block.Block;
@@ -23,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -136,19 +140,19 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
     @Override
     protected boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
         if (te instanceof GenericTileEntity) {
-//            GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-//            if ((!SecurityTools.isAdmin(player)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
-//                int securityChannel = genericTileEntity.getSecurityChannel();
-//                if (securityChannel != -1) {
-//                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
-//                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
-//                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
-//                    if (channel.isWhitelist() != playerListed) {
-//                        Logging.message(player, TextFormatting.RED + "You have no permission to use this block!");
-//                        return true;
-//                    }
-//                }
-//            }
+            GenericTileEntity genericTileEntity = (GenericTileEntity) te;
+            if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
+                int securityChannel = genericTileEntity.getSecurityChannel();
+                if (securityChannel != -1) {
+                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
+                    boolean playerListed = channel.getPlayers().contains(player.getDisplayNameString());
+                    if (channel.isWhitelist() != playerListed) {
+                        Logging.message(player, TextFormatting.RED + "You have no permission to use this block!");
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }

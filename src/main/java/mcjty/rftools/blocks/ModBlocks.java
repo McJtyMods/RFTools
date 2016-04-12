@@ -13,6 +13,7 @@ import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import mcjty.rftools.blocks.powercell.PowerCellSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -45,6 +46,7 @@ public final class ModBlocks {
         SpawnerSetup.init();
         BlockProtectorSetup.init();
         ItemFilterSetup.init();
+        SecuritySetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -69,6 +71,7 @@ public final class ModBlocks {
         SpawnerSetup.initClient();
         BlockProtectorSetup.initClient();
         ItemFilterSetup.initClient();
+        SecuritySetup.initClient();
     }
 
     private static void initBaseBlocks() {

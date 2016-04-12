@@ -9,8 +9,10 @@ import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
+import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
+import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftTp;
@@ -101,6 +103,7 @@ public class RFTools implements ModBase {
     public static final int GUI_SPAWNER = modGuiIndex++;
     public static final int GUI_BLOCK_PROTECTOR = modGuiIndex++;
     public static final int GUI_ITEMFILTER = modGuiIndex++;
+    public static final int GUI_SECURITY_MANAGER = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
@@ -141,6 +144,8 @@ public class RFTools implements ModBase {
         RemoteStorageIdRegistry.clearInstance();
         RedstoneChannels.clearInstance();
         PowerCellNetwork.clearInstance();
+        SecurityChannels.clearInstance();
+        BlockProtectors.clearInstance();
     }
 
     /**

@@ -12,6 +12,10 @@ import mcjty.rftools.blocks.powercell.PowerCellInfoPacketServer;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
+import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
+import mcjty.rftools.blocks.security.PacketGetSecurityName;
+import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
+import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.storage.PacketCompact;
@@ -50,6 +54,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetAdjacentTankBlocks.Handler.class, PacketGetAdjacentTankBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketContentsMonitor.Handler.class, PacketContentsMonitor.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetFilters.Handler.class, PacketGetFilters.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetSecurityInfo.Handler.class, PacketGetSecurityInfo.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetSecurityName.Handler.class, PacketGetSecurityName.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -64,7 +70,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketAdjacentTankBlocksReady.Handler.class, PacketAdjacentTankBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketFiltersReady.Handler.class, PacketFiltersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSendBuffsToClient.Handler.class, PacketSendBuffsToClient.class, PacketHandler.nextID(), Side.CLIENT);
-
+        net.registerMessage(PacketSecurityInfoReady.Handler.class, PacketSecurityInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketSecurityNameReady.Handler.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
