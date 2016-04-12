@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -158,7 +157,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return (outputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
+    IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
+    IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
+    IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
+    IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
+    IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
+    IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -171,7 +175,20 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     @Override
     public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
+            switch (facing) {
+                case DOWN:
+                    return (T) invHandlerD;
+                case UP:
+                    return (T) invHandlerU;
+                case NORTH:
+                    return (T) invHandlerN;
+                case SOUTH:
+                    return (T) invHandlerS;
+                case WEST:
+                    return (T) invHandlerW;
+                case EAST:
+                    return (T) invHandlerE;
+            }
         }
         return super.getCapability(capability, facing);
     }
