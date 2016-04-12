@@ -73,7 +73,7 @@ public class OrphaningCardItem extends GenericRFToolsItem {
     }
 
     public static boolean isPrivileged(EntityPlayer player, World world) {
-        return false;
-//        return player.capabilities.isCreativeMode || world.getMinecraftServer().getPlayerList().canSendCommands(player.getGameProfile());
+//        return false;
+        return player.capabilities.isCreativeMode || world.getMinecraftServer().getPlayerList().canSendCommands(player.getGameProfile());
     }
 }
