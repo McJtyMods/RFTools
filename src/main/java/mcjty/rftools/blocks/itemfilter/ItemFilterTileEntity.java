@@ -4,11 +4,15 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.CustomSidedInvWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.Map;
 
@@ -16,12 +20,6 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     public static final String CMD_SETMODE = "setMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemFilterContainer.factory, ItemFilterContainer.GHOST_SIZE + ItemFilterContainer.BUFFER_SIZE);
-
-    public static final byte OLDMODE_INPUT_EXACT = 2;
-    public static final byte OLDMODE_INPUT = 1;
-    public static final byte OLDMODE_DISABLED = 0;
-    public static final byte OLDMODE_OUTPUT_EXACT = -1;
-    public static final byte OLDMODE_OUTPUT = -2;
 
     private int inputMode[] = new int[6];
     private int outputMode[] = new int[6];
@@ -158,5 +156,23 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
 
     private boolean isOutputMode(EnumFacing side, int slot) {
         return (outputMode[side.ordinal()] & (1<<slot)) != 0;
+    }
+
+    IItemHandler invHandler = new CustomSidedInvWrapper(this);
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return (T) invHandler;
+        }
+        return super.getCapability(capability, facing);
     }
 }
