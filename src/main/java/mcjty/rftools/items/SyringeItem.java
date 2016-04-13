@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -74,9 +76,9 @@ public class SyringeItem extends GenericRFToolsItem {
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
-                String mob = tagCompound.getString("mobName");
-                if (mob != null) {
-                    Logging.message(player, TextFormatting.BLUE + "Mob: " + mob);
+                String mobName = getMobName(stack);
+                if (mobName != null) {
+                    Logging.message(player, TextFormatting.BLUE + "Mob: " + mobName);
                 }
                 int level = tagCompound.getInteger("level");
                 level = level * 100 / GeneralConfiguration.maxMobInjections;
@@ -116,11 +118,6 @@ public class SyringeItem extends GenericRFToolsItem {
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private String findSelectedMobClassName(Entity entity) {
-        Class<? extends Entity> entityClass = findSelectedMobClass(entity);
-        return entityClass.getCanonicalName();
-    }
-
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
         // First try to find an exact matching class.
         Class<? extends Entity> entityClass = entity.getClass();
@@ -142,9 +139,9 @@ public class SyringeItem extends GenericRFToolsItem {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            String mob = tagCompound.getString("mobName");
-            if (mob != null) {
-                list.add(TextFormatting.BLUE + "Mob: " + mob);
+            String mobName = getMobName(itemStack);
+            if (mobName != null) {
+                list.add(TextFormatting.BLUE + "Mob: " + mobName);
             }
             int level = tagCompound.getInteger("level");
             level = level * 100 / GeneralConfiguration.maxMobInjections;
@@ -158,4 +155,50 @@ public class SyringeItem extends GenericRFToolsItem {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
+
+    public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
+        ItemStack syringe = new ItemStack(ModItems.syringeItem);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setString("mobClass", mobClass.getCanonicalName());
+        String id = EntityList.getEntityStringFromClass(mobClass);
+        tagCompound.setString("mobId", id);
+        String name = I18n.translateToLocal("entity." + id + ".name");
+        if (name == null || name.isEmpty()) {
+            name = id;
+        }
+        tagCompound.setString("mobName", name);
+        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections);
+        syringe.setTagCompound(tagCompound);
+        return syringe;
+    }
+
+    public static String getMobId(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null) {
+            String mob = tagCompound.getString("mobId");
+            if (mob == null) {
+                // For compatibility only!
+                return tagCompound.getString("mobName");
+            }
+            return mob;
+        }
+        return null;
+    }
+
+    public static String getMobName(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null) {
+            String mob = tagCompound.getString("mobName");
+            if (mob == null) {
+                if (tagCompound.hasKey("mobId")) {
+                    return tagCompound.getString("mobId");
+                } else {
+                    return tagCompound.getString("mobClass");
+                }
+            }
+            return mob;
+        }
+        return null;
+    }
+
 }

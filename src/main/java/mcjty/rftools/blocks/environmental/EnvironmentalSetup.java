@@ -1,14 +1,12 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
@@ -18,7 +16,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -113,18 +110,18 @@ public class EnvironmentalSetup {
         String[] syringeMatcher = new String[] { "level", "mobId" };
         String[] pickMatcher = new String[] { "ench" };
 
-        ItemStack ironGolemSyringe = createMobSyringe(EntityIronGolem.class);
-        ItemStack endermanSyringe = createMobSyringe(EntityEnderman.class);
-        ItemStack ghastSyringe = createMobSyringe(EntityGhast.class);
-        ItemStack chickenSyringe = createMobSyringe(EntityChicken.class);
-        ItemStack batSyringe = createMobSyringe(EntityBat.class);
-        ItemStack horseSyringe = createMobSyringe(EntityHorse.class);
-        ItemStack zombieSyringe = createMobSyringe(EntityZombie.class);
-        ItemStack squidSyringe = createMobSyringe(EntitySquid.class);
-        ItemStack guardianSyringe = createMobSyringe(EntityGuardian.class);
-        ItemStack caveSpiderSyringe = createMobSyringe(EntityCaveSpider.class);
-        ItemStack blazeSyringe = createMobSyringe(EntityBlaze.class);
-        ItemStack shulkerEntity = createMobSyringe(EntityShulker.class);
+        ItemStack ironGolemSyringe = SyringeItem.createMobSyringe(EntityIronGolem.class);
+        ItemStack endermanSyringe = SyringeItem.createMobSyringe(EntityEnderman.class);
+        ItemStack ghastSyringe = SyringeItem.createMobSyringe(EntityGhast.class);
+        ItemStack chickenSyringe = SyringeItem.createMobSyringe(EntityChicken.class);
+        ItemStack batSyringe = SyringeItem.createMobSyringe(EntityBat.class);
+        ItemStack horseSyringe = SyringeItem.createMobSyringe(EntityHorse.class);
+        ItemStack zombieSyringe = SyringeItem.createMobSyringe(EntityZombie.class);
+        ItemStack squidSyringe = SyringeItem.createMobSyringe(EntitySquid.class);
+        ItemStack guardianSyringe = SyringeItem.createMobSyringe(EntityGuardian.class);
+        ItemStack caveSpiderSyringe = SyringeItem.createMobSyringe(EntityCaveSpider.class);
+        ItemStack blazeSyringe = SyringeItem.createMobSyringe(EntityBlaze.class);
+        ItemStack shulkerEntity = SyringeItem.createMobSyringe(EntityShulker.class);
         ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.enchantmentRegistry.getObject(new ResourceLocation("efficiency")), 3);
         ItemStack reds = new ItemStack(Items.redstone);
         ItemStack gold = new ItemStack(Items.gold_ingot);
@@ -243,14 +240,4 @@ public class EnvironmentalSetup {
         return stack;
     }
 
-    public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
-        ItemStack syringe = new ItemStack(ModItems.syringeItem);
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setString("mobClass", mobClass.getCanonicalName());
-        tagCompound.setString("mobId", EntityList.getEntityStringFromClass(mobClass));
-        //  "mobName" not given here
-        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections);
-        syringe.setTagCompound(tagCompound);
-        return syringe;
-    }
 }

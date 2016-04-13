@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -85,37 +86,31 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         if (stack == null || stack.stackSize == 0) {
             return;
         }
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound != null) {
-            String mob = tagCompound.getString("mobId");
-            if (mob == null) {
-                // For compatibility only!
-                mob = tagCompound.getString("mobName");
-            }
-            if (mob != null && !mob.isEmpty()) {
-                String mobName = tagCompound.getString("mobName");
-                name.setText(mobName);
-                rfTick.setText(SpawnerConfiguration.mobSpawnRf.get(mob) + "RF");
-                int i = 0;
-                List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mob);
-                if (list != null) {
-                    for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
-                        ItemStack b = spawnAmount.getObject();
-                        float amount = spawnAmount.getAmount();
-                        if (b == null) {
-                            Object[] blocks = {Blocks.leaves, Blocks.pumpkin, Items.wheat, Items.pumpkin_seeds, Items.potato};
-                            int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
-                            if (blocks[index] instanceof Block) {
-                                this.blocks[i].setRenderItem(new ItemStack((Block) blocks[index], 1, 0));
-                            } else {
-                                this.blocks[i].setRenderItem(new ItemStack((Item) blocks[index], 1, 0));
-                            }
+
+        String mobId = SyringeItem.getMobId(stack);
+        if (mobId != null) {
+            String mobName = SyringeItem.getMobName(stack);
+            name.setText(mobName);
+            rfTick.setText(SpawnerConfiguration.mobSpawnRf.get(mobId) + "RF");
+            int i = 0;
+            List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mobId);
+            if (list != null) {
+                for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
+                    ItemStack b = spawnAmount.getObject();
+                    float amount = spawnAmount.getAmount();
+                    if (b == null) {
+                        Object[] blocks = {Blocks.leaves, Blocks.pumpkin, Items.wheat, Items.pumpkin_seeds, Items.potato};
+                        int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
+                        if (blocks[index] instanceof Block) {
+                            this.blocks[i].setRenderItem(new ItemStack((Block) blocks[index], 1, 0));
                         } else {
-                            blocks[i].setRenderItem(b);
+                            this.blocks[i].setRenderItem(new ItemStack((Item) blocks[index], 1, 0));
                         }
-                        labels[i].setText(Float.toString(amount));
-                        i++;
+                    } else {
+                        blocks[i].setRenderItem(b);
                     }
+                    labels[i].setText(Float.toString(amount));
+                    i++;
                 }
             }
         }

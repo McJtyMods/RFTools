@@ -21,6 +21,7 @@ import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.SyringeItem;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityMooshroom;
@@ -82,9 +83,9 @@ public final class ModCrafting {
         String[] syringeMatcher = new String[] { "level", "mobId" };
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                                                     new ItemStack[]{EnvironmentalSetup.createMobSyringe(EntityIronGolem.class), EnvironmentalSetup.createMobSyringe(EntityEnderman.class), EnvironmentalSetup.createMobSyringe(EntitySnowman.class),
-                                                             EnvironmentalSetup.createMobSyringe(EntityBat.class), EnvironmentalSetup.createMobSyringe(EntityOcelot.class), EnvironmentalSetup.createMobSyringe(EntityGuardian.class),
-                                                             EnvironmentalSetup.createMobSyringe(EntityWolf.class), EnvironmentalSetup.createMobSyringe(EntityPigZombie.class), EnvironmentalSetup.createMobSyringe(EntityMooshroom.class)},
+                                                     new ItemStack[]{SyringeItem.createMobSyringe(EntityIronGolem.class), SyringeItem.createMobSyringe(EntityEnderman.class), SyringeItem.createMobSyringe(EntitySnowman.class),
+                                                             SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
+                                                             SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
                                                      new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
                                                      new ItemStack(ModItems.peaceEssenceItem)));
 
