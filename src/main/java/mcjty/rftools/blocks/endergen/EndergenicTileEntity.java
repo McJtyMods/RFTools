@@ -311,10 +311,17 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         pearls = newlist;
     }
 
+    private void markDirtyClientNoRender() {
+        markDirty();
+        if (worldObj != null) {
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(getPos(), state, state, 6); // Send to client and don't force rerender
+        }
+    }
+
     private void discardPearl() {
-//        spawnParticles("smoke", EndergenicConfiguration.badParticleCount);
         badCounter = 20;
-        markDirtyClient();
+        markDirtyClientNoRender();
         pearlsLost++;
         chargingMode = CHARGE_IDLE;
         fireMonitors(EnderMonitorMode.MODE_LOSTPEARL);
@@ -404,23 +411,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             modifyEnergyStored(rf);
 
             goodCounter = 10;
-            markDirtyClient();
-//            spawnParticles("portal", EndergenicConfiguration.goodParticleCount);
+            markDirtyClientNoRender();
 
             chargingMode = CHARGE_HOLDING;
             currentAge = age;
         }
-    }
-
-    private void spawnParticles(String name, int amount) {
-//        if (amount <= 0) {
-//            return;
-//        }
-//        float vecX = (random.nextFloat() - 0.5F) * 0.2F;
-//        float vecY = (random.nextFloat()) * 0.1F;
-//        float vecZ = (random.nextFloat() - 0.5F) * 0.2F;
-//        ((WorldServer)worldObj).func_147487_a(name, xCoord + 0.5f, yCoord + 1.1f, zCoord + 0.5f, amount, vecX, vecY, vecZ, 0.3f);
-        // @todo
     }
 
     public void startCharging() {
