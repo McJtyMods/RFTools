@@ -79,7 +79,7 @@ public final class ModCrafting {
 
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
 
-        String[] syringeMatcher = new String[] { "level", "mobName" };
+        String[] syringeMatcher = new String[] { "level", "mobId" };
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
                                                      new ItemStack[]{EnvironmentalSetup.createMobSyringe(EntityIronGolem.class), EnvironmentalSetup.createMobSyringe(EntityEnderman.class), EnvironmentalSetup.createMobSyringe(EntitySnowman.class),

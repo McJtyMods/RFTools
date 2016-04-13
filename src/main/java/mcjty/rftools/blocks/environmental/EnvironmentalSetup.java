@@ -110,7 +110,7 @@ public class EnvironmentalSetup {
 
         Object inkSac = Item.itemRegistry.getObjectById(351);
 
-        String[] syringeMatcher = new String[] { "level", "mobName" };
+        String[] syringeMatcher = new String[] { "level", "mobId" };
         String[] pickMatcher = new String[] { "ench" };
 
         ItemStack ironGolemSyringe = createMobSyringe(EntityIronGolem.class);
@@ -247,7 +247,8 @@ public class EnvironmentalSetup {
         ItemStack syringe = new ItemStack(ModItems.syringeItem);
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setString("mobClass", mobClass.getCanonicalName());
-        tagCompound.setString("mobName", EntityList.getEntityStringFromClass(mobClass));
+        tagCompound.setString("mobId", EntityList.getEntityStringFromClass(mobClass));
+        //  "mobName" not given here
         tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections);
         syringe.setTagCompound(tagCompound);
         return syringe;

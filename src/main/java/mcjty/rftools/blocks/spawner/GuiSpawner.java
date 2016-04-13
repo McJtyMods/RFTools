@@ -10,7 +10,10 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 
 public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
@@ -83,24 +87,36 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         }
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
-            String mob = tagCompound.getString("mobName");
+            String mob = tagCompound.getString("mobId");
+            if (mob == null) {
+                // For compatibility only!
+                mob = tagCompound.getString("mobName");
+            }
             if (mob != null && !mob.isEmpty()) {
-                name.setText(mob);
+                String mobName = tagCompound.getString("mobName");
+                name.setText(mobName);
                 rfTick.setText(SpawnerConfiguration.mobSpawnRf.get(mob) + "RF");
                 int i = 0;
                 List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mob);
-                for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
-                    ItemStack b = spawnAmount.getObject();
-                    float amount = spawnAmount.getAmount();
-                    if (b == null) {
-                        blocks[i].setRenderItem(new ItemStack(Blocks.leaves, 1, 0));
-                    } else {
-                        blocks[i].setRenderItem(b);
+                if (list != null) {
+                    for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
+                        ItemStack b = spawnAmount.getObject();
+                        float amount = spawnAmount.getAmount();
+                        if (b == null) {
+                            Object[] blocks = {Blocks.leaves, Blocks.pumpkin, Items.wheat, Items.pumpkin_seeds, Items.potato};
+                            int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
+                            if (blocks[index] instanceof Block) {
+                                this.blocks[i].setRenderItem(new ItemStack((Block) blocks[index], 1, 0));
+                            } else {
+                                this.blocks[i].setRenderItem(new ItemStack((Item) blocks[index], 1, 0));
+                            }
+                        } else {
+                            blocks[i].setRenderItem(b);
+                        }
+                        labels[i].setText(Float.toString(amount));
+                        i++;
                     }
-                    labels[i].setText(Float.toString(amount));
-                    i++;
                 }
-
             }
         }
     }

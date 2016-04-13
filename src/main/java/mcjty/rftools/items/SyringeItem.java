@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -88,8 +89,8 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        String mob = findSelectedMobClass(entity);
-        if (mob != null) {
+        Class<? extends Entity> clazz = findSelectedMobClass(entity);
+        if (clazz != null) {
             String prevMob = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
@@ -98,9 +99,10 @@ public class SyringeItem extends GenericRFToolsItem {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            if (prevMob == null || !prevMob.equals(mob)) {
-                tagCompound.setString("mobClass", mob);
+            if (prevMob == null || !prevMob.equals(clazz.getCanonicalName())) {
+                tagCompound.setString("mobClass", clazz.getCanonicalName());
                 tagCompound.setString("mobName", findSelectedMobName(entity));
+                tagCompound.setString("mobId", EntityList.classToStringMapping.get(clazz));
                 tagCompound.setInteger("level", 1);
             } else {
                 int level = tagCompound.getInteger("level");
@@ -114,7 +116,12 @@ public class SyringeItem extends GenericRFToolsItem {
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private String findSelectedMobClass(Entity entity) {
+    private String findSelectedMobClassName(Entity entity) {
+        Class<? extends Entity> entityClass = findSelectedMobClass(entity);
+        return entityClass.getCanonicalName();
+    }
+
+    private Class<? extends Entity> findSelectedMobClass(Entity entity) {
         // First try to find an exact matching class.
         Class<? extends Entity> entityClass = entity.getClass();
 
@@ -122,8 +129,7 @@ public class SyringeItem extends GenericRFToolsItem {
         if (entity instanceof EntityDragonPart) {
             entityClass = EntityDragon.class;
         }
-
-        return entityClass.getCanonicalName();
+        return entityClass;
     }
 
     private String findSelectedMobName(Entity entity) {
