@@ -29,7 +29,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/powercell.png");
 
     public GuiPowerCell(PowerCellTileEntity PowerCellTileEntity, PowerCellContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, PowerCellTileEntity, container, 0/*@todoRFTools.GUI_MANUAL_DIMENSION*/, "infuser");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, PowerCellTileEntity, container, RFTools.GUI_MANUAL_MAIN, "powercell");
 
         xSize = POWERCELL_WIDTH;
         ySize = POWERCELL_HEIGHT;

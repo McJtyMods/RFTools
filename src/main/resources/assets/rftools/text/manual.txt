@@ -8,18 +8,20 @@ Table of contents:
 {l:base}Base Ingredients
 {l:logic}Logic Gates
 {l:monitor}Contents Monitors
+{l:coalgen}Coal Generator
+{l:powercell}Power storage
 {l:stomon}Storage Scanner
 {l:storage}Storage System
-{l:filter}Item Filter
-{l:crafter}Automatic Crafter
 {/}
 
 
 
+{l:filter}Item Filter
+{l:crafter}Automatic Crafter
 {l:protect}Block Protector
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
-{l:power}Power Generator
+{l:power}Advanced Power Generator
 {l:shield}Shield System
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
@@ -35,7 +37,8 @@ be rotated by using a wrench on them.
 All blocks in this mod can be picked up by using a wrench while
 sneaking. Most settings (like stored energy, possible inventory,
 recipes and so on) will be remembered and restored when the block
-is put back in the world.
+is put back in the world. You can also break the blocks with
+a pickaxe without losing anything.
 {-------------------------------------------------------------}
 {b}Security
 {n:security}
@@ -138,7 +141,8 @@ The machine base is the base ingredient for a few other machines.
 {l:endermon}Ender Monitor
 {l:redtrans}Redstone Transmitter
 {l:redrec}Redstone Receiver
-{-------------------------------------------------------------} 
+{l:threelogic}Logic Gate
+{-------------------------------------------------------------}
 {b}Sequencer
 {n:sequencer}
 {rb:sequencer_block}
@@ -184,7 +188,7 @@ already got.
 {-------------------------------------------------------------}
 {b}Ender Monitor
 {n:endermon}
-{rb:ender_monitor_block}
+{rb:ender_monitor}
 The Ender Monitor only works in combination with the Endergenic
 Generator. It will send a pulse based on three different conditions:
 
@@ -213,6 +217,15 @@ redstone transmitter. To link this receiver with a transmitter
 right-select the transmitter (or another linked receiver) with
 this block.
 {-------------------------------------------------------------}
+{b}Logic Gate
+{n:threelogic}
+{rb:logic_block}
+This block has three redstone inputs and one output. Using the GUI you
+can make any possible combination of those three inputs into a single
+output. For every input combination you can set the output to off, on
+or keep. In keep the state of the output will be the same as it was
+before the input was switched to this state.
+{-------------------------------------------------------------}
 {b}RF Monitor
 {n:monitor}
 {rb:rf_monitor}
@@ -229,6 +242,41 @@ parts of your RF network.
 {rb:liquid_monitor}
 The Liquid Monitor is a block that works like the RF Monitor except
 that it can examine the contents of a nearby liquid tank.
+{-------------------------------------------------------------}
+{b}Coal Generator
+{n:coalgen}
+{rb:coalgenerator}
+The coal generator is a simply generator that can produce 60 RF/tick
+from coal or charcoal. If fully infused it will produce 120 RF/tick.
+It can also charge items that need RF but does that slowly. The
+powercell is a much better solution to charge items.
+{-------------------------------------------------------------}
+{b}Powercell
+{n:powercell}
+{rb:powercell}
+The powercell can store power. There a normal and an advanced version.
+The advanced version can store more power and can also transfer power
+faster. Every side of a powercell can be configured with a wrench (input,
+output, none) or you can set all sides at once using the GUI.
+
+The powercell can also charge items that use RF.
+{-------------------------------------------------------------}
+Powercells can also be linked to each other. To do that you have to craft
+as many powercell cards as you have powercells that you want to link:
+{ri:powercell_card}
+
+Insert one card in the first powercell and the others in the linking slot
+in the middle. That way all these cards will now have the same id. You can
+then insert each of these cards in another powercell. This will create a
+big multiblock of connected powercells.
+{-------------------------------------------------------------}
+Powercells that are linked (using cards) don't have to be adjacent to
+each other. However, if they are not adjacent there will be a small cost
+that is calculated when power is extracted. The cost depends on distance
+and also on how big the cluster of powercells is from where you extract
+power. i.e. power is considered to be evently distributed over all cells.
+Note that infusing a powercell reduces this cost and also RFTools
+dimensions are more efficient at transfering power this way.
 {-------------------------------------------------------------}
 {b}Storage Scanner
 {n:stomon}
@@ -281,12 +329,11 @@ a filter module to restrict items going into the storage.
 {n:remotestor}
 There is also a Remote Storage Block:
 {rb:remote_storage}
-With this block you can make a storage module available remotely.
-You can put up to four storage modules in the remote storage block.
-Then you can create Remote Storage Module items. These need
-to be linked first to de right storage item. To do that place
-the remote storage module in the appropriate slot next to the
-item.
+With this block you can make a storage module available remotely. You can
+put up to four storage modules in the remote storage block. Then you can
+create Remote Storage Module items. These need to be linked first to de
+right storage item. To do that place the remote storage module in the
+appropriate slot next to the item.
 
 You can then use the remote storage module by combining it with a tablet
 or you can insert the module in a modular chest block.
@@ -303,12 +350,12 @@ back you just put the tablet in your crafting grid.
 {-------------------------------------------------------------}
 Filtering items for your storage:
 {ri:filter_module}
-With this item you can control what is allowed in the chest and
-what not. You can whitelist or blacklist and also filter with
-NBT, damage, ore dictionary or even based on mod.
+With this item you can control what is allowed in the chest and what not.
+You can whitelist or blacklist and also filter with NBT, damage, ore
+dictionary or even based on mod.
 
-This filter module is also usable in the crafter to control what
-goes into the crafter buffer.
+This filter module is also usable in the crafter to control what goes into
+the crafter buffer.
 
 The storage filter item has its own GUI which you can only access
 by having the filter in your hand (outside of the machine).
@@ -501,7 +548,7 @@ click with this block on the transmitter and/or the receiver.
 
 {rb:simple_dialer}
 {-------------------------------------------------------------}
-{b}Power Generator
+{b}Advanced Power Generator
 {n:power}
 
 Scientists working in The End have discovered an interesting property
@@ -528,7 +575,7 @@ at all times.
 {-------------------------------------------------------------}
 {b}Endergenic Generator
 {n:powendergenic}
-{rb:endergenic_generator}
+{rb:endergenic}
 
 The Endergenic Generator is the main block in the power generator system.
 This device can capture endergenic pearls and fire them again. It has three
@@ -610,20 +657,20 @@ shield again to get the template blocks back. By doing that you
 can change the shape of your shield in case you're not happy with it.
 {-------------------------------------------------------------}
 To craft the Shield Template Blocks you use the following recipe:
-{rb:shield_template}
+{rb:shield_template_block}
 
 Note that there are four different template blocks so you can use them
 to make adjacent distinct shields. Every projector will only take one color.
 
 To craft the Shield Block you use the following recipe:
-{rb:shield}
+{rb:shield_block1}
 {-------------------------------------------------------------}
-The shield has three visualization options:
+The shield has four visualization options:
 
     Invisible: the shield is totally invisible
     Shield: a transparent generic shield texture is used
-    Solid: the shield takes the appearance of a given block
-        (insert that block in the gui of the Shield Block)
+    Solid: the shield is solid
+    Transparent: the shield is transparent
 
 In the gui you can also insert rules for different types of
 entities. For every rule you have the following actions:
@@ -653,7 +700,7 @@ the shield.
 {-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
-{rb:itemfilter}
+{rb:item_filter}
 The Item Filter allows controlled input/output from any side of the
 block. It has nine storage slots that can be configured to only hold
 a specific type of item. For each of these storage slots you can
